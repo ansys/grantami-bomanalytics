@@ -5,8 +5,6 @@ from ansys.granta.auth_common import AuthenticatedApiClient
 
 from builders import MaterialQueryBuilder, PartQueryBuilder, SpecificationQueryBuilder, SubstanceQueryBuilder, \
     BoM1711QueryBuilder
-from item_references import MaterialReference, PartReference, SpecificationReference, SubstanceReference, \
-    BoM1711Reference
 
 
 class Connection:
@@ -59,50 +57,29 @@ class Connection:
 
     def create_material_query(self):
         query = MaterialQueryBuilder(self)
-        query._item_type = MaterialReference
-        query._item_type_name = 'materials'
-        query.set_compliance_endpoints(bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest,
-                                       self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials)
-        query.set_impacted_substances_endpoints(
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest,
-            self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials)
+        query.set_impacted_substance_api(self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials)
+        query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials)
         return query
 
     def create_part_query(self):
         query = PartQueryBuilder(self)
-        query.set_item_type(PartReference, 'parts')
-        query.set_compliance_endpoints(bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest,
-                                       self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts)
-        query.set_impacted_substances_endpoints(
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest,
-            self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts)
+        query.set_impacted_substance_api(self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts)
+        query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts)
         return query
 
     def create_specification_query(self):
         query = SpecificationQueryBuilder(self)
-        query.set_item_type(SpecificationReference, 'specifications')
-        query.set_compliance_endpoints(
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest,
-            self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications)
-        query.set_impacted_substances_endpoints(
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest,
-            self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications)
+        query.set_impacted_substance_api(self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications)
+        query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications)
         return query
 
     def create_substance_query(self):
         query = SubstanceQueryBuilder(self)
-        query.set_item_type(SubstanceReference, 'substances')
-        query.set_compliance_endpoints(
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest,
-            self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances)
+        query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances)
         return query
 
     def create_bom_query(self):
         query = BoM1711QueryBuilder(self)
-        query.set_item_type(BoM1711Reference, 'bom')
-        query.set_compliance_endpoints(bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request,
-                                       self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711)
-        query.set_impacted_substances_endpoints(
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request,
-            self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711)
+        query.set_impacted_substance_api(self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711)
+        query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711)
         return query

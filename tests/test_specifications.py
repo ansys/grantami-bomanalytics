@@ -1,4 +1,4 @@
-from builders import ReferenceTypes
+from query_managers import ReferenceTypes
 
 
 def test_impacted_substances(connection):

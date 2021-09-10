@@ -31,7 +31,7 @@ class RoHSIndicator(Indicator):
         self._indicator_type = 'Rohs'
 
 
-class WatchListIndicator(Indicator):
+class WatchlistIndicator(Indicator):
     def __init__(self, name, legislation_names, default_threshold_percentage):
         super().__init__(name, legislation_names, default_threshold_percentage)
         self._indicator_type = 'WatchList'

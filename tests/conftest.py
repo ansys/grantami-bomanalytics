@@ -1,7 +1,7 @@
 import pytest
 
 from connection import Connection
-from indicators import WatchListIndicator, RoHSIndicator
+from indicators import WatchlistIndicator, RoHSIndicator
 
 
 @pytest.fixture(scope="session")
@@ -14,7 +14,7 @@ def connection():
 
 @pytest.fixture(scope="session")
 def indicators():
-    andys_noxious_substance_indicator = WatchListIndicator(name="Andy's disliked substances",
+    andys_noxious_substance_indicator = WatchlistIndicator(name="Andy's disliked substances",
                                                            legislation_names=['GADSL',
                                                                               'California Proposition 65 List'],
                                                            default_threshold_percentage=2)

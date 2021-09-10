@@ -1,10 +1,10 @@
 from pytest import raises
-from builders import ReferenceTypes
+from query_managers import ReferenceTypes, SubstanceQueryManager
 
 
 def test_impacted_substances(connection):
     substance_query = connection.create_substance_query()
-    substance_query.add_record(ReferenceTypes.cas_number, '50-00-0', 1.0)
+    substance_query.add_record(ReferenceTypes.cas_number, '50-00-0')
     with raises(AttributeError) as e:
         substance_query.add_legislation('The SIN List 2.1 (Substitute It Now!)')
     with raises(AttributeError) as e:
@@ -12,8 +12,8 @@ def test_impacted_substances(connection):
 
 
 def test_compliance(connection, indicators):
-    substance_query = connection.create_substance_query()
-    substance_query.add_record(ReferenceTypes.cas_number, '50-00-0', 1.0)
+    substance_query: SubstanceQueryManager = connection.create_substance_query()
+    substance_query.add_substance_with_amount(ReferenceTypes.cas_number, '50-00-0', 1.0)
     for indicator in indicators:
         substance_query.add_indicator(indicator)
     assert len(substance_query.compliance) == 1

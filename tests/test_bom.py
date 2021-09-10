@@ -1,5 +1,5 @@
 from pytest import raises
-from builders import ReferenceTypes
+from query_managers import ReferenceTypes
 
 bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" id="B0">
     <Components>
@@ -61,7 +61,7 @@ bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco"
 
 def test_impacted_substances(connection):
     bom_query = connection.create_bom_query()
-    bom_query.set_bom(bom)
+    bom_query.bom = bom
     bom_query.add_legislation('The SIN List 2.1 (Substitute It Now!)')
     assert len(bom_query.impacted_substances) == 1
     assert not bom_query.compliance
@@ -73,7 +73,7 @@ def test_impacted_substances(connection):
 
 def test_compliance(connection, indicators):
     bom_query = connection.create_bom_query()
-    bom_query.set_bom(bom)
+    bom_query.bom = bom
     for indicator in indicators:
         bom_query.add_indicator(indicator)
     assert len(bom_query.compliance) == 1

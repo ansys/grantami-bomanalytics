@@ -8,13 +8,6 @@ from ansys.granta.bomanalytics import models
 from indicators import IndicatorResult
 
 
-class ItemReference(ABC):
-    @property
-    @abstractmethod
-    def definition(self) -> str:
-        pass
-
-
 class ComplianceResultMixin:
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -28,7 +21,7 @@ class ComplianceResultMixin:
         id_def_lookup = {id.name: id for id in indicator_definitions}
         self.indicators = {indicator.name: IndicatorResult(id_def_lookup[indicator.name], indicator.flag) for indicator in indicators}
         if substances:
-            self.substances = [SubstanceReference(substance.reference_value, substance.indicators) for substance in substances]
+            self.substances = [SubstanceDefinition(substance.reference_value, substance.indicators) for substance in substances]
         else:
             self.substances = []
 
@@ -43,7 +36,7 @@ class SubstanceResultMixin:
                          legislation in legislations}
 
 
-class BoM1711Reference(ItemReference):
+class BoM1711Definition:
     def __init__(self, bom: Union[str, None] = None):
         super().__init__()
         self._bom = bom
@@ -53,7 +46,7 @@ class BoM1711Reference(ItemReference):
         return self._bom
 
 
-class RecordBasedItemReference(ItemReference):
+class RecordDefinition(ABC):
     def __init__(self,
                  record_history_identity: Union[int, None] = None,
                  record_guid: Union[str, None] = None,
@@ -99,7 +92,7 @@ class RecordBasedItemReference(ItemReference):
         pass
 
 
-class PartReference(RecordBasedItemReference):
+class PartDefinition(RecordDefinition):
     def __init__(self,
                  record_history_identity: Union[str, None] = None,
                  record_guid: Union[str, None] = None,
@@ -119,11 +112,11 @@ class PartReference(RecordBasedItemReference):
         return definition
 
 
-class PartResult(PartReference, ComplianceResultMixin, SubstanceResultMixin):
+class PartResult(PartDefinition, ComplianceResultMixin, SubstanceResultMixin):
     pass
 
 
-class MaterialReference(RecordBasedItemReference):
+class MaterialDefinition(RecordDefinition):
     def __init__(self,
                  material_id: Union[str, None] = None,
                  record_history_identity: Union[int, None] = None,
@@ -144,11 +137,11 @@ class MaterialReference(RecordBasedItemReference):
         return definition
 
 
-class MaterialResult(MaterialReference, ComplianceResultMixin, SubstanceResultMixin):
+class MaterialResult(MaterialDefinition, ComplianceResultMixin, SubstanceResultMixin):
     pass
 
 
-class SpecificationReference(RecordBasedItemReference):
+class SpecificationDefinition(RecordDefinition):
     def __init__(self,
                  specification_id: Union[str, None] = None,
                  record_history_identity: Union[int, None] = None,
@@ -169,11 +162,11 @@ class SpecificationReference(RecordBasedItemReference):
         return definition
 
 
-class SpecificationResult(SpecificationReference, ComplianceResultMixin, SubstanceResultMixin):
+class SpecificationResult(SpecificationDefinition, ComplianceResultMixin, SubstanceResultMixin):
     pass
 
 
-class SubstanceReference(RecordBasedItemReference):
+class SubstanceDefinition(RecordDefinition):
     def __init__(self,
                  substance_name=None,
                  cas_number=None,
@@ -208,7 +201,7 @@ class SubstanceReference(RecordBasedItemReference):
 
     @percentage_amount.setter
     def percentage_amount(self, value: float):
-        assert 0 < value < 100
+        assert 0 <= value <= 100
         self._percentage_amount = value
 
     @property
@@ -226,11 +219,11 @@ class SubstanceReference(RecordBasedItemReference):
         return definition
 
 
-class SubstanceResult(SubstanceReference, ComplianceResultMixin):
+class SubstanceResult(SubstanceDefinition, ComplianceResultMixin):
     pass
 
 
-class SubstanceWithAmount(SubstanceReference):
+class SubstanceWithAmount(SubstanceDefinition):
     def __init__(self, substance_name=None,
                  cas_number=None,
                  ec_number=None,
@@ -245,7 +238,7 @@ class SubstanceWithAmount(SubstanceReference):
         self.legislation_threshold = legislation_threshold
 
 
-class LegislationReference:
+class LegislationDefinition:
     def __init__(self, name: str):
         self.name = name
 
@@ -254,7 +247,7 @@ class LegislationReference:
         return self.name
 
 
-class LegislationResult(LegislationReference):
+class LegislationResult(LegislationDefinition):
     def __init__(self, name: str, substances: List[Union[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance,
                                                          models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance]]):
         super().__init__(name)

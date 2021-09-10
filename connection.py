@@ -3,8 +3,8 @@ from typing import Union
 from ansys.granta import bomanalytics
 from ansys.granta.auth_common import AuthenticatedApiClient
 
-from builders import MaterialQueryBuilder, PartQueryBuilder, SpecificationQueryBuilder, SubstanceQueryBuilder, \
-    BoM1711QueryBuilder
+from query_managers import MaterialQueryManager, PartQueryManager, SpecificationQueryManager, SubstanceQueryManager, \
+    BoM1711QueryManager
 
 
 class Connection:
@@ -55,31 +55,31 @@ class Connection:
     def get_yaml(self):
         return self._documentation_api.get_miservicelayer_bom_analytics_v1svc_yaml()
 
-    def create_material_query(self):
-        query = MaterialQueryBuilder(self)
+    def create_material_query(self) -> MaterialQueryManager:
+        query = MaterialQueryManager(connection=self)
         query.set_impacted_substance_api(self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials)
         query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials)
         return query
 
-    def create_part_query(self):
-        query = PartQueryBuilder(self)
+    def create_part_query(self) -> PartQueryManager:
+        query = PartQueryManager(connection=self)
         query.set_impacted_substance_api(self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts)
         query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts)
         return query
 
-    def create_specification_query(self):
-        query = SpecificationQueryBuilder(self)
+    def create_specification_query(self) -> SpecificationQueryManager:
+        query = SpecificationQueryManager(connection=self)
         query.set_impacted_substance_api(self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications)
         query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications)
         return query
 
-    def create_substance_query(self):
-        query = SubstanceQueryBuilder(self)
+    def create_substance_query(self) -> SubstanceQueryManager:
+        query = SubstanceQueryManager(connection=self)
         query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances)
         return query
 
-    def create_bom_query(self):
-        query = BoM1711QueryBuilder(self)
+    def create_bom_query(self) -> BoM1711QueryManager:
+        query = BoM1711QueryManager(connection=self)
         query.set_impacted_substance_api(self.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711)
         query.set_compliance_api(self.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711)
         return query

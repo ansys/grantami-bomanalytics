@@ -2,10 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Union, List, Dict
 
 from ansys.granta import bomanalytics
-from ansys.granta.bomanalytics import models
 from ansys.granta.bomanalytics.models import Model
-
-from indicators import IndicatorResult
 
 
 class RecordDefinition(ABC):
@@ -40,28 +37,6 @@ class RecordDefinition(ABC):
     @abstractmethod
     def definition(self):
         pass
-
-
-class ComplianceResultMixin:
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.indicators = {}
-        self.substances = []
-
-    def add_compliance(self, indicators: List, substances: List):
-        self.indicators = {indicator.name: IndicatorResult(indicator.name, indicator.flag)
-                           for indicator in indicators}
-        self.substances = [SubstanceResult(substance.reference_value, substance.indicators) for substance in substances]
-
-
-class ImpactedSubstancesResultMixin:
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.legislations = {}
-
-    def add_substances(self, legislations: Union[List, None] = None):
-        self.legislations = {legislation.legislation_name: LegislationResult(legislation.legislation_name, legislation.impacted_substances) for
-                         legislation in legislations}
 
 
 class PartDefinition(RecordDefinition):
@@ -112,18 +87,6 @@ class SpecificationDefinition(RecordDefinition):
         definition = super()._create_definition() or \
                      self._model(reference_type="SpecificationId", reference_value=self.specification_id)
         return definition
-
-
-class MaterialResult(MaterialDefinition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
-    pass
-
-
-class PartResult(PartDefinition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
-    pass
-
-
-class SpecificationResult(SpecificationDefinition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
-    pass
 
 
 class BoM1711Definition:
@@ -177,28 +140,29 @@ class SubstanceDefinition(RecordDefinition):
         return definition
 
 
-class SubstanceResult(SubstanceDefinition):
-    def __init__(self, substance_name=None,
-                 cas_number=None,
-                 ec_number=None,
-                 record_history_identity=None,
-                 record_guid=None,
-                 record_history_guid=None,
-                 percentage_amount=None,
-                 max_percentage_amount_in_material=None,
-                 legislation_threshold=None):
-        super().__init__(substance_name, cas_number, ec_number, record_history_identity, record_guid, record_history_guid, percentage_amount)
-        self.max_percentage_amount_in_material = max_percentage_amount_in_material
-        self.legislation_threshold = legislation_threshold
-        self.indicators = {}
-        self.substance = None
-
-    def add_compliance(self, indicators: List):
-        self.indicators = {indicator.name: IndicatorResult(indicator.name, indicator.flag) for indicator in indicators}
-
-
-class LegislationResult:
-    def __init__(self, name: str, substances: List[Union[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance,
-                                                         models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance]]):
+class Indicator(ABC):
+    def __init__(self, name, legislation_names, default_threshold_percentage):
         self.name = name
-        self.substances = {substance.cas_number: SubstanceResult(**substance.to_dict()) for substance in substances}
+        self.legislation_names = legislation_names
+        self.default_threshold_percentage = default_threshold_percentage
+        self._indicator_type = None
+
+    @property
+    def definition(self):
+        return bomanalytics. \
+            GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(name=self.name,
+                                                                         legislation_names=self.legislation_names,
+                                                                         default_threshold_percentage=self.default_threshold_percentage,
+                                                                         type=self._indicator_type)
+
+
+class RoHSIndicator(Indicator):
+    def __init__(self, name, legislation_names, default_threshold_percentage):
+        super().__init__(name, legislation_names, default_threshold_percentage)
+        self._indicator_type = 'Rohs'
+
+
+class WatchlistIndicator(Indicator):
+    def __init__(self, name, legislation_names, default_threshold_percentage):
+        super().__init__(name, legislation_names, default_threshold_percentage)
+        self._indicator_type = 'WatchList'

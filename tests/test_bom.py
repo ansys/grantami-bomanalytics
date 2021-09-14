@@ -1,4 +1,5 @@
 from query_managers import BoMComplianceQuery, BoMImpactedSubstancesQuery
+from pytest import mark
 
 bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" id="B0">
     <Components>
@@ -17,12 +18,8 @@ bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco"
                             <Percentage>66</Percentage>
                             <MISubstanceReference>
                                 <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
-                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">
-                                    41656452-1b2c-4ded-ad1b-1df8b3cf6e7e
-                                </recordGUID>
-                                <recordHistoryGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">
-                                    af1cb650-6db5-49d6-b4a2-0eee9a090207
-                                </recordHistoryGUID>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">41656452-1b2c-4ded-ad1b-1df8b3cf6e7e</recordGUID>
+                                <recordHistoryGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">af1cb650-6db5-49d6-b4a2-0eee9a090207</recordHistoryGUID>
                             </MISubstanceReference>
                             <Name>Lead oxide</Name>
                         </Substance>
@@ -38,12 +35,8 @@ bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco"
                             <Percentage>80</Percentage>
                             <MIMaterialReference>
                                 <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
-                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">
-                                    15069d02-9475-4f05-8810-57de68a2e9cc
-                                </recordGUID>
-                                <recordHistoryGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">
-                                    12ef41e5-0417-409e-b94b-bc79e7787db9
-                                </recordHistoryGUID>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">9ec40360-0cd7-44a4-9c8b-56d53452ae2c</recordGUID>
+                                <recordHistoryGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">ab4147f6-0e97-47f0-be53-cb5d17dfa82b</recordHistoryGUID>
                             </MIMaterialReference>
                         </Material>
                     </Materials>
@@ -58,17 +51,45 @@ bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco"
 </PartsEco>"""
 
 
-def test_impacted_substances(connection):
+def test_impacted_substances(connection, legislations):
     response = BoMImpactedSubstancesQuery(connection) \
                    .set_bom(bom) \
-                   .add_legislations(['The SIN List 2.1 (Substitute It Now!)']) \
+                   .add_legislations(legislations) \
                    .execute()
-    pass
+
+    assert len(response.impacted_substances) == 1
+    for mat_results in response.impacted_substances:
+        assert len(mat_results.legislations) == len(legislations)
+        for legislation in legislations:
+            assert legislation in mat_results.legislations
+            this_legislation = mat_results.legislations[legislation]
+            assert this_legislation.name == legislation
+            assert this_legislation.substances
+
+    assert len(response.all_impacted_substances) == 42
+    assert len(response.impacted_substances_by_legislation) == len(legislations)
+    for name, legislation in response.impacted_substances_by_legislation.items():
+        assert len(legislation) == 39 or len(legislation) == 3
 
 
+@mark.xfail
 def test_compliance(connection, indicators):
     response = BoMComplianceQuery(connection) \
         .set_bom(bom) \
         .add_indicators(indicators) \
         .execute()
 
+    assert len(response.compliance) == 1
+    for bom_results in response.compliance:
+        assert len(bom_results.indicators) == len(indicators)
+        for indicator in indicators:
+            indicator_result = bom_results.indicators[indicator.name]
+            assert indicator_result.name == indicator.name
+            assert indicator_result.result
+        assert bom_results.substances
+
+    assert len(response.compliance_by_indicator) == 2
+    for indicator in indicators:
+        indicator_result = response.compliance_by_indicator[indicator.name]
+        assert indicator_result.name == indicator.name
+        assert indicator_result.result

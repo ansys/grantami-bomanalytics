@@ -1,27 +1,28 @@
 from query_managers import MaterialImpactedSubstanceQuery, MaterialComplianceQuery
 
 
-def test_impacted_substances(connection):
+def test_impacted_substances(connection, legislations):
     stk_object = [{'dbkey': 'MI_Restricted_Substances',
                    'record_guid': 'eef13c81-9b04-4af3-8d68-3524ffce7035'}]
 
     response = MaterialImpactedSubstanceQuery(connection).add_material_ids(['plastic-abs-pvc-flame']) \
         .add_stk_records(stk_object) \
-        .add_legislations(['The SIN List 2.1 (Substitute It Now!)']) \
+        .add_legislations(legislations) \
         .execute()
 
     assert len(response.impacted_substances) == 2
     for mat_results in response.impacted_substances:
-        assert len(mat_results.legislations) == 1
-        assert 'The SIN List 2.1 (Substitute It Now!)' in mat_results.legislations
-        legislation = mat_results.legislations['The SIN List 2.1 (Substitute It Now!)']
-        assert legislation.name == 'The SIN List 2.1 (Substitute It Now!)'
-        assert legislation.substances
+        assert len(mat_results.legislations) == len(legislations)
+        for legislation in legislations:
+            assert legislation in mat_results.legislations
+            this_legislation = mat_results.legislations[legislation]
+            assert this_legislation.name == legislation
+            assert this_legislation.substances
 
-    assert len(response.all_impacted_substances) == 53
-    assert len(response.impacted_substances_by_legislation) == 1
+    assert len(response.all_impacted_substances) == 69
+    assert len(response.impacted_substances_by_legislation) == len(legislations)
     for name, legislation in response.impacted_substances_by_legislation.items():
-        assert len(legislation) == 53
+        assert len(legislation) == 64 or len(legislation) == 5
 
 
 def test_compliance(connection, indicators):

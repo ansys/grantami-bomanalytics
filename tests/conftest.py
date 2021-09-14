@@ -1,7 +1,7 @@
 import pytest
 
 from connection import Connection
-from indicators import WatchlistIndicator, RoHSIndicator
+from item_definitions import WatchlistIndicator, RoHSIndicator
 
 
 @pytest.fixture(scope="session")
@@ -23,3 +23,8 @@ def indicators():
                                    legislation_names=['EU Directive 2011/65/EU (RoHS 2)'],
                                    default_threshold_percentage=0.01)
     return [andys_noxious_substance_indicator, rohs_indicator]
+
+
+@pytest.fixture(scope="session")
+def legislations():
+    return ['The SIN List 2.1 (Substitute It Now!)', 'Canadian Chemical Challenge']

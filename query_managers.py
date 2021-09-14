@@ -14,7 +14,7 @@ from item_factories import (RecordFactory,
                             BomImpactedSubstancesFactory,
                             BomComplianceFactory,
                             )
-from indicators import Indicator
+from item_definitions import Indicator
 
 
 class BaseQueryBuilder(ABC):

@@ -1,139 +1,79 @@
-from typing import List
-from collections import defaultdict
-
+from typing import List, Union
 from ansys.granta.bomanalytics import models
-
-from item_definitions import MaterialResult, PartResult, SpecificationResult, SubstanceResult
-
-
-def instantiate_type(result, item_type):
-    if result.reference_type == 'MaterialId':
-        obj = item_type(material_id=result.reference_value)
-    elif result.reference_type == 'PartNumber':
-        obj = item_type(part_number=result.reference_value)
-    elif result.reference_type == 'SpecificationId':
-        obj = item_type(specification_id=result.reference_value)
-    elif result.reference_type == 'CasNumber':
-        obj = item_type(cas_number=result.reference_value)
-    elif result.reference_type == 'EcNumber':
-        obj = item_type(ec_number=result.reference_value)
-    elif result.reference_type == 'SubstanceName':
-        obj = item_type(substance_name=result.reference_value)
-    elif result.reference_type == 'MiRecordHistoryIdentity':
-        obj = item_type(record_history_identity=int(result.reference_value))
-    elif result.reference_type == 'MiRecordGuid':
-        obj = item_type(record_guid=result.reference_value)
-    elif result.reference_type == 'MiRecordHistoryGuid':
-        obj = item_type(record_history_guid=result.reference_value)
-    else:
-        raise Exception
-    return obj
+from item_definitions import (MaterialDefinition,
+                              PartDefinition,
+                              SpecificationDefinition,
+                              BoM1711Definition,
+                              SubstanceDefinition)
 
 
-class ImpactedSubstancesMixin:
-    _results = []
+class ComplianceResultMixin:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.indicators = {}
+        self.substances = []
 
-    @property
-    def impacted_substances_by_legislation(self):
-        results = defaultdict(dict)
-        for obj in self._results:
-            for name, content in obj.legislations.items():
-                for substance_name, substance_content in content.substances.items():
-                    results[name][substance_name] = substance_content
-        return results
-
-    @property
-    def all_impacted_substances(self):
-        results = {}
-        for obj in self._results:
-            for leg in obj.legislations.values():
-                results = {**results, **leg.substances}  # TODO: Merge these property, i.e. take max amount? range?
-        return results
-
-    @property
-    def impacted_substances(self):
-        return self._results
+    def add_compliance(self, indicators: List, substances: List):
+        self.indicators = {indicator.name: IndicatorResult(indicator.name, indicator.flag)
+                           for indicator in indicators}
+        self.substances = [SubstanceResult(substance.reference_value, substance.indicators) for substance in substances]
 
 
-class ComplianceMixin:
-    _results = []
+class ImpactedSubstancesResultMixin:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.legislations = {}
 
-    @property
-    def compliance_by_indicator(self):
-        results = {}
-        for result in self._results:
-            for indicator_name, indicator_result in result.indicators.items():
-                if indicator_name not in results:
-                    results[indicator_name] = indicator_result
-                else:
-                    pass
-                    # TODO: Merge Indicators
-        return results
-
-    @property
-    def compliance(self):
-        return self._results
+    def add_substances(self, legislations: Union[List, None] = None):
+        self.legislations = {legislation.legislation_name: LegislationResult(legislation.legislation_name, legislation.impacted_substances) for
+                         legislation in legislations}
 
 
-class MaterialImpactedSubstancesResult(ImpactedSubstancesMixin):
-    def __init__(self, results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial]):
-        self._results = []
-        for result in results:
-            obj = instantiate_type(result, MaterialResult)
-            obj.add_substances(result.legislations)
-            self._results.append(obj)
+class MaterialResult(MaterialDefinition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
+    pass
 
 
-class MaterialComplianceResult(ComplianceMixin):
-    def __init__(self, results: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance]):
-        self._results = []
-        for result in results:
-            obj = instantiate_type(result, MaterialResult)
-            obj.add_compliance(indicators=result.indicators, substances=result.substances)
-            self._results.append(obj)
+class PartResult(PartDefinition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
+    pass
 
 
-class PartImpactedSubstancesResult(ImpactedSubstancesMixin):
-    def __init__(self, results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart]):
-        self._results = []
-
-        for result in results:
-            obj = instantiate_type(result, PartResult)
-            obj.add_substances(result.legislations)
-            self._results.append(obj)
+class SpecificationResult(SpecificationDefinition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
+    pass
 
 
-class PartComplianceResult(ComplianceMixin):
-    def __init__(self, results: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance]):
-        self._results = []
-        for result in results:
-            obj = instantiate_type(result, PartResult)
-            obj.add_compliance(indicators=result.indicators, substances=result.substances)
-            self._results.append(obj)
+class BoM1711Result(BoM1711Definition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
+    pass
 
 
-class SpecificationImpactedSubstancesResult(ImpactedSubstancesMixin):
-    def __init__(self, results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification]):
-        self._results = []
-        for result in results:
-            obj = instantiate_type(result, SpecificationResult)
-            obj.add_substances(result.legislations)
-            self._results.append(obj)
+class SubstanceResult(SubstanceDefinition):
+    def __init__(self, substance_name=None,
+                 cas_number=None,
+                 ec_number=None,
+                 record_history_identity=None,
+                 record_guid=None,
+                 record_history_guid=None,
+                 percentage_amount=None,
+                 max_percentage_amount_in_material=None,
+                 legislation_threshold=None):
+        super().__init__(substance_name, cas_number, ec_number, record_history_identity, record_guid, record_history_guid, percentage_amount)
+        self.max_percentage_amount_in_material = max_percentage_amount_in_material
+        self.legislation_threshold = legislation_threshold
+        self.indicators = {}
+        self.substance = None
+
+    def add_compliance(self, indicators: List):
+        self.indicators = {indicator.name: IndicatorResult(indicator.name, indicator.flag) for indicator in indicators}
 
 
-class SpecificationComplianceResult(ComplianceMixin):
-    def __init__(self, results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance]):
-        self._results = []
-        for result in results:
-            obj = instantiate_type(result, SpecificationResult)
-            obj.add_compliance(indicators=result.indicators, substances=result.substances)
-            self._results.append(obj)
+class LegislationResult:
+    def __init__(self, name: str, substances: List[Union[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance,
+                                                         models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance]]):
+        self.name = name
+        self.substances = [SubstanceResult(**substance.to_dict()) for substance in substances]
 
 
-class SubstanceComplianceResult(ComplianceMixin):
-    def __init__(self, results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance]):
-        self._results = []
-        for result in results:
-            obj = instantiate_type(result, SubstanceResult)
-            obj.add_compliance(indicators=result.indicators)
-            self._results.append(obj)
+
+class IndicatorResult:
+    def __init__(self, name, result):
+        self.name = name
+        self.result = result

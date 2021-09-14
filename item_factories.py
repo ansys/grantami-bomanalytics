@@ -5,14 +5,16 @@ from item_definitions import (MaterialDefinition,
                               SubstanceDefinition,
                               BoM1711Definition,
                               )
-from item_results import (MaterialComplianceResult,
-                          MaterialImpactedSubstancesResult,
-                          PartComplianceResult,
-                          PartImpactedSubstancesResult,
-                          SpecificationComplianceResult,
-                          SpecificationImpactedSubstancesResult,
-                          SubstanceComplianceResult,
-                          )
+from query_results import (MaterialComplianceResult,
+                           MaterialImpactedSubstancesResult,
+                           PartComplianceResult,
+                           PartImpactedSubstancesResult,
+                           SpecificationComplianceResult,
+                           SpecificationImpactedSubstancesResult,
+                           SubstanceComplianceResult,
+                           BoMImpactedSubstancesResult,
+                           BoMComplianceResult,
+                           )
 
 
 class RecordFactory(ABC):
@@ -115,10 +117,10 @@ class BomFactory(ABC):
 
 
 class BomComplianceFactory(BomFactory):
-    def create_result(self, values):
-        return values   # TODO
+    def create_result(self, value):
+        return BoMComplianceResult(result=value)
 
 
 class BomImpactedSubstancesFactory(BomFactory):
-    def create_result(self, values):
-        return values   # TODO
+    def create_result(self, value):
+        return BoMImpactedSubstancesResult(result=value)

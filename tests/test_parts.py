@@ -15,10 +15,10 @@ def test_impacted_substances(connection):
         assert legislation.name == 'The SIN List 2.1 (Substitute It Now!)'
         assert legislation.substances
 
-    assert len(response.all_impacted_substances) == 79
+    assert len(response.all_impacted_substances) == 80
     assert len(response.impacted_substances_by_legislation) == 1
     for name, legislation in response.impacted_substances_by_legislation.items():
-        assert len(legislation) == 79
+        assert len(legislation) == 80
 
 
 def test_compliance(connection, indicators):

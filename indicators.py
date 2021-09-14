@@ -1,12 +1,5 @@
 from abc import ABC
-
 from ansys.granta import bomanalytics
-
-
-class IndicatorResult:
-    def __init__(self, indicator, result):
-        self.definition = indicator
-        self.result = result
 
 
 class Indicator(ABC):
@@ -35,3 +28,9 @@ class WatchlistIndicator(Indicator):
     def __init__(self, name, legislation_names, default_threshold_percentage):
         super().__init__(name, legislation_names, default_threshold_percentage)
         self._indicator_type = 'WatchList'
+
+
+class IndicatorResult:
+    def __init__(self, name, result):
+        self.name = name
+        self.result = result

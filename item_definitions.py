@@ -2,48 +2,10 @@ from abc import ABC, abstractmethod
 from typing import Union, List, Dict
 
 from ansys.granta import bomanalytics
-from ansys.granta.bomanalytics.models import Model
 from ansys.granta.bomanalytics import models
+from ansys.granta.bomanalytics.models import Model
 
 from indicators import IndicatorResult
-
-
-class ComplianceResultMixin:
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.indicators = {}
-        self.substances = []
-
-    def add_compliance(self,
-                       indicators: Union[List, None],
-                       indicator_definitions: Union[List, None],
-                       substances: Union[List, None] = None):
-        id_def_lookup = {id.name: id for id in indicator_definitions}
-        self.indicators = {indicator.name: IndicatorResult(id_def_lookup[indicator.name], indicator.flag) for indicator in indicators}
-        if substances:
-            self.substances = [SubstanceDefinition(substance.reference_value, substance.indicators) for substance in substances]
-        else:
-            self.substances = []
-
-
-class SubstanceResultMixin:
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.legislations = {}
-
-    def add_substances(self, legislations: Union[List, None] = None):
-        self.legislations = {legislation.legislation_name: LegislationResult(legislation.legislation_name, legislation.impacted_substances) for
-                         legislation in legislations}
-
-
-class BoM1711Definition:
-    def __init__(self, bom: Union[str, None] = None):
-        super().__init__()
-        self._bom = bom
-
-    @property
-    def definition(self) -> str:
-        return self._bom
 
 
 class RecordDefinition(ABC):
@@ -55,18 +17,6 @@ class RecordDefinition(ABC):
         self._record_guid = record_guid
         self._record_history_guid = record_history_guid
         self._model = None
-
-    @classmethod
-    def add_record_by_record_history_identity(cls, value):
-        return cls(record_history_identity=value)
-
-    @classmethod
-    def add_record_by_record_history_guid(cls, value):
-        return cls(record_history_guid=value)
-
-    @classmethod
-    def add_record_by_record_guid(cls, value):
-        return cls(record_guid=value)
 
     @classmethod
     def add_stk_records(cls, stk_records: List[Dict[str, str]]):
@@ -92,6 +42,28 @@ class RecordDefinition(ABC):
         pass
 
 
+class ComplianceResultMixin:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.indicators = {}
+        self.substances = []
+
+    def add_compliance(self, indicators: List, substances: List):
+        self.indicators = {indicator.name: IndicatorResult(indicator.name, indicator.flag)
+                           for indicator in indicators}
+        self.substances = [SubstanceResult(substance.reference_value, substance.indicators) for substance in substances]
+
+
+class ImpactedSubstancesResultMixin:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.legislations = {}
+
+    def add_substances(self, legislations: Union[List, None] = None):
+        self.legislations = {legislation.legislation_name: LegislationResult(legislation.legislation_name, legislation.impacted_substances) for
+                         legislation in legislations}
+
+
 class PartDefinition(RecordDefinition):
     def __init__(self,
                  record_history_identity: Union[str, None] = None,
@@ -102,18 +74,10 @@ class PartDefinition(RecordDefinition):
         self.part_number = part_number
         self._model = bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonPartReference
 
-    @classmethod
-    def add_record_by_part_number(cls, value):
-        return cls(part_number=value)
-
     @property
     def definition(self) -> Model:
         definition = super()._create_definition() or self._model(reference_type="PartNumber", reference_value=self.part_number)
         return definition
-
-
-class PartResult(PartDefinition, ComplianceResultMixin, SubstanceResultMixin):
-    pass
 
 
 class MaterialDefinition(RecordDefinition):
@@ -126,19 +90,11 @@ class MaterialDefinition(RecordDefinition):
         self.material_id = material_id
         self._model = bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
 
-    @classmethod
-    def add_record_by_material_id(cls, value):
-        return cls(material_id=value)
-
     @property
     def definition(self) -> Model:
         definition = super()._create_definition() or \
                      self._model(reference_type="MaterialId", reference_value=self.material_id)
         return definition
-
-
-class MaterialResult(MaterialDefinition, ComplianceResultMixin, SubstanceResultMixin):
-    pass
 
 
 class SpecificationDefinition(RecordDefinition):
@@ -151,10 +107,6 @@ class SpecificationDefinition(RecordDefinition):
         self.specification_id = specification_id
         self._model = bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference
 
-    @classmethod
-    def add_record_by_specification_id(cls, value):
-        return cls(specification_id=value)
-
     @property
     def definition(self) -> Model:
         definition = super()._create_definition() or \
@@ -162,8 +114,26 @@ class SpecificationDefinition(RecordDefinition):
         return definition
 
 
-class SpecificationResult(SpecificationDefinition, ComplianceResultMixin, SubstanceResultMixin):
+class MaterialResult(MaterialDefinition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
     pass
+
+
+class PartResult(PartDefinition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
+    pass
+
+
+class SpecificationResult(SpecificationDefinition, ComplianceResultMixin, ImpactedSubstancesResultMixin):
+    pass
+
+
+class BoM1711Definition:
+    def __init__(self, bom: Union[str, None] = None):
+        super().__init__()
+        self._bom = bom
+
+    @property
+    def definition(self) -> str:
+        return self._bom
 
 
 class SubstanceDefinition(RecordDefinition):
@@ -182,18 +152,6 @@ class SubstanceDefinition(RecordDefinition):
         if percentage_amount:
             self._percentage_amount = percentage_amount
         self._model = bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount
-
-    @classmethod
-    def add_record_by_substance_name(cls, value):
-        return cls(substance_name=value)
-
-    @classmethod
-    def add_record_by_cas_number(cls, value):
-        return cls(cas_number=value)
-
-    @classmethod
-    def add_record_by_ec_number(cls, value):
-        return cls(ec_number=value)
 
     @property
     def percentage_amount(self) -> float:
@@ -219,11 +177,7 @@ class SubstanceDefinition(RecordDefinition):
         return definition
 
 
-class SubstanceResult(SubstanceDefinition, ComplianceResultMixin):
-    pass
-
-
-class SubstanceWithAmount(SubstanceDefinition):
+class SubstanceResult(SubstanceDefinition):
     def __init__(self, substance_name=None,
                  cas_number=None,
                  ec_number=None,
@@ -236,19 +190,15 @@ class SubstanceWithAmount(SubstanceDefinition):
         super().__init__(substance_name, cas_number, ec_number, record_history_identity, record_guid, record_history_guid, percentage_amount)
         self.max_percentage_amount_in_material = max_percentage_amount_in_material
         self.legislation_threshold = legislation_threshold
+        self.indicators = {}
+        self.substance = None
+
+    def add_compliance(self, indicators: List):
+        self.indicators = {indicator.name: IndicatorResult(indicator.name, indicator.flag) for indicator in indicators}
 
 
-class LegislationDefinition:
-    def __init__(self, name: str):
-        self.name = name
-
-    @property
-    def definition(self):
-        return self.name
-
-
-class LegislationResult(LegislationDefinition):
+class LegislationResult:
     def __init__(self, name: str, substances: List[Union[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance,
                                                          models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance]]):
-        super().__init__(name)
-        self.substances = [SubstanceWithAmount(**substance.to_dict()) for substance in substances]
+        self.name = name
+        self.substances = {substance.cas_number: SubstanceResult(**substance.to_dict()) for substance in substances}

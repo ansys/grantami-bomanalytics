@@ -1,107 +1,60 @@
 from abc import ABC, abstractmethod
 from typing import Union, List, Dict, Callable
-from enum import Enum
 
 from ansys.granta.bomanalytics import models
-from item_references import RecordDefinition, MaterialDefinition, PartDefinition, SpecificationDefinition, \
-    SubstanceDefinition, BoM1711Definition, LegislationDefinition
-from item_references import PartResult, MaterialResult, SpecificationResult, SubstanceResult, LegislationResult
 
-register_dict = {
-    'materials': {'compliance_request_type': models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest,
-                  'impacted_substances_request_type': models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest},
-    'parts': {'compliance_request_type': models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest,
-              'impacted_substances_request_type': models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest},
-    'specifications': {
-        'compliance_request_type': models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest,
-        'impacted_substances_request_type': models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest},
-    'substances': {
-        'compliance_request_type': models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest},
-    'bom_xml1711': {'compliance_request_type': models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request,
-                    'impacted_substances_request_type': models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request}
-}
-
-
-class ReferenceTypes(Enum):
-    record_history_identity = 0
-    MiRecordHistoryIdentity = 0
-    record_history_guid = 1
-    MiRecordHistoryGuid = 1
-    record_guid = 2
-    MiRecordGuid = 2
-    material_id = 10
-    MaterialId = 10
-    part_number = 20
-    PartNumber = 20
-    specification_id = 30
-    SpecificationId = 30
-    substance_name = 40
-    ChemicalName = 40
-    cas_number = 41
-    CasNumber = 41
-    ec_number = 42
-    EcNumber = 42
+from item_factories import (RecordFactory,
+                            MaterialImpactedSubstancesFactory,
+                            MaterialComplianceFactory,
+                            PartComplianceFactory,
+                            PartImpactedSubstancesFactory,
+                            SpecificationComplianceFactory,
+                            SpecificationImpactedSubstancesFactory,
+                            SubstanceComplianceFactory,
+                            BomImpactedSubstancesFactory,
+                            BomComplianceFactory,
+                            )
+from indicators import Indicator
 
 
 class BaseQueryBuilder(ABC):
     _item_type_name = None
-    _item_type: Union[Callable, None] = None
     _result_type: Union[Callable, None] = None
 
     def __init__(self, connection):
         super().__init__()
         self._connection = connection
-        self._is_result_current = False
-
-    @property
-    @abstractmethod
-    def _content(self) -> List[List[models.Model]]:
-        for i in range(0, len(self._items), self._batch_size):
-            yield [i.definition for i in self._items][i:i + self._batch_size]
 
 
 class RecordBasedQueryManager(BaseQueryBuilder, ABC):
-    _default_batch_size: int = None
-    _item_type: RecordDefinition = None
-
     def __init__(self, connection):
+        self._batch_size = None
+        self._items = []
+        self._definition_factory: Union[RecordFactory, None] = None
         super().__init__(connection)
-        self._items: List[RecordDefinition] = []
-        self._batch_size = self.__class__._default_batch_size
 
-    def _create_definition(self, key: ReferenceTypes, value: Union[str, int]):
-        return self._create_definition_or_result(key, value, self._item_type)
+    def add_record_history_ids(self, values: List[Union[int]]):
+        for value in values:
+            item_reference = self._definition_factory.create_definition(record_history_identity=value)
+            self._items.append(item_reference)
+        return self
 
-    def _create_result(self, key: ReferenceTypes, value: Union[str, int]):
-        return self._create_definition_or_result(key, value, self._result_type)
+    def add_record_history_guids(self, values: List[Union[str]]):
+        for value in values:
+            item_reference = self._definition_factory.create_definition(record_history_guid=value)
+            self._items.append(item_reference)
+        return self
 
-    @abstractmethod
-    def _create_definition_or_result(self, key: ReferenceTypes, value: Union[str, int], item_type):
-        if key == ReferenceTypes.record_history_identity:
-            item_reference = item_type.add_record_by_record_history_identity(value)
-        elif key == ReferenceTypes.record_history_guid:
-            item_reference = item_type.add_record_by_record_history_guid(value)
-        elif key == ReferenceTypes.record_guid:
-            item_reference = item_type.add_record_by_record_guid(value)
-        else:
-            raise RecordInstantiationException
-        return item_reference
-
-    def add_record(self, key: ReferenceTypes, value: Union[str, int]):
-        item_reference = self._create_definition(key, value)
-        self._items.append(item_reference)
+    def add_record_guids(self, values: List[Union[str]]):
+        for value in values:
+            item_reference = self._definition_factory.create_definition(record_guid=value)
+            self._items.append(item_reference)
+        return self
 
     def add_stk_records(self, stk_records: List[Dict[str, str]]):
-        for record in stk_records:
-            assert 'dbkey' in record
-            assert 'record_guid' in record
-
-            if not self._connection.dbkey:
-                self._connection.dbkey = record['dbkey']
-            else:
-                assert record['dbkey'] == self._connection.dbkey
-            item_reference = self._item_type.add_record_by_record_guid(record['record_guid'])
-            self._items.append(item_reference)
+        record_guids = [r['record_guid'] for r in stk_records]
+        self.add_record_guids(record_guids)
+        return self
 
     @property
     def batch_size(self):
@@ -114,233 +67,251 @@ class RecordBasedQueryManager(BaseQueryBuilder, ABC):
 
     @property
     def _content(self) -> List[List[models.Model]]:
-        for i in range(0, len(self._items), self._batch_size):
-            yield [i.definition for i in self._items][i:i + self._batch_size]
+        for i in range(0, len(self._items), self.batch_size):
+            yield [i.definition for i in self._items][i:i + self.batch_size]
 
 
-class RecordInstantiationException(Exception):
-    pass
+class ApiMixin(ABC):
+    _items = None  # Implemented by main class
+    _content = None
 
-
-class ComplianceMixin:
     def __init__(self, **kwargs):
-        super().__init__()
-        self._indicators = []
-        self._compliance_api = None
-        self._compliance_request_type = register_dict[self._item_type_name]['compliance_request_type']
-        self._compliance = None
+        self._api = None
+        self._connection = None
+        self._request_type = None
+        self._item_type_name = None
+        self._definition_factory = None
 
-    def set_compliance_api(self, api):
-        self._compliance_api = api
+    def execute(self):
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
 
-    def add_indicator(self, value):
-        self._indicators.append(value)
+    @abstractmethod
+    def _validate_query(self):
+        assert self._connection
+
+    def _run_query(self) -> List:
+        result = []
+        for batch in self._content:
+            args = {**self._arguments, self._item_type_name: batch}
+            request = self._request_type(**args)
+            response = self._api(body=request)
+            result.extend([r for r in getattr(response, self._item_type_name)])
+        return result
 
     @property
-    def _compliance_args(self):
+    @abstractmethod
+    def _arguments(self) -> Dict:
+        pass
+
+
+class ComplianceMixin(ApiMixin, ABC):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._indicators = []
+
+    def add_indicators(self, values: List[Indicator]):
+        for value in values:
+            self._indicators.append(value)
+        return self
+
+    def _validate_query(self):
+        assert self._indicators
+        super()._validate_query()
+
+    @property
+    def _arguments(self):
         return {'database_key': self._connection.dbkey,
                 'indicators': [i.definition for i in self._indicators],
                 'config': self._connection.query_config}
 
-    @property
-    def compliance(self):
-        if not self._is_result_current:
-            self.get_compliance()
-        return self._compliance
 
-    def get_compliance(self) -> None:
-        assert self._compliance_api
-        if not self._indicators:
-            return
-
-        self._compliance = []
-
-        for batch in self._content:
-            args = {**self._compliance_args, self._item_type_name: batch}
-            request = self._compliance_request_type(**args)
-            response = self._compliance_api(body=request)
-            self.__build_result_object(response)
-        self._is_result_current = True
-
-    def __build_result_object(self, response):
-        for resp in getattr(response, self._item_type_name):
-            obj = self._create_result(key=ReferenceTypes[resp.reference_type], value=resp.reference_value)
-            try:
-                obj.add_compliance(substances=resp.substances,
-                                   indicators=resp.indicators,
-                                   indicator_definitions=self._indicators)
-            except AttributeError:
-                obj.add_compliance(indicators=resp.indicators, indicator_definitions=self._indicators)
-            self._compliance.append(obj)
-
-
-class ImpactedSubstanceMixin:
+class ImpactedSubstanceMixin(ApiMixin, ABC):
     def __init__(self, **kwargs):
-        super().__init__()
-        self._legislations = []
-        self._impacted_substances_api = None
-        self._impacted_substances_request_type = register_dict[self._item_type_name]['impacted_substances_request_type']
-        self._impacted_substances = None
+        super().__init__(**kwargs)
+        self._legislations: List[str] = []
 
-    def set_impacted_substance_api(self, api):
-        self._impacted_substances_api = api
+    def add_legislations(self, legislation_names: List[str]):
+        self._legislations.extend(legislation_names)
+        return self
 
-    def add_legislation(self, legislation_name):
-        self._legislations.append(LegislationDefinition(legislation_name))
-
-    @property
-    def impacted_substances(self):
-        if not self._is_result_current:
-            self.get_impacted_substances()
-        return self._impacted_substances
+    def _validate_query(self):
+        assert self._legislations
+        super()._validate_query()
 
     @property
-    def _impacted_substances_args(self):
+    def _arguments(self):
         return {'database_key': self._connection.dbkey,
-                'legislation_names': [legislation.definition for legislation in self._legislations],
+                'legislation_names': self._legislations,
                 'config': self._connection.query_config}
 
-    def get_impacted_substances(self) -> None:
-        assert self._impacted_substances_api
-        if not self._legislations:
-            return
 
-        self._impacted_substances = []
-
-        for batch in self._content:
-            args = {**self._impacted_substances_args, self._item_type_name: batch}
-            request = self._impacted_substances_request_type(**args)
-            response = self._impacted_substances_api(body=request)
-            self.__build_result_object(response)
-        self._is_result_current = True
-
-    def __build_result_object(self, response):
-        for resp in getattr(response, self._item_type_name):
-            obj = self._create_result(key=ReferenceTypes[resp.reference_type], value=resp.reference_value)
-            obj.add_substances(resp.legislations)
-            self._impacted_substances.append(obj)
-
-
-class MaterialQueryManager(RecordBasedQueryManager, ImpactedSubstanceMixin, ComplianceMixin):
-    _item_type_name = 'materials'
-    _item_type = MaterialDefinition
-    _result_type = MaterialResult
-    _default_batch_size = 1
-
-    def _create_definition_or_result(self, key: ReferenceTypes, value: Union[str, int], item_type):
-        if key == ReferenceTypes.material_id:
-            item_reference = item_type.add_record_by_material_id(value)
-        else:
-            item_reference = super()._create_definition_or_result(key, value, item_type)
-        return item_reference
-
-
-class PartQueryManager(RecordBasedQueryManager, ImpactedSubstanceMixin, ComplianceMixin):
-    _item_type_name = 'parts'
-    _item_type = PartDefinition
-    _result_type = PartResult
-    _default_batch_size = 1
-
-    def _create_definition_or_result(self, key: ReferenceTypes, value: Union[str, int], item_type):
-        if key == ReferenceTypes.part_number:
-            item_reference = item_type.add_record_by_part_number(value)
-        else:
-            item_reference = super()._create_definition_or_result(key, value, item_type)
-        return item_reference
-
-    def add_record_by_part_number(self, value) -> None:
-        part_reference = self._item_type(part_number=value)
-        self._items.append(part_reference)
-
-
-class SpecificationQueryManager(RecordBasedQueryManager, ImpactedSubstanceMixin, ComplianceMixin):
-    _item_type_name = 'specifications'
-    _item_type = SpecificationDefinition
-    _result_type = SpecificationResult
-    _default_batch_size = 1
-
-    def _create_definition_or_result(self, key: ReferenceTypes, value: Union[str, int], item_type):
-        if key == ReferenceTypes.specification_id:
-            item_reference = item_type.add_record_by_specification_id(value)
-        else:
-            item_reference = super()._create_definition_or_result(key, value, item_type)
-        return item_reference
-
-    def add_record_by_specification_id(self, value) -> None:
-        spec_reference = self._item_type(specification_id=value)
-        self._items.append(spec_reference)
-
-
-class SubstanceQueryManager(RecordBasedQueryManager, ComplianceMixin):
-    _item_type_name = 'substances'
-    _item_type = SubstanceDefinition
-    _result_type = SubstanceResult
-    _default_batch_size = 1
-
-    def add_record(self, key: ReferenceTypes, value: Union[str, int]):  # TODO Re-evaluate this decision
-        item_reference = self._create_definition(key, value)
-        item_reference.percentage_amount = 100
-        self._items.append(item_reference)
-
-    def add_substance_with_amount(self, key: ReferenceTypes, value: Union[str, int], percentage_amount: [float]):
-        item_reference = self._create_definition(key, value)
-        item_reference.percentage_amount = percentage_amount
-        self._items.append(item_reference)
-
-    def _create_definition_or_result(self, key: ReferenceTypes, value: Union[str, int], item_type):
-        if key == ReferenceTypes.substance_name:
-            item_reference = item_type.add_record_by_substance_name(value)
-        elif key == ReferenceTypes.cas_number:
-            item_reference = item_type.add_record_by_cas_number(value)
-        elif key == ReferenceTypes.ec_number:
-            item_reference = item_type.add_record_by_ec_number(value)
-        else:
-            item_reference = super()._create_definition_or_result(key, value, item_type)
-        return item_reference
-
-
-class BoM1711QueryManager(BaseQueryBuilder, ImpactedSubstanceMixin, ComplianceMixin):
-    _item_type_name = 'bom_xml1711'
-    _item_type = BoM1711Definition
-    _default_batch_size = 1
-
+class MaterialQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, connection):
         super().__init__(connection)
-        self._bom: Union[RecordDefinition, None] = None
+        self._batch_size = 1
+        self._item_type_name = 'materials'
+        self._definition_factory: Union[None, MaterialComplianceFactory, MaterialImpactedSubstancesFactory] = None
+
+    def add_material_ids(self, values: List[str]):
+        for value in values:
+            item_reference = self._definition_factory.create_definition_by_material_id(value)
+            self._items.append(item_reference)
+        return self
+
+
+class MaterialComplianceQuery(MaterialQueryManager, ComplianceMixin):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest
+        self._api = self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials
+        self._definition_factory = MaterialComplianceFactory()
+
+
+class MaterialImpactedSubstanceQuery(MaterialQueryManager, ImpactedSubstanceMixin):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest
+        self._api = self._connection.impacted_substances_api.\
+            post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials
+        self._definition_factory = MaterialImpactedSubstancesFactory()
+
+
+class PartQueryManager(RecordBasedQueryManager, ABC):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._batch_size = 1
+        self._item_type_name = 'parts'
+        self._definition_factory: Union[None, PartComplianceFactory, PartImpactedSubstancesFactory] = None
+
+    def add_part_numbers(self, values: List[str]):
+        for value in values:
+            item_reference = self._definition_factory.create_definition_by_part_number(value)
+            self._items.append(item_reference)
+        return self
+
+
+class PartComplianceQuery(PartQueryManager, ComplianceMixin):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest
+        self._api = self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts
+        self._definition_factory = PartComplianceFactory()
+
+
+class PartImpactedSubstanceQuery(PartQueryManager, ImpactedSubstanceMixin):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest
+        self._api = self._connection.impacted_substances_api.\
+            post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts
+        self._definition_factory = PartImpactedSubstancesFactory()
+
+
+class SpecificationQueryManager(RecordBasedQueryManager, ABC):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._batch_size = 1
+        self._item_type_name = 'specifications'
+        self._definition_factory: Union[None,
+                                        SpecificationComplianceFactory,
+                                        SpecificationImpactedSubstancesFactory] = None
+
+    def add_specification_ids(self, values: List[str]):
+        for value in values:
+            item_reference = self._definition_factory.create_definition_by_specification_id(value)
+            self._items.append(item_reference)
+        return self
+
+
+class SpecificationComplianceQuery(SpecificationQueryManager, ComplianceMixin):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest
+        self._api = self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications
+        self._definition_factory = SpecificationComplianceFactory()
+
+
+class SpecificationImpactedSubstanceQuery(SpecificationQueryManager, ImpactedSubstanceMixin):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest
+        self._api = self._connection.impacted_substances_api.\
+            post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications
+        self._definition_factory = SpecificationImpactedSubstancesFactory()
+
+
+class SubstanceQueryManager(RecordBasedQueryManager, ABC):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._batch_size = 1
+        self._item_type_name = 'substances'
+        self._definition_factory: Union[None, SubstanceComplianceFactory] = None
+
+    def add_cas_numbers(self, values: List[str]):
+        for value in values:
+            item_reference = self._definition_factory.create_definition_by_cas_number(value)
+            self._items.append(item_reference)
+        return self
+
+    def add_ec_numbers(self, values: List[str]):
+        for value in values:
+            item_reference = self._definition_factory.create_definition_by_ec_number(value)
+            self._items.append(item_reference)
+        return self
+
+    def add_substance_names(self, values: List[str]):
+        for value in values:
+            item_reference = self._definition_factory.create_definition_by_substance_name(value)
+            self._items.append(item_reference)
+        return self
+
+
+class SubstanceComplianceQuery(SubstanceQueryManager, ComplianceMixin):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest
+        self._api = self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances
+        self._definition_factory = SubstanceComplianceFactory()
+
+
+class BoM1711QueryManager(BaseQueryBuilder, ABC):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._batch_size = 1
+        self._item_type_name = 'bom_xml1711'
+        self._definition_factory: Union[None, BomComplianceFactory, BomImpactedSubstancesFactory] = None
+        self._bom = None
 
     @property
     def _content(self) -> str:
         return self._bom.definition
 
-    @property
-    def bom(self) -> None:
-        return self._bom
+    def set_bom(self, value: str):
+        self._bom = self._definition_factory.create_definition(bom=value)
+        return self
 
-    @bom.setter
-    def bom(self, value: str) -> None:
-        bom = self._item_type(bom=value)
-        self._bom = bom
+    def _run_query(self) -> None:
+        args = {**self._arguments, self._item_type_name: self._content}
+        request = self._request_type(**args)
+        response = self._api(body=request)
+        return response
 
-    def get_compliance(self) -> None:
-        assert self._compliance_api
-        if not self._indicators:
-            return
 
-        args = {**self._compliance_args, self._item_type_name: self._content}
-        request = self._compliance_request_type(**args)
-        response = self._compliance_api(body=request)
-        self._compliance = response.parts
-        self._is_result_current = True
+class BoMComplianceQuery(BoM1711QueryManager, ComplianceMixin):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request
+        self._api = self._connection.compliance_api.\
+            post_miservicelayer_bom_analytics_v1svc_compliance_bom1711
+        self._definition_factory = BomComplianceFactory()
 
-    def get_impacted_substances(self) -> None:
-        assert self._impacted_substances_api
-        if not self._legislations:
-            return
 
-        args = {**self._impacted_substances_args, self._item_type_name: self._content}
-        request = self._impacted_substances_request_type(**args)
-        response = self._impacted_substances_api(body=request)
-        self._impacted_substances = {legislation.legislation_name: LegislationResult(legislation.legislation_name,
-                                                                                     legislation.impacted_substances)
-                                     for legislation in response.legislations}
-        self._is_result_current = True
+class BoMImpactedSubstancesQuery(BoM1711QueryManager, ImpactedSubstanceMixin):
+    def __init__(self, connection):
+        super().__init__(connection)
+        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request
+        self._api = self._connection.impacted_substances_api.\
+            post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711
+        self._definition_factory = BomImpactedSubstancesFactory()

@@ -8,7 +8,8 @@ from indicators import WatchlistIndicator, RoHSIndicator
 def connection():
     connection = Connection(url='http://localhost/mi_servicelayer',
                             dbkey='MI_Restricted_Substances',
-                            autologon=True)
+                            username='***REMOVED***',
+                            password='***REMOVED***')
     return connection
 
 

@@ -10,10 +10,11 @@ class RecordDefinition(ABC):
                  record_history_identity: Union[int, None] = None,
                  record_guid: Union[str, None] = None,
                  record_history_guid: Union[str, None] = None):
-        self._record_history_identity = record_history_identity
-        self._record_guid = record_guid
-        self._record_history_guid = record_history_guid
+        self.record_history_identity = record_history_identity
+        self.record_guid = record_guid
+        self.record_history_guid = record_history_guid
         self._model = None
+        super().__init__()      # Mixin constructors
 
     @classmethod
     def add_stk_records(cls, stk_records: List[Dict[str, str]]):
@@ -26,12 +27,12 @@ class RecordDefinition(ABC):
         return item_references
 
     def _create_definition(self):
-        if self._record_history_identity:
-            return self._model(reference_type="MiRecordHistoryIdentity", reference_value=self._record_history_identity)
-        if self._record_guid:
-            return self._model(reference_type="MiRecordGuid", reference_value=self._record_guid)
-        if self._record_history_guid:
-            return self._model(reference_type="MiRecordHistoryGuid", reference_value=self._record_history_guid)
+        if self.record_history_identity:
+            return self._model(reference_type="MiRecordHistoryIdentity", reference_value=self.record_history_identity)
+        if self.record_guid:
+            return self._model(reference_type="MiRecordGuid", reference_value=self.record_guid)
+        if self.record_history_guid:
+            return self._model(reference_type="MiRecordHistoryGuid", reference_value=self.record_history_guid)
 
     @property
     @abstractmethod
@@ -89,17 +90,25 @@ class SpecificationDefinition(RecordDefinition):
         return definition
 
 
-class BoM1711Definition:
-    def __init__(self, bom: Union[str, None] = None):
-        super().__init__()
-        self._bom = bom
+class BaseSubstanceDefinition(RecordDefinition):
+    def __init__(self,
+                 substance_name=None,
+                 cas_number=None,
+                 ec_number=None,
+                 record_history_identity=None,
+                 record_guid=None,
+                 record_history_guid=None):
+        super().__init__(record_history_identity, record_guid, record_history_guid)
+        self.substance_name = substance_name
+        self.cas_number = cas_number
+        self.ec_number = ec_number
 
     @property
-    def definition(self) -> str:
-        return self._bom
+    def definition(self) -> Model:
+        return None
 
 
-class SubstanceDefinition(RecordDefinition):
+class SubstanceDefinition(BaseSubstanceDefinition):
     def __init__(self,
                  substance_name=None,
                  cas_number=None,
@@ -138,6 +147,16 @@ class SubstanceDefinition(RecordDefinition):
         assert definition
         definition.percentage_amount = self._percentage_amount
         return definition
+
+
+class BoM1711Definition:
+    def __init__(self, bom: Union[str, None] = None):
+        super().__init__()
+        self._bom = bom
+
+    @property
+    def definition(self) -> str:
+        return self._bom
 
 
 class Indicator(ABC):

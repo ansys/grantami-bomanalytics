@@ -72,7 +72,6 @@ def test_impacted_substances(connection, legislations):
         assert len(legislation) == 39 or len(legislation) == 3
 
 
-@mark.xfail
 def test_compliance(connection, indicators):
     response = BoMComplianceQuery(connection) \
         .set_bom(bom) \
@@ -86,7 +85,8 @@ def test_compliance(connection, indicators):
             indicator_result = bom_results.indicators[indicator.name]
             assert indicator_result.name == indicator.name
             assert indicator_result.result
-        assert bom_results.substances
+        assert bom_results.parts
+        assert not bom_results.substances   # Empty list
 
     assert len(response.compliance_by_indicator) == 2
     for indicator in indicators:

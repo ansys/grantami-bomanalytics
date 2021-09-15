@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Callable
+from typing import Union, List, Dict, Callable, Tuple
 
 from ansys.granta.bomanalytics import models
 
@@ -33,19 +33,19 @@ class RecordBasedQueryManager(BaseQueryBuilder, ABC):
         self._definition_factory: Union[RecordFactory, None] = None
         super().__init__(connection)
 
-    def add_record_history_ids(self, values: List[Union[int]]):
+    def add_record_history_ids(self, values: List[int]):
         for value in values:
             item_reference = self._definition_factory.create_definition(record_history_identity=value)
             self._items.append(item_reference)
         return self
 
-    def add_record_history_guids(self, values: List[Union[str]]):
+    def add_record_history_guids(self, values: List[str]):
         for value in values:
             item_reference = self._definition_factory.create_definition(record_history_guid=value)
             self._items.append(item_reference)
         return self
 
-    def add_record_guids(self, values: List[Union[str]]):
+    def add_record_guids(self, values: List[str]):
         for value in values:
             item_reference = self._definition_factory.create_definition(record_guid=value)
             self._items.append(item_reference)
@@ -250,20 +250,62 @@ class SubstanceQueryManager(RecordBasedQueryManager, ABC):
         self._definition_factory: Union[None, SubstanceComplianceFactory] = None
 
     def add_cas_numbers(self, values: List[str]):
-        for value in values:
-            item_reference = self._definition_factory.create_definition_by_cas_number(value)
+        for cas_number in values:
+            item_reference = self._definition_factory.create_definition_by_cas_number(cas_number)
             self._items.append(item_reference)
         return self
 
     def add_ec_numbers(self, values: List[str]):
-        for value in values:
-            item_reference = self._definition_factory.create_definition_by_ec_number(value)
+        for ec_number in values:
+            item_reference = self._definition_factory.create_definition_by_ec_number(ec_number)
             self._items.append(item_reference)
         return self
 
     def add_substance_names(self, values: List[str]):
-        for value in values:
-            item_reference = self._definition_factory.create_definition_by_substance_name(value)
+        for substance_name in values:
+            item_reference = self._definition_factory.create_definition_by_substance_name(substance_name)
+            self._items.append(item_reference)
+        return self
+
+    def add_record_history_ids_with_amounts(self, values: List[Tuple[int, float]]):
+        for record_history_id, amount in values:
+            item_reference = self._definition_factory.create_definition(record_history_identity=record_history_id)
+            item_reference.percentage_amount = amount
+            self._items.append(item_reference)
+        return self
+
+    def add_record_history_guids_with_amounts(self, values: List[Tuple[str, float]]):
+        for record_history_guid, amount in values:
+            item_reference = self._definition_factory.create_definition(record_history_guid=record_history_guid)
+            item_reference.percentage_amount = amount
+            self._items.append(item_reference)
+        return self
+
+    def add_record_guids_with_amounts(self, values: List[Tuple[str, float]]):
+        for record_guid, amount in values:
+            item_reference = self._definition_factory.create_definition(record_guid=record_guid)
+            item_reference.percentage_amount = amount
+            self._items.append(item_reference)
+        return self
+
+    def add_cas_numbers_with_amounts(self, values: List[Tuple[str, float]]):
+        for cas_number, amount in values:
+            item_reference = self._definition_factory.create_definition_by_cas_number(cas_number)
+            item_reference.percentage_amount = amount
+            self._items.append(item_reference)
+        return self
+
+    def add_ec_numbers_with_amounts(self, values: List[Tuple[str, float]]):
+        for ec_number, amount in values:
+            item_reference = self._definition_factory.create_definition_by_ec_number(ec_number)
+            item_reference.percentage_amount = amount
+            self._items.append(item_reference)
+        return self
+
+    def add_substance_names_with_amounts(self, values: List[Tuple[str, float]]):
+        for substance_name, amount in values:
+            item_reference = self._definition_factory.create_definition_by_substance_name(substance_name)
+            item_reference.percentage_amount = amount
             self._items.append(item_reference)
         return self
 

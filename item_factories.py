@@ -70,8 +70,8 @@ class PartImpactedSubstancesFactory(PartFactory):
 class SpecificationFactory(RecordFactory, ABC):
     def create_definition(self, record_history_identity=None, record_history_guid=None, record_guid=None):
         return SpecificationDefinition(record_history_identity=record_history_identity,
-                              record_guid=record_guid,
-                              record_history_guid=record_history_guid)
+                                       record_guid=record_guid,
+                                       record_history_guid=record_history_guid)
 
     def create_definition_by_specification_id(self, specification_id):
         return SpecificationDefinition(specification_id=specification_id)
@@ -87,7 +87,7 @@ class SpecificationImpactedSubstancesFactory(SpecificationFactory):
         return SpecificationImpactedSubstancesResult(results=values)
 
 
-class SubstanceComplianceFactory(RecordFactory):      # TODO Re-evaluate this decision
+class SubstanceComplianceFactory(RecordFactory):
     def create_definition(self, record_history_identity=None, record_history_guid=None, record_guid=None):
         return SubstanceDefinition(record_history_identity=record_history_identity,
                                    record_guid=record_guid,
@@ -95,13 +95,16 @@ class SubstanceComplianceFactory(RecordFactory):      # TODO Re-evaluate this de
                                    percentage_amount=100)
 
     def create_definition_by_substance_name(self, value):
-        return SubstanceDefinition(substance_name=value, percentage_amount=100)
+        return SubstanceDefinition(substance_name=value,
+                                   percentage_amount=100)
 
     def create_definition_by_cas_number(self, value):
-        return SubstanceDefinition(cas_number=value, percentage_amount=100)
+        return SubstanceDefinition(cas_number=value,
+                                   percentage_amount=100)
 
     def create_definition_by_ec_number(self, value):
-        return SubstanceDefinition(ec_number=value, percentage_amount=100)
+        return SubstanceDefinition(ec_number=value,
+                                   percentage_amount=100)
 
     def create_result(self, values):
         return SubstanceComplianceResult(results=values)

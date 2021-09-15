@@ -1,35 +1,44 @@
-from typing import List, Union
-from ansys.granta.bomanalytics import models
-from item_definitions import (MaterialDefinition,
-                              PartDefinition,
-                              SpecificationDefinition,
-                              BoM1711Definition,
-                              BaseSubstanceDefinition)
+from item_definitions import (
+    MaterialDefinition,
+    PartDefinition,
+    SpecificationDefinition,
+    BoM1711Definition,
+    BaseSubstanceDefinition,
+)
 
 
 class ComplianceResultMixin:
-    def __init__(self, **kwargs):
+    def __init__(self, indicators=None, substances=None, **kwargs):
         super().__init__(**kwargs)
-        self.indicators = {}
-        self.substances = []
+        if not indicators:
+            indicators = []
+        self.indicators = {
+            indicator.name: IndicatorResult(indicator.name, indicator.flag)
+            for indicator in indicators
+        }
 
-    def add_compliance(self, indicators: List, substances: List):
+        if not substances:
+            substances = []
+
         from query_results import instantiate_type
 
-        self.indicators = {indicator.name: IndicatorResult(indicator.name, indicator.flag)
-                           for indicator in indicators}
-        for substance in substances:
-            new_substance = instantiate_type(substance, SubstanceWithCompliance)
-            new_substance.add_compliance(substance.indicators)
-            self.substances.append(new_substance)
+        self.substances = [
+            instantiate_type(
+                result=substance,
+                item_type=SubstanceWithCompliance,
+                indicators=substance.indicators,
+            )
+            for substance in substances
+        ]
 
 
 class ImpactedSubstancesResultMixin:
-    def __init__(self, **kwargs):
+    def __init__(self, legislations=None, **kwargs):
         super().__init__(**kwargs)
-        self.legislations = {}
+        if not legislations:
+            legislations = []
 
-    def add_legislations(self, legislations: List):
+        self.legislations = {}
         for legislation in legislations:
             new_legislation_name = legislation.legislation_name
             new_legislation = LegislationResult(new_legislation_name)
@@ -38,95 +47,136 @@ class ImpactedSubstancesResultMixin:
 
 
 class BomStructureResultMixin:
-    def __init__(self, **kwargs):
+    def __init__(self, parts=None, materials=None, specifications=None, **kwargs):
         super().__init__(**kwargs)
-        self.parts = []
-        self.materials = []
-        self.specifications = []
-        self.substances = []
 
-    def add_parts(self, parts: List):
         from query_results import instantiate_type
 
+        self.parts = []
+        if not parts:
+            parts = []
         for part in parts:
-            new_part = instantiate_type(part, PartWithCompliance)
-            new_part.add_parts(part.parts)
-            new_part.add_materials(part.materials)
-            new_part.add_specifications(part.specifications)
-            new_part.add_compliance(indicators=part.indicators, substances=part.substances)
+            new_part = instantiate_type(
+                result=part,
+                item_type=PartWithCompliance,
+                indicators=part.indicators,
+                substances=part.substances,
+                parts=part.parts,
+                materials=part.materials,
+                specifications=part.specifications,
+            )
             self.parts.append(new_part)
 
-    def add_materials(self, materials: List):
-        from query_results import instantiate_type
+        self.materials = []
+        if not materials:
+            materials = []
         for material in materials:
-            new_material = instantiate_type(material, MaterialWithCompliance)
-            new_material.add_compliance(indicators=material.indicators, substances=material.substances)
+            new_material = instantiate_type(
+                result=material,
+                item_type=MaterialWithCompliance,
+                indicators=material.indicators,
+                substances=material.substances,
+            )
             self.materials.append(new_material)
 
-    def add_specifications(self, specifications: List):
-        from query_results import instantiate_type
+        self.specifications = []
+        if not specifications:
+            specifications = []
         for specification in specifications:
-            new_spec = instantiate_type(specification, SpecificationWithCompliance)
-            new_spec.add_compliance(indicators=specification.indicators, substances=specification.substances)
+            new_spec = instantiate_type(
+                result=specification,
+                item_type=SpecificationWithCompliance,
+                indicators=specification.indicators,
+                substances=specification.substances,
+            )
             self.materials.append(new_spec)
 
 
-class MaterialWithImpactedSubstances(MaterialDefinition, ImpactedSubstancesResultMixin):
+class MaterialWithImpactedSubstances(ImpactedSubstancesResultMixin, MaterialDefinition):
     pass
 
 
-class MaterialWithCompliance(MaterialDefinition, ComplianceResultMixin):
+class MaterialWithCompliance(ComplianceResultMixin, MaterialDefinition):
     pass
 
 
-class PartWithImpactedSubstances(PartDefinition, ImpactedSubstancesResultMixin):
+class PartWithImpactedSubstances(ImpactedSubstancesResultMixin, PartDefinition):
     pass
 
 
-class PartWithCompliance(PartDefinition, ComplianceResultMixin, BomStructureResultMixin):
+class PartWithCompliance(
+    ComplianceResultMixin, BomStructureResultMixin, PartDefinition
+):
     pass
 
 
-class SpecificationWithImpactedSubstances(SpecificationDefinition, ImpactedSubstancesResultMixin):
+class SpecificationWithImpactedSubstances(
+    ImpactedSubstancesResultMixin, SpecificationDefinition
+):
     pass
 
 
-class SpecificationWithCompliance(SpecificationDefinition, ComplianceResultMixin):
+class SpecificationWithCompliance(ComplianceResultMixin, SpecificationDefinition):
     pass
 
 
-class BoM1711WithImpactedSubstances(BoM1711Definition, ImpactedSubstancesResultMixin):
+class BoM1711WithImpactedSubstances(ImpactedSubstancesResultMixin, BoM1711Definition):
     pass
 
 
-class BoM1711WithCompliance(BoM1711Definition, ComplianceResultMixin, BomStructureResultMixin):
+class BoM1711WithCompliance(
+    ComplianceResultMixin, BomStructureResultMixin, BoM1711Definition
+):
     pass
 
 
 class SubstanceWithCompliance(BaseSubstanceDefinition):
-    def __init__(self, substance_name=None,
-                 cas_number=None,
-                 ec_number=None,
-                 record_history_identity=None,
-                 record_guid=None,
-                 record_history_guid=None):
-        super().__init__(substance_name, cas_number, ec_number, record_history_identity, record_guid, record_history_guid)
-        self.indicators = {}
-
-    def add_compliance(self, indicators: List):
-        self.indicators = {indicator.name: IndicatorResult(indicator.name, indicator.flag) for indicator in indicators}
+    def __init__(
+        self,
+        substance_name=None,
+        cas_number=None,
+        ec_number=None,
+        record_history_identity=None,
+        record_guid=None,
+        record_history_guid=None,
+        indicators=None,
+    ):
+        super().__init__(
+            substance_name,
+            cas_number,
+            ec_number,
+            record_history_identity,
+            record_guid,
+            record_history_guid,
+        )
+        if not indicators:
+            indicators = []
+        self.indicators = {
+            indicator.name: IndicatorResult(indicator.name, indicator.flag)
+            for indicator in indicators
+        }
 
 
 class SubstanceWithAmounts(BaseSubstanceDefinition):
-    def __init__(self, substance_name=None,
-                 cas_number=None,
-                 ec_number=None,
-                 record_history_identity=None,
-                 record_guid=None,
-                 record_history_guid=None,
-                 max_percentage_amount_in_material=None,
-                 legislation_threshold=None):
-        super().__init__(substance_name, cas_number, ec_number, record_history_identity, record_guid, record_history_guid)
+    def __init__(
+        self,
+        substance_name=None,
+        cas_number=None,
+        ec_number=None,
+        record_history_identity=None,
+        record_guid=None,
+        record_history_guid=None,
+        max_percentage_amount_in_material=None,
+        legislation_threshold=None,
+    ):
+        super().__init__(
+            substance_name,
+            cas_number,
+            ec_number,
+            record_history_identity,
+            record_guid,
+            record_history_guid,
+        )
         self.max_percentage_amount_in_material = max_percentage_amount_in_material
         self.legislation_threshold = legislation_threshold
 
@@ -138,13 +188,14 @@ class LegislationResult:
 
     def add_substances(self, substances):
         for substance in substances:
-            new_substance = SubstanceWithAmounts(substance_name=substance.substance_name,
-                                                 cas_number=substance.cas_number,
-                                                 ec_number=substance.ec_number,
-                                                 max_percentage_amount_in_material=substance.max_percentage_amount_in_material,
-                                                 legislation_threshold=substance.legislation_threshold)
+            new_substance = SubstanceWithAmounts(
+                substance_name=substance.substance_name,
+                cas_number=substance.cas_number,
+                ec_number=substance.ec_number,
+                max_percentage_amount_in_material=substance.max_percentage_amount_in_material,
+                legislation_threshold=substance.legislation_threshold,
+            )
             self.substances.append(new_substance)
-
 
 
 class IndicatorResult:

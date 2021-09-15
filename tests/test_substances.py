@@ -2,11 +2,13 @@ from query_managers import SubstanceComplianceQuery
 
 
 def test_compliance(connection, indicators):
-    response = SubstanceComplianceQuery(connection)\
-        .add_cas_numbers(['50-00-0', '57-24-9']) \
-        .add_cas_numbers_with_amounts([('1333-86-4', 25), ('75-74-1', 50)]) \
-        .add_indicators(indicators)\
+    response = (
+        SubstanceComplianceQuery(connection)
+        .add_cas_numbers(["50-00-0", "57-24-9"])
+        .add_cas_numbers_with_amounts([("1333-86-4", 25), ("75-74-1", 50)])
+        .add_indicators(indicators)
         .execute()
+    )
 
     assert len(response.compliance) == 4
     for sub_results in response.compliance:

@@ -5,18 +5,21 @@ from ansys.granta.auth_common import AuthenticatedApiClient
 
 
 class Connection:
-    def __init__(self, url: str,
-                 username: Union[str, None] = None,
-                 password: Union[str, None] = None,
-                 autologon: bool = False,
-                 dbkey: Union[str, None] = None):
+    def __init__(
+        self,
+        url: str,
+        username: Union[str, None] = None,
+        password: Union[str, None] = None,
+        autologon: bool = False,
+        dbkey: Union[str, None] = None,
+    ):
         # Create a generic AuthenticatedApiClient and initialize with the relevant models
         if autologon:
             self._client = AuthenticatedApiClient.with_autologon(servicelayer_url=url)
         else:
-            self._client = AuthenticatedApiClient.with_credentials(servicelayer_url=url,
-                                                                   username=username,
-                                                                   password=password)
+            self._client = AuthenticatedApiClient.with_credentials(
+                servicelayer_url=url, username=username, password=password
+            )
         self._client.setup_client(bomanalytics.models)
 
         self._documentation_api = bomanalytics.DocumentationApi(self._client)
@@ -34,19 +37,24 @@ class Connection:
 
     @property
     def query_config(self):
-        if self.material_universe_table_name or \
-                self.inhouse_materials_table_name or \
-                self.specifications_table_name or \
-                self.products_and_parts_table_name or \
-                self.substances_table_name or \
-                self.coatings_table_name:
-            config = \
-                bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(self.material_universe_table_name,
-                                                                                    self.inhouse_materials_table_name,
-                                                                                    self.specifications_table_name,
-                                                                                    self.products_and_parts_table_name,
-                                                                                    self.substances_table_name,
-                                                                                    self.coatings_table_name)
+        if (
+            self.material_universe_table_name
+            or self.inhouse_materials_table_name
+            or self.specifications_table_name
+            or self.products_and_parts_table_name
+            or self.substances_table_name
+            or self.coatings_table_name
+        ):
+            config = (
+                bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(
+                    self.material_universe_table_name,
+                    self.inhouse_materials_table_name,
+                    self.specifications_table_name,
+                    self.products_and_parts_table_name,
+                    self.substances_table_name,
+                    self.coatings_table_name,
+                )
+            )
             return config
 
     def get_yaml(self):

@@ -2,11 +2,16 @@ from query_managers import PartComplianceQuery, PartImpactedSubstanceQuery
 
 
 def test_impacted_substances(connection):
-    legislations = ['The SIN List 2.1 (Substitute It Now!)', 'EU Directive 2011/65/EU (RoHS 2)']
-    response = PartImpactedSubstanceQuery(connection) \
-                   .add_part_numbers(['DRILL', 'main_frame']) \
-                   .add_legislations(legislations) \
-                   .execute()
+    legislations = [
+        "The SIN List 2.1 (Substitute It Now!)",
+        "EU Directive 2011/65/EU (RoHS 2)",
+    ]
+    response = (
+        PartImpactedSubstanceQuery(connection)
+        .add_part_numbers(["DRILL", "main_frame"])
+        .add_legislations(legislations)
+        .execute()
+    )
 
     assert len(response.impacted_substances) == 2
     for part_results in response.impacted_substances:
@@ -21,10 +26,12 @@ def test_impacted_substances(connection):
 
 
 def test_compliance(connection, indicators):
-    response = PartComplianceQuery(connection) \
-        .add_part_numbers(['DRILL', 'main_frame']) \
-        .add_indicators(indicators) \
+    response = (
+        PartComplianceQuery(connection)
+        .add_part_numbers(["DRILL", "main_frame"])
+        .add_indicators(indicators)
         .execute()
+    )
 
     assert len(response.compliance) == 2
     for part_results in response.compliance:

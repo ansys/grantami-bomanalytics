@@ -2,13 +2,20 @@ from query_managers import MaterialImpactedSubstanceQuery, MaterialComplianceQue
 
 
 def test_impacted_substances(connection, legislations):
-    stk_object = [{'dbkey': 'MI_Restricted_Substances',
-                   'record_guid': 'eef13c81-9b04-4af3-8d68-3524ffce7035'}]
+    stk_object = [
+        {
+            "dbkey": "MI_Restricted_Substances",
+            "record_guid": "eef13c81-9b04-4af3-8d68-3524ffce7035",
+        }
+    ]
 
-    response = MaterialImpactedSubstanceQuery(connection).add_material_ids(['plastic-abs-pvc-flame']) \
-        .add_stk_records(stk_object) \
-        .add_legislations(legislations) \
+    response = (
+        MaterialImpactedSubstanceQuery(connection)
+        .add_material_ids(["plastic-abs-pvc-flame"])
+        .add_stk_records(stk_object)
+        .add_legislations(legislations)
         .execute()
+    )
 
     assert len(response.impacted_substances) == 2
     for mat_results in response.impacted_substances:
@@ -26,13 +33,20 @@ def test_impacted_substances(connection, legislations):
 
 
 def test_compliance(connection, indicators):
-    stk_object = [{'dbkey': 'MI_Restricted_Substances',
-                   'record_guid': 'eef13c81-9b04-4af3-8d68-3524ffce7035'}]
+    stk_object = [
+        {
+            "dbkey": "MI_Restricted_Substances",
+            "record_guid": "eef13c81-9b04-4af3-8d68-3524ffce7035",
+        }
+    ]
 
-    response = MaterialComplianceQuery(connection).add_material_ids(['plastic-abs-pvc-flame']) \
-        .add_stk_records(stk_object) \
-        .add_indicators(indicators) \
+    response = (
+        MaterialComplianceQuery(connection)
+        .add_material_ids(["plastic-abs-pvc-flame"])
+        .add_stk_records(stk_object)
+        .add_indicators(indicators)
         .execute()
+    )
 
     assert len(response.compliance) == 2
     for mat_results in response.compliance:

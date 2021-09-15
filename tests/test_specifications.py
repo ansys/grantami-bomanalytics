@@ -1,19 +1,24 @@
-from query_managers import SpecificationComplianceQuery, SpecificationImpactedSubstanceQuery
+from query_managers import (
+    SpecificationComplianceQuery,
+    SpecificationImpactedSubstanceQuery,
+)
 
 
 def test_impacted_substances(connection):
-    response = SpecificationImpactedSubstanceQuery(connection)\
-                .add_record_history_guids(['516b2b9b-c4cf-419f-8caa-238ba1e7b7e5']) \
-                .add_specification_ids(['MIL-C-20218,TypeII']) \
-                .add_legislations(['The SIN List 2.1 (Substitute It Now!)'])\
-                .execute()
+    response = (
+        SpecificationImpactedSubstanceQuery(connection)
+        .add_record_history_guids(["516b2b9b-c4cf-419f-8caa-238ba1e7b7e5"])
+        .add_specification_ids(["MIL-C-20218,TypeII"])
+        .add_legislations(["The SIN List 2.1 (Substitute It Now!)"])
+        .execute()
+    )
 
     assert len(response.impacted_substances) == 2
     for spec_results in response.impacted_substances:
         assert len(spec_results.legislations) == 1
-        assert 'The SIN List 2.1 (Substitute It Now!)' in spec_results.legislations
-        leg = spec_results.legislations['The SIN List 2.1 (Substitute It Now!)']
-        assert leg.name == 'The SIN List 2.1 (Substitute It Now!)'
+        assert "The SIN List 2.1 (Substitute It Now!)" in spec_results.legislations
+        leg = spec_results.legislations["The SIN List 2.1 (Substitute It Now!)"]
+        assert leg.name == "The SIN List 2.1 (Substitute It Now!)"
         assert leg.substances
 
     assert len(response.all_impacted_substances) == 4
@@ -23,11 +28,13 @@ def test_impacted_substances(connection):
 
 
 def test_compliance(connection, indicators):
-    response = SpecificationComplianceQuery(connection) \
-                .add_record_history_guids(['516b2b9b-c4cf-419f-8caa-238ba1e7b7e5']) \
-                .add_specification_ids(['MIL-C-20218,TypeII']) \
-                .add_indicators(indicators) \
-                .execute()
+    response = (
+        SpecificationComplianceQuery(connection)
+        .add_record_history_guids(["516b2b9b-c4cf-419f-8caa-238ba1e7b7e5"])
+        .add_specification_ids(["MIL-C-20218,TypeII"])
+        .add_indicators(indicators)
+        .execute()
+    )
 
     assert len(response.compliance) == 2
     for spec_results in response.compliance:

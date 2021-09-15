@@ -13,11 +13,10 @@ class RecordDefinition(ABC):
         record_history_guid: Union[str, None] = None,
         **kwargs,
     ):
-        self.record_history_identity = record_history_identity
-        self.record_guid = record_guid
-        self.record_history_guid = record_history_guid
+        self.record_history_identity: int = record_history_identity
+        self.record_guid: str = record_guid
+        self.record_history_guid: str = record_history_guid
         self._model = None
-        super().__init__(**kwargs)  # Mixin constructors
 
     @classmethod
     def add_stk_records(cls, stk_records: List[Dict[str, str]]):
@@ -63,7 +62,7 @@ class PartDefinition(RecordDefinition):
         super().__init__(
             record_history_identity, record_guid, record_history_guid, **kwargs
         )
-        self.part_number = part_number
+        self.part_number: str = part_number
         self._model = (
             bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonPartReference
         )
@@ -85,7 +84,7 @@ class MaterialDefinition(RecordDefinition):
         record_history_guid: Union[str, None] = None,
     ):
         super().__init__(record_history_identity, record_guid, record_history_guid)
-        self.material_id = material_id
+        self.material_id: str = material_id
         self._model = (
             bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
         )
@@ -107,7 +106,7 @@ class SpecificationDefinition(RecordDefinition):
         record_history_guid: Union[str, None] = None,
     ):
         super().__init__(record_history_identity, record_guid, record_history_guid)
-        self.specification_id = specification_id
+        self.specification_id: str = specification_id
         self._model = (
             bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference
         )
@@ -131,9 +130,9 @@ class BaseSubstanceDefinition(RecordDefinition):
         record_history_guid=None,
     ):
         super().__init__(record_history_identity, record_guid, record_history_guid)
-        self.substance_name = substance_name
-        self.cas_number = cas_number
-        self.ec_number = ec_number
+        self.substance_name: str = substance_name
+        self.cas_number: str = cas_number
+        self.ec_number: str = ec_number
 
     @property
     def definition(self) -> Model:
@@ -158,7 +157,7 @@ class SubstanceDefinition(BaseSubstanceDefinition):
         if percentage_amount:
             self._percentage_amount = percentage_amount
         self._model = (
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount
+            bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount  # noqa: E501
         )
 
     @property

@@ -13,7 +13,7 @@ class Connection:
         autologon: bool = False,
         dbkey: Union[str, None] = None,
     ):
-        # Create a generic AuthenticatedApiClient and initialize with the relevant models
+        # TODO: Support all options
         if autologon:
             self._client = AuthenticatedApiClient.with_autologon(servicelayer_url=url)
         else:

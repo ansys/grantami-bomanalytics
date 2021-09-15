@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Callable, Tuple
+from typing import Union, List, Dict, Callable, Tuple, Type
 
 from ansys.granta.bomanalytics import models
 
@@ -16,6 +16,18 @@ from item_factories import (
     BomComplianceFactory,
 )
 from item_definitions import Indicator
+from connection import Connection
+from query_results import (
+    MaterialImpactedSubstancesResult,
+    MaterialComplianceResult,
+    PartImpactedSubstancesResult,
+    PartComplianceResult,
+    SpecificationImpactedSubstancesResult,
+    SpecificationComplianceResult,
+    SubstanceComplianceResult,
+    BoMImpactedSubstancesResult,
+    BoMComplianceResult,
+)
 
 
 class BaseQueryBuilder(ABC):
@@ -23,16 +35,35 @@ class BaseQueryBuilder(ABC):
     _result_type: Union[Callable, None] = None
 
     def __init__(self, connection):
-        super().__init__()
         self._connection = connection
+        self._items = []
+        self._batch_size = None
+
+    @property
+    def batch_size(self) -> int:
+        return self._batch_size
+
+    @batch_size.setter
+    def batch_size(self, value: int):
+        assert isinstance(value, int) and value > 0, "Batch must be a positive integer"
+        self._batch_size = value
+
+    def set_batch_size(self, value: int):
+        self.batch_size = value
+        return self
+
+    @property
+    def _content(self) -> List[List[models.Model]]:
+        for i in range(0, len(self._items), self.batch_size):
+            yield [i.definition for i in self._items][
+                i : i + self.batch_size
+            ]  # noqa: E203 E501
 
 
 class RecordBasedQueryManager(BaseQueryBuilder, ABC):
-    def __init__(self, connection):
-        self._batch_size = None
-        self._items = []
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._definition_factory: Union[RecordFactory, None] = None
-        super().__init__(connection)
 
     def add_record_history_ids(self, values: List[int]):
         for value in values:
@@ -63,36 +94,10 @@ class RecordBasedQueryManager(BaseQueryBuilder, ABC):
         self.add_record_guids(record_guids)
         return self
 
-    @property
-    def batch_size(self):
-        return self._batch_size
-
-    @batch_size.setter
-    def batch_size(self, value: int):
-        assert value > 0
-        self._batch_size = value
-
-    @property
-    def _content(self) -> List[List[models.Model]]:
-        for i in range(0, len(self._items), self.batch_size):
-            yield [i.definition for i in self._items][i : i + self.batch_size]
-
 
 class ApiMixin(ABC):
-    _items = None  # Implemented by main class
-    _content = None
-
     def __init__(self, **kwargs):
-        self._api = None
-        self._connection = None
-        self._request_type = None
-        self._item_type_name = None
-        self._definition_factory = None
-
-    def execute(self):
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        super().__init__(**kwargs)
 
     @abstractmethod
     def _validate_query(self):
@@ -159,8 +164,8 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
 
 
 class MaterialQueryManager(RecordBasedQueryManager, ABC):
-    def __init__(self, connection):
-        super().__init__(connection)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._batch_size = 1
         self._item_type_name = "materials"
         self._definition_factory: Union[
@@ -176,33 +181,43 @@ class MaterialQueryManager(RecordBasedQueryManager, ABC):
         return self
 
 
-class MaterialComplianceQuery(MaterialQueryManager, ComplianceMixin):
-    def __init__(self, connection):
-        super().__init__(connection)
+class MaterialComplianceQuery(ComplianceMixin, MaterialQueryManager):
+    def __init__(self, connection: Connection):
+        super().__init__(connection=connection)
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest
         )
         self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials
+            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials  # noqa: E501
         )
         self._definition_factory = MaterialComplianceFactory()
 
+    def execute(self) -> MaterialComplianceResult:
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
 
-class MaterialImpactedSubstanceQuery(MaterialQueryManager, ImpactedSubstanceMixin):
-    def __init__(self, connection):
-        super().__init__(connection)
+
+class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryManager):
+    def __init__(self, connection: Connection):
+        super().__init__(connection=connection)
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest  # noqa: E501
         )
         self._api = (
-            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials
+            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials  # noqa: E501
         )
         self._definition_factory = MaterialImpactedSubstancesFactory()
 
+    def execute(self) -> MaterialImpactedSubstancesResult:
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
+
 
 class PartQueryManager(RecordBasedQueryManager, ABC):
-    def __init__(self, connection):
-        super().__init__(connection)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._batch_size = 1
         self._item_type_name = "parts"
         self._definition_factory: Union[
@@ -218,33 +233,43 @@ class PartQueryManager(RecordBasedQueryManager, ABC):
         return self
 
 
-class PartComplianceQuery(PartQueryManager, ComplianceMixin):
-    def __init__(self, connection):
-        super().__init__(connection)
+class PartComplianceQuery(ComplianceMixin, PartQueryManager):
+    def __init__(self, connection: Connection):
+        super().__init__(connection=connection)
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest
         )
         self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts
+            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts  # noqa: E501
         )
         self._definition_factory = PartComplianceFactory()
 
+    def execute(self) -> PartComplianceResult:
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
 
-class PartImpactedSubstanceQuery(PartQueryManager, ImpactedSubstanceMixin):
-    def __init__(self, connection):
-        super().__init__(connection)
+
+class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryManager):
+    def __init__(self, connection: Connection):
+        super().__init__(connection=connection)
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest  # noqa: E501
         )
         self._api = (
-            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts
+            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts  # noqa: E501
         )
         self._definition_factory = PartImpactedSubstancesFactory()
 
+    def execute(self) -> PartImpactedSubstancesResult:
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
+
 
 class SpecificationQueryManager(RecordBasedQueryManager, ABC):
-    def __init__(self, connection):
-        super().__init__(connection)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._batch_size = 1
         self._item_type_name = "specifications"
         self._definition_factory: Union[
@@ -260,35 +285,45 @@ class SpecificationQueryManager(RecordBasedQueryManager, ABC):
         return self
 
 
-class SpecificationComplianceQuery(SpecificationQueryManager, ComplianceMixin):
-    def __init__(self, connection):
-        super().__init__(connection)
+class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryManager):
+    def __init__(self, connection: Connection):
+        super().__init__(connection=connection)
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest
+            models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest  # noqa: E501
         )
         self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications
+            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications  # noqa: E501
         )
         self._definition_factory = SpecificationComplianceFactory()
 
+    def execute(self) -> SpecificationComplianceResult:
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
+
 
 class SpecificationImpactedSubstanceQuery(
-    SpecificationQueryManager, ImpactedSubstanceMixin
+    ImpactedSubstanceMixin, SpecificationQueryManager
 ):
-    def __init__(self, connection):
-        super().__init__(connection)
+    def __init__(self, connection: Connection):
+        super().__init__(connection=connection)
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest  # noqa: E501
         )
         self._api = (
-            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications
+            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications  # noqa: E501
         )
         self._definition_factory = SpecificationImpactedSubstancesFactory()
 
+    def execute(self) -> SpecificationImpactedSubstancesResult:
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
+
 
 class SubstanceQueryManager(RecordBasedQueryManager, ABC):
-    def __init__(self, connection):
-        super().__init__(connection)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._batch_size = 1
         self._item_type_name = "substances"
         self._definition_factory: Union[None, SubstanceComplianceFactory] = None
@@ -376,62 +411,76 @@ class SubstanceQueryManager(RecordBasedQueryManager, ABC):
         return self
 
 
-class SubstanceComplianceQuery(SubstanceQueryManager, ComplianceMixin):
-    def __init__(self, connection):
-        super().__init__(connection)
+class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryManager):
+    def __init__(self, connection: Connection):
+        super().__init__(connection=connection)
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest
         )
         self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances
+            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances  # noqa: E501
         )
         self._definition_factory = SubstanceComplianceFactory()
 
+    def execute(self) -> SubstanceComplianceResult:
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
+
 
 class BoM1711QueryManager(BaseQueryBuilder, ABC):
-    def __init__(self, connection):
-        super().__init__(connection)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self._batch_size = 1
         self._item_type_name = "bom_xml1711"
         self._definition_factory: Union[
             None, BomComplianceFactory, BomImpactedSubstancesFactory
         ] = None
-        self._bom = None
 
-    @property
-    def _content(self) -> str:
-        return self._bom.definition
-
-    def set_bom(self, value: str):
-        self._bom = self._definition_factory.create_definition(bom=value)
+    def set_bom(self, bom: str):
+        self._items = [self._definition_factory.create_definition(bom=bom)]
         return self
 
-    def _run_query(self) -> None:
-        args = {**self._arguments, self._item_type_name: self._content}
+
+class BoMQueryOverride:
+    def _run_query(self) -> List:
+        args = {**self._arguments, self._item_type_name: list(self._content)[0][0]}
         request = self._request_type(**args)
         response = self._api(body=request)
         return response
 
 
-class BoMComplianceQuery(BoM1711QueryManager, ComplianceMixin):
-    def __init__(self, connection):
-        super().__init__(connection)
+class BoMComplianceQuery(BoMQueryOverride, ComplianceMixin, BoM1711QueryManager):
+    def __init__(self, connection: Connection):
+        super().__init__(connection=connection)
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request
         )
         self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711
+            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711  # noqa: E501
         )
         self._definition_factory = BomComplianceFactory()
 
+    def execute(self) -> BoMComplianceResult:
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
 
-class BoMImpactedSubstancesQuery(BoM1711QueryManager, ImpactedSubstanceMixin):
-    def __init__(self, connection):
-        super().__init__(connection)
+
+class BoMImpactedSubstancesQuery(
+    BoMQueryOverride, ImpactedSubstanceMixin, BoM1711QueryManager
+):
+    def __init__(self, connection: Connection):
+        super().__init__(connection=connection)
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request  # noqa: E501
         )
         self._api = (
-            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711
+            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711  # noqa: E501
         )
         self._definition_factory = BomImpactedSubstancesFactory()
+
+    def execute(self) -> BoMImpactedSubstancesResult:
+        self._validate_query()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)

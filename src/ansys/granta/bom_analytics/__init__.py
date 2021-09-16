@@ -10,7 +10,7 @@ from .query_managers import (
     BoMImpactedSubstancesQuery,
     BoMComplianceQuery,
 )
-from .indicators import (
+from .bom_indicators import (
     RoHSIndicatorDefinition as RoHSIndicator,
     WatchListIndicatorDefinition as WatchListIndicator,
 )

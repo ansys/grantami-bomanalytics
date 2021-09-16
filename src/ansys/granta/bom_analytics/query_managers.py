@@ -4,18 +4,10 @@ import warnings
 
 from ansys.granta.bomanalytics import models
 
-from .item_factories import (
-    RecordFactory,
-    MaterialImpactedSubstancesFactory,
-    MaterialComplianceFactory,
-    PartComplianceFactory,
-    PartImpactedSubstancesFactory,
-    SpecificationComplianceFactory,
-    SpecificationImpactedSubstancesFactory,
-    SubstanceComplianceFactory,
-    BomImpactedSubstancesFactory,
-    BomComplianceFactory,
-)
+from .bom_item_definitions import AbstractBomFactory
+from .query_results import QueryResultFactory
+
+# Required for type hinting
 from .connection import Connection
 from .query_results import (
     MaterialImpactedSubstancesResult,
@@ -28,7 +20,7 @@ from .query_results import (
     BoMImpactedSubstancesResult,
     BoMComplianceResult,
 )
-from .indicators import IndicatorDefinition
+from .bom_indicators import IndicatorDefinition
 
 
 class BaseQueryBuilder(ABC):
@@ -68,11 +60,11 @@ class BaseQueryBuilder(ABC):
 class RecordBasedQueryManager(BaseQueryBuilder, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._definition_factory: Union[RecordFactory, None] = None
+        self._definition_factory = None
 
     def add_record_history_ids(self, values: List[int]):
         for value in values:
-            item_reference = self._definition_factory.create_definition(
+            item_reference = self._definition_factory.create_bom_item_definition(
                 record_history_identity=value
             )
             self._items.append(item_reference)
@@ -80,7 +72,7 @@ class RecordBasedQueryManager(BaseQueryBuilder, ABC):
 
     def add_record_history_guids(self, values: List[str]):
         for value in values:
-            item_reference = self._definition_factory.create_definition(
+            item_reference = self._definition_factory.create_bom_item_definition(
                 record_history_guid=value
             )
             self._items.append(item_reference)
@@ -88,7 +80,7 @@ class RecordBasedQueryManager(BaseQueryBuilder, ABC):
 
     def add_record_guids(self, values: List[str]):
         for value in values:
-            item_reference = self._definition_factory.create_definition(
+            item_reference = self._definition_factory.create_bom_item_definition(
                 record_guid=value
             )
             self._items.append(item_reference)
@@ -103,6 +95,7 @@ class RecordBasedQueryManager(BaseQueryBuilder, ABC):
 class ApiMixin(ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self._result_factory = None
 
     def _run_query(self) -> List:
         result = []
@@ -137,9 +130,7 @@ class ComplianceMixin(ApiMixin, ABC):
         self._validate_parameters()
         self._validate_items()
         result = self._run_query()
-        return self._definition_factory.create_compliance_result(
-            result, self._indicators
-        )
+        return self._result_factory(result, self._indicators)
 
     def _validate_parameters(self):
         if not self._indicators:
@@ -170,7 +161,7 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
         self._validate_parameters()
         self._validate_items()
         result = self._run_query()
-        return self._definition_factory.create_impacted_substances_result(result)
+        return self._result_factory(result)
 
     def _validate_parameters(self):
         if not self._legislations:
@@ -193,9 +184,7 @@ class MaterialQueryManager(RecordBasedQueryManager, ABC):
         super().__init__(**kwargs)
         self._batch_size = 100
         self._item_type_name = "materials"
-        self._definition_factory: Union[
-            None, MaterialComplianceFactory, MaterialImpactedSubstancesFactory
-        ] = None
+        self._definition_factory = None
 
     def add_material_ids(self, values: List[str]):
         for value in values:
@@ -215,7 +204,14 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryManager):
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials  # noqa: E501
         )
-        self._definition_factory = MaterialComplianceFactory()
+        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
+            self._request_type
+        )
+        self._result_factory = (
+            QueryResultFactory.create_response_type(
+                models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
+            )
+        )
 
     def execute(self) -> MaterialComplianceResult:
         return super().execute()
@@ -230,7 +226,12 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryManage
         self._api = (
             self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials  # noqa: E501
         )
-        self._definition_factory = MaterialImpactedSubstancesFactory()
+        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
+            self._request_type
+        )
+        self._result_factory = QueryResultFactory.create_response_type(
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial
+        )
 
     def execute(self) -> MaterialImpactedSubstancesResult:
         return super().execute()
@@ -241,9 +242,7 @@ class PartQueryManager(RecordBasedQueryManager, ABC):
         super().__init__(**kwargs)
         self._batch_size = 10
         self._item_type_name = "parts"
-        self._definition_factory: Union[
-            None, PartComplianceFactory, PartImpactedSubstancesFactory
-        ] = None
+        self._definition_factory = None
 
     def add_part_numbers(self, values: List[str]):
         for value in values:
@@ -263,7 +262,14 @@ class PartComplianceQuery(ComplianceMixin, PartQueryManager):
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts  # noqa: E501
         )
-        self._definition_factory = PartComplianceFactory()
+        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
+            self._request_type
+        )
+        self._result_factory = (
+            QueryResultFactory.create_response_type(
+                models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
+            )
+        )
 
     def execute(self) -> PartComplianceResult:
         return super().execute()
@@ -278,7 +284,12 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryManager):
         self._api = (
             self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts  # noqa: E501
         )
-        self._definition_factory = PartImpactedSubstancesFactory()
+        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
+            self._request_type
+        )
+        self._result_factory = QueryResultFactory.create_response_type(
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart
+        )
 
     def execute(self) -> PartImpactedSubstancesResult:
         return super().execute()
@@ -289,9 +300,7 @@ class SpecificationQueryManager(RecordBasedQueryManager, ABC):
         super().__init__(**kwargs)
         self._batch_size = 10
         self._item_type_name = "specifications"
-        self._definition_factory: Union[
-            None, SpecificationComplianceFactory, SpecificationImpactedSubstancesFactory
-        ] = None
+        self._definition_factory = None
 
     def add_specification_ids(self, values: List[str]):
         for value in values:
@@ -311,7 +320,12 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryManager):
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications  # noqa: E501
         )
-        self._definition_factory = SpecificationComplianceFactory()
+        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
+            self._request_type
+        )
+        self._result_factory = QueryResultFactory.create_response_type(
+            models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
+        )
 
     def execute(self) -> SpecificationComplianceResult:
         return super().execute()
@@ -328,7 +342,12 @@ class SpecificationImpactedSubstanceQuery(
         self._api = (
             self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications  # noqa: E501
         )
-        self._definition_factory = SpecificationImpactedSubstancesFactory()
+        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
+            self._request_type
+        )
+        self._result_factory = QueryResultFactory.create_response_type(
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
+        )
 
     def execute(self) -> SpecificationImpactedSubstancesResult:
         return super().execute()
@@ -339,7 +358,7 @@ class SubstanceQueryManager(RecordBasedQueryManager, ABC):
         super().__init__(**kwargs)
         self._batch_size = 500
         self._item_type_name = "substances"
-        self._definition_factory: Union[None, SubstanceComplianceFactory] = None
+        self._definition_factory = None
 
     def add_cas_numbers(self, values: List[str]):
         for cas_number in values:
@@ -369,7 +388,7 @@ class SubstanceQueryManager(RecordBasedQueryManager, ABC):
 
     def add_record_history_ids_with_amounts(self, values: List[Tuple[int, float]]):
         for record_history_id, amount in values:
-            item_reference = self._definition_factory.create_definition(
+            item_reference = self._definition_factory.create_bom_item_definition(
                 record_history_identity=record_history_id
             )
             item_reference.percentage_amount = amount
@@ -378,7 +397,7 @@ class SubstanceQueryManager(RecordBasedQueryManager, ABC):
 
     def add_record_history_guids_with_amounts(self, values: List[Tuple[str, float]]):
         for record_history_guid, amount in values:
-            item_reference = self._definition_factory.create_definition(
+            item_reference = self._definition_factory.create_bom_item_definition(
                 record_history_guid=record_history_guid
             )
             item_reference.percentage_amount = amount
@@ -387,7 +406,7 @@ class SubstanceQueryManager(RecordBasedQueryManager, ABC):
 
     def add_record_guids_with_amounts(self, values: List[Tuple[str, float]]):
         for record_guid, amount in values:
-            item_reference = self._definition_factory.create_definition(
+            item_reference = self._definition_factory.create_bom_item_definition(
                 record_guid=record_guid
             )
             item_reference.percentage_amount = amount
@@ -433,7 +452,14 @@ class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryManager):
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances  # noqa: E501
         )
-        self._definition_factory = SubstanceComplianceFactory()
+        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
+            self._request_type
+        )
+        self._result_factory = (
+            QueryResultFactory.create_response_type(
+                models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
+            )
+        )
 
     def execute(self) -> SubstanceComplianceResult:
         return super().execute()
@@ -444,9 +470,7 @@ class BoM1711QueryManager(BaseQueryBuilder, ABC):
         super().__init__(**kwargs)
         self._batch_size = 1
         self._item_type_name = "bom_xml1711"
-        self._definition_factory: Union[
-            None, BomComplianceFactory, BomImpactedSubstancesFactory
-        ] = None
+        self._definition_factory = None
 
     def set_bom(self, bom: str):
         self._items = [self._definition_factory.create_definition(bom=bom)]
@@ -470,7 +494,12 @@ class BoMComplianceQuery(BoMQueryOverride, ComplianceMixin, BoM1711QueryManager)
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711  # noqa: E501
         )
-        self._definition_factory = BomComplianceFactory()
+        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
+            self._request_type
+        )
+        self._result_factory = QueryResultFactory.create_response_type(
+            models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response
+        )
 
     def execute(self) -> BoMComplianceResult:
         return super().execute()
@@ -487,7 +516,12 @@ class BoMImpactedSubstancesQuery(
         self._api = (
             self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711  # noqa: E501
         )
-        self._definition_factory = BomImpactedSubstancesFactory()
+        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
+            self._request_type
+        )
+        self._result_factory = QueryResultFactory.create_response_type(
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
+        )
 
     def execute(self) -> BoMImpactedSubstancesResult:
         return super().execute()

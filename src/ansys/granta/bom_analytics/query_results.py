@@ -1,9 +1,12 @@
-from typing import List, Dict
+from typing import List, Dict, Type, Callable, Any
 from collections import defaultdict
 
 from ansys.granta.bomanalytics import models
 
-from .item_results import (
+from .bom_item_results import BomItemResultFactory
+
+# Required for type hinting
+from .bom_item_results import (
     MaterialWithImpactedSubstances,
     MaterialWithCompliance,
     PartWithImpactedSubstances,
@@ -16,30 +19,28 @@ from .item_results import (
 )
 
 
-def instantiate_type(
-    item_type, result, **kwargs
-):  # TODO: I don't like this function sitting here
-    if result.reference_type == "MaterialId":
-        obj = item_type(material_id=result.reference_value, **kwargs)
-    elif result.reference_type == "PartNumber":
-        obj = item_type(part_number=result.reference_value, **kwargs)
-    elif result.reference_type == "SpecificationId":
-        obj = item_type(specification_id=result.reference_value, **kwargs)
-    elif result.reference_type == "CasNumber":
-        obj = item_type(cas_number=result.reference_value, **kwargs)
-    elif result.reference_type == "EcNumber":
-        obj = item_type(ec_number=result.reference_value, **kwargs)
-    elif result.reference_type == "SubstanceName":
-        obj = item_type(chemical_name=result.reference_value, **kwargs)
-    elif result.reference_type == "MiRecordHistoryIdentity":
-        obj = item_type(record_history_identity=int(result.reference_value), **kwargs)
-    elif result.reference_type == "MiRecordGuid":
-        obj = item_type(record_guid=result.reference_value, **kwargs)
-    elif result.reference_type == "MiRecordHistoryGuid":
-        obj = item_type(record_history_guid=result.reference_value, **kwargs)
-    else:
-        raise RuntimeError(f"Unknown reference type {result.reference_type}")
-    return obj
+class QueryResultFactory:
+    registry = {}
+
+    @classmethod
+    def register(cls, response_type: Type[models.Model]) -> Callable:
+        def inner(item_factory: Any) -> Any:
+            cls.registry[response_type] = item_factory
+            return item_factory
+
+        return inner
+
+    @classmethod
+    def create_response_type(
+        cls, response_type: Type[models.Model], **kwargs
+    ):
+        try:
+            item_factory_class = cls.registry[response_type]
+        except KeyError as e:
+            raise RuntimeError(
+                f'Unregistered response type "{response_type}"'
+            ).with_traceback(e.__traceback__)
+        return item_factory_class
 
 
 class ImpactedSubstancesMixin:
@@ -69,7 +70,7 @@ class ImpactedSubstancesMixin:
         return results
 
 
-class ComplianceMixin:  # TODO: Think about all the pivots we will want to do on these results
+class ComplianceMixin:
     _results = []
 
     @property
@@ -85,6 +86,9 @@ class ComplianceMixin:  # TODO: Think about all the pivots we will want to do on
         return results
 
 
+@QueryResultFactory.register(
+    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial
+)
 class MaterialImpactedSubstancesResult(ImpactedSubstancesMixin):
     def __init__(
         self,
@@ -93,8 +97,8 @@ class MaterialImpactedSubstancesResult(ImpactedSubstancesMixin):
         ],
     ):
         self._results = [
-            instantiate_type(
-                item_type=MaterialWithImpactedSubstances,
+            BomItemResultFactory.create_record_result(
+                name="materialWithImpactedSubstances",
                 result=result,
                 legislations=result.legislations,
             )
@@ -108,6 +112,9 @@ class MaterialImpactedSubstancesResult(ImpactedSubstancesMixin):
         return self._results
 
 
+@QueryResultFactory.register(
+    models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
+)
 class MaterialComplianceResult(ComplianceMixin):
     def __init__(
         self,
@@ -117,8 +124,8 @@ class MaterialComplianceResult(ComplianceMixin):
         indicator_definitions: List,
     ):
         self._results = [
-            instantiate_type(
-                item_type=MaterialWithCompliance,
+            BomItemResultFactory.create_record_result(
+                name="materialWithCompliance",
                 result=result,
                 indicators=result.indicators,
                 substances=result.substances,
@@ -134,6 +141,9 @@ class MaterialComplianceResult(ComplianceMixin):
         return self._results
 
 
+@QueryResultFactory.register(
+    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart
+)
 class PartImpactedSubstancesResult(ImpactedSubstancesMixin):
     def __init__(
         self,
@@ -142,8 +152,8 @@ class PartImpactedSubstancesResult(ImpactedSubstancesMixin):
         ],
     ):
         self._results = [
-            instantiate_type(
-                item_type=PartWithImpactedSubstances,
+            BomItemResultFactory.create_record_result(
+                name="partWithImpactedSubstances",
                 result=result,
                 legislations=result.legislations,
             )
@@ -157,6 +167,9 @@ class PartImpactedSubstancesResult(ImpactedSubstancesMixin):
         return self._results
 
 
+@QueryResultFactory.register(
+    models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
+)
 class PartComplianceResult(ComplianceMixin):
     def __init__(
         self,
@@ -166,8 +179,8 @@ class PartComplianceResult(ComplianceMixin):
         indicator_definitions: List,
     ):
         self._results = [
-            instantiate_type(
-                item_type=PartWithCompliance,
+            BomItemResultFactory.create_record_result(
+                name="partWithCompliance",
                 result=result,
                 indicators=result.indicators,
                 substances=result.substances,
@@ -186,6 +199,9 @@ class PartComplianceResult(ComplianceMixin):
         return self._results
 
 
+@QueryResultFactory.register(
+    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
+)
 class SpecificationImpactedSubstancesResult(ImpactedSubstancesMixin):
     def __init__(
         self,
@@ -194,8 +210,8 @@ class SpecificationImpactedSubstancesResult(ImpactedSubstancesMixin):
         ],
     ):
         self._results = [
-            instantiate_type(
-                item_type=SpecificationWithImpactedSubstances,
+            BomItemResultFactory.create_record_result(
+                name="specificationWithImpactedSubstances",
                 result=result,
                 legislations=result.legislations,
             )
@@ -209,6 +225,9 @@ class SpecificationImpactedSubstancesResult(ImpactedSubstancesMixin):
         return self._results
 
 
+@QueryResultFactory.register(
+    models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
+)
 class SpecificationComplianceResult(ComplianceMixin):
     def __init__(
         self,
@@ -218,8 +237,8 @@ class SpecificationComplianceResult(ComplianceMixin):
         indicator_definitions: List,
     ):
         self._results = [
-            instantiate_type(
-                item_type=SpecificationWithCompliance,
+            BomItemResultFactory.create_record_result(
+                name="specificationWithCompliance",
                 result=result,
                 indicators=result.indicators,
                 substances=result.substances,
@@ -235,6 +254,9 @@ class SpecificationComplianceResult(ComplianceMixin):
         return self._results
 
 
+@QueryResultFactory.register(
+    models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
+)
 class SubstanceComplianceResult(ComplianceMixin):
     def __init__(
         self,
@@ -244,8 +266,8 @@ class SubstanceComplianceResult(ComplianceMixin):
         indicator_definitions: List,
     ):
         self._results = [
-            instantiate_type(
-                item_type=SubstanceWithCompliance,
+            BomItemResultFactory.create_record_result(
+                name="substanceWithCompliance",
                 result=result,
                 indicators=result.indicators,
                 indicator_definitions=indicator_definitions,
@@ -260,6 +282,9 @@ class SubstanceComplianceResult(ComplianceMixin):
         return self._results
 
 
+@QueryResultFactory.register(
+    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
+)
 class BoMImpactedSubstancesResult(ImpactedSubstancesMixin):
     def __init__(self, result):
         self._results = [
@@ -267,6 +292,9 @@ class BoMImpactedSubstancesResult(ImpactedSubstancesMixin):
         ]
 
 
+@QueryResultFactory.register(
+    models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response
+)
 class BoMComplianceResult(ComplianceMixin):
     def __init__(
         self,

@@ -54,6 +54,8 @@ def test_compliance(connection, indicators):
         .execute()
     )
 
+    test = MaterialComplianceQuery(connection)
+
     assert len(response.compliance_by_material_and_indicator) == 2
     for mat_results in response.compliance_by_material_and_indicator:
         assert len(mat_results.indicators) == len(indicators)

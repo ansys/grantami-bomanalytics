@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict
+from typing import Callable, Type, Union, List, Dict
 
 from ansys.granta import bomanalytics
+from ansys.granta.bomanalytics import models
 from ansys.granta.bomanalytics.models import Model
 
 
@@ -207,3 +208,134 @@ class BoM1711Definition:
     @property
     def definition(self) -> str:
         return self._bom
+
+
+class AbstractBomFactory:
+    registry = {}
+
+    @classmethod
+    def register(cls, request_types: List[Type[models.Model]]) -> Callable:
+        def inner(item_factory: BomItemDefinitionFactory) -> BomItemDefinitionFactory:
+            for request_type in request_types:
+                cls.registry[request_type] = item_factory
+            return item_factory
+
+        return inner
+
+    @classmethod
+    def create_factory_for_request_type(
+        cls, request_type: Type[models.Model], **kwargs
+    ):
+        try:
+            item_factory_class = cls.registry[request_type]
+        except KeyError as e:
+            raise RuntimeError(
+                f'Unregistered request type "{request_type}"'
+            ).with_traceback(e.__traceback__)
+        item_factory = item_factory_class(**kwargs)
+        return item_factory
+
+
+class BomItemDefinitionFactory(ABC):
+    @abstractmethod
+    def create_bom_item_definition(
+        self, record_history_identity=None, record_history_guid=None, record_guid=None
+    ):
+        pass
+
+
+@AbstractBomFactory.register(
+    [
+        models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest,
+        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest,
+    ]
+)
+class MaterialDefinitionFactory(BomItemDefinitionFactory, ABC):
+    def create_bom_item_definition(
+        self, record_history_identity=None, record_history_guid=None, record_guid=None
+    ) -> MaterialDefinition:
+        return MaterialDefinition(
+            record_history_identity=record_history_identity,
+            record_guid=record_guid,
+            record_history_guid=record_history_guid,
+        )
+
+    def create_definition_by_material_id(self, material_id) -> MaterialDefinition:
+        return MaterialDefinition(material_id=material_id)
+
+
+@AbstractBomFactory.register(
+    [
+        models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest,
+        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest,
+    ]
+)
+class PartDefinitionFactory(BomItemDefinitionFactory, ABC):
+    def create_bom_item_definition(
+        self, record_history_identity=None, record_history_guid=None, record_guid=None
+    ) -> PartDefinition:
+        return PartDefinition(
+            record_history_identity=record_history_identity,
+            record_guid=record_guid,
+            record_history_guid=record_history_guid,
+        )
+
+    def create_definition_by_part_number(self, part_number) -> PartDefinition:
+        return PartDefinition(part_number=part_number)
+
+
+@AbstractBomFactory.register(
+    [
+        models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest,
+        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest,
+    ]
+)
+class SpecificationDefinitionFactory(BomItemDefinitionFactory, ABC):
+    def create_bom_item_definition(
+        self, record_history_identity=None, record_history_guid=None, record_guid=None
+    ) -> SpecificationDefinition:
+        return SpecificationDefinition(
+            record_history_identity=record_history_identity,
+            record_guid=record_guid,
+            record_history_guid=record_history_guid,
+        )
+
+    def create_definition_by_specification_id(
+        self, specification_id
+    ) -> SpecificationDefinition:
+        return SpecificationDefinition(specification_id=specification_id)
+
+
+@AbstractBomFactory.register(
+    [models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest]
+)
+class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
+    def create_bom_item_definition(
+        self, record_history_identity=None, record_history_guid=None, record_guid=None
+    ) -> SubstanceDefinition:
+        return SubstanceDefinition(
+            record_history_identity=record_history_identity,
+            record_guid=record_guid,
+            record_history_guid=record_history_guid,
+            percentage_amount=100,
+        )
+
+    def create_definition_by_chemical_name(self, value) -> SubstanceDefinition:
+        return SubstanceDefinition(chemical_name=value)
+
+    def create_definition_by_cas_number(self, value) -> SubstanceDefinition:
+        return SubstanceDefinition(cas_number=value)
+
+    def create_definition_by_ec_number(self, value) -> SubstanceDefinition:
+        return SubstanceDefinition(ec_number=value)
+
+
+@AbstractBomFactory.register(
+    [
+        models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request,
+        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request,
+    ]
+)
+class BomFactory:
+    def create_definition(self, bom) -> BoM1711Definition:
+        return BoM1711Definition(bom=bom)

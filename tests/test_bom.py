@@ -1,5 +1,4 @@
 from query_managers import BoMComplianceQuery, BoMImpactedSubstancesQuery
-from pytest import mark
 
 bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" id="B0">
     <Components>
@@ -59,19 +58,13 @@ def test_impacted_substances(connection, legislations):
         .execute()
     )
 
-    assert len(response.impacted_substances) == 1
-    for mat_results in response.impacted_substances:
-        assert len(mat_results.legislations) == len(legislations)
-        for legislation in legislations:
-            assert legislation in mat_results.legislations
-            this_legislation = mat_results.legislations[legislation]
-            assert this_legislation.name == legislation
-            assert this_legislation.substances
-
-    assert len(response.all_impacted_substances) == 42
     assert len(response.impacted_substances_by_legislation) == len(legislations)
-    for name, legislation in response.impacted_substances_by_legislation.items():
-        assert len(legislation) == 39 or len(legislation) == 3
+    for legislation in legislations:
+        assert legislation in response.impacted_substances_by_legislation
+        substances = response.impacted_substances_by_legislation[legislation]
+        assert len(substances) in [3, 39]
+
+    assert len(response.impacted_substances) == 42
 
 
 def test_compliance(connection, indicators):
@@ -79,8 +72,8 @@ def test_compliance(connection, indicators):
         BoMComplianceQuery(connection).set_bom(bom).add_indicators(indicators).execute()
     )
 
-    assert len(response.compliance) == 1
-    for bom_results in response.compliance:
+    assert len(response.compliance_by_part_and_indicator) == 1
+    for bom_results in response.compliance_by_part_and_indicator:
         assert len(bom_results.indicators) == len(indicators)
         for indicator in indicators:
             indicator_result = bom_results.indicators[indicator.name]

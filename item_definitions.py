@@ -19,7 +19,7 @@ class RecordDefinition(ABC):
         self._model = None
 
     @classmethod
-    def add_stk_records(cls, stk_records: List[Dict[str, str]]):
+    def add_stk_records(cls, stk_records: List[Dict[str, str]]):  # TODO: Finalize the stk interop format
         item_references = []
         for record in stk_records:
             assert "dbkey" in record
@@ -119,10 +119,10 @@ class SpecificationDefinition(RecordDefinition):
         return definition
 
 
-class BaseSubstanceDefinition(RecordDefinition):
+class BaseSubstanceDefinition(RecordDefinition, ABC):
     def __init__(
         self,
-        substance_name=None,
+        chemical_name=None,
         cas_number=None,
         ec_number=None,
         record_history_identity=None,
@@ -130,19 +130,21 @@ class BaseSubstanceDefinition(RecordDefinition):
         record_history_guid=None,
     ):
         super().__init__(record_history_identity, record_guid, record_history_guid)
-        self.substance_name: str = substance_name
+        self.chemical_name: str = chemical_name
         self.cas_number: str = cas_number
         self.ec_number: str = ec_number
 
     @property
     def definition(self) -> Model:
-        return None
+        return Model()
 
 
 class SubstanceDefinition(BaseSubstanceDefinition):
+    default_percentage_amount = 100  # Default to worst case scenario
+
     def __init__(
         self,
-        substance_name=None,
+        chemical_name=None,
         cas_number=None,
         ec_number=None,
         record_history_identity=None,
@@ -151,18 +153,22 @@ class SubstanceDefinition(BaseSubstanceDefinition):
         percentage_amount=None,
     ):
         super().__init__(record_history_identity, record_guid, record_history_guid)
-        self.substance_name = substance_name
+        self.chemical_name = chemical_name
         self.cas_number = cas_number
         self.ec_number = ec_number
+        self._percentage_amount = None
         if percentage_amount:
-            self._percentage_amount = percentage_amount
+            self.percentage_amount = percentage_amount
         self._model = (
             bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount  # noqa: E501
         )
 
     @property
     def percentage_amount(self) -> float:
-        return self._percentage_amount
+        if self._percentage_amount:
+            return self._percentage_amount
+        else:
+            return self.__class__.default_percentage_amount
 
     @percentage_amount.setter
     def percentage_amount(self, value: float):
@@ -173,9 +179,9 @@ class SubstanceDefinition(BaseSubstanceDefinition):
     def definition(self) -> Model:
         definition = super()._create_definition()
         if not definition:
-            if self.substance_name:
+            if self.chemical_name:
                 definition = self._model(
-                    reference_type="ChemicalName", reference_value=self.substance_name
+                    reference_type="ChemicalName", reference_value=self.chemical_name
                 )
             elif self.cas_number:
                 definition = self._model(
@@ -185,8 +191,7 @@ class SubstanceDefinition(BaseSubstanceDefinition):
                 definition = self._model(
                     reference_type="EcNumber", reference_value=self.ec_number
                 )
-        assert definition
-        definition.percentage_amount = self._percentage_amount
+        definition.percentage_amount = self.percentage_amount
         return definition
 
 

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Callable, Tuple, Type
+from typing import Union, List, Dict, Callable, Tuple
 
 from ansys.granta.bomanalytics import models
 
@@ -43,13 +43,9 @@ class BaseQueryBuilder(ABC):
     def batch_size(self) -> int:
         return self._batch_size
 
-    @batch_size.setter
-    def batch_size(self, value: int):
+    def set_batch_size(self, value: int):
         assert isinstance(value, int) and value > 0, "Batch must be a positive integer"
         self._batch_size = value
-
-    def set_batch_size(self, value: int):
-        self.batch_size = value
         return self
 
     @property
@@ -100,7 +96,7 @@ class ApiMixin(ABC):
         super().__init__(**kwargs)
 
     @abstractmethod
-    def _validate_query(self):
+    def _validate_query(self):  # TODO: Any more validation required?
         assert self._connection
 
     def _run_query(self) -> List:
@@ -128,7 +124,7 @@ class ComplianceMixin(ApiMixin, ABC):
             self._indicators.append(value)
         return self
 
-    def _validate_query(self):
+    def _validate_query(self):  # TODO: Any more validation required?
         assert self._indicators
         super()._validate_query()
 
@@ -150,7 +146,7 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
         self._legislations.extend(legislation_names)
         return self
 
-    def _validate_query(self):
+    def _validate_query(self):   # TODO: Any more validation required?
         assert self._legislations
         super()._validate_query()
 
@@ -166,7 +162,7 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
 class MaterialQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1
+        self._batch_size = 1   # TODO: Set to something sensible
         self._item_type_name = "materials"
         self._definition_factory: Union[
             None, MaterialComplianceFactory, MaterialImpactedSubstancesFactory
@@ -218,7 +214,7 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryManage
 class PartQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1
+        self._batch_size = 1   # TODO: Set to something sensible
         self._item_type_name = "parts"
         self._definition_factory: Union[
             None, PartComplianceFactory, PartImpactedSubstancesFactory
@@ -270,7 +266,7 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryManager):
 class SpecificationQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1
+        self._batch_size = 1   # TODO: Set to something sensible
         self._item_type_name = "specifications"
         self._definition_factory: Union[
             None, SpecificationComplianceFactory, SpecificationImpactedSubstancesFactory
@@ -324,7 +320,7 @@ class SpecificationImpactedSubstanceQuery(
 class SubstanceQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1
+        self._batch_size = 1   # TODO: Set to something sensible
         self._item_type_name = "substances"
         self._definition_factory: Union[None, SubstanceComplianceFactory] = None
 
@@ -344,11 +340,11 @@ class SubstanceQueryManager(RecordBasedQueryManager, ABC):
             self._items.append(item_reference)
         return self
 
-    def add_substance_names(self, values: List[str]):
-        for substance_name in values:
+    def add_chemical_names(self, values: List[str]):
+        for chemical_name in values:
             item_reference = (
-                self._definition_factory.create_definition_by_substance_name(
-                    substance_name
+                self._definition_factory.create_definition_by_chemical_name(
+                    chemical_name
                 )
             )
             self._items.append(item_reference)
@@ -399,11 +395,11 @@ class SubstanceQueryManager(RecordBasedQueryManager, ABC):
             self._items.append(item_reference)
         return self
 
-    def add_substance_names_with_amounts(self, values: List[Tuple[str, float]]):
-        for substance_name, amount in values:
+    def add_chemical_names_with_amounts(self, values: List[Tuple[str, float]]):
+        for chemical_name, amount in values:
             item_reference = (
-                self._definition_factory.create_definition_by_substance_name(
-                    substance_name
+                self._definition_factory.create_definition_by_chemical_name(
+                    chemical_name
                 )
             )
             item_reference.percentage_amount = amount

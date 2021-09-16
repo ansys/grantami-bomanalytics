@@ -10,8 +10,8 @@ def test_compliance(connection, indicators):
         .execute()
     )
 
-    assert len(response.compliance) == 4
-    for sub_results in response.compliance:
+    assert len(response.compliance_by_substance_and_indicator) == 4
+    for sub_results in response.compliance_by_substance_and_indicator:
         assert len(sub_results.indicators) == len(indicators)
         for ind in indicators:
             indicator_result = sub_results.indicators[ind.name]

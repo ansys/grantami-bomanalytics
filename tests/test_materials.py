@@ -17,8 +17,8 @@ def test_impacted_substances(connection, legislations):
         .execute()
     )
 
-    assert len(response.impacted_substances) == 2
-    for mat_results in response.impacted_substances:
+    assert len(response.impacted_substances_by_material_and_legislation) == 2
+    for mat_results in response.impacted_substances_by_material_and_legislation:
         assert len(mat_results.legislations) == len(legislations)
         for legislation in legislations:
             assert legislation in mat_results.legislations
@@ -26,10 +26,11 @@ def test_impacted_substances(connection, legislations):
             assert this_legislation.name == legislation
             assert this_legislation.substances
 
-    assert len(response.all_impacted_substances) == 69
     assert len(response.impacted_substances_by_legislation) == len(legislations)
     for name, legislation in response.impacted_substances_by_legislation.items():
         assert len(legislation) == 64 or len(legislation) == 5
+
+    assert len(response.impacted_substances) == 69
 
 
 def test_compliance(connection, indicators):
@@ -48,8 +49,8 @@ def test_compliance(connection, indicators):
         .execute()
     )
 
-    assert len(response.compliance) == 2
-    for mat_results in response.compliance:
+    assert len(response.compliance_by_material_and_indicator) == 2
+    for mat_results in response.compliance_by_material_and_indicator:
         assert len(mat_results.indicators) == len(indicators)
         for indicator in indicators:
             indicator_result = mat_results.indicators[indicator.name]

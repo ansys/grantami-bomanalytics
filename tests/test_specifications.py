@@ -13,18 +13,19 @@ def test_impacted_substances(connection):
         .execute()
     )
 
-    assert len(response.impacted_substances) == 2
-    for spec_results in response.impacted_substances:
+    assert len(response.impacted_substances_by_specification_and_legislation) == 2
+    for spec_results in response.impacted_substances_by_specification_and_legislation:
         assert len(spec_results.legislations) == 1
         assert "The SIN List 2.1 (Substitute It Now!)" in spec_results.legislations
         leg = spec_results.legislations["The SIN List 2.1 (Substitute It Now!)"]
         assert leg.name == "The SIN List 2.1 (Substitute It Now!)"
         assert leg.substances
 
-    assert len(response.all_impacted_substances) == 4
     assert len(response.impacted_substances_by_legislation) == 1
     for name, legislation in response.impacted_substances_by_legislation.items():
         assert len(legislation) == 4
+
+    assert len(response.impacted_substances) == 4
 
 
 def test_compliance(connection, indicators):
@@ -36,8 +37,8 @@ def test_compliance(connection, indicators):
         .execute()
     )
 
-    assert len(response.compliance) == 2
-    for spec_results in response.compliance:
+    assert len(response.compliance_by_specification_and_indicator) == 2
+    for spec_results in response.compliance_by_specification_and_indicator:
         assert len(spec_results.indicators) == len(indicators)
         for ind in indicators:
             ind_res = spec_results.indicators[ind.name]

@@ -16,7 +16,7 @@ from item_results import (
 )
 
 
-def instantiate_type(result, item_type, **kwargs):
+def instantiate_type(result, item_type, **kwargs):  # TODO: I don't like this function sitting here. # TODO: Switch the signature to item_type, result
     if result.reference_type == "MaterialId":
         obj = item_type(material_id=result.reference_value, **kwargs)
     elif result.reference_type == "PartNumber":
@@ -28,7 +28,7 @@ def instantiate_type(result, item_type, **kwargs):
     elif result.reference_type == "EcNumber":
         obj = item_type(ec_number=result.reference_value, **kwargs)
     elif result.reference_type == "SubstanceName":
-        obj = item_type(substance_name=result.reference_value, **kwargs)
+        obj = item_type(chemical_name=result.reference_value, **kwargs)
     elif result.reference_type == "MiRecordHistoryIdentity":
         obj = item_type(record_history_identity=int(result.reference_value), **kwargs)
     elif result.reference_type == "MiRecordGuid":
@@ -40,7 +40,7 @@ def instantiate_type(result, item_type, **kwargs):
     return obj
 
 
-class ImpactedSubstancesMixin:
+class ImpactedSubstancesMixin:    # TODO: Think about all the pivots we will want to do on these results
     _results = []
 
     @property
@@ -57,7 +57,7 @@ class ImpactedSubstancesMixin:
         return results
 
     @property
-    def all_impacted_substances(self) -> List[SubstanceWithAmounts]:
+    def impacted_substances(self) -> List[SubstanceWithAmounts]:
         results = []
         for item_result in self._results:
             for legislation_result in item_result.legislations.values():
@@ -66,23 +66,8 @@ class ImpactedSubstancesMixin:
                 )  # TODO: Merge these property, i.e. take max amount? range?
         return results
 
-    @property
-    def impacted_substances(
-        self,
-    ) -> Union[
-        BoM1711WithImpactedSubstances,
-        List[
-            Union[
-                PartWithImpactedSubstances,
-                MaterialWithImpactedSubstances,
-                SpecificationWithImpactedSubstances,
-            ]
-        ],
-    ]:
-        return self._results
 
-
-class ComplianceMixin:
+class ComplianceMixin:    # TODO: Think about all the pivots we will want to do on these results
     _results = []
 
     @property
@@ -96,19 +81,6 @@ class ComplianceMixin:
                     pass
                     # TODO: Merge Indicators
         return results
-
-    @property
-    def compliance(
-        self,
-    ) -> List[
-        Union[
-            PartWithCompliance,
-            MaterialWithCompliance,
-            SpecificationWithCompliance,
-            SubstanceWithCompliance,
-        ]
-    ]:
-        return self._results
 
 
 class MaterialImpactedSubstancesResult(ImpactedSubstancesMixin):
@@ -126,6 +98,12 @@ class MaterialImpactedSubstancesResult(ImpactedSubstancesMixin):
             )
             for result in results
         ]
+
+    @property
+    def impacted_substances_by_material_and_legislation(
+        self,
+    ) -> List[MaterialWithImpactedSubstances]:
+        return self._results
 
 
 class MaterialComplianceResult(ComplianceMixin):
@@ -145,6 +123,14 @@ class MaterialComplianceResult(ComplianceMixin):
             for result in results
         ]
 
+    @property
+    def compliance_by_material_and_indicator(
+        self,
+    ) -> List[
+            MaterialWithCompliance,
+    ]:
+        return self._results
+
 
 class PartImpactedSubstancesResult(ImpactedSubstancesMixin):
     def __init__(
@@ -161,6 +147,12 @@ class PartImpactedSubstancesResult(ImpactedSubstancesMixin):
             )
             for result in results
         ]
+
+    @property
+    def impacted_substances_by_part_and_legislation(
+        self,
+    ) -> List[PartWithImpactedSubstances]:
+        return self._results
 
 
 class PartComplianceResult(ComplianceMixin):
@@ -183,6 +175,14 @@ class PartComplianceResult(ComplianceMixin):
             for result in results
         ]
 
+    @property
+    def compliance_by_part_and_indicator(
+        self,
+    ) -> List[
+            PartWithCompliance,
+    ]:
+        return self._results
+
 
 class SpecificationImpactedSubstancesResult(ImpactedSubstancesMixin):
     def __init__(
@@ -199,6 +199,12 @@ class SpecificationImpactedSubstancesResult(ImpactedSubstancesMixin):
             )
             for result in results
         ]
+
+    @property
+    def impacted_substances_by_specification_and_legislation(
+        self,
+    ) -> List[SpecificationWithImpactedSubstances]:
+        return self._results
 
 
 class SpecificationComplianceResult(ComplianceMixin):
@@ -218,6 +224,14 @@ class SpecificationComplianceResult(ComplianceMixin):
             for result in results
         ]
 
+    @property
+    def compliance_by_specification_and_indicator(
+        self,
+    ) -> List[
+            SpecificationWithCompliance,
+    ]:
+        return self._results
+
 
 class SubstanceComplianceResult(ComplianceMixin):
     def __init__(
@@ -234,6 +248,14 @@ class SubstanceComplianceResult(ComplianceMixin):
             )
             for result in results
         ]
+
+    @property
+    def compliance_by_substance_and_indicator(
+        self,
+    ) -> List[
+            SubstanceWithCompliance,
+    ]:
+        return self._results
 
 
 class BoMImpactedSubstancesResult(ImpactedSubstancesMixin):
@@ -254,3 +276,11 @@ class BoMComplianceResult(ComplianceMixin):
             specifications=part.specifications,
         )
         self._results = [obj]
+
+    @property
+    def compliance_by_part_and_indicator(
+        self,
+    ) -> List[
+            PartWithCompliance,
+    ]:
+        return self._results

@@ -1,5 +1,7 @@
 from query_managers import PartComplianceQuery, PartImpactedSubstanceQuery
 
+# TODO: For all tests, test all different pivots on the results with known values
+
 
 def test_impacted_substances(connection):
     legislations = [
@@ -13,16 +15,17 @@ def test_impacted_substances(connection):
         .execute()
     )
 
-    assert len(response.impacted_substances) == 2
-    for part_results in response.impacted_substances:
+    assert len(response.impacted_substances_by_part_and_legislation) == 2
+    for part_results in response.impacted_substances_by_part_and_legislation:
         assert len(part_results.legislations) in [1, 2]
         for name, legislation in part_results.legislations.items():
             assert len(legislation.substances) in [1, 19, 79]
 
-    assert len(response.all_impacted_substances) == 99
     assert len(response.impacted_substances_by_legislation) == 2
     for name, legislation in response.impacted_substances_by_legislation.items():
         assert len(legislation) in [80, 19]
+
+    assert len(response.impacted_substances) == 99
 
 
 def test_compliance(connection, indicators):
@@ -33,8 +36,8 @@ def test_compliance(connection, indicators):
         .execute()
     )
 
-    assert len(response.compliance) == 2
-    for part_results in response.compliance:
+    assert len(response.compliance_by_part_and_indicator) == 2
+    for part_results in response.compliance_by_part_and_indicator:
         assert len(part_results.indicators) == len(indicators)
         for indicator in indicators:
             indicator_result = part_results.indicators[indicator.name]

@@ -46,8 +46,6 @@ class MaterialFactory(RecordFactory, ABC):
 
 
 class MaterialComplianceFactory(MaterialFactory):
-    result_type = MaterialComplianceResult
-
     def create_result(self, values) -> MaterialComplianceResult:
         return MaterialComplianceResult(results=values)
 
@@ -118,14 +116,14 @@ class SubstanceComplianceFactory(RecordFactory):
             percentage_amount=100,
         )
 
-    def create_definition_by_substance_name(self, value) -> SubstanceDefinition:
-        return SubstanceDefinition(substance_name=value, percentage_amount=100)
+    def create_definition_by_chemical_name(self, value) -> SubstanceDefinition:
+        return SubstanceDefinition(chemical_name=value)
 
     def create_definition_by_cas_number(self, value) -> SubstanceDefinition:
-        return SubstanceDefinition(cas_number=value, percentage_amount=100)
+        return SubstanceDefinition(cas_number=value)
 
     def create_definition_by_ec_number(self, value) -> SubstanceDefinition:
-        return SubstanceDefinition(ec_number=value, percentage_amount=100)
+        return SubstanceDefinition(ec_number=value)
 
     def create_result(self, values) -> SubstanceComplianceResult:
         return SubstanceComplianceResult(results=values)

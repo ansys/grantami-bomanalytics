@@ -21,7 +21,7 @@ class ComplianceResultMixin:
 
         if not substances:
             substances = []
-        from query_results import instantiate_type
+        from query_results import instantiate_type  # TODO: Any way around this import?
 
         self.substances: List[SubstanceWithCompliance] = [
             instantiate_type(
@@ -52,7 +52,7 @@ class BomStructureResultMixin:
     def __init__(self, parts=None, materials=None, specifications=None, **kwargs):
         super().__init__(**kwargs)
 
-        from query_results import instantiate_type
+        from query_results import instantiate_type  # TODO: Any way around this import?
 
         if not parts:
             parts = []
@@ -133,7 +133,7 @@ class BoM1711WithCompliance(
     pass
 
 
-class IndicatorResult:
+class IndicatorResult:  # TODO: Somehow include all possible result strings? Reference an enum?
     def __init__(self, name, result):
         self.name: str = name
         self.result: str = result
@@ -142,7 +142,7 @@ class IndicatorResult:
 class SubstanceWithCompliance(BaseSubstanceDefinition):
     def __init__(
         self,
-        substance_name: str = None,
+        chemical_name: str = None,
         cas_number: str = None,
         ec_number: str = None,
         record_history_identity: int = None,
@@ -151,7 +151,7 @@ class SubstanceWithCompliance(BaseSubstanceDefinition):
         indicators: List = None,
     ):
         super().__init__(
-            substance_name,
+            chemical_name,
             cas_number,
             ec_number,
             record_history_identity,
@@ -169,7 +169,7 @@ class SubstanceWithCompliance(BaseSubstanceDefinition):
 class SubstanceWithAmounts(BaseSubstanceDefinition):
     def __init__(
         self,
-        substance_name: str = None,
+        chemical_name: str = None,
         cas_number: str = None,
         ec_number: str = None,
         record_history_identity: int = None,
@@ -179,7 +179,7 @@ class SubstanceWithAmounts(BaseSubstanceDefinition):
         legislation_threshold: float = None,
     ):
         super().__init__(
-            substance_name,
+            chemical_name,
             cas_number,
             ec_number,
             record_history_identity,
@@ -199,7 +199,7 @@ class LegislationResult:
 
         self.substances: List[SubstanceWithAmounts] = [
             SubstanceWithAmounts(
-                substance_name=substance.substance_name,
+                chemical_name=substance.substance_name,
                 cas_number=substance.cas_number,
                 ec_number=substance.ec_number,
                 max_percentage_amount_in_material=substance.max_percentage_amount_in_material,  # noqa: E501

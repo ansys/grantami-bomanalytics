@@ -42,11 +42,11 @@ def test_compliance(connection, indicators):
         for indicator in indicators:
             indicator_result = part_results.indicators[indicator.name]
             assert indicator_result.name == indicator.name
-            assert indicator_result.result
+            assert indicator_result.flag
         assert not part_results.substances  # Empty list, no substances
 
     assert len(response.compliance_by_indicator) == 2
     for indicator in indicators:
         indicator_result = response.compliance_by_indicator[indicator.name]
         assert indicator_result.name == indicator.name
-        assert indicator_result.result
+        assert indicator_result.flag

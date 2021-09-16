@@ -26,10 +26,6 @@ class RecordFactory(ABC):
     ):
         pass
 
-    @abstractmethod
-    def create_result(self, values):
-        pass
-
 
 class MaterialFactory(RecordFactory, ABC):
     def create_definition(
@@ -46,12 +42,18 @@ class MaterialFactory(RecordFactory, ABC):
 
 
 class MaterialComplianceFactory(MaterialFactory):
-    def create_result(self, values) -> MaterialComplianceResult:
-        return MaterialComplianceResult(results=values)
+    def create_compliance_result(
+        self, values, indicator_definitions
+    ) -> MaterialComplianceResult:
+        return MaterialComplianceResult(
+            results=values, indicator_definitions=indicator_definitions
+        )
 
 
 class MaterialImpactedSubstancesFactory(MaterialFactory):
-    def create_result(self, values) -> MaterialImpactedSubstancesResult:
+    def create_impacted_substances_result(
+        self, values
+    ) -> MaterialImpactedSubstancesResult:
         return MaterialImpactedSubstancesResult(results=values)
 
 
@@ -70,12 +72,16 @@ class PartFactory(RecordFactory, ABC):
 
 
 class PartComplianceFactory(PartFactory):
-    def create_result(self, values) -> PartComplianceResult:
-        return PartComplianceResult(results=values)
+    def create_compliance_result(
+        self, values, indicator_definitions
+    ) -> PartComplianceResult:
+        return PartComplianceResult(
+            results=values, indicator_definitions=indicator_definitions
+        )
 
 
 class PartImpactedSubstancesFactory(PartFactory):
-    def create_result(self, values) -> PartImpactedSubstancesResult:
+    def create_impacted_substances_result(self, values) -> PartImpactedSubstancesResult:
         return PartImpactedSubstancesResult(results=values)
 
 
@@ -96,12 +102,18 @@ class SpecificationFactory(RecordFactory, ABC):
 
 
 class SpecificationComplianceFactory(SpecificationFactory):
-    def create_result(self, values) -> SpecificationComplianceResult:
-        return SpecificationComplianceResult(results=values)
+    def create_compliance_result(
+        self, values, indicator_definitions
+    ) -> SpecificationComplianceResult:
+        return SpecificationComplianceResult(
+            results=values, indicator_definitions=indicator_definitions
+        )
 
 
 class SpecificationImpactedSubstancesFactory(SpecificationFactory):
-    def create_result(self, values) -> SpecificationImpactedSubstancesResult:
+    def create_impacted_substances_result(
+        self, values
+    ) -> SpecificationImpactedSubstancesResult:
         return SpecificationImpactedSubstancesResult(results=values)
 
 
@@ -125,24 +137,28 @@ class SubstanceComplianceFactory(RecordFactory):
     def create_definition_by_ec_number(self, value) -> SubstanceDefinition:
         return SubstanceDefinition(ec_number=value)
 
-    def create_result(self, values) -> SubstanceComplianceResult:
-        return SubstanceComplianceResult(results=values)
+    def create_compliance_result(
+        self, values, indicator_definitions
+    ) -> SubstanceComplianceResult:
+        return SubstanceComplianceResult(
+            results=values, indicator_definitions=indicator_definitions
+        )
 
 
 class BomFactory(ABC):
     def create_definition(self, bom) -> BoM1711Definition:
         return BoM1711Definition(bom=bom)
 
-    @abstractmethod
-    def create_result(self, values):
-        pass
-
 
 class BomComplianceFactory(BomFactory):
-    def create_result(self, value) -> BoMComplianceResult:
-        return BoMComplianceResult(result=value)
+    def create_compliance_result(
+        self, value, indicator_definitions
+    ) -> BoMComplianceResult:
+        return BoMComplianceResult(
+            result=value, indicator_definitions=indicator_definitions
+        )
 
 
 class BomImpactedSubstancesFactory(BomFactory):
-    def create_result(self, value) -> BoMImpactedSubstancesResult:
+    def create_impacted_substances_result(self, value) -> BoMImpactedSubstancesResult:
         return BoMImpactedSubstancesResult(result=value)

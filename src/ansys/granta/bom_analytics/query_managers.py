@@ -16,7 +16,6 @@ from .item_factories import (
     BomImpactedSubstancesFactory,
     BomComplianceFactory,
 )
-from .item_definitions import Indicator
 from .connection import Connection
 from .query_results import (
     MaterialImpactedSubstancesResult,
@@ -29,6 +28,7 @@ from .query_results import (
     BoMImpactedSubstancesResult,
     BoMComplianceResult,
 )
+from .indicators import IndicatorDefinition
 
 
 class BaseQueryBuilder(ABC):
@@ -42,7 +42,10 @@ class BaseQueryBuilder(ABC):
 
     def _validate_items(self):
         if not self._items:
-            warnings.warn(f"No {self._item_type_name} have been added to the query. Server response will be empty.",  RuntimeWarning)
+            warnings.warn(
+                f"No {self._item_type_name} have been added to the query. Server response will be empty.",
+                RuntimeWarning,
+            )
 
     @property
     def batch_size(self) -> int:
@@ -101,12 +104,6 @@ class ApiMixin(ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def execute(self):
-        self._validate_parameters()
-        self._validate_items()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
-
     def _run_query(self) -> List:
         result = []
         for batch in self._content:
@@ -131,14 +128,25 @@ class ComplianceMixin(ApiMixin, ABC):
         super().__init__(**kwargs)
         self._indicators = []
 
-    def add_indicators(self, values: List[Indicator]):
+    def add_indicators(self, values: List[IndicatorDefinition]):
         for value in values:
             self._indicators.append(value)
         return self
 
+    def execute(self):
+        self._validate_parameters()
+        self._validate_items()
+        result = self._run_query()
+        return self._definition_factory.create_compliance_result(
+            result, self._indicators
+        )
+
     def _validate_parameters(self):
         if not self._indicators:
-            warnings.warn("No indicators have been added to the query. Server response will be empty.", RuntimeWarning)
+            warnings.warn(
+                "No indicators have been added to the query. Server response will be empty.",
+                RuntimeWarning,
+            )
 
     @property
     def _arguments(self):
@@ -158,9 +166,18 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
         self._legislations.extend(legislation_names)
         return self
 
+    def execute(self):
+        self._validate_parameters()
+        self._validate_items()
+        result = self._run_query()
+        return self._definition_factory.create_impacted_substances_result(result)
+
     def _validate_parameters(self):
         if not self._legislations:
-            warnings.warn("No legislations have been added to the query. Server response will be empty.", RuntimeWarning)
+            warnings.warn(
+                "No legislations have been added to the query. Server response will be empty.",
+                RuntimeWarning,
+            )
 
     @property
     def _arguments(self):

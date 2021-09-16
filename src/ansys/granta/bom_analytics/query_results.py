@@ -17,8 +17,8 @@ from .item_results import (
 
 
 def instantiate_type(
-    result, item_type, **kwargs
-):  # TODO: I don't like this function sitting here. # TODO: Switch the signature to item_type, result
+    item_type, result, **kwargs
+):  # TODO: I don't like this function sitting here
     if result.reference_type == "MaterialId":
         obj = item_type(material_id=result.reference_value, **kwargs)
     elif result.reference_type == "PartNumber":
@@ -42,7 +42,7 @@ def instantiate_type(
     return obj
 
 
-class ImpactedSubstancesMixin:  # TODO: Think about all the pivots we will want to do on these results
+class ImpactedSubstancesMixin:
     _results = []
 
     @property
@@ -80,8 +80,8 @@ class ComplianceMixin:  # TODO: Think about all the pivots we will want to do on
                 if indicator_name not in results:
                     results[indicator_name] = indicator_result
                 else:
-                    pass
-                    # TODO: Merge Indicators
+                    if indicator_result.flag > results[indicator_name].flag:
+                        results[indicator_name] = indicator_result
         return results
 
 
@@ -94,8 +94,8 @@ class MaterialImpactedSubstancesResult(ImpactedSubstancesMixin):
     ):
         self._results = [
             instantiate_type(
-                result=result,
                 item_type=MaterialWithImpactedSubstances,
+                result=result,
                 legislations=result.legislations,
             )
             for result in results
@@ -114,13 +114,15 @@ class MaterialComplianceResult(ComplianceMixin):
         results: List[
             models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
         ],
+        indicator_definitions: List,
     ):
         self._results = [
             instantiate_type(
-                result=result,
                 item_type=MaterialWithCompliance,
+                result=result,
                 indicators=result.indicators,
                 substances=result.substances,
+                indicator_definitions=indicator_definitions,
             )
             for result in results
         ]
@@ -141,8 +143,8 @@ class PartImpactedSubstancesResult(ImpactedSubstancesMixin):
     ):
         self._results = [
             instantiate_type(
-                result=result,
                 item_type=PartWithImpactedSubstances,
+                result=result,
                 legislations=result.legislations,
             )
             for result in results
@@ -161,16 +163,18 @@ class PartComplianceResult(ComplianceMixin):
         results: List[
             models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
         ],
+        indicator_definitions: List,
     ):
         self._results = [
             instantiate_type(
-                result=result,
                 item_type=PartWithCompliance,
+                result=result,
                 indicators=result.indicators,
                 substances=result.substances,
                 parts=result.parts,
                 materials=result.materials,
                 specifications=result.specifications,
+                indicator_definitions=indicator_definitions,
             )
             for result in results
         ]
@@ -191,8 +195,8 @@ class SpecificationImpactedSubstancesResult(ImpactedSubstancesMixin):
     ):
         self._results = [
             instantiate_type(
-                result=result,
                 item_type=SpecificationWithImpactedSubstances,
+                result=result,
                 legislations=result.legislations,
             )
             for result in results
@@ -211,13 +215,15 @@ class SpecificationComplianceResult(ComplianceMixin):
         results: List[
             models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
         ],
+        indicator_definitions: List,
     ):
         self._results = [
             instantiate_type(
-                result=result,
                 item_type=SpecificationWithCompliance,
+                result=result,
                 indicators=result.indicators,
                 substances=result.substances,
+                indicator_definitions=indicator_definitions,
             )
             for result in results
         ]
@@ -235,12 +241,14 @@ class SubstanceComplianceResult(ComplianceMixin):
         results: List[
             models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
         ],
+        indicator_definitions: List,
     ):
         self._results = [
             instantiate_type(
-                result=result,
                 item_type=SubstanceWithCompliance,
+                result=result,
                 indicators=result.indicators,
+                indicator_definitions=indicator_definitions,
             )
             for result in results
         ]
@@ -248,7 +256,7 @@ class SubstanceComplianceResult(ComplianceMixin):
     @property
     def compliance_by_substance_and_indicator(
         self,
-    ) -> List[SubstanceWithCompliance,]:
+    ) -> List[SubstanceWithCompliance]:
         return self._results
 
 
@@ -260,7 +268,11 @@ class BoMImpactedSubstancesResult(ImpactedSubstancesMixin):
 
 
 class BoMComplianceResult(ComplianceMixin):
-    def __init__(self, result):
+    def __init__(
+        self,
+        result,
+        indicator_definitions: List,
+    ):
         part = result.parts[0]
         obj = PartWithCompliance(
             indicators=part.indicators,
@@ -268,6 +280,7 @@ class BoMComplianceResult(ComplianceMixin):
             parts=part.parts,
             materials=part.materials,
             specifications=part.specifications,
+            indicator_definitions=indicator_definitions,
         )
         self._results = [obj]
 

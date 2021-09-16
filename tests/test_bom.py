@@ -78,7 +78,7 @@ def test_compliance(connection, indicators):
         for indicator in indicators:
             indicator_result = bom_results.indicators[indicator.name]
             assert indicator_result.name == indicator.name
-            assert indicator_result.result
+            assert indicator_result.flag
         assert bom_results.parts
         assert not bom_results.substances  # Empty list
 
@@ -86,4 +86,4 @@ def test_compliance(connection, indicators):
     for indicator in indicators:
         indicator_result = response.compliance_by_indicator[indicator.name]
         assert indicator_result.name == indicator.name
-        assert indicator_result.result
+        assert indicator_result.flag

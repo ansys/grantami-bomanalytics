@@ -16,10 +16,10 @@ def test_compliance(connection, indicators):
         for ind in indicators:
             indicator_result = sub_results.indicators[ind.name]
             assert indicator_result.name == ind.name
-            assert indicator_result.result
+            assert indicator_result.flag
 
     assert len(response.compliance_by_indicator) == 2
     for indicator in indicators:
         indicator_result = response.compliance_by_indicator[indicator.name]
         assert indicator_result.name == indicator.name
-        assert indicator_result.result
+        assert indicator_result.flag

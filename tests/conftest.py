@@ -1,6 +1,10 @@
 import pytest
 
-from ansys.granta.bom_analytics import Connection, WatchlistIndicator, RoHSIndicator
+from ansys.granta.bom_analytics import (
+    Connection,
+    WatchListIndicator,
+    RoHSIndicator,
+)
 
 
 @pytest.fixture(scope="session")
@@ -16,7 +20,7 @@ def connection():
 
 @pytest.fixture(scope="session")
 def indicators():
-    andys_noxious_substance_indicator = WatchlistIndicator(
+    andys_noxious_substance_indicator = WatchListIndicator(
         name="Andy's disliked substances",
         legislation_names=["GADSL", "California Proposition 65 List"],
         default_threshold_percentage=2,

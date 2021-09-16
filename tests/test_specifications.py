@@ -43,10 +43,10 @@ def test_compliance(connection, indicators):
         for ind in indicators:
             ind_res = spec_results.indicators[ind.name]
             assert ind_res.name == ind.name
-            assert ind_res.result
+            assert ind_res.flag
 
     assert len(response.compliance_by_indicator) == 2
     for indicator in indicators:
         indicator_result = response.compliance_by_indicator[indicator.name]
         assert indicator_result.name == indicator.name
-        assert indicator_result.result
+        assert indicator_result.flag

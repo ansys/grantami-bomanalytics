@@ -1,11 +1,17 @@
-from typing import List, Dict
-
+from typing import List, Dict, Union
 from .item_definitions import (
     MaterialDefinition,
     PartDefinition,
     SpecificationDefinition,
     BoM1711Definition,
     BaseSubstanceDefinition,
+)
+from .indicators import (
+    WatchListIndicatorDefinition,
+    RoHSIndicatorDefinition,
+    WatchListIndicatorResult,
+    RoHSIndicatorResult,
+    create_indicator_result,
 )
 
 
@@ -14,8 +20,11 @@ class ComplianceResultMixin:
         super().__init__(**kwargs)
         if not indicators:
             indicators = []
-        self.indicators: Dict[str, IndicatorResult] = {
-            indicator.name: IndicatorResult(indicator.name, indicator.flag)
+        indicator_definitions = kwargs.get("indicator_definitions", [])
+        self.indicators: Dict[
+            str, Union[WatchListIndicatorResult, RoHSIndicatorResult]
+        ] = {
+            indicator.name: create_indicator_result(indicator, indicator_definitions)
             for indicator in indicators
         }
 
@@ -25,9 +34,10 @@ class ComplianceResultMixin:
 
         self.substances: List[SubstanceWithCompliance] = [
             instantiate_type(
-                result=substance,
                 item_type=SubstanceWithCompliance,
+                result=substance,
                 indicators=substance.indicators,
+                indicator_definitions=indicator_definitions,
             )
             for substance in substances
         ]
@@ -63,33 +73,36 @@ class BomStructureResultMixin:
 
         self.parts: List[PartWithCompliance] = [
             instantiate_type(
-                result=part,
                 item_type=PartWithCompliance,
+                result=part,
                 indicators=part.indicators,
                 substances=part.substances,
                 parts=part.parts,
                 materials=part.materials,
                 specifications=part.specifications,
+                indicator_definitions=kwargs.get("indicator_definitions", []),
             )
             for part in parts
         ]
 
         self.materials: List[MaterialWithCompliance] = [
             instantiate_type(
-                result=material,
                 item_type=MaterialWithCompliance,
+                result=material,
                 indicators=material.indicators,
                 substances=material.substances,
+                indicator_definitions=kwargs.get("indicator_definitions", []),
             )
             for material in materials
         ]
 
         self.specifications: List[SpecificationWithCompliance] = [
             instantiate_type(
-                result=specification,
                 item_type=SpecificationWithCompliance,
+                result=specification,
                 indicators=specification.indicators,
                 substances=specification.substances,
+                indicator_definitions=kwargs.get("indicator_definitions", []),
             )
             for specification in specifications
         ]
@@ -133,12 +146,6 @@ class BoM1711WithCompliance(
     pass
 
 
-class IndicatorResult:  # TODO: Somehow include all possible result strings? Reference an enum?
-    def __init__(self, name, result):
-        self.name: str = name
-        self.result: str = result
-
-
 class SubstanceWithCompliance(BaseSubstanceDefinition):
     def __init__(
         self,
@@ -149,6 +156,9 @@ class SubstanceWithCompliance(BaseSubstanceDefinition):
         record_guid: str = None,
         record_history_guid: str = None,
         indicators: List = None,
+        indicator_definitions: List[
+            Union[WatchListIndicatorDefinition, RoHSIndicatorDefinition]
+        ] = None,
     ):
         super().__init__(
             chemical_name,
@@ -160,8 +170,12 @@ class SubstanceWithCompliance(BaseSubstanceDefinition):
         )
         if not indicators:
             indicators = []
-        self.indicators = {
-            indicator.name: IndicatorResult(indicator.name, indicator.flag)
+        if not indicator_definitions:
+            indicator_definitions = []
+        self.indicators: Dict[
+            str, Union[WatchListIndicatorResult, RoHSIndicatorResult]
+        ] = {
+            indicator.name: create_indicator_result(indicator, indicator_definitions)
             for indicator in indicators
         }
 

@@ -84,6 +84,7 @@ class MaterialDefinition(RecordDefinition):
         record_history_identity: Union[int, None] = None,
         record_guid: Union[str, None] = None,
         record_history_guid: Union[str, None] = None,
+        **kwargs,
     ):
         super().__init__(record_history_identity, record_guid, record_history_guid)
         self.material_id: str = material_id
@@ -106,6 +107,7 @@ class SpecificationDefinition(RecordDefinition):
         record_history_identity: Union[int, None] = None,
         record_guid: Union[str, None] = None,
         record_history_guid: Union[str, None] = None,
+        **kwargs,
     ):
         super().__init__(record_history_identity, record_guid, record_history_guid)
         self.specification_id: str = specification_id
@@ -205,34 +207,3 @@ class BoM1711Definition:
     @property
     def definition(self) -> str:
         return self._bom
-
-
-class Indicator(ABC):
-    def __init__(self, name, legislation_names, default_threshold_percentage):
-        self.name = name
-        self.legislation_names = legislation_names
-        self.default_threshold_percentage = default_threshold_percentage
-        self._indicator_type = None
-
-    @property
-    def definition(self):
-        return (
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
-                name=self.name,
-                legislation_names=self.legislation_names,
-                default_threshold_percentage=self.default_threshold_percentage,
-                type=self._indicator_type,
-            )
-        )
-
-
-class RoHSIndicator(Indicator):
-    def __init__(self, name, legislation_names, default_threshold_percentage):
-        super().__init__(name, legislation_names, default_threshold_percentage)
-        self._indicator_type = "Rohs"
-
-
-class WatchlistIndicator(Indicator):
-    def __init__(self, name, legislation_names, default_threshold_percentage):
-        super().__init__(name, legislation_names, default_threshold_percentage)
-        self._indicator_type = "WatchList"

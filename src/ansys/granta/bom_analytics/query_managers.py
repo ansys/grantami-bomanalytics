@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Union, List, Dict, Callable, Tuple
+import warnings
 
 from ansys.granta.bomanalytics import models
 
@@ -39,13 +40,18 @@ class BaseQueryBuilder(ABC):
         self._items = []
         self._batch_size = None
 
+    def _validate_items(self):
+        if not self._items:
+            warnings.warn(f"No {self._item_type_name} have been added to the query. Server response will be empty.",  RuntimeWarning)
+
     @property
     def batch_size(self) -> int:
         return self._batch_size
 
     def set_batch_size(self, value: int):
-        assert isinstance(value, int) and value > 0, "Batch must be a positive integer"
-        self._batch_size = value
+        if int(value) < 0:
+            raise ValueError("Batch must be a positive integer")
+        self._batch_size = int(value)
         return self
 
     @property
@@ -95,9 +101,11 @@ class ApiMixin(ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    @abstractmethod
-    def _validate_query(self):  # TODO: Any more validation required?
-        assert self._connection
+    def execute(self):
+        self._validate_parameters()
+        self._validate_items()
+        result = self._run_query()
+        return self._definition_factory.create_result(result)
 
     def _run_query(self) -> List:
         result = []
@@ -107,6 +115,10 @@ class ApiMixin(ABC):
             response = self._api(body=request)
             result.extend([r for r in getattr(response, self._item_type_name)])
         return result
+
+    @abstractmethod
+    def _validate_parameters(self):
+        pass
 
     @property
     @abstractmethod
@@ -124,9 +136,9 @@ class ComplianceMixin(ApiMixin, ABC):
             self._indicators.append(value)
         return self
 
-    def _validate_query(self):  # TODO: Any more validation required?
-        assert self._indicators
-        super()._validate_query()
+    def _validate_parameters(self):
+        if not self._indicators:
+            warnings.warn("No indicators have been added to the query. Server response will be empty.", RuntimeWarning)
 
     @property
     def _arguments(self):
@@ -146,9 +158,9 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
         self._legislations.extend(legislation_names)
         return self
 
-    def _validate_query(self):  # TODO: Any more validation required?
-        assert self._legislations
-        super()._validate_query()
+    def _validate_parameters(self):
+        if not self._legislations:
+            warnings.warn("No legislations have been added to the query. Server response will be empty.", RuntimeWarning)
 
     @property
     def _arguments(self):
@@ -162,7 +174,7 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
 class MaterialQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1  # TODO: Set to something sensible
+        self._batch_size = 100
         self._item_type_name = "materials"
         self._definition_factory: Union[
             None, MaterialComplianceFactory, MaterialImpactedSubstancesFactory
@@ -189,9 +201,7 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryManager):
         self._definition_factory = MaterialComplianceFactory()
 
     def execute(self) -> MaterialComplianceResult:
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        return super().execute()
 
 
 class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryManager):
@@ -206,15 +216,13 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryManage
         self._definition_factory = MaterialImpactedSubstancesFactory()
 
     def execute(self) -> MaterialImpactedSubstancesResult:
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        return super().execute()
 
 
 class PartQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1  # TODO: Set to something sensible
+        self._batch_size = 10
         self._item_type_name = "parts"
         self._definition_factory: Union[
             None, PartComplianceFactory, PartImpactedSubstancesFactory
@@ -241,9 +249,7 @@ class PartComplianceQuery(ComplianceMixin, PartQueryManager):
         self._definition_factory = PartComplianceFactory()
 
     def execute(self) -> PartComplianceResult:
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        return super().execute()
 
 
 class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryManager):
@@ -258,15 +264,13 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryManager):
         self._definition_factory = PartImpactedSubstancesFactory()
 
     def execute(self) -> PartImpactedSubstancesResult:
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        return super().execute()
 
 
 class SpecificationQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1  # TODO: Set to something sensible
+        self._batch_size = 10
         self._item_type_name = "specifications"
         self._definition_factory: Union[
             None, SpecificationComplianceFactory, SpecificationImpactedSubstancesFactory
@@ -293,9 +297,7 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryManager):
         self._definition_factory = SpecificationComplianceFactory()
 
     def execute(self) -> SpecificationComplianceResult:
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        return super().execute()
 
 
 class SpecificationImpactedSubstanceQuery(
@@ -312,15 +314,13 @@ class SpecificationImpactedSubstanceQuery(
         self._definition_factory = SpecificationImpactedSubstancesFactory()
 
     def execute(self) -> SpecificationImpactedSubstancesResult:
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        return super().execute()
 
 
 class SubstanceQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1  # TODO: Set to something sensible
+        self._batch_size = 500
         self._item_type_name = "substances"
         self._definition_factory: Union[None, SubstanceComplianceFactory] = None
 
@@ -419,9 +419,7 @@ class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryManager):
         self._definition_factory = SubstanceComplianceFactory()
 
     def execute(self) -> SubstanceComplianceResult:
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        return super().execute()
 
 
 class BoM1711QueryManager(BaseQueryBuilder, ABC):
@@ -458,9 +456,7 @@ class BoMComplianceQuery(BoMQueryOverride, ComplianceMixin, BoM1711QueryManager)
         self._definition_factory = BomComplianceFactory()
 
     def execute(self) -> BoMComplianceResult:
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        return super().execute()
 
 
 class BoMImpactedSubstancesQuery(
@@ -477,6 +473,4 @@ class BoMImpactedSubstancesQuery(
         self._definition_factory = BomImpactedSubstancesFactory()
 
     def execute(self) -> BoMImpactedSubstancesResult:
-        self._validate_query()
-        result = self._run_query()
-        return self._definition_factory.create_result(result)
+        return super().execute()

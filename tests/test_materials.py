@@ -1,5 +1,7 @@
 from ansys.granta.bom_analytics import MaterialImpactedSubstanceQuery, MaterialComplianceQuery
 
+import pytest
+
 
 def test_impacted_substances(connection, legislations):
     stk_object = [

@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from item_definitions import (
+from .item_definitions import (
     MaterialDefinition,
     PartDefinition,
     SpecificationDefinition,
@@ -21,7 +21,7 @@ class ComplianceResultMixin:
 
         if not substances:
             substances = []
-        from query_results import instantiate_type  # TODO: Any way around this import?
+        from .query_results import instantiate_type  # TODO: Any way around this import?
 
         self.substances: List[SubstanceWithCompliance] = [
             instantiate_type(
@@ -52,7 +52,7 @@ class BomStructureResultMixin:
     def __init__(self, parts=None, materials=None, specifications=None, **kwargs):
         super().__init__(**kwargs)
 
-        from query_results import instantiate_type  # TODO: Any way around this import?
+        from .query_results import instantiate_type  # TODO: Any way around this import?
 
         if not parts:
             parts = []

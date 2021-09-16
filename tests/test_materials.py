@@ -1,4 +1,4 @@
-from query_managers import MaterialImpactedSubstanceQuery, MaterialComplianceQuery
+from ansys.granta.bom_analytics import MaterialImpactedSubstanceQuery, MaterialComplianceQuery
 
 
 def test_impacted_substances(connection, legislations):

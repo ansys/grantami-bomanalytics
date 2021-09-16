@@ -1,4 +1,4 @@
-from query_managers import (
+from ansys.granta.bom_analytics import (
     SpecificationComplianceQuery,
     SpecificationImpactedSubstanceQuery,
 )

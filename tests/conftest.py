@@ -1,7 +1,6 @@
 import pytest
 
-from connection import Connection
-from item_definitions import WatchlistIndicator, RoHSIndicator
+from ansys.granta.bom_analytics import Connection, WatchlistIndicator, RoHSIndicator
 
 
 @pytest.fixture(scope="session")

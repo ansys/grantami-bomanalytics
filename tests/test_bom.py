@@ -1,4 +1,4 @@
-from query_managers import BoMComplianceQuery, BoMImpactedSubstancesQuery
+from ansys.granta.bom_analytics import BoMComplianceQuery, BoMImpactedSubstancesQuery
 
 bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" id="B0">
     <Components>

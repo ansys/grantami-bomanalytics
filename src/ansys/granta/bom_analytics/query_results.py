@@ -1,9 +1,9 @@
-from typing import List, Dict, Union
+from typing import List, Dict
 from collections import defaultdict
 
 from ansys.granta.bomanalytics import models
 
-from item_results import (
+from .item_results import (
     MaterialWithImpactedSubstances,
     MaterialWithCompliance,
     PartWithImpactedSubstances,
@@ -16,7 +16,9 @@ from item_results import (
 )
 
 
-def instantiate_type(result, item_type, **kwargs):  # TODO: I don't like this function sitting here. # TODO: Switch the signature to item_type, result
+def instantiate_type(
+    result, item_type, **kwargs
+):  # TODO: I don't like this function sitting here. # TODO: Switch the signature to item_type, result
     if result.reference_type == "MaterialId":
         obj = item_type(material_id=result.reference_value, **kwargs)
     elif result.reference_type == "PartNumber":
@@ -36,11 +38,11 @@ def instantiate_type(result, item_type, **kwargs):  # TODO: I don't like this fu
     elif result.reference_type == "MiRecordHistoryGuid":
         obj = item_type(record_history_guid=result.reference_value, **kwargs)
     else:
-        raise Exception  # TODO: Raise a real exception
+        raise RuntimeError(f"Unknown reference type {result.reference_type}")
     return obj
 
 
-class ImpactedSubstancesMixin:    # TODO: Think about all the pivots we will want to do on these results
+class ImpactedSubstancesMixin:  # TODO: Think about all the pivots we will want to do on these results
     _results = []
 
     @property
@@ -67,7 +69,7 @@ class ImpactedSubstancesMixin:    # TODO: Think about all the pivots we will wan
         return results
 
 
-class ComplianceMixin:    # TODO: Think about all the pivots we will want to do on these results
+class ComplianceMixin:  # TODO: Think about all the pivots we will want to do on these results
     _results = []
 
     @property
@@ -126,9 +128,7 @@ class MaterialComplianceResult(ComplianceMixin):
     @property
     def compliance_by_material_and_indicator(
         self,
-    ) -> List[
-            MaterialWithCompliance,
-    ]:
+    ) -> List[MaterialWithCompliance,]:
         return self._results
 
 
@@ -178,9 +178,7 @@ class PartComplianceResult(ComplianceMixin):
     @property
     def compliance_by_part_and_indicator(
         self,
-    ) -> List[
-            PartWithCompliance,
-    ]:
+    ) -> List[PartWithCompliance,]:
         return self._results
 
 
@@ -227,9 +225,7 @@ class SpecificationComplianceResult(ComplianceMixin):
     @property
     def compliance_by_specification_and_indicator(
         self,
-    ) -> List[
-            SpecificationWithCompliance,
-    ]:
+    ) -> List[SpecificationWithCompliance,]:
         return self._results
 
 
@@ -252,9 +248,7 @@ class SubstanceComplianceResult(ComplianceMixin):
     @property
     def compliance_by_substance_and_indicator(
         self,
-    ) -> List[
-            SubstanceWithCompliance,
-    ]:
+    ) -> List[SubstanceWithCompliance,]:
         return self._results
 
 
@@ -280,7 +274,5 @@ class BoMComplianceResult(ComplianceMixin):
     @property
     def compliance_by_part_and_indicator(
         self,
-    ) -> List[
-            PartWithCompliance,
-    ]:
+    ) -> List[PartWithCompliance,]:
         return self._results

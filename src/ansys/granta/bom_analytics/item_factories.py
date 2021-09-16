@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from item_definitions import (
+from .item_definitions import (
     MaterialDefinition,
     PartDefinition,
     SpecificationDefinition,
     SubstanceDefinition,
     BoM1711Definition,
 )
-from query_results import (
+from .query_results import (
     MaterialComplianceResult,
     MaterialImpactedSubstancesResult,
     PartComplianceResult,

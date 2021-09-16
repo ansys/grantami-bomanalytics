@@ -3,7 +3,7 @@ from typing import Union, List, Dict, Callable, Tuple
 
 from ansys.granta.bomanalytics import models
 
-from item_factories import (
+from .item_factories import (
     RecordFactory,
     MaterialImpactedSubstancesFactory,
     MaterialComplianceFactory,
@@ -15,9 +15,9 @@ from item_factories import (
     BomImpactedSubstancesFactory,
     BomComplianceFactory,
 )
-from item_definitions import Indicator
-from connection import Connection
-from query_results import (
+from .item_definitions import Indicator
+from .connection import Connection
+from .query_results import (
     MaterialImpactedSubstancesResult,
     MaterialComplianceResult,
     PartImpactedSubstancesResult,
@@ -146,7 +146,7 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
         self._legislations.extend(legislation_names)
         return self
 
-    def _validate_query(self):   # TODO: Any more validation required?
+    def _validate_query(self):  # TODO: Any more validation required?
         assert self._legislations
         super()._validate_query()
 
@@ -162,7 +162,7 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
 class MaterialQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1   # TODO: Set to something sensible
+        self._batch_size = 1  # TODO: Set to something sensible
         self._item_type_name = "materials"
         self._definition_factory: Union[
             None, MaterialComplianceFactory, MaterialImpactedSubstancesFactory
@@ -214,7 +214,7 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryManage
 class PartQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1   # TODO: Set to something sensible
+        self._batch_size = 1  # TODO: Set to something sensible
         self._item_type_name = "parts"
         self._definition_factory: Union[
             None, PartComplianceFactory, PartImpactedSubstancesFactory
@@ -266,7 +266,7 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryManager):
 class SpecificationQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1   # TODO: Set to something sensible
+        self._batch_size = 1  # TODO: Set to something sensible
         self._item_type_name = "specifications"
         self._definition_factory: Union[
             None, SpecificationComplianceFactory, SpecificationImpactedSubstancesFactory
@@ -320,7 +320,7 @@ class SpecificationImpactedSubstanceQuery(
 class SubstanceQueryManager(RecordBasedQueryManager, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._batch_size = 1   # TODO: Set to something sensible
+        self._batch_size = 1  # TODO: Set to something sensible
         self._item_type_name = "substances"
         self._definition_factory: Union[None, SubstanceComplianceFactory] = None
 

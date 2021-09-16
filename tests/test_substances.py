@@ -1,4 +1,4 @@
-from query_managers import SubstanceComplianceQuery
+from ansys.granta.bom_analytics import SubstanceComplianceQuery
 
 
 def test_compliance(connection, indicators):

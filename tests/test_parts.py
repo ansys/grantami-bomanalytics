@@ -1,4 +1,4 @@
-from query_managers import PartComplianceQuery, PartImpactedSubstanceQuery
+from ansys.granta.bom_analytics import PartComplianceQuery, PartImpactedSubstanceQuery
 
 # TODO: For all tests, test all different pivots on the results with known values
 

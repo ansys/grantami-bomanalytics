@@ -19,7 +19,9 @@ class RecordDefinition(ABC):
         self._model = None
 
     @classmethod
-    def add_stk_records(cls, stk_records: List[Dict[str, str]]):  # TODO: Finalize the stk interop format
+    def add_stk_records(
+        cls, stk_records: List[Dict[str, str]]
+    ):  # TODO: Finalize the stk interop format
         item_references = []
         for record in stk_records:
             assert "dbkey" in record

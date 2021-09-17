@@ -63,7 +63,7 @@ STK_OBJECT = [
     {
         "dbkey": "MI_Restricted_Substances",
         "record_guid": "00000000-0000-0000-0000-000000000123",
-    }
+    },
 ]
 
 

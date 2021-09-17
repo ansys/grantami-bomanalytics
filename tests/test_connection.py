@@ -17,7 +17,9 @@ from ansys.granta.bom_analytics import Connection
     ],
 )
 def test_custom_table_config(property_name, table_name):
-    conn = Connection(url="http://localhost/mi_servicelayer", autologon=True)
+    conn = Connection(
+        url="http://localhost/mi_servicelayer", autologon=True, dbkey="DBKEY"
+    )
 
     conn.__setattr__(property_name, table_name)
 

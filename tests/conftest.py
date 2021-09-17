@@ -20,17 +20,17 @@ def connection():
 
 @pytest.fixture(scope="session")
 def indicators():
-    andys_noxious_substance_indicator = WatchListIndicator(
-        name="Andy's disliked substances",
+    two_legislation_indicator = WatchListIndicator(
+        name="Two legislations",
         legislation_names=["GADSL", "California Proposition 65 List"],
         default_threshold_percentage=2,
     )
-    rohs_indicator = RoHSIndicator(
-        name="RoHS 2",
+    one_legislation_indicator = RoHSIndicator(
+        name="One legislation",
         legislation_names=["EU Directive 2011/65/EU (RoHS 2)"],
         default_threshold_percentage=0.01,
     )
-    return [andys_noxious_substance_indicator, rohs_indicator]
+    return [two_legislation_indicator, one_legislation_indicator]
 
 
 @pytest.fixture(scope="session")

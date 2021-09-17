@@ -1,5 +1,13 @@
 import pytest
-from .common import RECORD_QUERY_TYPES, COMPLIANCE_QUERY_TYPES, SUBSTANCE_QUERY_TYPES, ALL_QUERY_TYPES, TEST_HISTORY_IDS, TEST_GUIDS, STK_OBJECT
+from .common import (
+    RECORD_QUERY_TYPES,
+    COMPLIANCE_QUERY_TYPES,
+    SUBSTANCE_QUERY_TYPES,
+    ALL_QUERY_TYPES,
+    TEST_HISTORY_IDS,
+    TEST_GUIDS,
+    STK_OBJECT,
+)
 
 
 @pytest.mark.parametrize("query_type", RECORD_QUERY_TYPES)
@@ -70,16 +78,18 @@ class TestAddPropertiesToRecordQueries:
         assert isinstance(query, query_type)
         assert len(query._items) == len(STK_OBJECT)
         for idx, stk_record in enumerate(STK_OBJECT):
-            assert query._items[idx].record_guid == stk_record['record_guid']
+            assert query._items[idx].record_guid == stk_record["record_guid"]
             assert not query._items[idx].record_history_identity
             assert not query._items[idx].record_history_guid
 
     def test_stk_object_wrong_dbkey(self, query_type, connection):
-        stk_object = [{'record_guid': 'test_guid',
-                      'dbkey': 'Invalid dbkey'}]
+        stk_object = [{"record_guid": "test_guid", "dbkey": "Invalid dbkey"}]
         with pytest.raises(ValueError) as e:
             query_type(connection).add_stk_records(stk_object)
-        assert 'Database key "Invalid dbkey" does not match connection database key "MI_Restricted_Substances"' in str(e.value)
+        assert (
+            'Database key "Invalid dbkey" does not match connection database key "MI_Restricted_Substances"'
+            in str(e.value)
+        )
 
 
 class TestAddIndicators:
@@ -143,7 +153,6 @@ class TestBatchSize:
     @pytest.mark.parametrize("batch_size", [5, 5000])
     def test_correct_types_and_values(self, query_type, batch_size, connection):
         query = query_type(connection).set_batch_size(batch_size)
-        assert query.batch_size == batch_size
         assert query._batch_size == batch_size
 
     @pytest.mark.parametrize("batch_size", [0, -25])
@@ -153,7 +162,7 @@ class TestBatchSize:
             query.set_batch_size(batch_size)
         assert "Batch must be a positive integer" in str(e.value)
         with pytest.raises(ValueError) as e:
-            query.set_batch_size(value=batch_size)
+            query.set_batch_size(batch_size=batch_size)
         assert "Batch must be a positive integer" in str(e.value)
 
     @pytest.mark.parametrize("batch_size", [20.25, "5", None])
@@ -163,5 +172,5 @@ class TestBatchSize:
             query.set_batch_size(batch_size)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            query.set_batch_size(value=batch_size)
+            query.set_batch_size(batch_size=batch_size)
         assert "Incorrect type for value" in str(e.value)

@@ -3,8 +3,6 @@ from ansys.granta.bom_analytics import (
     MaterialComplianceQuery,
 )
 
-import pytest
-
 
 def test_impacted_substances(connection, legislations):
     stk_object = [
@@ -53,8 +51,6 @@ def test_compliance(connection, indicators):
         .add_indicators(indicators)
         .execute()
     )
-
-    test = MaterialComplianceQuery(connection)
 
     assert len(response.compliance_by_material_and_indicator) == 2
     for mat_results in response.compliance_by_material_and_indicator:

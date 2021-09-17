@@ -1,7 +1,5 @@
 from ansys.granta.bom_analytics import PartComplianceQuery, PartImpactedSubstanceQuery
 
-# TODO: For all tests, test all different pivots on the results with known values
-
 
 def test_impacted_substances(connection):
     legislations = [

@@ -63,7 +63,10 @@ class PartDefinition(RecordDefinition):
         **kwargs,
     ):
         super().__init__(
-            record_history_identity, record_guid, record_history_guid, **kwargs
+            record_history_identity=record_history_identity,
+            record_guid=record_guid,
+            record_history_guid=record_history_guid,
+            **kwargs,
         )
         self.part_number: str = part_number
         self._model = (
@@ -87,7 +90,12 @@ class MaterialDefinition(RecordDefinition):
         record_history_guid: Union[str, None] = None,
         **kwargs,
     ):
-        super().__init__(record_history_identity, record_guid, record_history_guid)
+        super().__init__(
+            record_history_identity=record_history_identity,
+            record_guid=record_guid,
+            record_history_guid=record_history_guid,
+            **kwargs,
+        )
         self.material_id: str = material_id
         self._model = (
             bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
@@ -110,7 +118,12 @@ class SpecificationDefinition(RecordDefinition):
         record_history_guid: Union[str, None] = None,
         **kwargs,
     ):
-        super().__init__(record_history_identity, record_guid, record_history_guid)
+        super().__init__(
+            record_history_identity=record_history_identity,
+            record_guid=record_guid,
+            record_history_guid=record_history_guid,
+            **kwargs,
+        )
         self.specification_id: str = specification_id
         self._model = (
             bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference
@@ -134,7 +147,11 @@ class BaseSubstanceDefinition(RecordDefinition, ABC):
         record_guid=None,
         record_history_guid=None,
     ):
-        super().__init__(record_history_identity, record_guid, record_history_guid)
+        super().__init__(
+            record_history_identity=record_history_identity,
+            record_guid=record_guid,
+            record_history_guid=record_history_guid,
+        )
         self.chemical_name: str = chemical_name
         self.cas_number: str = cas_number
         self.ec_number: str = ec_number
@@ -156,8 +173,14 @@ class SubstanceDefinition(BaseSubstanceDefinition):
         record_guid=None,
         record_history_guid=None,
         percentage_amount=None,
+        **kwargs,
     ):
-        super().__init__(record_history_identity, record_guid, record_history_guid)
+        super().__init__(
+            record_history_identity=record_history_identity,
+            record_guid=record_guid,
+            record_history_guid=record_history_guid,
+            **kwargs,
+        )
         self.chemical_name = chemical_name
         self.cas_number = cas_number
         self.ec_number = ec_number

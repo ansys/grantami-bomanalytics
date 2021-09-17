@@ -95,7 +95,7 @@ class RecordBasedQueryManager(BaseQueryBuilder, ABC):
 class ApiMixin(ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._result_factory = None
+        self._result_type = None
 
     def _run_query(self) -> List:
         result = []
@@ -129,8 +129,13 @@ class ComplianceMixin(ApiMixin, ABC):
     def execute(self):
         self._validate_parameters()
         self._validate_items()
-        result = self._run_query()
-        return self._result_factory(result, self._indicators)
+        result_raw = self._run_query()
+        result = QueryResultFactory.create_result(
+            response_type=self._result_type,
+            results=result_raw,
+            indicator_definitions=self._indicators,
+        )
+        return result
 
     def _validate_parameters(self):
         if not self._indicators:
@@ -160,8 +165,11 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
     def execute(self):
         self._validate_parameters()
         self._validate_items()
-        result = self._run_query()
-        return self._result_factory(result)
+        result_raw = self._run_query()
+        result = QueryResultFactory.create_result(
+            response_type=self._result_type, results=result_raw
+        )
+        return result
 
     def _validate_parameters(self):
         if not self._legislations:
@@ -201,16 +209,14 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryManager):
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest
         )
+        self._result_type = (
+            models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
+        )
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
-        )
-        self._result_factory = (
-            QueryResultFactory.create_response_type(
-                models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
-            )
         )
 
     def execute(self) -> MaterialComplianceResult:
@@ -223,14 +229,14 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryManage
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest  # noqa: E501
         )
+        self._result_type = (
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial
+        )
         self._api = (
             self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
-        )
-        self._result_factory = QueryResultFactory.create_response_type(
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial
         )
 
     def execute(self) -> MaterialImpactedSubstancesResult:
@@ -259,16 +265,14 @@ class PartComplianceQuery(ComplianceMixin, PartQueryManager):
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest
         )
+        self._result_type = (
+            models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
+        )
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
-        )
-        self._result_factory = (
-            QueryResultFactory.create_response_type(
-                models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
-            )
         )
 
     def execute(self) -> PartComplianceResult:
@@ -281,14 +285,14 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryManager):
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest  # noqa: E501
         )
+        self._result_type = (
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart
+        )
         self._api = (
             self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
-        )
-        self._result_factory = QueryResultFactory.create_response_type(
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart
         )
 
     def execute(self) -> PartImpactedSubstancesResult:
@@ -317,14 +321,14 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryManager):
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest  # noqa: E501
         )
+        self._result_type = (
+            models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
+        )
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
-        )
-        self._result_factory = QueryResultFactory.create_response_type(
-            models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
         )
 
     def execute(self) -> SpecificationComplianceResult:
@@ -339,14 +343,14 @@ class SpecificationImpactedSubstanceQuery(
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest  # noqa: E501
         )
+        self._result_type = (
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
+        )
         self._api = (
             self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
-        )
-        self._result_factory = QueryResultFactory.create_response_type(
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
         )
 
     def execute(self) -> SpecificationImpactedSubstancesResult:
@@ -449,16 +453,14 @@ class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryManager):
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest
         )
+        self._result_type = (
+            models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
+        )
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
-        )
-        self._result_factory = (
-            QueryResultFactory.create_response_type(
-                models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
-            )
         )
 
     def execute(self) -> SubstanceComplianceResult:
@@ -491,14 +493,14 @@ class BoMComplianceQuery(BoMQueryOverride, ComplianceMixin, BoM1711QueryManager)
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request
         )
+        self._result_type = (
+            models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response
+        )
         self._api = (
             self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
-        )
-        self._result_factory = QueryResultFactory.create_response_type(
-            models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response
         )
 
     def execute(self) -> BoMComplianceResult:
@@ -513,14 +515,14 @@ class BoMImpactedSubstancesQuery(
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request  # noqa: E501
         )
+        self._result_type = (
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
+        )
         self._api = (
             self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
-        )
-        self._result_factory = QueryResultFactory.create_response_type(
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
         )
 
     def execute(self) -> BoMImpactedSubstancesResult:

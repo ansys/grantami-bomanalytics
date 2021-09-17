@@ -1,60 +1,5 @@
 import pytest
-from ansys.granta.bom_analytics import (
-    MaterialImpactedSubstanceQuery,
-    MaterialComplianceQuery,
-    PartImpactedSubstanceQuery,
-    PartComplianceQuery,
-    SpecificationImpactedSubstanceQuery,
-    SpecificationComplianceQuery,
-    SubstanceComplianceQuery,
-    BomImpactedSubstancesQuery,
-    BomComplianceQuery,
-)
-
-RECORD_QUERY_TYPES = [
-    MaterialImpactedSubstanceQuery,
-    MaterialComplianceQuery,
-    PartImpactedSubstanceQuery,
-    PartComplianceQuery,
-    SpecificationImpactedSubstanceQuery,
-    SpecificationComplianceQuery,
-    SubstanceComplianceQuery,
-]
-
-COMPLIANCE_QUERY_TYPES = [
-    MaterialComplianceQuery,
-    PartComplianceQuery,
-    SpecificationComplianceQuery,
-    SubstanceComplianceQuery,
-    BomComplianceQuery,
-]
-SUBSTANCE_QUERY_TYPES = [
-    MaterialImpactedSubstanceQuery,
-    PartImpactedSubstanceQuery,
-    SpecificationImpactedSubstanceQuery,
-    BomImpactedSubstancesQuery,
-]
-ALL_QUERY_TYPES = COMPLIANCE_QUERY_TYPES + SUBSTANCE_QUERY_TYPES
-
-
-TEST_GUIDS = [
-    [],
-    ["00000000-0000-0000-0000-000000000000"],
-    [
-        "00000000-0123-4567-89AB-000000000000",
-        "00000000-0000-0000-0000-CDEF01234567",
-    ],
-]
-
-
-TEST_HISTORY_IDS = [
-    [],
-    [123],
-    [
-        456,
-        789,
-    ],
-]
+from .common import RECORD_QUERY_TYPES, COMPLIANCE_QUERY_TYPES, SUBSTANCE_QUERY_TYPES, ALL_QUERY_TYPES, TEST_HISTORY_IDS, TEST_GUIDS, STK_OBJECT
 
 
 @pytest.mark.parametrize("query_type", RECORD_QUERY_TYPES)
@@ -69,15 +14,6 @@ class TestAddPropertiesToRecordQueries:
             assert not query._items[idx].record_history_guid
             assert not query._items[idx].record_history_identity
 
-    @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS[1:])
-    def test_record_guids_wrong_type(self, query_type, test_values, connection):
-        with pytest.raises(TypeError) as e:
-            query_type(connection).add_record_guids(test_values)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
-            query_type(connection).add_record_guids(record_guids=test_values)
-        assert "Incorrect type for value" in str(e.value)
-
     @pytest.mark.parametrize("test_values", TEST_GUIDS)
     def test_record_history_guids(self, query_type, test_values, connection):
         query = query_type(connection).add_record_history_guids(test_values)
@@ -87,6 +23,25 @@ class TestAddPropertiesToRecordQueries:
             assert query._items[idx].record_history_guid == guid
             assert not query._items[idx].record_guid
             assert not query._items[idx].record_history_identity
+
+    @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS)
+    def test_record_history_ids(self, query_type, test_values, connection):
+        query = query_type(connection).add_record_history_ids(test_values)
+        assert isinstance(query, query_type)
+        assert len(query._items) == len(test_values)
+        for idx, id in enumerate(test_values):
+            assert query._items[idx].record_history_identity == id
+            assert not query._items[idx].record_guid
+            assert not query._items[idx].record_history_guid
+
+    @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS[1:])
+    def test_record_guids_wrong_type(self, query_type, test_values, connection):
+        with pytest.raises(TypeError) as e:
+            query_type(connection).add_record_guids(test_values)
+        assert "Incorrect type for value" in str(e.value)
+        with pytest.raises(TypeError) as e:
+            query_type(connection).add_record_guids(record_guids=test_values)
+        assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS[1:])
     def test_record_history_guids_wrong_type(self, query_type, test_values, connection):
@@ -99,16 +54,6 @@ class TestAddPropertiesToRecordQueries:
             )
         assert "Incorrect type for value" in str(e.value)
 
-    @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS)
-    def test_record_history_ids(self, query_type, test_values, connection):
-        query = query_type(connection).add_record_history_ids(test_values)
-        assert isinstance(query, query_type)
-        assert len(query._items) == len(test_values)
-        for idx, id in enumerate(test_values):
-            assert query._items[idx].record_history_identity == id
-            assert not query._items[idx].record_guid
-            assert not query._items[idx].record_history_guid
-
     @pytest.mark.parametrize("test_values", TEST_GUIDS[1:])
     def test_record_history_ids_wrong_type(self, query_type, test_values, connection):
         with pytest.raises(TypeError) as e:
@@ -119,6 +64,22 @@ class TestAddPropertiesToRecordQueries:
                 record_history_identities=test_values
             )
         assert "Incorrect type for value" in str(e.value)
+
+    def test_stk_object(self, query_type, connection):
+        query = query_type(connection).add_stk_records(STK_OBJECT)
+        assert isinstance(query, query_type)
+        assert len(query._items) == len(STK_OBJECT)
+        for idx, stk_record in enumerate(STK_OBJECT):
+            assert query._items[idx].record_guid == stk_record['record_guid']
+            assert not query._items[idx].record_history_identity
+            assert not query._items[idx].record_history_guid
+
+    def test_stk_object_wrong_dbkey(self, query_type, connection):
+        stk_object = [{'record_guid': 'test_guid',
+                      'dbkey': 'Invalid dbkey'}]
+        with pytest.raises(ValueError) as e:
+            query_type(connection).add_stk_records(stk_object)
+        assert 'Database key "Invalid dbkey" does not match connection database key "MI_Restricted_Substances"' in str(e.value)
 
 
 class TestAddIndicators:

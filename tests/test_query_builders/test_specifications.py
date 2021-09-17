@@ -3,7 +3,7 @@ from ansys.granta.bom_analytics import (
     SpecificationImpactedSubstanceQuery,
     SpecificationComplianceQuery,
 )
-from tests.test_query_managers.common import check_query_manager_attributes
+from tests.test_query_builders.common import check_query_manager_attributes
 
 
 @pytest.mark.parametrize(

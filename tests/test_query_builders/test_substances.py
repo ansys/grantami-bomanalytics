@@ -1,6 +1,6 @@
 import pytest
 from ansys.granta.bom_analytics import SubstanceComplianceQuery
-from tests.test_query_managers.common import check_query_manager_attributes
+from tests.test_query_builders.common import check_query_manager_attributes
 
 
 @pytest.mark.parametrize(
@@ -104,6 +104,42 @@ class TestWithoutAmountsWrongType:
     [([("One chemical_name", 12.5)]), ([("Two", 0.001), ("Chemical names", 100)])],
 )
 class TestWithAmounts:
+    def test_record_guids(self, values, connection):
+        query = SubstanceComplianceQuery(connection).add_record_guids_with_amounts(values)
+        assert isinstance(query, SubstanceComplianceQuery)
+        assert check_query_manager_attributes(
+            query,
+            [
+                "chemical_name",
+                "record_history_guid",
+                "record_history_identity",
+                "cas_number",
+                "ec_number",
+            ],
+            "record_guid",
+            [v for (v, _) in values],
+        )
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+
+    def test_record_history_guids(self, values, connection):
+        query = SubstanceComplianceQuery(connection).add_record_history_guids_with_amounts(values)
+        assert isinstance(query, SubstanceComplianceQuery)
+        assert check_query_manager_attributes(
+            query,
+            [
+                "chemical_name",
+                "record_guid",
+                "record_history_identity",
+                "cas_number",
+                "ec_number",
+            ],
+            "record_history_guid",
+            [v for (v, _) in values],
+        )
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+
     def test_add_chemical_names(self, values, connection):
         query = SubstanceComplianceQuery(connection).add_chemical_names_with_amounts(
             values
@@ -121,18 +157,8 @@ class TestWithAmounts:
             "chemical_name",
             [v for (v, _) in values],
         )
-        assert all(
-            [
-                i._percentage_amount == amount
-                for i, (_, amount) in zip(query._items, values)
-            ]
-        )
-        assert all(
-            [
-                i.percentage_amount == amount
-                for i, (_, amount) in zip(query._items, values)
-            ]
-        )
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
 
     def test_add_cas_numbers(self, values, connection):
         query = SubstanceComplianceQuery(connection).add_cas_numbers_with_amounts(
@@ -151,18 +177,8 @@ class TestWithAmounts:
             "cas_number",
             [v for (v, _) in values],
         )
-        assert all(
-            [
-                i._percentage_amount == amount
-                for i, (_, amount) in zip(query._items, values)
-            ]
-        )
-        assert all(
-            [
-                i.percentage_amount == amount
-                for i, (_, amount) in zip(query._items, values)
-            ]
-        )
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
 
     def test_add_ec_numbers(self, values, connection):
         query = SubstanceComplianceQuery(connection).add_ec_numbers_with_amounts(values)
@@ -179,31 +195,71 @@ class TestWithAmounts:
             "ec_number",
             [v for (v, _) in values],
         )
-        assert all(
-            [
-                i._percentage_amount == amount
-                for i, (_, amount) in zip(query._items, values)
-            ]
-        )
-        assert all(
-            [
-                i.percentage_amount == amount
-                for i, (_, amount) in zip(query._items, values)
-            ]
-        )
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+
+
+@pytest.mark.parametrize("values", [([(123, 12.5)]), ([(234, 0.001), (345, 100)])])
+def test_record_history_ids_with_amounts(values, connection):
+    query = SubstanceComplianceQuery(connection).add_record_history_ids_with_amounts(values)
+    assert isinstance(query, SubstanceComplianceQuery)
+    assert check_query_manager_attributes(
+        query,
+        [
+            "record_guid",
+            "record_history_guid",
+            "ec_number",
+            "chemical_name",
+            "cas_number",
+        ],
+        "record_history_identity",
+        [v for (v, _) in values],
+    )
+    assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+    assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
 
 
 @pytest.mark.parametrize(
     "values", ["Strings are not allowed", [("id_without_amount", None)], 12]
 )
 class TestWithAmountsWrongType:
+    def test_record_guids(self, values, connection):
+        with pytest.raises(TypeError) as e:
+            SubstanceComplianceQuery(connection).add_record_guids_with_amounts(values)
+        assert f"Incorrect type for value" in str(e.value)
+        with pytest.raises(TypeError) as e:
+            SubstanceComplianceQuery(connection).add_record_guids_with_amounts(
+                record_guids_and_amounts=values
+            )
+        assert f"Incorrect type for value" in str(e.value)
+
+    def test_record_history_guids(self, values, connection):
+        with pytest.raises(TypeError) as e:
+            SubstanceComplianceQuery(connection).add_record_history_guids_with_amounts(values)
+        assert f"Incorrect type for value" in str(e.value)
+        with pytest.raises(TypeError) as e:
+            SubstanceComplianceQuery(connection).add_record_history_guids_with_amounts(
+                record_history_guids_and_amounts=values
+            )
+        assert f"Incorrect type for value" in str(e.value)
+
+    def test_record_history_ids(self, values, connection):
+        with pytest.raises(TypeError) as e:
+            SubstanceComplianceQuery(connection).add_record_history_ids_with_amounts(values)
+        assert f"Incorrect type for value" in str(e.value)
+        with pytest.raises(TypeError) as e:
+            SubstanceComplianceQuery(connection).add_record_history_ids_with_amounts(
+                record_history_identities_and_amounts=values
+            )
+        assert f"Incorrect type for value" in str(e.value)
+
     def test_add_chemical_names(self, values, connection):
         with pytest.raises(TypeError) as e:
             SubstanceComplianceQuery(connection).add_chemical_names_with_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
             SubstanceComplianceQuery(connection).add_chemical_names_with_amounts(
-                chemical_names_and_amounts="Strings are not allowed"
+                chemical_names_and_amounts=values
             )
         assert f"Incorrect type for value" in str(e.value)
 
@@ -213,7 +269,7 @@ class TestWithAmountsWrongType:
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
             SubstanceComplianceQuery(connection).add_cas_numbers_with_amounts(
-                cas_numbers_and_amounts="Strings are not allowed"
+                cas_numbers_and_amounts=values
             )
         assert f"Incorrect type for value" in str(e.value)
 
@@ -223,6 +279,6 @@ class TestWithAmountsWrongType:
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
             SubstanceComplianceQuery(connection).add_ec_numbers_with_amounts(
-                ec_numbers_and_amounts="Strings are not allowed"
+                ec_numbers_and_amounts=values
             )
         assert f"Incorrect type for value" in str(e.value)

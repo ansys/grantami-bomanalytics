@@ -92,9 +92,14 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @type_check(Any, list)
+    @type_check(Any, [{str: str}])
     def add_stk_records(self, stk_records: List[Dict[str, str]]):
-        record_guids = [r["record_guid"] for r in stk_records]
+        record_guids = []
+        for r in stk_records:
+            if r["dbkey"] != self._connection.dbkey:
+                dbkey = r["dbkey"]
+                raise ValueError(f'Database key "{dbkey}" does not match connection database key "{self._connection.dbkey}"')
+            record_guids.append(r["record_guid"])
         self.add_record_guids(record_guids)
         return self
 
@@ -407,7 +412,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @type_check(Any, [(str, Number)])
+    @type_check(Any, [(int, Number)])
     def add_record_history_ids_with_amounts(
         self, record_history_identities_and_amounts: List[Tuple[int, float]]
     ):

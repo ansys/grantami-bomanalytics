@@ -8,10 +8,10 @@ class Connection:
     def __init__(
         self,
         url: str,
+        dbkey: str,
         username: Union[str, None] = None,
         password: Union[str, None] = None,
         autologon: bool = False,
-        dbkey: Union[str, None] = None,
     ):
         # TODO: Support all options
         if autologon:

@@ -7,10 +7,10 @@ def test_impacted_substances(connection):
         "EU Directive 2011/65/EU (RoHS 2)",
     ]
     response = (
-        PartImpactedSubstanceQuery(connection)
+        PartImpactedSubstanceQuery()
         .add_part_numbers(["DRILL", "main_frame"])
         .add_legislations(legislations)
-        .execute()
+        .execute(connection)
     )
 
     assert len(response.impacted_substances_by_part_and_legislation) == 2
@@ -28,10 +28,10 @@ def test_impacted_substances(connection):
 
 def test_compliance(connection, indicators):
     response = (
-        PartComplianceQuery(connection)
+        PartComplianceQuery()
         .add_part_numbers(["DRILL", "main_frame"])
         .add_indicators(indicators)
-        .execute()
+        .execute(connection)
     )
 
     assert len(response.compliance_by_part_and_indicator) == 2

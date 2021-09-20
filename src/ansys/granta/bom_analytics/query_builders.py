@@ -31,8 +31,7 @@ class BaseQueryBuilder(Generic[T]):
     _item_type_name = None
     _result_type: Union[Callable, None] = None
 
-    def __init__(self, connection):
-        self._connection = connection
+    def __init__(self):
         self._items = []
         self._batch_size = None
 
@@ -55,8 +54,7 @@ class BaseQueryBuilder(Generic[T]):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = MaterialComplianceQuery(conn)
+        >>> query = MaterialComplianceQuery()
         >>> query.set_batch_size(batch_size=50)
         """
 
@@ -74,8 +72,8 @@ class BaseQueryBuilder(Generic[T]):
 
 
 class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self._definition_factory = None
 
     @type_check(Any, [int])
@@ -95,8 +93,7 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = MaterialComplianceQuery(conn)
+        >>> query = MaterialComplianceQuery()
         >>> query.add_record_history_ids([15321, 17542, 942])
         """
 
@@ -124,8 +121,7 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = MaterialComplianceQuery(conn)
+        >>> query = MaterialComplianceQuery()
         >>> query.add_record_history_guids(['41e20a88-d496-4735-a177-6266fac9b4e2',
         >>>                               'd117d9ad-e6a9-4ba9-8ad8-9a20b6d0b5e2'])
         """
@@ -154,8 +150,7 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = MaterialComplianceQuery(conn)
+        >>> query = MaterialComplianceQuery()
         >>> query.add_record_guids(['bdb0b880-e6ee-4f1a-bebd-af76959ae3c8',
         >>>                         'a98cf4b3-f96a-4714-9f79-afe443982c69'])
         """
@@ -184,20 +179,13 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = MaterialComplianceQuery(conn)
+        >>> query = MaterialComplianceQuery()
         >>> query.add_stk_records(stk_records)
         """
 
-        record_guids = []
-        for r in stk_records:
-            if r["db_key"] != self._connection.db_key:
-                db_key = r["db_key"]
-                raise ValueError(
-                    f'Database key "{db_key}" does not match connection database key "{self._connection.db_key}"'
-                )
-            record_guids.append(r["record_guid"])
+        record_guids = [r["record_guid"] for r in stk_records]
         self.add_record_guids(record_guids)
+
         return self
 
 
@@ -205,6 +193,8 @@ class ApiMixin(ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._result_type = None
+        self._connection = None
+        self._api = None
 
     def _run_query(self) -> List:
         result = []
@@ -247,8 +237,7 @@ class ComplianceMixin(ApiMixin, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = MaterialComplianceQuery(conn)
+        >>> query = MaterialComplianceQuery()
         >>> query.add_indicators([WatchListIndicator(...)])
         """
 
@@ -256,7 +245,8 @@ class ComplianceMixin(ApiMixin, ABC):
             self._indicators.append(value)
         return self
 
-    def execute(self):
+    def execute(self, connection: Connection):
+        self._connection = connection
         self._validate_parameters()
         self._validate_items()
         result_raw = self._run_query()
@@ -305,15 +295,15 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = MaterialComplianceQuery(conn)
+        >>> query = MaterialComplianceQuery()
         >>> query.add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
         """
 
         self._legislations.extend(legislation_names)
         return self
 
-    def execute(self):
+    def execute(self, connection: Connection):
+        self._connection = connection
         self._validate_parameters()
         self._validate_items()
         result_raw = self._run_query()
@@ -362,8 +352,7 @@ class MaterialQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = MaterialComplianceQuery(conn)
+        >>> query = MaterialComplianceQuery()
         >>> query.add_material_ids(['elastomer-butadienerubber',
         >>>                         'NBR-100'])
         """
@@ -396,28 +385,25 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = MaterialComplianceQuery(conn) \
+    >>> result = MaterialComplianceQuery() \
     >>>             .add_material_ids(['elastomer-butadienerubber', 'NBR-100']) \
     >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute()
+    >>>             .execute(conn)
     """
 
-    def __init__(self, connection: Connection):
-        super().__init__(connection=connection)
+    def __init__(self):
+        super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest
         )
         self._result_type = (
             models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
         )
-        self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials  # noqa: E501
-        )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
         )
 
-    def execute(self) -> MaterialComplianceResult:
+    def execute(self, connection: Connection) -> MaterialComplianceResult:
         """
         Run the query against the Granta MI database and return the results.
 
@@ -427,7 +413,10 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryBuilder):
             The result of the compliance query.
 
         """
-        return super().execute()
+        self._api = (
+            connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials  # noqa: E501
+        )
+        return super().execute(connection)
 
 
 class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilder):
@@ -450,28 +439,25 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilde
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = MaterialImpactedSubstancesQuery(conn) \
+    >>> result = MaterialImpactedSubstancesQuery() \
     >>>             .add_material_ids(['elastomer-butadienerubber', 'NBR-100']) \
     >>>             .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"]) \
-    >>>             .execute()
+    >>>             .execute(conn)
     """
 
-    def __init__(self, connection: Connection):
-        super().__init__(connection=connection)
+    def __init__(self):
+        super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest  # noqa: E501
         )
         self._result_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial
         )
-        self._api = (
-            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials  # noqa: E501
-        )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
         )
 
-    def execute(self) -> MaterialImpactedSubstancesResult:
+    def execute(self, connection: Connection) -> MaterialImpactedSubstancesResult:
         """
         Run the query against the Granta MI database and return the results.
 
@@ -480,7 +466,10 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilde
         MaterialImpactedSubstancesResult
             The result of the impacted substances query.
         """
-        return super().execute()
+        self._api = (
+            connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials  # noqa: E501
+        )
+        return super().execute(connection)
 
 
 class PartQueryBuilder(RecordBasedQueryBuilder, ABC):
@@ -507,8 +496,7 @@ class PartQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = PartComplianceQuery(conn)
+        >>> query = PartComplianceQuery()
         >>> query.add_part_numbers(['ABC12345', 'Q356AQ'])
         """
 
@@ -541,28 +529,25 @@ class PartComplianceQuery(ComplianceMixin, PartQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = PartComplianceQuery(conn) \
+    >>> result = PartComplianceQuery() \
     >>>             .add_part_numbers(['ABC12345', 'Q356AQ']) \
     >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute()
+    >>>             .execute(conn)
     """
 
-    def __init__(self, connection: Connection):
-        super().__init__(connection=connection)
+    def __init__(self):
+        super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest
         )
         self._result_type = (
             models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
         )
-        self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts  # noqa: E501
-        )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
         )
 
-    def execute(self) -> PartComplianceResult:
+    def execute(self, connection: Connection) -> PartComplianceResult:
         """
         Run the query against the Granta MI database and return the results.
 
@@ -571,7 +556,10 @@ class PartComplianceQuery(ComplianceMixin, PartQueryBuilder):
         PartComplianceResult
             The result of the compliance query.
         """
-        return super().execute()
+        self._api = (
+            connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts  # noqa: E501
+        )
+        return super().execute(connection)
 
 
 class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryBuilder):
@@ -594,28 +582,25 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = PartImpactedSubstancesQuery(conn) \
+    >>> result = PartImpactedSubstancesQuery() \
     >>>             .add_part_numbers(['ABC12345', 'Q356AQ']) \
     >>>             .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"]) \
-    >>>             .execute()
+    >>>             .execute(conn)
     """
 
-    def __init__(self, connection: Connection):
-        super().__init__(connection=connection)
+    def __init__(self):
+        super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest  # noqa: E501
         )
         self._result_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart
         )
-        self._api = (
-            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts  # noqa: E501
-        )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
         )
 
-    def execute(self) -> PartImpactedSubstancesResult:
+    def execute(self, connection: Connection) -> PartImpactedSubstancesResult:
         """
         Run the query against the Granta MI database and return the results.
 
@@ -624,7 +609,10 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryBuilder):
         PartImpactedSubstancesResult
             The result of the impacted substances query.
         """
-        return super().execute()
+        self._api = (
+            connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts  # noqa: E501
+        )
+        return super().execute(connection)
 
 
 class SpecificationQueryBuilder(RecordBasedQueryBuilder, ABC):
@@ -651,8 +639,7 @@ class SpecificationQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SpecificationComplianceQuery(conn)
+        >>> query = SpecificationComplianceQuery()
         >>> query.add_part_numbers(['MIL-A-8625', 'PSP101'])
         """
         for value in specification_ids:
@@ -684,28 +671,25 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = SpecificationComplianceQuery(conn) \
+    >>> result = SpecificationComplianceQuery() \
     >>>             .add_specification_ids(['MIL-A-8625', 'PSP101']) \
     >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute()
+    >>>             .execute(conn)
     """
 
-    def __init__(self, connection: Connection):
-        super().__init__(connection=connection)
+    def __init__(self):
+        super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest  # noqa: E501
         )
         self._result_type = (
             models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
         )
-        self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications  # noqa: E501
-        )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
         )
 
-    def execute(self) -> SpecificationComplianceResult:
+    def execute(self, connection: Connection) -> SpecificationComplianceResult:
         """
         Run the query against the Granta MI database and return the results.
 
@@ -714,7 +698,10 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryBuilder):
         SpecificationComplianceResult
             The result of the compliance query.
         """
-        return super().execute()
+        self._api = (
+            connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications  # noqa: E501
+        )
+        return super().execute(connection)
 
 
 class SpecificationImpactedSubstanceQuery(
@@ -739,28 +726,25 @@ class SpecificationImpactedSubstanceQuery(
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = SpecificationImpactedSubstancesQuery(conn) \
+    >>> result = SpecificationImpactedSubstancesQuery() \
     >>>             .add_specification_ids(['MIL-A-8625', 'PSP101']) \
     >>>             .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"]) \
-    >>>             .execute()
+    >>>             .execute(conn)
     """
 
-    def __init__(self, connection: Connection):
-        super().__init__(connection=connection)
+    def __init__(self):
+        super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest  # noqa: E501
         )
         self._result_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
         )
-        self._api = (
-            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications  # noqa: E501
-        )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
         )
 
-    def execute(self) -> SpecificationImpactedSubstancesResult:
+    def execute(self, connection: Connection) -> SpecificationImpactedSubstancesResult:
         """
         Run the query against the Granta MI database and return the results.
 
@@ -769,7 +753,10 @@ class SpecificationImpactedSubstanceQuery(
         SpecificationImpactedSubstancesResult
             The result of the impacted substances query.
         """
-        return super().execute()
+        self._api = (
+            connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications  # noqa: E501
+        )
+        return super().execute(connection)
 
 
 class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
@@ -796,8 +783,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SubstanceComplianceQuery(conn)
+        >>> query = SubstanceComplianceQuery()
         >>> query.add_cas_numbers(['50-00-0', '57-24-9'])
         """
         for cas_number in cas_numbers:
@@ -824,8 +810,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SubstanceComplianceQuery(conn)
+        >>> query = SubstanceComplianceQuery()
         >>> query.add_ec_numbers(['200-001-8', '200-319-7'])
         """
         for ec_number in ec_numbers:
@@ -852,8 +837,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SubstanceComplianceQuery(conn)
+        >>> query = SubstanceComplianceQuery()
         >>> query.add_chemical_names(['Formaldehyde', 'Strychnine'])
         """
         for chemical_name in chemical_names:
@@ -884,8 +868,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SubstanceComplianceQuery(conn)
+        >>> query = SubstanceComplianceQuery()
         >>> query.add_record_history_ids_with_amounts([(15321, 25),
         >>>                                            (17542, 0.1)])
         """
@@ -917,8 +900,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SubstanceComplianceQuery(conn)
+        >>> query = SubstanceComplianceQuery()
         >>> query.add_record_history_guids_with_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
         >>>                                              ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])
         """
@@ -949,8 +931,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SubstanceComplianceQuery(conn)
+        >>> query = SubstanceComplianceQuery()
         >>> query.add_record_guids_with_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
         >>>                                      ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])
         """
@@ -982,8 +963,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SubstanceComplianceQuery(conn)
+        >>> query = SubstanceComplianceQuery()
         >>> query.add_cas_numbers_with_amounts([('50-00-0', 25), ('57-24-9', 0.1)])
         """
 
@@ -1014,8 +994,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SubstanceComplianceQuery(conn)
+        >>> query = SubstanceComplianceQuery()
         >>> query.add_ec_numbers_with_amounts([('200-001-8', 25), ('200-319-7', 0.1)])
         """
 
@@ -1046,8 +1025,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = SubstanceComplianceQuery(conn)
+        >>> query = SubstanceComplianceQuery()
         >>> query.add_chemical_names_with_amounts([('Formaldehyde', 25), ('Strychnine', 0.1)])
         """
 
@@ -1082,28 +1060,25 @@ class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = SubstanceComplianceQuery(conn) \
+    >>> result = SubstanceComplianceQuery() \
     >>>             .add_cas_numbers(['50-00-0', '57-24-9']) \
     >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute()
+    >>>             .execute(conn)
     """
 
-    def __init__(self, connection: Connection):
-        super().__init__(connection=connection)
+    def __init__(self):
+        super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest
         )
         self._result_type = (
             models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
         )
-        self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances  # noqa: E501
-        )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
         )
 
-    def execute(self) -> SubstanceComplianceResult:
+    def execute(self, connection: Connection) -> SubstanceComplianceResult:
         """
         Run the query against the Granta MI database and return the results.
 
@@ -1112,7 +1087,10 @@ class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryBuilder):
         SubstanceComplianceResult
             The result of the compliance query.
         """
-        return super().execute()
+        self._api = (
+            connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances  # noqa: E501
+        )
+        return super().execute(connection)
 
 
 class Bom1711QueryBuilder(BaseQueryBuilder, ABC):
@@ -1134,8 +1112,7 @@ class Bom1711QueryBuilder(BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> query = MaterialComplianceQuery(conn)
+        >>> query = MaterialComplianceQuery()
         >>> query.set_bom(bom)
         """
 
@@ -1171,28 +1148,25 @@ class BomComplianceQuery(Bom1711QueryOverride, ComplianceMixin, Bom1711QueryBuil
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = BomComplianceQuery(conn) \
+    >>> result = BomComplianceQuery() \
     >>>             .set_bom(bom) \
     >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute()
+    >>>             .execute(conn)
     """
 
-    def __init__(self, connection: Connection):
-        super().__init__(connection=connection)
+    def __init__(self):
+        super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request
         )
         self._result_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response
         )
-        self._api = (
-            self._connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711  # noqa: E501
-        )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
         )
 
-    def execute(self) -> BoMComplianceResult:
+    def execute(self, connection: Connection) -> BoMComplianceResult:
         """
         Run the query against the Granta MI database and return the results.
 
@@ -1201,7 +1175,10 @@ class BomComplianceQuery(Bom1711QueryOverride, ComplianceMixin, Bom1711QueryBuil
         BoMComplianceResult
             The result of the compliance query.
         """
-        return super().execute()
+        self._api = (
+            connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711  # noqa: E501
+        )
+        return super().execute(connection)
 
 
 class BomImpactedSubstancesQuery(
@@ -1226,28 +1203,25 @@ class BomImpactedSubstancesQuery(
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = BomImpactedSubstancesQuery(conn) \
+    >>> result = BomImpactedSubstancesQuery() \
     >>>             .set_bom(bom) \
     >>>             .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"]) \
-    >>>             .execute()
+    >>>             .execute(conn)
     """
 
-    def __init__(self, connection: Connection):
-        super().__init__(connection=connection)
+    def __init__(self):
+        super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request  # noqa: E501
         )
         self._result_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
         )
-        self._api = (
-            self._connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711  # noqa: E501
-        )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(
             self._request_type
         )
 
-    def execute(self) -> BoMImpactedSubstancesResult:
+    def execute(self, connection: Connection) -> BoMImpactedSubstancesResult:
         """
         Run the query against the Granta MI database and return the results.
 
@@ -1256,4 +1230,7 @@ class BomImpactedSubstancesQuery(
         BoMImpactedSubstancesResult
             The result of the impacted substances query.
         """
-        return super().execute()
+        self._api = (
+            connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711  # noqa: E501
+        )
+        return super().execute(connection)

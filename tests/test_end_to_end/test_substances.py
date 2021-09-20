@@ -3,11 +3,11 @@ from ansys.granta.bom_analytics import SubstanceComplianceQuery
 
 def test_compliance(connection, indicators):
     response = (
-        SubstanceComplianceQuery(connection)
+        SubstanceComplianceQuery()
         .add_cas_numbers(["50-00-0", "57-24-9"])
         .add_cas_numbers_with_amounts([("1333-86-4", 25), ("75-74-1", 50)])
         .add_indicators(indicators)
-        .execute()
+        .execute(connection)
     )
 
     assert len(response.compliance_by_substance_and_indicator) == 4

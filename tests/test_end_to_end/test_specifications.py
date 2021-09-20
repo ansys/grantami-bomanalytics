@@ -6,11 +6,11 @@ from ansys.granta.bom_analytics import (
 
 def test_impacted_substances(connection):
     response = (
-        SpecificationImpactedSubstanceQuery(connection)
+        SpecificationImpactedSubstanceQuery()
         .add_record_history_guids(["516b2b9b-c4cf-419f-8caa-238ba1e7b7e5"])
         .add_specification_ids(["MIL-C-20218,TypeII"])
         .add_legislations(["The SIN List 2.1 (Substitute It Now!)"])
-        .execute()
+        .execute(connection)
     )
 
     assert len(response.impacted_substances_by_specification_and_legislation) == 2
@@ -30,11 +30,11 @@ def test_impacted_substances(connection):
 
 def test_compliance(connection, indicators):
     response = (
-        SpecificationComplianceQuery(connection)
+        SpecificationComplianceQuery()
         .add_record_history_guids(["516b2b9b-c4cf-419f-8caa-238ba1e7b7e5"])
         .add_specification_ids(["MIL-C-20218,TypeII"])
         .add_indicators(indicators)
-        .execute()
+        .execute(connection)
     )
 
     assert len(response.compliance_by_specification_and_indicator) == 2

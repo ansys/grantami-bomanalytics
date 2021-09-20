@@ -6,10 +6,10 @@ from ansys.granta.bom_analytics import (
 
 def test_impacted_substances(connection, legislations):
     response = (
-        MaterialImpactedSubstanceQuery(connection)
+        MaterialImpactedSubstanceQuery()
         .add_material_ids(["plastic-abs-pvc-flame", "plastic-pmma-pc"])
         .add_legislations(legislations)
-        .execute()
+        .execute(connection)
     )
 
     assert len(response.impacted_substances_by_material_and_legislation) == 2
@@ -30,10 +30,10 @@ def test_impacted_substances(connection, legislations):
 
 def test_compliance(connection, indicators):
     response = (
-        MaterialComplianceQuery(connection)
+        MaterialComplianceQuery()
         .add_material_ids(["plastic-abs-pvc-flame", "plastic-pmma-pc"])
         .add_indicators(indicators)
-        .execute()
+        .execute(connection)
     )
 
     assert len(response.compliance_by_material_and_indicator) == 2

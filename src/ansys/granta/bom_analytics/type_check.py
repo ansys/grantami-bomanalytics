@@ -1,9 +1,11 @@
-from typing import Any
+from typing import Any, TypeVar, Type
 import functools
+
+T = TypeVar('T')
 
 
 def type_check(*allowed_types):
-    def decorator(method):
+    def decorator(method: Type[T]) -> T:
         @functools.wraps(method)
         def check_types(*args, **kwargs):
             values = list(args) + list(kwargs.values())
@@ -20,9 +22,7 @@ def type_check(*allowed_types):
                         f'Incorrect type for value "{value}". Expected "{allowed_type}"'
                     )
             return method(*args, **kwargs)
-
         return check_types
-
     return decorator
 
 

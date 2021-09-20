@@ -17,6 +17,8 @@ from .bom_item_results import (
     SubstanceWithCompliance,
     SubstanceWithAmounts,
     BoM1711WithImpactedSubstances,
+    WatchListIndicatorResult,
+    RoHSIndicatorResult
 )
 
 
@@ -75,7 +77,7 @@ class ComplianceBaseClass(ABC):
     _results = []
 
     @property
-    def compliance_by_indicator(self) -> Dict[str, str]:
+    def compliance_by_indicator(self) -> Dict[str, Union[WatchListIndicatorResult, RoHSIndicatorResult]]:
         results = {}
         for result in self._results:
             for indicator_name, indicator_result in result.indicators.items():

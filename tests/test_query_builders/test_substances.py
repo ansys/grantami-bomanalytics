@@ -24,7 +24,7 @@ class TestWithoutAmounts:
             values,
         )
         assert all(
-            [i.percentage_amount == i.default_percentage_amount for i in query._items]
+            [i.percentage_amount == i._default_percentage_amount for i in query._items]
         )
 
     def test_add_cas_numbers(self, values, connection):
@@ -44,7 +44,7 @@ class TestWithoutAmounts:
             values,
         )
         assert all(
-            [i.percentage_amount == i.default_percentage_amount for i in query._items]
+            [i.percentage_amount == i._default_percentage_amount for i in query._items]
         )
 
     def test_add_ec_numbers(self, values, connection):
@@ -64,7 +64,7 @@ class TestWithoutAmounts:
             values,
         )
         assert all(
-            [i.percentage_amount == i.default_percentage_amount for i in query._items]
+            [i.percentage_amount == i._default_percentage_amount for i in query._items]
         )
 
 

@@ -2,7 +2,7 @@ from enum import Enum, auto
 from abc import ABC
 from typing import List, Union
 
-from ansys.granta import bomanalytics
+from ansys.granta.bomanalytics import models
 
 
 class IndicatorDefinition(ABC):
@@ -14,13 +14,11 @@ class IndicatorDefinition(ABC):
 
     @property
     def definition(self):
-        return (
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
-                name=self.name,
-                legislation_names=self.legislation_names,
-                default_threshold_percentage=self.default_threshold_percentage,
-                type=self._indicator_type,
-            )
+        return models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
+            name=self.name,
+            legislation_names=self.legislation_names,
+            default_threshold_percentage=self.default_threshold_percentage,
+            type=self._indicator_type,
         )
 
 

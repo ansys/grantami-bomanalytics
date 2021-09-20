@@ -5,17 +5,9 @@ from ansys.granta.bom_analytics import (
 
 
 def test_impacted_substances(connection, legislations):
-    stk_object = [
-        {
-            "dbkey": "MI_Restricted_Substances",
-            "record_guid": "eef13c81-9b04-4af3-8d68-3524ffce7035",
-        }
-    ]
-
     response = (
         MaterialImpactedSubstanceQuery(connection)
-        .add_material_ids(["plastic-abs-pvc-flame"])
-        .add_stk_records(stk_object)
+        .add_material_ids(["plastic-abs-pvc-flame", "plastic-pmma-pc"])
         .add_legislations(legislations)
         .execute()
     )
@@ -37,17 +29,9 @@ def test_impacted_substances(connection, legislations):
 
 
 def test_compliance(connection, indicators):
-    stk_object = [
-        {
-            "dbkey": "MI_Restricted_Substances",
-            "record_guid": "eef13c81-9b04-4af3-8d68-3524ffce7035",
-        }
-    ]
-
     response = (
         MaterialComplianceQuery(connection)
-        .add_material_ids(["plastic-abs-pvc-flame"])
-        .add_stk_records(stk_object)
+        .add_material_ids(["plastic-abs-pvc-flame", "plastic-pmma-pc"])
         .add_indicators(indicators)
         .execute()
     )

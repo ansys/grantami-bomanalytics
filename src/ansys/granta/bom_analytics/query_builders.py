@@ -189,10 +189,10 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         record_guids = []
         for r in stk_records:
-            if r["dbkey"] != self._connection.dbkey:
-                dbkey = r["dbkey"]
+            if r["db_key"] != self._connection.dbkey:
+                db_key = r["db_key"]
                 raise ValueError(
-                    f'Database key "{dbkey}" does not match connection database key "{self._connection.dbkey}"'
+                    f'Database key "{db_key}" does not match connection database key "{self._connection.dbkey}"'
                 )
             record_guids.append(r["record_guid"])
         self.add_record_guids(record_guids)

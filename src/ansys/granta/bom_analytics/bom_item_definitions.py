@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Callable, Type, Union, List, Dict
 
-from ansys.granta import bomanalytics
 from ansys.granta.bomanalytics import models
-from ansys.granta.bomanalytics.models import Model
 
 
 class RecordDefinition(ABC):
@@ -25,18 +23,13 @@ class RecordDefinition(ABC):
     ):  # TODO: Finalize the stk interop format
         item_references = []
         for record in stk_records:
-            assert "dbkey" in record
+            assert "db_key" in record
             assert "record_guid" in record
 
             item_references.append(cls(record_guid=record["record_guid"]))
         return item_references
 
     def _create_definition(self):
-        if self.record_history_identity:
-            return self._model(
-                reference_type="MiRecordHistoryIdentity",
-                reference_value=self.record_history_identity,
-            )
         if self.record_guid:
             return self._model(
                 reference_type="MiRecordGuid", reference_value=self.record_guid
@@ -45,6 +38,11 @@ class RecordDefinition(ABC):
             return self._model(
                 reference_type="MiRecordHistoryGuid",
                 reference_value=self.record_history_guid,
+            )
+        if self.record_history_identity:
+            return self._model(
+                reference_type="MiRecordHistoryIdentity",
+                reference_value=self.record_history_identity,
             )
 
     @property
@@ -69,12 +67,10 @@ class PartDefinition(RecordDefinition):
             **kwargs,
         )
         self.part_number: str = part_number
-        self._model = (
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonPartReference
-        )
+        self._model = models.GrantaBomAnalyticsServicesInterfaceCommonPartReference
 
     @property
-    def definition(self) -> Model:
+    def definition(self) -> models.Model:
         definition = super()._create_definition() or self._model(
             reference_type="PartNumber", reference_value=self.part_number
         )
@@ -97,12 +93,10 @@ class MaterialDefinition(RecordDefinition):
             **kwargs,
         )
         self.material_id: str = material_id
-        self._model = (
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
-        )
+        self._model = models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
 
     @property
-    def definition(self) -> Model:
+    def definition(self) -> models.Model:
         definition = super()._create_definition() or self._model(
             reference_type="MaterialId", reference_value=self.material_id
         )
@@ -126,11 +120,11 @@ class SpecificationDefinition(RecordDefinition):
         )
         self.specification_id: str = specification_id
         self._model = (
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference
+            models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference
         )
 
     @property
-    def definition(self) -> Model:
+    def definition(self) -> models.Model:
         definition = super()._create_definition() or self._model(
             reference_type="SpecificationId", reference_value=self.specification_id
         )
@@ -157,12 +151,12 @@ class BaseSubstanceDefinition(RecordDefinition, ABC):
         self.ec_number: str = ec_number
 
     @property
-    def definition(self) -> Model:
-        return Model()
+    def definition(self) -> models.Model:
+        return models.Model()
 
 
 class SubstanceDefinition(BaseSubstanceDefinition):
-    default_percentage_amount = 100  # Default to worst case scenario
+    _default_percentage_amount = 100  # Default to worst case scenario
 
     def __init__(
         self,
@@ -188,23 +182,23 @@ class SubstanceDefinition(BaseSubstanceDefinition):
         if percentage_amount:
             self.percentage_amount = percentage_amount
         self._model = (
-            bomanalytics.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount  # noqa: E501
+            models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount  # noqa: E501
         )
 
     @property
     def percentage_amount(self) -> float:
-        if self._percentage_amount:
-            return self._percentage_amount
-        else:
-            return self.__class__.default_percentage_amount
+        return self._percentage_amount or self.__class__._default_percentage_amount
 
     @percentage_amount.setter
     def percentage_amount(self, value: float):
-        assert 0 <= value <= 100
+        if not 0 <= value <= 100:
+            raise ValueError(
+                'percentage_amount must be between 0 and 100. Specified value was "{value}"'
+            )
         self._percentage_amount = value
 
     @property
-    def definition(self) -> Model:
+    def definition(self) -> models.Model:
         definition = super()._create_definition()
         if not definition:
             if self.chemical_name:

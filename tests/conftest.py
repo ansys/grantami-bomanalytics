@@ -1,4 +1,5 @@
 import pytest
+import os
 
 from ansys.granta.bom_analytics import (
     Connection,
@@ -10,10 +11,10 @@ from ansys.granta.bom_analytics import (
 @pytest.fixture(scope="session")
 def connection():
     connection = Connection(
-        url="http://localhost/mi_servicelayer",
-        dbkey="MI_Restricted_Substances",
-        username="***REMOVED***",
-        password="***REMOVED***",
+        url=os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer"),
+        dbkey=os.getenv("TEST_RS_DB_KEY", "MI_Restricted_Substances"),
+        username=os.getenv("TEST_USER"),
+        password=os.getenv("TEST_PASS"),
     )
     return connection
 

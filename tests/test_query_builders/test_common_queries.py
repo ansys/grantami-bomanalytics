@@ -83,7 +83,7 @@ class TestAddPropertiesToRecordQueries:
             assert not query._items[idx].record_history_guid
 
     def test_stk_object_wrong_dbkey(self, query_type, connection):
-        stk_object = [{"record_guid": "test_guid", "dbkey": "Invalid dbkey"}]
+        stk_object = [{"record_guid": "test_guid", "db_key": "Invalid dbkey"}]
         with pytest.raises(ValueError) as e:
             query_type(connection).add_stk_records(stk_object)
         assert (

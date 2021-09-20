@@ -81,7 +81,7 @@ def test_compliance(connection, indicators):
             assert indicator_result.name == indicator.name
             assert indicator_result.flag
         assert bom_results.parts
-        assert not bom_results.substances  # Empty list
+        assert len(bom_results.substances) == 0
 
     assert len(response.compliance_by_indicator) == 2
     for indicator in indicators:

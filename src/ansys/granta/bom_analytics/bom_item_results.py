@@ -275,7 +275,9 @@ class LegislationResult:
         ]
 
 
-class RoHSIndicatorResult(RoHSIndicatorDefinition):
+class IndicatorResultMixin:
+    _indicator_type = None
+
     def __init__(
         self,
         name: str,
@@ -288,25 +290,16 @@ class RoHSIndicatorResult(RoHSIndicatorDefinition):
             self.flag: str = self.__class__.flags[flag]
         except KeyError as e:
             raise Exception(
-                f'Unknown flag {flag} for indicator {name}, type "RohsIndicator"'
+                f'Unknown flag {flag} for indicator {name}, type "{self._indicator_type}"'
             ).with_traceback(e.__traceback__)
 
 
-class WatchListIndicatorResult(WatchListIndicatorDefinition):
-    def __init__(
-        self,
-        name: str,
-        legislation_names: List[str],
-        flag: str,
-        default_threshold_percentage: Union[float, None] = None,
-    ):
-        super().__init__(name, legislation_names, default_threshold_percentage)
-        try:
-            self.flag: str = self.__class__.flags[flag]
-        except KeyError as e:
-            raise Exception(
-                f'Unknown flag {flag} for indicator {name}, type "WatchListIndicator"'
-            ).with_traceback(e.__traceback__)
+class RoHSIndicatorResult(IndicatorResultMixin, RoHSIndicatorDefinition):
+    pass
+
+
+class WatchListIndicatorResult(IndicatorResultMixin, WatchListIndicatorDefinition):
+    pass
 
 
 def create_indicator_result(

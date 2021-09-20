@@ -1,3 +1,4 @@
+from typing import List
 from ansys.granta.bom_analytics import (
     MaterialImpactedSubstanceQuery,
     MaterialComplianceQuery,
@@ -10,7 +11,7 @@ from ansys.granta.bom_analytics import (
     BomComplianceQuery,
 )
 
-RECORD_QUERY_TYPES = [
+RECORD_QUERY_TYPES: List = [
     MaterialImpactedSubstanceQuery,
     MaterialComplianceQuery,
     PartImpactedSubstanceQuery,
@@ -20,14 +21,14 @@ RECORD_QUERY_TYPES = [
     SubstanceComplianceQuery,
 ]
 
-COMPLIANCE_QUERY_TYPES = [
+COMPLIANCE_QUERY_TYPES: List = [
     MaterialComplianceQuery,
     PartComplianceQuery,
     SpecificationComplianceQuery,
     SubstanceComplianceQuery,
     BomComplianceQuery,
 ]
-SUBSTANCE_QUERY_TYPES = [
+SUBSTANCE_QUERY_TYPES: List = [
     MaterialImpactedSubstanceQuery,
     PartImpactedSubstanceQuery,
     SpecificationImpactedSubstanceQuery,
@@ -57,11 +58,11 @@ TEST_HISTORY_IDS = [
 
 STK_OBJECT = [
     {
-        "dbkey": "MI_Restricted_Substances",
+        "db_key": "MI_Restricted_Substances",
         "record_guid": "00000000-0000-0000-0000-000000000000",
     },
     {
-        "dbkey": "MI_Restricted_Substances",
+        "db_key": "MI_Restricted_Substances",
         "record_guid": "00000000-0000-0000-0000-000000000123",
     },
 ]

@@ -1,8 +1,8 @@
 import pytest
-from ansys.granta.bom_analytics import BomComplianceQuery, BomImpactedSubstancesQuery
+from ansys.granta.bom_analytics import BomComplianceQuery, BomImpactedSubstanceQuery
 
 
-@pytest.mark.parametrize("query_type", [BomComplianceQuery, BomImpactedSubstancesQuery])
+@pytest.mark.parametrize("query_type", [BomComplianceQuery, BomImpactedSubstanceQuery])
 def test_add_bom(query_type):
     query = query_type().set_bom("TEST BOM")
     assert isinstance(query, query_type)
@@ -10,7 +10,7 @@ def test_add_bom(query_type):
     assert query._items[0]._bom == "TEST BOM"
 
 
-@pytest.mark.parametrize("query_type", [BomComplianceQuery, BomImpactedSubstancesQuery])
+@pytest.mark.parametrize("query_type", [BomComplianceQuery, BomImpactedSubstanceQuery])
 def test_add_bom_wrong_type(query_type, connection):
     with pytest.raises(TypeError) as e:
         query_type().set_bom(12345)

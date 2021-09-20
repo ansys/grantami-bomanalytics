@@ -7,7 +7,7 @@ from ansys.granta.bom_analytics import (
     SpecificationImpactedSubstanceQuery,
     SpecificationComplianceQuery,
     SubstanceComplianceQuery,
-    BomImpactedSubstancesQuery,
+    BomImpactedSubstanceQuery,
     BomComplianceQuery,
 )
 
@@ -32,7 +32,7 @@ SUBSTANCE_QUERY_TYPES: List = [
     MaterialImpactedSubstanceQuery,
     PartImpactedSubstanceQuery,
     SpecificationImpactedSubstanceQuery,
-    BomImpactedSubstancesQuery,
+    BomImpactedSubstanceQuery,
 ]
 ALL_QUERY_TYPES = COMPLIANCE_QUERY_TYPES + SUBSTANCE_QUERY_TYPES
 

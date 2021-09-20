@@ -128,7 +128,7 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
         --------
         >>> query = MaterialComplianceQuery()
         >>> query.add_record_history_guids(['41e20a88-d496-4735-a177-6266fac9b4e2',
-        >>>                               'd117d9ad-e6a9-4ba9-8ad8-9a20b6d0b5e2'])
+        ...                               'd117d9ad-e6a9-4ba9-8ad8-9a20b6d0b5e2'])
         """
 
         for value in record_history_guids:
@@ -157,7 +157,7 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
         --------
         >>> query = MaterialComplianceQuery()
         >>> query.add_record_guids(['bdb0b880-e6ee-4f1a-bebd-af76959ae3c8',
-        >>>                         'a98cf4b3-f96a-4714-9f79-afe443982c69'])
+        ...                         'a98cf4b3-f96a-4714-9f79-afe443982c69'])
         """
 
         for value in record_guids:
@@ -200,9 +200,9 @@ else:
     api_base_class = object
 
 
-class ApiMixin(ABC, api_base_class):
+class ApiMixin(api_base_class):
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__()
         self._request_type = None
         self._result_type = None
         self._connection = None
@@ -285,7 +285,7 @@ class ComplianceMixin(ApiMixin, ABC):
         }
 
 
-class ImpactedSubstanceMixin(ApiMixin, ABC):
+class ImpactedSubstanceMixin(Generic[T], ApiMixin, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._legislations: List[str] = []
@@ -307,7 +307,7 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
 
         Examples
         --------
-        >>> query = MaterialComplianceQuery()
+        >>> query = MaterialImpactedSubstanceQuery()
         >>> query.add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
         """
 
@@ -366,7 +366,7 @@ class MaterialQueryBuilder(RecordBasedQueryBuilder, ABC):
         --------
         >>> query = MaterialComplianceQuery()
         >>> query.add_material_ids(['elastomer-butadienerubber',
-        >>>                         'NBR-100'])
+        ...                         'NBR-100'])
         """
         for material_id in material_ids:
             item_reference = self._definition_factory.create_definition_by_material_id(
@@ -384,11 +384,6 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryBuilder):
     All methods used to add materials and indicators to this query return the query itself, so they can be chained
     together as required. Use the .execute() method once the query is fully constructed to return the result.
 
-    Parameters
-    ----------
-    connection : Connection
-        The connection to the Granta MI server.
-
     Returns
     -------
     MaterialComplianceQuery
@@ -397,10 +392,12 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = MaterialComplianceQuery() \
-    >>>             .add_material_ids(['elastomer-butadienerubber', 'NBR-100']) \
-    >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute(conn)
+    >>> result = (
+    ...     MaterialComplianceQuery()
+    ...     .add_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+    ...     .add_indicators([WatchListIndicator(...)])
+    ...     .execute(conn)
+    ... )
     """
 
     def __init__(self):
@@ -418,6 +415,11 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryBuilder):
     def execute(self, connection: Connection) -> MaterialComplianceResult:
         """
         Run the query against the Granta MI database and return the results.
+
+        Parameters
+        ----------
+        connection : Connection
+            The connection to the Granta MI server.
 
         Returns
         -------
@@ -438,11 +440,6 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilde
     All methods used to add materials and legislations to this query return the query itself, so they can be chained
     together as required. Use the .execute() method once the query is fully constructed to return the result.
 
-    Parameters
-    ----------
-    connection : Connection
-        The connection to the Granta MI server.
-
     Returns
     -------
     MaterialImpactedSubstancesQuery
@@ -451,10 +448,12 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilde
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = MaterialImpactedSubstancesQuery() \
-    >>>             .add_material_ids(['elastomer-butadienerubber', 'NBR-100']) \
-    >>>             .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"]) \
-    >>>             .execute(conn)
+    >>> result = (
+    ...     MaterialImpactedSubstanceQuery()
+    ...     .add_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+    ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
+    ...     .execute(conn)
+    ... )
     """
 
     def __init__(self):
@@ -472,6 +471,11 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilde
     def execute(self, connection: Connection) -> MaterialImpactedSubstancesResult:
         """
         Run the query against the Granta MI database and return the results.
+
+        Parameters
+        ----------
+        connection : Connection
+            The connection to the Granta MI server.
 
         Returns
         -------
@@ -528,11 +532,6 @@ class PartComplianceQuery(ComplianceMixin, PartQueryBuilder):
     All methods used to add parts and indicators to this query return the query itself, so they can be chained
     together as required. Use the .execute() method once the query is fully constructed to return the result.
 
-    Parameters
-    ----------
-    connection : Connection
-        The connection to the Granta MI server.
-
     Returns
     -------
     PartComplianceQuery
@@ -541,10 +540,12 @@ class PartComplianceQuery(ComplianceMixin, PartQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = PartComplianceQuery() \
-    >>>             .add_part_numbers(['ABC12345', 'Q356AQ']) \
-    >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute(conn)
+    >>> result = (
+    ...     PartComplianceQuery()
+    ...    .add_part_numbers(['ABC12345', 'Q356AQ'])
+    ...    .add_indicators([WatchListIndicator(...)])
+    ...    .execute(conn)
+    ... )
     """
 
     def __init__(self):
@@ -562,6 +563,11 @@ class PartComplianceQuery(ComplianceMixin, PartQueryBuilder):
     def execute(self, connection: Connection) -> PartComplianceResult:
         """
         Run the query against the Granta MI database and return the results.
+
+        Parameters
+        ----------
+        connection : Connection
+            The connection to the Granta MI server.
 
         Returns
         -------
@@ -581,11 +587,6 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryBuilder):
     All methods used to add parts and legislations to this query return the query itself, so they can be chained
     together as required. Use the .execute() method once the query is fully constructed to return the result.
 
-    Parameters
-    ----------
-    connection : Connection
-        The connection to the Granta MI server.
-
     Returns
     -------
     PartImpactedSubstancesQuery
@@ -594,10 +595,12 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = PartImpactedSubstancesQuery() \
-    >>>             .add_part_numbers(['ABC12345', 'Q356AQ']) \
-    >>>             .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"]) \
-    >>>             .execute(conn)
+    >>> result = (
+    ...     PartImpactedSubstanceQuery()
+    ...     .add_part_numbers(['ABC12345', 'Q356AQ'])
+    ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
+    ...     .execute(conn)
+    ... )
     """
 
     def __init__(self):
@@ -615,6 +618,11 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryBuilder):
     def execute(self, connection: Connection) -> PartImpactedSubstancesResult:
         """
         Run the query against the Granta MI database and return the results.
+
+        Parameters
+        ----------
+        connection : Connection
+            The connection to the Granta MI server.
 
         Returns
         -------
@@ -652,7 +660,7 @@ class SpecificationQueryBuilder(RecordBasedQueryBuilder, ABC):
         Examples
         --------
         >>> query = SpecificationComplianceQuery()
-        >>> query.add_part_numbers(['MIL-A-8625', 'PSP101'])
+        >>> query.add_specification_ids(['MIL-A-8625', 'PSP101'])
         """
         for value in specification_ids:
             item_reference = (
@@ -670,11 +678,6 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryBuilder):
     All methods used to add specifcations and indicators to this query return the query itself, so they can be chained
     together as required. Use the .execute() method once the query is fully constructed to return the result.
 
-    Parameters
-    ----------
-    connection : Connection
-        The connection to the Granta MI server.
-
     Returns
     -------
     SpecificationComplianceQuery
@@ -683,10 +686,12 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = SpecificationComplianceQuery() \
-    >>>             .add_specification_ids(['MIL-A-8625', 'PSP101']) \
-    >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute(conn)
+    >>> result = (
+    ...     SpecificationComplianceQuery()
+    ...     .add_specification_ids(['MIL-A-8625', 'PSP101'])
+    ...     .add_indicators([WatchListIndicator(...)])
+    ...     .execute(conn)
+    ... )
     """
 
     def __init__(self):
@@ -704,6 +709,11 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryBuilder):
     def execute(self, connection: Connection) -> SpecificationComplianceResult:
         """
         Run the query against the Granta MI database and return the results.
+
+        Parameters
+        ----------
+        connection : Connection
+            The connection to the Granta MI server.
 
         Returns
         -------
@@ -725,11 +735,6 @@ class SpecificationImpactedSubstanceQuery(
     All methods used to add specifications and legislations to this query return the query itself, so they can be
     chained together as required. Use the .execute() method once the query is fully constructed to return the result.
 
-    Parameters
-    ----------
-    connection : Connection
-        The connection to the Granta MI server.
-
     Returns
     -------
     SpecificationImpactedSubstancesQuery
@@ -738,10 +743,12 @@ class SpecificationImpactedSubstanceQuery(
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = SpecificationImpactedSubstancesQuery() \
-    >>>             .add_specification_ids(['MIL-A-8625', 'PSP101']) \
-    >>>             .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"]) \
-    >>>             .execute(conn)
+    >>> result = (
+    ...     SpecificationImpactedSubstanceQuery()
+    ...     .add_specification_ids(['MIL-A-8625', 'PSP101'])
+    ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
+    ...     .execute(conn)
+    ... )
     """
 
     def __init__(self):
@@ -759,6 +766,11 @@ class SpecificationImpactedSubstanceQuery(
     def execute(self, connection: Connection) -> SpecificationImpactedSubstancesResult:
         """
         Run the query against the Granta MI database and return the results.
+
+        Parameters
+        ----------
+        connection : Connection
+            The connection to the Granta MI server.
 
         Returns
         -------
@@ -882,7 +894,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         --------
         >>> query = SubstanceComplianceQuery()
         >>> query.add_record_history_ids_with_amounts([(15321, 25),
-        >>>                                            (17542, 0.1)])
+        ...                                            (17542, 0.1)])
         """
 
         for record_history_id, amount in record_history_identities_and_amounts:
@@ -914,7 +926,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         --------
         >>> query = SubstanceComplianceQuery()
         >>> query.add_record_history_guids_with_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
-        >>>                                              ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])
+        ...                                              ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])
         """
         for record_history_guid, amount in record_history_guids_and_amounts:
             item_reference = self._definition_factory.create_bom_item_definition(
@@ -945,7 +957,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         --------
         >>> query = SubstanceComplianceQuery()
         >>> query.add_record_guids_with_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
-        >>>                                      ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])
+        ...                                      ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])
         """
 
         for record_guid, amount in record_guids_and_amounts:
@@ -1067,10 +1079,12 @@ class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryBuilder):
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = SubstanceComplianceQuery() \
-    >>>             .add_cas_numbers(['50-00-0', '57-24-9']) \
-    >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute(conn)
+    >>> result = (
+    ...     SubstanceComplianceQuery()
+    ...     .add_cas_numbers(['50-00-0', '57-24-9'])
+    ...     .add_indicators([WatchListIndicator(...)])
+    ...     .execute(conn)
+    ... )
     """
 
     def __init__(self):
@@ -1124,7 +1138,7 @@ class Bom1711QueryBuilder(BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = MaterialComplianceQuery()
+        >>> query = BomComplianceQuery()
         >>> query.set_bom(bom)
         """
 
@@ -1153,11 +1167,6 @@ class BomComplianceQuery(Bom1711QueryOverride, ComplianceMixin, Bom1711QueryBuil
     All methods used to add the Bill of Materials and indicators to this query return the query itself, so they can be
     chained together as required. Use the .execute() method once the query is fully constructed to return the result.
 
-    Parameters
-    ----------
-    connection : Connection
-        The connection to the Granta MI server.
-
     Returns
     -------
     BomComplianceQuery
@@ -1166,10 +1175,13 @@ class BomComplianceQuery(Bom1711QueryOverride, ComplianceMixin, Bom1711QueryBuil
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = BomComplianceQuery() \
-    >>>             .set_bom(bom) \
-    >>>             .add_indicators([WatchListIndicator(...)]) \
-    >>>             .execute(conn)
+    >>> bom = "<PartsEco xmlns..."
+    >>> result = (
+    ...     BomComplianceQuery()
+    ...     .set_bom(bom)
+    ...     .add_indicators([WatchListIndicator(...)])
+    ...     .execute(conn)
+    ... )
     """
 
     def __init__(self):
@@ -1188,6 +1200,11 @@ class BomComplianceQuery(Bom1711QueryOverride, ComplianceMixin, Bom1711QueryBuil
         """
         Run the query against the Granta MI database and return the results.
 
+        Parameters
+        ----------
+        connection : Connection
+            The connection to the Granta MI server.
+
         Returns
         -------
         BoMComplianceResult
@@ -1199,7 +1216,7 @@ class BomComplianceQuery(Bom1711QueryOverride, ComplianceMixin, Bom1711QueryBuil
         return super().execute(connection)
 
 
-class BomImpactedSubstancesQuery(
+class BomImpactedSubstanceQuery(
     Bom1711QueryOverride, ImpactedSubstanceMixin, Bom1711QueryBuilder
 ):
     """
@@ -1210,16 +1227,18 @@ class BomImpactedSubstancesQuery(
 
     Returns
     -------
-    BomImpactedSubstancesQuery
+    BomImpactedSubstanceQuery
         The query containing the bom and legislation names.
 
     Examples
     --------
     >>> conn = Connection(...)
-    >>> result = BomImpactedSubstancesQuery() \
-    >>>             .set_bom("<PartsEco xmlns...") \
-    >>>             .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"]) \
-    >>>             .execute(conn)
+    >>> result = (
+    ...     BomImpactedSubstanceQuery()
+    ...     .set_bom("<PartsEco xmlns...")
+    ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
+    ...     .execute(conn)
+    ... )
     """
 
     def __init__(self):

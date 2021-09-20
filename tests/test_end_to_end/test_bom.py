@@ -1,5 +1,5 @@
 import pytest
-from ansys.granta.bom_analytics import BomComplianceQuery, BomImpactedSubstancesQuery
+from ansys.granta.bom_analytics import BomComplianceQuery, BomImpactedSubstanceQuery
 
 bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" id="B0">
     <Components>
@@ -53,7 +53,7 @@ bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco"
 
 def test_impacted_substances(connection, legislations):
     response = (
-        BomImpactedSubstancesQuery()
+        BomImpactedSubstanceQuery()
         .set_bom(bom)
         .add_legislations(legislations)
         .execute(connection)

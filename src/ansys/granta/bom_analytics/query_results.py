@@ -142,7 +142,7 @@ class MaterialComplianceResult(ComplianceBaseClass):
     @property
     def compliance_by_material_and_indicator(
         self,
-    ) -> List[MaterialWithCompliance,]:
+    ) -> List[MaterialWithCompliance]:
         return self._results
 
 
@@ -200,7 +200,7 @@ class PartComplianceResult(ComplianceBaseClass):
     @property
     def compliance_by_part_and_indicator(
         self,
-    ) -> List[PartWithCompliance,]:
+    ) -> List[PartWithCompliance]:
         return self._results
 
 
@@ -255,7 +255,7 @@ class SpecificationComplianceResult(ComplianceBaseClass):
     @property
     def compliance_by_specification_and_indicator(
         self,
-    ) -> List[SpecificationWithCompliance,]:
+    ) -> List[SpecificationWithCompliance]:
         return self._results
 
 

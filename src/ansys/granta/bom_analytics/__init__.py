@@ -7,7 +7,7 @@ from .query_builders import (
     SpecificationImpactedSubstanceQuery,
     SpecificationComplianceQuery,
     SubstanceComplianceQuery,
-    BomImpactedSubstancesQuery,
+    BomImpactedSubstanceQuery,
     BomComplianceQuery,
 )
 from .bom_indicators import (

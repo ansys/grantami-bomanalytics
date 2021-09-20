@@ -4,17 +4,17 @@ import functools
 T = TypeVar("T")
 
 
-def type_check(*allowed_types):
+def allowed_types(*types):
     def decorator(method: Type[T]) -> T:
         @functools.wraps(method)
         def check_types(*args, **kwargs):
             values = list(args) + list(kwargs.values())
 
-            if len(allowed_types) != len(values):
+            if len(types) != len(values):
                 raise ValueError(
-                    f"Number of types ({len(allowed_types)}) does not match number of arguments ({len(values)})"
+                    f"Number of types ({len(types)}) does not match number of arguments ({len(values)})"
                 )
-            for value, allowed_type in zip(values, allowed_types):
+            for value, allowed_type in zip(values, types):
                 try:
                     check_type(value, allowed_type)
                 except AssertionError:

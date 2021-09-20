@@ -29,7 +29,5 @@ def test_add_spec_ids_wrong_type(query_type):
         query_type().add_specification_ids("Strings are not allowed")
     assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)
     with pytest.raises(TypeError) as e:
-        query_type().add_specification_ids(
-            specification_ids="Strings are not allowed"
-        )
+        query_type().add_specification_ids(specification_ids="Strings are not allowed")
     assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)

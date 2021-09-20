@@ -11,8 +11,8 @@ from .query_builders import (
     BomComplianceQuery,
 )
 from .bom_indicators import (
-    RoHSIndicatorDefinition as RoHSIndicator,
-    WatchListIndicatorDefinition as WatchListIndicator,
+    RoHSIndicator,
+    WatchListIndicator,
 )
 
 # TODO Logging?!

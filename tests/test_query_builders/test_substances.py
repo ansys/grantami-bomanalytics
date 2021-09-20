@@ -77,9 +77,7 @@ class TestWithoutAmountsWrongType:
             SubstanceComplianceQuery().add_chemical_names(values)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceComplianceQuery().add_chemical_names(
-                chemical_names=values
-            )
+            SubstanceComplianceQuery().add_chemical_names(chemical_names=values)
         assert "Incorrect type for value" in str(e.value)
 
     def test_add_cas_numbers(self, values):
@@ -105,9 +103,7 @@ class TestWithoutAmountsWrongType:
 )
 class TestWithAmounts:
     def test_record_guids(self, values):
-        query = SubstanceComplianceQuery().add_record_guids_with_amounts(
-            values
-        )
+        query = SubstanceComplianceQuery().add_record_guids_with_amounts(values)
         assert isinstance(query, SubstanceComplianceQuery)
         assert check_query_manager_attributes(
             query,
@@ -163,9 +159,7 @@ class TestWithAmounts:
         )
 
     def test_add_chemical_names(self, values):
-        query = SubstanceComplianceQuery().add_chemical_names_with_amounts(
-            values
-        )
+        query = SubstanceComplianceQuery().add_chemical_names_with_amounts(values)
         assert isinstance(query, SubstanceComplianceQuery)
         assert check_query_manager_attributes(
             query,
@@ -193,9 +187,7 @@ class TestWithAmounts:
         )
 
     def test_add_cas_numbers(self, values):
-        query = SubstanceComplianceQuery().add_cas_numbers_with_amounts(
-            values
-        )
+        query = SubstanceComplianceQuery().add_cas_numbers_with_amounts(values)
         assert isinstance(query, SubstanceComplianceQuery)
         assert check_query_manager_attributes(
             query,
@@ -253,9 +245,7 @@ class TestWithAmounts:
 
 @pytest.mark.parametrize("values", [([(123, 12.5)]), ([(234, 0.001), (345, 100)])])
 def test_record_history_ids_with_amounts(values):
-    query = SubstanceComplianceQuery().add_record_history_ids_with_amounts(
-        values
-    )
+    query = SubstanceComplianceQuery().add_record_history_ids_with_amounts(values)
     assert isinstance(query, SubstanceComplianceQuery)
     assert check_query_manager_attributes(
         query,
@@ -293,9 +283,7 @@ class TestWithAmountsWrongType:
 
     def test_record_history_guids(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceComplianceQuery().add_record_history_guids_with_amounts(
-                values
-            )
+            SubstanceComplianceQuery().add_record_history_guids_with_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
             SubstanceComplianceQuery().add_record_history_guids_with_amounts(
@@ -305,9 +293,7 @@ class TestWithAmountsWrongType:
 
     def test_record_history_ids(self, values, connection):
         with pytest.raises(TypeError) as e:
-            SubstanceComplianceQuery().add_record_history_ids_with_amounts(
-                values
-            )
+            SubstanceComplianceQuery().add_record_history_ids_with_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
             SubstanceComplianceQuery().add_record_history_ids_with_amounts(

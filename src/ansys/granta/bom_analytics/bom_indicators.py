@@ -49,7 +49,7 @@ class WatchListFlags(Flags):
     WatchListUnknown = auto()
 
 
-class RoHSIndicatorDefinition(IndicatorDefinition):
+class RoHSIndicator(IndicatorDefinition):
     flags = RoHSFlags
 
     def __init__(
@@ -62,7 +62,7 @@ class RoHSIndicatorDefinition(IndicatorDefinition):
         self._indicator_type = "Rohs"
 
 
-class WatchListIndicatorDefinition(IndicatorDefinition):
+class WatchListIndicator(IndicatorDefinition):
     flags = WatchListFlags
 
     def __init__(

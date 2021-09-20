@@ -10,20 +10,18 @@ class Connection:
 
     Parameters
     ----------
-    url : str
-        Location of the Granta MI Service layer.
-    dbkey : str
+    client : ApiClient
+        A client genereated by the ansys.granta.auth_common package. See the auth_common
+        documentation for details of available authentication methods.
+    db_key : str
         Database key of the Restricted Substances-based database.
-    username, password : str, optional
-        Credentials to be used for Basic or Windows authentication. Not required if autologon is used.
-    autologon : bool : default=False
-        Attempt to use the current user's Windows session to authenticate.
+
 
     Attributes
     ----------
     material_universe_table_name : str
         Specify an alternate name for the 'MaterialUniverse' table
-    inhouse_materials_table_name : str
+    in_house_materials_table_name : str
         Specify an alternate name for the 'Materials - in house' table
     specifications_table_name : str
         Specify an alternate name for the 'Specifications' table
@@ -41,9 +39,9 @@ class Connection:
 
     Examples
     --------
-    >>> Connection(url='http://localhost/mi_servicelayer', autologon=True)
-
-    >>> Connection(url='http://localhost/mi_servicelayer', username='my_username', password='my_password')
+    >>> from ansys.granta.auth_common import AuthenticatedApiClient
+    >>> my_client = AuthenticatedApiClient.with_autologon()
+    >>> Connection(client=my_client, db_key='MI_Restricted_Substances')
     """
 
     def __init__(

@@ -1,4 +1,4 @@
-from typing import List, Dict, Union, Callable
+from typing import List, Dict, Union, Callable, TYPE_CHECKING
 from ansys.granta.bomanalytics import models
 from .bom_item_definitions import (
     MaterialDefinition,
@@ -10,8 +10,8 @@ from .bom_item_definitions import (
 )
 from .bom_indicators import (
     IndicatorDefinition,
-    WatchListIndicatorDefinition,
-    RoHSIndicatorDefinition,
+    WatchListIndicator,
+    RoHSIndicator,
 )
 
 
@@ -207,9 +207,7 @@ class SubstanceWithCompliance(BaseSubstanceDefinition):
         record_guid: str = None,
         record_history_guid: str = None,
         indicators: List = None,
-        indicator_definitions: List[
-            Union[WatchListIndicatorDefinition, RoHSIndicatorDefinition]
-        ] = None,
+        indicator_definitions: List[Union[WatchListIndicator, RoHSIndicator]] = None,
     ):
         super().__init__(
             chemical_name,
@@ -276,7 +274,9 @@ class LegislationResult:
 
 
 class IndicatorResultMixin:
-    _indicator_type = None
+    if TYPE_CHECKING:
+        _indicator_type = None
+        flags = None
 
     def __init__(
         self,
@@ -294,11 +294,11 @@ class IndicatorResultMixin:
             ).with_traceback(e.__traceback__)
 
 
-class RoHSIndicatorResult(IndicatorResultMixin, RoHSIndicatorDefinition):
+class RoHSIndicatorResult(IndicatorResultMixin, RoHSIndicator):
     pass
 
 
-class WatchListIndicatorResult(IndicatorResultMixin, WatchListIndicatorDefinition):
+class WatchListIndicatorResult(IndicatorResultMixin, WatchListIndicator):
     pass
 
 
@@ -310,7 +310,7 @@ def create_indicator_result(
     assert indicator_definitions, "indicator_definitions is empty"
     for indicator_definition in indicator_definitions:
         if indicator_from_mi.name == indicator_definition.name:
-            if isinstance(indicator_definition, WatchListIndicatorDefinition):
+            if isinstance(indicator_definition, WatchListIndicator):
                 result = WatchListIndicatorResult(
                     name=indicator_from_mi.name,
                     legislation_names=indicator_definition.legislation_names,
@@ -318,7 +318,7 @@ def create_indicator_result(
                     flag=indicator_from_mi.flag,
                 )
                 return result
-            elif isinstance(indicator_definition, RoHSIndicatorDefinition):
+            elif isinstance(indicator_definition, RoHSIndicator):
                 result = RoHSIndicatorResult(
                     name=indicator_from_mi.name,
                     legislation_names=indicator_definition.legislation_names,

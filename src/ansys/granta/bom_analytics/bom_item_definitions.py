@@ -277,7 +277,8 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory, ABC):
             record_history_guid=record_history_guid,
         )
 
-    def create_definition_by_material_id(self, material_id) -> MaterialDefinition:
+    @staticmethod
+    def create_definition_by_material_id(material_id) -> MaterialDefinition:
         return MaterialDefinition(material_id=material_id)
 
 
@@ -297,7 +298,8 @@ class PartDefinitionFactory(BomItemDefinitionFactory, ABC):
             record_history_guid=record_history_guid,
         )
 
-    def create_definition_by_part_number(self, part_number) -> PartDefinition:
+    @staticmethod
+    def create_definition_by_part_number(part_number) -> PartDefinition:
         return PartDefinition(part_number=part_number)
 
 
@@ -317,8 +319,9 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory, ABC):
             record_history_guid=record_history_guid,
         )
 
+    @staticmethod
     def create_definition_by_specification_id(
-        self, specification_id
+        specification_id,
     ) -> SpecificationDefinition:
         return SpecificationDefinition(specification_id=specification_id)
 
@@ -337,13 +340,16 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
             percentage_amount=100,
         )
 
-    def create_definition_by_chemical_name(self, value) -> SubstanceDefinition:
+    @staticmethod
+    def create_definition_by_chemical_name(value) -> SubstanceDefinition:
         return SubstanceDefinition(chemical_name=value)
 
-    def create_definition_by_cas_number(self, value) -> SubstanceDefinition:
+    @staticmethod
+    def create_definition_by_cas_number(value) -> SubstanceDefinition:
         return SubstanceDefinition(cas_number=value)
 
-    def create_definition_by_ec_number(self, value) -> SubstanceDefinition:
+    @staticmethod
+    def create_definition_by_ec_number(value) -> SubstanceDefinition:
         return SubstanceDefinition(ec_number=value)
 
 
@@ -354,5 +360,6 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
     ]
 )
 class BomFactory:
-    def create_definition(self, bom) -> BoM1711Definition:
+    @staticmethod
+    def create_definition(bom) -> BoM1711Definition:
         return BoM1711Definition(bom=bom)

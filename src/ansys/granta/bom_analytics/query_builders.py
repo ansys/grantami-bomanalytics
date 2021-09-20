@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Tuple, Any, TypeVar, Generic
+from typing import Union, List, Dict, Tuple, Any, TypeVar, Generic, Callable
 import warnings
 from numbers import Number
 
@@ -24,7 +24,7 @@ from .query_results import (
 )
 from .bom_indicators import IndicatorDefinition
 
-T = TypeVar('T', bound="BaseQueryBuilder")
+T = TypeVar("T", bound="BaseQueryBuilder")
 
 
 class BaseQueryBuilder(Generic[T]):
@@ -191,10 +191,10 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         record_guids = []
         for r in stk_records:
-            if r["db_key"] != self._connection.dbkey:
+            if r["db_key"] != self._connection.db_key:
                 db_key = r["db_key"]
                 raise ValueError(
-                    f'Database key "{db_key}" does not match connection database key "{self._connection.dbkey}"'
+                    f'Database key "{db_key}" does not match connection database key "{self._connection.db_key}"'
                 )
             record_guids.append(r["record_guid"])
         self.add_record_guids(record_guids)
@@ -277,7 +277,7 @@ class ComplianceMixin(ApiMixin, ABC):
     @property
     def _arguments(self):
         return {
-            "database_key": self._connection.dbkey,
+            "database_key": self._connection.db_key,
             "indicators": [i.definition for i in self._indicators],
             "config": self._connection.query_config,
         }
@@ -332,7 +332,7 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
     @property
     def _arguments(self):
         return {
-            "database_key": self._connection.dbkey,
+            "database_key": self._connection.db_key,
             "legislation_names": self._legislations,
             "config": self._connection.query_config,
         }

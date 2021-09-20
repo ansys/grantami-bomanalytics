@@ -1,7 +1,7 @@
 from typing import Union
 
 from ansys.granta import bomanalytics
-from ansys.granta.auth_common import AuthenticatedApiClient
+from ansys.granta.auth_common import ApiClient
 
 
 class Connection:
@@ -48,33 +48,28 @@ class Connection:
 
     def __init__(
         self,
-        url: str,
-        dbkey: str,
-        username: Union[str, None] = None,
-        password: Union[str, None] = None,
-        autologon: bool = False,
+        client: ApiClient,
+        db_key: str,
     ):
-        # TODO: Support all options
-        if autologon:
-            self._client = AuthenticatedApiClient.with_autologon(servicelayer_url=url)
-        else:
-            self._client = AuthenticatedApiClient.with_credentials(
-                servicelayer_url=url, username=username, password=password
-            )
+        self._client = client
         self._client.setup_client(bomanalytics.models)
 
         self._documentation_api = bomanalytics.DocumentationApi(self._client)
         self.compliance_api = bomanalytics.ComplianceApi(self._client)
         self.impacted_substances_api = bomanalytics.ImpactedSubstancesApi(self._client)
 
-        self.dbkey = dbkey
+        self._db_key = db_key
 
         self.material_universe_table_name: Union[str, None] = None
-        self.inhouse_materials_table_name: Union[str, None] = None
+        self.in_house_materials_table_name: Union[str, None] = None
         self.specifications_table_name: Union[str, None] = None
         self.products_and_parts_table_name: Union[str, None] = None
         self.substances_table_name: Union[str, None] = None
         self.coatings_table_name: Union[str, None] = None
+
+    @property
+    def db_key(self) -> str:
+        return self._db_key
 
     @property
     def query_config(
@@ -82,7 +77,7 @@ class Connection:
     ) -> bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig:
         if (
             self.material_universe_table_name
-            or self.inhouse_materials_table_name
+            or self.in_house_materials_table_name
             or self.specifications_table_name
             or self.products_and_parts_table_name
             or self.substances_table_name
@@ -91,7 +86,7 @@ class Connection:
             config = (
                 bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(
                     self.material_universe_table_name,
-                    self.inhouse_materials_table_name,
+                    self.in_house_materials_table_name,
                     self.specifications_table_name,
                     self.products_and_parts_table_name,
                     self.substances_table_name,

@@ -1,7 +1,7 @@
 from typing import Any, TypeVar, Type
 import functools
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def type_check(*allowed_types):
@@ -22,7 +22,9 @@ def type_check(*allowed_types):
                         f'Incorrect type for value "{value}". Expected "{allowed_type}"'
                     )
             return method(*args, **kwargs)
+
         return check_types
+
     return decorator
 
 

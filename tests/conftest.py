@@ -1,6 +1,6 @@
 import pytest
 import os
-
+from ansys.granta.auth_common import AuthenticatedApiClient
 from ansys.granta.bom_analytics import (
     Connection,
     WatchListIndicator,
@@ -10,11 +10,13 @@ from ansys.granta.bom_analytics import (
 
 @pytest.fixture(scope="session")
 def connection():
-    connection = Connection(
-        url=os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer"),
-        dbkey=os.getenv("TEST_RS_DB_KEY", "MI_Restricted_Substances"),
+    client = AuthenticatedApiClient.with_credentials(
+        servicelayer_url=os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer"),
         username=os.getenv("TEST_USER"),
         password=os.getenv("TEST_PASS"),
+    )
+    connection = Connection(
+        client=client, db_key=os.getenv("TEST_RS_DB_KEY", "MI_Restricted_Substances")
     )
     return connection
 

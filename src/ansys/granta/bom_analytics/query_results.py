@@ -18,7 +18,7 @@ from .bom_item_results import (
     ImpactedSubstance,
     BoM1711WithImpactedSubstances,
 )
-from .bom_indicators import (RoHSIndicator, WatchListIndicator)
+from .bom_indicators import RoHSIndicator, WatchListIndicator
 
 
 class QueryResultFactory:
@@ -39,9 +39,7 @@ class QueryResultFactory:
         try:
             item_factory_class = cls.registry[response_type]
         except KeyError as e:
-            raise RuntimeError(
-                f'Unregistered response type "{response_type}"'
-            ).with_traceback(e.__traceback__)
+            raise RuntimeError(f'Unregistered response type "{response_type}"').with_traceback(e.__traceback__)
         return item_factory_class(**kwargs)
 
 
@@ -90,9 +88,7 @@ class ComplianceBaseClass(ABC):
         return results
 
 
-@QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial
-)
+@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial)
 class MaterialImpactedSubstancesResult(ImpactedSubstancesBaseClass):
     def __init__(
         self,
@@ -117,15 +113,11 @@ class MaterialImpactedSubstancesResult(ImpactedSubstancesBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
-)
+@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance)
 class MaterialComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
-        results: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
-        ],
+        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
         indicator_definitions: Dict[str, Union[RoHSIndicator, WatchListIndicator]],
     ):
         self._results = [
@@ -147,15 +139,11 @@ class MaterialComplianceResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart
-)
+@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart)
 class PartImpactedSubstancesResult(ImpactedSubstancesBaseClass):
     def __init__(
         self,
-        results: List[
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart
-        ],
+        results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart],
     ):
         self._results = [
             BomItemResultFactory.create_record_result(
@@ -174,15 +162,11 @@ class PartImpactedSubstancesResult(ImpactedSubstancesBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
-)
+@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance)
 class PartComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
-        results: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
-        ],
+        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
         indicator_definitions: Dict[str, Union[RoHSIndicator, WatchListIndicator]],
     ):
         self._results = [
@@ -234,15 +218,11 @@ class SpecificationImpactedSubstancesResult(ImpactedSubstancesBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
-)
+@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance)
 class SpecificationComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
-        results: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
-        ],
+        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
         indicator_definitions: Dict[str, Union[RoHSIndicator, WatchListIndicator]],
     ):
         self._results = [
@@ -264,15 +244,11 @@ class SpecificationComplianceResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
-)
+@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance)
 class SubstanceComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
-        results: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
-        ],
+        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
         indicator_definitions: Dict[str, Union[RoHSIndicator, WatchListIndicator]],
     ):
         self._results = [
@@ -293,19 +269,13 @@ class SubstanceComplianceResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
-)
+@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response)
 class BoMImpactedSubstancesResult(ImpactedSubstancesBaseClass):
     def __init__(self, results):
-        self._results = [
-            BoM1711WithImpactedSubstances(legislations=results.legislations)
-        ]
+        self._results = [BoM1711WithImpactedSubstances(legislations=results.legislations)]
 
 
-@QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response
-)
+@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response)
 class BoMComplianceResult(ComplianceBaseClass):
     def __init__(
         self,

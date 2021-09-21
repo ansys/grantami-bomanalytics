@@ -52,12 +52,7 @@ bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco"
 
 
 def test_impacted_substances(connection, legislations):
-    response = (
-        BomImpactedSubstanceQuery()
-        .set_bom(bom)
-        .add_legislations(legislations)
-        .execute(connection)
-    )
+    response = BomImpactedSubstanceQuery().set_bom(bom).add_legislations(legislations).execute(connection)
 
     assert len(response.impacted_substances_by_legislation) == len(legislations)
     for legislation in legislations:
@@ -69,9 +64,7 @@ def test_impacted_substances(connection, legislations):
 
 
 def test_compliance(connection, indicators):
-    response = (
-        BomComplianceQuery().set_bom(bom).add_indicators(indicators).execute(connection)
-    )
+    response = BomComplianceQuery().set_bom(bom).add_indicators(indicators).execute(connection)
 
     assert len(response.compliance_by_part_and_indicator) == 1
     for bom_results in response.compliance_by_part_and_indicator:

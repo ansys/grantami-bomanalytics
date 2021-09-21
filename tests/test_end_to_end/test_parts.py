@@ -28,10 +28,7 @@ def test_impacted_substances(connection):
 
 def test_compliance(connection, indicators):
     response = (
-        PartComplianceQuery()
-        .add_part_numbers(["DRILL", "main_frame"])
-        .add_indicators(indicators)
-        .execute(connection)
+        PartComplianceQuery().add_part_numbers(["DRILL", "main_frame"]).add_indicators(indicators).execute(connection)
     )
 
     assert len(response.compliance_by_part_and_indicator) == 2

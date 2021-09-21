@@ -11,16 +11,12 @@ def allowed_types(*types):
             values = list(args) + list(kwargs.values())
 
             if len(types) != len(values):
-                raise ValueError(
-                    f"Number of types ({len(types)}) does not match number of arguments ({len(values)})"
-                )
+                raise ValueError(f"Number of types ({len(types)}) does not match number of arguments ({len(values)})")
             for value, allowed_type in zip(values, types):
                 try:
                     check_type(value, allowed_type)
                 except AssertionError:
-                    raise TypeError(
-                        f'Incorrect type for value "{value}". Expected "{allowed_type}"'
-                    )
+                    raise TypeError(f'Incorrect type for value "{value}". Expected "{allowed_type}"')
             return method(*args, **kwargs)
 
         return check_types

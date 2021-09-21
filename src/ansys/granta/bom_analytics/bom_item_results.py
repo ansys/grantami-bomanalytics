@@ -39,20 +39,14 @@ class BomItemResultFactory:
 class ComplianceResultMixin:
     def __init__(
         self,
-        indicator_results: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult
-        ],
+        indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
         indicator_definitions: Dict[str, Union[WatchListIndicator, RoHSIndicator]],
-        substances_with_compliance: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
-        ],
+        substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
         **kwargs,  # Contains record reference for non-Bom queries
     ):
         super().__init__(**kwargs)
 
-        self.indicators: Dict[str, Union[WatchListIndicator, RoHSIndicator]] = copy(
-            indicator_definitions
-        )
+        self.indicators: Dict[str, Union[WatchListIndicator, RoHSIndicator]] = copy(indicator_definitions)
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
@@ -71,9 +65,7 @@ class ComplianceResultMixin:
 class ImpactedSubstancesResultMixin:
     def __init__(
         self,
-        legislations: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonLegislationWithImpactedSubstances
-        ],
+        legislations: List[models.GrantaBomAnalyticsServicesInterfaceCommonLegislationWithImpactedSubstances],
         **kwargs,  # Contains record reference for non-Bom queries
     ):
         super().__init__(**kwargs)
@@ -90,15 +82,9 @@ class ImpactedSubstancesResultMixin:
 class BomStructureResultMixin:
     def __init__(
         self,
-        child_parts: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
-        ],
-        child_materials: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
-        ],
-        child_specifications: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
-        ],
+        child_parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
+        child_materials: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
+        child_specifications: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
         indicator_definitions: Dict[str, Union[WatchListIndicator, RoHSIndicator]],
         substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
@@ -162,16 +148,12 @@ class PartWithImpactedSubstances(ImpactedSubstancesResultMixin, PartDefinition):
 
 
 @BomItemResultFactory.register("partWithCompliance")
-class PartWithCompliance(
-    BomStructureResultMixin, ComplianceResultMixin, PartDefinition
-):
+class PartWithCompliance(BomStructureResultMixin, ComplianceResultMixin, PartDefinition):
     pass
 
 
 @BomItemResultFactory.register("specificationWithImpactedSubstances")
-class SpecificationWithImpactedSubstances(
-    ImpactedSubstancesResultMixin, SpecificationDefinition
-):
+class SpecificationWithImpactedSubstances(ImpactedSubstancesResultMixin, SpecificationDefinition):
     pass
 
 
@@ -186,9 +168,7 @@ class BoM1711WithImpactedSubstances(ImpactedSubstancesResultMixin, BoM1711Defini
 
 
 @BomItemResultFactory.register("bom1711WithCompliance")
-class BoM1711WithCompliance(
-    BomStructureResultMixin, ComplianceResultMixin, BoM1711Definition
-):
+class BoM1711WithCompliance(BomStructureResultMixin, ComplianceResultMixin, BoM1711Definition):
     pass
 
 
@@ -196,18 +176,14 @@ class BoM1711WithCompliance(
 class SubstanceWithCompliance(BaseSubstanceDefinition):
     def __init__(
         self,
-        indicator_results: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult
-        ],
+        indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
         indicator_definitions: Dict[str, Union[WatchListIndicator, RoHSIndicator]],
         **kwargs,
     ):
         super().__init__(**kwargs)
         if not indicator_results:
             indicator_results = []
-        self.indicators: Dict[str, Union[WatchListIndicator, RoHSIndicator]] = copy(
-            indicator_definitions
-        )
+        self.indicators: Dict[str, Union[WatchListIndicator, RoHSIndicator]] = copy(indicator_definitions)
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
@@ -228,9 +204,7 @@ class LegislationResult:
     def __init__(
         self,
         name: str,
-        impacted_substances: List[
-            models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance
-        ],
+        impacted_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance],
     ):
         self.name: str = name
         self.substances: List[ImpactedSubstance] = []

@@ -15,9 +15,7 @@ def connection():
         username=os.getenv("TEST_USER"),
         password=os.getenv("TEST_PASS"),
     )
-    connection = Connection(
-        client=client, db_key=os.getenv("TEST_RS_DB_KEY", "MI_Restricted_Substances")
-    )
+    connection = Connection(client=client, db_key=os.getenv("TEST_RS_DB_KEY", "MI_Restricted_Substances"))
     return connection
 
 

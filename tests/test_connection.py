@@ -16,9 +16,7 @@ def test_custom_table_config(property_name, table_name, connection):
     connection.__setattr__(property_name, table_name)
 
     query_config = connection.query_config.to_dict()
-    query_config["in_house_materials_table_name"] = query_config.pop(
-        "inhouse_materials_table_name"
-    )
+    query_config["in_house_materials_table_name"] = query_config.pop("inhouse_materials_table_name")
     for k, v in query_config.items():
         if k != property_name:
             assert not v

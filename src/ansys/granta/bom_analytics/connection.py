@@ -81,15 +81,13 @@ class Connection:
             or self.substances_table_name
             or self.coatings_table_name
         ):
-            config = (
-                bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(
-                    self.material_universe_table_name,
-                    self.in_house_materials_table_name,
-                    self.specifications_table_name,
-                    self.products_and_parts_table_name,
-                    self.substances_table_name,
-                    self.coatings_table_name,
-                )
+            config = bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(
+                self.material_universe_table_name,
+                self.in_house_materials_table_name,
+                self.specifications_table_name,
+                self.products_and_parts_table_name,
+                self.substances_table_name,
+                self.coatings_table_name,
             )
             return config
 

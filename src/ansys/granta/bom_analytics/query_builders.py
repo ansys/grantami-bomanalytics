@@ -22,7 +22,7 @@ from .query_results import (
     BoMImpactedSubstancesResult,
     BoMComplianceResult,
 )
-from .bom_indicators import IndicatorDefinition, WatchListIndicator
+from .bom_indicators import Indicator, WatchListIndicator
 
 T = TypeVar("T", bound="BaseQueryBuilder")
 result_T = TypeVar(
@@ -230,10 +230,10 @@ class ApiMixin(api_base_class):
 class ComplianceMixin(ApiMixin, ABC):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._indicators = []
+        self._indicators = {}
 
-    @allowed_types(Any, [IndicatorDefinition])
-    def add_indicators(self: T, indicators: List[IndicatorDefinition]) -> T:
+    @allowed_types(Any, [Indicator])
+    def add_indicators(self: T, indicators: List[Indicator]) -> T:
         """
         Add a list of indicators to evaluate compliance against.
 
@@ -254,7 +254,7 @@ class ComplianceMixin(ApiMixin, ABC):
         """
 
         for value in indicators:
-            self._indicators.append(value)
+            self._indicators[value.name] = value
         return self
 
     def execute(self, connection: Connection) -> result_T:
@@ -280,7 +280,7 @@ class ComplianceMixin(ApiMixin, ABC):
     def _arguments(self):
         return {
             "database_key": self._connection.db_key,
-            "indicators": [i.definition for i in self._indicators],
+            "indicators": [i.definition for i in self._indicators.values()],
             "config": self._connection.query_config,
         }
 

@@ -84,8 +84,8 @@ class TestAddIndicators:
     def test_compliance_query_success(self, query_type, indicators):
         query = query_type().add_indicators(indicators)
         assert len(query._indicators) == len(indicators)
-        for idx, indicator in enumerate(indicators):
-            assert query._indicators[idx] == indicator
+        for indicator in indicators:
+            assert query._indicators[indicator.name] == indicator
 
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
     def test_compliance_query_wrong_type_fails(self, query_type, legislations):

@@ -1,6 +1,8 @@
 from ansys.granta.bom_analytics import (
     MaterialImpactedSubstanceQuery,
     MaterialComplianceQuery,
+    WatchListIndicator,
+    RoHSIndicator,
 )
 
 
@@ -42,11 +44,17 @@ def test_compliance(connection, indicators):
         for indicator in indicators:
             indicator_result = mat_results.indicators[indicator.name]
             assert indicator_result.name == indicator.name
-            assert indicator_result.flag
-        assert mat_results.substances
+            assert indicator_result.flag in [
+                WatchListIndicator.available_flags.WatchListAboveThreshold,
+                RoHSIndicator.available_flags.RohsNotImpacted,
+            ]
+        assert len(mat_results.substances) in [51, 17]
 
     assert len(response.compliance_by_indicator) == 2
     for indicator in indicators:
         indicator_result = response.compliance_by_indicator[indicator.name]
         assert indicator_result.name == indicator.name
-        assert indicator_result.flag
+        assert indicator_result.flag in [
+            WatchListIndicator.available_flags.WatchListAboveThreshold,
+            RoHSIndicator.available_flags.RohsNotImpacted,
+        ]

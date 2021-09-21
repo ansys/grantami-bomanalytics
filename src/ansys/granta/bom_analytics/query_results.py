@@ -103,8 +103,9 @@ class MaterialImpactedSubstancesResult(ImpactedSubstancesBaseClass):
         self._results = [
             BomItemResultFactory.create_record_result(
                 name="materialWithImpactedSubstances",
-                result=result,
                 legislations=result.legislations,
+                reference_type=result.reference_type,
+                reference_value=result.reference_value,
             )
             for result in results
         ]
@@ -130,10 +131,11 @@ class MaterialComplianceResult(ComplianceBaseClass):
         self._results = [
             BomItemResultFactory.create_record_result(
                 name="materialWithCompliance",
-                result=result,
                 indicator_results=result.indicators,
                 indicator_definitions=indicator_definitions,
                 substances_with_compliance=result.substances,
+                reference_type=result.reference_type,
+                reference_value=result.reference_value,
             )
             for result in results
         ]
@@ -158,8 +160,9 @@ class PartImpactedSubstancesResult(ImpactedSubstancesBaseClass):
         self._results = [
             BomItemResultFactory.create_record_result(
                 name="partWithImpactedSubstances",
-                result=result,
                 legislations=result.legislations,
+                reference_type=result.reference_type,
+                reference_value=result.reference_value,
             )
             for result in results
         ]
@@ -185,13 +188,14 @@ class PartComplianceResult(ComplianceBaseClass):
         self._results = [
             BomItemResultFactory.create_record_result(
                 name="partWithCompliance",
-                result=result,
                 indicator_results=result.indicators,
                 indicator_definitions=indicator_definitions,
                 substances_with_compliance=result.substances,
                 child_parts=result.parts,
                 child_materials=result.materials,
                 child_specifications=result.specifications,
+                reference_type=result.reference_type,
+                reference_value=result.reference_value,
             )
             for result in results
         ]
@@ -216,8 +220,9 @@ class SpecificationImpactedSubstancesResult(ImpactedSubstancesBaseClass):
         self._results = [
             BomItemResultFactory.create_record_result(
                 name="specificationWithImpactedSubstances",
-                result=result,
                 legislations=result.legislations,
+                reference_type=result.reference_type,
+                reference_value=result.reference_value,
             )
             for result in results
         ]
@@ -243,10 +248,11 @@ class SpecificationComplianceResult(ComplianceBaseClass):
         self._results = [
             BomItemResultFactory.create_record_result(
                 name="specificationWithCompliance",
-                result=result,
                 indicator_results=result.indicators,
                 indicator_definitions=indicator_definitions,
                 substances_with_compliance=result.substances,
+                reference_type=result.reference_type,
+                reference_value=result.reference_value,
             )
             for result in results
         ]
@@ -272,9 +278,10 @@ class SubstanceComplianceResult(ComplianceBaseClass):
         self._results = [
             BomItemResultFactory.create_record_result(
                 name="substanceWithCompliance",
-                result=result,
                 indicator_results=result.indicators,
                 indicator_definitions=indicator_definitions,
+                reference_type=result.reference_type,
+                reference_value=result.reference_value,
             )
             for result in results
         ]
@@ -313,6 +320,8 @@ class BoMComplianceResult(ComplianceBaseClass):
             child_parts=part.parts,
             child_materials=part.materials,
             child_specifications=part.specifications,
+            reference_type=part.reference_type,
+            reference_value=part.reference_value,
         )
         self._results = [obj]
 

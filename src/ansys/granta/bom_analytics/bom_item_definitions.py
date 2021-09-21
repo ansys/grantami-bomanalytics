@@ -1,47 +1,67 @@
 from abc import ABC, abstractmethod
 from typing import Callable, Type, Union, List, Dict
+from enum import Enum, auto
 
 from ansys.granta.bomanalytics import models
 
 
+class ReferenceType(Enum):
+    MiRecordHistoryGuid = auto()
+    MiRecordGuid = auto()
+    MiRecordHistoryIdentity = auto()
+    PartNumber = auto()
+    MaterialId = auto()
+    SpecificationId = auto()
+    ChemicalName = auto()
+    CasNumber = auto()
+    EcNumber = auto()
+
+
 class RecordDefinition(ABC):
     def __init__(
-        self,
-        record_history_identity: Union[int, None] = None,
-        record_guid: Union[str, None] = None,
-        record_history_guid: Union[str, None] = None,
-        **kwargs,
+            self,
+            reference_type: ReferenceType,
+            reference_value: Union[int, str],
+            **kwargs,
     ):
-        self.record_history_identity: int = record_history_identity
-        self.record_guid: str = record_guid
-        self.record_history_guid: str = record_history_guid
+        self.record_history_identity: Union[int, None] = None
+        self.record_guid: Union[str, None] = None
+        self.record_history_guid: Union[str, None] = None
+
+        if reference_type == ReferenceType.MiRecordHistoryIdentity:
+            self.record_history_identity = reference_value
+        elif reference_type == ReferenceType.MiRecordGuid:
+            self.record_guid = reference_value
+        elif reference_type == ReferenceType.MiRecordHistoryGuid:
+            self.record_history_guid = reference_value
         self._model = None
 
     @classmethod
     def add_stk_records(
-        cls, stk_records: List[Dict[str, str]]
+            cls, stk_records: List[Dict[str, str]]
     ):  # TODO: Finalize the stk interop format
         item_references = []
         for record in stk_records:
             assert "db_key" in record
             assert "record_guid" in record
 
-            item_references.append(cls(record_guid=record["record_guid"]))
+            item_references.append(cls(reference_type=ReferenceType.MiRecordGuid,
+                                       reference_value=record["record_guid"]))
         return item_references
 
     def _create_definition(self):
         if self.record_guid:
             return self._model(
-                reference_type="MiRecordGuid", reference_value=self.record_guid
+                reference_type=ReferenceType.MiRecordGuid.name, reference_value=self.record_guid
             )
         if self.record_history_guid:
             return self._model(
-                reference_type="MiRecordHistoryGuid",
+                reference_type=ReferenceType.MiRecordHistoryGuid.name,
                 reference_value=self.record_history_guid,
             )
         if self.record_history_identity:
             return self._model(
-                reference_type="MiRecordHistoryIdentity",
+                reference_type=ReferenceType.MiRecordHistoryIdentity.name,
                 reference_value=self.record_history_identity,
             )
 
@@ -53,72 +73,69 @@ class RecordDefinition(ABC):
 
 class PartDefinition(RecordDefinition):
     def __init__(
-        self,
-        record_history_identity: Union[str, None] = None,
-        record_guid: Union[str, None] = None,
-        record_history_guid: Union[str, None] = None,
-        part_number: Union[str, None] = None,
-        **kwargs,
+            self,
+            reference_type: ReferenceType,
+            reference_value: Union[int, str],
+            **kwargs,
     ):
         super().__init__(
-            record_history_identity=record_history_identity,
-            record_guid=record_guid,
-            record_history_guid=record_history_guid,
+            reference_type=reference_type,
+            reference_value=reference_value,
             **kwargs,
         )
-        self.part_number: str = part_number
+        self.part_number: Union[str, None] = None
+        if reference_type == ReferenceType.PartNumber:
+            self.part_number = reference_value
         self._model = models.GrantaBomAnalyticsServicesInterfaceCommonPartReference
 
     @property
     def definition(self) -> models.Model:
         definition = super()._create_definition() or self._model(
-            reference_type="PartNumber", reference_value=self.part_number
+            reference_type=ReferenceType.PartNumber.name, reference_value=self.part_number
         )
         return definition
 
 
 class MaterialDefinition(RecordDefinition):
     def __init__(
-        self,
-        material_id: Union[str, None] = None,
-        record_history_identity: Union[int, None] = None,
-        record_guid: Union[str, None] = None,
-        record_history_guid: Union[str, None] = None,
-        **kwargs,
+            self,
+            reference_type: ReferenceType,
+            reference_value: Union[int, str],
+            **kwargs,
     ):
         super().__init__(
-            record_history_identity=record_history_identity,
-            record_guid=record_guid,
-            record_history_guid=record_history_guid,
+            reference_type=reference_type,
+            reference_value=reference_value,
             **kwargs,
         )
-        self.material_id: str = material_id
+        self.material_id: Union[str, None] = None
+        if reference_type == ReferenceType.MaterialId:
+            self.material_id = reference_value
         self._model = models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
 
     @property
     def definition(self) -> models.Model:
         definition = super()._create_definition() or self._model(
-            reference_type="MaterialId", reference_value=self.material_id
+            reference_type=ReferenceType.MaterialId.name, reference_value=self.material_id
         )
         return definition
 
 
 class SpecificationDefinition(RecordDefinition):
     def __init__(
-        self,
-        specification_id: Union[str, None] = None,
-        record_history_identity: Union[int, None] = None,
-        record_guid: Union[str, None] = None,
-        record_history_guid: Union[str, None] = None,
-        **kwargs,
+            self,
+            reference_type: ReferenceType,
+            reference_value: Union[int, str],
+            **kwargs,
     ):
         super().__init__(
-            record_history_identity=record_history_identity,
-            record_guid=record_guid,
-            record_history_guid=record_history_guid,
+            reference_type=reference_type,
+            reference_value=reference_value,
             **kwargs,
         )
-        self.specification_id: str = specification_id
+        self.specification_id: Union[str, None] = None
+        if reference_type == ReferenceType.SpecificationId:
+            self.specification_id = reference_value
         self._model = (
             models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference
         )
@@ -126,29 +143,32 @@ class SpecificationDefinition(RecordDefinition):
     @property
     def definition(self) -> models.Model:
         definition = super()._create_definition() or self._model(
-            reference_type="SpecificationId", reference_value=self.specification_id
+            reference_type=ReferenceType.SpecificationId.name, reference_value=self.specification_id
         )
         return definition
 
 
 class BaseSubstanceDefinition(RecordDefinition, ABC):
     def __init__(
-        self,
-        chemical_name=None,
-        cas_number=None,
-        ec_number=None,
-        record_history_identity=None,
-        record_guid=None,
-        record_history_guid=None,
+            self,
+            reference_type: ReferenceType,
+            reference_value: Union[int, str],
+            **kwargs,
     ):
         super().__init__(
-            record_history_identity=record_history_identity,
-            record_guid=record_guid,
-            record_history_guid=record_history_guid,
+            reference_type=reference_type,
+            reference_value=reference_value,
+            **kwargs,
         )
-        self.chemical_name: str = chemical_name
-        self.cas_number: str = cas_number
-        self.ec_number: str = ec_number
+        self.chemical_name: Union[str, None] = None
+        self.cas_number: Union[str, None] = None
+        self.ec_number: Union[str, None] = None
+        if reference_type == ReferenceType.ChemicalName:
+            self.chemical_name = reference_value
+        elif reference_type == ReferenceType.CasNumber:
+            self.cas_number = reference_value
+        elif reference_type == ReferenceType.EcNumber:
+            self.ec_number = reference_value
 
     @property
     def definition(self) -> models.Model:
@@ -159,25 +179,13 @@ class SubstanceDefinition(BaseSubstanceDefinition):
     _default_percentage_amount = 100  # Default to worst case scenario
 
     def __init__(
-        self,
-        chemical_name=None,
-        cas_number=None,
-        ec_number=None,
-        record_history_identity=None,
-        record_guid=None,
-        record_history_guid=None,
-        percentage_amount=None,
-        **kwargs,
+            self,
+            percentage_amount=None,
+            **kwargs,
     ):
         super().__init__(
-            record_history_identity=record_history_identity,
-            record_guid=record_guid,
-            record_history_guid=record_history_guid,
             **kwargs,
         )
-        self.chemical_name = chemical_name
-        self.cas_number = cas_number
-        self.ec_number = ec_number
         self._percentage_amount = None
         if percentage_amount:
             self.percentage_amount = percentage_amount
@@ -203,15 +211,15 @@ class SubstanceDefinition(BaseSubstanceDefinition):
         if not definition:
             if self.chemical_name:
                 definition = self._model(
-                    reference_type="ChemicalName", reference_value=self.chemical_name
+                    reference_type=ReferenceType.ChemicalName.name, reference_value=self.chemical_name
                 )
             elif self.cas_number:
                 definition = self._model(
-                    reference_type="CasNumber", reference_value=self.cas_number
+                    reference_type=ReferenceType.CasNumber.name, reference_value=self.cas_number
                 )
             elif self.ec_number:
                 definition = self._model(
-                    reference_type="EcNumber", reference_value=self.ec_number
+                    reference_type=ReferenceType.EcNumber.name, reference_value=self.ec_number
                 )
         definition.percentage_amount = self.percentage_amount
         return definition
@@ -241,7 +249,7 @@ class AbstractBomFactory:
 
     @classmethod
     def create_factory_for_request_type(
-        cls, request_type: Type[models.Model], **kwargs
+            cls, request_type: Type[models.Model], **kwargs
     ):
         try:
             item_factory_class = cls.registry[request_type]
@@ -254,10 +262,19 @@ class AbstractBomFactory:
 
 
 class BomItemDefinitionFactory(ABC):
+    @staticmethod
     @abstractmethod
-    def create_bom_item_definition(
-        self, record_history_identity=None, record_history_guid=None, record_guid=None
-    ):
+    def create_definition_by_record_history_identity(record_history_identity: int):
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def create_definition_by_record_guid(record_guid: str):
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def create_definition_by_record_history_guid(record_history_guid: str):
         pass
 
 
@@ -268,18 +285,25 @@ class BomItemDefinitionFactory(ABC):
     ]
 )
 class MaterialDefinitionFactory(BomItemDefinitionFactory, ABC):
-    def create_bom_item_definition(
-        self, record_history_identity=None, record_history_guid=None, record_guid=None
-    ) -> MaterialDefinition:
-        return MaterialDefinition(
-            record_history_identity=record_history_identity,
-            record_guid=record_guid,
-            record_history_guid=record_history_guid,
-        )
+    @staticmethod
+    def create_definition_by_record_history_identity(record_history_identity: int) -> MaterialDefinition:
+        return MaterialDefinition(reference_type=ReferenceType.MiRecordHistoryIdentity,
+                                  reference_value=record_history_identity)
+
+    @staticmethod
+    def create_definition_by_record_history_guid(record_history_guid: str) -> MaterialDefinition:
+        return MaterialDefinition(reference_type=ReferenceType.MiRecordHistoryGuid,
+                                  reference_value=record_history_guid)
+
+    @staticmethod
+    def create_definition_by_record_guid(record_guid: str) -> MaterialDefinition:
+        return MaterialDefinition(reference_type=ReferenceType.MiRecordGuid,
+                                  reference_value=record_guid)
 
     @staticmethod
     def create_definition_by_material_id(material_id) -> MaterialDefinition:
-        return MaterialDefinition(material_id=material_id)
+        return MaterialDefinition(reference_type=ReferenceType.MaterialId,
+                                  reference_value=material_id)
 
 
 @AbstractBomFactory.register(
@@ -289,18 +313,25 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory, ABC):
     ]
 )
 class PartDefinitionFactory(BomItemDefinitionFactory, ABC):
-    def create_bom_item_definition(
-        self, record_history_identity=None, record_history_guid=None, record_guid=None
-    ) -> PartDefinition:
-        return PartDefinition(
-            record_history_identity=record_history_identity,
-            record_guid=record_guid,
-            record_history_guid=record_history_guid,
-        )
+    @staticmethod
+    def create_definition_by_record_history_identity(record_history_identity: int) -> PartDefinition:
+        return PartDefinition(reference_type=ReferenceType.MiRecordHistoryIdentity,
+                              reference_value=record_history_identity)
+
+    @staticmethod
+    def create_definition_by_record_history_guid(record_history_guid: str) -> PartDefinition:
+        return PartDefinition(reference_type=ReferenceType.MiRecordHistoryGuid,
+                              reference_value=record_history_guid)
+
+    @staticmethod
+    def create_definition_by_record_guid(record_guid: str) -> PartDefinition:
+        return PartDefinition(reference_type=ReferenceType.MiRecordGuid,
+                              reference_value=record_guid)
 
     @staticmethod
     def create_definition_by_part_number(part_number) -> PartDefinition:
-        return PartDefinition(part_number=part_number)
+        return PartDefinition(reference_type=ReferenceType.PartNumber,
+                              reference_value=part_number)
 
 
 @AbstractBomFactory.register(
@@ -310,47 +341,60 @@ class PartDefinitionFactory(BomItemDefinitionFactory, ABC):
     ]
 )
 class SpecificationDefinitionFactory(BomItemDefinitionFactory, ABC):
-    def create_bom_item_definition(
-        self, record_history_identity=None, record_history_guid=None, record_guid=None
-    ) -> SpecificationDefinition:
-        return SpecificationDefinition(
-            record_history_identity=record_history_identity,
-            record_guid=record_guid,
-            record_history_guid=record_history_guid,
-        )
+    @staticmethod
+    def create_definition_by_record_history_identity(record_history_identity: int) -> SpecificationDefinition:
+        return SpecificationDefinition(reference_type=ReferenceType.MiRecordHistoryIdentity,
+                                       reference_value=record_history_identity)
 
     @staticmethod
-    def create_definition_by_specification_id(
-        specification_id,
-    ) -> SpecificationDefinition:
-        return SpecificationDefinition(specification_id=specification_id)
+    def create_definition_by_record_history_guid(record_history_guid: str) -> SpecificationDefinition:
+        return SpecificationDefinition(reference_type=ReferenceType.MiRecordHistoryGuid,
+                                       reference_value=record_history_guid)
+
+    @staticmethod
+    def create_definition_by_record_guid(record_guid: str) -> SpecificationDefinition:
+        return SpecificationDefinition(reference_type=ReferenceType.MiRecordGuid,
+                                       reference_value=record_guid)
+
+    @staticmethod
+    def create_definition_by_specification_id(specification_id) -> SpecificationDefinition:
+        return SpecificationDefinition(reference_type=ReferenceType.SpecificationId,
+                                       reference_value=specification_id)
 
 
 @AbstractBomFactory.register(
     [models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest]
 )
 class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
-    def create_bom_item_definition(
-        self, record_history_identity=None, record_history_guid=None, record_guid=None
-    ) -> SubstanceDefinition:
-        return SubstanceDefinition(
-            record_history_identity=record_history_identity,
-            record_guid=record_guid,
-            record_history_guid=record_history_guid,
-            percentage_amount=100,
-        )
+    @staticmethod
+    def create_definition_by_record_history_identity(record_history_identity: int) -> SubstanceDefinition:
+        return SubstanceDefinition(reference_type=ReferenceType.MiRecordHistoryIdentity,
+                                   reference_value=record_history_identity)
 
     @staticmethod
-    def create_definition_by_chemical_name(value) -> SubstanceDefinition:
-        return SubstanceDefinition(chemical_name=value)
+    def create_definition_by_record_history_guid(record_history_guid: str) -> SubstanceDefinition:
+        return SubstanceDefinition(reference_type=ReferenceType.MiRecordHistoryGuid,
+                                   reference_value=record_history_guid)
 
     @staticmethod
-    def create_definition_by_cas_number(value) -> SubstanceDefinition:
-        return SubstanceDefinition(cas_number=value)
+    def create_definition_by_record_guid(record_guid: str) -> SubstanceDefinition:
+        return SubstanceDefinition(reference_type=ReferenceType.MiRecordGuid,
+                                   reference_value=record_guid)
 
     @staticmethod
-    def create_definition_by_ec_number(value) -> SubstanceDefinition:
-        return SubstanceDefinition(ec_number=value)
+    def create_definition_by_chemical_name(chemical_name: str) -> SubstanceDefinition:
+        return SubstanceDefinition(reference_type=ReferenceType.ChemicalName,
+                                   reference_value=chemical_name)
+
+    @staticmethod
+    def create_definition_by_cas_number(cas_number: str) -> SubstanceDefinition:
+        return SubstanceDefinition(reference_type=ReferenceType.CasNumber,
+                                   reference_value=cas_number)
+
+    @staticmethod
+    def create_definition_by_ec_number(ec_number: str) -> SubstanceDefinition:
+        return SubstanceDefinition(reference_type=ReferenceType.EcNumber,
+                                   reference_value=ec_number)
 
 
 @AbstractBomFactory.register(

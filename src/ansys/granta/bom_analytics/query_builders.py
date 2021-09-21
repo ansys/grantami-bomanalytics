@@ -103,7 +103,7 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
         """
 
         for value in record_history_identities:
-            item_reference = self._definition_factory.create_bom_item_definition(
+            item_reference = self._definition_factory.create_definition_by_record_history_identity(
                 record_history_identity=value
             )
             self._items.append(item_reference)
@@ -132,7 +132,7 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
         """
 
         for value in record_history_guids:
-            item_reference = self._definition_factory.create_bom_item_definition(
+            item_reference = self._definition_factory.create_definition_by_record_history_guid(
                 record_history_guid=value
             )
             self._items.append(item_reference)
@@ -161,7 +161,7 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
         """
 
         for value in record_guids:
-            item_reference = self._definition_factory.create_bom_item_definition(
+            item_reference = self._definition_factory.create_definition_by_record_guid(
                 record_guid=value
             )
             self._items.append(item_reference)
@@ -369,9 +369,7 @@ class MaterialQueryBuilder(RecordBasedQueryBuilder, ABC):
         ...                         'NBR-100'])
         """
         for material_id in material_ids:
-            item_reference = self._definition_factory.create_definition_by_material_id(
-                material_id
-            )
+            item_reference = self._definition_factory.create_definition_by_material_id(material_id=material_id)
             self._items.append(item_reference)
         return self
 
@@ -517,9 +515,7 @@ class PartQueryBuilder(RecordBasedQueryBuilder, ABC):
         """
 
         for value in part_numbers:
-            item_reference = self._definition_factory.create_definition_by_part_number(
-                value
-            )
+            item_reference = self._definition_factory.create_definition_by_part_number(part_number=value)
             self._items.append(item_reference)
         return self
 
@@ -662,9 +658,9 @@ class SpecificationQueryBuilder(RecordBasedQueryBuilder, ABC):
         >>> query = SpecificationComplianceQuery()
         >>> query.add_specification_ids(['MIL-A-8625', 'PSP101'])
         """
-        for value in specification_ids:
+        for specification_id in specification_ids:
             item_reference = (
-                self._definition_factory.create_definition_by_specification_id(value)
+                self._definition_factory.create_definition_by_specification_id(specification_id=specification_id)
             )
             self._items.append(item_reference)
         return self
@@ -811,9 +807,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         >>> query.add_cas_numbers(['50-00-0', '57-24-9'])
         """
         for cas_number in cas_numbers:
-            item_reference = self._definition_factory.create_definition_by_cas_number(
-                cas_number
-            )
+            item_reference = self._definition_factory.create_definition_by_cas_number(cas_number=cas_number)
             self._items.append(item_reference)
         return self
 
@@ -838,9 +832,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         >>> query.add_ec_numbers(['200-001-8', '200-319-7'])
         """
         for ec_number in ec_numbers:
-            item_reference = self._definition_factory.create_definition_by_ec_number(
-                ec_number
-            )
+            item_reference = self._definition_factory.create_definition_by_ec_number(ec_number=ec_number)
             self._items.append(item_reference)
         return self
 
@@ -866,9 +858,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         """
         for chemical_name in chemical_names:
             item_reference = (
-                self._definition_factory.create_definition_by_chemical_name(
-                    chemical_name
-                )
+                self._definition_factory.create_definition_by_chemical_name(chemical_name=chemical_name)
             )
             self._items.append(item_reference)
         return self
@@ -898,9 +888,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         """
 
         for record_history_id, amount in record_history_identities_and_amounts:
-            item_reference = self._definition_factory.create_bom_item_definition(
-                record_history_identity=record_history_id
-            )
+            item_reference = self._definition_factory.create_definition_by_record_history_identity(record_history_identity=record_history_id)
             item_reference.percentage_amount = amount
             self._items.append(item_reference)
         return self
@@ -929,7 +917,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         ...                                              ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])
         """
         for record_history_guid, amount in record_history_guids_and_amounts:
-            item_reference = self._definition_factory.create_bom_item_definition(
+            item_reference = self._definition_factory.create_definition_by_record_history_guid(
                 record_history_guid=record_history_guid
             )
             item_reference.percentage_amount = amount
@@ -961,7 +949,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         """
 
         for record_guid, amount in record_guids_and_amounts:
-            item_reference = self._definition_factory.create_bom_item_definition(
+            item_reference = self._definition_factory.create_definition_by_record_guid(
                 record_guid=record_guid
             )
             item_reference.percentage_amount = amount
@@ -993,7 +981,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         for cas_number, amount in cas_numbers_and_amounts:
             item_reference = self._definition_factory.create_definition_by_cas_number(
-                cas_number
+                cas_number=cas_number
             )
             item_reference.percentage_amount = amount
             self._items.append(item_reference)
@@ -1024,7 +1012,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         for ec_number, amount in ec_numbers_and_amounts:
             item_reference = self._definition_factory.create_definition_by_ec_number(
-                ec_number
+                ec_number=ec_number
             )
             item_reference.percentage_amount = amount
             self._items.append(item_reference)
@@ -1056,7 +1044,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         for chemical_name, amount in chemical_names_and_amounts:
             item_reference = (
                 self._definition_factory.create_definition_by_chemical_name(
-                    chemical_name
+                    chemical_name=chemical_name
                 )
             )
             item_reference.percentage_amount = amount

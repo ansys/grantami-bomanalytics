@@ -27,37 +27,13 @@ class BomItemResultFactory:
         return inner
 
     @classmethod
-    def create_record_result(cls, name: str, result, **kwargs):
+    def create_record_result(cls, name: str, **kwargs):
         try:
             item_result_class = cls.registry[name]
         except KeyError:
             raise RuntimeError(f"Unregistered result object {name}")
-        id_kwargs = cls.generate_kwarg(result)
-        kwargs = dict(**id_kwargs, **kwargs)
         item_result = item_result_class(**kwargs)
         return item_result
-
-    @staticmethod
-    def generate_kwarg(result) -> Dict[str, Union[str, int]]:
-        if result.reference_type == "MaterialId":
-            return dict(material_id=result.reference_value)
-        elif result.reference_type == "PartNumber":
-            return dict(part_number=result.reference_value)
-        elif result.reference_type == "SpecificationId":
-            return dict(specification_id=result.reference_value)
-        elif result.reference_type == "CasNumber":
-            return dict(cas_number=result.reference_value)
-        elif result.reference_type == "EcNumber":
-            return dict(ec_number=result.reference_value)
-        elif result.reference_type == "SubstanceName":
-            return dict(chemical_name=result.reference_value)
-        elif result.reference_type == "MiRecordHistoryIdentity":
-            return dict(record_history_identity=int(result.reference_value))
-        elif result.reference_type == "MiRecordGuid":
-            return dict(record_guid=result.reference_value)
-        elif result.reference_type == "MiRecordHistoryGuid":
-            return dict(record_history_guid=result.reference_value)
-        raise RuntimeError(f"Unknown reference type {result.reference_type}")
 
 
 class ComplianceResultMixin:
@@ -70,7 +46,7 @@ class ComplianceResultMixin:
         substances_with_compliance: List[
             models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
         ],
-        **kwargs,
+        **kwargs,  # Contains record reference for non-Bom queries
     ):
         super().__init__(**kwargs)
 
@@ -83,9 +59,10 @@ class ComplianceResultMixin:
         self.substances: List[SubstanceWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="substanceWithCompliance",
-                result=substance,
                 indicator_results=substance.indicators,
                 indicator_definitions=indicator_definitions,
+                reference_type=substance.reference_type,
+                reference_value=substance.reference_value,
             )
             for substance in substances_with_compliance
         ]
@@ -97,7 +74,7 @@ class ImpactedSubstancesResultMixin:
         legislations: List[
             models.GrantaBomAnalyticsServicesInterfaceCommonLegislationWithImpactedSubstances
         ],
-        **kwargs,
+        **kwargs,  # Contains record reference for non-Bom queries
     ):
         super().__init__(**kwargs)
 
@@ -122,20 +99,24 @@ class BomStructureResultMixin:
         child_specifications: List[
             models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
         ],
-        **kwargs,
+        indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
+        indicator_definitions: Dict[str, Union[WatchListIndicator, RoHSIndicator]],
+        substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
+        **kwargs,  # Contains record reference for non-Bom queries
     ):
-        super().__init__(**kwargs)
+        super().__init__(indicator_results, indicator_definitions, substances_with_compliance, **kwargs)
 
         self.parts: List[PartWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="partWithCompliance",
-                result=part,
                 indicator_results=part.indicators,
-                indicator_definitions=kwargs.get("indicator_definitions", []),
+                indicator_definitions=indicator_definitions,
                 substances_with_compliance=part.substances,
                 child_parts=part.parts,
                 child_materials=part.materials,
                 child_specifications=part.specifications,
+                reference_type=part.reference_type,
+                reference_value=part.reference_value,
             )
             for part in child_parts
         ]
@@ -143,10 +124,11 @@ class BomStructureResultMixin:
         self.materials: List[MaterialWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="materialWithCompliance",
-                result=material,
                 indicator_results=material.indicators,
-                indicator_definitions=kwargs.get("indicator_definitions", []),
+                indicator_definitions=indicator_definitions,
                 substances_with_compliance=material.substances,
+                reference_type=material.reference_type,
+                reference_value=material.reference_value,
             )
             for material in child_materials
         ]
@@ -154,10 +136,11 @@ class BomStructureResultMixin:
         self.specifications: List[SpecificationWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="specificationWithCompliance",
-                result=specification,
                 indicator_results=specification.indicators,
-                indicator_definitions=kwargs.get("indicator_definitions", []),
+                indicator_definitions=indicator_definitions,
                 substances_with_compliance=specification.substances,
+                reference_type=specification.reference_type,
+                reference_value=specification.reference_value,
             )
             for specification in child_specifications
         ]
@@ -250,13 +233,15 @@ class LegislationResult:
         ],
     ):
         self.name: str = name
-        self.substances: List[ImpactedSubstance] = [
-            ImpactedSubstance(
-                chemical_name=substance.substance_name,
-                cas_number=substance.cas_number,
-                ec_number=substance.ec_number,
+        self.substances: List[ImpactedSubstance] = []
+        for substance in impacted_substances:
+            impacted_substance = ImpactedSubstance(
                 max_percentage_amount_in_material=substance.max_percentage_amount_in_material,  # noqa: E501
                 legislation_threshold=substance.legislation_threshold,
+                reference_type=None,
+                reference_value=None,
             )
-            for substance in impacted_substances
-        ]
+            impacted_substance.ec_number = substance.ec_number
+            impacted_substance.cas_number = substance.cas_number
+            impacted_substance.chemical_name = substance.substance_name
+            self.substances.append(impacted_substance)

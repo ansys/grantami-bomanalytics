@@ -9,9 +9,7 @@ Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 class Flag(Enum):
     def __lt__(self, other):
-        if self.__class__ is other.__class__:
-            return self.value < other.value
-        return TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        return self.value < other.value
 
 
 class RoHSFlag(Flag):
@@ -58,6 +56,18 @@ class Indicator(ABC):
             type=self._indicator_type,
         )
 
+    def __repr__(self):
+        if not self._flag:
+            return f"<{self.__class__.__name__}, name: {self.name}>"
+        else:
+            return f"<{self.__class__.__name__}, name: {self.name}, flag: {str(self.flag)}>"
+
+    def __str__(self):
+        result = self.name
+        if self.flag:
+            result = f"{result}, {self.flag.name}"
+        return result
+
     @property
     def flag(self) -> Flag:
         return self._flag
@@ -67,9 +77,32 @@ class Indicator(ABC):
         try:
             self._flag: Flag = self.__class__.available_flags[flag]
         except KeyError as e:
-            raise Exception(
-                f'Unknown flag {flag} for indicator {self.name}, type "{self._indicator_type}"'
+            raise KeyError(
+                f'Unknown flag "{flag}" for indicator "{repr(self)}"'
             ).with_traceback(e.__traceback__)
+
+    def __eq__(self, other):
+        if self.__class__ is not other.__class__:
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        if self.flag and other.flag:
+            return self.flag is other.flag
+        elif not self.flag:
+            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
+        elif not other.flag:
+            raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+
+    def __lt__(self, other):
+        if self.__class__ is not other.__class__:
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        if self.flag and other.flag:
+            return self.flag < other.flag
+        elif not self.flag:
+            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
+        elif not other.flag:
+            raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+
+    def __le__(self, other):
+        return self == other or self < other
 
 
 class RoHSIndicator(Indicator):

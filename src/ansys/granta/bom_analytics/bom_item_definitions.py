@@ -22,7 +22,6 @@ class RecordDefinition(ABC):
         self,
         reference_type: ReferenceType,
         reference_value: Union[int, str],
-        **kwargs,
     ):
         self.record_history_identity: Union[int, None] = None
         self.record_guid: Union[str, None] = None
@@ -73,12 +72,10 @@ class PartDefinition(RecordDefinition):
         self,
         reference_type: ReferenceType,
         reference_value: Union[int, str],
-        **kwargs,
     ):
         super().__init__(
             reference_type=reference_type,
             reference_value=reference_value,
-            **kwargs,
         )
         self.part_number: Union[str, None] = None
         if reference_type == ReferenceType.PartNumber:
@@ -98,12 +95,10 @@ class MaterialDefinition(RecordDefinition):
         self,
         reference_type: ReferenceType,
         reference_value: Union[int, str],
-        **kwargs,
     ):
         super().__init__(
             reference_type=reference_type,
             reference_value=reference_value,
-            **kwargs,
         )
         self.material_id: Union[str, None] = None
         if reference_type == ReferenceType.MaterialId:
@@ -123,12 +118,10 @@ class SpecificationDefinition(RecordDefinition):
         self,
         reference_type: ReferenceType,
         reference_value: Union[int, str],
-        **kwargs,
     ):
         super().__init__(
             reference_type=reference_type,
             reference_value=reference_value,
-            **kwargs,
         )
         self.specification_id: Union[str, None] = None
         if reference_type == ReferenceType.SpecificationId:
@@ -148,12 +141,10 @@ class BaseSubstanceDefinition(RecordDefinition, ABC):
         self,
         reference_type: ReferenceType,
         reference_value: Union[int, str],
-        **kwargs,
     ):
         super().__init__(
             reference_type=reference_type,
             reference_value=reference_value,
-            **kwargs,
         )
         self.chemical_name: Union[str, None] = None
         self.cas_number: Union[str, None] = None
@@ -175,11 +166,13 @@ class SubstanceDefinition(BaseSubstanceDefinition):
 
     def __init__(
         self,
+        reference_type: ReferenceType,
+        reference_value: Union[int, str],
         percentage_amount=None,
-        **kwargs,
     ):
         super().__init__(
-            **kwargs,
+            reference_type=reference_type,
+            reference_value=reference_value,
         )
         self._percentage_amount = None
         if percentage_amount:

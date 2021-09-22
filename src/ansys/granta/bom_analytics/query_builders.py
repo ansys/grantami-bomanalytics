@@ -25,8 +25,8 @@ from .query_results import (
 from .bom_indicators import Indicator, WatchListIndicator
 
 T = TypeVar("T", bound="BaseQueryBuilder")
-result_T = TypeVar(
-    "result_T",
+Query_Result = TypeVar(
+    "Query_Result",
     covariant=True,
     bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass],
 )
@@ -197,7 +197,7 @@ else:
 
 
 class ApiMixin(api_base_class):
-    def __init__(self, **kwargs):
+    def __init__(self):
         super().__init__()
         self._request_type = None
         self._result_type = None
@@ -224,8 +224,8 @@ class ApiMixin(api_base_class):
 
 
 class ComplianceMixin(ApiMixin, ABC):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self._indicators = {}
 
     @allowed_types(Any, [Indicator])
@@ -253,7 +253,7 @@ class ComplianceMixin(ApiMixin, ABC):
             self._indicators[value.name] = value
         return self
 
-    def execute(self, connection: Connection) -> result_T:
+    def execute(self, connection: Connection) -> Query_Result:
         self._connection = connection
         self._validate_parameters()
         self._validate_items()
@@ -281,9 +281,9 @@ class ComplianceMixin(ApiMixin, ABC):
         }
 
 
-class ImpactedSubstanceMixin(Generic[T], ApiMixin, ABC):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+class ImpactedSubstanceMixin(ApiMixin, ABC):
+    def __init__(self):
+        super().__init__()
         self._legislations: List[str] = []
 
     @allowed_types(Any, [str])
@@ -310,7 +310,7 @@ class ImpactedSubstanceMixin(Generic[T], ApiMixin, ABC):
         self._legislations.extend(legislation_names)
         return self
 
-    def execute(self, connection: Connection) -> result_T:
+    def execute(self, connection: Connection) -> Query_Result:
         self._connection = connection
         self._validate_parameters()
         self._validate_items()
@@ -335,8 +335,8 @@ class ImpactedSubstanceMixin(Generic[T], ApiMixin, ABC):
 
 
 class MaterialQueryBuilder(RecordBasedQueryBuilder, ABC):
-    def __init__(self: T, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self._batch_size = 100
         self._item_type_name = "materials"
         self._definition_factory = None
@@ -469,8 +469,8 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilde
 
 
 class PartQueryBuilder(RecordBasedQueryBuilder, ABC):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self._batch_size = 10
         self._item_type_name = "parts"
         self._definition_factory = None
@@ -602,8 +602,8 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryBuilder):
 
 
 class SpecificationQueryBuilder(RecordBasedQueryBuilder, ABC):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self._batch_size = 10
         self._item_type_name = "specifications"
         self._definition_factory = None
@@ -742,8 +742,8 @@ class SpecificationImpactedSubstanceQuery(ImpactedSubstanceMixin, SpecificationQ
 
 
 class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self._batch_size = 500
         self._item_type_name = "substances"
         self._definition_factory = None
@@ -1044,8 +1044,8 @@ class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryBuilder):
 
 
 class Bom1711QueryBuilder(BaseQueryBuilder, ABC):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self):
+        super().__init__()
         self._batch_size = 1
         self._item_type_name = "bom_xml1711"
         self._definition_factory = None

@@ -1,8 +1,10 @@
 from enum import Enum, auto
 from abc import ABC
-from typing import List, Union
+from typing import List, Union, Dict
 
 from ansys.granta.bomanalytics import models
+
+Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
 class Flag(Enum):

@@ -18,7 +18,7 @@ from .bom_item_results import (
     ImpactedSubstance,
     BoM1711WithImpactedSubstances,
 )
-from .bom_indicators import RoHSIndicator, WatchListIndicator
+from .bom_indicators import Indicator_Definitions
 
 
 class QueryResultFactory:
@@ -74,9 +74,7 @@ class ComplianceBaseClass(ABC):
     _results = []
 
     @property
-    def compliance_by_indicator(
-        self,
-    ) -> Dict[str, Union[RoHSIndicator, WatchListIndicator]]:
+    def compliance_by_indicator(self) -> Indicator_Definitions:
         results = {}
         for result in self._results:
             for indicator_name, indicator_result in result.indicators.items():
@@ -118,7 +116,7 @@ class MaterialComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
-        indicator_definitions: Dict[str, Union[RoHSIndicator, WatchListIndicator]],
+        indicator_definitions: Indicator_Definitions,
     ):
         self._results = [
             BomItemResultFactory.create_record_result(
@@ -167,7 +165,7 @@ class PartComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
-        indicator_definitions: Dict[str, Union[RoHSIndicator, WatchListIndicator]],
+        indicator_definitions: Indicator_Definitions,
     ):
         self._results = [
             BomItemResultFactory.create_record_result(
@@ -223,7 +221,7 @@ class SpecificationComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
-        indicator_definitions: Dict[str, Union[RoHSIndicator, WatchListIndicator]],
+        indicator_definitions: Indicator_Definitions,
     ):
         self._results = [
             BomItemResultFactory.create_record_result(
@@ -249,7 +247,7 @@ class SubstanceComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
-        indicator_definitions: Dict[str, Union[RoHSIndicator, WatchListIndicator]],
+        indicator_definitions: Indicator_Definitions,
     ):
         self._results = [
             BomItemResultFactory.create_record_result(
@@ -280,7 +278,7 @@ class BoMComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
         results,
-        indicator_definitions: Dict[str, Union[RoHSIndicator, WatchListIndicator]],
+        indicator_definitions: Indicator_Definitions,
     ):
         part = results.parts[0]
         obj = PartWithCompliance(

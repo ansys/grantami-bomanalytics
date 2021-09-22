@@ -8,11 +8,9 @@ from .bom_item_definitions import (
     BoM1711Definition,
     BaseSubstanceDefinition,
     RecordDefinition,
+    ReferenceType,
 )
-from .bom_indicators import (
-    WatchListIndicator,
-    RoHSIndicator,
-)
+from .bom_indicators import Indicator_Definitions
 
 
 class BomItemResultFactory:
@@ -40,13 +38,13 @@ class ComplianceResultMixin:
     def __init__(
         self,
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
-        indicator_definitions: Dict[str, Union[WatchListIndicator, RoHSIndicator]],
+        indicator_definitions: Indicator_Definitions,
         substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
         **kwargs,  # Contains record reference for non-Bom queries
     ):
         super().__init__(**kwargs)
 
-        self.indicators: Dict[str, Union[WatchListIndicator, RoHSIndicator]] = copy(indicator_definitions)
+        self.indicators: Indicator_Definitions = copy(indicator_definitions)
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
@@ -86,7 +84,7 @@ class BomStructureResultMixin:
         child_materials: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
         child_specifications: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
-        indicator_definitions: Dict[str, Union[WatchListIndicator, RoHSIndicator]],
+        indicator_definitions: Indicator_Definitions,
         substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
         **kwargs,  # Contains record reference for non-Bom queries
     ):
@@ -176,14 +174,18 @@ class BoM1711WithCompliance(BomStructureResultMixin, ComplianceResultMixin, BoM1
 class SubstanceWithCompliance(BaseSubstanceDefinition):
     def __init__(
         self,
+        reference_type: ReferenceType,
+        reference_value: Union[int, str],
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
-        indicator_definitions: Dict[str, Union[WatchListIndicator, RoHSIndicator]],
-        **kwargs,
+        indicator_definitions: Indicator_Definitions,
     ):
-        super().__init__(**kwargs)
+        super().__init__(
+            reference_type=reference_type,
+            reference_value=reference_value,
+        )
         if not indicator_results:
             indicator_results = []
-        self.indicators: Dict[str, Union[WatchListIndicator, RoHSIndicator]] = copy(indicator_definitions)
+        self.indicators: Indicator_Definitions = copy(indicator_definitions)
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
@@ -191,11 +193,15 @@ class SubstanceWithCompliance(BaseSubstanceDefinition):
 class ImpactedSubstance(BaseSubstanceDefinition):
     def __init__(
         self,
+        reference_type: ReferenceType,
+        reference_value: Union[int, str],
         max_percentage_amount_in_material: float,
         legislation_threshold: float,
-        **kwargs,
     ):
-        super().__init__(**kwargs)
+        super().__init__(
+            reference_type=reference_type,
+            reference_value=reference_value,
+        )
         self.max_percentage_amount_in_material = max_percentage_amount_in_material
         self.legislation_threshold = legislation_threshold
 
@@ -209,11 +215,26 @@ class LegislationResult:
         self.name: str = name
         self.substances: List[ImpactedSubstance] = []
         for substance in impacted_substances:
+            if substance.cas_number:
+                reference_type = ReferenceType.CasNumber
+                reference_value = substance.cas_number
+            elif substance.ec_number:
+                reference_type = ReferenceType.EcNumber
+                reference_value = substance.ec_number
+            elif substance.substance_name:
+                reference_type = ReferenceType.ChemicalName
+                reference_value = substance.substance_name
+            else:
+                raise RuntimeError(
+                    "Substance result returned from Granta MI has no reference. Ensure any substances "
+                    "in your request include references, and check you are using an up-to-date version"
+                    " of the base bom analytics package."
+                )
             impacted_substance = ImpactedSubstance(
                 max_percentage_amount_in_material=substance.max_percentage_amount_in_material,  # noqa: E501
                 legislation_threshold=substance.legislation_threshold,
-                reference_type=None,
-                reference_value=None,
+                reference_type=reference_type,
+                reference_value=reference_value,
             )
             impacted_substance.ec_number = substance.ec_number
             impacted_substance.cas_number = substance.cas_number

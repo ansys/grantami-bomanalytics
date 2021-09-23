@@ -1,44 +1,31 @@
 import pytest
 import os
-from types import ModuleType
 from ansys.granta.auth_common import AuthenticatedApiClient
-from ansys.granta.bom_analytics import (
-    Connection,
-    WatchListIndicator,
-    RoHSIndicator,
-)
+from ansys.granta.bomanalytics import models
+from ansys.granta.bom_analytics import Connection
+from .common import ConnectionMock
 
 
 @pytest.fixture(scope="session")
-def connection():
+def client():
     client = AuthenticatedApiClient.with_credentials(
         servicelayer_url=os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer"),
         username=os.getenv("TEST_USER"),
         password=os.getenv("TEST_PASS"),
     )
-    connection = Connection(client=client, db_key=os.getenv("TEST_RS_DB_KEY", "MI_Restricted_Substances"))
-    return connection
-
-
-class ClientMock:
-    def __init__(self):
-        self.response = None
-
-    def select_header_accept(self, *args, **kwargs):
-        pass
-
-    def select_header_content_type(self, *args, **kwargs):
-        pass
-
-    def setup_client(self, package: ModuleType):
-        pass
-
-    def call_api(self, *args, **kwargs):
-        return self.response
+    client.setup_client(models)
+    return client
 
 
 @pytest.fixture(scope="session")
-def mock_connection():
-    client = ClientMock()
-    connection = Connection(client=client, db_key=os.getenv("TEST_RS_DB_KEY", "MI_Restricted_Substances"))
-    return connection
+def connection(client):
+    return Connection(client, db_key=os.getenv("TEST_RS_DB_KEY", "MI_Restricted_Substances"))
+
+
+@pytest.fixture(scope="function")
+def connection_mock(client, request):
+    api_name = request.param[0]
+    api_call_method = request.param[1]
+    response_type = request.param[2]
+
+    return ConnectionMock(api_name, api_call_method, response_type, client)

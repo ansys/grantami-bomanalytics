@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Callable
 from ansys.granta.bom_analytics import (
     MaterialImpactedSubstanceQuery,
     MaterialComplianceQuery,
@@ -12,6 +12,7 @@ from ansys.granta.bom_analytics import (
     WatchListIndicator,
     RoHSIndicator,
 )
+from .examples import example_dict
 
 RECORD_QUERY_TYPES: List = [
     MaterialImpactedSubstanceQuery,
@@ -97,3 +98,20 @@ def check_query_manager_attributes(query_manager, none_attributes, populated_att
             if query_manager._items[idx].__getattribute__(none_attr):
                 return False
     return True
+
+
+class ConnectionMock:
+    def __init__(self, api_name: str, api_call_method_name: str, response_type: Callable, client):
+        self.db_key = "Mock_db_key"
+        self.query_config = None
+        api_object = self.__class__.API(api_call_method_name, response_type, client)
+        setattr(self, api_name, api_object)
+
+    class API:
+        def __init__(self, call_method_name: str, response_type: Callable, client):
+            response = example_dict[response_type.__name__]
+            self.response = client._ApiClient__deserialize(response, response_type)
+            setattr(self, call_method_name, self.api_call)
+
+        def api_call(self, **kwargs):
+            return self.response

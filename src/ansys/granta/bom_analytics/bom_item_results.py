@@ -57,6 +57,8 @@ class ComplianceResultMixin:
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
+        if not substances_with_compliance:
+            substances_with_compliance = []
         self.substances: List[SubstanceWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="substanceWithCompliance",
@@ -99,6 +101,8 @@ class BomStructureResultMixin:
     ):
         super().__init__(indicator_results, indicator_definitions, substances_with_compliance, **kwargs)
 
+        if not child_parts:
+            child_parts = []
         self.parts: List[PartWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="partWithCompliance",
@@ -114,6 +118,8 @@ class BomStructureResultMixin:
             for part in child_parts
         ]
 
+        if not child_materials:
+            child_materials = []
         self.materials: List[MaterialWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="materialWithCompliance",
@@ -126,6 +132,8 @@ class BomStructureResultMixin:
             for material in child_materials
         ]
 
+        if not child_specifications:
+            child_specifications = []
         self.specifications: List[SpecificationWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="specificationWithCompliance",

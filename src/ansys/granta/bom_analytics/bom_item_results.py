@@ -25,13 +25,22 @@ class BomItemResultFactory:
         return inner
 
     @classmethod
-    def create_record_result(cls, name: str, **kwargs):
+    def create_record_result(cls, name: str, reference_type: Union[str, None], **kwargs):
         try:
             item_result_class = cls.registry[name]
         except KeyError:
             raise RuntimeError(f"Unregistered result object {name}")
-        item_result = item_result_class(**kwargs)
+
+        reference_type = cls.parse_reference_type(reference_type)
+        item_result = item_result_class(reference_type=reference_type, **kwargs)
         return item_result
+
+    @staticmethod
+    def parse_reference_type(reference_type: str) -> str:
+        try:
+            return ReferenceType[reference_type]
+        except KeyError as e:
+            raise KeyError(f"Unknown reference_type {reference_type} returned.").with_traceback(e.__traceback__)
 
 
 class ComplianceResultMixin:

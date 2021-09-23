@@ -5,6 +5,7 @@ from abc import ABC
 from ansys.granta.bomanalytics import models
 
 from .bom_item_results import BomItemResultFactory
+from .bom_item_definitions import ReferenceType
 
 # Required for type hinting
 from .bom_item_results import (
@@ -40,6 +41,7 @@ class QueryResultFactory:
             item_factory_class = cls.registry[response_type]
         except KeyError as e:
             raise RuntimeError(f'Unregistered response type "{response_type}"').with_traceback(e.__traceback__)
+
         return item_factory_class(**kwargs)
 
 

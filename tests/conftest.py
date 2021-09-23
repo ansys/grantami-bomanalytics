@@ -1,5 +1,6 @@
 import pytest
 import os
+from types import ModuleType
 from ansys.granta.auth_common import AuthenticatedApiClient
 from ansys.granta.bom_analytics import (
     Connection,
@@ -19,21 +20,25 @@ def connection():
     return connection
 
 
-@pytest.fixture(scope="session")
-def indicators():
-    two_legislation_indicator = WatchListIndicator(
-        name="Two legislations",
-        legislation_names=["GADSL", "California Proposition 65 List"],
-        default_threshold_percentage=2,
-    )
-    one_legislation_indicator = RoHSIndicator(
-        name="One legislation",
-        legislation_names=["EU Directive 2011/65/EU (RoHS 2)"],
-        default_threshold_percentage=0.01,
-    )
-    return [two_legislation_indicator, one_legislation_indicator]
+class ClientMock:
+    def __init__(self):
+        self.response = None
+
+    def select_header_accept(self, *args, **kwargs):
+        pass
+
+    def select_header_content_type(self, *args, **kwargs):
+        pass
+
+    def setup_client(self, package: ModuleType):
+        pass
+
+    def call_api(self, *args, **kwargs):
+        return self.response
 
 
 @pytest.fixture(scope="session")
-def legislations():
-    return ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]
+def mock_connection():
+    client = ClientMock()
+    connection = Connection(client=client, db_key=os.getenv("TEST_RS_DB_KEY", "MI_Restricted_Substances"))
+    return connection

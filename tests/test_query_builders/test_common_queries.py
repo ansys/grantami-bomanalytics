@@ -1,5 +1,5 @@
 import pytest
-from .common import (
+from tests.common import (
     RECORD_QUERY_TYPES,
     COMPLIANCE_QUERY_TYPES,
     SUBSTANCE_QUERY_TYPES,
@@ -7,6 +7,8 @@ from .common import (
     TEST_HISTORY_IDS,
     TEST_GUIDS,
     STK_OBJECT,
+    LEGISLATIONS,
+    INDICATORS,
 )
 
 
@@ -81,48 +83,48 @@ class TestAddPropertiesToRecordQueries:
 
 class TestAddIndicators:
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
-    def test_compliance_query_success(self, query_type, indicators):
-        query = query_type().add_indicators(indicators)
-        assert len(query._indicators) == len(indicators)
-        for indicator in indicators:
-            assert query._indicators[indicator.name] == indicator
+    def test_compliance_query_success(self, query_type):
+        query = query_type().add_indicators(INDICATORS)
+        assert len(query._indicators) == len(INDICATORS)
+        for indicator in INDICATORS:
+            assert query._indicators[indicator.name] is indicator
 
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
-    def test_compliance_query_wrong_type_fails(self, query_type, legislations):
+    def test_compliance_query_wrong_type_fails(self, query_type):
         with pytest.raises(TypeError) as e:
-            query_type().add_indicators(legislations)
+            query_type().add_indicators(LEGISLATIONS)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            query_type().add_indicators(indicators=legislations)
+            query_type().add_indicators(indicators=LEGISLATIONS)
         assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("query_type", SUBSTANCE_QUERY_TYPES)
-    def test_impacted_substances_query_attribute_error(self, query_type, indicators):
+    def test_impacted_substances_query_attribute_error(self, query_type):
         with pytest.raises(AttributeError):
-            query_type().add_indicators(indicators)
+            query_type().add_indicators(INDICATORS)
 
 
 class TestAddLegislations:
     @pytest.mark.parametrize("query_type", SUBSTANCE_QUERY_TYPES)
-    def test_impacted_substances_query_success(self, query_type, legislations):
-        query = query_type().add_legislations(legislations)
-        assert len(query._legislations) == len(legislations)
-        for idx, legislation in enumerate(legislations):
+    def test_impacted_substances_query_success(self, query_type):
+        query = query_type().add_legislations(LEGISLATIONS)
+        assert len(query._legislations) == len(LEGISLATIONS)
+        for idx, legislation in enumerate(LEGISLATIONS):
             assert query._legislations[idx] == legislation
 
     @pytest.mark.parametrize("query_type", SUBSTANCE_QUERY_TYPES)
-    def test_impacted_substances_query_wrong_type_fails(self, query_type, indicators):
+    def test_impacted_substances_query_wrong_type_fails(self, query_type):
         with pytest.raises(TypeError) as e:
-            query_type().add_legislations(indicators)
+            query_type().add_legislations(INDICATORS)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            query_type().add_legislations(legislations=indicators)
+            query_type().add_legislations(legislations=INDICATORS)
         assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
-    def test_compliance_query_attribute_error(self, query_type, legislations):
+    def test_compliance_query_attribute_error(self, query_type):
         with pytest.raises(AttributeError):
-            query_type().add_legislations(legislations)
+            query_type().add_legislations(LEGISLATIONS)
 
 
 @pytest.mark.parametrize("query_type", ALL_QUERY_TYPES)

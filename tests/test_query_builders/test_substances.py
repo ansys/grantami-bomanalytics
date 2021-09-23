@@ -1,6 +1,6 @@
 import pytest
 from ansys.granta.bom_analytics import SubstanceComplianceQuery
-from tests.test_query_builders.common import check_query_manager_attributes
+from tests.common import check_query_manager_attributes
 
 
 @pytest.mark.parametrize("values", [[], ["One chemical_name"], ["Two", "Chemical names"]])

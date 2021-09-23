@@ -9,6 +9,8 @@ from ansys.granta.bom_analytics import (
     SubstanceComplianceQuery,
     BomImpactedSubstanceQuery,
     BomComplianceQuery,
+    WatchListIndicator,
+    RoHSIndicator,
 )
 
 RECORD_QUERY_TYPES: List = [
@@ -66,6 +68,24 @@ STK_OBJECT = [
         "record_guid": "00000000-0000-0000-0000-000000000123",
     },
 ]
+
+
+LEGISLATIONS = ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]
+
+
+two_legislation_indicator = WatchListIndicator(
+    name="Two legislations",
+    legislation_names=["GADSL", "California Proposition 65 List"],
+    default_threshold_percentage=2,
+)
+one_legislation_indicator = RoHSIndicator(
+    name="One legislation",
+    legislation_names=["EU Directive 2011/65/EU (RoHS 2)"],
+    default_threshold_percentage=0.01,
+)
+
+
+INDICATORS = [two_legislation_indicator, one_legislation_indicator]
 
 
 def check_query_manager_attributes(query_manager, none_attributes, populated_attributes, populated_values):

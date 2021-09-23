@@ -77,9 +77,7 @@ class Indicator(ABC):
         try:
             self._flag: Flag = self.__class__.available_flags[flag]
         except KeyError as e:
-            raise KeyError(
-                f'Unknown flag "{flag}" for indicator "{repr(self)}"'
-            ).with_traceback(e.__traceback__)
+            raise KeyError(f'Unknown flag "{flag}" for indicator "{repr(self)}"').with_traceback(e.__traceback__)
 
     def __eq__(self, other):
         if self.__class__ is not other.__class__:

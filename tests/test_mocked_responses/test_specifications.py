@@ -26,9 +26,7 @@ from .common import check_substance, check_indicator
 )
 class TestImpactedSubstances:
     query = (
-        SpecificationImpactedSubstanceQuery()
-        .add_legislations(["Fake legislation"])
-        .add_specification_ids(["Fake ID"])
+        SpecificationImpactedSubstanceQuery().add_legislations(["Fake legislation"]).add_specification_ids(["Fake ID"])
     )
 
     def test_full_response(self, connection_mock):
@@ -75,7 +73,7 @@ class TestImpactedSubstances:
 class TestCompliance:
     query = (
         SpecificationComplianceQuery()
-            .add_indicators(
+        .add_indicators(
             [
                 WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
                 RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
@@ -97,7 +95,7 @@ class TestCompliance:
 
         spec_1 = response.compliance_by_specification_and_indicator[1]
         assert not spec_1.specification_id
-        assert spec_1.record_guid == '3df206df-9fc8-4859-90d4-3519764f8b55'
+        assert spec_1.record_guid == "3df206df-9fc8-4859-90d4-3519764f8b55"
         assert not spec_1.record_history_guid
         assert not spec_1.record_history_identity
         assert all(check_indicator(name, ind) for name, ind in spec_1.indicators.items())
@@ -106,11 +104,11 @@ class TestCompliance:
         response = self.query.execute(connection_mock)
 
         substance_1_0 = response.compliance_by_specification_and_indicator[1].substances[0]
-        assert substance_1_0.record_history_identity == '12345'
+        assert substance_1_0.record_history_identity == "12345"
         assert all(check_indicator(name, ind) for name, ind in substance_1_0.indicators.items())
 
         substance_1_1 = response.compliance_by_specification_and_indicator[1].substances[1]
-        assert substance_1_1.record_history_identity == '34567'
+        assert substance_1_1.record_history_identity == "34567"
         assert all(check_indicator(name, ind) for name, ind in substance_1_1.indicators.items())
 
     def test_indicator_pivot(self, connection_mock):

@@ -26,11 +26,7 @@ from .common import check_substance, check_indicator
     indirect=True,
 )
 class TestImpactedSubstances:
-    query = (
-        MaterialImpactedSubstanceQuery()
-        .add_legislations(["Fake legislation"])
-        .add_material_ids(["Fake ID"])
-    )
+    query = MaterialImpactedSubstanceQuery().add_legislations(["Fake legislation"]).add_material_ids(["Fake ID"])
 
     def test_full_response(self, connection_mock):
         response = self.query.execute(connection_mock)

@@ -5,6 +5,7 @@ from ansys.granta.bom_analytics import (
     PartImpactedSubstanceQuery,
     SpecificationImpactedSubstanceQuery,
     SpecificationComplianceQuery,
+    SubstanceComplianceQuery,
 )
 
 from .common import LEGISLATIONS, INDICATORS
@@ -71,4 +72,17 @@ class TestSpecificationQueries:
             .execute(connection)
         )
         assert response.compliance_by_specification_and_indicator
+        assert response.compliance_by_indicator
+
+
+class TestSubstancesQueries:
+    def test_compliance(self, connection):
+        response = (
+            SubstanceComplianceQuery()
+            .add_cas_numbers(["50-00-0", "57-24-9"])
+            .add_cas_numbers_with_amounts([("1333-86-4", 25), ("75-74-1", 50)])
+            .add_indicators(INDICATORS)
+            .execute(connection)
+        )
+        assert response.compliance_by_substance_and_indicator
         assert response.compliance_by_indicator

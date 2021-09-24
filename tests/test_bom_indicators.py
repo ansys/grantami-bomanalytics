@@ -1,7 +1,10 @@
-import pytest
-import random
-from ansys.granta.bom_analytics import RoHSIndicator, WatchListIndicator
-from ansys.granta.bomanalytics import models
+from .common import (
+    pytest,
+    random,
+    RoHSIndicator,
+    WatchListIndicator,
+    GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition,
+)
 
 
 def create_indicator(indicator):
@@ -43,7 +46,7 @@ def test_indicator_definition_property(indicator):
     test_indicator = create_indicator(indicator)
 
     definition = test_indicator.definition
-    assert isinstance(definition, models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition)
+    assert isinstance(definition, GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition)
     assert definition.to_dict()["name"] == test_indicator.name
     assert definition.to_dict()["legislation_names"] == test_indicator.legislation_names
     assert definition.to_dict()["default_threshold_percentage"] == test_indicator.default_threshold_percentage

@@ -1,9 +1,4 @@
-import pytest
-from ansys.granta.bom_analytics import (
-    MaterialImpactedSubstanceQuery,
-    MaterialComplianceQuery,
-)
-from tests.common import check_query_manager_attributes
+from ..common import pytest, MaterialImpactedSubstanceQuery, MaterialComplianceQuery, check_query_manager_attributes
 
 
 @pytest.mark.parametrize("query_type", [MaterialImpactedSubstanceQuery, MaterialComplianceQuery])

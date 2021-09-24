@@ -1,17 +1,14 @@
-import pytest
-from ansys.granta.bom_analytics import (
-    PartImpactedSubstanceQuery,
-    PartComplianceQuery,
-    WatchListIndicator,
-    RoHSIndicator,
-)
-
-from ansys.granta.bomanalytics.models import (
+from .common import (
+    pytest,
     GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse,
     GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsResponse,
+    PartComplianceQuery,
+    PartImpactedSubstanceQuery,
+    WatchListIndicator,
+    RoHSIndicator,
+    check_substance,
+    check_indicator,
 )
-
-from .common import check_substance, check_indicator
 
 
 @pytest.mark.parametrize(

@@ -1,17 +1,42 @@
-from typing import Union
-from ansys.granta.bom_analytics.bom_indicators import Indicator
+from ..common import (
+    pytest,
+    Union,
+    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
+    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
+    MaterialComplianceQuery,
+    MaterialImpactedSubstanceQuery,
+    PartComplianceQuery,
+    PartImpactedSubstanceQuery,
+    SubstanceComplianceQuery,
+    SpecificationImpactedSubstanceQuery,
+    SpecificationComplianceQuery,
+    BomComplianceQuery,
+    BomImpactedSubstanceQuery,
+    Indicator,
+    WatchListIndicator,
+    RoHSIndicator,
+)
 
 
 def check_substance(substance):
     return (
-        _check_substance(substance, "106-99-0", "203-450-8", "1,3-Butadiene", None, 0.1)
-        or _check_substance(substance, "128-37-0", "204-881-4", "Butylated hydroxytoluene [BAN:NF]", None, 0.1)
-        or _check_substance(substance, "119-61-9", "204-337-6", "Benzophenone", 1.0, 0.1)
-        or _check_substance(substance, "131-56-6", "205-029-4", "2,4-Dihydroxybenzophenon", 1.0, 0.1)
+        _check_specific_substance(substance, "106-99-0", "203-450-8", "1,3-Butadiene", None, 0.1)
+        or _check_specific_substance(substance, "128-37-0", "204-881-4", "Butylated hydroxytoluene [BAN:NF]", None, 0.1)
+        or _check_specific_substance(substance, "119-61-9", "204-337-6", "Benzophenone", 1.0, 0.1)
+        or _check_specific_substance(substance, "131-56-6", "205-029-4", "2,4-Dihydroxybenzophenon", 1.0, 0.1)
     )
 
 
-def _check_substance(substance, cas: str, ec: str, chemical_name: str, amount: Union[float, None], threshold: float):
+def _check_specific_substance(
+    substance, cas: str, ec: str, chemical_name: str, amount: Union[float, None], threshold: float
+):
     return (
         substance.cas_number == cas
         and substance.ec_number == ec

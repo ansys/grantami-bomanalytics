@@ -1,5 +1,8 @@
-import pytest
-from ansys.granta.bom_analytics import BomComplianceQuery, BomImpactedSubstanceQuery
+from ..common import (
+    pytest,
+    BomComplianceQuery,
+    BomImpactedSubstanceQuery,
+)
 
 
 @pytest.mark.parametrize("query_type", [BomComplianceQuery, BomImpactedSubstanceQuery])

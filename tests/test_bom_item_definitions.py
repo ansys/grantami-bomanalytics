@@ -1,13 +1,11 @@
-import pytest
-from ansys.granta.bom_analytics.bom_item_definitions import (
+from .common import (
+    pytest,
     BoM1711Definition,
     MaterialDefinition,
     SpecificationDefinition,
     PartDefinition,
     SubstanceDefinition,
     ReferenceType,
-)
-from ansys.granta.bomanalytics.models import (
     GrantaBomAnalyticsServicesInterfaceCommonMaterialReference as MatRef,
     GrantaBomAnalyticsServicesInterfaceCommonPartReference as PartRef,
     GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference as SpecRef,

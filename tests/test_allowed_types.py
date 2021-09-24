@@ -1,7 +1,10 @@
-import pytest
-from numbers import Number
-from typing import Any
-from ansys.granta.bom_analytics.allowed_types import allowed_types, check_type
+from .common import (
+    pytest,
+    Number,
+    Any,
+    allowed_types,
+    check_type,
+)
 
 
 def test_allowed_types_args():

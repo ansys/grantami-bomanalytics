@@ -1,4 +1,5 @@
-from ansys.granta.bom_analytics import (
+from .common import (
+    pathlib,
     MaterialImpactedSubstanceQuery,
     MaterialComplianceQuery,
     PartComplianceQuery,
@@ -8,9 +9,9 @@ from ansys.granta.bom_analytics import (
     SubstanceComplianceQuery,
     BomImpactedSubstanceQuery,
     BomComplianceQuery,
+    LEGISLATIONS,
+    INDICATORS,
 )
-
-from .common import LEGISLATIONS, INDICATORS
 
 
 class TestMaterialQueries:
@@ -91,7 +92,8 @@ class TestSubstancesQueries:
 
 
 class TestBomQueries:
-    with open("bom.xml", "r") as f:
+    bom_path = pathlib.Path(__file__).parent / "bom.xml"
+    with open(bom_path, "r") as f:
         bom = f.read()
 
     def test_impacted_substances(self, connection):

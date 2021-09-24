@@ -1,18 +1,56 @@
-from typing import List, Callable
+from typing import Union, List, Callable, Any
+import pytest
+import pathlib
+from numbers import Number
+import random
+import os
+import requests_mock
+from ansys.granta.auth_common import AuthenticatedApiClient
+from ansys.granta.bomanalytics import (
+    models,
+    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
+    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
+    GrantaBomAnalyticsServicesInterfaceCommonMaterialReference,
+    GrantaBomAnalyticsServicesInterfaceCommonPartReference,
+    GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference,
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount,
+    GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition,
+)
+
 from ansys.granta.bom_analytics import (
+    PartComplianceQuery,
+    PartImpactedSubstanceQuery,
     MaterialImpactedSubstanceQuery,
     MaterialComplianceQuery,
-    PartImpactedSubstanceQuery,
-    PartComplianceQuery,
     SpecificationImpactedSubstanceQuery,
     SpecificationComplianceQuery,
     SubstanceComplianceQuery,
-    BomImpactedSubstanceQuery,
     BomComplianceQuery,
+    BomImpactedSubstanceQuery,
     WatchListIndicator,
     RoHSIndicator,
+    Connection,
 )
+from ansys.granta.bom_analytics.allowed_types import allowed_types, check_type
+from ansys.granta.bom_analytics.bom_indicators import Indicator
+from ansys.granta.bom_analytics.bom_item_definitions import (
+    BoM1711Definition,
+    MaterialDefinition,
+    SpecificationDefinition,
+    PartDefinition,
+    SubstanceDefinition,
+    ReferenceType,
+)
+
 from .examples import example_dict
+
 
 RECORD_QUERY_TYPES: List = [
     MaterialImpactedSubstanceQuery,

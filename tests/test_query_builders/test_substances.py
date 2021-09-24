@@ -110,7 +110,7 @@ class TestWithAmounts:
         assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
         assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
 
-    def test_record_history_guids(self, values, connection):
+    def test_record_history_guids(self, values):
         query = SubstanceComplianceQuery().add_record_history_guids_with_amounts(values)
         assert isinstance(query, SubstanceComplianceQuery)
         assert check_query_manager_attributes(
@@ -221,7 +221,7 @@ class TestWithAmountsWrongType:
             SubstanceComplianceQuery().add_record_history_guids_with_amounts(record_history_guids_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)
 
-    def test_record_history_ids(self, values, connection):
+    def test_record_history_ids(self, values):
         with pytest.raises(TypeError) as e:
             SubstanceComplianceQuery().add_record_history_ids_with_amounts(values)
         assert f"Incorrect type for value" in str(e.value)

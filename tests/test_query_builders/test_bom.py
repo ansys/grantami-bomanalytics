@@ -11,7 +11,7 @@ def test_add_bom(query_type):
 
 
 @pytest.mark.parametrize("query_type", [BomComplianceQuery, BomImpactedSubstanceQuery])
-def test_add_bom_wrong_type(query_type, connection):
+def test_add_bom_wrong_type(query_type):
     with pytest.raises(TypeError) as e:
         query_type().set_bom(12345)
     assert "Incorrect type for value" in str(e.value)

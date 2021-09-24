@@ -6,6 +6,8 @@ from ansys.granta.bom_analytics import (
     SpecificationImpactedSubstanceQuery,
     SpecificationComplianceQuery,
     SubstanceComplianceQuery,
+    BomImpactedSubstanceQuery,
+    BomComplianceQuery,
 )
 
 from .common import LEGISLATIONS, INDICATORS
@@ -85,4 +87,19 @@ class TestSubstancesQueries:
             .execute(connection)
         )
         assert response.compliance_by_substance_and_indicator
+        assert response.compliance_by_indicator
+
+
+class TestBomQueries:
+    with open("bom.xml", "r") as f:
+        bom = f.read()
+
+    def test_impacted_substances(self, connection):
+        response = BomImpactedSubstanceQuery().set_bom(self.bom).add_legislations(LEGISLATIONS).execute(connection)
+        assert response.impacted_substances_by_legislation
+        assert response.impacted_substances
+
+    def test_compliance(self, connection):
+        response = BomComplianceQuery().set_bom(self.bom).add_indicators(INDICATORS).execute(connection)
+        assert response.compliance_by_part_and_indicator
         assert response.compliance_by_indicator

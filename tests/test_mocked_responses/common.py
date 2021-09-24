@@ -1,4 +1,5 @@
 from typing import Union
+from ansys.granta.bom_analytics.bom_indicators import Indicator
 
 
 def check_substance(substance):
@@ -20,13 +21,19 @@ def _check_substance(substance, cas: str, ec: str, chemical_name: str, amount: U
     )
 
 
-def check_indicator(name: str, indicator):
+def check_indicator(name: str, indicator: Indicator, impacted: bool = True):
     if name not in ["Indicator 1", "Indicator 2"]:
         return False
     if indicator.legislation_names != ["Mock"]:
         return False
-    if indicator.name == "Indicator 1" and indicator.flag.name == "WatchListAboveThreshold":
-        return True
-    if indicator.name == "Indicator 2" and indicator.flag.name == "RohsAboveThreshold":
-        return True
+    if impacted:
+        if indicator.name == "Indicator 1" and indicator.flag.name == "WatchListAboveThreshold":
+            return True
+        if indicator.name == "Indicator 2" and indicator.flag.name == "RohsAboveThreshold":
+            return True
+    else:
+        if indicator.name == "Indicator 1" and indicator.flag.name == "WatchListNotImpacted":
+            return True
+        if indicator.name == "Indicator 2" and indicator.flag.name == "RohsNotImpacted":
+            return True
     return False

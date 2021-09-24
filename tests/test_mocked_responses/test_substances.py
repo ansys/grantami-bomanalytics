@@ -34,7 +34,7 @@ class TestCompliance:
         .add_cas_numbers(["Fake ID"])
     )
 
-    def test_full_response_substances(self, connection_mock):
+    def test_compliance_by_substance_and_indicator(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.compliance_by_substance_and_indicator) == 2
 
@@ -56,7 +56,7 @@ class TestCompliance:
         assert not substance_1.record_history_identity
         assert all(check_indicator(name, ind) for name, ind in substance_1.indicators.items())
 
-    def test_indicator_pivot(self, connection_mock):
+    def test_compliance_by_indicator(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())

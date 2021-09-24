@@ -28,7 +28,7 @@ from .common import check_substance, check_indicator
 class TestImpactedSubstances:
     query = PartImpactedSubstanceQuery().add_legislations(["Fake legislation"]).add_part_numbers(["Fake part number"])
 
-    def test_full_response(self, connection_mock):
+    def test_impacted_substances_by_part_and_legislation(self, connection_mock):
         response = self.query.execute(connection_mock)
 
         assert len(response.impacted_substances_by_part_and_legislation) == 2
@@ -48,13 +48,13 @@ class TestImpactedSubstances:
         assert len(part_1_legislation.substances) == 2
         assert all([check_substance(s) for s in part_1_legislation.substances])
 
-    def test_legislation_pivot(self, connection_mock):
+    def test_impacted_substances_by_legislation(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.impacted_substances_by_legislation) == 1
         legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
         assert all([check_substance(s) for s in legislation])
 
-    def test_substance_pivot(self, connection_mock):
+    def test_impacted_substances(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.impacted_substances) == 4
         assert all([check_substance(s) for s in response.impacted_substances])
@@ -83,7 +83,7 @@ class TestCompliance:
         .add_part_numbers(["Fake part number"])
     )
 
-    def test_full_response_parts(self, connection_mock):
+    def test_compliance_by_part_and_indicator(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.compliance_by_part_and_indicator) == 2
         part_0 = response.compliance_by_part_and_indicator[0]
@@ -111,7 +111,7 @@ class TestCompliance:
         assert material_1_1.record_history_identity == "222222"
         assert all(check_indicator(name, ind) for name, ind in material_1_1.indicators.items())
 
-    def test_full_response_substances(self, connection_mock):
+    def test_compliance_by_part_and_indicator_substances(self, connection_mock):
         response = self.query.execute(connection_mock)
         substance_0_0_0 = response.compliance_by_part_and_indicator[0].parts[0].substances[0]
         assert substance_0_0_0.record_history_identity == "62345"
@@ -129,7 +129,7 @@ class TestCompliance:
         assert substance_1_1_1.record_history_identity == "34567"
         assert all(check_indicator(name, ind) for name, ind in substance_1_1_1.indicators.items())
 
-    def test_indicator_pivot(self, connection_mock):
+    def test_compliance_by_indicator(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())

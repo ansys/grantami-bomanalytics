@@ -29,7 +29,7 @@ class TestImpactedSubstances:
         SpecificationImpactedSubstanceQuery().add_legislations(["Fake legislation"]).add_specification_ids(["Fake ID"])
     )
 
-    def test_full_response(self, connection_mock):
+    def test_impacted_substances_by_specification_and_legislation(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.impacted_substances_by_specification_and_legislation) == 2
 
@@ -47,13 +47,13 @@ class TestImpactedSubstances:
         assert len(substances_1) == 2
         assert all([check_substance(s) for s in substances_1])
 
-    def test_legislation_pivot(self, connection_mock):
+    def test_impacted_substances_by_legislation(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.impacted_substances_by_legislation) == 1
         legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
         assert all([check_substance(s) for s in legislation])
 
-    def test_substance_pivot(self, connection_mock):
+    def test_impacted_substances(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.impacted_substances) == 4
         assert all([check_substance(s) for s in response.impacted_substances])
@@ -82,7 +82,7 @@ class TestCompliance:
         .add_specification_ids(["Fake ID"])
     )
 
-    def test_full_response_specs(self, connection_mock):
+    def test_compliance_by_specification_and_indicator(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.compliance_by_specification_and_indicator) == 2
 
@@ -100,7 +100,7 @@ class TestCompliance:
         assert not spec_1.record_history_identity
         assert all(check_indicator(name, ind) for name, ind in spec_1.indicators.items())
 
-    def test_full_response_substances(self, connection_mock):
+    def test_compliance_by_specification_and_indicator_substances(self, connection_mock):
         response = self.query.execute(connection_mock)
 
         substance_1_0 = response.compliance_by_specification_and_indicator[1].substances[0]
@@ -111,7 +111,7 @@ class TestCompliance:
         assert substance_1_1.record_history_identity == "34567"
         assert all(check_indicator(name, ind) for name, ind in substance_1_1.indicators.items())
 
-    def test_indicator_pivot(self, connection_mock):
+    def test_compliance_by_indicator(self, connection_mock):
         response = self.query.execute(connection_mock)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())

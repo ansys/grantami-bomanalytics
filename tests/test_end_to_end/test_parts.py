@@ -1,4 +1,4 @@
-from ansys.granta.bom_analytics import PartComplianceQuery, PartImpactedSubstanceQuery
+from ansys.granta.bom_analytics import queries
 
 
 def test_impacted_substances(connection):
@@ -7,7 +7,7 @@ def test_impacted_substances(connection):
         "EU Directive 2011/65/EU (RoHS 2)",
     ]
     response = (
-        PartImpactedSubstanceQuery()
+        queries.PartImpactedSubstances()
         .add_part_numbers(["DRILL", "main_frame"])
         .add_legislations(legislations)
         .execute(connection)
@@ -26,22 +26,25 @@ def test_impacted_substances(connection):
     assert len(response.impacted_substances) == 99
 
 
-def test_compliance(connection, indicators):
+def test_compliance(connection, indicator_definitions):
     response = (
-        PartComplianceQuery().add_part_numbers(["DRILL", "main_frame"]).add_indicators(indicators).execute(connection)
+        queries.PartCompliance()
+        .add_part_numbers(["DRILL", "main_frame"])
+        .add_indicators(indicator_definitions)
+        .execute(connection)
     )
 
     assert len(response.compliance_by_part_and_indicator) == 2
     for part_results in response.compliance_by_part_and_indicator:
-        assert len(part_results.indicators) == len(indicators)
-        for indicator in indicators:
+        assert len(part_results.indicators) == len(indicator_definitions)
+        for indicator in indicator_definitions:
             indicator_result = part_results.indicators[indicator.name]
             assert indicator_result.name == indicator.name
             assert indicator_result.flag
         assert not part_results.substances  # Empty list, no substances
 
     assert len(response.compliance_by_indicator) == 2
-    for indicator in indicators:
+    for indicator in indicator_definitions:
         indicator_result = response.compliance_by_indicator[indicator.name]
         assert indicator_result.name == indicator.name
         assert indicator_result.flag

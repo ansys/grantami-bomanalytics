@@ -7,14 +7,14 @@ from ansys.granta.bomanalytics import models
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
-class Flag(Enum):
+class _Flag(Enum):
     def __lt__(self, other):
         if self.__class__ is other.__class__:
             return self.value < other.value
         return TypeError(f"Cannot compare {type(self)} with {type(other)}")
 
 
-class RoHSFlag(Flag):
+class RoHSFlag(_Flag):
     RohsNotImpacted = auto()
     RohsBelowThreshold = auto()
     RohsCompliant = auto()
@@ -24,7 +24,7 @@ class RoHSFlag(Flag):
     RohsUnknown = auto()
 
 
-class WatchListFlag(Flag):
+class WatchListFlag(_Flag):
     WatchListNotImpacted = auto()
     WatchListCompliant = auto()
     WatchListBelowThreshold = auto()
@@ -34,7 +34,7 @@ class WatchListFlag(Flag):
     WatchListUnknown = auto()
 
 
-class Indicator(ABC):
+class _Indicator(ABC):
     available_flags = None
 
     def __init__(
@@ -47,7 +47,7 @@ class Indicator(ABC):
         self.legislation_names: List[str] = legislation_names
         self.default_threshold_percentage: float = default_threshold_percentage
         self._indicator_type: Union[str, None] = None
-        self._flag: Union[Flag, None] = None
+        self._flag: Union[_Flag, None] = None
 
     @property
     def definition(self):
@@ -59,20 +59,20 @@ class Indicator(ABC):
         )
 
     @property
-    def flag(self) -> Flag:
+    def flag(self) -> _Flag:
         return self._flag
 
     @flag.setter
     def flag(self, flag: str):
         try:
-            self._flag: Flag = self.__class__.available_flags[flag]
+            self._flag: _Flag = self.__class__.available_flags[flag]
         except KeyError as e:
             raise Exception(
                 f'Unknown flag {flag} for indicator {self.name}, type "{self._indicator_type}"'
             ).with_traceback(e.__traceback__)
 
 
-class RoHSIndicator(Indicator):
+class RoHSIndicator(_Indicator):
     available_flags = RoHSFlag
 
     def __init__(
@@ -85,7 +85,7 @@ class RoHSIndicator(Indicator):
         self._indicator_type: str = "Rohs"
 
 
-class WatchListIndicator(Indicator):
+class WatchListIndicator(_Indicator):
     available_flags = WatchListFlag
 
     def __init__(

@@ -4,10 +4,10 @@ from abc import ABC
 
 from ansys.granta.bomanalytics import models
 
-from .bom_item_results import BomItemResultFactory
+from ._bom_item_results import BomItemResultFactory
 
 # Required for type hinting
-from .bom_item_results import (
+from ._bom_item_results import (
     MaterialWithImpactedSubstances,
     MaterialWithCompliance,
     PartWithImpactedSubstances,
@@ -18,7 +18,7 @@ from .bom_item_results import (
     ImpactedSubstance,
     BoM1711WithImpactedSubstances,
 )
-from .bom_indicators import Indicator_Definitions
+from .indicators import Indicator_Definitions
 
 
 class QueryResultFactory:

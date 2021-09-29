@@ -1,7 +1,7 @@
 from typing import List, Dict, Union, Callable
 from copy import copy
 from ansys.granta.bomanalytics import models
-from .bom_item_definitions import (
+from ._bom_item_definitions import (
     MaterialDefinition,
     PartDefinition,
     SpecificationDefinition,
@@ -10,7 +10,7 @@ from .bom_item_definitions import (
     RecordDefinition,
     ReferenceType,
 )
-from .bom_indicators import Indicator_Definitions
+from .indicators import Indicator_Definitions
 
 
 class BomItemResultFactory:

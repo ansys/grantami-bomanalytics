@@ -1,12 +1,12 @@
 import pytest
-from ansys.granta.bom_analytics import PartImpactedSubstanceQuery, PartComplianceQuery
+from ansys.granta.bom_analytics import queries
 
 from tests.test_query_builders.common import check_query_manager_attributes
 
 # TODO: For all tests, test all different pivots on the results with known values
 
 
-@pytest.mark.parametrize("query_type", [PartComplianceQuery, PartImpactedSubstanceQuery])
+@pytest.mark.parametrize("query_type", [queries.PartCompliance, queries.PartImpactedSubstances])
 @pytest.mark.parametrize("part_numbers", [[], ["One part number"], ["Two", "Part numbers"]])
 def test_add_part_numbers(query_type, part_numbers):
     query = query_type().add_part_numbers(part_numbers)
@@ -19,7 +19,7 @@ def test_add_part_numbers(query_type, part_numbers):
     )
 
 
-@pytest.mark.parametrize("query_type", [PartComplianceQuery, PartImpactedSubstanceQuery])
+@pytest.mark.parametrize("query_type", [queries.PartCompliance, queries.PartImpactedSubstances])
 def test_add_part_numbers_wrong_type(query_type):
     with pytest.raises(TypeError) as e:
         query_type().add_part_numbers("Strings are not allowed")

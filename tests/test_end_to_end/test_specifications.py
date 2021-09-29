@@ -1,12 +1,9 @@
-from ansys.granta.bom_analytics import (
-    SpecificationComplianceQuery,
-    SpecificationImpactedSubstanceQuery,
-)
+from ansys.granta.bom_analytics import queries
 
 
 def test_impacted_substances(connection):
     response = (
-        SpecificationImpactedSubstanceQuery()
+        queries.SpecificationImpactedSubstances()
         .add_record_history_guids(["516b2b9b-c4cf-419f-8caa-238ba1e7b7e5"])
         .add_specification_ids(["MIL-C-20218,TypeII"])
         .add_legislations(["The SIN List 2.1 (Substitute It Now!)"])
@@ -28,25 +25,25 @@ def test_impacted_substances(connection):
     assert len(response.impacted_substances) == 4
 
 
-def test_compliance(connection, indicators):
+def test_compliance(connection, indicator_definitions):
     response = (
-        SpecificationComplianceQuery()
+        queries.SpecificationCompliance()
         .add_record_history_guids(["516b2b9b-c4cf-419f-8caa-238ba1e7b7e5"])
         .add_specification_ids(["MIL-C-20218,TypeII"])
-        .add_indicators(indicators)
+        .add_indicators(indicator_definitions)
         .execute(connection)
     )
 
     assert len(response.compliance_by_specification_and_indicator) == 2
     for spec_results in response.compliance_by_specification_and_indicator:
-        assert len(spec_results.indicators) == len(indicators)
-        for ind in indicators:
+        assert len(spec_results.indicators) == len(indicator_definitions)
+        for ind in indicator_definitions:
             ind_res = spec_results.indicators[ind.name]
             assert ind_res.name == ind.name
             assert ind_res.flag
 
     assert len(response.compliance_by_indicator) == 2
-    for indicator in indicators:
+    for indicator in indicator_definitions:
         indicator_result = response.compliance_by_indicator[indicator.name]
         assert indicator_result.name == indicator.name
         assert indicator_result.flag

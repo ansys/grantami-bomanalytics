@@ -1,38 +1,28 @@
 from typing import List
-from ansys.granta.bom_analytics import (
-    MaterialImpactedSubstanceQuery,
-    MaterialComplianceQuery,
-    PartImpactedSubstanceQuery,
-    PartComplianceQuery,
-    SpecificationImpactedSubstanceQuery,
-    SpecificationComplianceQuery,
-    SubstanceComplianceQuery,
-    BomImpactedSubstanceQuery,
-    BomComplianceQuery,
-)
+from ansys.granta.bom_analytics import queries
 
 RECORD_QUERY_TYPES: List = [
-    MaterialImpactedSubstanceQuery,
-    MaterialComplianceQuery,
-    PartImpactedSubstanceQuery,
-    PartComplianceQuery,
-    SpecificationImpactedSubstanceQuery,
-    SpecificationComplianceQuery,
-    SubstanceComplianceQuery,
+    queries.MaterialImpactedSubstances,
+    queries.MaterialCompliance,
+    queries.PartImpactedSubstances,
+    queries.PartCompliance,
+    queries.SpecificationImpactedSubstances,
+    queries.SpecificationCompliance,
+    queries.SubstanceCompliance,
 ]
 
 COMPLIANCE_QUERY_TYPES: List = [
-    MaterialComplianceQuery,
-    PartComplianceQuery,
-    SpecificationComplianceQuery,
-    SubstanceComplianceQuery,
-    BomComplianceQuery,
+    queries.MaterialCompliance,
+    queries.PartCompliance,
+    queries.SpecificationCompliance,
+    queries.SubstanceCompliance,
+    queries.BomCompliance,
 ]
 SUBSTANCE_QUERY_TYPES: List = [
-    MaterialImpactedSubstanceQuery,
-    PartImpactedSubstanceQuery,
-    SpecificationImpactedSubstanceQuery,
-    BomImpactedSubstanceQuery,
+    queries.MaterialImpactedSubstances,
+    queries.PartImpactedSubstances,
+    queries.SpecificationImpactedSubstances,
+    queries.BomImpactedSubstances,
 ]
 ALL_QUERY_TYPES = COMPLIANCE_QUERY_TYPES + SUBSTANCE_QUERY_TYPES
 

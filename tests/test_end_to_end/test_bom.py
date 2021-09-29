@@ -1,5 +1,4 @@
-import pytest
-from ansys.granta.bom_analytics import BomComplianceQuery, BomImpactedSubstanceQuery
+from ansys.granta.bom_analytics import queries
 
 bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" id="B0">
     <Components>
@@ -52,7 +51,7 @@ bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco"
 
 
 def test_impacted_substances(connection, legislations):
-    response = BomImpactedSubstanceQuery().set_bom(bom).add_legislations(legislations).execute(connection)
+    response = queries.BomImpactedSubstances().set_bom(bom).add_legislations(legislations).execute(connection)
 
     assert len(response.impacted_substances_by_legislation) == len(legislations)
     for legislation in legislations:
@@ -63,13 +62,13 @@ def test_impacted_substances(connection, legislations):
     assert len(response.impacted_substances) == 42
 
 
-def test_compliance(connection, indicators):
-    response = BomComplianceQuery().set_bom(bom).add_indicators(indicators).execute(connection)
+def test_compliance(connection, indicator_definitions):
+    response = queries.BomCompliance().set_bom(bom).add_indicators(indicator_definitions).execute(connection)
 
     assert len(response.compliance_by_part_and_indicator) == 1
     for bom_results in response.compliance_by_part_and_indicator:
-        assert len(bom_results.indicators) == len(indicators)
-        for indicator in indicators:
+        assert len(bom_results.indicators) == len(indicator_definitions)
+        for indicator in indicator_definitions:
             indicator_result = bom_results.indicators[indicator.name]
             assert indicator_result.name == indicator.name
             assert indicator_result.flag
@@ -77,7 +76,7 @@ def test_compliance(connection, indicators):
         assert len(bom_results.substances) == 0
 
     assert len(response.compliance_by_indicator) == 2
-    for indicator in indicators:
+    for indicator in indicator_definitions:
         indicator_result = response.compliance_by_indicator[indicator.name]
         assert indicator_result.name == indicator.name
         assert indicator_result.flag

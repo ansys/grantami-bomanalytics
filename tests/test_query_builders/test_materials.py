@@ -1,12 +1,9 @@
 import pytest
-from ansys.granta.bom_analytics import (
-    MaterialImpactedSubstanceQuery,
-    MaterialComplianceQuery,
-)
+from ansys.granta.bom_analytics import queries
 from tests.test_query_builders.common import check_query_manager_attributes
 
 
-@pytest.mark.parametrize("query_type", [MaterialImpactedSubstanceQuery, MaterialComplianceQuery])
+@pytest.mark.parametrize("query_type", [queries.MaterialImpactedSubstances, queries.MaterialCompliance])
 @pytest.mark.parametrize("material_ids", [[], ["One Material ID"], ["Two", "Material IDs"]])
 def test_add_material_ids(query_type, material_ids):
     query = query_type().add_material_ids(material_ids)
@@ -19,7 +16,7 @@ def test_add_material_ids(query_type, material_ids):
     )
 
 
-@pytest.mark.parametrize("query_type", [MaterialImpactedSubstanceQuery, MaterialComplianceQuery])
+@pytest.mark.parametrize("query_type", [queries.MaterialImpactedSubstances, queries.MaterialCompliance])
 def test_add_material_ids_wrong_type(query_type):
     with pytest.raises(TypeError) as e:
         query_type().add_material_ids("Strings are not allowed")

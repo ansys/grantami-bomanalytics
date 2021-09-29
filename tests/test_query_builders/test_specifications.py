@@ -1,12 +1,9 @@
 import pytest
-from ansys.granta.bom_analytics import (
-    SpecificationImpactedSubstanceQuery,
-    SpecificationComplianceQuery,
-)
+from ansys.granta.bom_analytics import queries
 from tests.test_query_builders.common import check_query_manager_attributes
 
 
-@pytest.mark.parametrize("query_type", [SpecificationComplianceQuery, SpecificationImpactedSubstanceQuery])
+@pytest.mark.parametrize("query_type", [queries.SpecificationCompliance, queries.SpecificationImpactedSubstances])
 @pytest.mark.parametrize("spec_ids", [[], ["One spec id"], ["Two", "Spec IDs"]])
 def test_add_spec_ids(query_type, spec_ids):
     query = query_type().add_specification_ids(spec_ids)
@@ -19,7 +16,7 @@ def test_add_spec_ids(query_type, spec_ids):
     )
 
 
-@pytest.mark.parametrize("query_type", [SpecificationComplianceQuery, SpecificationImpactedSubstanceQuery])
+@pytest.mark.parametrize("query_type", [queries.SpecificationCompliance, queries.SpecificationImpactedSubstances])
 def test_add_spec_ids_wrong_type(query_type):
     with pytest.raises(TypeError) as e:
         query_type().add_specification_ids("Strings are not allowed")

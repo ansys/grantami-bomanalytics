@@ -3,12 +3,12 @@ from typing import Union, List, Dict, Tuple, Any, TypeVar, Generic, Type, TYPE_C
 import warnings
 from numbers import Number
 
-from ansys.granta.bomanalytics import models
+from ansys.granta.bomanalytics import models, ComplianceApi, ImpactedSubstancesApi, DocumentationApi
 
-from .bom_item_definitions import AbstractBomFactory
-from .allowed_types import allowed_types
-from .connection import Connection
-from .query_results import (
+from ._bom_item_definitions import AbstractBomFactory
+from ._allowed_types import allowed_types
+from ._connection import Connection
+from ._query_results import (
     QueryResultFactory,
     ComplianceBaseClass,
     ImpactedSubstancesBaseClass,
@@ -22,7 +22,7 @@ from .query_results import (
     BoMImpactedSubstancesResult,
     BoMComplianceResult,
 )
-from .bom_indicators import Indicator, WatchListIndicator
+from .indicators import _Indicator
 
 T = TypeVar("T", bound="BaseQueryBuilder")
 Query_Result = TypeVar(
@@ -32,13 +32,20 @@ Query_Result = TypeVar(
 )
 
 
-class BaseQueryBuilder(Generic[T], ABC):
+class _BaseQueryBuilder(Generic[T], ABC):
     _item_type_name = None
     _result_type: Union[Type[models.Model], None] = None
 
     def __init__(self):
         self._items = []
         self._batch_size = None
+        self._db_key: str = "MI_Restricted_Substances"
+        self._material_universe_table_name: Union[str, None] = None
+        self._in_house_materials_table_name: Union[str, None] = None
+        self._specifications_table_name: Union[str, None] = None
+        self._products_and_parts_table_name: Union[str, None] = None
+        self._substances_table_name: Union[str, None] = None
+        self._coatings_table_name: Union[str, None] = None
 
     def _validate_items(self):
         if not self._items:
@@ -59,7 +66,7 @@ class BaseQueryBuilder(Generic[T], ABC):
 
         Examples
         --------
-        >>> query = MaterialComplianceQuery()
+        >>> query = MaterialCompliance()
         >>> query.set_batch_size(batch_size=50)
         """
 
@@ -68,13 +75,81 @@ class BaseQueryBuilder(Generic[T], ABC):
         self._batch_size = batch_size
         return self
 
+    def set_database_config(
+        self: T,
+        database_key: str = "MI_Restricted_Substances",
+        material_universe_table_name: Union[str, None] = None,
+        in_house_materials_table_name: Union[str, None] = None,
+        specifications_table_name: Union[str, None] = None,
+        products_and_parts_table_name: Union[str, None] = None,
+        substances_table_name: Union[str, None] = None,
+        coatings_table_name: Union[str, None] = None,
+    ) -> T:
+        """
+        Custom database configuration settings.
+
+        The database key is required if something other than MI_Restricted_Substances is being used. Table names are
+        required if they have been modified from the defaults.
+
+        Parameters
+        ----------
+        database_key : str, default="MI_Restricted_Substances"
+            Database key of the Restricted Substances-based database.
+        material_universe_table_name : str
+            Specify an alternate name for the 'MaterialUniverse' table
+        in_house_materials_table_name : str
+            Specify an alternate name for the 'Materials - in house' table
+        specifications_table_name : str
+            Specify an alternate name for the 'Specifications' table
+        products_and_parts_table_name : str
+            Specify an alternate name for the 'Products and parts' table
+        substances_table_name : str
+            Specify an alternate name for the 'Restricted Substances' table
+        coatings_table_name : str
+            Specify an alternate name for the 'Coatings' table
+
+        Examples
+        --------
+        >>> query = MaterialCompliance()
+        >>> query.set_database_config(database_key = "ACME_RS", in_house_materials_table_name = "ACME Materials")
+        """
+
+        self._db_key = database_key
+        self._material_universe_table_name = material_universe_table_name
+        self._in_house_materials_table_name = in_house_materials_table_name
+        self._specifications_table_name = specifications_table_name
+        self._products_and_parts_table_name = products_and_parts_table_name
+        self._substances_table_name = substances_table_name
+        self._coatings_table_name = coatings_table_name
+        return self
+
+    @property
+    def _query_config(self) -> Union[models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]:
+        if (
+            self._material_universe_table_name
+            or self._in_house_materials_table_name
+            or self._specifications_table_name
+            or self._products_and_parts_table_name
+            or self._substances_table_name
+            or self._coatings_table_name
+        ):
+            config = models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(
+                self._material_universe_table_name,
+                self._in_house_materials_table_name,
+                self._specifications_table_name,
+                self._products_and_parts_table_name,
+                self._substances_table_name,
+                self._coatings_table_name,
+            )
+            return config
+
     @property
     def _content(self) -> List[List[models.Model]]:
         for i in range(0, len(self._items), self._batch_size):
             yield [i.definition for i in self._items][i : i + self._batch_size]  # noqa: E203 E501
 
 
-class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
+class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
     def __init__(self):
         super().__init__()
         self._definition_factory = None
@@ -91,12 +166,12 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         Returns
         -------
-        RecordBasedQueryBuilder
+        _RecordBasedQueryBuilder
             The current query builder.
 
         Examples
         --------
-        >>> query = MaterialComplianceQuery()
+        >>> query = MaterialCompliance()
         >>> query.add_record_history_ids([15321, 17542, 942])
         """
 
@@ -119,12 +194,12 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         Returns
         -------
-        RecordBasedQueryBuilder
+        _RecordBasedQueryBuilder
             The current query builder.
 
         Examples
         --------
-        >>> query = MaterialComplianceQuery()
+        >>> query = MaterialCompliance()
         >>> query.add_record_history_guids(['41e20a88-d496-4735-a177-6266fac9b4e2',
         ...                               'd117d9ad-e6a9-4ba9-8ad8-9a20b6d0b5e2'])
         """
@@ -148,12 +223,12 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         Returns
         -------
-        RecordBasedQueryBuilder
+        _RecordBasedQueryBuilder
             The current query builder.
 
         Examples
         --------
-        >>> query = MaterialComplianceQuery()
+        >>> query = MaterialCompliance()
         >>> query.add_record_guids(['bdb0b880-e6ee-4f1a-bebd-af76959ae3c8',
         ...                         'a98cf4b3-f96a-4714-9f79-afe443982c69'])
         """
@@ -175,12 +250,12 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
         Returns
         -------
-        RecordBasedQueryBuilder
+        _RecordBasedQueryBuilder
             The current query builder.
 
         Examples
         --------
-        >>> query = MaterialComplianceQuery()
+        >>> query = MaterialCompliance()
         >>> query.add_stk_records(stk_records)
         """
 
@@ -191,12 +266,12 @@ class RecordBasedQueryBuilder(BaseQueryBuilder, ABC):
 
 
 if TYPE_CHECKING:
-    api_base_class = RecordBasedQueryBuilder
+    api_base_class = _RecordBasedQueryBuilder
 else:
     api_base_class = object
 
 
-class ApiMixin(api_base_class):
+class _ApiMixin(api_base_class):
     def __init__(self):
         super().__init__()
         self._request_type = None
@@ -223,13 +298,13 @@ class ApiMixin(api_base_class):
         pass
 
 
-class ComplianceMixin(ApiMixin, ABC):
+class _ComplianceMixin(_ApiMixin, ABC):
     def __init__(self):
         super().__init__()
         self._indicators = {}
 
-    @allowed_types(Any, [Indicator])
-    def add_indicators(self: T, indicators: List[Indicator]) -> T:
+    @allowed_types(Any, [_Indicator])
+    def add_indicators(self: T, indicators: List[_Indicator]) -> T:
         """
         Add a list of indicators to evaluate compliance against.
 
@@ -240,12 +315,12 @@ class ComplianceMixin(ApiMixin, ABC):
 
         Returns
         -------
-        RecordBasedQueryBuilder
+        _RecordBasedQueryBuilder
             The current query builder.
 
         Examples
         --------
-        >>> query = MaterialComplianceQuery()
+        >>> query = MaterialCompliance()
         >>> query.add_indicators([WatchListIndicator(...)])
         """
 
@@ -254,7 +329,6 @@ class ComplianceMixin(ApiMixin, ABC):
         return self
 
     def execute(self, connection: Connection) -> Query_Result:
-        self._connection = connection
         self._validate_parameters()
         self._validate_items()
         result_raw = self._run_query()
@@ -275,13 +349,13 @@ class ComplianceMixin(ApiMixin, ABC):
     @property
     def _arguments(self):
         return {
-            "database_key": self._connection.db_key,
+            "database_key": self._db_key,
             "indicators": [i.definition for i in self._indicators.values()],
-            "config": self._connection.query_config,
+            "config": self._query_config,
         }
 
 
-class ImpactedSubstanceMixin(ApiMixin, ABC):
+class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     def __init__(self):
         super().__init__()
         self._legislations: List[str] = []
@@ -298,12 +372,12 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
 
         Returns
         -------
-        RecordBasedQueryBuilder
+        _RecordBasedQueryBuilder
             The current query builder.
 
         Examples
         --------
-        >>> query = MaterialImpactedSubstanceQuery()
+        >>> query = MaterialImpactedSubstances()
         >>> query.add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
         """
 
@@ -311,7 +385,6 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
         return self
 
     def execute(self, connection: Connection) -> Query_Result:
-        self._connection = connection
         self._validate_parameters()
         self._validate_items()
         result_raw = self._run_query()
@@ -328,13 +401,13 @@ class ImpactedSubstanceMixin(ApiMixin, ABC):
     @property
     def _arguments(self):
         return {
-            "database_key": self._connection.db_key,
+            "database_key": self._db_key,
             "legislation_names": self._legislations,
-            "config": self._connection.query_config,
+            "config": self._query_config,
         }
 
 
-class MaterialQueryBuilder(RecordBasedQueryBuilder, ABC):
+class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def __init__(self):
         super().__init__()
         self._batch_size = 100
@@ -353,12 +426,12 @@ class MaterialQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        MaterialQueryBuilder
+        _MaterialQueryBuilder
             The current query builder.
 
         Examples
         --------
-        >>> query = MaterialComplianceQuery()
+        >>> query = MaterialCompliance()
         >>> query.add_material_ids(['elastomer-butadienerubber',
         ...                         'NBR-100'])
         """
@@ -368,7 +441,7 @@ class MaterialQueryBuilder(RecordBasedQueryBuilder, ABC):
         return self
 
 
-class MaterialComplianceQuery(ComplianceMixin, MaterialQueryBuilder):
+class MaterialCompliance(_ComplianceMixin, _MaterialQueryBuilder):
     """
     A query to evaluate compliance for Granta MI material records against a number of indicators. If the materials are
     associated with substances, these are also evaluated and returned.
@@ -378,14 +451,14 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryBuilder):
 
     Returns
     -------
-    MaterialComplianceQuery
+    MaterialCompliance
         The query containing the material records and indicator definitions.
 
     Examples
     --------
     >>> conn = Connection(...)
     >>> result = (
-    ...     MaterialComplianceQuery()
+    ...     MaterialCompliance()
     ...     .add_material_ids(['elastomer-butadienerubber', 'NBR-100'])
     ...     .add_indicators([WatchListIndicator(...)])
     ...     .execute(conn)
@@ -404,7 +477,7 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryBuilder):
 
         Parameters
         ----------
-        connection : Connection
+        connection : ApiClient
             The connection to the Granta MI server.
 
         Returns
@@ -413,11 +486,11 @@ class MaterialComplianceQuery(ComplianceMixin, MaterialQueryBuilder):
             The result of the compliance query.
 
         """
-        self._api = connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_materials  # noqa: E501
+        self._api = ComplianceApi(connection).post_miservicelayer_bom_analytics_v1svc_compliance_materials  # noqa: E501
         return super().execute(connection)
 
 
-class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilder):
+class MaterialImpactedSubstances(_ImpactedSubstanceMixin, _MaterialQueryBuilder):
     """
     A query to determine the substances impacted by a list of legislations for Granta MI material records.
 
@@ -433,7 +506,7 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilde
     --------
     >>> conn = Connection(...)
     >>> result = (
-    ...     MaterialImpactedSubstanceQuery()
+    ...     MaterialImpactedSubstances()
     ...     .add_material_ids(['elastomer-butadienerubber', 'NBR-100'])
     ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
     ...     .execute(conn)
@@ -462,13 +535,13 @@ class MaterialImpactedSubstanceQuery(ImpactedSubstanceMixin, MaterialQueryBuilde
         MaterialImpactedSubstancesResult
             The result of the impacted substances query.
         """
-        self._api = (
-            connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials  # noqa: E501
-        )
+        self._api = ImpactedSubstancesApi(
+            connection
+        ).post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials  # noqa: E501
         return super().execute(connection)
 
 
-class PartQueryBuilder(RecordBasedQueryBuilder, ABC):
+class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def __init__(self):
         super().__init__()
         self._batch_size = 10
@@ -487,7 +560,7 @@ class PartQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        PartQueryBuilder
+        _PartQueryBuilder
             The current query builder.
 
         Examples
@@ -502,7 +575,7 @@ class PartQueryBuilder(RecordBasedQueryBuilder, ABC):
         return self
 
 
-class PartComplianceQuery(ComplianceMixin, PartQueryBuilder):
+class PartCompliance(_ComplianceMixin, _PartQueryBuilder):
     """
     A query to evaluate compliance for Granta MI part records against a number of indicators. If the parts are
     associated with materials, parts, specifications, or substances, these are also evaluated and returned.
@@ -512,7 +585,7 @@ class PartComplianceQuery(ComplianceMixin, PartQueryBuilder):
 
     Returns
     -------
-    PartComplianceQuery
+    PartCompliance
         The query containing the part records and indicator definitions.
 
     Examples
@@ -546,11 +619,11 @@ class PartComplianceQuery(ComplianceMixin, PartQueryBuilder):
         PartComplianceResult
             The result of the compliance query.
         """
-        self._api = connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_parts  # noqa: E501
+        self._api = ComplianceApi(connection).post_miservicelayer_bom_analytics_v1svc_compliance_parts  # noqa: E501
         return super().execute(connection)
 
 
-class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryBuilder):
+class PartImpactedSubstances(_ImpactedSubstanceMixin, _PartQueryBuilder):
     """
     A query to determine the substances impacted by a list of legislations for Granta MI part records.
 
@@ -595,13 +668,13 @@ class PartImpactedSubstanceQuery(ImpactedSubstanceMixin, PartQueryBuilder):
         PartImpactedSubstancesResult
             The result of the impacted substances query.
         """
-        self._api = (
-            connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts  # noqa: E501
-        )
+        self._api = ImpactedSubstancesApi(
+            connection
+        ).post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts  # noqa: E501
         return super().execute(connection)
 
 
-class SpecificationQueryBuilder(RecordBasedQueryBuilder, ABC):
+class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def __init__(self):
         super().__init__()
         self._batch_size = 10
@@ -620,7 +693,7 @@ class SpecificationQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SpecificationQueryBuilder
+        _SpecificationQueryBuilder
             The current query builder.
 
         Examples
@@ -636,7 +709,7 @@ class SpecificationQueryBuilder(RecordBasedQueryBuilder, ABC):
         return self
 
 
-class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryBuilder):
+class SpecificationCompliance(_ComplianceMixin, _SpecificationQueryBuilder):
     """
     A query to evaluate compliance for Granta MI specification records against a number of indicators. If the
     specifications are associated with materials, specifications, or substances, these are also evaluated and returned.
@@ -646,7 +719,7 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryBuilder):
 
     Returns
     -------
-    SpecificationComplianceQuery
+    SpecificationCompliance
         The query containing the specification records and indicator definitions.
 
     Examples
@@ -682,13 +755,13 @@ class SpecificationComplianceQuery(ComplianceMixin, SpecificationQueryBuilder):
         SpecificationComplianceResult
             The result of the compliance query.
         """
-        self._api = (
-            connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_specifications  # noqa: E501
-        )
+        self._api = ComplianceApi(
+            connection
+        ).post_miservicelayer_bom_analytics_v1svc_compliance_specifications  # noqa: E501
         return super().execute(connection)
 
 
-class SpecificationImpactedSubstanceQuery(ImpactedSubstanceMixin, SpecificationQueryBuilder):
+class SpecificationImpactedSubstances(_ImpactedSubstanceMixin, _SpecificationQueryBuilder):
     """
     A query to determine the substances impacted by a list of legislations for Granta MI specification records.
 
@@ -735,13 +808,13 @@ class SpecificationImpactedSubstanceQuery(ImpactedSubstanceMixin, SpecificationQ
         SpecificationImpactedSubstancesResult
             The result of the impacted substances query.
         """
-        self._api = (
-            connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications  # noqa: E501
-        )
+        self._api = ImpactedSubstancesApi(
+            connection
+        ).post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications  # noqa: E501
         return super().execute(connection)
 
 
-class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
+class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def __init__(self):
         super().__init__()
         self._batch_size = 500
@@ -760,7 +833,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SubstanceQueryBuilder
+        _SubstanceQueryBuilder
             The current query builder.
 
         Examples
@@ -785,7 +858,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SubstanceQueryBuilder
+        _SubstanceQueryBuilder
             The current query builder.
 
         Examples
@@ -810,7 +883,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SubstanceQueryBuilder
+        _SubstanceQueryBuilder
             The current query builder.
 
         Examples
@@ -837,7 +910,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SubstanceQueryBuilder
+        _SubstanceQueryBuilder
             The current query builder.
 
         Examples
@@ -867,7 +940,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SubstanceQueryBuilder
+        _SubstanceQueryBuilder
             The current query builder.
 
         Examples
@@ -896,7 +969,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SubstanceQueryBuilder
+        _SubstanceQueryBuilder
             The current query builder.
 
         Examples
@@ -924,7 +997,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SubstanceQueryBuilder
+        _SubstanceQueryBuilder
             The current query builder.
 
         Examples
@@ -951,7 +1024,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SubstanceQueryBuilder
+        _SubstanceQueryBuilder
             The current query builder.
 
         Examples
@@ -978,7 +1051,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
 
         Returns
         -------
-        SubstanceQueryBuilder
+        _SubstanceQueryBuilder
             The current query builder.
 
         Examples
@@ -994,7 +1067,7 @@ class SubstanceQueryBuilder(RecordBasedQueryBuilder, ABC):
         return self
 
 
-class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryBuilder):
+class SubstanceCompliance(_ComplianceMixin, _SubstanceQueryBuilder):
     """
     A query to evaluate compliance for Granta MI substance records against a number of indicators.
 
@@ -1003,7 +1076,7 @@ class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryBuilder):
 
     Returns
     -------
-    SubstanceComplianceQuery
+    SubstanceCompliance
         The query containing the substance records and indicator definitions.
 
     Examples
@@ -1037,13 +1110,13 @@ class SubstanceComplianceQuery(ComplianceMixin, SubstanceQueryBuilder):
         SubstanceComplianceResult
             The result of the compliance query.
         """
-        self._api = (
-            connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_substances  # noqa: E501
-        )
+        self._api = ComplianceApi(
+            connection
+        ).post_miservicelayer_bom_analytics_v1svc_compliance_substances  # noqa: E501
         return super().execute(connection)
 
 
-class Bom1711QueryBuilder(BaseQueryBuilder, ABC):
+class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
     def __init__(self):
         super().__init__()
         self._batch_size = 1
@@ -1071,12 +1144,12 @@ class Bom1711QueryBuilder(BaseQueryBuilder, ABC):
 
 
 if TYPE_CHECKING:
-    bom_base_class = RecordBasedQueryBuilder, ApiMixin
+    bom_base_class = _RecordBasedQueryBuilder, _ApiMixin
 else:
     bom_base_class = object
 
 
-class Bom1711QueryOverride(bom_base_class):
+class _Bom1711QueryOverride(bom_base_class):
     def _run_query(self) -> List:
         args = {**self._arguments, self._item_type_name: list(self._content)[0][0]}
         request = self._request_type(**args)
@@ -1084,7 +1157,7 @@ class Bom1711QueryOverride(bom_base_class):
         return response
 
 
-class BomComplianceQuery(Bom1711QueryOverride, ComplianceMixin, Bom1711QueryBuilder):
+class BomCompliance(_Bom1711QueryOverride, _ComplianceMixin, _Bom1711QueryBuilder):
     """
     A query to evaluate compliance for a Bill of Maerials in 17/11 XML format against a number of indicators.
 
@@ -1093,7 +1166,7 @@ class BomComplianceQuery(Bom1711QueryOverride, ComplianceMixin, Bom1711QueryBuil
 
     Returns
     -------
-    BomComplianceQuery
+    BomCompliance
         The query containing the BoM and indicator definitions.
 
     Examples
@@ -1128,11 +1201,11 @@ class BomComplianceQuery(Bom1711QueryOverride, ComplianceMixin, Bom1711QueryBuil
         BoMComplianceResult
             The result of the compliance query.
         """
-        self._api = connection.compliance_api.post_miservicelayer_bom_analytics_v1svc_compliance_bom1711  # noqa: E501
+        self._api = ComplianceApi(connection).post_miservicelayer_bom_analytics_v1svc_compliance_bom1711  # noqa: E501
         return super().execute(connection)
 
 
-class BomImpactedSubstanceQuery(Bom1711QueryOverride, ImpactedSubstanceMixin, Bom1711QueryBuilder):
+class BomImpactedSubstances(_Bom1711QueryOverride, _ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     """
     A query to determine the substances impacted by a list of legislations for a Bill of Maerials in 17/11 XML format.
 
@@ -1141,7 +1214,7 @@ class BomImpactedSubstanceQuery(Bom1711QueryOverride, ImpactedSubstanceMixin, Bo
 
     Returns
     -------
-    BomImpactedSubstanceQuery
+    BomImpactedSubstances
         The query containing the bom and legislation names.
 
     Examples
@@ -1177,7 +1250,13 @@ class BomImpactedSubstanceQuery(Bom1711QueryOverride, ImpactedSubstanceMixin, Bo
         BoMImpactedSubstancesResult
             The result of the impacted substances query.
         """
-        self._api = (
-            connection.impacted_substances_api.post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711  # noqa: E501
-        )
+        self._api = ImpactedSubstancesApi(
+            connection
+        ).post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711  # noqa: E501
         return super().execute(connection)
+
+
+class Yaml:
+    @staticmethod
+    def get_yaml(connection: Connection):
+        return DocumentationApi(connection).get_miservicelayer_bom_analytics_v1svc_yaml()

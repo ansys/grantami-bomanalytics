@@ -3,7 +3,7 @@ from typing import Union, List, Dict, Tuple, Any, TypeVar, Generic, Type, TYPE_C
 import warnings
 from numbers import Number
 
-from ansys.granta.bomanalytics import models, ComplianceApi, ImpactedSubstancesApi, DocumentationApi
+from ansys.granta.bomanalytics import models, api
 
 from ._bom_item_definitions import AbstractBomFactory
 from ._allowed_types import allowed_types
@@ -19,8 +19,8 @@ from ._query_results import (
     SpecificationImpactedSubstancesResult,
     SpecificationComplianceResult,
     SubstanceComplianceResult,
-    BoMImpactedSubstancesResult,
-    BoMComplianceResult,
+    BomImpactedSubstancesResult,
+    BomComplianceResult,
 )
 from .indicators import _Indicator
 
@@ -277,14 +277,16 @@ class _ApiMixin(api_base_class):
         self._request_type = None
         self._result_type = None
         self._connection = None
-        self._api = None
+        self.api_method = ""
 
-    def _run_query(self) -> List:
+    def _call_api(self, api_method) -> List:
+        self._validate_parameters()
+        self._validate_items()
         result = []
         for batch in self._content:
             args = {**self._arguments, self._item_type_name: batch}
             request = self._request_type(**args)
-            response = self._api(body=request)
+            response = api_method(body=request)
             result.extend([r for r in getattr(response, self._item_type_name)])
         return result
 
@@ -302,6 +304,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
     def __init__(self):
         super().__init__()
         self._indicators = {}
+        self.api = api.ComplianceApi
 
     @allowed_types(Any, [_Indicator])
     def add_indicators(self: T, indicators: List[_Indicator]) -> T:
@@ -328,10 +331,8 @@ class _ComplianceMixin(_ApiMixin, ABC):
             self._indicators[value.name] = value
         return self
 
-    def execute(self, connection: Connection) -> Query_Result:
-        self._validate_parameters()
-        self._validate_items()
-        result_raw = self._run_query()
+    def run_query(self, api_method) -> Query_Result:
+        result_raw = self._call_api(api_method)
         result = QueryResultFactory.create_result(
             response_type=self._result_type,
             results=result_raw,
@@ -359,6 +360,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     def __init__(self):
         super().__init__()
         self._legislations: List[str] = []
+        self.api = api.ImpactedSubstancesApi
 
     @allowed_types(Any, [str])
     def add_legislations(self: T, legislation_names: List[str]) -> T:
@@ -384,10 +386,8 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         self._legislations.extend(legislation_names)
         return self
 
-    def execute(self, connection: Connection) -> Query_Result:
-        self._validate_parameters()
-        self._validate_items()
-        result_raw = self._run_query()
+    def run_query(self, api_method) -> Query_Result:
+        result_raw = self._call_api(api_method)
         result = QueryResultFactory.create_result(response_type=self._result_type, results=result_raw)
         return result
 
@@ -470,24 +470,7 @@ class MaterialCompliance(_ComplianceMixin, _MaterialQueryBuilder):
         self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest
         self._result_type = models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-
-    def execute(self, connection: Connection) -> MaterialComplianceResult:
-        """
-        Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        connection : ApiClient
-            The connection to the Granta MI server.
-
-        Returns
-        -------
-        MaterialComplianceResult
-            The result of the compliance query.
-
-        """
-        self._api = ComplianceApi(connection).post_miservicelayer_bom_analytics_v1svc_compliance_materials  # noqa: E501
-        return super().execute(connection)
+        self.api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_materials"
 
 
 class MaterialImpactedSubstances(_ImpactedSubstanceMixin, _MaterialQueryBuilder):
@@ -520,25 +503,7 @@ class MaterialImpactedSubstances(_ImpactedSubstanceMixin, _MaterialQueryBuilder)
         )
         self._result_type = models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-
-    def execute(self, connection: Connection) -> MaterialImpactedSubstancesResult:
-        """
-        Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        connection : Connection
-            The connection to the Granta MI server.
-
-        Returns
-        -------
-        MaterialImpactedSubstancesResult
-            The result of the impacted substances query.
-        """
-        self._api = ImpactedSubstancesApi(
-            connection
-        ).post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials  # noqa: E501
-        return super().execute(connection)
+        self.api_method = "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials"
 
 
 class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
@@ -604,23 +569,7 @@ class PartCompliance(_ComplianceMixin, _PartQueryBuilder):
         self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest
         self._result_type = models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-
-    def execute(self, connection: Connection) -> PartComplianceResult:
-        """
-        Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        connection : Connection
-            The connection to the Granta MI server.
-
-        Returns
-        -------
-        PartComplianceResult
-            The result of the compliance query.
-        """
-        self._api = ComplianceApi(connection).post_miservicelayer_bom_analytics_v1svc_compliance_parts  # noqa: E501
-        return super().execute(connection)
+        self.api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_parts"
 
 
 class PartImpactedSubstances(_ImpactedSubstanceMixin, _PartQueryBuilder):
@@ -653,25 +602,7 @@ class PartImpactedSubstances(_ImpactedSubstanceMixin, _PartQueryBuilder):
         )
         self._result_type = models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-
-    def execute(self, connection: Connection) -> PartImpactedSubstancesResult:
-        """
-        Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        connection : Connection
-            The connection to the Granta MI server.
-
-        Returns
-        -------
-        PartImpactedSubstancesResult
-            The result of the impacted substances query.
-        """
-        self._api = ImpactedSubstancesApi(
-            connection
-        ).post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts  # noqa: E501
-        return super().execute(connection)
+        self.api_method = "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts"
 
 
 class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
@@ -740,25 +671,7 @@ class SpecificationCompliance(_ComplianceMixin, _SpecificationQueryBuilder):
         )
         self._result_type = models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-
-    def execute(self, connection: Connection) -> SpecificationComplianceResult:
-        """
-        Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        connection : Connection
-            The connection to the Granta MI server.
-
-        Returns
-        -------
-        SpecificationComplianceResult
-            The result of the compliance query.
-        """
-        self._api = ComplianceApi(
-            connection
-        ).post_miservicelayer_bom_analytics_v1svc_compliance_specifications  # noqa: E501
-        return super().execute(connection)
+        self.api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_specifications"
 
 
 class SpecificationImpactedSubstances(_ImpactedSubstanceMixin, _SpecificationQueryBuilder):
@@ -793,25 +706,7 @@ class SpecificationImpactedSubstances(_ImpactedSubstanceMixin, _SpecificationQue
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-
-    def execute(self, connection: Connection) -> SpecificationImpactedSubstancesResult:
-        """
-        Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        connection : Connection
-            The connection to the Granta MI server.
-
-        Returns
-        -------
-        SpecificationImpactedSubstancesResult
-            The result of the impacted substances query.
-        """
-        self._api = ImpactedSubstancesApi(
-            connection
-        ).post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications  # noqa: E501
-        return super().execute(connection)
+        self.api_method = "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications"
 
 
 class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
@@ -1095,25 +990,7 @@ class SubstanceCompliance(_ComplianceMixin, _SubstanceQueryBuilder):
         self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest
         self._result_type = models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-
-    def execute(self, connection: Connection) -> SubstanceComplianceResult:
-        """
-        Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        connection : Connection
-            The connection to the Granta MI server.
-
-        Returns
-        -------
-        SubstanceComplianceResult
-            The result of the compliance query.
-        """
-        self._api = ComplianceApi(
-            connection
-        ).post_miservicelayer_bom_analytics_v1svc_compliance_substances  # noqa: E501
-        return super().execute(connection)
+        self.api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_substances"
 
 
 class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
@@ -1150,10 +1027,10 @@ else:
 
 
 class _Bom1711QueryOverride(bom_base_class):
-    def _run_query(self) -> List:
+    def _call_api(self, api_method) -> List:
         args = {**self._arguments, self._item_type_name: list(self._content)[0][0]}
         request = self._request_type(**args)
-        response = self._api(body=request)
+        response = api_method(body=request)
         return response
 
 
@@ -1186,23 +1063,7 @@ class BomCompliance(_Bom1711QueryOverride, _ComplianceMixin, _Bom1711QueryBuilde
         self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request
         self._result_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-
-    def execute(self, connection: Connection) -> BoMComplianceResult:
-        """
-        Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        connection : Connection
-            The connection to the Granta MI server.
-
-        Returns
-        -------
-        BoMComplianceResult
-            The result of the compliance query.
-        """
-        self._api = ComplianceApi(connection).post_miservicelayer_bom_analytics_v1svc_compliance_bom1711  # noqa: E501
-        return super().execute(connection)
+        self.api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_bom1711"
 
 
 class BomImpactedSubstances(_Bom1711QueryOverride, _ImpactedSubstanceMixin, _Bom1711QueryBuilder):
@@ -1235,28 +1096,10 @@ class BomImpactedSubstances(_Bom1711QueryOverride, _ImpactedSubstanceMixin, _Bom
         )
         self._result_type = models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-
-    def execute(self, connection: Connection) -> BoMImpactedSubstancesResult:
-        """
-        Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        connection : Connection
-            The connection to the Granta MI server.
-
-        Returns
-        -------
-        BoMImpactedSubstancesResult
-            The result of the impacted substances query.
-        """
-        self._api = ImpactedSubstancesApi(
-            connection
-        ).post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711  # noqa: E501
-        return super().execute(connection)
+        self.api_method = "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711"
 
 
 class Yaml:
     @staticmethod
     def get_yaml(connection: Connection):
-        return DocumentationApi(connection).get_miservicelayer_bom_analytics_v1svc_yaml()
+        return api.DocumentationApi(connection).get_miservicelayer_bom_analytics_v1svc_yaml()

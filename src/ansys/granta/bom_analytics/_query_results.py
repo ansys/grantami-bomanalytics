@@ -269,13 +269,13 @@ class SubstanceComplianceResult(ComplianceBaseClass):
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response)
-class BoMImpactedSubstancesResult(ImpactedSubstancesBaseClass):
+class BomImpactedSubstancesResult(ImpactedSubstancesBaseClass):
     def __init__(self, results):
         self._results = [BoM1711WithImpactedSubstances(legislations=results.legislations)]
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response)
-class BoMComplianceResult(ComplianceBaseClass):
+class BomComplianceResult(ComplianceBaseClass):
     def __init__(
         self,
         results,

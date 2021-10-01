@@ -22,7 +22,7 @@ def get_mocked_response(query, result_model, connection):
     with requests_mock.Mocker() as m:
         m.get(requests_mock.ANY, text="")
         m.post(url=requests_mock.ANY, text=text)
-        response = query.execute(connection)
+        response = connection.run(query)
     return response
 
 

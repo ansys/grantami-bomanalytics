@@ -10,7 +10,9 @@ from .common import (
 
 
 class TestImpactedSubstances:
-    query = queries.PartImpactedSubstances().add_legislations(["Fake legislation"]).add_part_numbers(["Fake part number"])
+    query = (
+        queries.PartImpactedSubstances().add_legislations(["Fake legislation"]).add_part_numbers(["Fake part number"])
+    )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse.__name__
 
     def test_impacted_substances_by_part_and_legislation(self, connection):

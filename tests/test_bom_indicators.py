@@ -28,7 +28,9 @@ def get_low_flag(flag_enum):
     return flag_enum(1)
 
 
-@pytest.mark.parametrize("indicator, indicator_type", [(indicators.RoHSIndicator, "Rohs"), (indicators.WatchListIndicator, "WatchList")])
+@pytest.mark.parametrize(
+    "indicator, indicator_type", [(indicators.RoHSIndicator, "Rohs"), (indicators.WatchListIndicator, "WatchList")]
+)
 def test_indicator_definition(indicator, indicator_type):
     test_indicator = create_indicator(indicator)
 
@@ -71,7 +73,9 @@ def test_indicator_definition_comparison_value_error(indicator, add_flag):
     assert "has no flag" in str(e.value)
 
 
-@pytest.mark.parametrize("indicator, indicator_type", [(indicators.RoHSIndicator, "Rohs"), (indicators.WatchListIndicator, "WatchList")])
+@pytest.mark.parametrize(
+    "indicator, indicator_type", [(indicators.RoHSIndicator, "Rohs"), (indicators.WatchListIndicator, "WatchList")]
+)
 def test_indicator_result_less_than(indicator, indicator_type):
     test_indicator = create_indicator(indicator)
     test_indicator.flag = get_random_flag(test_indicator.available_flags).name
@@ -82,7 +86,9 @@ def test_indicator_result_less_than(indicator, indicator_type):
     assert test_indicator > low_indicator
 
 
-@pytest.mark.parametrize("indicator, indicator_type", [(indicators.RoHSIndicator, "Rohs"), (indicators.WatchListIndicator, "WatchList")])
+@pytest.mark.parametrize(
+    "indicator, indicator_type", [(indicators.RoHSIndicator, "Rohs"), (indicators.WatchListIndicator, "WatchList")]
+)
 def test_indicator_result_greater_than(indicator, indicator_type):
     test_indicator = create_indicator(indicator)
     test_indicator.flag = get_random_flag(test_indicator.available_flags).name
@@ -116,7 +122,11 @@ def test_indicator_result_less_than_equal_to(indicator):
 
 
 @pytest.mark.parametrize(
-    "indicator, other_indicator", [(indicators.RoHSIndicator, indicators.WatchListIndicator), (indicators.WatchListIndicator, indicators.RoHSIndicator)]
+    "indicator, other_indicator",
+    [
+        (indicators.RoHSIndicator, indicators.WatchListIndicator),
+        (indicators.WatchListIndicator, indicators.RoHSIndicator),
+    ],
 )
 def test_indicator_result_different_indicators_type_error(indicator, other_indicator):
     test_indicator = create_indicator(indicator)

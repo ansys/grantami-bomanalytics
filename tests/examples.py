@@ -43,4 +43,3 @@ _example_dict_raw = {
 
 examples_as_strings = {k: html.unescape(v) for k, v in _example_dict_raw.items() if v}
 examples_as_dicts = {k: json.loads(v) for k, v in examples_as_strings.items() if v}
-

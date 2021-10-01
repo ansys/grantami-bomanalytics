@@ -11,7 +11,9 @@ from .common import (
 
 class TestImpactedSubstances:
     query = (
-        queries.SpecificationImpactedSubstances().add_legislations(["Fake legislation"]).add_specification_ids(["Fake ID"])
+        queries.SpecificationImpactedSubstances()
+        .add_legislations(["Fake legislation"])
+        .add_specification_ids(["Fake ID"])
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse.__name__
 

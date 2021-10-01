@@ -188,7 +188,6 @@ class _ApiMixin(api_base_class):
         super().__init__()
         self._request_type = None
         self._result_type = None
-        self._connection = None
 
     def _call_api(self, api_method: Callable, arguments: Dict) -> List:
         self._validate_parameters()
@@ -197,7 +196,7 @@ class _ApiMixin(api_base_class):
         for batch in self._content:
             args = {**arguments, self._item_type_name: batch}
             request = self._request_type(**args)
-            response = api_method(body=request)
+            response = api_method(body=request)  # TODO: Error handling
             result.extend([r for r in getattr(response, self._item_type_name)])
         return result
 
@@ -236,12 +235,8 @@ class _ComplianceMixin(_ApiMixin, ABC):
             self._indicators[value.name] = value
         return self
 
-    def run_query(self, api_method: Callable, db_key: str, query_config) -> Query_Result:
-        arguments = {
-            "database_key": db_key,
-            "indicators": [i.definition for i in self._indicators.values()],
-            "config": query_config,
-        }
+    def run_query(self, api_method: Callable, static_arguments: Dict) -> Query_Result:
+        arguments = {**static_arguments, "indicators": [i.definition for i in self._indicators.values()]}
         result_raw = self._call_api(api_method, arguments)
         result = QueryResultFactory.create_result(
             response_type=self._result_type,
@@ -267,7 +262,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     @allowed_types(_BaseQueryBuilder, [str])
     def with_legislations(self: T, legislation_names: List[str]) -> T:
         """
-        Add a list of legislations to retreive the impacted substances for.
+        Add a list of legislations to retrieve the impacted substances for.
 
         Parameters
         ----------
@@ -289,12 +284,8 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         self._legislations.extend(legislation_names)
         return self
 
-    def run_query(self, api_method: Callable, db_key: str, query_config) -> Query_Result:
-        arguments = {
-            "database_key": db_key,
-            "legislation_names": self._legislations,
-            "config": query_config,
-        }
+    def run_query(self, api_method: Callable, static_arguments: Dict) -> Query_Result:
+        arguments = {"legislation_names": self._legislations, **static_arguments}
         result_raw = self._call_api(api_method, arguments)
         result = QueryResultFactory.create_result(response_type=self._result_type, results=result_raw)
         return result
@@ -350,7 +341,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
 class MaterialCompliance(_ComplianceMixin, _MaterialQueryBuilder):
     """
-    A query to evaluate compliance for Granta MI material records against a number of indicators. If the materials are
+    Evaluate compliance for Granta MI material records against a number of indicators. If the materials are
     associated with substances, these are also evaluated and returned.
 
     All methods used to add materials and indicators to this query return the query itself, so they can be chained
@@ -382,7 +373,7 @@ class MaterialCompliance(_ComplianceMixin, _MaterialQueryBuilder):
 
 class MaterialImpactedSubstances(_ImpactedSubstanceMixin, _MaterialQueryBuilder):
     """
-    A query to determine the substances impacted by a list of legislations for Granta MI material records.
+    Get the substances impacted by a list of legislations for Granta MI material records.
 
     All methods used to add materials and legislations to this query return the query itself, so they can be chained
     together as required. Use the .execute() method once the query is fully constructed to return the result.
@@ -448,7 +439,7 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
 class PartCompliance(_ComplianceMixin, _PartQueryBuilder):
     """
-    A query to evaluate compliance for Granta MI part records against a number of indicators. If the parts are
+    Evaluate compliance for Granta MI part records against a number of indicators. If the parts are
     associated with materials, parts, specifications, or substances, these are also evaluated and returned.
 
     All methods used to add parts and indicators to this query return the query itself, so they can be chained
@@ -480,7 +471,7 @@ class PartCompliance(_ComplianceMixin, _PartQueryBuilder):
 
 class PartImpactedSubstances(_ImpactedSubstanceMixin, _PartQueryBuilder):
     """
-    A query to determine the substances impacted by a list of legislations for Granta MI part records.
+    Get the substances impacted by a list of legislations for Granta MI part records.
 
     All methods used to add parts and legislations to this query return the query itself, so they can be chained
     together as required. Use the .execute() method once the query is fully constructed to return the result.
@@ -548,10 +539,10 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
 class SpecificationCompliance(_ComplianceMixin, _SpecificationQueryBuilder):
     """
-    A query to evaluate compliance for Granta MI specification records against a number of indicators. If the
+    Evaluate compliance for Granta MI specification records against a number of indicators. If the
     specifications are associated with materials, specifications, or substances, these are also evaluated and returned.
 
-    All methods used to add specifcations and indicators to this query return the query itself, so they can be chained
+    All methods used to add specifications and indicators to this query return the query itself, so they can be chained
     together as required. Use the .execute() method once the query is fully constructed to return the result.
 
     Returns
@@ -582,14 +573,14 @@ class SpecificationCompliance(_ComplianceMixin, _SpecificationQueryBuilder):
 
 class SpecificationImpactedSubstances(_ImpactedSubstanceMixin, _SpecificationQueryBuilder):
     """
-    A query to determine the substances impacted by a list of legislations for Granta MI specification records.
+    Get the substances impacted by a list of legislations for Granta MI specification records.
 
     All methods used to add specifications and legislations to this query return the query itself, so they can be
     chained together as required. Use the .execute() method once the query is fully constructed to return the result.
 
     Returns
     -------
-    SpecificationImpactedSubstancesQuery
+    SpecificationImpactedSubstances
         The query containing the specification records and legislation names.
 
     Examples
@@ -866,7 +857,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
 class SubstanceCompliance(_ComplianceMixin, _SubstanceQueryBuilder):
     """
-    A query to evaluate compliance for Granta MI substance records against a number of indicators.
+    Evaluate compliance for Granta MI substance records against a number of indicators.
 
     All methods used to add substances and indicators to this query return the query itself, so they can be chained
     together as required. Use the .execute() method once the query is fully constructed to return the result.
@@ -938,7 +929,7 @@ class _Bom1711QueryOverride(bom_base_class):
 
 class BomCompliance(_Bom1711QueryOverride, _ComplianceMixin, _Bom1711QueryBuilder):
     """
-    A query to evaluate compliance for a Bill of Maerials in 17/11 XML format against a number of indicators.
+    Evaluate compliance for a Bill of Materials in 17/11 XML format against a number of indicators.
 
     All methods used to add the Bill of Materials and indicators to this query return the query itself, so they can be
     chained together as required. Use the .execute() method once the query is fully constructed to return the result.
@@ -970,7 +961,7 @@ class BomCompliance(_Bom1711QueryOverride, _ComplianceMixin, _Bom1711QueryBuilde
 
 class BomImpactedSubstances(_Bom1711QueryOverride, _ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     """
-    A query to determine the substances impacted by a list of legislations for a Bill of Maerials in 17/11 XML format.
+    Get the substances impacted by a list of legislations for a Bill of Materials in 17/11 XML format.
 
     All methods used to add the bom and legislations to this query return the query itself, so they can be
     chained together as required. Use the .execute() method once the query is fully constructed to return the result.

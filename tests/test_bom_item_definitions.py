@@ -21,7 +21,7 @@ def test_bom_definition():
 common_test_cases = [
     ({"reference_type": ReferenceType.MiRecordGuid, "reference_value": "TEST_GUID"}, "record_guid"),
     (
-        {"reference_type": ReferenceType.MiRecordHistoryIdentity, "reference_value": "TEST_RHID"},
+        {"reference_type": ReferenceType.MiRecordHistoryIdentity, "reference_value": "TEST_RH_ID"},
         "record_history_identity",
     ),
     ({"reference_type": ReferenceType.MiRecordHistoryGuid, "reference_value": "TEST_RH_GUID"}, "record_history_guid"),
@@ -77,7 +77,7 @@ def test_specification_definition(kwargs, variable_name):
         (
             {
                 "reference_type": ReferenceType.MiRecordHistoryIdentity,
-                "reference_value": "TEST_RHID",
+                "reference_value": "TEST_RH_ID",
                 "percentage_amount": 20,
             },
             "record_history_identity",

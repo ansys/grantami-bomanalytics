@@ -1,4 +1,4 @@
-from typing import overload, TYPE_CHECKING, Union
+from typing import overload, TYPE_CHECKING, Union, Dict
 from ansys.granta import bomanalytics, auth_common
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
@@ -88,7 +88,11 @@ class BomServicesClient(auth_common.ApiClient):
         self._coatings_table_name = coatings_table_name
 
     @property
-    def _query_config(self) -> Union[bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]:
+    def _query_arguments(
+        self,
+    ) -> Dict[str, Union[str, bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]]:
+
+        arguments = {"database_key": self._db_key}
         if (
             self._material_universe_table_name
             or self._in_house_materials_table_name
@@ -105,7 +109,10 @@ class BomServicesClient(auth_common.ApiClient):
                 self._substances_table_name,
                 self._coatings_table_name,
             )
-            return config
+        else:
+            config = None
+        arguments["config"] = config
+        return arguments
 
     @overload
     def run(self, query: "MaterialImpactedSubstances") -> "MaterialImpactedSubstancesResult":
@@ -158,9 +165,9 @@ class BomServicesClient(auth_common.ApiClient):
             The corresponding result object based on the provided query
         """
 
-        api = query.api(self)
-        api_method = getattr(api, query.api_method)
-        return query.run_query(api_method, self._db_key, self._query_config)
+        api_instance = query.api(self)
+        api_method = getattr(api_instance, query.api_method)
+        return query.run_query(api_method, self._query_arguments)
 
 
 class Connection(auth_common.ApiClientFactory):

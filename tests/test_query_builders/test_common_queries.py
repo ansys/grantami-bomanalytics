@@ -1,4 +1,4 @@
-from ..common import (
+from .common import (
     pytest,
     RECORD_QUERY_TYPES,
     COMPLIANCE_QUERY_TYPES,

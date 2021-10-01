@@ -14,6 +14,7 @@ from ..common import (
     indicators,
     examples_as_strings,
     requests_mock,
+    check_query_manager_attributes,
 )
 
 

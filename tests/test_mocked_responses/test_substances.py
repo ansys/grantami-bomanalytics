@@ -10,13 +10,13 @@ from .common import (
 class TestCompliance:
     query = (
         queries.SubstanceCompliance()
-        .add_indicators(
+        .with_indicators(
             [
                 indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
                 indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
             ]
         )
-        .add_cas_numbers(["Fake ID"])
+        .with_cas_numbers(["Fake ID"])
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse.__name__
 

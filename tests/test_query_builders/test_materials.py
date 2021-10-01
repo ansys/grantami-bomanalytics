@@ -4,7 +4,7 @@ from ..common import pytest, queries, check_query_manager_attributes
 @pytest.mark.parametrize("query_type", [queries.MaterialImpactedSubstances, queries.MaterialCompliance])
 @pytest.mark.parametrize("material_ids", [[], ["One Material ID"], ["Two", "Material IDs"]])
 def test_add_material_ids(query_type, material_ids):
-    query = query_type().add_material_ids(material_ids)
+    query = query_type().with_material_ids(material_ids)
     assert isinstance(query, query_type)
     assert check_query_manager_attributes(
         query,
@@ -17,8 +17,8 @@ def test_add_material_ids(query_type, material_ids):
 @pytest.mark.parametrize("query_type", [queries.MaterialImpactedSubstances, queries.MaterialCompliance])
 def test_add_material_ids_wrong_type(query_type):
     with pytest.raises(TypeError) as e:
-        query_type().add_material_ids("Strings are not allowed")
+        query_type().with_material_ids("Strings are not allowed")
     assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)
     with pytest.raises(TypeError) as e:
-        query_type().add_material_ids(material_ids="Strings are not allowed")
+        query_type().with_material_ids(material_ids="Strings are not allowed")
     assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)

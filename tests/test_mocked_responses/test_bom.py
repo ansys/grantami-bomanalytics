@@ -10,7 +10,7 @@ from .common import (
 
 
 class TestImpactedSubstances:
-    query = queries.BomImpactedSubstances().add_legislations(["Fake legislation"]).set_bom("<Bom />")
+    query = queries.BomImpactedSubstances().with_legislations(["Fake legislation"]).with_bom("<Bom />")
     mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response.__name__
 
     def test_impacted_substances_by_legislation(self, connection):
@@ -28,13 +28,13 @@ class TestImpactedSubstances:
 class TestCompliance:
     query = (
         queries.BomCompliance()
-        .add_indicators(
+        .with_indicators(
             [
                 indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
                 indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
             ]
         )
-        .set_bom("<Bom />")
+        .with_bom("<Bom />")
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response.__name__
 

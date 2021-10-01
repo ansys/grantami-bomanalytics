@@ -17,7 +17,7 @@ from ansys.granta.bom_analytics.queries import Yaml
 class TestAddPropertiesToRecordQueries:
     @pytest.mark.parametrize("test_values", TEST_GUIDS)
     def test_record_guids(self, query_type, test_values):
-        query = query_type().add_record_guids(test_values)
+        query = query_type().with_record_guids(test_values)
         assert isinstance(query, query_type)
         assert len(query._items) == len(test_values)
         for idx, guid in enumerate(test_values):
@@ -27,7 +27,7 @@ class TestAddPropertiesToRecordQueries:
 
     @pytest.mark.parametrize("test_values", TEST_GUIDS)
     def test_record_history_guids(self, query_type, test_values):
-        query = query_type().add_record_history_guids(test_values)
+        query = query_type().with_record_history_guids(test_values)
         assert isinstance(query, query_type)
         assert len(query._items) == len(test_values)
         for idx, guid in enumerate(test_values):
@@ -37,7 +37,7 @@ class TestAddPropertiesToRecordQueries:
 
     @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS)
     def test_record_history_ids(self, query_type, test_values):
-        query = query_type().add_record_history_ids(test_values)
+        query = query_type().with_record_history_ids(test_values)
         assert isinstance(query, query_type)
         assert len(query._items) == len(test_values)
         for idx, id in enumerate(test_values):
@@ -48,32 +48,32 @@ class TestAddPropertiesToRecordQueries:
     @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS[1:])
     def test_record_guids_wrong_type(self, query_type, test_values):
         with pytest.raises(TypeError) as e:
-            query_type().add_record_guids(test_values)
+            query_type().with_record_guids(test_values)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            query_type().add_record_guids(record_guids=test_values)
+            query_type().with_record_guids(record_guids=test_values)
         assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS[1:])
     def test_record_history_guids_wrong_type(self, query_type, test_values):
         with pytest.raises(TypeError) as e:
-            query_type().add_record_history_guids(test_values)
+            query_type().with_record_history_guids(test_values)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            query_type().add_record_history_guids(record_history_guids=test_values)
+            query_type().with_record_history_guids(record_history_guids=test_values)
         assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("test_values", TEST_GUIDS[1:])
     def test_record_history_ids_wrong_type(self, query_type, test_values):
         with pytest.raises(TypeError) as e:
-            query_type().add_record_history_ids(test_values)
+            query_type().with_record_history_ids(test_values)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            query_type().add_record_history_ids(record_history_identities=test_values)
+            query_type().with_record_history_ids(record_history_identities=test_values)
         assert "Incorrect type for value" in str(e.value)
 
     def test_stk_object(self, query_type):
-        query = query_type().add_stk_records(STK_OBJECT)
+        query = query_type().with_stk_records(STK_OBJECT)
         assert isinstance(query, query_type)
         assert len(query._items) == len(STK_OBJECT)
         for idx, stk_record in enumerate(STK_OBJECT):
@@ -85,7 +85,7 @@ class TestAddPropertiesToRecordQueries:
 class TestAddIndicators:
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
     def test_compliance_query_success(self, query_type):
-        query = query_type().add_indicators(INDICATORS)
+        query = query_type().with_indicators(INDICATORS)
         assert len(query._indicators) == len(INDICATORS)
         for indicator in INDICATORS:
             assert query._indicators[indicator.name] is indicator
@@ -93,22 +93,22 @@ class TestAddIndicators:
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
     def test_compliance_query_wrong_type_fails(self, query_type):
         with pytest.raises(TypeError) as e:
-            query_type().add_indicators(LEGISLATIONS)
+            query_type().with_indicators(LEGISLATIONS)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            query_type().add_indicators(indicators=LEGISLATIONS)
+            query_type().with_indicators(indicators=LEGISLATIONS)
         assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("query_type", SUBSTANCE_QUERY_TYPES)
     def test_impacted_substances_query_attribute_error(self, query_type):
         with pytest.raises(AttributeError):
-            query_type().add_indicators(INDICATORS)
+            query_type().with_indicators(INDICATORS)
 
 
 class TestAddLegislations:
     @pytest.mark.parametrize("query_type", SUBSTANCE_QUERY_TYPES)
     def test_impacted_substances_query_success(self, query_type):
-        query = query_type().add_legislations(LEGISLATIONS)
+        query = query_type().with_legislations(LEGISLATIONS)
         assert len(query._legislations) == len(LEGISLATIONS)
         for idx, legislation in enumerate(LEGISLATIONS):
             assert query._legislations[idx] == legislation
@@ -116,16 +116,16 @@ class TestAddLegislations:
     @pytest.mark.parametrize("query_type", SUBSTANCE_QUERY_TYPES)
     def test_impacted_substances_query_wrong_type_fails(self, query_type):
         with pytest.raises(TypeError) as e:
-            query_type().add_legislations(INDICATORS)
+            query_type().with_legislations(INDICATORS)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            query_type().add_legislations(legislations=INDICATORS)
+            query_type().with_legislations(legislations=INDICATORS)
         assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
     def test_compliance_query_attribute_error(self, query_type):
         with pytest.raises(AttributeError):
-            query_type().add_legislations(LEGISLATIONS)
+            query_type().with_legislations(LEGISLATIONS)
 
 
 @pytest.mark.parametrize("query_type", ALL_QUERY_TYPES)
@@ -136,17 +136,17 @@ class TestBatchSize:
         query_type,
         batch_size,
     ):
-        query = query_type().set_batch_size(batch_size)
+        query = query_type().with_batch_size(batch_size)
         assert query._batch_size == batch_size
 
     @pytest.mark.parametrize("batch_size", [0, -25])
     def test_incorrect_values(self, query_type, batch_size):
         query = query_type()
         with pytest.raises(ValueError) as e:
-            query.set_batch_size(batch_size)
+            query.with_batch_size(batch_size)
         assert "Batch must be a positive integer" in str(e.value)
         with pytest.raises(ValueError) as e:
-            query.set_batch_size(batch_size=batch_size)
+            query.with_batch_size(batch_size=batch_size)
         assert "Batch must be a positive integer" in str(e.value)
 
     @pytest.mark.parametrize("batch_size", [20.25, "5", None])
@@ -157,33 +157,11 @@ class TestBatchSize:
     ):
         query = query_type()
         with pytest.raises(TypeError) as e:
-            query.set_batch_size(batch_size)
+            query.with_batch_size(batch_size)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            query.set_batch_size(batch_size=batch_size)
+            query.with_batch_size(batch_size=batch_size)
         assert "Incorrect type for value" in str(e.value)
-
-
-@pytest.mark.parametrize(
-    "property_name, table_name",
-    [
-        ("material_universe_table_name", "My Material Universe"),
-        ("in_house_materials_table_name", "My Materials"),
-        ("specifications_table_name", "specs"),
-        ("products_and_parts_table_name", "Parts 'n' Products"),
-        ("substances_table_name", "Chemicals"),
-        ("coatings_table_name", "Coverings"),
-    ],
-)
-@pytest.mark.parametrize("query_type", ALL_QUERY_TYPES)
-def test_custom_table_config(property_name, table_name, query_type):
-    query_config = query_type().set_database_config(**{property_name: table_name})._query_config.to_dict()
-    query_config["in_house_materials_table_name"] = query_config.pop("inhouse_materials_table_name")
-    for k, v in query_config.items():
-        if k != property_name:
-            assert not v
-        else:
-            assert v == table_name
 
 
 def test_yaml(connection):

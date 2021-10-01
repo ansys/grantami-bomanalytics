@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Tuple, Any, TypeVar, Generic, Type, TYPE_CHECKING
+from typing import Union, List, Dict, Tuple, Any, TypeVar, Generic, Type, TYPE_CHECKING, Callable
 import warnings
 from numbers import Number
 
@@ -12,15 +12,6 @@ from ._query_results import (
     QueryResultFactory,
     ComplianceBaseClass,
     ImpactedSubstancesBaseClass,
-    MaterialImpactedSubstancesResult,
-    MaterialComplianceResult,
-    PartImpactedSubstancesResult,
-    PartComplianceResult,
-    SpecificationImpactedSubstancesResult,
-    SpecificationComplianceResult,
-    SubstanceComplianceResult,
-    BomImpactedSubstancesResult,
-    BomComplianceResult,
 )
 from .indicators import _Indicator
 
@@ -39,13 +30,6 @@ class _BaseQueryBuilder(Generic[T], ABC):
     def __init__(self):
         self._items = []
         self._batch_size = None
-        self._db_key: str = "MI_Restricted_Substances"
-        self._material_universe_table_name: Union[str, None] = None
-        self._in_house_materials_table_name: Union[str, None] = None
-        self._specifications_table_name: Union[str, None] = None
-        self._products_and_parts_table_name: Union[str, None] = None
-        self._substances_table_name: Union[str, None] = None
-        self._coatings_table_name: Union[str, None] = None
 
     def _validate_items(self):
         if not self._items:
@@ -55,7 +39,7 @@ class _BaseQueryBuilder(Generic[T], ABC):
             )
 
     @allowed_types(Any, int)
-    def set_batch_size(self: T, batch_size: int) -> T:
+    def with_batch_size(self: T, batch_size: int) -> T:
         """
         Number of items included in a single request. Sensible values are set by default, but this value can be changed
         to optimize performance if required on a query-by-query basis.
@@ -66,82 +50,13 @@ class _BaseQueryBuilder(Generic[T], ABC):
 
         Examples
         --------
-        >>> query = MaterialCompliance()
-        >>> query.set_batch_size(batch_size=50)
+        >>> query = MaterialCompliance().with_batch_size(50)...
         """
 
         if batch_size < 1:
             raise ValueError("Batch must be a positive integer")
         self._batch_size = batch_size
         return self
-
-    def set_database_config(
-        self: T,
-        database_key: str = "MI_Restricted_Substances",
-        material_universe_table_name: Union[str, None] = None,
-        in_house_materials_table_name: Union[str, None] = None,
-        specifications_table_name: Union[str, None] = None,
-        products_and_parts_table_name: Union[str, None] = None,
-        substances_table_name: Union[str, None] = None,
-        coatings_table_name: Union[str, None] = None,
-    ) -> T:
-        """
-        Custom database configuration settings.
-
-        The database key is required if something other than MI_Restricted_Substances is being used. Table names are
-        required if they have been modified from the defaults.
-
-        Parameters
-        ----------
-        database_key : str, default="MI_Restricted_Substances"
-            Database key of the Restricted Substances-based database.
-        material_universe_table_name : str
-            Specify an alternate name for the 'MaterialUniverse' table
-        in_house_materials_table_name : str
-            Specify an alternate name for the 'Materials - in house' table
-        specifications_table_name : str
-            Specify an alternate name for the 'Specifications' table
-        products_and_parts_table_name : str
-            Specify an alternate name for the 'Products and parts' table
-        substances_table_name : str
-            Specify an alternate name for the 'Restricted Substances' table
-        coatings_table_name : str
-            Specify an alternate name for the 'Coatings' table
-
-        Examples
-        --------
-        >>> query = MaterialCompliance()
-        >>> query.set_database_config(database_key = "ACME_RS", in_house_materials_table_name = "ACME Materials")
-        """
-
-        self._db_key = database_key
-        self._material_universe_table_name = material_universe_table_name
-        self._in_house_materials_table_name = in_house_materials_table_name
-        self._specifications_table_name = specifications_table_name
-        self._products_and_parts_table_name = products_and_parts_table_name
-        self._substances_table_name = substances_table_name
-        self._coatings_table_name = coatings_table_name
-        return self
-
-    @property
-    def _query_config(self) -> Union[models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]:
-        if (
-            self._material_universe_table_name
-            or self._in_house_materials_table_name
-            or self._specifications_table_name
-            or self._products_and_parts_table_name
-            or self._substances_table_name
-            or self._coatings_table_name
-        ):
-            config = models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(
-                self._material_universe_table_name,
-                self._in_house_materials_table_name,
-                self._specifications_table_name,
-                self._products_and_parts_table_name,
-                self._substances_table_name,
-                self._coatings_table_name,
-            )
-            return config
 
     @property
     def _content(self) -> List[List[models.Model]]:
@@ -154,8 +69,8 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         super().__init__()
         self._definition_factory = None
 
-    @allowed_types(Any, [int])
-    def add_record_history_ids(self: T, record_history_identities: List[int]) -> T:
+    @allowed_types(_BaseQueryBuilder, [int])
+    def with_record_history_ids(self: T, record_history_identities: List[int]) -> T:
         """
         Add a list of record history identities to a query.
 
@@ -171,8 +86,8 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = MaterialCompliance()
-        >>> query.add_record_history_ids([15321, 17542, 942])
+        >>> query = MaterialCompliance() \
+        ...         .with_record_history_ids([15321, 17542, 942])...
         """
 
         for value in record_history_identities:
@@ -182,8 +97,8 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [str])
-    def add_record_history_guids(self: T, record_history_guids: List[str]) -> T:
+    @allowed_types(_BaseQueryBuilder, [str])
+    def with_record_history_guids(self: T, record_history_guids: List[str]) -> T:
         """
         Add a list of record history guids to a query.
 
@@ -199,9 +114,9 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = MaterialCompliance()
-        >>> query.add_record_history_guids(['41e20a88-d496-4735-a177-6266fac9b4e2',
-        ...                               'd117d9ad-e6a9-4ba9-8ad8-9a20b6d0b5e2'])
+        >>> query = MaterialCompliance() \
+        ...         .with_record_history_guids(['41e20a88-d496-4735-a177-6266fac9b4e2',
+        ...                                     'd117d9ad-e6a9-4ba9-8ad8-9a20b6d0b5e2'])...
         """
 
         for value in record_history_guids:
@@ -211,8 +126,8 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [str])
-    def add_record_guids(self: T, record_guids: List[str]) -> T:
+    @allowed_types(_BaseQueryBuilder, [str])
+    def with_record_guids(self: T, record_guids: List[str]) -> T:
         """
         Add a list of record guids to a query.
 
@@ -228,9 +143,9 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = MaterialCompliance()
-        >>> query.add_record_guids(['bdb0b880-e6ee-4f1a-bebd-af76959ae3c8',
-        ...                         'a98cf4b3-f96a-4714-9f79-afe443982c69'])
+        >>> query = MaterialCompliance() \
+        ...         .with_record_guids(['bdb0b880-e6ee-4f1a-bebd-af76959ae3c8',
+        ...                             'a98cf4b3-f96a-4714-9f79-afe443982c69'])...
         """
 
         for value in record_guids:
@@ -238,8 +153,8 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [{str: str}])
-    def add_stk_records(self: T, stk_records: List[Dict[str, str]]) -> T:
+    @allowed_types(_BaseQueryBuilder, [{str: str}])
+    def with_stk_records(self: T, stk_records: List[Dict[str, str]]) -> T:
         """
         Add a list of records generated by the Scripting Toolkit.
 
@@ -255,14 +170,11 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = MaterialCompliance()
-        >>> query.add_stk_records(stk_records)
+        >>> query = MaterialCompliance().with_stk_records(stk_records)...
         """
 
         record_guids = [r["record_guid"] for r in stk_records]
-        self.add_record_guids(record_guids)
-
-        return self
+        return self.with_record_guids(record_guids)
 
 
 if TYPE_CHECKING:
@@ -277,14 +189,13 @@ class _ApiMixin(api_base_class):
         self._request_type = None
         self._result_type = None
         self._connection = None
-        self.api_method = ""
 
-    def _call_api(self, api_method) -> List:
+    def _call_api(self, api_method: Callable, arguments: Dict) -> List:
         self._validate_parameters()
         self._validate_items()
         result = []
         for batch in self._content:
-            args = {**self._arguments, self._item_type_name: batch}
+            args = {**arguments, self._item_type_name: batch}
             request = self._request_type(**args)
             response = api_method(body=request)
             result.extend([r for r in getattr(response, self._item_type_name)])
@@ -294,11 +205,6 @@ class _ApiMixin(api_base_class):
     def _validate_parameters(self):
         pass
 
-    @property
-    @abstractmethod
-    def _arguments(self) -> Dict:
-        pass
-
 
 class _ComplianceMixin(_ApiMixin, ABC):
     def __init__(self):
@@ -306,8 +212,8 @@ class _ComplianceMixin(_ApiMixin, ABC):
         self._indicators = {}
         self.api = api.ComplianceApi
 
-    @allowed_types(Any, [_Indicator])
-    def add_indicators(self: T, indicators: List[_Indicator]) -> T:
+    @allowed_types(_BaseQueryBuilder, [_Indicator])
+    def with_indicators(self: T, indicators: List[_Indicator]) -> T:
         """
         Add a list of indicators to evaluate compliance against.
 
@@ -323,16 +229,20 @@ class _ComplianceMixin(_ApiMixin, ABC):
 
         Examples
         --------
-        >>> query = MaterialCompliance()
-        >>> query.add_indicators([WatchListIndicator(...)])
+        >>> query = MaterialCompliance().with_indicators([WatchListIndicator(...)])...
         """
 
         for value in indicators:
             self._indicators[value.name] = value
         return self
 
-    def run_query(self, api_method) -> Query_Result:
-        result_raw = self._call_api(api_method)
+    def run_query(self, api_method: Callable, db_key: str, query_config) -> Query_Result:
+        arguments = {
+            "database_key": db_key,
+            "indicators": [i.definition for i in self._indicators.values()],
+            "config": query_config,
+        }
+        result_raw = self._call_api(api_method, arguments)
         result = QueryResultFactory.create_result(
             response_type=self._result_type,
             results=result_raw,
@@ -347,14 +257,6 @@ class _ComplianceMixin(_ApiMixin, ABC):
                 RuntimeWarning,
             )
 
-    @property
-    def _arguments(self):
-        return {
-            "database_key": self._db_key,
-            "indicators": [i.definition for i in self._indicators.values()],
-            "config": self._query_config,
-        }
-
 
 class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     def __init__(self):
@@ -362,8 +264,8 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         self._legislations: List[str] = []
         self.api = api.ImpactedSubstancesApi
 
-    @allowed_types(Any, [str])
-    def add_legislations(self: T, legislation_names: List[str]) -> T:
+    @allowed_types(_BaseQueryBuilder, [str])
+    def with_legislations(self: T, legislation_names: List[str]) -> T:
         """
         Add a list of legislations to retreive the impacted substances for.
 
@@ -379,15 +281,21 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
 
         Examples
         --------
-        >>> query = MaterialImpactedSubstances()
-        >>> query.add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
+        >>> query = MaterialImpactedSubstances() \
+        ...         .with_legislations(["California Proposition 65 List",
+                                        "REACH - The Candidate List"])...
         """
 
         self._legislations.extend(legislation_names)
         return self
 
-    def run_query(self, api_method) -> Query_Result:
-        result_raw = self._call_api(api_method)
+    def run_query(self, api_method: Callable, db_key: str, query_config) -> Query_Result:
+        arguments = {
+            "database_key": db_key,
+            "legislation_names": self._legislations,
+            "config": query_config,
+        }
+        result_raw = self._call_api(api_method, arguments)
         result = QueryResultFactory.create_result(response_type=self._result_type, results=result_raw)
         return result
 
@@ -398,12 +306,11 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
                 RuntimeWarning,
             )
 
-    @property
-    def _arguments(self):
+    def _generate_arguments(self, db_key, query_config):
         return {
-            "database_key": self._db_key,
+            "database_key": db_key,
             "legislation_names": self._legislations,
-            "config": self._query_config,
+            "config": query_config,
         }
 
 
@@ -414,8 +321,8 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._item_type_name = "materials"
         self._definition_factory = None
 
-    @allowed_types(Any, [str])
-    def add_material_ids(self: T, material_ids: List[str]) -> T:
+    @allowed_types(_BaseQueryBuilder, [str])
+    def with_material_ids(self: T, material_ids: List[str]) -> T:
         """
         Add a list of material ids to a material query.
 
@@ -431,9 +338,9 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = MaterialCompliance()
-        >>> query.add_material_ids(['elastomer-butadienerubber',
-        ...                         'NBR-100'])
+        >>> query = MaterialCompliance() \
+        ...         .with_material_ids(['elastomer-butadienerubber',
+        ...                             'NBR-100'])...
         """
         for material_id in material_ids:
             item_reference = self._definition_factory.create_definition_by_material_id(material_id=material_id)
@@ -456,13 +363,13 @@ class MaterialCompliance(_ComplianceMixin, _MaterialQueryBuilder):
 
     Examples
     --------
-    >>> conn = Connection(...)
-    >>> result = (
+    >>> cxn = Connection(...)
+    >>> query = (
     ...     MaterialCompliance()
-    ...     .add_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-    ...     .add_indicators([WatchListIndicator(...)])
-    ...     .execute(conn)
+    ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+    ...     .with_indicators([WatchListIndicator(...)])
     ... )
+    >>> result = cxn.run(query)
     """
 
     def __init__(self):
@@ -487,13 +394,13 @@ class MaterialImpactedSubstances(_ImpactedSubstanceMixin, _MaterialQueryBuilder)
 
     Examples
     --------
-    >>> conn = Connection(...)
-    >>> result = (
+    >>> cxn = Connection(...)
+    >>> query = (
     ...     MaterialImpactedSubstances()
-    ...     .add_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-    ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
-    ...     .execute(conn)
+    ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+    ...     .with_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
     ... )
+    >>> result = cxn.run(query)
     """
 
     def __init__(self):
@@ -513,8 +420,8 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._item_type_name = "parts"
         self._definition_factory = None
 
-    @allowed_types(Any, [str])
-    def add_part_numbers(self: T, part_numbers: List[str]) -> T:
+    @allowed_types(_BaseQueryBuilder, [str])
+    def with_part_numbers(self: T, part_numbers: List[str]) -> T:
         """
         Add a list of part numbers to a part query.
 
@@ -530,8 +437,7 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = PartComplianceQuery()
-        >>> query.add_part_numbers(['ABC12345', 'Q356AQ'])
+        >>> query = PartComplianceQuery().with_part_numbers(['ABC12345', 'Q356AQ'])...
         """
 
         for value in part_numbers:
@@ -555,13 +461,13 @@ class PartCompliance(_ComplianceMixin, _PartQueryBuilder):
 
     Examples
     --------
-    >>> conn = Connection(...)
-    >>> result = (
+    >>> cxn = Connection(...)
+    >>> query = (
     ...     PartComplianceQuery()
-    ...    .add_part_numbers(['ABC12345', 'Q356AQ'])
-    ...    .add_indicators([WatchListIndicator(...)])
-    ...    .execute(conn)
+    ...    .with_part_numbers(['ABC12345', 'Q356AQ'])
+    ...    .with_indicators([WatchListIndicator(...)])
     ... )
+    >>> result = cxn.run(query)
     """
 
     def __init__(self):
@@ -586,13 +492,13 @@ class PartImpactedSubstances(_ImpactedSubstanceMixin, _PartQueryBuilder):
 
     Examples
     --------
-    >>> conn = Connection(...)
-    >>> result = (
+    >>> cxn = Connection(...)
+    >>> query = (
     ...     PartImpactedSubstanceQuery()
-    ...     .add_part_numbers(['ABC12345', 'Q356AQ'])
-    ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
-    ...     .execute(conn)
+    ...     .with_part_numbers(['ABC12345', 'Q356AQ'])
+    ...     .with_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
     ... )
+    >>> result = cxn.run(query)
     """
 
     def __init__(self):
@@ -612,8 +518,8 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._item_type_name = "specifications"
         self._definition_factory = None
 
-    @allowed_types(Any, [str])
-    def add_specification_ids(self: T, specification_ids: List[str]) -> T:
+    @allowed_types(_BaseQueryBuilder, [str])
+    def with_specification_ids(self: T, specification_ids: List[str]) -> T:
         """
         Add a list of specification IDs to a specification query.
 
@@ -629,8 +535,8 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SpecificationComplianceQuery()
-        >>> query.add_specification_ids(['MIL-A-8625', 'PSP101'])
+        >>> query = SpecificationComplianceQuery() \
+        ...         .with_specification_ids(['MIL-A-8625', 'PSP101'])...
         """
         for specification_id in specification_ids:
             item_reference = self._definition_factory.create_definition_by_specification_id(
@@ -655,13 +561,13 @@ class SpecificationCompliance(_ComplianceMixin, _SpecificationQueryBuilder):
 
     Examples
     --------
-    >>> conn = Connection(...)
-    >>> result = (
+    >>> cxn = Connection(...)
+    >>> query = (
     ...     SpecificationComplianceQuery()
-    ...     .add_specification_ids(['MIL-A-8625', 'PSP101'])
-    ...     .add_indicators([WatchListIndicator(...)])
-    ...     .execute(conn)
+    ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
+    ...     .with_indicators([WatchListIndicator(...)])
     ... )
+    >>> result = cxn.run(query)
     """
 
     def __init__(self):
@@ -688,13 +594,13 @@ class SpecificationImpactedSubstances(_ImpactedSubstanceMixin, _SpecificationQue
 
     Examples
     --------
-    >>> conn = Connection(...)
-    >>> result = (
+    >>> cxn = Connection(...)
+    >>> query = (
     ...     SpecificationImpactedSubstanceQuery()
-    ...     .add_specification_ids(['MIL-A-8625', 'PSP101'])
-    ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
-    ...     .execute(conn)
+    ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
+    ...     .with_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
     ... )
+    >>> result = cxn.run(query)
     """
 
     def __init__(self):
@@ -716,8 +622,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._item_type_name = "substances"
         self._definition_factory = None
 
-    @allowed_types(Any, [str])
-    def add_cas_numbers(self: T, cas_numbers: List[str]) -> T:
+    @allowed_types(_BaseQueryBuilder, [str])
+    def with_cas_numbers(self: T, cas_numbers: List[str]) -> T:
         """
         Add a list of CAS numbers to a substance query. The amount of substance in the material will be set to 100%.
 
@@ -733,16 +639,15 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SubstanceComplianceQuery()
-        >>> query.add_cas_numbers(['50-00-0', '57-24-9'])
+        >>> query = SubstanceComplianceQuery().with_cas_numbers(['50-00-0', '57-24-9'])...
         """
         for cas_number in cas_numbers:
             item_reference = self._definition_factory.create_definition_by_cas_number(cas_number=cas_number)
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [str])
-    def add_ec_numbers(self: T, ec_numbers: List[str]) -> T:
+    @allowed_types(_BaseQueryBuilder, [str])
+    def with_ec_numbers(self: T, ec_numbers: List[str]) -> T:
         """
         Add a list of EC numbers to a substance query. The amount of substance in the material will be set to 100%.
 
@@ -758,16 +663,15 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SubstanceComplianceQuery()
-        >>> query.add_ec_numbers(['200-001-8', '200-319-7'])
+        >>> query = SubstanceComplianceQuery().with_ec_numbers(['200-001-8', '200-319-7'])...
         """
         for ec_number in ec_numbers:
             item_reference = self._definition_factory.create_definition_by_ec_number(ec_number=ec_number)
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [str])
-    def add_chemical_names(self: T, chemical_names: List[str]) -> T:
+    @allowed_types(_BaseQueryBuilder, [str])
+    def with_chemical_names(self: T, chemical_names: List[str]) -> T:
         """
         Add a list of chemical names to a substance query. The amount of substance in the material will be set to 100%.
 
@@ -783,16 +687,15 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SubstanceComplianceQuery()
-        >>> query.add_chemical_names(['Formaldehyde', 'Strychnine'])
+        >>> query = SubstanceComplianceQuery().with_chemical_names(['Formaldehyde', 'Strychnine'])...
         """
         for chemical_name in chemical_names:
             item_reference = self._definition_factory.create_definition_by_chemical_name(chemical_name=chemical_name)
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [(int, Number)])
-    def add_record_history_ids_with_amounts(
+    @allowed_types(_BaseQueryBuilder, [(int, Number)])
+    def with_record_history_ids_and_amounts(
         self: T, record_history_identities_and_amounts: List[Tuple[int, float]]
     ) -> T:
         """
@@ -810,9 +713,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SubstanceComplianceQuery()
-        >>> query.add_record_history_ids_with_amounts([(15321, 25),
-        ...                                            (17542, 0.1)])
+        >>> query = SubstanceComplianceQuery() \
+        ...         .with_record_history_ids_and_amounts([(15321, 25), (17542, 0.1)])...
         """
 
         for record_history_id, amount in record_history_identities_and_amounts:
@@ -823,8 +725,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [(str, Number)])
-    def add_record_history_guids_with_amounts(self: T, record_history_guids_and_amounts: List[Tuple[str, float]]) -> T:
+    @allowed_types(_BaseQueryBuilder, [(str, Number)])
+    def with_record_history_guids_and_amounts(self: T, record_history_guids_and_amounts: List[Tuple[str, float]]) -> T:
         """
         Add a list of record history guids and amounts to a substance query.
 
@@ -840,9 +742,9 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SubstanceComplianceQuery()
-        >>> query.add_record_history_guids_with_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
-        ...                                              ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])
+        >>> query = SubstanceComplianceQuery() \
+        ...         .with_record_history_guids_and_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
+        ...                                                 ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])...
         """
         for record_history_guid, amount in record_history_guids_and_amounts:
             item_reference = self._definition_factory.create_definition_by_record_history_guid(
@@ -852,8 +754,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [(str, Number)])
-    def add_record_guids_with_amounts(self: T, record_guids_and_amounts: List[Tuple[str, float]]) -> T:
+    @allowed_types(_BaseQueryBuilder, [(str, Number)])
+    def with_record_guids_with_amounts(self: T, record_guids_and_amounts: List[Tuple[str, float]]) -> T:
         """
         Add a list of record guids and amounts to a substance query.
 
@@ -869,9 +771,9 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SubstanceComplianceQuery()
-        >>> query.add_record_guids_with_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
-        ...                                      ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])
+        >>> query = SubstanceComplianceQuery() \
+        ...         .with_record_guids_with_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
+        ...                                          ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])...
         """
 
         for record_guid, amount in record_guids_and_amounts:
@@ -880,8 +782,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [(str, Number)])
-    def add_cas_numbers_with_amounts(self: T, cas_numbers_and_amounts: List[Tuple[str, float]]) -> T:
+    @allowed_types(_BaseQueryBuilder, [(str, Number)])
+    def with_cas_numbers_and_amounts(self: T, cas_numbers_and_amounts: List[Tuple[str, float]]) -> T:
         """
         Add a list of CAS numbers and amounts to a substance query.
 
@@ -897,8 +799,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SubstanceComplianceQuery()
-        >>> query.add_cas_numbers_with_amounts([('50-00-0', 25), ('57-24-9', 0.1)])
+        >>> query = SubstanceComplianceQuery() \
+        ...         .with_cas_numbers_and_amounts([('50-00-0', 25), ('57-24-9', 0.1)])...
         """
 
         for cas_number, amount in cas_numbers_and_amounts:
@@ -907,8 +809,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [(str, Number)])
-    def add_ec_numbers_with_amounts(self: T, ec_numbers_and_amounts: List[Tuple[str, float]]) -> T:
+    @allowed_types(_BaseQueryBuilder, [(str, Number)])
+    def with_ec_numbers_and_amounts(self: T, ec_numbers_and_amounts: List[Tuple[str, float]]) -> T:
         """
         Add a list of EC numbers and amounts to a substance query.
 
@@ -924,8 +826,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SubstanceComplianceQuery()
-        >>> query.add_ec_numbers_with_amounts([('200-001-8', 25), ('200-319-7', 0.1)])
+        >>> query = SubstanceComplianceQuery() \
+        ...         .with_ec_numbers_and_amounts([('200-001-8', 25), ('200-319-7', 0.1)])...
         """
 
         for ec_number, amount in ec_numbers_and_amounts:
@@ -934,8 +836,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._items.append(item_reference)
         return self
 
-    @allowed_types(Any, [(str, Number)])
-    def add_chemical_names_with_amounts(self: T, chemical_names_and_amounts: List[Tuple[str, float]]) -> T:
+    @allowed_types(_BaseQueryBuilder, [(str, Number)])
+    def with_chemical_names_and_amounts(self: T, chemical_names_and_amounts: List[Tuple[str, float]]) -> T:
         """
         Add a list of chemical names and amounts to a substance query.
 
@@ -951,8 +853,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = SubstanceComplianceQuery()
-        >>> query.add_chemical_names_with_amounts([('Formaldehyde', 25), ('Strychnine', 0.1)])
+        >>> query = SubstanceComplianceQuery() \
+        ...         .with_chemical_names_and_amounts([('Formaldehyde', 25), ('Strychnine', 0.1)])...
         """
 
         for chemical_name, amount in chemical_names_and_amounts:
@@ -976,13 +878,13 @@ class SubstanceCompliance(_ComplianceMixin, _SubstanceQueryBuilder):
 
     Examples
     --------
-    >>> conn = Connection(...)
+    >>> cxn = Connection(...)
     >>> result = (
     ...     SubstanceComplianceQuery()
     ...     .add_cas_numbers(['50-00-0', '57-24-9'])
     ...     .add_indicators([WatchListIndicator(...)])
-    ...     .execute(conn)
     ... )
+    >>> result = cxn.run(query)
     """
 
     def __init__(self):
@@ -1000,8 +902,8 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
         self._item_type_name = "bom_xml1711"
         self._definition_factory = None
 
-    @allowed_types(Any, str)
-    def set_bom(self: T, bom: str) -> T:
+    @allowed_types(_BaseQueryBuilder, str)
+    def with_bom(self: T, bom: str) -> T:
         """
         Set the bom to be used for the query. Must be in the Granta 17/11 XML format. This format can be saved from the
         BoM Analyzer.
@@ -1012,8 +914,8 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
 
         Examples
         --------
-        >>> query = BomComplianceQuery()
-        >>> query.set_bom(bom)
+        >>> bom = "<PartsEco xmlns..."
+        >>> query = BomComplianceQuery().with_bom(bom)...
         """
 
         self._items = [self._definition_factory.create_definition(bom=bom)]
@@ -1027,8 +929,8 @@ else:
 
 
 class _Bom1711QueryOverride(bom_base_class):
-    def _call_api(self, api_method) -> List:
-        args = {**self._arguments, self._item_type_name: list(self._content)[0][0]}
+    def _call_api(self, api_method, arguments) -> List:
+        args = {**arguments, self._item_type_name: list(self._content)[0][0]}
         request = self._request_type(**args)
         response = api_method(body=request)
         return response
@@ -1048,14 +950,14 @@ class BomCompliance(_Bom1711QueryOverride, _ComplianceMixin, _Bom1711QueryBuilde
 
     Examples
     --------
-    >>> conn = Connection(...)
+    >>> cxn = Connection(...)
     >>> bom = "<PartsEco xmlns..."
-    >>> result = (
+    >>> query = (
     ...     BomComplianceQuery()
     ...     .set_bom(bom)
     ...     .add_indicators([WatchListIndicator(...)])
-    ...     .execute(conn)
     ... )
+    >>> result = cxn.run(query)
     """
 
     def __init__(self):
@@ -1080,13 +982,14 @@ class BomImpactedSubstances(_Bom1711QueryOverride, _ImpactedSubstanceMixin, _Bom
 
     Examples
     --------
-    >>> conn = Connection(...)
+    >>> cxn = Connection(...)
+    >>> bom = "<PartsEco xmlns..."
     >>> result = (
     ...     BomImpactedSubstanceQuery()
     ...     .set_bom("<PartsEco xmlns...")
     ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
-    ...     .execute(conn)
     ... )
+    >>> result = cxn.run(query)
     """
 
     def __init__(self):

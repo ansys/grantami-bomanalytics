@@ -6,7 +6,7 @@ SubstanceCompliance = queries.SubstanceCompliance
 @pytest.mark.parametrize("values", [[], ["One chemical_name"], ["Two", "Chemical names"]])
 class TestWithoutAmounts:
     def test_add_chemical_names(self, values):
-        query = SubstanceCompliance().add_chemical_names(values)
+        query = SubstanceCompliance().with_chemical_names(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -24,7 +24,7 @@ class TestWithoutAmounts:
         assert all([i.percentage_amount == i._default_percentage_amount for i in query._items])
 
     def test_add_cas_numbers(self, values):
-        query = SubstanceCompliance().add_cas_numbers(values)
+        query = SubstanceCompliance().with_cas_numbers(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -42,7 +42,7 @@ class TestWithoutAmounts:
         assert all([i.percentage_amount == i._default_percentage_amount for i in query._items])
 
     def test_add_ec_numbers(self, values):
-        query = SubstanceCompliance().add_ec_numbers(values)
+        query = SubstanceCompliance().with_ec_numbers(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -64,26 +64,26 @@ class TestWithoutAmounts:
 class TestWithoutAmountsWrongType:
     def test_add_chemical_names(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_chemical_names(values)
+            SubstanceCompliance().with_chemical_names(values)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_chemical_names(chemical_names=values)
+            SubstanceCompliance().with_chemical_names(chemical_names=values)
         assert "Incorrect type for value" in str(e.value)
 
     def test_add_cas_numbers(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_cas_numbers(values)
+            SubstanceCompliance().with_cas_numbers(values)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_cas_numbers(cas_numbers=values)
+            SubstanceCompliance().with_cas_numbers(cas_numbers=values)
         assert "Incorrect type for value" in str(e.value)
 
     def test_add_ec_numbers(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_ec_numbers(values)
+            SubstanceCompliance().with_ec_numbers(values)
         assert "Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_ec_numbers(ec_numbers=values)
+            SubstanceCompliance().with_ec_numbers(ec_numbers=values)
         assert "Incorrect type for value" in str(e.value)
 
 
@@ -93,7 +93,7 @@ class TestWithoutAmountsWrongType:
 )
 class TestWithAmounts:
     def test_record_guids(self, values):
-        query = SubstanceCompliance().add_record_guids_with_amounts(values)
+        query = SubstanceCompliance().with_record_guids_with_amounts(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -111,7 +111,7 @@ class TestWithAmounts:
         assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
 
     def test_record_history_guids(self, values):
-        query = SubstanceCompliance().add_record_history_guids_with_amounts(values)
+        query = SubstanceCompliance().with_record_history_guids_and_amounts(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -129,7 +129,7 @@ class TestWithAmounts:
         assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
 
     def test_add_chemical_names(self, values):
-        query = SubstanceCompliance().add_chemical_names_with_amounts(values)
+        query = SubstanceCompliance().with_chemical_names_and_amounts(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -147,7 +147,7 @@ class TestWithAmounts:
         assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
 
     def test_add_cas_numbers(self, values):
-        query = SubstanceCompliance().add_cas_numbers_with_amounts(values)
+        query = SubstanceCompliance().with_cas_numbers_and_amounts(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -165,7 +165,7 @@ class TestWithAmounts:
         assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
 
     def test_add_ec_numbers(self, values):
-        query = SubstanceCompliance().add_ec_numbers_with_amounts(values)
+        query = SubstanceCompliance().with_ec_numbers_and_amounts(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -185,7 +185,7 @@ class TestWithAmounts:
 
 @pytest.mark.parametrize("values", [([(123, 12.5)]), ([(234, 0.001), (345, 100)])])
 def test_record_history_ids_with_amounts(values):
-    query = SubstanceCompliance().add_record_history_ids_with_amounts(values)
+    query = SubstanceCompliance().with_record_history_ids_and_amounts(values)
     assert isinstance(query, SubstanceCompliance)
     assert check_query_manager_attributes(
         query,
@@ -207,48 +207,48 @@ def test_record_history_ids_with_amounts(values):
 class TestWithAmountsWrongType:
     def test_record_guids(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_record_guids_with_amounts(values)
+            SubstanceCompliance().with_record_guids_with_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_record_guids_with_amounts(record_guids_and_amounts=values)
+            SubstanceCompliance().with_record_guids_with_amounts(record_guids_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)
 
     def test_record_history_guids(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_record_history_guids_with_amounts(values)
+            SubstanceCompliance().with_record_history_guids_and_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_record_history_guids_with_amounts(record_history_guids_and_amounts=values)
+            SubstanceCompliance().with_record_history_guids_and_amounts(record_history_guids_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)
 
     def test_record_history_ids(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_record_history_ids_with_amounts(values)
+            SubstanceCompliance().with_record_history_ids_and_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_record_history_ids_with_amounts(record_history_identities_and_amounts=values)
+            SubstanceCompliance().with_record_history_ids_and_amounts(record_history_identities_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)
 
     def test_add_chemical_names(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_chemical_names_with_amounts(values)
+            SubstanceCompliance().with_chemical_names_and_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_chemical_names_with_amounts(chemical_names_and_amounts=values)
+            SubstanceCompliance().with_chemical_names_and_amounts(chemical_names_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)
 
     def test_add_cas_numbers(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_cas_numbers_with_amounts(values)
+            SubstanceCompliance().with_cas_numbers_and_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_cas_numbers_with_amounts(cas_numbers_and_amounts=values)
+            SubstanceCompliance().with_cas_numbers_and_amounts(cas_numbers_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)
 
     def test_add_ec_numbers(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_ec_numbers_with_amounts(values)
+            SubstanceCompliance().with_ec_numbers_and_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().add_ec_numbers_with_amounts(ec_numbers_and_amounts=values)
+            SubstanceCompliance().with_ec_numbers_and_amounts(ec_numbers_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)

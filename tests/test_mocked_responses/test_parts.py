@@ -11,7 +11,7 @@ from .common import (
 
 class TestImpactedSubstances:
     query = (
-        queries.PartImpactedSubstances().add_legislations(["Fake legislation"]).add_part_numbers(["Fake part number"])
+        queries.PartImpactedSubstances().with_legislations(["Fake legislation"]).with_part_numbers(["Fake part number"])
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse.__name__
 
@@ -50,13 +50,13 @@ class TestImpactedSubstances:
 class TestCompliance:
     query = (
         queries.PartCompliance()
-        .add_indicators(
+        .with_indicators(
             [
                 indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
                 indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
             ]
         )
-        .add_part_numbers(["Fake part number"])
+        .with_part_numbers(["Fake part number"])
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsResponse.__name__
 

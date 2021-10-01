@@ -10,7 +10,7 @@ from .common import (
 
 
 class TestImpactedSubstances:
-    query = queries.MaterialImpactedSubstances().add_legislations(["Fake legislation"]).add_material_ids(["Fake ID"])
+    query = queries.MaterialImpactedSubstances().with_legislations(["Fake legislation"]).with_material_ids(["Fake ID"])
     mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse.__name__
 
     def test_impacted_substances_by_material_and_legislation(self, connection):
@@ -40,13 +40,13 @@ class TestImpactedSubstances:
 class TestCompliance:
     query = (
         queries.MaterialCompliance()
-        .add_indicators(
+        .with_indicators(
             [
                 indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
                 indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
             ]
         )
-        .add_material_ids(["Fake ID"])
+        .with_material_ids(["Fake ID"])
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsResponse.__name__
 

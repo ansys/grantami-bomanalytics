@@ -1,6 +1,6 @@
-import pytest
-from ansys.granta.bom_analytics.queries import SubstanceCompliance
-from tests.test_query_builders.common import check_query_manager_attributes
+from ..common import pytest, queries, check_query_manager_attributes
+
+SubstanceCompliance = queries.SubstanceCompliance
 
 
 @pytest.mark.parametrize("values", [[], ["One chemical_name"], ["Two", "Chemical names"]])
@@ -110,7 +110,7 @@ class TestWithAmounts:
         assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
         assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
 
-    def test_record_history_guids(self, values, connection):
+    def test_record_history_guids(self, values):
         query = SubstanceCompliance().add_record_history_guids_with_amounts(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
@@ -221,7 +221,7 @@ class TestWithAmountsWrongType:
             SubstanceCompliance().add_record_history_guids_with_amounts(record_history_guids_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)
 
-    def test_record_history_ids(self, values, connection):
+    def test_record_history_ids(self, values):
         with pytest.raises(TypeError) as e:
             SubstanceCompliance().add_record_history_ids_with_amounts(values)
         assert f"Incorrect type for value" in str(e.value)

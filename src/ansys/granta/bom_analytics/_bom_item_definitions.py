@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Type, Union, List, Dict
+from typing import Callable, Type, Union, List, Dict, SupportsFloat
 from enum import Enum, auto
+
 
 from ansys.granta.bomanalytics import models
 
@@ -186,9 +187,12 @@ class SubstanceDefinition(BaseSubstanceDefinition):
         return self._percentage_amount or self.__class__._default_percentage_amount
 
     @percentage_amount.setter
-    def percentage_amount(self, value: float):
-        if not 0 <= value <= 100:
-            raise ValueError('percentage_amount must be between 0 and 100. Specified value was "{value}"')
+    def percentage_amount(self, value: SupportsFloat):
+        if not isinstance(value, SupportsFloat):
+            raise TypeError(f'percentage_amount must be a number. Specified type was "{type(value)}"')
+        value = float(value)
+        if not 0.0 <= value <= 100.0:
+            raise ValueError(f'percentage_amount must be between 0 and 100. Specified value was "{value}"')
         self._percentage_amount = value
 
     @property

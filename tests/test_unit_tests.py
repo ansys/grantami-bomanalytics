@@ -1,1 +1,0 @@
-# TODO Check definition generation

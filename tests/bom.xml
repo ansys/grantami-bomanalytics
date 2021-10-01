@@ -1,6 +1,4 @@
-from ansys.granta.bom_analytics import queries
-
-bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" id="B0">
+<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" id="B0">
     <Components>
         <Part id="A0">
             <Quantity Unit="Each">2</Quantity>
@@ -47,36 +45,4 @@ bom = r"""<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco"
         <Notes>Part with substance</Notes>
         <ProductName>Part with substance</ProductName>
     </Notes>
-</PartsEco>"""
-
-
-def test_impacted_substances(connection, legislations):
-    response = queries.BomImpactedSubstances().set_bom(bom).add_legislations(legislations).execute(connection)
-
-    assert len(response.impacted_substances_by_legislation) == len(legislations)
-    for legislation in legislations:
-        assert legislation in response.impacted_substances_by_legislation
-        substances = response.impacted_substances_by_legislation[legislation]
-        assert len(substances) in [3, 39]
-
-    assert len(response.impacted_substances) == 42
-
-
-def test_compliance(connection, indicator_definitions):
-    response = queries.BomCompliance().set_bom(bom).add_indicators(indicator_definitions).execute(connection)
-
-    assert len(response.compliance_by_part_and_indicator) == 1
-    for bom_results in response.compliance_by_part_and_indicator:
-        assert len(bom_results.indicators) == len(indicator_definitions)
-        for indicator in indicator_definitions:
-            indicator_result = bom_results.indicators[indicator.name]
-            assert indicator_result.name == indicator.name
-            assert indicator_result.flag
-        assert bom_results.parts
-        assert len(bom_results.substances) == 0
-
-    assert len(response.compliance_by_indicator) == 2
-    for indicator in indicator_definitions:
-        indicator_result = response.compliance_by_indicator[indicator.name]
-        assert indicator_result.name == indicator.name
-        assert indicator_result.flag
+</PartsEco>

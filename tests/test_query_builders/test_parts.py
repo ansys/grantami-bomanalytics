@@ -1,9 +1,4 @@
-import pytest
-from ansys.granta.bom_analytics import queries
-
-from tests.test_query_builders.common import check_query_manager_attributes
-
-# TODO: For all tests, test all different pivots on the results with known values
+from ..common import pytest, queries, check_query_manager_attributes
 
 
 @pytest.mark.parametrize("query_type", [queries.PartCompliance, queries.PartImpactedSubstances])

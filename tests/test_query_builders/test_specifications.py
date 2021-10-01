@@ -1,6 +1,8 @@
-import pytest
-from ansys.granta.bom_analytics import queries
-from tests.test_query_builders.common import check_query_manager_attributes
+from ..common import (
+    pytest,
+    queries,
+    check_query_manager_attributes,
+)
 
 
 @pytest.mark.parametrize("query_type", [queries.SpecificationCompliance, queries.SpecificationImpactedSubstances])

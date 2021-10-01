@@ -22,15 +22,6 @@ class Connection(ApiClientFactory):
     ...     .build()
     """
 
-    def __init__(
-        self,
-        servicelayer_url: str,
-    ):
-        super().__init__(servicelayer_url=servicelayer_url)
-        self._documentation_api: Union[bomanalytics.DocumentationApi, None] = None
-        self.compliance_api: Union[bomanalytics.ComplianceApi, None] = None
-        self.impacted_substances_api: Union[bomanalytics.ImpactedSubstancesApi, None] = None
-
     def build(self) -> ApiClient:
         client = super().build()
         client.setup_client(bomanalytics.models)

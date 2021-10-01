@@ -41,4 +41,6 @@ _example_dict_raw = {
     "GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification": r"""""",  # noqa: E501
 }
 
-example_dict = {k: json.loads(html.unescape(v)) for k, v in _example_dict_raw.items() if v}
+examples_as_strings = {k: html.unescape(v) for k, v in _example_dict_raw.items() if v}
+examples_as_dicts = {k: json.loads(v) for k, v in examples_as_strings.items() if v}
+

@@ -12,8 +12,18 @@ from ..common import (
     GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
     queries,
     indicators,
+    examples_as_strings,
     requests_mock,
 )
+
+
+def get_mocked_response(query, result_model, connection):
+    text = examples_as_strings[result_model]
+    with requests_mock.Mocker() as m:
+        m.get(requests_mock.ANY, text="")
+        m.post(url=requests_mock.ANY, text=text)
+        response = query.execute(connection)
+    return response
 
 
 def check_substance(substance):

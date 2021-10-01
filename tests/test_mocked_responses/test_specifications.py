@@ -1,32 +1,22 @@
 from .common import (
-    pytest,
     GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse,
     GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse,
     queries,
     indicators,
     check_substance,
     check_indicator,
+    get_mocked_response,
 )
 
 
-@pytest.mark.parametrize(
-    "connection_mock",
-    [
-        [
-            "impacted_substances_api",
-            "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications",
-            GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse,
-        ]
-    ],
-    indirect=True,
-)
 class TestImpactedSubstances:
     query = (
         queries.SpecificationImpactedSubstances().add_legislations(["Fake legislation"]).add_specification_ids(["Fake ID"])
     )
+    mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse.__name__
 
-    def test_impacted_substances_by_specification_and_legislation(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_impacted_substances_by_specification_and_legislation(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.impacted_substances_by_specification_and_legislation) == 2
 
         spec_result_0 = response.impacted_substances_by_specification_and_legislation[0]
@@ -43,29 +33,18 @@ class TestImpactedSubstances:
         assert len(substances_1) == 2
         assert all([check_substance(s) for s in substances_1])
 
-    def test_impacted_substances_by_legislation(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_impacted_substances_by_legislation(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.impacted_substances_by_legislation) == 1
         legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
         assert all([check_substance(s) for s in legislation])
 
-    def test_impacted_substances(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_impacted_substances(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.impacted_substances) == 4
         assert all([check_substance(s) for s in response.impacted_substances])
 
 
-@pytest.mark.parametrize(
-    "connection_mock",
-    [
-        [
-            "compliance_api",
-            "post_miservicelayer_bom_analytics_v1svc_compliance_specifications",
-            GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse,
-        ]
-    ],
-    indirect=True,
-)
 class TestCompliance:
     query = (
         queries.SpecificationCompliance()
@@ -77,9 +56,10 @@ class TestCompliance:
         )
         .add_specification_ids(["Fake ID"])
     )
+    mock_key = GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse.__name__
 
-    def test_compliance_by_specification_and_indicator(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_compliance_by_specification_and_indicator(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_specification_and_indicator) == 2
 
         spec_0 = response.compliance_by_specification_and_indicator[0]
@@ -96,8 +76,8 @@ class TestCompliance:
         assert not spec_1.record_history_identity
         assert all(check_indicator(name, ind) for name, ind in spec_1.indicators.items())
 
-    def test_compliance_by_specification_and_indicator_substances(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_compliance_by_specification_and_indicator_substances(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
 
         substance_1_0 = response.compliance_by_specification_and_indicator[1].substances[0]
         assert substance_1_0.record_history_identity == "12345"
@@ -107,7 +87,7 @@ class TestCompliance:
         assert substance_1_1.record_history_identity == "34567"
         assert all(check_indicator(name, ind) for name, ind in substance_1_1.indicators.items())
 
-    def test_compliance_by_indicator(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_compliance_by_indicator(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())

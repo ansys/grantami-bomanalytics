@@ -1,51 +1,30 @@
 from .common import (
-    pytest,
     GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
     GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
     queries,
     indicators,
     check_substance,
     check_indicator,
+    get_mocked_response,
 )
 
 
-@pytest.mark.parametrize(
-    "connection_mock",
-    [
-        [
-            "impacted_substances_api",
-            "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711",
-            GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
-        ]
-    ],
-    indirect=True,
-)
 class TestImpactedSubstances:
     query = queries.BomImpactedSubstances().add_legislations(["Fake legislation"]).set_bom("<Bom />")
+    mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response.__name__
 
-    def test_impacted_substances_by_legislation(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_impacted_substances_by_legislation(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.impacted_substances_by_legislation) == 1
         legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
         assert all([check_substance(s) for s in legislation])
 
-    def test_impacted_substances(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_impacted_substances(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.impacted_substances) == 2
         assert all([check_substance(s) for s in response.impacted_substances])
 
 
-@pytest.mark.parametrize(
-    "connection_mock",
-    [
-        [
-            "compliance_api",
-            "post_miservicelayer_bom_analytics_v1svc_compliance_bom1711",
-            GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
-        ]
-    ],
-    indirect=True,
-)
 class TestCompliance:
     query = (
         queries.BomCompliance()
@@ -57,9 +36,10 @@ class TestCompliance:
         )
         .set_bom("<Bom />")
     )
+    mock_key = GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response.__name__
 
-    def test_compliance_by_part_and_indicator(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_compliance_by_part_and_indicator(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_part_and_indicator) == 1
 
         # Top level item
@@ -94,7 +74,7 @@ class TestCompliance:
         assert not substance_0_0_0.record_guid
         assert all(check_indicator(name, ind, False) for name, ind in substance_0_0_0.indicators.items())
 
-    def test_compliance_by_indicator(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_compliance_by_indicator(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind, False) for name, ind in response.compliance_by_indicator.items())

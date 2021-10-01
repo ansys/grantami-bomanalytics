@@ -1,23 +1,12 @@
 from .common import (
-    pytest,
     GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
     queries,
     indicators,
     check_indicator,
+    get_mocked_response,
 )
 
 
-@pytest.mark.parametrize(
-    "connection_mock",
-    [
-        [
-            "compliance_api",
-            "post_miservicelayer_bom_analytics_v1svc_compliance_substances",
-            GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
-        ]
-    ],
-    indirect=True,
-)
 class TestCompliance:
     query = (
         queries.SubstanceCompliance()
@@ -29,9 +18,10 @@ class TestCompliance:
         )
         .add_cas_numbers(["Fake ID"])
     )
+    mock_key = GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse.__name__
 
-    def test_compliance_by_substance_and_indicator(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_compliance_by_substance_and_indicator(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_substance_and_indicator) == 2
 
         substance_0 = response.compliance_by_substance_and_indicator[0]
@@ -52,7 +42,7 @@ class TestCompliance:
         assert not substance_1.record_history_identity
         assert all(check_indicator(name, ind) for name, ind in substance_1.indicators.items())
 
-    def test_compliance_by_indicator(self, connection_mock):
-        response = self.query.execute(connection_mock)
+    def test_compliance_by_indicator(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())

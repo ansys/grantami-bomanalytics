@@ -39,7 +39,7 @@ from ansys.granta.bom_analytics._bom_item_definitions import (
     ReferenceType,
 )
 
-from .examples import example_dict
+from .examples import examples_as_strings
 
 
 RECORD_QUERY_TYPES: List = [
@@ -126,13 +126,3 @@ def check_query_manager_attributes(query_manager, none_attributes, populated_att
             if query_manager._items[idx].__getattribute__(none_attr):
                 return False
     return True
-
-
-class APIMock:
-    def __init__(self, call_method_name: str, response_type: Callable, client):
-        response = example_dict[response_type.__name__]
-        self.response = client._ApiClient__deserialize(response, response_type)
-        setattr(self, call_method_name, self.api_call)
-
-    def api_call(self, **kwargs):
-        return self.response

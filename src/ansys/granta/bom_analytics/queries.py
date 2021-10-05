@@ -71,7 +71,7 @@ class _Items(list):
         for batch_number, i in enumerate(range(0, len(self), self.batch_size)):
             batch = [i.definition for i in self][i : i + self.batch_size]  # noqa: E203 E501
             batch_str = ", ".join(['"' + item.reference_type + ": " + item.reference_value + '"' for item in batch])
-            logger.debug(f"Batch {batch_number + 1}, Items: {batch_str}")
+            logger.debug(f"[TECHDOCS] Batch {batch_number + 1}, Items: {batch_str}")
             yield {self.item_type_name: batch}
 
 
@@ -337,7 +337,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         arguments = {**static_arguments, "indicators": [i.definition for i in self._indicators.values()]}
 
         indicators_text = ", ".join(self._indicators)
-        logger.debug(f"Indicators: {indicators_text}")
+        logger.debug(f"[TECHDOCS] Indicators: {indicators_text}")
 
         result_raw = self._call_api(api_method, arguments)
         result = QueryResultFactory.create_result(results=result_raw, indicator_definitions=self._indicators)
@@ -410,7 +410,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         arguments = {"legislation_names": self._legislations, **static_arguments}
 
         legislations_text = ", ".join(['"' + leg + '"' for leg in self._legislations])
-        logger.debug(f"Legislation names: {legislations_text}")
+        logger.debug(f"[TECHDOCS] Legislation names: {legislations_text}")
 
         result_raw = self._call_api(api_method, arguments)
         if not result_raw:

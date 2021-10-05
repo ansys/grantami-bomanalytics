@@ -10,7 +10,6 @@ from .common import (
     LEGISLATIONS,
     INDICATORS,
 )
-from ansys.granta.bom_analytics.queries import Yaml
 
 
 @pytest.mark.parametrize("query_type", RECORD_QUERY_TYPES)
@@ -162,7 +161,3 @@ class TestBatchSize:
         with pytest.raises(TypeError) as e:
             query.with_batch_size(batch_size=batch_size)
         assert "Incorrect type for value" in str(e.value)
-
-
-def test_yaml(connection):
-    assert Yaml.get_yaml(connection)

@@ -91,3 +91,7 @@ class TestBomQueries:
 
         assert response.compliance_by_part_and_indicator
         assert response.compliance_by_indicator
+
+
+def test_yaml(connection):
+    assert connection.run(queries.Yaml)

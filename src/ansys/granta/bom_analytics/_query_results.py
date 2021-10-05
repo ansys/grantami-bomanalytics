@@ -34,14 +34,18 @@ class QueryResultFactory:
 
     @classmethod
     def create_result(
-        cls, response_type: Type[models.Model], **kwargs
+        cls, results: List[models.Model], **kwargs
     ) -> Union["ImpactedSubstancesBaseClass", "ComplianceBaseClass"]:
+        try:
+            response_type = type(results[0])
+        except TypeError:
+            response_type = type(results)  # Bom results aren't returned in an iterable
         try:
             item_factory_class = cls.registry[response_type]
         except KeyError as e:
             raise RuntimeError(f'Unregistered response type "{response_type}"').with_traceback(e.__traceback__)
 
-        return item_factory_class(**kwargs)
+        return item_factory_class(results, **kwargs)
 
 
 class ImpactedSubstancesBaseClass(ABC):

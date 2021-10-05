@@ -1,4 +1,5 @@
 from typing import overload, TYPE_CHECKING, Union, Dict
+import logging
 from ansys.granta import bomanalytics, auth_common
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
@@ -27,17 +28,24 @@ if TYPE_CHECKING:
         BomComplianceResult,
     )
 
+logger = logging.getLogger(__name__)
+
 
 class BomServicesClient(auth_common.ApiClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._db_key = DEFAULT_DBKEY
-        self._material_universe_table_name: Union[str, None] = None
-        self._in_house_materials_table_name: Union[str, None] = None
-        self._specifications_table_name: Union[str, None] = None
-        self._products_and_parts_table_name: Union[str, None] = None
-        self._substances_table_name: Union[str, None] = None
-        self._coatings_table_name: Union[str, None] = None
+        self._table_names: Dict[str, Union[str, None]] = {
+            "material_universe_table_name": None,
+            "inhouse_materials_table_name": None,
+            "specifications_table_name": None,
+            "products_and_parts_table_name": None,
+            "substances_table_name": None,
+            "coatings_table_name": None,
+        }
+
+    def __repr__(self):
+        return f"<BomServicesClient: url={self.api_url}>"
 
     def set_database_details(
         self,
@@ -80,38 +88,34 @@ class BomServicesClient(auth_common.ApiClient):
         """
 
         self._db_key = database_key
-        self._material_universe_table_name = material_universe_table_name
-        self._in_house_materials_table_name = in_house_materials_table_name
-        self._specifications_table_name = specifications_table_name
-        self._products_and_parts_table_name = products_and_parts_table_name
-        self._substances_table_name = substances_table_name
-        self._coatings_table_name = coatings_table_name
+        self._table_names["material_universe_table_name"] = material_universe_table_name
+        self._table_names["inhouse_materials_table_name"] = in_house_materials_table_name
+        self._table_names["specifications_table_name"] = specifications_table_name
+        self._table_names["products_and_parts_table_name"] = products_and_parts_table_name
+        self._table_names["substances_table_name"] = substances_table_name
+        self._table_names["coatings_table_name"] = coatings_table_name
 
     @property
     def _query_arguments(
         self,
     ) -> Dict[str, Union[str, bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]]:
 
-        arguments = {"database_key": self._db_key}
-        if (
-            self._material_universe_table_name
-            or self._in_house_materials_table_name
-            or self._specifications_table_name
-            or self._products_and_parts_table_name
-            or self._substances_table_name
-            or self._coatings_table_name
-        ):
-            config = bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(
-                self._material_universe_table_name,
-                self._in_house_materials_table_name,
-                self._specifications_table_name,
-                self._products_and_parts_table_name,
-                self._substances_table_name,
-                self._coatings_table_name,
-            )
+        if any(self._table_names.values()):
+            config = bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(**self._table_names)
+            table_mapping = [f"{n}: {v}" for n, v in self._table_names.items() if v]
+            logger.info(f"[TECHDOCS] Using custom table config:")
+            for line in table_mapping:
+                logger.info(line)
         else:
             config = None
-        arguments["config"] = config
+            logger.info(f"[TECHDOCS] Using default table config")
+
+        if self._db_key != DEFAULT_DBKEY:
+            logger.info(f"[TECHDOCS] Using custom database key: {self._db_key}")
+        else:
+            logger.info(f"[TECHDOCS] Using default database key ({self._db_key})")
+
+        arguments = {"config": config, "database_key": self._db_key}
         return arguments
 
     @overload
@@ -165,9 +169,9 @@ class BomServicesClient(auth_common.ApiClient):
             The corresponding result object based on the provided query
         """
 
+        logger.info(f"[TECHDOCS] Running query {query} with connection {self}")
         api_instance = query.api(self)
-        api_method = getattr(api_instance, query.api_method)
-        return query.run_query(api_method, self._query_arguments)
+        return query.run_query(api_instance, self._query_arguments)
 
 
 class Connection(auth_common.ApiClientFactory):

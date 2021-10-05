@@ -21,7 +21,7 @@ class TestWithoutAmounts:
             "chemical_name",
             values,
         )
-        assert all([i.percentage_amount == i._default_percentage_amount for i in query._items])
+        assert all([i.percentage_amount == i._default_percentage_amount for i in query._bom_item_definitions])
 
     def test_add_cas_numbers(self, values):
         query = SubstanceCompliance().with_cas_numbers(values)
@@ -39,7 +39,7 @@ class TestWithoutAmounts:
             "cas_number",
             values,
         )
-        assert all([i.percentage_amount == i._default_percentage_amount for i in query._items])
+        assert all([i.percentage_amount == i._default_percentage_amount for i in query._bom_item_definitions])
 
     def test_add_ec_numbers(self, values):
         query = SubstanceCompliance().with_ec_numbers(values)
@@ -57,7 +57,7 @@ class TestWithoutAmounts:
             "ec_number",
             values,
         )
-        assert all([i.percentage_amount == i._default_percentage_amount for i in query._items])
+        assert all([i.percentage_amount == i._default_percentage_amount for i in query._bom_item_definitions])
 
 
 @pytest.mark.parametrize("values", ["Strings are not allowed", [("id_with_amount", 12)], 12])
@@ -107,8 +107,8 @@ class TestWithAmounts:
             "record_guid",
             [v for (v, _) in values],
         )
-        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
-        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
 
     def test_record_history_guids(self, values):
         query = SubstanceCompliance().with_record_history_guids_and_amounts(values)
@@ -125,8 +125,8 @@ class TestWithAmounts:
             "record_history_guid",
             [v for (v, _) in values],
         )
-        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
-        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
 
     def test_add_chemical_names(self, values):
         query = SubstanceCompliance().with_chemical_names_and_amounts(values)
@@ -143,8 +143,8 @@ class TestWithAmounts:
             "chemical_name",
             [v for (v, _) in values],
         )
-        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
-        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
 
     def test_add_cas_numbers(self, values):
         query = SubstanceCompliance().with_cas_numbers_and_amounts(values)
@@ -161,8 +161,8 @@ class TestWithAmounts:
             "cas_number",
             [v for (v, _) in values],
         )
-        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
-        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
 
     def test_add_ec_numbers(self, values):
         query = SubstanceCompliance().with_ec_numbers_and_amounts(values)
@@ -179,8 +179,8 @@ class TestWithAmounts:
             "ec_number",
             [v for (v, _) in values],
         )
-        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
-        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+        assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
+        assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
 
 
 @pytest.mark.parametrize("values", [([(123, 12.5)]), ([(234, 0.001), (345, 100)])])
@@ -199,8 +199,8 @@ def test_record_history_ids_with_amounts(values):
         "record_history_identity",
         [v for (v, _) in values],
     )
-    assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
-    assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._items, values)])
+    assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
+    assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._bom_item_definitions, values)])
 
 
 @pytest.mark.parametrize("values", ["Strings are not allowed", [("id_without_amount", None)], 12])

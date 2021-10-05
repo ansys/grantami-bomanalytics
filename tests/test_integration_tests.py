@@ -1,5 +1,5 @@
 from .common import (
-    pathlib,
+    sample_bom,
     queries,
     LEGISLATIONS,
     INDICATORS,
@@ -78,19 +78,15 @@ class TestSubstancesQueries:
 
 
 class TestBomQueries:
-    bom_path = pathlib.Path(__file__).parent / "bom.xml"
-    with open(bom_path, "r") as f:
-        bom = f.read()
-
     def test_impacted_substances(self, connection):
-        query = queries.BomImpactedSubstances().with_bom(self.bom).with_legislations(LEGISLATIONS)
+        query = queries.BomImpactedSubstances().with_bom(sample_bom).with_legislations(LEGISLATIONS)
         response = connection.run(query)
 
         assert response.impacted_substances_by_legislation
         assert response.impacted_substances
 
     def test_compliance(self, connection):
-        query = queries.BomCompliance().with_bom(self.bom).with_indicators(INDICATORS)
+        query = queries.BomCompliance().with_bom(sample_bom).with_indicators(INDICATORS)
         response = connection.run(query)
 
         assert response.compliance_by_part_and_indicator

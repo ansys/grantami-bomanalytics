@@ -230,7 +230,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         >>> query = MaterialCompliance().with_stk_records(stk_records)...
         """
 
-        record_guids = [r["record_guid"] for r in stk_records]
+        record_guids = [r["record_guid"] for r in stk_records]  # TODO Handle database key
         return self.with_record_guids(record_guids)
 
 
@@ -264,7 +264,7 @@ class _ApiMixin(api_base_class):
         for idx, batch in enumerate(self._bom_item_definitions.batched_bom_arguments):
             args = {**arguments, **batch}
             request = self._request_type(**args)
-            response = api_method(body=request)  # TODO: Error handling
+            response = api_method(body=request)
             result.extend([r for r in getattr(response, self._bom_item_definitions.item_type_name)])
         return result
 
@@ -826,7 +826,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Parameters
         ----------
-        record_history_identities_and_amounts : list(tuple(str, float))
+        record_history_identities_and_amounts : list(tuple(int, float))
             List of tuples containing the record history identity and its wt % amount in the material/part
 
         Returns

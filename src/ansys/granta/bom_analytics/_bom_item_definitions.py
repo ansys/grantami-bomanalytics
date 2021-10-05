@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Callable, Type, Union, List, Dict, SupportsFloat
 from enum import Enum, auto
 
-
 from ansys.granta.bomanalytics import models
 
 
@@ -35,18 +34,6 @@ class RecordDefinition(ABC):
         elif reference_type == ReferenceType.MiRecordHistoryGuid:
             self.record_history_guid = reference_value
         self._model = None
-
-    @classmethod
-    def add_stk_records(cls, stk_records: List[Dict[str, str]]):  # TODO: Finalize the stk interop format
-        item_references = []
-        for record in stk_records:
-            assert "db_key" in record
-            assert "record_guid" in record
-
-            item_references.append(
-                cls(reference_type=ReferenceType.MiRecordGuid, reference_value=record["record_guid"])
-            )
-        return item_references
 
     def _create_definition(self):
         if self.record_guid:

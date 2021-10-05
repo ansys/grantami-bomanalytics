@@ -103,7 +103,7 @@ class _Indicator(ABC):
         return self == other or self < other
 
 
-class RoHSIndicator(_Indicator):
+class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, IndicatorDefinition vs Result
     available_flags = RoHSFlag
 
     def __init__(

@@ -39,8 +39,7 @@ from ansys.granta.bom_analytics._bom_item_definitions import (
     ReferenceType,
 )
 
-from .examples import examples_as_strings
-
+from .inputs import sample_bom, examples_as_strings
 
 LEGISLATIONS = ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]
 

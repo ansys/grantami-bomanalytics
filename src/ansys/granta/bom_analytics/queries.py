@@ -1,7 +1,8 @@
 """Bom Analytics query builders.
 
-This module describes and implements the main interface for the Bom Analytics API. It controls
-the creation, validation, and execution of Impacted Substances and Compliance queries.
+Describes and implements the main interface for the Bom Analytics API. The builder objects here define
+the creation, validation, and execution of Impacted Substances and Compliance queries. One separate
+static class outside the main hierarchy implements the Yaml API endpoint.
 
 Attributes
 ----------

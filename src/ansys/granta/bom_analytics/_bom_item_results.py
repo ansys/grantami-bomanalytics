@@ -1,4 +1,10 @@
-from typing import List, Dict, Union, Callable
+"""Bom Analytics Bom item result definitions.
+
+Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
+queries. These are extensions of the classes in _bom_item_definitions.py.
+"""
+
+from typing import List, Dict, Union, Callable, TypeVar
 from copy import copy
 from ansys.granta.bomanalytics import models
 from ._bom_item_definitions import (
@@ -13,11 +19,40 @@ from ._bom_item_definitions import (
 from .indicators import Indicator_Definitions
 
 
+Item_Result = TypeVar(
+    "Item_Result",
+    covariant=True,
+    bound=Union["ImpactedSubstancesResultMixin", "ComplianceResultMixin"],
+)
+
+
 class BomItemResultFactory:
+    """Creates item results for a given type of API query. The key to control which result type is created is the name
+     of the query class in `queries.py`.
+
+    Class Attributes
+    ----------------
+    registry : dict
+        Mapping between an item result class and the query type it supports.
+    """
+
     registry = {}
 
     @classmethod
     def register(cls, name: str) -> Callable:
+        """Decorator function to register a specific item result class with a query name.
+
+        Parameters
+        ----------
+        name : str
+            The name of the query to be registered.
+
+        Returns
+        -------
+        Callable
+            The function that's being decorated.
+        """
+
         def inner(result_class: RecordDefinition) -> RecordDefinition:
             cls.registry[name] = result_class
             return result_class
@@ -25,7 +60,30 @@ class BomItemResultFactory:
         return inner
 
     @classmethod
-    def create_record_result(cls, name: str, reference_type: Union[str, None], **kwargs):
+    def create_record_result(cls, name: str, reference_type: Union[str, None], **kwargs) -> Item_Result:
+        """Factory method to return a specific item result.
+
+        Parameters
+        ----------
+        name : str
+            The name of the query for which a result object is needed
+        reference_type : str, optional
+            The `reference_type` is pulled out of **kwargs because it needs to be used as a key to get the appropriate
+            `ReferenceType` enum member. Not populated for Bom item results.
+        **kwargs
+            All other arguments required to instantiate the item definition, including the `reference_value` for
+            `RecordDefinition`-based results.
+
+        Returns
+        -------
+        Item_Result
+
+        Raises
+        ------
+        RuntimeError
+            If a query type is not registered to any factory.
+        """
+
         try:
             item_result_class = cls.registry[name]
         except KeyError:
@@ -36,7 +94,25 @@ class BomItemResultFactory:
         return item_result
 
     @staticmethod
-    def parse_reference_type(reference_type: str) -> str:
+    def parse_reference_type(reference_type: str) -> ReferenceType:
+        """Parse the `reference_type` returned by the low-level API into a `ReferenceType`.
+
+        Parameters
+        ----------
+        reference_type : str
+            The type of record reference returned from the API for a particular result.
+
+        Returns
+        -------
+        ReferenceType
+            The specific enum value for the `reference_type` `str`.
+
+        Raises
+        ------
+        KeyError
+            If the `reference_type` returned by the low-level API doesn't appear in `ReferenceType`.
+        """
+
         try:
             return ReferenceType[reference_type]
         except KeyError as e:
@@ -44,12 +120,39 @@ class BomItemResultFactory:
 
 
 class ComplianceResultMixin:
+    """Adds results from a compliance query to an `ItemDefinition` class.
+
+    Extensions to the constructor only, doesn't implement any additional methods.
+
+    Parameters
+    ----------
+    indicator_results : list of `models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult`
+        Compliance of the `ItemDefinition` item for the specified indicators. Does not include the full indicator
+        definition; only the indicator name
+    indicator_definitions : `Indicator_Definitions`
+        The indicators defined in the original query
+    substances_with_compliance : list of `models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance`
+        The substances associated with the `ItemDefinition` item for the legislations included in the specified
+        indicators.
+    **kwargs
+        Contains the `reference_type` and `reference_value` for `RecordDefinition`-based objects.
+
+    Attributes
+    ----------
+    indicators : `Indicator_Definitions`
+        Created as a copy of the `indicator_definitions` parameter, with each indicator definition augmented with the
+        result returned by the low-level API.
+    substances : list of `SubstanceWithCompliance`
+        Summarizes the compliance of each substance found in the `ItemDefinition`, allowing the source of non-compliance
+        to be determined.
+    """
+
     def __init__(
         self,
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
         indicator_definitions: Indicator_Definitions,
         substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
-        **kwargs,  # Contains record reference for non-Bom queries
+        **kwargs,
     ):
         super().__init__(**kwargs)
 
@@ -72,6 +175,24 @@ class ComplianceResultMixin:
 
 
 class ImpactedSubstancesResultMixin:
+    """Adds results from an impacted substances query to an `ItemDefinition` class.
+
+    Extensions to the constructor only, doesn't implement any additional methods.
+
+    Parameters
+    ----------
+    legislations : list of `models.GrantaBomAnalyticsServicesInterfaceCommonLegislationWithImpactedSubstances`
+        The substances that are found in the `ItemDefinition` item for the specified legislations.
+    **kwargs
+        Contains the `reference_type` and `reference_value` for `RecordDefinition`-based objects.
+
+    Attributes
+    ----------
+    legislations : dict of (str, LegislationResult)
+        Describes the substances in the `ItemDefinition` for a particular legislation. The legislation name is used
+        as the dictionary key.
+    """
+
     def __init__(
         self,
         legislations: List[models.GrantaBomAnalyticsServicesInterfaceCommonLegislationWithImpactedSubstances],
@@ -89,6 +210,47 @@ class ImpactedSubstancesResultMixin:
 
 
 class BomStructureResultMixin:
+    """Adds a recursive 17/11 Bill of Materials structure to an `ItemDefinition`.
+
+    Bills of Materials are recursively defined structures. The top-level item is always a 'Part', but 'Parts' can
+    contain zero or more of 'Parts', 'Materials', 'Specifications' and 'Substances'. 'Specifications' can contain
+    'Materials', 'Specifications', and 'Substances', and 'Materials' can only contain 'Substances'. 'Substances' have
+    no children and are always leaf nodes.
+
+    As a result, there is in principle no limit to how complex a Bill of Materials can be. This mixin allows for
+    arbitrary complexity by calling itself, 'material' and 'specification' factories.
+
+    This mixin is only applied to `ItemDefinitions` that represent part-like objects, i.e. `PartDefinition` and
+    `BoM1711Definition` classes. Only compliance queries fully evaluate and return the Bom structure, so
+    impacted substance queries do not require this mixin.
+
+    Parameters
+    ----------
+    child_parts : list of `models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance`
+        The parts returned by the low-level API that are children of this part.
+    child_materials : list of `models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance`
+        The materials returned by the low-level API that are children of this part.
+    child_specifications : list of `models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance`
+        The specifications returned by the low-level API that are children of this part.
+    indicator_results : list of `models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult`
+        Required by the the `ComplianceMixin`, which is always used with this mixin. Not required here.
+    indicator_definitions : `Indicator_Definitions`
+        Required by the the `ComplianceMixin`, which is always used with this mixin. Not required here.
+    substances_with_compliance : list of `models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance`
+        Required by the the `ComplianceMixin`, which is always used with this mixin. Not required here.
+    **kwargs
+        Contains the `reference_type` and `reference_value` for `RecordDefinition`-based objects.
+
+    Attributes
+    ----------
+    parts : list of `PartWithCompliance`
+        The part result objects that are direct children of this part.
+    materials : list of `MaterialWithCompliance`
+        The material result objects that are direct children of this part.
+    specifications : list of `SpecificationWithCompliance`
+        The specification result objects that are direct children of this part.
+    """
+
     def __init__(
         self,
         child_parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
@@ -97,7 +259,7 @@ class BomStructureResultMixin:
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
         indicator_definitions: Indicator_Definitions,
         substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
-        **kwargs,  # Contains record reference for non-Bom queries
+        **kwargs,
     ):
         super().__init__(indicator_results, indicator_definitions, substances_with_compliance, **kwargs)
 
@@ -132,7 +294,7 @@ class BomStructureResultMixin:
             for material in child_materials
         ]
 
-        if not child_specifications:
+        if not child_specifications:  # TODO: Specifications can have material children? And coating children!
             child_specifications = []
         self.specifications: List[SpecificationWithCompliance] = [
             BomItemResultFactory.create_record_result(
@@ -149,46 +311,83 @@ class BomStructureResultMixin:
 
 @BomItemResultFactory.register("materialWithImpactedSubstances")
 class MaterialWithImpactedSubstances(ImpactedSubstancesResultMixin, MaterialDefinition):
+    """Extension of `MaterialDefinition` which includes impacted substances query results."""
+
     pass
 
 
 @BomItemResultFactory.register("materialWithCompliance")
 class MaterialWithCompliance(ComplianceResultMixin, MaterialDefinition):
+    """Extension of `MaterialDefinition` which includes compliance query results."""
+
     pass
 
 
 @BomItemResultFactory.register("partWithImpactedSubstances")
 class PartWithImpactedSubstances(ImpactedSubstancesResultMixin, PartDefinition):
+    """Extension of `PartDefinition` which includes impacted substances query results."""
+
     pass
 
 
 @BomItemResultFactory.register("partWithCompliance")
 class PartWithCompliance(BomStructureResultMixin, ComplianceResultMixin, PartDefinition):
+    """Extension of `PartDefinition` which includes compliance query results and bom structure attributes."""
+
     pass
 
 
 @BomItemResultFactory.register("specificationWithImpactedSubstances")
 class SpecificationWithImpactedSubstances(ImpactedSubstancesResultMixin, SpecificationDefinition):
+    """Extension of `SpecificationDefinition` which includes impacted substances query results."""
+
     pass
 
 
 @BomItemResultFactory.register("specificationWithCompliance")
 class SpecificationWithCompliance(ComplianceResultMixin, SpecificationDefinition):
+    """Extension of `SpecificationDefinition` which includes compliance query results."""
+
     pass
 
 
 @BomItemResultFactory.register("bom1711WithImpactedSubstances")
 class BoM1711WithImpactedSubstances(ImpactedSubstancesResultMixin, BoM1711Definition):
+    """Extension of `BoM1711Definition` which includes impacted substances query results."""
+
     pass
 
 
 @BomItemResultFactory.register("bom1711WithCompliance")
 class BoM1711WithCompliance(BomStructureResultMixin, ComplianceResultMixin, BoM1711Definition):
+    """Extension of `BoM1711Definition` which includes compliance query results and bom structure attributes."""
+
     pass
 
 
 @BomItemResultFactory.register("substanceWithCompliance")
 class SubstanceWithCompliance(BaseSubstanceDefinition):
+    """Extension of `BaseSubstanceDefinition` which includes compliance query results.
+
+    Parameters
+    ----------
+    reference_type : ReferenceType
+        The type of the record reference value.
+    reference_value : int or str
+        The value of the record reference. All are `str`, except for record history identities which are `int`.
+    indicator_results : list of `models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult`
+        Compliance of the `ItemDefinition` item for the specified indicators. Does not include the full indicator
+        definition; only the indicator name
+    indicator_definitions : `Indicator_Definitions`
+        The indicators defined in the original query
+
+    Attributes
+    ----------
+    indicators : `Indicator_Definitions`
+        Created as a copy of the `indicator_definitions` parameter, with each indicator definition augmented with the
+        result returned by the low-level API.
+    """
+
     def __init__(
         self,
         reference_type: ReferenceType,
@@ -206,8 +405,27 @@ class SubstanceWithCompliance(BaseSubstanceDefinition):
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
+    @property
+    def definition(self):
+        return
+
 
 class ImpactedSubstance(BaseSubstanceDefinition):
+    """Extension of `BaseSubstanceDefinition` which includes impacted substance results.
+
+    Parameters
+    ----------
+    reference_type : ReferenceType
+        The type of the record reference value.
+    reference_value : int or str
+        The value of the record reference. All are `str`, except for record history identities which are `int`.
+    max_percentage_amount_in_material : float
+        The amount of this substance that occurs in the parent material. In the case where a range is specified in the
+        declaration, only the maximum is reported here.
+    legislation_threshold : float
+        The substance concentration threshold over which the material is non-compliant with the legislation.
+    """
+
     def __init__(
         self,
         reference_type: ReferenceType,
@@ -222,8 +440,31 @@ class ImpactedSubstance(BaseSubstanceDefinition):
         self.max_percentage_amount_in_material = max_percentage_amount_in_material
         self.legislation_threshold = legislation_threshold
 
+    @property
+    def definition(self):
+        return
+
 
 class LegislationResult:
+    """Describes the result of an impacted substances query for a particular legislation.
+
+    Parameters
+    ----------
+    name : str
+        The name of the legislation.
+    impacted_substances : list of `models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance`
+        The result from the low-level API that describes which substances appear in the parent item.
+
+    Attributes
+    ----------
+    substances : list of `ImpactedSubstance`
+
+    Raises
+    ------
+    RuntimeError
+        If the substance returned by the low-level API does not contain a reference.
+    """
+
     def __init__(
         self,
         name: str,
@@ -244,8 +485,8 @@ class LegislationResult:
             else:
                 raise RuntimeError(
                     "Substance result returned from Granta MI has no reference. Ensure any substances "
-                    "in your request include references, and check you are using an up-to-date version"
-                    " of the base bom analytics package."
+                    "in your request include references, and check you are using an up-to-date version "
+                    "of the base bom analytics package."
                 )
             impacted_substance = ImpactedSubstance(
                 max_percentage_amount_in_material=substance.max_percentage_amount_in_material,  # noqa: E501

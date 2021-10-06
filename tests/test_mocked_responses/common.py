@@ -15,6 +15,11 @@ from ..common import (
     examples_as_strings,
     requests_mock,
     check_query_manager_attributes,
+    PartWithCompliance,
+    SpecificationWithCompliance,
+    MaterialWithCompliance,
+    SubstanceWithCompliance,
+    CoatingWithCompliance,
 )
 
 
@@ -64,3 +69,67 @@ def check_indicator(name: str, indicator: indicators._Indicator, impacted: bool 
         if indicator.name == "Indicator 2" and indicator.flag.name == "RohsNotImpacted":
             return True
     return False
+
+
+def check_part_attributes(part: PartWithCompliance):
+    if (
+        part.parts is None
+        or part.materials is None
+        or part.substances is None
+        or part.specifications is None
+    ):
+        return False
+    if part.coatings is not None:
+        return False
+    return True
+
+
+def check_specification_attributes(specification: SpecificationWithCompliance):
+    if (
+        specification.coatings is None
+        or specification.materials is None
+        or specification.substances is None
+        or specification.specifications is None
+    ):
+        return False
+    if specification.parts is not None:
+        return False
+    return True
+
+
+def check_material_attributes(material: MaterialWithCompliance):
+    if material.substances is None:
+        return False
+    if (
+        hasattr(material, 'parts')
+        or hasattr(material, 'coatings')
+        or hasattr(material, 'materials')
+        or hasattr(material, 'specifications')
+    ):
+        return False
+    return True
+
+
+def check_coating_attributes(coating: CoatingWithCompliance):
+    if coating.substances is None:
+        return False
+    if (
+        hasattr(coating, 'parts')
+        or hasattr(coating, 'coatings')
+        or hasattr(coating, 'materials')
+        or hasattr(coating, 'specifications')
+    ):
+        return False
+    return True
+
+
+def check_substance_attributes(substance: SubstanceWithCompliance):
+    if (
+        hasattr(substance, 'parts')
+        or hasattr(substance, 'coatings')
+        or hasattr(substance, 'materials')
+        or hasattr(substance, 'specifications')
+        or hasattr(substance, 'substances')
+    ):
+        return False
+    return True

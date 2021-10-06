@@ -4,6 +4,7 @@ from .common import (
     indicators,
     check_indicator,
     get_mocked_response,
+    check_substance_attributes,
 )
 
 
@@ -46,3 +47,10 @@ class TestCompliance:
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())
+
+    def test_compliance_result_objects(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+
+        assert all(
+            [check_substance_attributes(sub) for sub in response.compliance_by_substance_and_indicator]
+        )

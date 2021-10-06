@@ -6,9 +6,10 @@ from ._bom_item_definitions import (
     PartDefinition,
     SpecificationDefinition,
     BoM1711Definition,
-    BaseSubstanceDefinition,
+    BaseSubstanceReference,
     RecordDefinition,
     ReferenceType,
+    CoatingDefinition,
 )
 from .indicators import Indicator_Definitions
 
@@ -91,9 +92,10 @@ class ImpactedSubstancesResultMixin:
 class BomStructureResultMixin:
     def __init__(
         self,
-        child_parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
+        child_parts: Union[None, List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance]],
         child_materials: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
         child_specifications: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
+        child_coatings: Union[None, List[models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance]],
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
         indicator_definitions: Indicator_Definitions,
         substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
@@ -101,25 +103,25 @@ class BomStructureResultMixin:
     ):
         super().__init__(indicator_results, indicator_definitions, substances_with_compliance, **kwargs)
 
-        if not child_parts:
-            child_parts = []
-        self.parts: List[PartWithCompliance] = [
-            BomItemResultFactory.create_record_result(
-                name="partWithCompliance",
-                indicator_results=part.indicators,
-                indicator_definitions=indicator_definitions,
-                substances_with_compliance=part.substances,
-                child_parts=part.parts,
-                child_materials=part.materials,
-                child_specifications=part.specifications,
-                reference_type=part.reference_type,
-                reference_value=part.reference_value,
-            )
-            for part in child_parts
-        ]
+        if child_parts is None:
+            self.parts = None
+        else:
+            self.parts: List[PartWithCompliance] = [
+                BomItemResultFactory.create_record_result(
+                    name="partWithCompliance",
+                    indicator_results=part.indicators,
+                    indicator_definitions=indicator_definitions,
+                    substances_with_compliance=part.substances,
+                    child_parts=part.parts,
+                    child_materials=part.materials,
+                    child_specifications=part.specifications,
+                    child_coatings=None,
+                    reference_type=part.reference_type,
+                    reference_value=part.reference_value,
+                )
+                for part in child_parts
+            ]
 
-        if not child_materials:
-            child_materials = []
         self.materials: List[MaterialWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="materialWithCompliance",
@@ -132,19 +134,36 @@ class BomStructureResultMixin:
             for material in child_materials
         ]
 
-        if not child_specifications:
-            child_specifications = []
         self.specifications: List[SpecificationWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="specificationWithCompliance",
                 indicator_results=specification.indicators,
                 indicator_definitions=indicator_definitions,
                 substances_with_compliance=specification.substances,
+                child_parts=None,
+                child_materials=specification.materials,
+                child_specifications=specification.specifications,
+                child_coatings=specification.coatings,
                 reference_type=specification.reference_type,
                 reference_value=specification.reference_value,
             )
             for specification in child_specifications
         ]
+
+        if child_coatings is None:
+            self.coatings = None
+        else:
+            self.coatings: List[CoatingWithCompliance] = [
+                BomItemResultFactory.create_record_result(
+                    name="coatingWithCompliance",
+                    indicator_results=coating.indicators,
+                    indicator_definitions=indicator_definitions,
+                    substances_with_compliance=coating.substances,
+                    reference_type=coating.reference_type,
+                    reference_value=coating.reference_value,
+                )
+                for coating in child_coatings
+            ]
 
 
 @BomItemResultFactory.register("materialWithImpactedSubstances")
@@ -173,7 +192,12 @@ class SpecificationWithImpactedSubstances(ImpactedSubstancesResultMixin, Specifi
 
 
 @BomItemResultFactory.register("specificationWithCompliance")
-class SpecificationWithCompliance(ComplianceResultMixin, SpecificationDefinition):
+class SpecificationWithCompliance(BomStructureResultMixin, ComplianceResultMixin, SpecificationDefinition):
+    pass
+
+
+@BomItemResultFactory.register("coatingWithCompliance")
+class CoatingWithCompliance(ComplianceResultMixin, CoatingDefinition):
     pass
 
 
@@ -188,7 +212,7 @@ class BoM1711WithCompliance(BomStructureResultMixin, ComplianceResultMixin, BoM1
 
 
 @BomItemResultFactory.register("substanceWithCompliance")
-class SubstanceWithCompliance(BaseSubstanceDefinition):
+class SubstanceWithCompliance(BaseSubstanceReference):
     def __init__(
         self,
         reference_type: ReferenceType,
@@ -207,7 +231,7 @@ class SubstanceWithCompliance(BaseSubstanceDefinition):
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
 
-class ImpactedSubstance(BaseSubstanceDefinition):
+class ImpactedSubstance(BaseSubstanceReference):
     def __init__(
         self,
         reference_type: ReferenceType,

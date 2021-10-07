@@ -92,6 +92,4 @@ class TestCompliance:
     def test_compliance_result_objects(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
 
-        assert all(
-            [check_material_attributes(mat) for mat in response.compliance_by_material_and_indicator]
-        )
+        assert all([check_material_attributes(mat) for mat in response.compliance_by_material_and_indicator])

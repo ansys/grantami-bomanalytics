@@ -121,8 +121,7 @@ class TestCompliance:
 
     def test_compliance_result_objects_parts(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
-        parts = response.compliance_by_part_and_indicator + \
-                response.compliance_by_part_and_indicator[0].parts
+        parts = response.compliance_by_part_and_indicator + response.compliance_by_part_and_indicator[0].parts
         assert all([check_part_attributes(part) for part in parts])
 
     def test_compliance_result_objects_specifications(self, connection):

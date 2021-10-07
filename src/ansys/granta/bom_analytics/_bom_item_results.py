@@ -49,7 +49,7 @@ class ComplianceResultMixin:
         self,
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
         indicator_definitions: Indicator_Definitions,
-        substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
+        child_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
         **kwargs,  # Contains record reference for non-Bom queries
     ):
         super().__init__(**kwargs)
@@ -58,8 +58,6 @@ class ComplianceResultMixin:
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
-        if not substances_with_compliance:
-            substances_with_compliance = []
         self.substances: List[SubstanceWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="substanceWithCompliance",
@@ -68,7 +66,7 @@ class ComplianceResultMixin:
                 reference_type=substance.reference_type,
                 reference_value=substance.reference_value,
             )
-            for substance in substances_with_compliance
+            for substance in child_substances
         ]
 
 
@@ -92,42 +90,21 @@ class ImpactedSubstancesResultMixin:
 class BomStructureResultMixin:
     def __init__(
         self,
-        child_parts: Union[None, List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance]],
         child_materials: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
         child_specifications: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
-        child_coatings: Union[None, List[models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance]],
+        child_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
         indicator_definitions: Indicator_Definitions,
-        substances_with_compliance: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
         **kwargs,  # Contains record reference for non-Bom queries
     ):
-        super().__init__(indicator_results, indicator_definitions, substances_with_compliance, **kwargs)
-
-        if child_parts is None:
-            self.parts = None
-        else:
-            self.parts: List[PartWithCompliance] = [
-                BomItemResultFactory.create_record_result(
-                    name="partWithCompliance",
-                    indicator_results=part.indicators,
-                    indicator_definitions=indicator_definitions,
-                    substances_with_compliance=part.substances,
-                    child_parts=part.parts,
-                    child_materials=part.materials,
-                    child_specifications=part.specifications,
-                    child_coatings=None,
-                    reference_type=part.reference_type,
-                    reference_value=part.reference_value,
-                )
-                for part in child_parts
-            ]
+        super().__init__(indicator_results, indicator_definitions, child_substances, **kwargs)
 
         self.materials: List[MaterialWithCompliance] = [
             BomItemResultFactory.create_record_result(
                 name="materialWithCompliance",
                 indicator_results=material.indicators,
                 indicator_definitions=indicator_definitions,
-                substances_with_compliance=material.substances,
+                child_substances=material.substances,
                 reference_type=material.reference_type,
                 reference_value=material.reference_value,
             )
@@ -139,31 +116,15 @@ class BomStructureResultMixin:
                 name="specificationWithCompliance",
                 indicator_results=specification.indicators,
                 indicator_definitions=indicator_definitions,
-                substances_with_compliance=specification.substances,
-                child_parts=None,
                 child_materials=specification.materials,
                 child_specifications=specification.specifications,
                 child_coatings=specification.coatings,
+                child_substances=specification.substances,
                 reference_type=specification.reference_type,
                 reference_value=specification.reference_value,
             )
             for specification in child_specifications
         ]
-
-        if child_coatings is None:
-            self.coatings = None
-        else:
-            self.coatings: List[CoatingWithCompliance] = [
-                BomItemResultFactory.create_record_result(
-                    name="coatingWithCompliance",
-                    indicator_results=coating.indicators,
-                    indicator_definitions=indicator_definitions,
-                    substances_with_compliance=coating.substances,
-                    reference_type=coating.reference_type,
-                    reference_value=coating.reference_value,
-                )
-                for coating in child_coatings
-            ]
 
 
 @BomItemResultFactory.register("materialWithImpactedSubstances")
@@ -183,7 +144,28 @@ class PartWithImpactedSubstances(ImpactedSubstancesResultMixin, PartDefinition):
 
 @BomItemResultFactory.register("partWithCompliance")
 class PartWithCompliance(BomStructureResultMixin, ComplianceResultMixin, PartDefinition):
-    pass
+    def __init__(
+        self,
+        child_parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
+        indicator_definitions: Indicator_Definitions,
+        **kwargs,  # Contains common bom items and record reference for non-Bom queries
+    ):
+        super().__init__(indicator_definitions=indicator_definitions, **kwargs)
+
+        self.parts: List[PartWithCompliance] = [
+            BomItemResultFactory.create_record_result(
+                name="partWithCompliance",
+                indicator_results=part.indicators,
+                indicator_definitions=indicator_definitions,
+                child_parts=part.parts,
+                child_materials=part.materials,
+                child_specifications=part.specifications,
+                child_substances=part.substances,
+                reference_type=part.reference_type,
+                reference_value=part.reference_value,
+            )
+            for part in child_parts
+        ]
 
 
 @BomItemResultFactory.register("specificationWithImpactedSubstances")
@@ -193,7 +175,25 @@ class SpecificationWithImpactedSubstances(ImpactedSubstancesResultMixin, Specifi
 
 @BomItemResultFactory.register("specificationWithCompliance")
 class SpecificationWithCompliance(BomStructureResultMixin, ComplianceResultMixin, SpecificationDefinition):
-    pass
+    def __init__(
+        self,
+        child_coatings: List[models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance],
+        indicator_definitions: Indicator_Definitions,
+        **kwargs,  # Contains common bom items and record reference for non-Bom queries
+    ):
+        super().__init__(indicator_definitions=indicator_definitions, **kwargs)
+
+        self.coatings: List[CoatingWithCompliance] = [
+            BomItemResultFactory.create_record_result(
+                name="coatingWithCompliance",
+                indicator_results=coating.indicators,
+                indicator_definitions=indicator_definitions,
+                child_substances=coating.substances,
+                reference_type=coating.reference_type,
+                reference_value=coating.reference_value,
+            )
+            for coating in child_coatings
+        ]
 
 
 @BomItemResultFactory.register("coatingWithCompliance")

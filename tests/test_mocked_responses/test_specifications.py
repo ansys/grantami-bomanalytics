@@ -111,33 +111,29 @@ class TestCompliance:
 
     def test_compliance_result_objects_specifications(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
-        specs = response.compliance_by_specification_and_indicator + \
-            response.compliance_by_specification_and_indicator[0].specifications
-        assert all(
-            [check_specification_attributes(spec) for spec in specs]
+        specs = (
+            response.compliance_by_specification_and_indicator
+            + response.compliance_by_specification_and_indicator[0].specifications
         )
+        assert all([check_specification_attributes(spec) for spec in specs])
 
     def test_compliance_result_objects_materials(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         mats = response.compliance_by_specification_and_indicator[1].materials
-        assert all(
-            [check_material_attributes(mat) for mat in mats]
-        )
+        assert all([check_material_attributes(mat) for mat in mats])
 
     def test_compliance_result_objects_coatings(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         coatings = response.compliance_by_specification_and_indicator[0].coatings
-        assert all(
-            [check_coating_attributes(coating) for coating in coatings]
-        )
+        assert all([check_coating_attributes(coating) for coating in coatings])
 
     def test_compliance_result_objects_substances(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
-        subs = response.compliance_by_specification_and_indicator[0].coatings[0].substances + \
-                   response.compliance_by_specification_and_indicator[0].specifications[0].substances + \
-                   response.compliance_by_specification_and_indicator[1].materials[0].substances + \
-                   response.compliance_by_specification_and_indicator[1].materials[1].substances + \
-                   response.compliance_by_specification_and_indicator[1].substances
-        assert all(
-            [check_substance_attributes(sub) for sub in subs]
+        subs = (
+            response.compliance_by_specification_and_indicator[0].coatings[0].substances
+            + response.compliance_by_specification_and_indicator[0].specifications[0].substances
+            + response.compliance_by_specification_and_indicator[1].materials[0].substances
+            + response.compliance_by_specification_and_indicator[1].materials[1].substances
+            + response.compliance_by_specification_and_indicator[1].substances
         )
+        assert all([check_substance_attributes(sub) for sub in subs])

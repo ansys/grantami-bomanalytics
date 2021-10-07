@@ -72,14 +72,9 @@ def check_indicator(name: str, indicator: indicators._Indicator, impacted: bool 
 
 
 def check_part_attributes(part: PartWithCompliance):
-    if (
-        part.parts is None
-        or part.materials is None
-        or part.substances is None
-        or part.specifications is None
-    ):
+    if part.parts is None or part.materials is None or part.substances is None or part.specifications is None:
         return False
-    if part.coatings is not None:
+    if hasattr(part, "coatings"):
         return False
     return True
 
@@ -92,7 +87,7 @@ def check_specification_attributes(specification: SpecificationWithCompliance):
         or specification.specifications is None
     ):
         return False
-    if specification.parts is not None:
+    if hasattr(specification, "parts"):
         return False
     return True
 
@@ -101,10 +96,10 @@ def check_material_attributes(material: MaterialWithCompliance):
     if material.substances is None:
         return False
     if (
-        hasattr(material, 'parts')
-        or hasattr(material, 'coatings')
-        or hasattr(material, 'materials')
-        or hasattr(material, 'specifications')
+        hasattr(material, "parts")
+        or hasattr(material, "coatings")
+        or hasattr(material, "materials")
+        or hasattr(material, "specifications")
     ):
         return False
     return True
@@ -114,10 +109,10 @@ def check_coating_attributes(coating: CoatingWithCompliance):
     if coating.substances is None:
         return False
     if (
-        hasattr(coating, 'parts')
-        or hasattr(coating, 'coatings')
-        or hasattr(coating, 'materials')
-        or hasattr(coating, 'specifications')
+        hasattr(coating, "parts")
+        or hasattr(coating, "coatings")
+        or hasattr(coating, "materials")
+        or hasattr(coating, "specifications")
     ):
         return False
     return True
@@ -125,11 +120,11 @@ def check_coating_attributes(coating: CoatingWithCompliance):
 
 def check_substance_attributes(substance: SubstanceWithCompliance):
     if (
-        hasattr(substance, 'parts')
-        or hasattr(substance, 'coatings')
-        or hasattr(substance, 'materials')
-        or hasattr(substance, 'specifications')
-        or hasattr(substance, 'substances')
+        hasattr(substance, "parts")
+        or hasattr(substance, "coatings")
+        or hasattr(substance, "materials")
+        or hasattr(substance, "specifications")
+        or hasattr(substance, "substances")
     ):
         return False
     return True

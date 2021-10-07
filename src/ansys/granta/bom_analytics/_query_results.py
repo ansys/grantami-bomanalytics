@@ -124,7 +124,7 @@ class MaterialComplianceResult(ComplianceBaseClass):
                 name="materialWithCompliance",
                 indicator_results=result.indicators,
                 indicator_definitions=indicator_definitions,
-                substances_with_compliance=result.substances,
+                child_substances=result.substances,
                 reference_type=result.reference_type,
                 reference_value=result.reference_value,
             )
@@ -173,11 +173,10 @@ class PartComplianceResult(ComplianceBaseClass):
                 name="partWithCompliance",
                 indicator_results=result.indicators,
                 indicator_definitions=indicator_definitions,
-                substances_with_compliance=result.substances,
                 child_parts=result.parts,
                 child_materials=result.materials,
                 child_specifications=result.specifications,
-                child_coatings=None,
+                child_substances=result.substances,
                 reference_type=result.reference_type,
                 reference_value=result.reference_value,
             )
@@ -230,11 +229,10 @@ class SpecificationComplianceResult(ComplianceBaseClass):
                 name="specificationWithCompliance",
                 indicator_results=result.indicators,
                 indicator_definitions=indicator_definitions,
-                substances_with_compliance=result.substances,
-                child_parts=None,
                 child_materials=result.materials,
                 child_specifications=result.specifications,
                 child_coatings=result.coatings,
+                child_substances=result.substances,
                 reference_type=result.reference_type,
                 reference_value=result.reference_value,
             )
@@ -290,11 +288,10 @@ class BomComplianceResult(ComplianceBaseClass):
         obj = PartWithCompliance(
             indicator_results=part.indicators,
             indicator_definitions=indicator_definitions,
-            substances_with_compliance=part.substances,
+            child_substances=part.substances,
             child_parts=part.parts,
             child_materials=part.materials,
             child_specifications=part.specifications,
-            child_coatings=None,
             reference_type=part.reference_type,
             reference_value=part.reference_value,
         )

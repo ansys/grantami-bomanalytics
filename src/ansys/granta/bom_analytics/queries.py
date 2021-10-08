@@ -6,7 +6,7 @@ import logging
 
 from ansys.granta.bomanalytics import models, api
 
-from ._bom_item_definitions import AbstractBomFactory
+from ._bom_item_definitions import AbstractBomFactory, RecordDefinition
 from ._allowed_types import allowed_types
 from ._connection import Connection
 from ._query_results import (
@@ -27,38 +27,62 @@ Query_Result = TypeVar(
 logger = logging.getLogger(__name__)
 
 
-class _Items(list):
-    """
-    Store Bom items for use in queries and generate the list of models to be sent to the server.
+class _RecordArgumentManager:
+    """Store Bom items for use in queries and generate the list of models to be sent to the server.
 
     Parameters
     ----------
-    item_type_name : str
+    record_type_name : str
         The name of the items, e.g. materials, parts. Used in the `batched_bom_arguments` property as the keyword for
         the list of items in the request constructor.
-
     batch_size : int
         Number of items included in a single request.
 
+    Attributes
+    ----------
+    _items : list of `RecordDefinition`
+        The definition objects added to this object to be used in a query
+
     Examples
     --------
-    >>> items = _Items(item_type_name = "materials", batch_size = 100)
+    >>> items = _RecordDefinitionList(item_type_name = "materials", batch_size = 100)
     >>> items.batched_bom_arguments
     {"materials": [{"reference_type": "material_id", "reference_value": "ABS"}, ...]  # Up to 100 items
     """
 
-    def __init__(self, item_type_name: str, batch_size: int = 100):
+    def __init__(self, record_type_name: Union[str, None] = None, batch_size: int = 100):
         super().__init__()
-        self.batch_size: Union[int] = batch_size
-        self.item_type_name = item_type_name
+        self._items = []
+        self.batch_size: int = batch_size
+        self.record_type_name: Union[str, None] = record_type_name
 
     def __repr__(self):
-        return f"{len(self)} {self.item_type_name}, batch size: {self.batch_size}"
+        return f"{len(self._items)} {self.record_type_name}, batch size: {self.batch_size}"
+
+    def append_record_definition(self, item: RecordDefinition):
+        """Append a specific record definition to the argument manager.
+
+        Parameters
+        ----------
+        item : `RecordDefinition`
+            The definition to be added to this list of record definitions.
+
+        Examples
+        --------
+        >>> part_definition = PartDefinition(...)
+        >>> items = _RecordDefinitionList(item_type_name = "materials", batch_size = 100)
+        >>> items.append(part_definition)
+        """
+
+        self._items.append(item)
+
+    @property
+    def is_populated(self):
+        return self._items is None
 
     @property
     def batched_bom_arguments(self) -> Generator[Dict[str, List[Union[models.Model, str]]], None, None]:
-        """
-        A generator producing item request arguments as a list of instances of the appropriate Model. Each list
+        """ A generator producing item request arguments as a list of instances of the appropriate Model. Each list
         of dicts will be at most `_batch_size` long.
 
         Each individual dict can be passed to the request constructor as a kwarg.
@@ -66,37 +90,54 @@ class _Items(list):
         Yields
         ------
         Generator(dict(str, list(models.Model)))
+
+        Raises
+        ------
+        RuntimeError
+            If the `item_type_name` has not been set before the arguments are generated.
         """
 
-        for batch_number, i in enumerate(range(0, len(self), self.batch_size)):
-            batch = [i.definition for i in self][i : i + self.batch_size]  # noqa: E203 E501
-            batch_str = ", ".join(['"' + item.reference_type + ": " + item.reference_value + '"' for item in batch])
+        if self.record_type_name is None:
+            raise RuntimeError('"record_type_name" must be populated before item definitions can be added.')
+
+        for batch_number, i in enumerate(range(0, len(self._items), self.batch_size)):
+            batch = [i.definition for i in self._items][i : i + self.batch_size]  # noqa: E203 E501
+            batch_str = ", ".join([f'"{item.reference_type}": "{item.reference_value}"' for item in batch])
             logger.debug(f"[TECHDOCS] Batch {batch_number + 1}, Items: {batch_str}")
-            yield {self.item_type_name: batch}
+            yield {self.record_type_name: batch}
+
+    def extract_results_from_response(self, response):
+        return [r for r in getattr(response, self.record_type_name)]
 
 
 class _BaseQueryBuilder(Generic[T], ABC):
-    """
-    Base class for all query types. The properties and methods here primarily represent the things on which the API is
+    """ Base class for all query types. The properties and methods here primarily represent the things on which the API is
     acting, i.e. records or bills of materials (BoMs).
 
     Attributes
     ----------
-    _bom_item_definitions : _Items
+    _record_argument_manager : _RecordArgumentManager
         The list of 'things' on which the API gets compliance for.
     """
 
     def __init__(self):
-        self._bom_item_definitions = None
+        self._record_argument_manager = _RecordArgumentManager()
 
     def __repr__(self):
-        return f"<{self.__class__.__name__}: {self._bom_item_definitions}>"
+        return f"<{self.__class__.__name__}: {self._record_argument_manager}>"
 
     def _validate_items(self):
-        """ Perform pre-flight checks on the """
-        if not self._bom_item_definitions:
+        """Perform pre-flight checks on the items that have been added to the query.
+
+        Warns
+        -----
+        RuntimeWarning
+            If no items have been added to the query, warn that the response will be empty.
+        """
+
+        if not self._record_argument_manager.is_populated:
             warnings.warn(
-                f"No {self._bom_item_definitions.item_type_name} have been added to the query. Server response will be empty.",
+                f"No {self._record_argument_manager.record_type_name} have been added to the query. Server response will be empty.",
                 RuntimeWarning,
             )
 
@@ -117,7 +158,7 @@ class _BaseQueryBuilder(Generic[T], ABC):
 
         if batch_size < 1:
             raise ValueError("Batch must be a positive integer")
-        self._bom_item_definitions.batch_size = batch_size
+        self._record_argument_manager.batch_size = batch_size
         return self
 
 
@@ -151,7 +192,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
             item_reference = self._definition_factory.create_definition_by_record_history_identity(
                 record_history_identity=value
             )
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [str])
@@ -180,7 +221,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
             item_reference = self._definition_factory.create_definition_by_record_history_guid(
                 record_history_guid=value
             )
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [str])
@@ -207,7 +248,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
 
         for value in record_guids:
             item_reference = self._definition_factory.create_definition_by_record_guid(record_guid=value)
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [{str: str}])
@@ -261,11 +302,11 @@ class _ApiMixin(api_base_class):
         self._validate_parameters()
         self._validate_items()
         result = []
-        for idx, batch in enumerate(self._bom_item_definitions.batched_bom_arguments):
+        for idx, batch in enumerate(self._record_argument_manager.batched_bom_arguments):
             args = {**arguments, **batch}
             request = self._request_type(**args)
             response = api_method(body=request)
-            result.extend([r for r in getattr(response, self._bom_item_definitions.item_type_name)])
+            result.extend(self._record_argument_manager.extract_results_from_response(response))
         return result
 
     @abstractmethod
@@ -304,7 +345,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         self.api_method = ""
 
     def __repr__(self):
-        return f"<{self.__class__.__name__}: {self._bom_item_definitions}, {len(self._indicators)} indicators>"
+        return f"<{self.__class__.__name__}: {self._record_argument_manager}, {len(self._indicators)} indicators>"
 
     @allowed_types(_BaseQueryBuilder, [_Indicator])
     def with_indicators(self: T, indicators: List[_Indicator]) -> T:
@@ -376,7 +417,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         self.api_method = ""
 
     def __repr__(self):
-        return f"<{self.__class__.__name__}: {self._bom_item_definitions}, {len(self._legislations)} legislations>"
+        return f"<{self.__class__.__name__}: {self._record_argument_manager}, {len(self._legislations)} legislations>"
 
     @allowed_types(_BaseQueryBuilder, [str])
     def with_legislations(self: T, legislation_names: List[str]) -> T:
@@ -440,8 +481,8 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     def __init__(self):
         super().__init__()
-        self._bom_item_definitions = _Items(item_type_name="materials", batch_size=100)
-        self._definition_factory = None
+        self._record_argument_manager.record_type_name = "materials"
+        self._record_argument_manager.batch_size = 100
 
     @allowed_types(_BaseQueryBuilder, [str])
     def with_material_ids(self: T, material_ids: List[str]) -> T:
@@ -466,7 +507,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         """
         for material_id in material_ids:
             item_reference = self._definition_factory.create_definition_by_material_id(material_id=material_id)
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
 
@@ -540,8 +581,8 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     def __init__(self):
         super().__init__()
-        self._bom_item_definitions = _Items(item_type_name="parts", batch_size=10)
-        self._definition_factory = None
+        self._record_argument_manager.record_type_name = "parts"
+        self._record_argument_manager.batch_size = 10
 
     @allowed_types(_BaseQueryBuilder, [str])
     def with_part_numbers(self: T, part_numbers: List[str]) -> T:
@@ -565,7 +606,7 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         for value in part_numbers:
             item_reference = self._definition_factory.create_definition_by_part_number(part_number=value)
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
 
@@ -639,8 +680,8 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     def __init__(self):
         super().__init__()
-        self._bom_item_definitions = _Items(item_type_name="specifications", batch_size=10)
-        self._definition_factory = None
+        self._record_argument_manager.record_type_name = "specifications"
+        self._record_argument_manager.batch_size = 10
 
     @allowed_types(_BaseQueryBuilder, [str])
     def with_specification_ids(self: T, specification_ids: List[str]) -> T:
@@ -666,7 +707,7 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
             item_reference = self._definition_factory.create_definition_by_specification_id(
                 specification_id=specification_id
             )
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
 
@@ -742,8 +783,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     def __init__(self):
         super().__init__()
-        self._bom_item_definitions = _Items(item_type_name="substances", batch_size=500)
-        self._definition_factory = None
+        self._record_argument_manager.record_type_name = "substances"
+        self._record_argument_manager.batch_size = 500
 
     @allowed_types(_BaseQueryBuilder, [str])
     def with_cas_numbers(self: T, cas_numbers: List[str]) -> T:
@@ -766,7 +807,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         """
         for cas_number in cas_numbers:
             item_reference = self._definition_factory.create_definition_by_cas_number(cas_number=cas_number)
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [str])
@@ -790,7 +831,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         """
         for ec_number in ec_numbers:
             item_reference = self._definition_factory.create_definition_by_ec_number(ec_number=ec_number)
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [str])
@@ -814,7 +855,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         """
         for chemical_name in chemical_names:
             item_reference = self._definition_factory.create_definition_by_chemical_name(chemical_name=chemical_name)
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [(int, Number)])
@@ -845,7 +886,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
                 record_history_identity=record_history_id
             )
             item_reference.percentage_amount = amount
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
@@ -874,7 +915,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
                 record_history_guid=record_history_guid
             )
             item_reference.percentage_amount = amount
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
@@ -902,7 +943,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for record_guid, amount in record_guids_and_amounts:
             item_reference = self._definition_factory.create_definition_by_record_guid(record_guid=record_guid)
             item_reference.percentage_amount = amount
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
@@ -929,7 +970,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for cas_number, amount in cas_numbers_and_amounts:
             item_reference = self._definition_factory.create_definition_by_cas_number(cas_number=cas_number)
             item_reference.percentage_amount = amount
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
@@ -956,7 +997,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for ec_number, amount in ec_numbers_and_amounts:
             item_reference = self._definition_factory.create_definition_by_ec_number(ec_number=ec_number)
             item_reference.percentage_amount = amount
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
@@ -983,7 +1024,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for chemical_name, amount in chemical_names_and_amounts:
             item_reference = self._definition_factory.create_definition_by_chemical_name(chemical_name=chemical_name)
             item_reference.percentage_amount = amount
-            self._bom_item_definitions.append(item_reference)
+            self._record_argument_manager.append_record_definition(item_reference)
         return self
 
 
@@ -1017,7 +1058,7 @@ class SubstanceCompliance(_ComplianceMixin, _SubstanceQueryBuilder):
         self.api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_substances"
 
 
-class _BomItem:
+class _BomDefinition:
     """
     Store a Bom in 1711 XML format for use in queries.
 
@@ -1053,7 +1094,7 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
 
     def __init__(self):
         super().__init__()
-        self._bom_item_definitions = _BomItem()
+        self._bom_definition = _BomDefinition()
 
     @allowed_types(_BaseQueryBuilder, str)
     def with_bom(self: T, bom: str) -> T:
@@ -1071,7 +1112,7 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
         >>> query = BomComplianceQuery().with_bom(bom)...
         """
 
-        self._bom_item_definitions.bom = bom    # TODO: Validate the bom against the 17/11 schema
+        self._bom_definition.bom = bom  # TODO: Validate the bom against the 17/11 schema
         return self
 
 
@@ -1089,7 +1130,7 @@ class _Bom1711QueryOverride(bom_base_class):
     """
 
     def _call_api(self, api_method, arguments) -> List:
-        args = {**arguments, **self._bom_item_definitions.bom_argument}
+        args = {**arguments, **self._bom_definition.bom_argument}
         request = self._request_type(**args)
         response = api_method(body=request)
         return response

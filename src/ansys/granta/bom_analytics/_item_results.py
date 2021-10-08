@@ -1,7 +1,7 @@
 """Bom Analytics Bom item result definitions.
 
 Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
-queries. These are mostly extensions of the classes in _bom_item_definitions.py.
+queries. These are mostly extensions of the classes in _item_definitions.py.
 
 Attributes
 ----------
@@ -18,7 +18,7 @@ Item_With_Compliance_Result
 from typing import List, Dict, Union, Callable, TYPE_CHECKING
 from copy import copy
 from ansys.granta.bomanalytics import models
-from ._bom_item_definitions import (
+from ._item_definitions import (
     MaterialDefinition,
     PartDefinition,
     SpecificationDefinition,

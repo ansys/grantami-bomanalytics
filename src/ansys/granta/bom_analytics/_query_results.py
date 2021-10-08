@@ -4,10 +4,10 @@ from abc import ABC
 
 from ansys.granta.bomanalytics import models
 
-from ._bom_item_results import ItemResultFactory
+from ._item_results import ItemResultFactory
 
 # Required for type hinting
-from ._bom_item_results import (
+from ._item_results import (
     MaterialWithImpactedSubstancesResult,
     MaterialWithComplianceResult,
     PartWithImpactedSubstancesResult,

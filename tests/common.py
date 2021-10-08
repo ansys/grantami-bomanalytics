@@ -30,7 +30,7 @@ from ansys.granta.bom_analytics import (
 )
 from ansys.granta.bom_analytics._allowed_types import allowed_types, check_type
 from ansys.granta.bom_analytics.indicators import _Indicator
-from ansys.granta.bom_analytics._bom_item_definitions import (
+from ansys.granta.bom_analytics._item_definitions import (
     BoM1711Definition,
     MaterialDefinition,
     SpecificationDefinition,
@@ -38,7 +38,7 @@ from ansys.granta.bom_analytics._bom_item_definitions import (
     SubstanceDefinition,
     ReferenceType,
 )
-from ansys.granta.bom_analytics._bom_item_results import (
+from ansys.granta.bom_analytics._item_results import (
     PartWithComplianceResult,
     SpecificationWithComplianceResult,
     MaterialWithComplianceResult,

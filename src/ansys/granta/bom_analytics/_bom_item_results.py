@@ -61,7 +61,7 @@ Item_With_Compliance_Result = Union[
 ]
 
 
-class BomItemResultFactory:
+class ItemResultFactory:
     """Creates item results for a given type of API query. The key to control which result type is created is the name
      of the query class in `queries.py`.
 
@@ -320,22 +320,22 @@ class ImpactedSubstancesResultMixin:
         }
 
 
-@BomItemResultFactory.register("materialWithImpactedSubstances")
+@ItemResultFactory.register("materialWithImpactedSubstances")
 class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, MaterialDefinition):
     pass
 
 
-@BomItemResultFactory.register("partWithImpactedSubstances")
+@ItemResultFactory.register("partWithImpactedSubstances")
 class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefinition):
     pass
 
 
-@BomItemResultFactory.register("specificationWithImpactedSubstances")
+@ItemResultFactory.register("specificationWithImpactedSubstances")
 class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, SpecificationDefinition):
     pass
 
 
-@BomItemResultFactory.register("bom1711WithImpactedSubstances")
+@ItemResultFactory.register("bom1711WithImpactedSubstances")
 class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin, BoM1711Definition):
     pass
 
@@ -435,7 +435,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
         super().__init__(**kwargs)
         self.substances: List[SubstanceWithComplianceResult] = []
 
-    def add_child_substances(
+    def _add_child_substances(
         self, child_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance]
     ):
         """Populate the `substances` attribute based on a provided list of low-level API substance with compliance
@@ -448,7 +448,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
         """
 
         for child_substance in child_substances:
-            child_substance_with_compliance = BomItemResultFactory.create_compliance_result(
+            child_substance_with_compliance = ItemResultFactory.create_compliance_result(
                 result_type_name="substanceWithCompliance",
                 result_with_compliance=child_substance,
                 indicator_definitions=self._indicator_definitions,
@@ -479,7 +479,7 @@ class ChildMaterialWithComplianceMixin(child_base_class):
         super().__init__(**kwargs)
         self.materials: List[MaterialWithComplianceResult] = []
 
-    def add_child_materials(
+    def _add_child_materials(
         self,
         child_materials: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
     ):
@@ -495,12 +495,12 @@ class ChildMaterialWithComplianceMixin(child_base_class):
         """
 
         for child_material in child_materials:
-            child_material_with_compliance = BomItemResultFactory.create_compliance_result(
+            child_material_with_compliance = ItemResultFactory.create_compliance_result(
                 result_type_name="materialWithCompliance",
                 result_with_compliance=child_material,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_material_with_compliance.add_child_substances(child_material.substances)
+            child_material_with_compliance._add_child_substances(child_material.substances)
             self.materials.append(child_material_with_compliance)
 
 
@@ -528,7 +528,7 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
         super().__init__(**kwargs)
         self.specifications: List[SpecificationWithComplianceResult] = []
 
-    def add_child_specifications(
+    def _add_child_specifications(
         self,
         child_specifications: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
     ):
@@ -545,15 +545,15 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
         """
 
         for child_specification in child_specifications:
-            child_specification_with_compliance = BomItemResultFactory.create_compliance_result(
+            child_specification_with_compliance = ItemResultFactory.create_compliance_result(
                 result_type_name="specificationWithCompliance",
                 result_with_compliance=child_specification,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_specification_with_compliance.add_child_materials(child_specification.materials)
-            child_specification_with_compliance.add_child_specifications(child_specification.specifications)
-            child_specification_with_compliance.add_child_coatings(child_specification.coatings)
-            child_specification_with_compliance.add_child_substances(child_specification.substances)
+            child_specification_with_compliance._add_child_materials(child_specification.materials)
+            child_specification_with_compliance._add_child_specifications(child_specification.specifications)
+            child_specification_with_compliance._add_child_coatings(child_specification.coatings)
+            child_specification_with_compliance._add_child_substances(child_specification.substances)
             self.specifications.append(child_specification_with_compliance)
 
 
@@ -580,7 +580,7 @@ class ChildPartWithComplianceMixin(child_base_class):
         super().__init__(**kwargs)
         self.parts: List[PartWithComplianceResult] = []
 
-    def add_child_parts(
+    def _add_child_parts(
         self,
         child_parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
     ):
@@ -597,15 +597,15 @@ class ChildPartWithComplianceMixin(child_base_class):
         """
 
         for child_part in child_parts:
-            child_part_with_compliance = BomItemResultFactory.create_compliance_result(
+            child_part_with_compliance = ItemResultFactory.create_compliance_result(
                 result_type_name="partWithCompliance",
                 result_with_compliance=child_part,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_part_with_compliance.add_child_parts(child_part.parts)
-            child_part_with_compliance.add_child_specifications(child_part.specifications)
-            child_part_with_compliance.add_child_materials(child_part.materials)
-            child_part_with_compliance.add_child_substances(child_part.substances)
+            child_part_with_compliance._add_child_parts(child_part.parts)
+            child_part_with_compliance._add_child_specifications(child_part.specifications)
+            child_part_with_compliance._add_child_materials(child_part.materials)
+            child_part_with_compliance._add_child_substances(child_part.substances)
             self.parts.append(child_part_with_compliance)
 
 
@@ -632,7 +632,7 @@ class ChildCoatingWithComplianceMixin(child_base_class):
         super().__init__(**kwargs)
         self.coatings: List[CoatingWithComplianceResult] = []
 
-    def add_child_coatings(
+    def _add_child_coatings(
         self,
         child_coatings: List[models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance],
     ):
@@ -648,26 +648,26 @@ class ChildCoatingWithComplianceMixin(child_base_class):
         """
 
         for child_coating in child_coatings:
-            child_coating_with_compliance = BomItemResultFactory.create_compliance_result(
+            child_coating_with_compliance = ItemResultFactory.create_compliance_result(
                 result_type_name="coatingWithCompliance",
                 result_with_compliance=child_coating,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_coating_with_compliance.add_child_substances(child_coating.substances)
+            child_coating_with_compliance._add_child_substances(child_coating.substances)
             self.coatings.append(child_coating_with_compliance)
 
 
-@BomItemResultFactory.register("substanceWithCompliance")
+@ItemResultFactory.register("substanceWithCompliance")
 class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
     pass
 
 
-@BomItemResultFactory.register("materialWithCompliance")
+@ItemResultFactory.register("materialWithCompliance")
 class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialDefinition):
     pass
 
 
-@BomItemResultFactory.register("partWithCompliance")
+@ItemResultFactory.register("partWithCompliance")
 class PartWithComplianceResult(
     ChildPartWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,
@@ -679,7 +679,7 @@ class PartWithComplianceResult(
     pass
 
 
-@BomItemResultFactory.register("specificationWithCompliance")
+@ItemResultFactory.register("specificationWithCompliance")
 class SpecificationWithComplianceResult(
     ChildCoatingWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,
@@ -691,12 +691,12 @@ class SpecificationWithComplianceResult(
     pass
 
 
-@BomItemResultFactory.register("coatingWithCompliance")
+@ItemResultFactory.register("coatingWithCompliance")
 class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingDefinition):
     pass
 
 
-@BomItemResultFactory.register("bom1711WithCompliance")
+@ItemResultFactory.register("bom1711WithCompliance")
 class BoM1711WithComplianceResult(
     ChildPartWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,

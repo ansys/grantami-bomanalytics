@@ -1,10 +1,21 @@
 """Bom Analytics Bom item result definitions.
 
 Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
-queries. These are extensions of the classes in _bom_item_definitions.py.
+queries. These are mostly extensions of the classes in _bom_item_definitions.py.
+
+Attributes
+----------
+Impacted_Substances_REST_Result
+    The set of types that represent the low-level REST API items with impacted substances results.
+Item_With_Impacted_Substances_Result
+    The set of types that represent objects in this module with impacted substances results.
+Compliance_REST_Result
+    The set of types that represent the low-level REST API items with compliance results.
+Item_With_Compliance_Result
+    The set of types that represent objects in this module with compliance results.
 """
 
-from typing import List, Dict, Union, Callable, TypeVar
+from typing import List, Dict, Union, Callable, TYPE_CHECKING
 from copy import copy
 from ansys.granta.bomanalytics import models
 from ._bom_item_definitions import (
@@ -19,12 +30,35 @@ from ._bom_item_definitions import (
 )
 from .indicators import Indicator_Definitions
 
+Impacted_Substances_REST_Result = Union[
+    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial,
+    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart,
+    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification,
+    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
+]
 
-Item_Result = TypeVar(
-    "Item_Result",
-    covariant=True,
-    bound=Union["ImpactedSubstancesResultMixin", "ComplianceResultMixin"],
-)
+Item_With_Impacted_Substances_Result = Union[
+    "MaterialWithImpactedSubstancesResult",
+    "PartWithImpactedSubstancesResult",
+    "SpecificationsWithImpactedSubstancesResult",
+    "BoM1711WithImpactedSubstancesResult",
+]
+
+Compliance_REST_Result = Union[
+    models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance,
+    models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance,
+    models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance,
+    models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance,
+    models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance,
+]
+
+Item_With_Compliance_Result = Union[
+    "SubstanceWithComplianceResult",
+    "MaterialWithComplianceResult",
+    "PartWithComplianceResult",
+    "SpecificationsWithComplianceResult",
+    "BoM1711WithComplianceResult",
+]
 
 
 class BomItemResultFactory:
@@ -41,12 +75,12 @@ class BomItemResultFactory:
 
     @classmethod
     def register(cls, name: str) -> Callable:
-        """Decorator function to register a specific item result class with a query name.
+        """Decorator function to register a specific item result class with the name of a result type.
 
         Parameters
         ----------
         name : str
-            The name of the query to be registered.
+            The name of the result type to be registered.
 
         Returns
         -------
@@ -61,23 +95,25 @@ class BomItemResultFactory:
         return inner
 
     @classmethod
-    def create_record_result(cls, name: str, reference_type: Union[str, None], **kwargs) -> Item_Result:
-        """Factory method to return a specific item result.
+    def create_impacted_substances_result(
+        cls,
+        result_type_name: str,
+        result_with_impacted_substances: Impacted_Substances_REST_Result,
+    ) -> Item_With_Impacted_Substances_Result:
+        """Factory method to return a specific impacted substances result.
 
         Parameters
         ----------
-        name : str
-            The name of the query for which a result object is needed
-        reference_type : str, optional
-            The `reference_type` is pulled out of **kwargs because it needs to be used as a key to get the appropriate
-            `ReferenceType` enum member. Not populated for Bom item results.
-        **kwargs
-            All other arguments required to instantiate the item definition, including the `reference_value` for
-            `RecordDefinition`-based results.
+        result_type_name : str
+            The name of the result for which an object is needed.
+        result_with_impacted_substances: `Impacted_Substances_Model_Result`
+            The result from the REST API describing the impacted substances for this particular item.
 
         Returns
         -------
-        Item_Result
+        `Impacted_Substances_Item_Result`
+            An object that describes the substances that impacted a material, part, specification, or BoM. Substances
+            are grouped by legislation.
 
         Raises
         ------
@@ -85,13 +121,54 @@ class BomItemResultFactory:
             If a query type is not registered to any factory.
         """
 
-        try:
-            item_result_class = cls.registry[name]
-        except KeyError:
-            raise RuntimeError(f"Unregistered result object {name}")
+        reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        item_result_class = cls.registry[result_type_name]
+        item_result = item_result_class(
+            reference_type=reference_type,
+            reference_value=result_with_impacted_substances.reference_value,
+            legislations=result_with_impacted_substances.legislations,
+        )
+        return item_result
 
-        reference_type = cls.parse_reference_type(reference_type)
-        item_result = item_result_class(reference_type=reference_type, **kwargs)
+    @classmethod
+    def create_compliance_result(
+        cls,
+        result_type_name: str,
+        result_with_compliance: Compliance_REST_Result,
+        indicator_definitions: Indicator_Definitions,
+    ) -> Item_With_Compliance_Result:
+        """Factory method to return a specific item result.
+
+        Parameters
+        ----------
+        result_type_name : str
+            The name of the result for which an object is needed.
+        result_with_compliance : `Compliance_Model_Result`
+            The result from the REST API describing the compliance for this particular item.
+        indicator_definitions : `Indicator_Definitions`
+            The definitions of the indicators supplied to the original query. Required since the REST API does not
+            provide them in the response.
+
+        Returns
+        -------
+        `Compliance_Item_Result`
+            An object that describes the compliance of a substance, material, part, specification, or BoM. Is defined
+            recursively, with each level of the BoM having a reported compliance status for each indicator.
+
+        Raises
+        ------
+        RuntimeError
+            If a query type is not registered to any factory.
+        """
+
+        reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        item_result_class = cls.registry[result_type_name]
+        item_result = item_result_class(
+            reference_type=reference_type,
+            reference_value=result_with_compliance.reference_value,
+            indicator_results=result_with_compliance.indicators,
+            indicator_definitions=indicator_definitions,
+        )
         return item_result
 
     @staticmethod
@@ -207,7 +284,8 @@ class LegislationResult:
 
 
 class ImpactedSubstancesResultMixin:
-    """Adds results from an impacted substances query to an `ItemDefinition` class.
+    """Adds results from an impacted substances query to an `ItemDefinition` class, turning it into an
+    `ItemWithImpactedSubstancesResult` class.
 
     Extensions to the constructor only, doesn't implement any additional methods.
 
@@ -243,31 +321,32 @@ class ImpactedSubstancesResultMixin:
 
 
 @BomItemResultFactory.register("materialWithImpactedSubstances")
-class MaterialWithImpactedSubstances(ImpactedSubstancesResultMixin, MaterialDefinition):
+class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, MaterialDefinition):
     pass
 
 
 @BomItemResultFactory.register("partWithImpactedSubstances")
-class PartWithImpactedSubstances(ImpactedSubstancesResultMixin, PartDefinition):
+class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefinition):
     pass
 
 
 @BomItemResultFactory.register("specificationWithImpactedSubstances")
-class SpecificationWithImpactedSubstances(ImpactedSubstancesResultMixin, SpecificationDefinition):
+class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, SpecificationDefinition):
     pass
 
 
 @BomItemResultFactory.register("bom1711WithImpactedSubstances")
-class BoM1711WithImpactedSubstances(ImpactedSubstancesResultMixin, BoM1711Definition):
+class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin, BoM1711Definition):
     pass
 
 
 class ComplianceResultMixin:
-    """Adds results from a compliance query to an `ItemDefinition` class.
+    """Adds results from a compliance query to a class deriving from `ItemDefinition`, turning it into an
+    `[ItemType]WithComplianceResult` class.
 
      A compliance query returns a Bom-like result (see Notes for more background), with indicator results attached to
-     each level of the Bom. This mixin implements only the indicator results for a given item, the other child items
-     are implemented via separate mixins.
+     each level of the Bom. This mixin implements only the indicator results for a given item; separate mixins
+     instantiate and add the child items to the parent.
 
     Parameters
     ----------
@@ -320,259 +399,280 @@ class ComplianceResultMixin:
         **kwargs,
     ):
         super().__init__(**kwargs)
-
+        self._indicator_definitions = indicator_definitions
         self.indicators: Indicator_Definitions = copy(indicator_definitions)
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
 
-class SubstanceChildMixin:
-    """Adds a 'substance' attribute to an `ItemResult` class.
+if TYPE_CHECKING:
+    child_base_class = ComplianceResultMixin
+else:
+    child_base_class = object
 
-    `ItemResults` are not explicitly defined, but are formed by adding the `ComplianceResultMixin` to an
-    `ItemDefinition`-based class.
 
-    See the `ComplianceResultMixin` notes for more background on Compliance query results.
+class ChildSubstanceWithComplianceMixin(child_base_class):
+    """Adds a 'substance' attribute to an `ItemWithComplianceResult` class and populates it with child substances.
+
+    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
 
     Parameters
     ----------
-    indicator_definitions : `Indicator_Definitions`
-        Used as a base to create the indicator results for the child substances.
     child_substances : list of `models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance`
         The materials returned by the low-level API that are children of this item.
     **kwargs
         Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects. Is empty for `BoM1711Definition`-based objects.
+        `RecordDefinition`-based objects.
 
     Attributes
     ----------
-    substances : list of `SubstanceWithCompliance`
+    substances : list of `SubstanceWithComplianceResult`
         Summarizes the compliance of each substance found in the `ItemDefinition`, allowing the source of non-compliance
         to be determined.
     """
 
-    def __init__(
-        self,
-        indicator_definitions: Indicator_Definitions,
-        child_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
-        **kwargs,
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.substances: List[SubstanceWithComplianceResult] = []
+
+    def add_child_substances(
+        self, child_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance]
     ):
-        super().__init__(indicator_definitions=indicator_definitions, **kwargs)
+        """Populate the `substances` attribute based on a provided list of low-level API substance with compliance
+        results.
 
-        self.substances: List[SubstanceWithCompliance] = [
-            BomItemResultFactory.create_record_result(
-                name="substanceWithCompliance",
-                indicator_results=substance.indicators,
-                indicator_definitions=indicator_definitions,
-                reference_type=substance.reference_type,
-                reference_value=substance.reference_value,
+        Parameters
+        ----------
+        child_substances : list of `models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance`
+            A list of substances with compliance returned from the low-level API
+        """
+
+        for child_substance in child_substances:
+            child_substance_with_compliance = BomItemResultFactory.create_compliance_result(
+                result_type_name="substanceWithCompliance",
+                result_with_compliance=child_substance,
+                indicator_definitions=self._indicator_definitions,
             )
-            for substance in child_substances
-        ]
+            self.substances.append(child_substance_with_compliance)
 
 
-class MaterialChildMixin:
-    """Adds a 'material' attribute to an `ItemResult` class.
+class ChildMaterialWithComplianceMixin(child_base_class):
+    """Adds a 'material' attribute to an `ItemWithComplianceResult` class and populates it with child materials.
 
-    `ItemResults` are not explicitly defined, but are formed by adding the `ComplianceResultMixin` to an
-    `ItemDefinition`-based class.
-
-    See the `ComplianceResultMixin` notes for more background on Compliance query results.
+    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
 
     Parameters
     ----------
     child_materials : list of `models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance`
         The materials returned by the low-level API that are children of this item.
-    indicator_definitions : `Indicator_Definitions`
-        Used as a base to create the indicator results for the child materials.
     **kwargs
         Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects. Is empty for `BoM1711Definition`-based objects.
+        `RecordDefinition`-based objects.
 
     Attributes
     ----------
-    materials : list of `MaterialWithCompliance`
+    materials : list of `MaterialWithComplianceResult`
         The material result objects that are direct children of this part.
     """
 
-    def __init__(
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.materials: List[MaterialWithComplianceResult] = []
+
+    def add_child_materials(
         self,
         child_materials: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
-        indicator_definitions: Indicator_Definitions,
-        **kwargs,
     ):
-        super().__init__(indicator_definitions=indicator_definitions, **kwargs)
+        """Populate the `materials` attribute based on a provided list of low-level API materials with compliance
+        results.
 
-        self.materials: List[MaterialWithCompliance] = [
-            BomItemResultFactory.create_record_result(
-                name="materialWithCompliance",
-                indicator_results=material.indicators,
-                indicator_definitions=indicator_definitions,
-                child_substances=material.substances,
-                reference_type=material.reference_type,
-                reference_value=material.reference_value,
+        Operates recursively, i.e. also adds any substances with compliance that are children of each material.
+
+        Parameters
+        ----------
+        child_materials : list of `models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance`
+            A list of materials with compliance returned from the low-level API
+        """
+
+        for child_material in child_materials:
+            child_material_with_compliance = BomItemResultFactory.create_compliance_result(
+                result_type_name="materialWithCompliance",
+                result_with_compliance=child_material,
+                indicator_definitions=self._indicator_definitions,
             )
-            for material in child_materials
-        ]
+            child_material_with_compliance.add_child_substances(child_material.substances)
+            self.materials.append(child_material_with_compliance)
 
 
-class SpecificationChildMixin:
-    """Adds a 'specification' attribute to an `ItemResult` class.
+class ChildSpecificationWithComplianceMixin(child_base_class):
+    """Adds a 'specification' attribute to an `ItemWithComplianceResult` class and populates it with child
+    specifications.
 
-    `ItemResults` are not explicitly defined, but are formed by adding the `ComplianceResultMixin` to an
-    `ItemDefinition`-based class.
-
-    See the `ComplianceResultMixin` notes for more background on Compliance query results.
+    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
 
     Parameters
     ----------
     child_specifications : list of `models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance`
         The specifications returned by the low-level API that are children of this item.
-    indicator_definitions : `Indicator_Definitions`
-        Used as a base to create the indicator results for the child materials and specifications.
     **kwargs
         Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects. Is empty for `BoM1711Definition`-based objects.
+        `RecordDefinition`-based objects.
 
     Attributes
     ----------
-    specifications : list of `SpecificationWithCompliance`
-        The specification result objects that are direct children of this part.
+    specifications : list of `SpecificationWithComplianceResult`
+        The specification result objects that are direct children of this item.
     """
 
-    def __init__(
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.specifications: List[SpecificationWithComplianceResult] = []
+
+    def add_child_specifications(
         self,
         child_specifications: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
-        indicator_definitions: Indicator_Definitions,
-        **kwargs,
     ):
-        super().__init__(indicator_definitions=indicator_definitions, **kwargs)
+        """Populate the `specifications` attribute based on a provided list of low-level API specifications with
+        compliance results.
 
-        self.specifications: List[SpecificationWithCompliance] = [
-            BomItemResultFactory.create_record_result(
-                name="specificationWithCompliance",
-                indicator_results=specification.indicators,
-                indicator_definitions=indicator_definitions,
-                child_materials=specification.materials,
-                child_specifications=specification.specifications,
-                child_coatings=specification.coatings,
-                child_substances=specification.substances,
-                reference_type=specification.reference_type,
-                reference_value=specification.reference_value,
+        Operates recursively, i.e. also adds any specifications, materials, coatings, and substances with compliance
+        that are children of each specification.
+
+        Parameters
+        ----------
+        child_specifications : list of `models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance`
+            A list of specifications with compliance returned from the low-level API
+        """
+
+        for child_specification in child_specifications:
+            child_specification_with_compliance = BomItemResultFactory.create_compliance_result(
+                result_type_name="specificationWithCompliance",
+                result_with_compliance=child_specification,
+                indicator_definitions=self._indicator_definitions,
             )
-            for specification in child_specifications
-        ]
+            child_specification_with_compliance.add_child_materials(child_specification.materials)
+            child_specification_with_compliance.add_child_specifications(child_specification.specifications)
+            child_specification_with_compliance.add_child_coatings(child_specification.coatings)
+            child_specification_with_compliance.add_child_substances(child_specification.substances)
+            self.specifications.append(child_specification_with_compliance)
 
 
-class PartChildMixin:
-    """Adds a 'part' attribute to an `ItemResult` class.
+class ChildPartWithComplianceMixin(child_base_class):
+    """Adds a 'part' attribute to an `ItemWithComplianceResult` class and populates it with child parts.
 
-    `ItemResults` are not explicitly defined, but are formed by adding the `ComplianceResultMixin` to an
-    `ItemDefinition`-based class.
-
-    See the `ComplianceResultMixin` notes for more background on Compliance query results.
+    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
 
     Parameters
     ----------
     child_parts : list of `models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance`
         The parts returned by the low-level API that are children of this item.
-    indicator_definitions : `Indicator_Definitions`
-        Used as a base to create the indicator results for the child parts.
     **kwargs
         Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects. Is empty for `BoM1711Definition`-based objects.
+        `RecordDefinition`-based objects.
 
     Attributes
     ----------
-    parts : list of `PartWithCompliance`
+    parts : list of `PartWithComplianceResult`
         The part result objects that are direct children of this part.
     """
 
-    def __init__(
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.parts: List[PartWithComplianceResult] = []
+
+    def add_child_parts(
         self,
         child_parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
-        indicator_definitions: Indicator_Definitions,
-        **kwargs,
     ):
-        super().__init__(indicator_definitions=indicator_definitions, **kwargs)
+        """Populate the `parts` attribute based on a provided list of low-level API parts with compliance
+        results.
 
-        self.parts: List[PartWithCompliance] = [
-            BomItemResultFactory.create_record_result(
-                name="partWithCompliance",
-                indicator_results=part.indicators,
-                indicator_definitions=indicator_definitions,
-                child_parts=part.parts,
-                child_materials=part.materials,
-                child_specifications=part.specifications,
-                child_substances=part.substances,
-                reference_type=part.reference_type,
-                reference_value=part.reference_value,
+        Operates recursively, i.e. also adds any parts, materials, coatings, and substances with compliance
+        that are children of each part.
+
+        Parameters
+        ----------
+        child_parts : list of `models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance`
+            A list of parts with compliance returned from the low-level API
+        """
+
+        for child_part in child_parts:
+            child_part_with_compliance = BomItemResultFactory.create_compliance_result(
+                result_type_name="partWithCompliance",
+                result_with_compliance=child_part,
+                indicator_definitions=self._indicator_definitions,
             )
-            for part in child_parts
-        ]
+            child_part_with_compliance.add_child_parts(child_part.parts)
+            child_part_with_compliance.add_child_specifications(child_part.specifications)
+            child_part_with_compliance.add_child_materials(child_part.materials)
+            child_part_with_compliance.add_child_substances(child_part.substances)
+            self.parts.append(child_part_with_compliance)
 
 
-class CoatingChildMixin:
-    """Adds a 'coating' attribute to an `ItemResult` class.
+class ChildCoatingWithComplianceMixin(child_base_class):
+    """Adds a 'coating' attribute to an `ItemWithComplianceResult` class and populates it with child coatings.
 
-    `ItemResults` are not explicitly defined, but are formed by adding the `ComplianceResultMixin` to an
-    `ItemDefinition`-based class.
-
-    See the `ComplianceResultMixin` notes for more background on Compliance query results.
+    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
 
     Parameters
     ----------
     child_coatings : list of `models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance`
          The coatings returned by the low-level API that are children of this item.
-    indicator_definitions : `Indicator_Definitions`
-         Used as a base to create the indicator results for the child coatings.
     **kwargs
         Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects. Is empty for `BoM1711Definition`-based objects.
+        `RecordDefinition`-based objects.
 
     Attributes
     ----------
-    coatings : list of `CoatingWithCompliance`
+    coatings : list of `CoatingWithComplianceResult`
          The coating result objects that are direct children of this specification.
     """
 
-    def __init__(
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.coatings: List[CoatingWithComplianceResult] = []
+
+    def add_child_coatings(
         self,
         child_coatings: List[models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance],
-        indicator_definitions: Indicator_Definitions,
-        **kwargs,
     ):
-        super().__init__(indicator_definitions=indicator_definitions, **kwargs)
+        """Populate the `coatings` attribute based on a provided list of low-level API coatings with compliance
+        results.
 
-        self.coatings: List[CoatingWithCompliance] = [
-            BomItemResultFactory.create_record_result(
-                name="coatingWithCompliance",
-                indicator_results=coating.indicators,
-                indicator_definitions=indicator_definitions,
-                child_substances=coating.substances,
-                reference_type=coating.reference_type,
-                reference_value=coating.reference_value,
+        Operates recursively, i.e. also adds any substances with compliance that are children of each coating.
+
+        Parameters
+        ----------
+        child_coatings : list of `models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance`
+            A list of coatings with compliance returned from the low-level API
+        """
+
+        for child_coating in child_coatings:
+            child_coating_with_compliance = BomItemResultFactory.create_compliance_result(
+                result_type_name="coatingWithCompliance",
+                result_with_compliance=child_coating,
+                indicator_definitions=self._indicator_definitions,
             )
-            for coating in child_coatings
-        ]
+            child_coating_with_compliance.add_child_substances(child_coating.substances)
+            self.coatings.append(child_coating_with_compliance)
 
 
 @BomItemResultFactory.register("substanceWithCompliance")
-class SubstanceWithCompliance(ComplianceResultMixin, BaseSubstanceReference):
+class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
     pass
 
 
 @BomItemResultFactory.register("materialWithCompliance")
-class MaterialWithCompliance(SubstanceChildMixin, ComplianceResultMixin, MaterialDefinition):
+class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialDefinition):
     pass
 
 
 @BomItemResultFactory.register("partWithCompliance")
-class PartWithCompliance(
-    PartChildMixin,
-    SpecificationChildMixin,
-    MaterialChildMixin,
-    SubstanceChildMixin,
+class PartWithComplianceResult(
+    ChildPartWithComplianceMixin,
+    ChildSpecificationWithComplianceMixin,
+    ChildMaterialWithComplianceMixin,
+    ChildSubstanceWithComplianceMixin,
     ComplianceResultMixin,
     PartDefinition,
 ):
@@ -580,11 +680,11 @@ class PartWithCompliance(
 
 
 @BomItemResultFactory.register("specificationWithCompliance")
-class SpecificationWithCompliance(
-    CoatingChildMixin,
-    SpecificationChildMixin,
-    MaterialChildMixin,
-    SubstanceChildMixin,
+class SpecificationWithComplianceResult(
+    ChildCoatingWithComplianceMixin,
+    ChildSpecificationWithComplianceMixin,
+    ChildMaterialWithComplianceMixin,
+    ChildSubstanceWithComplianceMixin,
     ComplianceResultMixin,
     SpecificationDefinition,
 ):
@@ -592,16 +692,16 @@ class SpecificationWithCompliance(
 
 
 @BomItemResultFactory.register("coatingWithCompliance")
-class CoatingWithCompliance(SubstanceChildMixin, ComplianceResultMixin, CoatingDefinition):
+class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingDefinition):
     pass
 
 
 @BomItemResultFactory.register("bom1711WithCompliance")
-class BoM1711WithCompliance(
-    PartChildMixin,
-    SpecificationChildMixin,
-    MaterialChildMixin,
-    SubstanceChildMixin,
+class BoM1711WithComplianceResult(
+    ChildPartWithComplianceMixin,
+    ChildSpecificationWithComplianceMixin,
+    ChildMaterialWithComplianceMixin,
+    ChildSubstanceWithComplianceMixin,
     ComplianceResultMixin,
     BoM1711Definition,
 ):

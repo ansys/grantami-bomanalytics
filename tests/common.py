@@ -39,11 +39,11 @@ from ansys.granta.bom_analytics._bom_item_definitions import (
     ReferenceType,
 )
 from ansys.granta.bom_analytics._bom_item_results import (
-    PartWithCompliance,
-    SpecificationWithCompliance,
-    MaterialWithCompliance,
-    SubstanceWithCompliance,
-    CoatingWithCompliance,
+    PartWithComplianceResult,
+    SpecificationWithComplianceResult,
+    MaterialWithComplianceResult,
+    SubstanceWithComplianceResult,
+    CoatingWithComplianceResult,
 )
 from .inputs import sample_bom, examples_as_strings
 

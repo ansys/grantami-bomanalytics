@@ -15,11 +15,11 @@ from ..common import (
     examples_as_strings,
     requests_mock,
     check_query_manager_attributes,
-    PartWithCompliance,
-    SpecificationWithCompliance,
-    MaterialWithCompliance,
-    SubstanceWithCompliance,
-    CoatingWithCompliance,
+    PartWithComplianceResult,
+    SpecificationWithComplianceResult,
+    MaterialWithComplianceResult,
+    SubstanceWithComplianceResult,
+    CoatingWithComplianceResult,
 )
 
 
@@ -71,7 +71,7 @@ def check_indicator(name: str, indicator: indicators._Indicator, impacted: bool 
     return False
 
 
-def check_part_attributes(part: PartWithCompliance):
+def check_part_attributes(part: PartWithComplianceResult):
     if part.parts is None or part.materials is None or part.substances is None or part.specifications is None:
         return False
     if hasattr(part, "coatings"):
@@ -79,7 +79,7 @@ def check_part_attributes(part: PartWithCompliance):
     return True
 
 
-def check_specification_attributes(specification: SpecificationWithCompliance):
+def check_specification_attributes(specification: SpecificationWithComplianceResult):
     if (
         specification.coatings is None
         or specification.materials is None
@@ -92,7 +92,7 @@ def check_specification_attributes(specification: SpecificationWithCompliance):
     return True
 
 
-def check_material_attributes(material: MaterialWithCompliance):
+def check_material_attributes(material: MaterialWithComplianceResult):
     if material.substances is None:
         return False
     if (
@@ -105,7 +105,7 @@ def check_material_attributes(material: MaterialWithCompliance):
     return True
 
 
-def check_coating_attributes(coating: CoatingWithCompliance):
+def check_coating_attributes(coating: CoatingWithComplianceResult):
     if coating.substances is None:
         return False
     if (
@@ -118,7 +118,7 @@ def check_coating_attributes(coating: CoatingWithCompliance):
     return True
 
 
-def check_substance_attributes(substance: SubstanceWithCompliance):
+def check_substance_attributes(substance: SubstanceWithComplianceResult):
     if (
         hasattr(substance, "parts")
         or hasattr(substance, "coatings")

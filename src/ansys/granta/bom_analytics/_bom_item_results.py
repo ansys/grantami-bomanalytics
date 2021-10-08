@@ -420,8 +420,8 @@ class ImpactedSubstance(BaseSubstanceDefinition):
     reference_value : int or str
         The value of the record reference. All are `str`, except for record history identities which are `int`.
     max_percentage_amount_in_material : float
-        The amount of this substance that occurs in the parent material. In the case where a range is specified in the
-        declaration, only the maximum is reported here.
+        The percentage amount of this substance that occurs in the parent material. In the case where a range is
+        specified in the declaration, only the maximum is reported here.
     legislation_threshold : float
         The substance concentration threshold over which the material is non-compliant with the legislation.
     """

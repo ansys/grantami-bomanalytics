@@ -247,8 +247,8 @@ class BaseSubstanceDefinition(RecordDefinition, ABC):
     Parameters
     ----------
     reference_type : ReferenceType
-        The type of the record reference value. This class extends the base constructor to also support cas numbers,
-        ec numbers, and chemical names.
+        The type of the record reference value. This class extends the base constructor to also support CAS numbers,
+        EC numbers, and chemical names.
     reference_value : int or str
         The value of the record reference. All are `str`, except for record history identities which are `int`.
 
@@ -285,8 +285,7 @@ class SubstanceDefinition(BaseSubstanceDefinition):
     Parameters
     ----------
     reference_type : ReferenceType
-        The type of the record reference value. This class extends the base constructor to also support cas numbers,
-        ec numbers, and chemical names.
+        The type of the record reference value.
     reference_value : int or str
         The value of the record reference. All are `str`, except for record history identities which are `int`.
     percentage_amount : float, optional
@@ -559,7 +558,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
     ]
 )
 class PartDefinitionFactory(BomItemDefinitionFactory):
-    """Creates parat definition objects."""
+    """Creates part definition objects."""
 
     @staticmethod
     def create_definition_by_record_history_identity(record_history_identity: int) -> PartDefinition:
@@ -768,7 +767,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_cas_number(cas_number: str) -> SubstanceDefinition:
-        """Instantiate and return a `SubstanceDefinition` object based on the provided cas number.
+        """Instantiate and return a `SubstanceDefinition` object based on the provided CAS number.
 
         Parameters
         ----------
@@ -783,7 +782,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_ec_number(ec_number: str) -> SubstanceDefinition:
-        """Instantiate and return a `SubstanceDefinition` object based on the provided ec number.
+        """Instantiate and return a `SubstanceDefinition` object based on the provided EC number.
 
         Parameters
         ----------

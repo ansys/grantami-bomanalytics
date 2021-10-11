@@ -1,3 +1,17 @@
+""" Connection to Granta MI Service layer.
+
+This module subclasses creates the connection object by subclassing the
+abstract `ApiClientFactory` in the `auth_common` package.
+
+The connection object itself is also subclassed to include global configuration
+options that span all queries, and the method to execute the query.
+
+Attributes
+----------
+DEFAULT_DBKEY : str
+    The default database key for Restricted Substances. Used if a database key isn't specified.
+"""
+
 from typing import overload, TYPE_CHECKING, Union, Dict
 import logging
 from ansys.granta import bomanalytics, auth_common
@@ -57,8 +71,7 @@ class BomServicesClient(auth_common.ApiClient):
         substances_table_name: Union[str, None] = None,
         coatings_table_name: Union[str, None] = None,
     ):
-        """
-        Configure the database key and table names if the defaults in Granta MI have been modified.
+        """Configure the database key and table names if the defaults in Granta MI have been modified.
 
         The database key is required if something other than MI_Restricted_Substances is being used. Table names are
         required if they have been modified from the defaults.
@@ -99,6 +112,13 @@ class BomServicesClient(auth_common.ApiClient):
     def _query_arguments(
         self,
     ) -> Dict[str, Union[str, bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]]:
+        """:obj:`dict`: A dictionary of ``**kwargs`` to be used to run a query.
+
+        The arguments returned here are limited to connection-level arguments, i.e. those that relate to the database
+        schema. Query-specific arguments (records, legislations, etc.) are added within the query object itself.
+
+        The table mapping config is only created if at least one table has a non-default name.
+        """
 
         if any(self._table_names.values()):
             config = bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(**self._table_names)
@@ -155,8 +175,7 @@ class BomServicesClient(auth_common.ApiClient):
         ...
 
     def run(self, query):
-        """
-        Run the query against the Granta MI database and return the results.
+        """Run the query against the Granta MI database and return the results.
 
         Parameters
         ----------
@@ -170,18 +189,27 @@ class BomServicesClient(auth_common.ApiClient):
         """
 
         logger.info(f"[TECHDOCS] Running query {query} with connection {self}")
-        api_instance = query.api(self)
-        return query.run_query(api_instance, self._query_arguments)
+        api_instance = query.api_class(self)
+        return query.run_query(api_instance=api_instance, static_arguments=self._query_arguments)
 
 
 class Connection(auth_common.ApiClientFactory):
-    """
-    Build a connection to an instance of Granta MI.
+    """ Build a connection to an instance of Granta MI.
 
     Parameters
     ----------
     servicelayer_url : str
         The url to the Granta MI service layer
+
+    Notes
+    -----
+    This a builder class, which means you must call the `.build()` method to return the actual
+    connection object.
+
+    Builder classes are generally instantiated, configured, and then built. The examples below
+    show this in action, first by instantiating the Connection builder (i.e. Connection()),
+    then configuring the builder object (.with_autologon()), and then using the builder
+    object to build the connection itself (.build()).
 
     Examples
     --------

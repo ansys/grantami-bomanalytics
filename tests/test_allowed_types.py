@@ -3,7 +3,7 @@ from .common import (
     Number,
     Any,
     allowed_types,
-    check_type,
+    _check_type,
 )
 
 
@@ -72,7 +72,7 @@ def test_different_types_type_error():
     ],
 )
 def test_check_type_success(obj, allowed_type):
-    check_type(obj, allowed_type)
+    _check_type(obj, allowed_type)
 
 
 @pytest.mark.parametrize(
@@ -90,4 +90,4 @@ def test_check_type_success(obj, allowed_type):
 )
 def test_check_type_failure(obj, allowed_type):
     with pytest.raises(AssertionError):
-        check_type(obj, allowed_type)
+        _check_type(obj, allowed_type)

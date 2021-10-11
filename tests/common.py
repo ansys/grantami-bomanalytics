@@ -29,7 +29,7 @@ from ansys.granta.bom_analytics import (
     indicators,
     Connection,
 )
-from ansys.granta.bom_analytics._allowed_types import allowed_types, check_type
+from ansys.granta.bom_analytics._allowed_types import allowed_types, _check_type
 from ansys.granta.bom_analytics.indicators import _Indicator
 from ansys.granta.bom_analytics._item_definitions import (
     BoM1711Definition,

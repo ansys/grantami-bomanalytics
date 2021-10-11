@@ -955,7 +955,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
-    def with_record_guids_with_amounts(self: T, record_guids_and_amounts: List[Tuple[str, float]]) -> T:
+    def with_record_guids_and_amounts(self: T, record_guids_and_amounts: List[Tuple[str, float]]) -> T:
         """Add a list of record guids and amounts to a substance query.
 
         Parameters
@@ -971,7 +971,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Examples
         --------
         >>> query = SubstanceCompliance() \
-        ...         .with_record_guids_with_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
+        ...         .with_record_guids_and_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
         ...                                          ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])...
         """
 

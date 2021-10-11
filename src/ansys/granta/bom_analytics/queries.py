@@ -6,7 +6,7 @@ import logging
 
 from ansys.granta.bomanalytics import models, api
 
-from ._bom_item_definitions import AbstractBomFactory, RecordDefinition
+from ._item_definitions import AbstractBomFactory, RecordDefinition
 from ._allowed_types import allowed_types
 from ._connection import Connection
 from ._query_results import (

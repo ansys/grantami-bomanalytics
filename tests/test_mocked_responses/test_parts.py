@@ -6,6 +6,10 @@ from .common import (
     check_substance,
     check_indicator,
     get_mocked_response,
+    check_part_attributes,
+    check_material_attributes,
+    check_substance_attributes,
+    check_specification_attributes,
 )
 
 
@@ -94,6 +98,10 @@ class TestCompliance:
         assert substance_0_0_0.record_history_identity == "62345"
         assert all(check_indicator(name, ind) for name, ind in substance_0_0_0.indicators.items())
 
+        substance_0_spec_0 = response.compliance_by_part_and_indicator[0].specifications[0].substances[0]
+        assert substance_0_spec_0.record_history_identity == "12345"
+        assert all(check_indicator(name, ind) for name, ind in substance_0_spec_0.indicators.items())
+
         substance_1_0_0 = response.compliance_by_part_and_indicator[1].materials[0].substances[0]
         assert substance_1_0_0.record_history_identity == "12345"
         assert all(check_indicator(name, ind) for name, ind in substance_1_0_0.indicators.items())
@@ -110,3 +118,27 @@ class TestCompliance:
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())
+
+    def test_compliance_result_objects_parts(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        parts = response.compliance_by_part_and_indicator + response.compliance_by_part_and_indicator[0].parts
+        assert all([check_part_attributes(part) for part in parts])
+
+    def test_compliance_result_objects_specifications(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        specifications = response.compliance_by_part_and_indicator[0].specifications
+        assert all([check_specification_attributes(spec) for spec in specifications])
+
+    def test_compliance_result_objects_materials(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        materials = response.compliance_by_part_and_indicator[1].materials
+        assert all([check_material_attributes(mat) for mat in materials])
+
+    def test_compliance_result_objects_substances(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        substances = (
+            response.compliance_by_part_and_indicator[0].parts[0].substances
+            + response.compliance_by_part_and_indicator[1].materials[0].substances
+            + response.compliance_by_part_and_indicator[1].materials[1].substances
+        )
+        assert all([check_substance_attributes(sub) for sub in substances])

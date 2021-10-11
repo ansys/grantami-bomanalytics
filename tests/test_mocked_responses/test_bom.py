@@ -6,6 +6,9 @@ from .common import (
     check_substance,
     check_indicator,
     get_mocked_response,
+    check_part_attributes,
+    check_material_attributes,
+    check_substance_attributes,
 )
 
 
@@ -78,3 +81,15 @@ class TestCompliance:
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind, False) for name, ind in response.compliance_by_indicator.items())
+
+    def test_compliance_result_objects_parts(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+
+        parts = response.compliance_by_part_and_indicator + response.compliance_by_part_and_indicator[0].parts
+        assert all([check_part_attributes(part) for part in parts])
+
+    def test_compliance_result_objects_substances(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+
+        subs = response.compliance_by_part_and_indicator[0].parts[0].substances
+        assert all([check_substance_attributes(sub) for sub in subs])

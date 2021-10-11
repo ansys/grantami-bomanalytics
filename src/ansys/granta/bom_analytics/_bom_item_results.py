@@ -7,12 +7,12 @@ queries. These are extensions of the classes in _bom_item_definitions.py.
 from typing import List, Dict, Union, Callable, TypeVar
 from copy import copy
 from ansys.granta.bomanalytics import models
-from ._bom_item_definitions import (
+from ._item_definitions import (
     MaterialDefinition,
     PartDefinition,
     SpecificationDefinition,
     BoM1711Definition,
-    BaseSubstanceDefinition,
+    BaseSubstanceReference,
     RecordDefinition,
     ReferenceType,
 )
@@ -366,7 +366,7 @@ class BoM1711WithCompliance(BomStructureResultMixin, ComplianceResultMixin, BoM1
 
 
 @BomItemResultFactory.register("substanceWithCompliance")
-class SubstanceWithCompliance(BaseSubstanceDefinition):
+class SubstanceWithCompliance(BaseSubstanceReference):
     """Extension of `BaseSubstanceDefinition` which includes compliance query results.
 
     Parameters
@@ -405,12 +405,8 @@ class SubstanceWithCompliance(BaseSubstanceDefinition):
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
-    @property
-    def definition(self):
-        return
 
-
-class ImpactedSubstance(BaseSubstanceDefinition):
+class ImpactedSubstance(BaseSubstanceReference):
     """Extension of `BaseSubstanceDefinition` which includes impacted substance results.
 
     Parameters
@@ -439,10 +435,6 @@ class ImpactedSubstance(BaseSubstanceDefinition):
         )
         self.max_percentage_amount_in_material = max_percentage_amount_in_material
         self.legislation_threshold = legislation_threshold
-
-    @property
-    def definition(self):
-        return
 
 
 class LegislationResult:

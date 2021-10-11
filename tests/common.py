@@ -5,6 +5,7 @@ from numbers import Number
 import random
 import os
 import requests_mock
+from dataclasses import dataclass
 from ansys.granta.bomanalytics import (
     models,
     GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
@@ -30,7 +31,7 @@ from ansys.granta.bom_analytics import (
 )
 from ansys.granta.bom_analytics._allowed_types import allowed_types, _check_type
 from ansys.granta.bom_analytics.indicators import _Indicator
-from ansys.granta.bom_analytics._bom_item_definitions import (
+from ansys.granta.bom_analytics._item_definitions import (
     BoM1711Definition,
     MaterialDefinition,
     SpecificationDefinition,
@@ -38,7 +39,13 @@ from ansys.granta.bom_analytics._bom_item_definitions import (
     SubstanceDefinition,
     ReferenceType,
 )
-
+from ansys.granta.bom_analytics._item_results import (
+    PartWithComplianceResult,
+    SpecificationWithComplianceResult,
+    MaterialWithComplianceResult,
+    SubstanceWithComplianceResult,
+    CoatingWithComplianceResult,
+)
 from .inputs import sample_bom, examples_as_strings
 
 LEGISLATIONS = ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]
@@ -60,11 +67,11 @@ INDICATORS = [two_legislation_indicator, one_legislation_indicator]
 
 
 def check_query_manager_attributes(query_manager, none_attributes, populated_attributes, populated_values):
-    assert len(query_manager._bom_item_definitions) == len(populated_values)
+    assert len(query_manager._record_argument_manager._items) == len(populated_values)
     for idx, value in enumerate(populated_values):
-        if query_manager._bom_item_definitions[idx].__getattribute__(populated_attributes) != value:
+        if query_manager._record_argument_manager._items[idx].__getattribute__(populated_attributes) != value:
             return False
         for none_attr in none_attributes:
-            if query_manager._bom_item_definitions[idx].__getattribute__(none_attr):
+            if query_manager._record_argument_manager._items[idx].__getattribute__(none_attr):
                 return False
     return True

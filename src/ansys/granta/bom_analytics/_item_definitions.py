@@ -29,11 +29,11 @@ class ReferenceType(Enum):
     EcNumber = auto()
 
 
-class RecordDefinition(ABC):
-    """Base class for all record-based item definitions.
+class RecordReference(ABC):
+    """Base class for all references to records in Granta MI.
 
-    Records are always instantiated with two parameters; the type of the reference, and the value of the reference.
-    This follows the way the low-level API is structured.
+    Record references are always instantiated with two parameters; the type of the reference, and the value of the
+    reference. This follows the way the REST API is structured.
 
     Parameters
     ----------
@@ -68,14 +68,20 @@ class RecordDefinition(ABC):
 
         self._model = None
 
-    def _create_definition(self) -> models.Model:
+
+class RecordDefinition(RecordReference):
+    """Adds the ability to generate a definition of the record reference that can be supplied to the low-level API
+    to run a query. As a result, is only implemented for record references that can server as inputs to a query.
+    """
+
+    def _create_definition(self):
         """Instantiate the specific low-level API model class for this record.
 
         Returns
         -------
         models.Model, optional
             If one of the reference attributes defined in this class is populated, then an instantiated model is
-            returned. Otheriwse, `None` is returned.
+            returned. Otherwise `None` is returned.
         """
 
         if self.record_guid:
@@ -138,10 +144,10 @@ class PartDefinition(RecordDefinition):
         models.GrantaBomAnalyticsServicesInterfaceCommonPartReference
         """
 
-        definition = super()._create_definition() or self._model(
+        result = super()._create_definition() or self._model(
             reference_type=ReferenceType.PartNumber.name, reference_value=self.part_number
         )
-        return definition
+        return result
 
 
 class MaterialDefinition(RecordDefinition):
@@ -184,10 +190,10 @@ class MaterialDefinition(RecordDefinition):
         models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
         """
 
-        definition = super()._create_definition() or self._model(
+        result = super()._create_definition() or self._model(
             reference_type=ReferenceType.MaterialId.name, reference_value=self.material_id
         )
-        return definition
+        return result
 
 
 class SpecificationDefinition(RecordDefinition):
@@ -231,16 +237,16 @@ class SpecificationDefinition(RecordDefinition):
         models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
         """
 
-        definition = super()._create_definition() or self._model(
+        result = super()._create_definition() or self._model(
             reference_type=ReferenceType.SpecificationId.name, reference_value=self.specification_id
         )
-        return definition
+        return result
 
 
-class BaseSubstanceDefinition(RecordDefinition, ABC):
-    """Abstract `RecordDefinition` subclass which represents a generic substance record.
+class BaseSubstanceReference(RecordReference, ABC):
+    """Abstract `RecordReference` subclass which represents a reference to a substance record.
 
-    Substance references come in multiple flavors, inputs, compliance results and impacted substance results quantify
+    Substance references come in multiple flavors; inputs, compliance results and impacted substance results quantify
     substances in slightly different ways. This class implements the reference aspects of the substance record only;
     the quantification are implemented in the sub-classes.
 
@@ -279,7 +285,7 @@ class BaseSubstanceDefinition(RecordDefinition, ABC):
             self.ec_number = reference_value
 
 
-class SubstanceDefinition(BaseSubstanceDefinition):
+class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
     """Concrete substance subclass which represents the definition of a substance as supplied to a compliance query.
 
     Parameters
@@ -366,6 +372,18 @@ class SubstanceDefinition(BaseSubstanceDefinition):
                 definition = self._model(reference_type=ReferenceType.EcNumber.name, reference_value=self.ec_number)
         definition.percentage_amount = self.percentage_amount
         return definition
+
+
+class CoatingDefinition(RecordReference, ABC):
+    def __init__(
+        self,
+        reference_type: ReferenceType,
+        reference_value: Union[int, str],
+    ):
+        super().__init__(
+            reference_type=reference_type,
+            reference_value=reference_value,
+        )
 
 
 class BoM1711Definition:

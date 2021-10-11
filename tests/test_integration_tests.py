@@ -24,7 +24,7 @@ class TestMaterialQueries:
 
 
 class TestPartQueries:
-    ids = ["DRILL", "main_frame"]
+    ids = ["DRILL", "asm_flap_mating"]
 
     def test_impacted_substances(self, connection):
         query = queries.PartImpactedSubstances().with_part_numbers(self.ids).with_legislations(LEGISLATIONS)

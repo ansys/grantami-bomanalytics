@@ -8,8 +8,7 @@ from ..common import (
 def test_add_bom(query_type):
     query = query_type().with_bom("TEST BOM")
     assert isinstance(query, query_type)
-    assert len(query._items) == 1
-    assert query._items[0]._bom == "TEST BOM"
+    assert query._bom_definition.bom == "TEST BOM"
 
 
 @pytest.mark.parametrize("query_type", [queries.BomCompliance, queries.BomImpactedSubstances])

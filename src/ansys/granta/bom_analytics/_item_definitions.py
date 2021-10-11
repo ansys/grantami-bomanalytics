@@ -17,7 +17,7 @@ class ReferenceType(Enum):
     EcNumber = auto()
 
 
-class RecordDefinition(ABC):
+class RecordReference(ABC):
     def __init__(
         self,
         reference_type: ReferenceType,
@@ -35,6 +35,8 @@ class RecordDefinition(ABC):
             self.record_history_guid = reference_value
         self._model = None
 
+
+class RecordDefinition(RecordReference):
     def _create_definition(self):
         if self.record_guid:
             return self._model(reference_type=ReferenceType.MiRecordGuid.name, reference_value=self.record_guid)
@@ -124,7 +126,7 @@ class SpecificationDefinition(RecordDefinition):
         return definition
 
 
-class BaseSubstanceDefinition(RecordDefinition, ABC):
+class BaseSubstanceReference(RecordReference, ABC):
     def __init__(
         self,
         reference_type: ReferenceType,
@@ -144,12 +146,8 @@ class BaseSubstanceDefinition(RecordDefinition, ABC):
         elif reference_type == ReferenceType.EcNumber:
             self.ec_number = reference_value
 
-    @property
-    def definition(self) -> models.Model:
-        return models.Model()
 
-
-class SubstanceDefinition(BaseSubstanceDefinition):
+class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
     _default_percentage_amount = 100  # Default to worst case scenario
 
     def __init__(
@@ -196,6 +194,18 @@ class SubstanceDefinition(BaseSubstanceDefinition):
                 definition = self._model(reference_type=ReferenceType.EcNumber.name, reference_value=self.ec_number)
         definition.percentage_amount = self.percentage_amount
         return definition
+
+
+class CoatingDefinition(RecordReference, ABC):
+    def __init__(
+        self,
+        reference_type: ReferenceType,
+        reference_value: Union[int, str],
+    ):
+        super().__init__(
+            reference_type=reference_type,
+            reference_value=reference_value,
+        )
 
 
 class BoM1711Definition:

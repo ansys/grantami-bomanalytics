@@ -5,7 +5,7 @@ from numbers import Number
 
 from ansys.granta.bomanalytics import models, api
 
-from ._bom_item_definitions import AbstractBomFactory
+from ._item_definitions import AbstractBomFactory
 from ._allowed_types import allowed_types
 from ._connection import Connection
 from ._query_results import (

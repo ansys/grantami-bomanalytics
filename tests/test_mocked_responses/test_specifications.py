@@ -6,6 +6,10 @@ from .common import (
     check_substance,
     check_indicator,
     get_mocked_response,
+    check_specification_attributes,
+    check_material_attributes,
+    check_coating_attributes,
+    check_substance_attributes,
 )
 
 
@@ -78,8 +82,19 @@ class TestCompliance:
         assert not spec_1.record_history_identity
         assert all(check_indicator(name, ind) for name, ind in spec_1.indicators.items())
 
+    def test_compliance_by_specification_and_indicator_coatings(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+
+        coating_0_0 = response.compliance_by_specification_and_indicator[0].coatings[0]
+        assert coating_0_0.record_history_identity == "987654"
+        assert all(check_indicator(name, ind) for name, ind in coating_0_0.indicators.items())
+
     def test_compliance_by_specification_and_indicator_substances(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
+
+        substance_0_0 = response.compliance_by_specification_and_indicator[0].coatings[0].substances[0]
+        assert substance_0_0.record_history_identity == "62345"
+        assert all(check_indicator(name, ind) for name, ind in substance_0_0.indicators.items())
 
         substance_1_0 = response.compliance_by_specification_and_indicator[1].substances[0]
         assert substance_1_0.record_history_identity == "12345"
@@ -93,3 +108,32 @@ class TestCompliance:
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
         assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())
+
+    def test_compliance_result_objects_specifications(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        specs = (
+            response.compliance_by_specification_and_indicator
+            + response.compliance_by_specification_and_indicator[0].specifications
+        )
+        assert all([check_specification_attributes(spec) for spec in specs])
+
+    def test_compliance_result_objects_materials(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        mats = response.compliance_by_specification_and_indicator[1].materials
+        assert all([check_material_attributes(mat) for mat in mats])
+
+    def test_compliance_result_objects_coatings(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        coatings = response.compliance_by_specification_and_indicator[0].coatings
+        assert all([check_coating_attributes(coating) for coating in coatings])
+
+    def test_compliance_result_objects_substances(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        subs = (
+            response.compliance_by_specification_and_indicator[0].coatings[0].substances
+            + response.compliance_by_specification_and_indicator[0].specifications[0].substances
+            + response.compliance_by_specification_and_indicator[1].materials[0].substances
+            + response.compliance_by_specification_and_indicator[1].materials[1].substances
+            + response.compliance_by_specification_and_indicator[1].substances
+        )
+        assert all([check_substance_attributes(sub) for sub in subs])

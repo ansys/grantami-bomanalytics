@@ -4,19 +4,19 @@ from abc import ABC
 
 from ansys.granta.bomanalytics import models
 
-from ._bom_item_results import BomItemResultFactory
+from ._item_results import ItemResultFactory
 
 # Required for type hinting
-from ._bom_item_results import (
-    MaterialWithImpactedSubstances,
-    MaterialWithCompliance,
-    PartWithImpactedSubstances,
-    PartWithCompliance,
-    SpecificationWithImpactedSubstances,
-    SpecificationWithCompliance,
-    SubstanceWithCompliance,
+from ._item_results import (
+    MaterialWithImpactedSubstancesResult,
+    MaterialWithComplianceResult,
+    PartWithImpactedSubstancesResult,
+    PartWithComplianceResult,
+    SpecificationWithImpactedSubstancesResult,
+    SpecificationWithComplianceResult,
+    SubstanceWithComplianceResult,
     ImpactedSubstance,
-    BoM1711WithImpactedSubstances,
+    BoM1711WithImpactedSubstancesResult,
 )
 from .indicators import Indicator_Definitions
 
@@ -95,20 +95,18 @@ class MaterialImpactedSubstancesResult(ImpactedSubstancesBaseClass):
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial  # noqa: E501
         ],
     ):
-        self._results = [
-            BomItemResultFactory.create_record_result(
-                name="materialWithImpactedSubstances",
-                legislations=result.legislations,
-                reference_type=result.reference_type,
-                reference_value=result.reference_value,
+        self._results = []
+        for result in results:
+            material_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
+                result_type_name="materialWithImpactedSubstances",
+                result_with_impacted_substances=result,
             )
-            for result in results
-        ]
+            self._results.append(material_with_impacted_substances)
 
     @property
     def impacted_substances_by_material_and_legislation(
         self,
-    ) -> List[MaterialWithImpactedSubstances]:
+    ) -> List[MaterialWithImpactedSubstancesResult]:
         return self._results
 
 
@@ -119,22 +117,20 @@ class MaterialComplianceResult(ComplianceBaseClass):
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
         indicator_definitions: Indicator_Definitions,
     ):
-        self._results = [
-            BomItemResultFactory.create_record_result(
-                name="materialWithCompliance",
-                indicator_results=result.indicators,
+        self._results = []
+        for result in results:
+            material_with_compliance = ItemResultFactory.create_compliance_result(
+                result_type_name="materialWithCompliance",
+                result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
-                substances_with_compliance=result.substances,
-                reference_type=result.reference_type,
-                reference_value=result.reference_value,
             )
-            for result in results
-        ]
+            material_with_compliance._add_child_substances(result.substances)
+            self._results.append(material_with_compliance)
 
     @property
     def compliance_by_material_and_indicator(
         self,
-    ) -> List[MaterialWithCompliance]:
+    ) -> List[MaterialWithComplianceResult]:
         return self._results
 
 
@@ -144,20 +140,18 @@ class PartImpactedSubstancesResult(ImpactedSubstancesBaseClass):
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart],
     ):
-        self._results = [
-            BomItemResultFactory.create_record_result(
-                name="partWithImpactedSubstances",
-                legislations=result.legislations,
-                reference_type=result.reference_type,
-                reference_value=result.reference_value,
+        self._results = []
+        for result in results:
+            part_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
+                result_type_name="partWithImpactedSubstances",
+                result_with_impacted_substances=result,
             )
-            for result in results
-        ]
+            self._results.append(part_with_impacted_substances)
 
     @property
     def impacted_substances_by_part_and_legislation(
         self,
-    ) -> List[PartWithImpactedSubstances]:
+    ) -> List[PartWithImpactedSubstancesResult]:
         return self._results
 
 
@@ -168,25 +162,23 @@ class PartComplianceResult(ComplianceBaseClass):
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
         indicator_definitions: Indicator_Definitions,
     ):
-        self._results = [
-            BomItemResultFactory.create_record_result(
-                name="partWithCompliance",
-                indicator_results=result.indicators,
+        self._results = []
+        for result in results:
+            part_with_compliance = ItemResultFactory.create_compliance_result(
+                result_type_name="partWithCompliance",
+                result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
-                substances_with_compliance=result.substances,
-                child_parts=result.parts,
-                child_materials=result.materials,
-                child_specifications=result.specifications,
-                reference_type=result.reference_type,
-                reference_value=result.reference_value,
             )
-            for result in results
-        ]
+            part_with_compliance._add_child_parts(result.parts)
+            part_with_compliance._add_child_materials(result.materials)
+            part_with_compliance._add_child_specifications(result.specifications)
+            part_with_compliance._add_child_substances(result.substances)
+            self._results.append(part_with_compliance)
 
     @property
     def compliance_by_part_and_indicator(
         self,
-    ) -> List[PartWithCompliance]:
+    ) -> List[PartWithComplianceResult]:
         return self._results
 
 
@@ -200,20 +192,18 @@ class SpecificationImpactedSubstancesResult(ImpactedSubstancesBaseClass):
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification  # noqa: E501
         ],
     ):
-        self._results = [
-            BomItemResultFactory.create_record_result(
-                name="specificationWithImpactedSubstances",
-                legislations=result.legislations,
-                reference_type=result.reference_type,
-                reference_value=result.reference_value,
+        self._results = []
+        for result in results:
+            specification_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
+                result_type_name="specificationWithImpactedSubstances",
+                result_with_impacted_substances=result,
             )
-            for result in results
-        ]
+            self._results.append(specification_with_impacted_substances)
 
     @property
     def impacted_substances_by_specification_and_legislation(
         self,
-    ) -> List[SpecificationWithImpactedSubstances]:
+    ) -> List[SpecificationWithImpactedSubstancesResult]:
         return self._results
 
 
@@ -224,22 +214,23 @@ class SpecificationComplianceResult(ComplianceBaseClass):
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
         indicator_definitions: Indicator_Definitions,
     ):
-        self._results = [
-            BomItemResultFactory.create_record_result(
-                name="specificationWithCompliance",
-                indicator_results=result.indicators,
+        self._results = []
+        for result in results:
+            specification_with_compliance = ItemResultFactory.create_compliance_result(
+                result_type_name="specificationWithCompliance",
+                result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
-                substances_with_compliance=result.substances,
-                reference_type=result.reference_type,
-                reference_value=result.reference_value,
             )
-            for result in results
-        ]
+            specification_with_compliance._add_child_materials(result.materials)
+            specification_with_compliance._add_child_specifications(result.specifications)
+            specification_with_compliance._add_child_coatings(result.coatings)
+            specification_with_compliance._add_child_substances(result.substances)
+            self._results.append(specification_with_compliance)
 
     @property
     def compliance_by_specification_and_indicator(
         self,
-    ) -> List[SpecificationWithCompliance]:
+    ) -> List[SpecificationWithComplianceResult]:
         return self._results
 
 
@@ -250,28 +241,26 @@ class SubstanceComplianceResult(ComplianceBaseClass):
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
         indicator_definitions: Indicator_Definitions,
     ):
-        self._results = [
-            BomItemResultFactory.create_record_result(
-                name="substanceWithCompliance",
-                indicator_results=result.indicators,
+        self._results = []
+        for result in results:
+            substance_with_compliance = ItemResultFactory.create_compliance_result(
+                result_type_name="substanceWithCompliance",
+                result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
-                reference_type=result.reference_type,
-                reference_value=result.reference_value,
             )
-            for result in results
-        ]
+            self._results.append(substance_with_compliance)
 
     @property
     def compliance_by_substance_and_indicator(
         self,
-    ) -> List[SubstanceWithCompliance]:
+    ) -> List[SubstanceWithComplianceResult]:
         return self._results
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response)
 class BomImpactedSubstancesResult(ImpactedSubstancesBaseClass):
     def __init__(self, results):
-        self._results = [BoM1711WithImpactedSubstances(legislations=results.legislations)]
+        self._results = [BoM1711WithImpactedSubstancesResult(legislations=results.legislations)]
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response)
@@ -282,20 +271,20 @@ class BomComplianceResult(ComplianceBaseClass):
         indicator_definitions: Indicator_Definitions,
     ):
         part = results.parts[0]
-        obj = PartWithCompliance(
+        part_with_compliance = PartWithComplianceResult(
             indicator_results=part.indicators,
             indicator_definitions=indicator_definitions,
-            substances_with_compliance=part.substances,
-            child_parts=part.parts,
-            child_materials=part.materials,
-            child_specifications=part.specifications,
             reference_type=part.reference_type,
             reference_value=part.reference_value,
         )
-        self._results = [obj]
+        part_with_compliance._add_child_parts(part.parts)
+        part_with_compliance._add_child_materials(part.materials)
+        part_with_compliance._add_child_specifications(part.specifications)
+        part_with_compliance._add_child_substances(part.substances)
+        self._results = [part_with_compliance]
 
     @property
     def compliance_by_part_and_indicator(
         self,
-    ) -> List[PartWithCompliance]:
+    ) -> List[PartWithComplianceResult]:
         return self._results

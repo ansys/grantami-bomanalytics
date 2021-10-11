@@ -82,15 +82,6 @@ class TestAddPropertiesToRecordQueries:
             f" empty." in w[0].message.args[0]
         )
 
-    @pytest.mark.parametrize("test_values", TEST_GUIDS[1:])
-    def test_unitialized_arg_manager_raises_runtime_error(self, query_type, test_values):
-        query = query_type().with_record_history_guids(test_values)
-        query._record_argument_manager.record_type_name = None  # This is set automatically, so manually set to None
-        arg_generator = query._record_argument_manager.batched_bom_arguments
-        with pytest.raises(RuntimeError) as e:
-            next(arg_generator)
-        assert '"record_type_name" must be populated before item definitions can be added.' in str(e.value)
-
     def test_stk_object(self, query_type):
         query = query_type().with_stk_records(STK_OBJECT)
         assert isinstance(query, query_type)
@@ -149,15 +140,6 @@ class TestAddLegislations:
 
 @pytest.mark.parametrize("query_type", ALL_QUERY_TYPES)
 class TestBatchSize:
-    @pytest.mark.parametrize("batch_size", [5, 5000])
-    def test_correct_types_and_values(
-        self,
-        query_type,
-        batch_size,
-    ):
-        query = query_type().with_batch_size(batch_size)
-        assert query._record_argument_manager.batch_size == batch_size
-
     @pytest.mark.parametrize("batch_size", [0, -25])
     def test_incorrect_values(self, query_type, batch_size):
         query = query_type()

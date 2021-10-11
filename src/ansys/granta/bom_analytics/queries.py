@@ -50,14 +50,22 @@ class _RecordArgumentManager:
     {"materials": [{"reference_type": "material_id", "reference_value": "ABS"}, ...]  # Up to 100 items
     """
 
-    def __init__(self, record_type_name: Union[str, None] = None, batch_size: int = 100):
+    def __init__(self, record_type_name: Union[str, None] = None, batch_size: Union[int, None] = None):
         super().__init__()
         self._items = []
-        self.batch_size: int = batch_size
+        self.batch_size: Union[int, None] = batch_size
         self.record_type_name: Union[str, None] = record_type_name
 
     def __repr__(self):
-        return f"{len(self._items)} {self.record_type_name}, batch size: {self.batch_size}"
+        if not self.record_type_name:
+            item_text = "record_type_name: None"
+        else:
+            item_text = f'record_type_name: "{self.record_type_name}"'
+        if not self.batch_size:
+            batch_text = "batch_size: None"
+        else:
+            batch_text = f"batch_size: {self.batch_size}"
+        return f"<{self.__class__.__name__} {{{item_text}, {batch_text}}}, length = {len(self._items)}>"
 
     def append_record_definition(self, item: RecordDefinition):
         """Append a specific record definition to the argument manager.
@@ -81,8 +89,8 @@ class _RecordArgumentManager:
         return self._items is None
 
     @property
-    def batched_bom_arguments(self) -> Generator[Dict[str, List[Union[models.Model, str]]], None, None]:
-        """ A generator producing item request arguments as a list of instances of the appropriate Model. Each list
+    def batched_record_arguments(self) -> Generator[Dict[str, List[Union[models.Model, str]]], None, None]:
+        """A generator producing item request arguments as a list of instances of the appropriate Model. Each list
         of dicts will be at most `_batch_size` long.
 
         Each individual dict can be passed to the request constructor as a kwarg.
@@ -98,7 +106,9 @@ class _RecordArgumentManager:
         """
 
         if self.record_type_name is None:
-            raise RuntimeError('"record_type_name" must be populated before item definitions can be added.')
+            raise RuntimeError('"record_type_name" must be populated before record arguments can be generated.')
+        if self.batch_size is None:
+            raise RuntimeError('"batch_size" must be populated before record arguments can be generated.')
 
         for batch_number, i in enumerate(range(0, len(self._items), self.batch_size)):
             batch = [i.definition for i in self._items][i : i + self.batch_size]  # noqa: E203 E501
@@ -111,7 +121,7 @@ class _RecordArgumentManager:
 
 
 class _BaseQueryBuilder(Generic[T], ABC):
-    """ Base class for all query types. The properties and methods here primarily represent the things on which the API is
+    """Base class for all query types. The properties and methods here primarily represent the things on which the API is
     acting, i.e. records or bills of materials (BoMs).
 
     Attributes
@@ -302,7 +312,7 @@ class _ApiMixin(api_base_class):
         self._validate_parameters()
         self._validate_items()
         result = []
-        for idx, batch in enumerate(self._record_argument_manager.batched_bom_arguments):
+        for idx, batch in enumerate(self._record_argument_manager.batched_record_arguments):
             args = {**arguments, **batch}
             request = self._request_type(**args)
             response = api_method(body=request)
@@ -1058,7 +1068,7 @@ class SubstanceCompliance(_ComplianceMixin, _SubstanceQueryBuilder):
         self.api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_substances"
 
 
-class _BomDefinition:
+class _BomArgumentManager:
     """
     Store a Bom in 1711 XML format for use in queries.
 
@@ -1069,11 +1079,11 @@ class _BomDefinition:
     {"bom_xml1711": "<PartsEco xmlns..."}
     """
 
-    def __init__(self):
-        self.bom = ""
+    def __init__(self, bom: str = ""):
+        self.bom = bom
 
     def __repr__(self):
-        return f"Bom, {self.bom}[:100]"
+        return f'_BomArgumentManager {{bom: "{self.bom[:100]}"}}'
 
     @property
     def bom_argument(self) -> Dict[str, str]:
@@ -1094,7 +1104,7 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
 
     def __init__(self):
         super().__init__()
-        self._bom_definition = _BomDefinition()
+        self._bom_definition = _BomArgumentManager()
 
     @allowed_types(_BaseQueryBuilder, str)
     def with_bom(self: T, bom: str) -> T:

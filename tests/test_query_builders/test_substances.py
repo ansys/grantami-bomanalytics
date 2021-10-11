@@ -219,7 +219,9 @@ def test_record_history_ids_with_amounts(values):
         "record_history_identity",
         [v for (v, _) in values],
     )
-    assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)])
+    assert all(
+        [i._percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+    )
     assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)])
 
 

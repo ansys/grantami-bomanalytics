@@ -5,6 +5,7 @@ from numbers import Number
 import random
 import os
 import requests_mock
+from dataclasses import dataclass
 from ansys.granta.bomanalytics import (
     models,
     GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,

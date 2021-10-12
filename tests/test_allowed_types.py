@@ -67,8 +67,8 @@ def test_different_types_type_error():
         ({"a": 5.5, "b": 10.0}, {}),
         ({"a": 5.5, "b": 10.0}, {str: float}),
         ({"a": [1, 2], "b": [3, 4]}, {str: [int]}),
-        ({"a": [1, 2], "b": [3, 4]}, Any),
-        ({"a": [1, 2], "b": [3, 4]}, {str: [Any]}),
+        ({"a": [1, 2], "b": [3, 4]}, object),
+        ({"a": [1, 2], "b": [3, 4]}, {str: [object]}),
     ],
 )
 def test_check_type_success(obj, allowed_type):

@@ -9,22 +9,154 @@ Indicators
 .. autoclass:: ansys.granta.bom_analytics.indicators.RoHSIndicator
    :members:
 
-   .. automethod:: __init__
    .. autoattribute:: available_flags
+      :noindex:
 
 .. autoenum:: ansys.granta.bom_analytics.indicators.RoHSFlag
 
 .. autoclass:: ansys.granta.bom_analytics.indicators.WatchListIndicator
    :members:
 
-   .. automethod:: __init__
    .. autoattribute:: available_flags
+      :noindex:
 
 .. autoenum:: ansys.granta.bom_analytics.indicators.WatchListFlag
 
 
-Compliance queries
-~~~~~~~~~~~~~~~~~~
+Material Compliance Query
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Query definition
+----------------
+
+.. autoclass:: ansys.granta.bom_analytics.queries.MaterialCompliance
+   :members:
+
+   .. automethod:: with_record_guids
+   .. automethod:: with_record_history_guids
+   .. automethod:: with_record_history_ids
+   .. automethod:: with_stk_records
+   .. automethod:: with_material_ids
+   .. automethod:: with_batch_size
+   .. automethod:: with_indicators
+
+Query result
+------------
+
+.. autoclass:: ansys.granta.bom_analytics._query_results.MaterialComplianceResult
+   :members:
+
+   .. autoproperty:: compliance_by_indicator
+
+Material result
+---------------
+
+.. py:currentmodule::ansys.granta.bom_analytics._item_results
+.. autoclass:: ansys.granta.bom_analytics._item_results.MaterialWithComplianceResult
+   :members:
+
+   .. autoattribute:: indicators
+   .. autoattribute:: substances
+
+
+Part Compliance Query
+~~~~~~~~~~~~~~~~~~~~~
+
+Query definition
+----------------
+
+.. autoclass:: ansys.granta.bom_analytics.queries.PartCompliance
+   :members:
+
+   .. automethod:: with_record_guids
+   .. automethod:: with_record_history_guids
+   .. automethod:: with_record_history_ids
+   .. automethod:: with_stk_records
+   .. automethod:: with_part_numbers
+   .. automethod:: with_batch_size
+   .. automethod:: with_indicators
+
+
+Query result
+------------
+
+.. autoclass:: ansys.granta.bom_analytics._query_results.PartComplianceResult
+   :members:
+
+   .. autoproperty:: compliance_by_indicator
+
+
+Part result
+-----------
+
+.. py:currentmodule::ansys.granta.bom_analytics._item_results
+.. autoclass:: ansys.granta.bom_analytics._item_results.PartWithComplianceResult
+   :members:
+
+   .. autoattribute:: indicators
+   .. autoattribute:: parts
+   .. autoattribute:: materials
+   .. autoattribute:: specifications
+   .. autoattribute:: substances
+
+
+Specification Compliance Query
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Query definition
+----------------
+
+.. autoclass:: ansys.granta.bom_analytics.queries.SpecificationCompliance
+   :members:
+
+   .. automethod:: with_record_guids
+   .. automethod:: with_record_history_guids
+   .. automethod:: with_record_history_ids
+   .. automethod:: with_stk_records
+   .. automethod:: with_specification_ids
+   .. automethod:: with_batch_size
+   .. automethod:: with_indicators
+
+
+Query result
+------------
+
+.. autoclass:: ansys.granta.bom_analytics._query_results.SpecificationComplianceResult
+   :members:
+
+   .. autoproperty:: compliance_by_indicator
+
+
+Specification result
+--------------------
+
+.. py:currentmodule::ansys.granta.bom_analytics._item_results
+.. autoclass:: ansys.granta.bom_analytics._item_results.SpecificationWithComplianceResult
+   :members:
+
+   .. autoattribute:: indicators
+   .. autoattribute:: specifications
+   .. autoattribute:: materials
+   .. autoattribute:: coatings
+   .. autoattribute:: substances
+
+Coating result
+--------------
+
+.. py:currentmodule::ansys.granta.bom_analytics._item_results
+.. autoclass:: ansys.granta.bom_analytics._item_results.CoatingWithComplianceResult
+   :members:
+
+   .. autoattribute:: indicators
+   .. autoattribute:: substances
+
+
+Substance Compliance Query
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Query definition
+----------------
+
 .. py:currentmodule::ansys.granta.bom_analytics.queries
 .. autoclass:: ansys.granta.bom_analytics.queries.SubstanceCompliance
    :members:
@@ -32,6 +164,7 @@ Compliance queries
    .. automethod:: with_record_guids
    .. automethod:: with_record_history_guids
    .. automethod:: with_record_history_ids
+   .. automethod:: with_stk_records
    .. automethod:: with_cas_numbers
    .. automethod:: with_ec_numbers
    .. automethod:: with_chemical_names
@@ -44,35 +177,30 @@ Compliance queries
    .. automethod:: with_batch_size
    .. automethod:: with_indicators
 
-.. autoclass:: ansys.granta.bom_analytics.queries.MaterialCompliance
+Query result
+------------
+
+.. py:currentmodule::ansys.granta.bom_analytics._query_results
+.. autoclass:: ansys.granta.bom_analytics._query_results.SubstanceComplianceResult
    :members:
 
-   .. automethod:: with_record_guids
-   .. automethod:: with_record_history_guids
-   .. automethod:: with_record_history_ids
-   .. automethod:: with_material_ids
-   .. automethod:: with_batch_size
-   .. automethod:: with_indicators
+   .. autoproperty:: compliance_by_indicator
 
-.. autoclass:: ansys.granta.bom_analytics.queries.PartCompliance
+Substance result
+----------------
+
+.. py:currentmodule::ansys.granta.bom_analytics._item_results
+.. autoclass:: ansys.granta.bom_analytics._item_results.SubstanceWithComplianceResult
    :members:
 
-   .. automethod:: with_record_guids
-   .. automethod:: with_record_history_guids
-   .. automethod:: with_record_history_ids
-   .. automethod:: with_part_numbers
-   .. automethod:: with_batch_size
-   .. automethod:: with_indicators
+   .. autoattribute:: indicators
 
-.. autoclass:: ansys.granta.bom_analytics.queries.SpecificationCompliance
-   :members:
 
-   .. automethod:: with_record_guids
-   .. automethod:: with_record_history_guids
-   .. automethod:: with_record_history_ids
-   .. automethod:: with_specification_ids
-   .. automethod:: with_batch_size
-   .. automethod:: with_indicators
+Bom Compliance Query
+~~~~~~~~~~~~~~~~~~~~
+
+Query definition
+----------------
 
 .. autoclass:: ansys.granta.bom_analytics.queries.BomCompliance
    :members:
@@ -80,36 +208,10 @@ Compliance queries
    .. automethod:: with_bom
    .. automethod:: with_indicators
 
-
-Compliance results
-~~~~~~~~~~~~~~~~~~
-.. py:currentmodule::ansys.granta.bom_analytics._query_results
-.. autoclass:: ansys.granta.bom_analytics._query_results.SubstanceComplianceResult
-   :members:
-
-   .. autoproperty:: compliance_by_substance_and_indicator
-   .. autoproperty:: compliance_by_indicator
-
-.. autoclass:: ansys.granta.bom_analytics._query_results.MaterialComplianceResult
-   :members:
-
-   .. autoproperty:: compliance_by_material_and_indicator
-   .. autoproperty:: compliance_by_indicator
-
-.. autoclass:: ansys.granta.bom_analytics._query_results.SpecificationComplianceResult
-   :members:
-
-   .. autoproperty:: compliance_by_specification_and_indicator
-   .. autoproperty:: compliance_by_indicator
-
-.. autoclass:: ansys.granta.bom_analytics._query_results.PartComplianceResult
-   :members:
-
-   .. autoproperty:: compliance_by_part_and_indicator
-   .. autoproperty:: compliance_by_indicator
+Query result
+------------
 
 .. autoclass:: ansys.granta.bom_analytics._query_results.BomComplianceResult
    :members:
 
-   .. autoproperty:: compliance_by_part_and_indicator
    .. autoproperty:: compliance_by_indicator

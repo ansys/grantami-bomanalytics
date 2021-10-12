@@ -17,7 +17,5 @@ Connection
 .. autoclass:: ansys.granta.bom_analytics._connection.BomServicesClient
    :members:
 
-   .. automethod:: run
-   .. automethod:: set_database_details
 
 

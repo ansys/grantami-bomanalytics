@@ -12,7 +12,7 @@ DEFAULT_DBKEY : str
     The default database key for Restricted Substances. Used if a database key isn't specified.
 """
 
-from typing import overload, TYPE_CHECKING, Union, Dict
+from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
 import logging
 from ansys.granta import bomanalytics, auth_common
 
@@ -29,6 +29,7 @@ if TYPE_CHECKING:
         SubstanceCompliance,
         BomImpactedSubstances,
         BomCompliance,
+        Yaml,
     )
     from ansys.granta.bom_analytics._query_results import (
         MaterialImpactedSubstancesResult,
@@ -49,7 +50,7 @@ class BomServicesClient(auth_common.ApiClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._db_key = DEFAULT_DBKEY
-        self._table_names: Dict[str, Union[str, None]] = {
+        self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,
             "inhouse_materials_table_name": None,
             "specifications_table_name": None,
@@ -64,12 +65,12 @@ class BomServicesClient(auth_common.ApiClient):
     def set_database_details(
         self,
         database_key: str = DEFAULT_DBKEY,
-        material_universe_table_name: Union[str, None] = None,
-        in_house_materials_table_name: Union[str, None] = None,
-        specifications_table_name: Union[str, None] = None,
-        products_and_parts_table_name: Union[str, None] = None,
-        substances_table_name: Union[str, None] = None,
-        coatings_table_name: Union[str, None] = None,
+        material_universe_table_name: Optional[str] = None,
+        in_house_materials_table_name: Optional[str] = None,
+        specifications_table_name: Optional[str] = None,
+        products_and_parts_table_name: Optional[str] = None,
+        substances_table_name: Optional[str] = None,
+        coatings_table_name: Optional[str] = None,
     ):
         """Configure the database key and table names if the defaults in Granta MI have been modified.
 
@@ -78,26 +79,26 @@ class BomServicesClient(auth_common.ApiClient):
 
         Parameters
         ----------
-        database_key : str, default="MI_Restricted_Substances"
+        database_key
             As-implemented database key of the Restricted Substances-based database.
-        material_universe_table_name : str, optional
+        material_universe_table_name
             As-implemented name for the 'MaterialUniverse' table
-        in_house_materials_table_name : str, optional
+        in_house_materials_table_name
             As-implemented name for the 'Materials - in house' table
-        specifications_table_name : str, optional
+        specifications_table_name
             As-implemented name for the 'Specifications' table
-        products_and_parts_table_name : str, optional
+        products_and_parts_table_name
             As-implemented name for the 'Products and parts' table
-        substances_table_name : str, optional
+        substances_table_name
             As-implemented name for the 'Restricted Substances' table
-        coatings_table_name : str, optional
+        coatings_table_name
             As-implemented name for the 'Coatings' table
 
         Examples
         --------
-        >>> conn = Connection(...)
-        >>> conn.set_database_details(database_key = "ACME_RS",
-        ...                           in_house_materials_table_name = "ACME Materials")
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> cxn.set_database_details(database_key = "MY_RS_DB",
+        ...                          in_house_materials_table_name = "My Materials")
         """
 
         self._db_key = database_key
@@ -174,18 +175,25 @@ class BomServicesClient(auth_common.ApiClient):
     def run(self, query: "BomCompliance") -> "BomComplianceResult":
         ...
 
+    @overload
+    def run(self, query: "Yaml") -> str:
+        ...
+
+    @overload
+    def run(self, query: Type["Yaml"]) -> str:
+        ...
+
     def run(self, query):
         """Run the query against the Granta MI database and return the results.
 
         Parameters
         ----------
-        query : Query
-            A compliance or impacted substance query
+        query
+            A compliance, impacted substance, or yaml query
 
         Returns
         -------
-        Result
-            The corresponding result object based on the provided query
+        The corresponding result object based on the provided query.
         """
 
         logger.info(f"[TECHDOCS] Running query {query} with connection {self}")
@@ -194,11 +202,11 @@ class BomServicesClient(auth_common.ApiClient):
 
 
 class Connection(auth_common.ApiClientFactory):
-    """ Build a connection to an instance of Granta MI.
+    """Build a connection to an instance of Granta MI.
 
     Parameters
     ----------
-    servicelayer_url : str
+    servicelayer_url
         The url to the Granta MI service layer
 
     Notes
@@ -207,17 +215,22 @@ class Connection(auth_common.ApiClientFactory):
     connection object.
 
     Builder classes are generally instantiated, configured, and then built. The examples below
-    show this in action, first by instantiating the Connection builder (i.e. Connection()),
-    then configuring the builder object (.with_autologon()), and then using the builder
-    object to build the connection itself (.build()).
+    show this in action, first by instantiating the Connection builder (i.e. `Connection()`),
+    then configuring the builder object (`.with_autologon()`), and then using the builder
+    object to build the connection itself (`.build()`).
 
     Examples
     --------
-    >>> conn = Connection(servicelayer_url="http://my_mi_server/mi_servicelayer").with_autologon().build()
+    >>> Connection("http://my_mi_server/mi_servicelayer").with_autologon().build()
+    <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
 
-    >>> conn = Connection(servicelayer_url="http://my_mi_server/mi_servicelayer") \
-    ...     .with_credentials(username="my_username", password="my_password") \
+    >>> cxn = (
+    ...     Connection("http://my_mi_server/mi_servicelayer")
+    ...     .with_credentials(username="my_username", password="my_password")
     ...     .build()
+    ... )
+    >>> cxn
+    <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
     """
 
     def build(self) -> BomServicesClient:

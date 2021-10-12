@@ -93,7 +93,7 @@ class TestWithoutAmountsWrongType:
 )
 class TestWithAmounts:
     def test_record_guids(self, values):
-        query = SubstanceCompliance().with_record_guids_with_amounts(values)
+        query = SubstanceCompliance().with_record_guids_and_amounts(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -229,10 +229,10 @@ def test_record_history_ids_with_amounts(values):
 class TestWithAmountsWrongType:
     def test_record_guids(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().with_record_guids_with_amounts(values)
+            SubstanceCompliance().with_record_guids_and_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().with_record_guids_with_amounts(record_guids_and_amounts=values)
+            SubstanceCompliance().with_record_guids_and_amounts(record_guids_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)
 
     def test_record_history_guids(self, values):

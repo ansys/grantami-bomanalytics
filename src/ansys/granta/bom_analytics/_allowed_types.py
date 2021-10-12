@@ -8,7 +8,7 @@ T : TypeVar
     Generic type to ensure static type checking works as expected.
 """
 
-from typing import Any, TypeVar, Type
+from typing import TypeVar, Type
 import functools
 
 T = TypeVar("T")
@@ -92,8 +92,6 @@ def _check_type(obj, allowed_type):
     `typing.Any` is also allowed as a type. This effectively allows type checking to be skipped for a particular `obj`.
     """
 
-    if allowed_type == Any:
-        return
     if isinstance(allowed_type, list):
         assert isinstance(obj, list)
         for value, item_type in zip(obj, allowed_type):

@@ -6,7 +6,7 @@ static class outside the main hierarchy implements the Yaml API endpoint.
 
 Attributes
 ----------
-T : TypeVar
+Query_Builder : TypeVar
     Generic type for builder configuration methods. Ensures that the specific sub-class of the
     object to which the method is bound is hinted as the return type, e.g. that if `.with_record_guid()`
     is called on a `SpecificationCompliance` object, then the return type is correctly identified as
@@ -17,23 +17,24 @@ Query_Result : TypeVar
 """
 
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Tuple, Any, TypeVar, Generic, TYPE_CHECKING, Callable, Generator
+from typing import Union, List, Dict, Tuple, TypeVar, Generic, TYPE_CHECKING, Callable, Generator, Optional, Type
 import warnings
 from numbers import Number
 import logging
 
 from ansys.granta.bomanalytics import models, api
 
-from ._item_definitions import AbstractBomFactory, RecordDefinition
+from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition
 from ._allowed_types import allowed_types
 from ._query_results import (
     QueryResultFactory,
     ComplianceBaseClass,
     ImpactedSubstancesBaseClass,
 )
-from .indicators import _Indicator
+from .indicators import _Indicator, WatchListIndicator
+from ._connection import Connection
 
-T = TypeVar("T", bound="BaseQueryBuilder")
+Query_Builder = TypeVar("Query_Builder", bound="BaseQueryBuilder")
 Query_Result = TypeVar(
     "Query_Result",
     covariant=True,
@@ -49,10 +50,10 @@ class _RecordArgumentManager:
 
     Parameters
     ----------
-    record_type_name : str
+    record_type_name
         The name of the items, e.g. materials, parts. Used in the `batched_bom_arguments` property as the keyword for
         the list of items in the request constructor.
-    batch_size : int
+    batch_size
         Number of items included in a single request.
 
     Attributes
@@ -62,16 +63,16 @@ class _RecordArgumentManager:
 
     Examples
     --------
-    >>> items = _RecordDefinitionList(item_type_name = "materials", batch_size = 100)
-    >>> items.batched_bom_arguments
+    >>> items = _RecordArgumentManager(item_type_name = "materials", batch_size = 100)
+    >>> items.batched_record_arguments
     {"materials": [{"reference_type": "material_id", "reference_value": "ABS"}, ...]  # Up to 100 items
     """
 
-    def __init__(self, record_type_name: Union[str, None] = None, batch_size: Union[int, None] = None):
+    def __init__(self, record_type_name: Optional[str] = None, batch_size: Optional[int] = None):
         super().__init__()
         self._items = []
-        self.batch_size: Union[int, None] = batch_size
-        self.record_type_name: Union[str, None] = record_type_name
+        self.batch_size: Optional[int] = batch_size
+        self.record_type_name: Optional[str] = record_type_name
 
     def __repr__(self):
         if not self.record_type_name:
@@ -89,14 +90,14 @@ class _RecordArgumentManager:
 
         Parameters
         ----------
-        item : `RecordDefinition`
+        item
             The definition to be added to this list of record definitions.
 
         Examples
         --------
         >>> part_definition = PartDefinition(...)
-        >>> items = _RecordDefinitionList(item_type_name = "materials", batch_size = 100)
-        >>> items.append(part_definition)
+        >>> items = _RecordArgumentManager(item_type_name = "parts", batch_size = 100)
+        >>> items.append_record_definition(part_definition)
         """
 
         self._items.append(item)
@@ -114,7 +115,7 @@ class _RecordArgumentManager:
 
         Yields
         ------
-        Generator(dict(str, list(models.Model)))
+        Batched **kwargs
 
         Raises
         ------
@@ -137,7 +138,7 @@ class _RecordArgumentManager:
         return [r for r in getattr(response, self.record_type_name)]
 
 
-class _BaseQueryBuilder(Generic[T], ABC):
+class _BaseQueryBuilder(Generic[Query_Builder], ABC):
     """Base class for all query types. The properties and methods here primarily represent the things on which the API
     is acting, i.e. records or bills of materials (BoMs).
 
@@ -169,14 +170,18 @@ class _BaseQueryBuilder(Generic[T], ABC):
                 RuntimeWarning,
             )
 
-    @allowed_types(Any, int)
-    def with_batch_size(self: T, batch_size: int) -> T:
+    @allowed_types(object, int)
+    def with_batch_size(self: Query_Builder, batch_size: int) -> Query_Builder:
         """Number of items included in a single request. Sensible values are set by default, but this value can be
         changed to optimize performance if required on a query-by-query basis.
 
         Parameters
         ----------
-        batch_size : int
+        batch_size
+
+        Returns
+        -------
+        The current query builder.
 
         Raises
         ------
@@ -185,7 +190,7 @@ class _BaseQueryBuilder(Generic[T], ABC):
 
         Examples
         --------
-        >>> query = MaterialCompliance().with_batch_size(50)...
+        >>> query = MaterialCompliance().with_batch_size(50)
         """
 
         if batch_size < 1:
@@ -198,23 +203,21 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
     """Sub-class for all queries where the items added to the query are direct references to records."""
 
     @allowed_types(_BaseQueryBuilder, [int])
-    def with_record_history_ids(self: T, record_history_identities: List[int]) -> T:
+    def with_record_history_ids(self: Query_Builder, record_history_identities: List[int]) -> Query_Builder:
         """Add a list of record history identities to a query.
 
         Parameters
         ----------
-        record_history_identities : list(int)
-            List of integer record history identities to be added to the query
+        record_history_identities
+            List of record history identities to be added to the query
 
         Returns
         -------
-        _RecordBasedQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = MaterialCompliance() \
-        ...         .with_record_history_ids([15321, 17542, 942])...
+        >>> query = MaterialCompliance().with_record_history_ids([15321, 17542, 942])
         """
 
         for value in record_history_identities:
@@ -225,24 +228,23 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [str])
-    def with_record_history_guids(self: T, record_history_guids: List[str]) -> T:
+    def with_record_history_guids(self: Query_Builder, record_history_guids: List[str]) -> Query_Builder:
         """Add a list of record history guids to a query.
 
         Parameters
         ----------
-        record_history_guids : list(str)
+        record_history_guids
             List of record history guids to be added to the query
 
         Returns
         -------
-        _RecordBasedQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = MaterialCompliance() \
-        ...         .with_record_history_guids(['41e20a88-d496-4735-a177-6266fac9b4e2',
-        ...                                     'd117d9ad-e6a9-4ba9-8ad8-9a20b6d0b5e2'])...
+        >>> query = MaterialCompliance()
+        >>> query = query.with_record_history_guids(['41e20a88-d496-4735-a177-6266fac9b4e2',
+        >>>                                          'd117d9ad-e6a9-4ba9-8ad8-9a20b6d0b5e2'])
         """
 
         for value in record_history_guids:
@@ -253,24 +255,23 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [str])
-    def with_record_guids(self: T, record_guids: List[str]) -> T:
+    def with_record_guids(self: Query_Builder, record_guids: List[str]) -> Query_Builder:
         """Add a list of record guids to a query.
 
         Parameters
         ----------
-        record_guids : list(str)
+        record_guids
             List of record guids to be added to the query
 
         Returns
         -------
-        _RecordBasedQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = MaterialCompliance() \
-        ...         .with_record_guids(['bdb0b880-e6ee-4f1a-bebd-af76959ae3c8',
-        ...                             'a98cf4b3-f96a-4714-9f79-afe443982c69'])...
+        >>> query = MaterialCompliance()
+        >>> query = query.with_record_guids(['bdb0b880-e6ee-4f1a-bebd-af76959ae3c8',
+        >>>                                  'a98cf4b3-f96a-4714-9f79-afe443982c69'])
         """
 
         for value in record_guids:
@@ -279,22 +280,21 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [{str: str}])
-    def with_stk_records(self: T, stk_records: List[Dict[str, str]]) -> T:
+    def with_stk_records(self: Query_Builder, stk_records: List[Dict[str, str]]) -> Query_Builder:
         """Add a list of records generated by the Scripting Toolkit.
 
         Parameters
         ----------
-        stk_records : list
+        stk_records
             List of record definitions
 
         Returns
         -------
-        _RecordBasedQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = MaterialCompliance().with_stk_records(stk_records)...
+        >>> query = MaterialCompliance().with_stk_records(stk_records)
         """
 
         record_guids = [r["record_guid"] for r in stk_records]  # TODO Handle database key
@@ -323,7 +323,7 @@ class _ApiMixin(api_base_class):
         super().__init__()
         self._request_type = None
 
-    def _call_api(self, api_method: Callable, arguments: Dict) -> List:
+    def _call_api(self, api_method: Callable[[models.Model], models.Model], arguments: Dict) -> List:
         """Perform the actual call against the Granta MI database.
 
         Finalizes the arguments by appending each batch of 'item' arguments to the passed in dict,
@@ -332,16 +332,15 @@ class _ApiMixin(api_base_class):
 
         Parameters
         ----------
-        api_method : Callable
+        api_method
             The method bound to the `api.ComplianceApi` or `api.ImpactedSubstanceApi` instance
-        arguments : dict
+        arguments
             The state of the query as a set of low-level API kwargs. Includes everything except the batched items.
 
         Returns
         -------
-        list of models.Model
-            The results from the low-level API. The type varies depending on the specific query, but is a sub-type of
-            `models.Model`.
+        The results from the low-level API. The type varies depending on the specific query, but is a sub-type of
+        `models.Model`.
         """
 
         self._validate_parameters()
@@ -350,7 +349,7 @@ class _ApiMixin(api_base_class):
         for batch in self._record_argument_manager.batched_record_arguments:
             args = {**arguments, **batch}
             request = self._request_type(**args)
-            response = api_method(body=request)
+            response = api_method(request)
             result.extend(self._record_argument_manager.extract_results_from_response(response))
         return result
 
@@ -373,42 +372,45 @@ class _ComplianceMixin(_ApiMixin, ABC):
 
     Attributes
     ----------
-    _indicators : dict
+    _indicators
         The indicators added to the query.
-    _api_method : str
+    _api_method
         The name of the method in the `api` class. Specified in the concrete class. Retrieved dynamically because the
         `api` instance doesn't exist until runtime.
-    api_class : object
+    api_class
         The class in the low-level API for this query type. Requires instantiation with the client object, and so only
         the reference to the class is stored here, not the instance itself.
     """
 
     def __init__(self):
         super().__init__()
-        self._indicators = {}
-        self._api_method = ""
-        self.api_class = api.ComplianceApi
+        self._indicators: Dict[str, _Indicator] = {}
+        self._api_method: str = ""
+        self.api_class: Type[api.ComplianceApi] = api.ComplianceApi
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self._record_argument_manager}, {len(self._indicators)} indicators>"
 
     @allowed_types(_BaseQueryBuilder, [_Indicator])
-    def with_indicators(self: T, indicators: List[_Indicator]) -> T:
+    def with_indicators(self: Query_Builder, indicators: List[_Indicator]) -> Query_Builder:
         """Add a list of indicators to evaluate compliance against.
 
         Parameters
         ----------
-        indicators : list
-            List of Indicator definitions
+        indicators
+            List of Indicator definitions to be included in this query.
 
         Returns
         -------
-        _RecordBasedQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = MaterialCompliance().with_indicators([WatchListIndicator(...)])...
+        >>> indicator = WatchListIndicator(
+        ...     name="Indicator",
+        ...     legislation_names=["California Proposition 65 List"]
+        ... )
+        >>> query = MaterialCompliance().with_indicators([indicator])
         """
 
         for value in indicators:
@@ -427,14 +429,13 @@ class _ComplianceMixin(_ApiMixin, ABC):
 
         Parameters
         ----------
-        api_instance : api.ComplianceApi
-        static_arguments : dict
+        api_instance
+        static_arguments
             The arguments set at the connection level, which includes the database key and any custom table names.
 
         Returns
         -------
-        Query_Result
-            The exact type of the result depends on the query.
+        The exact type of the result depends on the query.
         """
 
         api_method = getattr(api_instance, self._api_method)
@@ -471,12 +472,12 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
 
     Attributes
     ----------
-    _legislations : list
+    _legislations
         The legislation names added to the query.
-    _api_method : str
+    _api_method
         The name of the method in the `api` class. Specified in the concrete class. Retrieved dynamically because the
         `api` instance doesn't exist until runtime.
-    api_class : object
+    api_class
         The class in the low-level API for this query type. Requires instantiation with the client object, and so only
         the reference to the class is stored here, not the instance itself.
     """
@@ -484,31 +485,30 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     def __init__(self):
         super().__init__()
         self._legislations: List[str] = []
-        self._api_method = ""
-        self.api_class = api.ImpactedSubstancesApi
+        self._api_method: str = ""
+        self.api_class: Type[api.ImpactedSubstancesApi] = api.ImpactedSubstancesApi
 
     def __repr__(self):
         return f"<{self.__class__.__name__}: {self._record_argument_manager}, {len(self._legislations)} legislations>"
 
     @allowed_types(_BaseQueryBuilder, [str])
-    def with_legislations(self: T, legislation_names: List[str]) -> T:
-        """ Add a list of legislations to retrieve the impacted substances for.
+    def with_legislations(self: Query_Builder, legislation_names: List[str]) -> Query_Builder:
+        """Add a list of legislations to retrieve the impacted substances for.
 
         Parameters
         ----------
-        legislation_names : str
-            List of legislation names
+        legislation_names
+            List of legislation names to be added to the query.
 
         Returns
         -------
-        _RecordBasedQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = MaterialImpactedSubstances() \
-        ...         .with_legislations(["California Proposition 65 List",
-                                        "REACH - The Candidate List"])...
+        >>> query = MaterialImpactedSubstances()
+        >>> query = query.with_legislations(["California Proposition 65 List",
+        >>>                                  "REACH - The Candidate List"])
         """
 
         self._legislations.extend(legislation_names)
@@ -523,14 +523,13 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
 
         Parameters
         ----------
-        api_instance : api.ImpactedSubstancesApi
-        static_arguments : dict
+        api_instance
+        static_arguments
             The arguments set at the connection level, which includes the database key and any custom table names.
 
         Returns
         -------
-        Query_Result
-            The exact type of the result depends on the query.
+        The result of the query. The exact type of the result depends on the query that was run.
         """
 
         api_method = getattr(api_instance, self._api_method)
@@ -570,24 +569,21 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._record_argument_manager.batch_size = 100
 
     @allowed_types(_BaseQueryBuilder, [str])
-    def with_material_ids(self: T, material_ids: List[str]) -> T:
-        """ Add a list of material ids to a material query.
+    def with_material_ids(self: Query_Builder, material_ids: List[str]) -> Query_Builder:
+        """Add a list of material ids to a material query.
 
         Parameters
         ----------
-        material_ids : list of str
+        material_ids
             List of material ids to be added to the query
 
         Returns
         -------
-        _MaterialQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = MaterialCompliance() \
-        ...         .with_material_ids(['elastomer-butadienerubber',
-        ...                             'NBR-100'])...
+        >>> query = MaterialCompliance().with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
         """
         for material_id in material_ids:
             item_reference = self._definition_factory.create_definition_by_material_id(material_id=material_id)
@@ -600,15 +596,20 @@ class MaterialCompliance(_ComplianceMixin, _MaterialQueryBuilder):
     associated with substances, these are also evaluated and returned.
 
     All methods used to add materials and indicators to this query return the query itself, so they can be chained
-    together as required. Use the .execute() method once the query is fully constructed to return the result.
+    together as required. Use the .execute() method once the query is fully constructed to return a result of
+    type :class:`ansys.granta.bom_analytics._query_results.MaterialComplianceResult`.
 
     Examples
     --------
-    >>> cxn = Connection(...)
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+    >>> indicator = WatchListIndicator(
+    ...     name="Indicator",
+    ...     legislation_names=["California Proposition 65 List"]
+    ... )
     >>> query = (
     ...     MaterialCompliance()
     ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-    ...     .with_indicators([WatchListIndicator(...)])
+    ...     .with_indicators([indicator])
     ... )
     >>> result = cxn.run(query)
     """
@@ -624,15 +625,16 @@ class MaterialImpactedSubstances(_ImpactedSubstanceMixin, _MaterialQueryBuilder)
     """Get the substances impacted by a list of legislations for Granta MI material records.
 
     All methods used to add materials and legislations to this query return the query itself, so they can be chained
-    together as required. Use the .execute() method once the query is fully constructed to return the result.
+    together as required. Use the .execute() method once the query is fully constructed to return a result of
+    type :class:`ansys.granta.bom_analytics._query_results.MaterialImpactedSubstancesResult`.
 
     Examples
     --------
-    >>> cxn = Connection(...)
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> query = (
     ...     MaterialImpactedSubstances()
     ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-    ...     .with_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
+    ...     .with_legislations(["REACH - The Candidate List"])
     ... )
     >>> result = cxn.run(query)
     """
@@ -655,22 +657,21 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._record_argument_manager.batch_size = 10
 
     @allowed_types(_BaseQueryBuilder, [str])
-    def with_part_numbers(self: T, part_numbers: List[str]) -> T:
+    def with_part_numbers(self: Query_Builder, part_numbers: List[str]) -> Query_Builder:
         """Add a list of part numbers to a part query.
 
         Parameters
         ----------
-        part_numbers : list(str)
+        part_numbers
             List of part numbers to be added to the query
 
         Returns
         -------
-        _PartQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = PartComplianceQuery().with_part_numbers(['ABC12345', 'Q356AQ'])...
+        >>> query = PartCompliance().with_part_numbers(['ABC12345', 'Q356AQ'])
         """
 
         for value in part_numbers:
@@ -684,15 +685,20 @@ class PartCompliance(_ComplianceMixin, _PartQueryBuilder):
     associated with materials, parts, specifications, or substances, these are also evaluated and returned.
 
     All methods used to add parts and indicators to this query return the query itself, so they can be chained
-    together as required. Use the .execute() method once the query is fully constructed to return the result.
+    together as required. Use the .execute() method once the query is fully constructed to return return a result of
+    type :class:`ansys.granta.bom_analytics._query_results.PartComplianceResult`.
 
     Examples
     --------
-    >>> cxn = Connection(...)
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+    >>> indicator = WatchListIndicator(
+    ...     name="Indicator",
+    ...     legislation_names=["California Proposition 65 List"]
+    ... )
     >>> query = (
-    ...     PartComplianceQuery()
-    ...    .with_part_numbers(['ABC12345', 'Q356AQ'])
-    ...    .with_indicators([WatchListIndicator(...)])
+    ...     PartCompliance()
+    ...     .with_part_numbers(['ABC12345', 'Q356AQ'])
+    ...     .with_indicators([indicator])
     ... )
     >>> result = cxn.run(query)
     """
@@ -708,15 +714,16 @@ class PartImpactedSubstances(_ImpactedSubstanceMixin, _PartQueryBuilder):
     """Get the substances impacted by a list of legislations for Granta MI part records.
 
     All methods used to add parts and legislations to this query return the query itself, so they can be chained
-    together as required. Use the .execute() method once the query is fully constructed to return the result.
+    together as required. Use the .execute() method once the query is fully constructed to return return a result of
+    type :class:`ansys.granta.bom_analytics._query_results.PartImpactedSubstancesResult`.
 
     Examples
     --------
-    >>> cxn = Connection(...)
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> query = (
-    ...     PartImpactedSubstanceQuery()
+    ...     PartImpactedSubstances()
     ...     .with_part_numbers(['ABC12345', 'Q356AQ'])
-    ...     .with_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
+    ...     .with_legislations(["REACH - The Candidate List"])
     ... )
     >>> result = cxn.run(query)
     """
@@ -739,23 +746,21 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._record_argument_manager.batch_size = 10
 
     @allowed_types(_BaseQueryBuilder, [str])
-    def with_specification_ids(self: T, specification_ids: List[str]) -> T:
+    def with_specification_ids(self: Query_Builder, specification_ids: List[str]) -> Query_Builder:
         """Add a list of specification IDs to a specification query.
 
         Parameters
         ----------
-        specification_ids : list(str)
+        specification_ids
             List of specification IDs to be added to the query
 
         Returns
         -------
-        _SpecificationQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SpecificationComplianceQuery() \
-        ...         .with_specification_ids(['MIL-A-8625', 'PSP101'])...
+        >>> query = SpecificationCompliance().with_specification_ids(['MIL-A-8625', 'PSP101'])
         """
         for specification_id in specification_ids:
             item_reference = self._definition_factory.create_definition_by_specification_id(
@@ -770,15 +775,20 @@ class SpecificationCompliance(_ComplianceMixin, _SpecificationQueryBuilder):
     specifications are associated with materials, specifications, or substances, these are also evaluated and returned.
 
     All methods used to add specifications and indicators to this query return the query itself, so they can be chained
-    together as required. Use the .execute() method once the query is fully constructed to return the result.
+    together as required. Use the .execute() method once the query is fully constructed to return return a result of
+    type :class:`ansys.granta.bom_analytics._query_results.SpecificationComplianceResult`.
 
     Examples
     --------
-    >>> cxn = Connection(...)
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+    >>> indicator = WatchListIndicator(
+    ...     name="Indicator",
+    ...     legislation_names=["California Proposition 65 List"]
+    ... )
     >>> query = (
-    ...     SpecificationComplianceQuery()
+    ...     SpecificationCompliance()
     ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
-    ...     .with_indicators([WatchListIndicator(...)])
+    ...     .with_indicators([indicator])
     ... )
     >>> result = cxn.run(query)
     """
@@ -796,15 +806,16 @@ class SpecificationImpactedSubstances(_ImpactedSubstanceMixin, _SpecificationQue
     """Get the substances impacted by a list of legislations for Granta MI specification records.
 
     All methods used to add specifications and legislations to this query return the query itself, so they can be
-    chained together as required. Use the .execute() method once the query is fully constructed to return the result.
+    chained together as required. Use the .execute() method once the query is fully constructed to return a result of
+    type :class:`ansys.granta.bom_analytics._query_results.SpecificationImpactedSubstancesResult`.
 
     Examples
     --------
-    >>> cxn = Connection(...)
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> query = (
-    ...     SpecificationImpactedSubstanceQuery()
+    ...     SpecificationImpactedSubstances()
     ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
-    ...     .with_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
+    ...     .with_legislations(["REACH - The Candidate List"])
     ... )
     >>> result = cxn.run(query)
     """
@@ -827,22 +838,21 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._record_argument_manager.batch_size = 500
 
     @allowed_types(_BaseQueryBuilder, [str])
-    def with_cas_numbers(self: T, cas_numbers: List[str]) -> T:
+    def with_cas_numbers(self: Query_Builder, cas_numbers: List[str]) -> Query_Builder:
         """Add a list of CAS numbers to a substance query. The amount of substance in the material will be set to 100%.
 
         Parameters
         ----------
-        cas_numbers : list(str)
+        cas_numbers
             List of CAS numbers to be added to the query
 
         Returns
         -------
-        _SubstanceQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SubstanceCompliance().with_cas_numbers(['50-00-0', '57-24-9'])...
+        >>> query = SubstanceCompliance().with_cas_numbers(['50-00-0', '57-24-9'])
         """
         for cas_number in cas_numbers:
             item_reference = self._definition_factory.create_definition_by_cas_number(cas_number=cas_number)
@@ -850,22 +860,21 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [str])
-    def with_ec_numbers(self: T, ec_numbers: List[str]) -> T:
+    def with_ec_numbers(self: Query_Builder, ec_numbers: List[str]) -> Query_Builder:
         """Add a list of EC numbers to a substance query. The amount of substance in the material will be set to 100%.
 
         Parameters
         ----------
-        ec_numbers : list(str)
+        ec_numbers
             List of EC numbers to be added to the query
 
         Returns
         -------
-        _SubstanceQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SubstanceCompliance().with_ec_numbers(['200-001-8', '200-319-7'])...
+        >>> query = SubstanceCompliance().with_ec_numbers(['200-001-8', '200-319-7'])
         """
         for ec_number in ec_numbers:
             item_reference = self._definition_factory.create_definition_by_ec_number(ec_number=ec_number)
@@ -873,23 +882,22 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [str])
-    def with_chemical_names(self: T, chemical_names: List[str]) -> T:
+    def with_chemical_names(self: Query_Builder, chemical_names: List[str]) -> Query_Builder:
         """Add a list of chemical names to a substance query. The amount of substance in the material will be set to
         100%.
 
         Parameters
         ----------
-        chemical_names : list(str)
+        chemical_names
             List of chemical names to be added to the query
 
         Returns
         -------
-        _SubstanceQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SubstanceCompliance().with_chemical_names(['Formaldehyde', 'Strychnine'])...
+        >>> query = SubstanceCompliance().with_chemical_names(['Formaldehyde', 'Strychnine'])
         """
         for chemical_name in chemical_names:
             item_reference = self._definition_factory.create_definition_by_chemical_name(chemical_name=chemical_name)
@@ -898,24 +906,23 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @allowed_types(_BaseQueryBuilder, [(int, Number)])
     def with_record_history_ids_and_amounts(
-        self: T, record_history_identities_and_amounts: List[Tuple[int, float]]
-    ) -> T:
+        self: Query_Builder, record_history_identities_and_amounts: List[Tuple[int, float]]
+    ) -> Query_Builder:
         """Add a list of record history identities and amounts to a substance query.
 
         Parameters
         ----------
-        record_history_identities_and_amounts : list(tuple(int, float))
+        record_history_identities_and_amounts
             List of tuples containing the record history identity and its wt % amount in the material/part
 
         Returns
         -------
-        _SubstanceQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SubstanceCompliance() \
-        ...         .with_record_history_ids_and_amounts([(15321, 25), (17542, 0.1)])...
+        >>> query = SubstanceCompliance()
+        >>> query = query.with_record_history_ids_and_amounts([(15321, 25), (17542, 0.1)])
         """
 
         for record_history_id, amount in record_history_identities_and_amounts:
@@ -927,24 +934,27 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
-    def with_record_history_guids_and_amounts(self: T, record_history_guids_and_amounts: List[Tuple[str, float]]) -> T:
+    def with_record_history_guids_and_amounts(
+        self: Query_Builder, record_history_guids_and_amounts: List[Tuple[str, float]]
+    ) -> Query_Builder:
         """Add a list of record history guids and amounts to a substance query.
 
         Parameters
         ----------
-        record_history_guids_and_amounts : list(tuple(str, float))
+        record_history_guids_and_amounts
             List of tuples containing the record history guid and its wt % amount in the material/part
 
         Returns
         -------
-        _SubstanceQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SubstanceCompliance() \
-        ...         .with_record_history_guids_and_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
-        ...                                                 ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])...
+        >>> query = SubstanceCompliance()
+        >>> query = query.with_record_history_guids_and_amounts(
+        ...     [('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
+        ...      ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)]
+        ... )
         """
         for record_history_guid, amount in record_history_guids_and_amounts:
             item_reference = self._definition_factory.create_definition_by_record_history_guid(
@@ -955,24 +965,27 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
-    def with_record_guids_and_amounts(self: T, record_guids_and_amounts: List[Tuple[str, float]]) -> T:
+    def with_record_guids_and_amounts(
+        self: Query_Builder, record_guids_and_amounts: List[Tuple[str, float]]
+    ) -> Query_Builder:
         """Add a list of record guids and amounts to a substance query.
 
         Parameters
         ----------
-        record_guids_and_amounts : list(tuple(str, float))
+        record_guids_and_amounts
             List of tuples containing the record guid and its wt % amount in the material/part
 
         Returns
         -------
-        _SubstanceQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SubstanceCompliance() \
-        ...         .with_record_guids_and_amounts([('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
-        ...                                          ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)])...
+        >>> query = SubstanceCompliance()
+        >>> query = query.with_record_guids_and_amounts(
+        ...     [('bdb0b880-e6ee-4f1a-bebd-af76959ae3c8', 25),
+        ...      ('a98cf4b3-f96a-4714-9f79-afe443982c69', 0.1)]
+        ... )
         """
 
         for record_guid, amount in record_guids_and_amounts:
@@ -982,23 +995,24 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
-    def with_cas_numbers_and_amounts(self: T, cas_numbers_and_amounts: List[Tuple[str, float]]) -> T:
+    def with_cas_numbers_and_amounts(
+        self: Query_Builder, cas_numbers_and_amounts: List[Tuple[str, float]]
+    ) -> Query_Builder:
         """Add a list of CAS numbers and amounts to a substance query.
 
         Parameters
         ----------
-        cas_numbers_and_amounts : list(tuple(str, float))
+        cas_numbers_and_amounts
             List of tuples containing the CAS number and its wt % amount in the material/part
 
         Returns
         -------
-        _SubstanceQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SubstanceCompliance() \
-        ...         .with_cas_numbers_and_amounts([('50-00-0', 25), ('57-24-9', 0.1)])...
+        >>> query = SubstanceCompliance()
+        >>> query = query.with_cas_numbers_and_amounts([('50-00-0', 25), ('57-24-9', 0.1)])
         """
 
         for cas_number, amount in cas_numbers_and_amounts:
@@ -1008,23 +1022,24 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
-    def with_ec_numbers_and_amounts(self: T, ec_numbers_and_amounts: List[Tuple[str, float]]) -> T:
+    def with_ec_numbers_and_amounts(
+        self: Query_Builder, ec_numbers_and_amounts: List[Tuple[str, float]]
+    ) -> Query_Builder:
         """Add a list of EC numbers and amounts to a substance query.
 
         Parameters
         ----------
-        ec_numbers_and_amounts : list(tuple(str, float))
+        ec_numbers_and_amounts
             List of tuples containing the EC number and its wt % amount in the material/part
 
         Returns
         -------
-        _SubstanceQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SubstanceCompliance() \
-        ...         .with_ec_numbers_and_amounts([('200-001-8', 25), ('200-319-7', 0.1)])...
+        >>> query = SubstanceCompliance()
+        >>> query = query.with_ec_numbers_and_amounts([('200-001-8', 25), ('200-319-7', 0.1)])
         """
 
         for ec_number, amount in ec_numbers_and_amounts:
@@ -1034,23 +1049,24 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @allowed_types(_BaseQueryBuilder, [(str, Number)])
-    def with_chemical_names_and_amounts(self: T, chemical_names_and_amounts: List[Tuple[str, float]]) -> T:
+    def with_chemical_names_and_amounts(
+        self: Query_Builder, chemical_names_and_amounts: List[Tuple[str, float]]
+    ) -> Query_Builder:
         """Add a list of chemical names and amounts to a substance query.
 
         Parameters
         ----------
-        chemical_names_and_amounts : list(tuple(str, float))
+        chemical_names_and_amounts
             List of tuples containing the chemical name and its wt % amount in the material/part
 
         Returns
         -------
-        _SubstanceQueryBuilder
-            The current query builder.
+        The current query builder.
 
         Examples
         --------
-        >>> query = SubstanceCompliance() \
-        ...         .with_chemical_names_and_amounts([('Formaldehyde', 25), ('Strychnine', 0.1)])...
+        >>> query = SubstanceCompliance()
+        >>> query = query.with_chemical_names_and_amounts([('Formaldehyde', 25), ('Strychnine', 0.1)])
         """
 
         for chemical_name, amount in chemical_names_and_amounts:
@@ -1064,15 +1080,20 @@ class SubstanceCompliance(_ComplianceMixin, _SubstanceQueryBuilder):
     """Evaluate compliance for Granta MI substance records against a number of indicators.
 
     All methods used to add substances and indicators to this query return the query itself, so they can be chained
-    together as required. Use the .execute() method once the query is fully constructed to return the result.
+    together as required. Use the .execute() method once the query is fully constructed to return a result of type
+    :class:`ansys.granta.bom_analytics._query_results.SubstanceComplianceResult`.
 
     Examples
     --------
-    >>> cxn = Connection(...)
-    >>> result = (
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+    >>> indicator = WatchListIndicator(
+    ...     name="Indicator",
+    ...     legislation_names=["California Proposition 65 List"]
+    ... )
+    >>> query = (
     ...     SubstanceCompliance()
-    ...     .add_cas_numbers(['50-00-0', '57-24-9'])
-    ...     .add_indicators([WatchListIndicator(...)])
+    ...     .with_cas_numbers(['50-00-0', '57-24-9'])
+    ...     .with_indicators([indicator])
     ... )
     >>> result = cxn.run(query)
     """
@@ -1090,7 +1111,7 @@ class _BomArgumentManager:
 
     Examples
     --------
-    >>> bom_item = _BomItem(bom = "<PartsEco xmlns...")
+    >>> bom_item = _BomArgumentManager(bom = "<PartsEco xmlns...")
     >>> bom_item.bom_argument
     {"bom_xml1711": "<PartsEco xmlns..."}
     """
@@ -1107,7 +1128,7 @@ class _BomArgumentManager:
 
         Returns
         -------
-        Dict of str, str
+        Bom with the appropriate keyword argument.
         """
         return {"bom_xml1711": self.bom}
 
@@ -1120,18 +1141,19 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
         self._bom_definition = _BomArgumentManager()
 
     @allowed_types(_BaseQueryBuilder, str)
-    def with_bom(self: T, bom: str) -> T:
+    def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
         """Set the bom to be used for the query. Must be in the Granta 17/11 XML format. This format can be saved from
          the BoM Analyzer.
 
         Parameters
         ----------
-        bom : str
+        bom
+            The BoM to be added to the query.
 
         Examples
         --------
-        >>> bom = "<PartsEco xmlns..."
-        >>> query = BomCompliance().with_bom(bom)...
+        >>> my_bom = "<PartsEco xmlns..."
+        >>> query = BomCompliance().with_bom(my_bom)
         """
 
         self._bom_definition.bom = bom  # TODO: Validate the bom against the 17/11 schema
@@ -1165,12 +1187,16 @@ class BomCompliance(_Bom1711QueryOverride, _ComplianceMixin, _Bom1711QueryBuilde
 
     Examples
     --------
-    >>> cxn = Connection(...)
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> bom = "<PartsEco xmlns..."
+    >>> indicator = WatchListIndicator(
+    ...     name="Indicator",
+    ...     legislation_names=["California Proposition 65 List"]
+    ... )
     >>> query = (
     ...     BomCompliance()
-    ...     .set_bom(bom)
-    ...     .add_indicators([WatchListIndicator(...)])
+    ...     .with_bom(bom)
+    ...     .with_indicators([indicator])
     ... )
     >>> result = cxn.run(query)
     """
@@ -1189,12 +1215,12 @@ class BomImpactedSubstances(_Bom1711QueryOverride, _ImpactedSubstanceMixin, _Bom
 
     Examples
     --------
-    >>> cxn = Connection(...)
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> bom = "<PartsEco xmlns..."
-    >>> result = (
+    >>> query = (
     ...     BomImpactedSubstances()
-    ...     .set_bom("<PartsEco xmlns...")
-    ...     .add_legislations(["California Proposition 65 List", "REACH - The Candidate List"])
+    ...     .with_bom("<PartsEco xmlns...")
+    ...     .with_legislations(["REACH - The Candidate List"])
     ... )
     >>> result = cxn.run(query)
     """
@@ -1215,15 +1241,9 @@ class Yaml:
 
     This class only contains static methods and class attributes, so can be used without instantiation.
 
-    Class Attributes
-    ----------------
-    api_class : object
-        The class in the low-level API for this query type. Requires instantiation with the client object, and so only
-        the reference to the class is stored here, not the instance itself.
-
     Examples
     --------
-    >>> cxn = Connection(...)
+    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> cxn.run(Yaml)
     openapi: 3.0.1
     info:
@@ -1239,12 +1259,11 @@ class Yaml:
 
         Parameters
         ----------
-        api_instance : api.DocumentationApi
+        api_instance
 
         Returns
         -------
-        str
-            The yaml definition of the API.
+        The yaml definition of the API.
         """
 
         return api_instance.get_miservicelayer_bom_analytics_v1svc_yaml()

@@ -3,11 +3,6 @@
 There are two indicators supported by the Bom Analytics API. Each is implemented as a separate class. They are their
 own result, i.e. all that is needed to convert a definition to a result is to add a result flag.
 
-Attributes
-----------
-Indicator_Definitions : TypeVar
-    A shorthand for the `dict` of indicator definitions, used elsewhere in this package.
-
 Notes
 -----
 Indicators define compliance in terms of one or more legislations and a concentration threshold. The flags (states) of
@@ -18,11 +13,9 @@ or part.
 
 from enum import Enum, auto
 from abc import ABC
-from typing import List, Union, Dict
+from typing import List, Union, Optional
 
 from ansys.granta.bomanalytics import models
-
-Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
 class _Flag(Enum):
@@ -103,7 +96,7 @@ class _Indicator(ABC):
 
     @property
     def flag(self) -> _Flag:
-        """The state of this indicator. If the indicator is a definition, the flag is `None`."""
+        """The state of this indicator. If the indicator is a definition, this property is `None`."""
         return self._flag
 
     @flag.setter
@@ -145,18 +138,13 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
 
     Parameters
     ----------
-    name : str
+    name
         The name of the indicator. Used to identify the indicator in the query result.
-    legislation_names : list of str
+    legislation_names
         The legislations against which compliance will be determined.
-    default_threshold_percentage : float, optional
+    default_threshold_percentage
         The concentration of substance that will be determined to be non-compliant. Is only used if the legislation
         doesn't define a specific threshold for the substance.
-
-    Class Attributes
-    ----------------
-    available_flags : RoHSFlag
-        The possible results for this Indicator.
 
     Raises
     ------
@@ -171,9 +159,7 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
     ...                           legislation_names=["EU Directive 2011/65/EU (RoHS 2)"],
     ...                           default_threshold_percentage=0.1)
     <RoHSIndicator, name: Tracked substances>
-
     >>> ...  # Perform a compliance query
-
     >>> indicator_result = result.compliance_by_material_and_indicator[0]['RoHS substances']
     >>> indicator_result.flag >= indicator.available_flags['RohsCompliantWithExemptions']
     True  # The material is not compliant with RoHS 2
@@ -185,10 +171,11 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
         self,
         name: str,
         legislation_names: List[str],
-        default_threshold_percentage: Union[float, None] = None,
+        default_threshold_percentage: Optional[float] = None,
     ):
         super().__init__(name, legislation_names, default_threshold_percentage)
         self._indicator_type: str = "Rohs"
+        self._flag: Optional[RoHSFlag] = None
 
 
 class WatchListIndicator(_Indicator):
@@ -199,18 +186,13 @@ class WatchListIndicator(_Indicator):
 
     Parameters
     ----------
-    name : str
+    name
         The name of the indicator. Used to identify the indicator in the query result.
-    legislation_names : list of str
+    legislation_names
         The legislations against which compliance will be determined.
-    default_threshold_percentage : float, optional
+    default_threshold_percentage
         The concentration of substance that will be determined to be non-compliant. Is only used if the legislation
         doesn't define a specific threshold for the substance.
-
-    Class Attributes
-    ----------------
-    available_flags : WatchListFlag
-        The possible results for this Indicator.
 
     Raises
     ------
@@ -225,9 +207,7 @@ class WatchListIndicator(_Indicator):
     ...                           legislation_names=["The SIN List 2.1 (Substitute It Now!)"],
     ...                           default_threshold_percentage=0.1)
     <WatchListIndicator, name: Tracked substances>
-
     >>> ...  # Perform a compliance query
-
     >>> indicator_result = result.compliance_by_material_and_indicator[0]['Tracked substances']
     >>> indicator_result.flag >= indicator.available_flags['WatchListAllSubstancesBelowThreshold']
     True  # The material is not compliant with the SinList
@@ -239,7 +219,8 @@ class WatchListIndicator(_Indicator):
         self,
         name: str,
         legislation_names: List[str],
-        default_threshold_percentage: Union[float, None] = None,
+        default_threshold_percentage: Optional[float] = None,
     ):
         super().__init__(name, legislation_names, default_threshold_percentage)
         self._indicator_type: str = "WatchList"
+        self._flag: Optional[WatchListFlag] = None

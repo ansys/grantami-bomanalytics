@@ -10,8 +10,7 @@ an indicator represent the compliance status of that indicator against a certain
 or part.
 
 """
-
-from enum import Enum, auto
+from enum import Enum
 from abc import ABC
 from typing import List, Union, Optional
 
@@ -22,34 +21,58 @@ class _Flag(Enum):
     """Base class for flags (result states) of indicators.
 
     Implements `__lt__`, allowing comparison of enum values.
+
+    Overrides `__new__` to populate the __doc__ on an enum member when it is defined.
     """
+
+    def __new__(cls, value, doc=None):
+        self = object.__new__(cls)  # calling super().__new__(value) here would fail
+        self._value_ = value
+        if doc is not None:
+            self.__doc__ = doc
+        return self
 
     def __lt__(self, other):
         return self.value < other.value
 
 
 class RoHSFlag(_Flag):
-    """Permitted RoHS flag states. Increasing value means 'worse' compliance."""
+    """Permitted RoHS flag states. Increasing value means 'worse' compliance, i.e. the compliance result is worse the
+    further down the list the result appears."""
 
-    RohsNotImpacted = auto()
-    RohsBelowThreshold = auto()
-    RohsCompliant = auto()
-    RohsCompliantWithExemptions = auto()
-    RohsAboveThreshold = auto()
-    RohsNonCompliant = auto()
-    RohsUnknown = auto()
+    RohsNotImpacted = 1, """This substance is not impacted by the specified legislations. 
+    *Substance is not impacted.*"""
+    RohsBelowThreshold = 2, """This substance is impacted by the specified legislations, but appears in the parent item
+    in a quantity below that specified by the indicator. *Substance is not impacted.*"""
+    RohsCompliant = 3, """This item does not contain any substances impacted by the specified legislations. *Item is 
+    compliant.*"""
+    RohsCompliantWithExemptions = 4, """This item contains substances impacted by the specified legislations, but has
+    a compliant defined either on itself or a child item. *Item is compliant with exemptions.*"""
+    RohsAboveThreshold = 5, """This substance is impacted by the specified legislations and appears in the parent item
+    in a quantity above that specified by the indicator. *Substance is impacted.*"""
+    RohsNonCompliant = 6, """This item contains one or more substances impacted by the specified legislations. *Item is 
+    non-compliant.*"""
+    RohsUnknown = 7, """There is not enough information to determine compliance. *Compliance is unknown.*"""
 
 
 class WatchListFlag(_Flag):
-    """Permitted Watch List flag states. Increasing value means 'worse' compliance."""
+    """Permitted Watch List flag states. Increasing value means 'worse' compliance, i.e. the compliance result is worse
+    the further down the list the result appears."""
 
-    WatchListNotImpacted = auto()
-    WatchListCompliant = auto()
-    WatchListBelowThreshold = auto()
-    WatchListAllSubstancesBelowThreshold = auto()
-    WatchListAboveThreshold = auto()
-    WatchListHasSubstanceAboveThreshold = auto()
-    WatchListUnknown = auto()
+    WatchListNotImpacted = 1, """This substance is not impacted by the specified legislations. 
+    *Substance is not impacted.*"""
+    WatchListCompliant = 2, """This item does not contain any substances impacted by the specified legislations. 
+    *Item is compliant.*"""
+    WatchListBelowThreshold = 3, """This substance is impacted by the specified legislations, but appears in the parent
+    item in a quantity below that specified by the indicator. *Substance is below threshold.*"""
+    WatchListAllSubstancesBelowThreshold = 4, """This item contains substances impacted by the specified legislations, 
+    but in quantities below the limit specified in the indicator. *Item is compliant, but with substances below 
+    threshold.*"""
+    WatchListAboveThreshold = 5, """This substance is impacted by the specified legislations and appears in the parent
+    item in a quantity above that specified by the indicator. *Substance is impacted.*"""
+    WatchListHasSubstanceAboveThreshold = 6, """This item contains one or more substances impacted by the specified
+    legislations. *Item is non-compliant.*"""
+    WatchListUnknown = 7, """There is not enough information to determine compliance. *Compliance is unknown.*"""
 
 
 class _Indicator(ABC):

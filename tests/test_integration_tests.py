@@ -47,7 +47,9 @@ class TestSpecificationQueries:
 
     def test_impacted_substances(self, connection):
         query = (
-            queries.SpecificationImpactedSubstancesQuery().with_specification_ids(self.ids).with_legislations(LEGISLATIONS)
+            queries.SpecificationImpactedSubstancesQuery()
+            .with_specification_ids(self.ids)
+            .with_legislations(LEGISLATIONS)
         )
         response = connection.run(query)
 

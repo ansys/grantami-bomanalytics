@@ -4,7 +4,6 @@ Defines the representations of the items (materials, parts, specifications, and 
 These are sub-classed in _bom_item_results.py to include the results of the queries.
 """
 
-
 from abc import ABC, abstractmethod
 from typing import Callable, Type, Union, List, SupportsFloat
 from enum import Enum, auto
@@ -37,18 +36,10 @@ class RecordReference(ABC):
 
     Parameters
     ----------
-    reference_type : ReferenceType
+    reference_type
         The type of the record reference value. This class only supports 'generic' record properties.
-    reference_value : int or str
+    reference_value
         The value of the record reference. All are `str`, except for record history identities which are `int`.
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-    record_guid : str, optional
-    record_history_guid : str, optional
-    _model : Type[models.Model]
-        The low-level API class that defines this definition object. Is set for concrete subclasses.
     """
 
     def __init__(
@@ -67,6 +58,7 @@ class RecordReference(ABC):
             self.record_history_guid = reference_value
 
         self._model = None
+        """The low-level API class that defines this definition object. Is set for concrete subclasses."""
 
 
 class RecordDefinition(RecordReference):
@@ -79,7 +71,7 @@ class RecordDefinition(RecordReference):
 
         Returns
         -------
-        models.Model, optional
+        Definition
             If one of the reference attributes defined in this class is populated, then an instantiated model is
             returned. Otherwise `None` is returned.
         """
@@ -99,25 +91,19 @@ class RecordDefinition(RecordReference):
 
     @property
     @abstractmethod
-    def definition(self):
+    def definition(self) -> models.Model:
         pass
 
 
 class PartDefinition(RecordDefinition):
-    """Concrete `RecordDefinition` subclass which represents a part record.
+    """Concrete :class:`RecordDefinition` subclass which represents a part record.
 
     Parameters
     ----------
-    reference_type : ReferenceType
+    reference_type
         The type of the record reference value. This class extends the base constructor to also support part numbers.
-    reference_value : int or str
+    reference_value
         The value of the record reference. All are `str`, except for record history identities which are `int`.
-
-    Attributes
-    ----------
-    part_number : str, optional
-    _model : Type[models.Model]
-        The low-level API class that defines this definition object.
     """
 
     def __init__(
@@ -132,7 +118,6 @@ class PartDefinition(RecordDefinition):
         self.part_number: Union[str, None] = None
         if reference_type == ReferenceType.PartNumber:
             self.part_number = reference_value
-
         self._model = models.GrantaBomAnalyticsServicesInterfaceCommonPartReference
 
     @property
@@ -141,7 +126,7 @@ class PartDefinition(RecordDefinition):
 
         Returns
         -------
-        models.GrantaBomAnalyticsServicesInterfaceCommonPartReference
+        Definition
         """
 
         result = super()._create_definition() or self._model(
@@ -155,16 +140,10 @@ class MaterialDefinition(RecordDefinition):
 
     Parameters
     ----------
-    reference_type : ReferenceType
+    reference_type
         The type of the record reference value. This class extends the base constructor to also support material ids.
-    reference_value : int or str
+    reference_value
         The value of the record reference. All are `str`, except for record history identities which are `int`.
-
-    Attributes
-    ----------
-    material_id : str, optional
-    _model : Type[models.Model]
-        The low-level API class that defines this definition object.
     """
 
     def __init__(
@@ -187,7 +166,7 @@ class MaterialDefinition(RecordDefinition):
 
         Returns
         -------
-        models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
+        Definition
         """
 
         result = super()._create_definition() or self._model(
@@ -201,17 +180,11 @@ class SpecificationDefinition(RecordDefinition):
 
     Parameters
     ----------
-    reference_type : ReferenceType
+    reference_type
         The type of the record reference value. This class extends the base constructor to also support specification
          ids.
-    reference_value : int or str
+    reference_value
         The value of the record reference. All are `str`, except for record history identities which are `int`.
-
-    Attributes
-    ----------
-    specification_id : str, optional
-    _model : Type[models.Model]
-        The low-level API class that defines this definition object.
     """
 
     def __init__(
@@ -234,7 +207,7 @@ class SpecificationDefinition(RecordDefinition):
 
         Returns
         -------
-        models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
+        Definition
         """
 
         result = super()._create_definition() or self._model(
@@ -252,17 +225,11 @@ class BaseSubstanceReference(RecordReference, ABC):
 
     Parameters
     ----------
-    reference_type : ReferenceType
+    reference_type
         The type of the record reference value. This class extends the base constructor to also support CAS numbers,
         EC numbers, and chemical names.
-    reference_value : int or str
+    reference_value
         The value of the record reference. All are `str`, except for record history identities which are `int`.
-
-    Attributes
-    ----------
-    chemical_name : str, optional
-    cas_number : str, optional
-    ec_number : str, optional
     """
 
     def __init__(
@@ -290,18 +257,13 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
 
     Parameters
     ----------
-    reference_type : ReferenceType
+    reference_type
         The type of the record reference value.
-    reference_value : int or str
+    reference_value
         The value of the record reference. All are `str`, except for record history identities which are `int`.
-    percentage_amount : float, optional
+    percentage_amount
         The amount of the substance that appears in the parent Bom item. Should be greater than 0 and less than or
         equal to 100.
-
-    Attributes
-    ----------
-    _model : Type[models.Model]
-        The low-level API class that defines this definition object.
     """
 
     _default_percentage_amount = 100  # Default to worst case scenario
@@ -336,7 +298,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
 
         Returns
         -------
-        float
+        Amount
             Defaults to 100 if not set.
         """
 
@@ -357,7 +319,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
 
         Returns
         -------
-        models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount
+        Definition
         """
 
         definition = super()._create_definition()
@@ -393,7 +355,7 @@ class BoM1711Definition:
 
     Parameters
     ----------
-    bom : str
+    bom
         The bill of materials in XML 1711 format.
     """
 
@@ -403,11 +365,11 @@ class BoM1711Definition:
 
     @property
     def definition(self) -> str:
-        """The low-level API Bom definition. This is just a str.
+        """The low-level API Bom definition.
 
         Returns
         -------
-        str
+        Definition
         """
         return self._bom
 
@@ -415,14 +377,10 @@ class BoM1711Definition:
 class AbstractBomFactory:
     """Creates factories for a given type of API query. The key to control which definition is created is the
     request object in the low-level API.
-
-    Class Attributes
-    ----------------
-    registry : dict
-        Mapping between a factory class and the definition object it can create
     """
 
     registry = {}
+    """Mapping between a factory class and the definition object it can create"""
 
     @classmethod
     def register(cls, request_types: List[Type[models.Model]]) -> Callable:
@@ -430,7 +388,7 @@ class AbstractBomFactory:
 
         Parameters
         ----------
-        request_types : list of Type[models.Model]
+        request_types
 
         Returns
         -------
@@ -451,12 +409,12 @@ class AbstractBomFactory:
 
         Parameters
         ----------
-        request_type : Type[models.Model]
+        request_type
             The request type for which a definition is needed
 
         Returns
         -------
-        BomItemDefinitionFactory
+        Factory
             An instance of a factory to create the appropriate definitions.
 
         Raises
@@ -476,9 +434,9 @@ class AbstractBomFactory:
 class BomItemDefinitionFactory(ABC):
     """Base factory to create a specific definition object. Applies to definitions based on records only.
 
-    These factories intentionally abstract away the concept of `ReferenceType` and expose separate static methods to
+    These factories intentionally abstract away the concept of :class:`ReferenceType` and expose separate static methods to
     create definitions based on a specific reference type, which more closely relates to the structure in the
-    `queries.py` builder.
+    :mod:`queries.py` builder.
     """
 
     @staticmethod
@@ -512,7 +470,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_history_identity : int
+        record_history_identity
 
         Returns
         -------
@@ -529,7 +487,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_history_guid : str
+        record_history_guid
 
         Returns
         -------
@@ -544,7 +502,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_guid : str
+        record_guid
 
         Returns
         -------
@@ -559,7 +517,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        material_id : str
+        material_id
 
         Returns
         -------
@@ -584,7 +542,7 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_history_identity : int
+        record_history_identity
 
         Returns
         -------
@@ -601,7 +559,7 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_history_guid : str
+        record_history_guid
 
         Returns
         -------
@@ -616,7 +574,7 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_guid : str
+        record_guid
 
         Returns
         -------
@@ -631,7 +589,7 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        part_number : str
+        part_number
 
         Returns
         -------
@@ -656,7 +614,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_history_identity : int
+        record_history_identity
 
         Returns
         -------
@@ -673,7 +631,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_history_guid : str
+        record_history_guid
 
         Returns
         -------
@@ -690,7 +648,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_guid : str
+        record_guid
 
         Returns
         -------
@@ -705,7 +663,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        specification_id : str
+        specification_id
 
         Returns
         -------
@@ -725,7 +683,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_history_identity : int
+        record_history_identity
 
         Returns
         -------
@@ -742,7 +700,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_history_guid : str
+        record_history_guid
 
         Returns
         -------
@@ -759,7 +717,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        record_guid : str
+        record_guid
 
         Returns
         -------
@@ -774,7 +732,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        chemical_name : str
+        chemical_name
 
         Returns
         -------
@@ -789,7 +747,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        cas_number : str
+        cas_number
 
         Returns
         -------
@@ -804,7 +762,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
         Parameters
         ----------
-        ec_number : str
+        ec_number
 
         Returns
         -------
@@ -829,7 +787,7 @@ class BomFactory:
 
         Parameters
         ----------
-        bom : str
+        bom
 
         Returns
         -------

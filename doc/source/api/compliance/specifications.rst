@@ -1,7 +1,7 @@
 .. _ref_bom_analytics_api_compliance_specifications:
 
-Specification Compliance Query
-==============================
+Specification Compliance
+========================
 
 Query definition
 ~~~~~~~~~~~~~~~~

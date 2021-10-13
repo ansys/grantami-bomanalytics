@@ -1,7 +1,7 @@
 .. _ref_bom_analytics_api_compliance_substances:
 
-Substance Compliance Query
-==========================
+Substance Compliance
+====================
 
 Query definition
 ~~~~~~~~~~~~~~~~

@@ -21,18 +21,18 @@ class TestRecordArgManager:
     def test_no_record_type_raises_runtime_error(self):
         am = queries._RecordArgumentManager(batch_size=100)
         with pytest.raises(RuntimeError) as e:
-            next(am.batched_record_arguments)
+            next(am.batched_arguments)
         assert '"item_type_name" must be populated before record arguments can be generated.' in str(e.value)
 
     def test_no_batch_size_raises_runtime_error(self):
         am = queries._RecordArgumentManager(item_type_name="TEST_RECORD")
         with pytest.raises(RuntimeError) as e:
-            next(am.batched_record_arguments)
+            next(am.batched_arguments)
         assert '"batch_size" must be populated before record arguments can be generated.' in str(e.value)
 
     def test_initialized_arg_manager_no_records(self):
         am = queries._RecordArgumentManager(batch_size=100, item_type_name="TEST_RECORD")
-        args = list(am.batched_record_arguments)
+        args = list(am.batched_arguments)
         assert args == []
 
     @pytest.mark.parametrize("number_of_records", [1, 2, 3, 4, 49, 50, 51, 99, 100, 101, 200, 500, 1000])
@@ -42,7 +42,7 @@ class TestRecordArgManager:
         for idx in range(number_of_records):
             rec_def = MockRecordDefinition(reference_type="Ref Type", reference_value=f"Ref Val{idx}")
             am.append_record_definition(rec_def)
-        args = list(am.batched_record_arguments)
+        args = list(am.batched_arguments)
 
         if number_of_records % am.batch_size == 0:
             epsilon = 0
@@ -74,5 +74,5 @@ class TestBomArgManager:
         am = queries._BomArgumentManager()
         am._items = bom
         assert am._items == bom
-        assert am.bom_argument == {"bom_xml1711": bom}
+        assert am.batched_arguments == [{"bom_xml1711": bom}]
         assert am.__repr__() == f'<_BomArgumentManager {{bom: "{bom[:100]}"}}>'

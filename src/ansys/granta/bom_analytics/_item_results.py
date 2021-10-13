@@ -121,13 +121,17 @@ class ItemResultFactory:
             If a query type is not registered to any factory.
         """
 
-        reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
         item_result_class = cls.registry[result_type_name]
-        item_result = item_result_class(
-            reference_type=reference_type,
-            reference_value=result_with_impacted_substances.reference_value,
-            legislations=result_with_impacted_substances.legislations,
-        )
+        try:
+            reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+            item_result = item_result_class(
+                reference_type=reference_type,
+                reference_value=result_with_impacted_substances.reference_value,
+                legislations=result_with_impacted_substances.legislations,
+            )
+        except AttributeError:
+            # This is a Bom-type query result, and has no record reference
+            item_result = item_result_class(legislations=result_with_impacted_substances.legislations)
         return item_result
 
     @classmethod
@@ -177,7 +181,7 @@ class ItemResultFactory:
 
         Parameters
         ----------
-        reference_type : str
+        reference_type
             The type of record reference returned from the API for a particular result.
 
         Returns
@@ -231,6 +235,20 @@ class ImpactedSubstance(BaseSubstanceReference):
 
         self.legislation_threshold: float = legislation_threshold
         """The substance concentration threshold over which the material is non-compliant with the legislation."""
+
+    def __repr__(self):
+        if self.cas_number:
+            return f'<ImpactedSubstance: {{"cas_number": {self.cas_number}}}>'
+        elif self.ec_number:
+            return f'<ImpactedSubstance: {{"ec_number": {self.ec_number}}}>'
+        elif self.chemical_name:
+            return f'<ImpactedSubstance: {{"chemical_name": {self.chemical_name}}}>'
+        elif self.record_guid:
+            return f'<ImpactedSubstance: {{"record_guid": {self.record_guid}}}>'
+        elif self.record_history_guid:
+            return f'<ImpactedSubstance: {{"record_history_guid": {self.record_history_guid}}}>'
+        elif self.record_history_identity:
+            return f'<ImpactedSubstance: {{"record_history_identity": {self.record_history_identity}}}>'
 
 
 class LegislationResult:
@@ -323,6 +341,14 @@ class ImpactedSubstancesResultMixin:
             )
             self.legislations[legislation.legislation_name] = new_legislation_result
 
+    def __repr__(self):
+        reference_type = self.definition.reference_type
+        reference_value = self.definition.reference_value
+        return (
+            f'<{self.__class__.__name__}({{"{reference_type}": "{reference_value}"}}), '
+            f"{len(self.legislations)} legislations>"
+        )
+
 
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
 class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, MaterialDefinition):
@@ -404,6 +430,14 @@ class ComplianceResultMixin:
 
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
+
+    def __repr__(self):
+        reference_type = self.definition.reference_type
+        reference_value = self.definition.reference_value
+        return (
+            f'<{self.__class__.__name__}({{"{reference_type}": "{reference_value}"}}),'
+            f" {len(self.indicators)} indicators>"
+        )
 
 
 if TYPE_CHECKING:
@@ -644,7 +678,8 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 
 @ItemResultFactory.register("SubstanceWithCompliance")
 class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
-    pass
+    def __repr__(self):
+        return f'<{self.__class__.__name__}({{"cas_number": {self.cas_number}}}), {len(self.indicators)} indicators>'
 
 
 @ItemResultFactory.register("MaterialWithCompliance")
@@ -661,7 +696,12 @@ class PartWithComplianceResult(
     ComplianceResultMixin,
     PartDefinition,
 ):
-    pass
+    def __repr__(self):
+        reference_value = self.definition.reference_value
+        if not reference_value:
+            return f"<{self.__class__.__name__}, {len(self.indicators)} indicators>"
+        else:
+            return super().__repr__()
 
 
 @ItemResultFactory.register("SpecificationWithCompliance")

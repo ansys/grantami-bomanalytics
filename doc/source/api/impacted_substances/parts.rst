@@ -1,6 +1,5 @@
 .. _ref_bom_analytics_api_impactedsubstances_parts:
 
-
 Part Impacted Substances
 ========================
 

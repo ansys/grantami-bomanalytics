@@ -4,11 +4,11 @@ Provides a decorator that performs runtime type checking of the arguments passed
 
 Attributes
 ----------
-T : TypeVar
+T
     Generic type to ensure static type checking works as expected.
 """
 
-from typing import TypeVar, Type
+from typing import TypeVar, Type, Any
 import functools
 
 T = TypeVar("T")
@@ -20,7 +20,8 @@ def allowed_types(*types):
 
     Parameters
     ----------
-    *types : Tuple of objects who's type should match the corresponding function argument's type.
+    *types
+        Tuple of objects who's type should match the corresponding function argument's type.
 
     Raises
     ------
@@ -64,7 +65,7 @@ def allowed_types(*types):
     return decorator
 
 
-def _check_type(obj, allowed_type):
+def _check_type(obj, allowed_type: Any):
     """Recursively checks the type of an object against an allowed type.
 
     Recursive checking is performed if `allowed_type` is a container; first the type of the container itself is checked,

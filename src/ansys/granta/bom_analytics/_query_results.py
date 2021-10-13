@@ -4,16 +4,14 @@ Defines the representations of the query results themselves, which allows them t
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
 
-from typing import List, Dict, Type, Callable, Any, Union, TypeVar
+from typing import List, Dict, Type, Callable, Any, Union, TypeVar, TYPE_CHECKING
 from collections import defaultdict
 from abc import ABC
 
 from ansys.granta.bomanalytics import models
 
-from ._item_results import ItemResultFactory
-
-# Required for type hinting
 from ._item_results import (
+    ItemResultFactory,
     MaterialWithImpactedSubstancesResult,
     MaterialWithComplianceResult,
     PartWithImpactedSubstancesResult,
@@ -22,10 +20,21 @@ from ._item_results import (
     SpecificationWithComplianceResult,
     SubstanceWithComplianceResult,
     ImpactedSubstance,
-    BoM1711WithImpactedSubstancesResult,
 )
-
 from .indicators import WatchListIndicator, RoHSIndicator
+
+if TYPE_CHECKING:
+    from .queries import (
+        MaterialImpactedSubstancesQuery,
+        MaterialComplianceQuery,
+        PartImpactedSubstancesQuery,
+        PartComplianceQuery,
+        SpecificationImpactedSubstancesQuery,
+        SpecificationComplianceQuery,
+        SubstanceComplianceQuery,
+        BomComplianceQuery,
+    )
+    from ._connection import Connection
 
 Query_Result = TypeVar(
     "Query_Result",
@@ -36,15 +45,11 @@ Query_Result = TypeVar(
 
 class QueryResultFactory:
     """Creates query results for a given type of API query. The key to control which result type is created is the type
-     of the response from the low-level API.
-
-    Class Attributes
-    ----------------
-    registry : dict
-        Mapping between a query result class and the API response it supports.
+    of the response from the low-level API.
     """
 
-    registry = {}
+    registry: dict = {}
+    "Mapping between a query result class and the API response it supports."
 
     @classmethod
     def register(cls, response_type: Type[models.Model]) -> Callable:
@@ -52,7 +57,7 @@ class QueryResultFactory:
 
         Parameters
         ----------
-        response_type : Type[models.Model]
+        response_type
             The type of response to be registered.
 
         Returns
@@ -76,7 +81,7 @@ class QueryResultFactory:
 
         Parameters
         ----------
-        results : models.Model or list of models.Model
+        results
             The result or results returned from the low-level API.
         **kwargs
             All other arguments required to instantiate the item definition, including the `reference_value` for
@@ -119,17 +124,28 @@ class ImpactedSubstancesBaseClass(ABC):
         return f"<{self.__class__.__name__}: {len(self._results)} {self.result_type_name} results>"
 
     @property
-    def impacted_substances_by_legislation(
-        self,
-    ) -> Dict[str, List[ImpactedSubstance]]:
+    def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
         """A view of the results for an impacted substances query grouped by legislation only.
 
-        Returns
-        -------
-        dict of (str, list of `ImpactedSubstances`)
-            The substances from all items specified in the query are merged for each legislation, providing a single
-            list of impacted substances grouped by legislation only. Substances are duplicated where they appear in
-            multiple items for the same legislation.
+        The substances from all items specified in the query are merged for each legislation, providing a single
+        list of impacted substances grouped by legislation only. Substances are duplicated where they appear in
+        multiple items for the same legislation.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>>    query = (
+        ...     MaterialImpactedSubstancesQuery()
+        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+        ...     .with_legislations(["REACH - The Candidate List"])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.impacted_substances_by_legislation
+        {'REACH - The Candidate List': [
+            <ImpactedSubstance: {"cas_number": 90481-04-2}>,
+            <ImpactedSubstance: {"cas_number": 98-95-3}>,
+            <ImpactedSubstance: {"cas_number": 117-81-7}>]
+        }
         """
 
         results = defaultdict(list)
@@ -141,17 +157,28 @@ class ImpactedSubstancesBaseClass(ABC):
                 results[legislation_name].extend(
                     legislation_result.substances
                 )  # TODO: Merge these property, i.e. take max amount? range?
-        return results
+        return dict(results)
 
     @property
-    def impacted_substances(self) -> List[ImpactedSubstance]:
+    def impacted_substances(self) -> List["ImpactedSubstance"]:
         """A view of the results for an impacted substances query flattened into a single list.
 
-        Returns
-        -------
-        list of `ImpactedSubstances`
-            The substances from all items specified in the query are merged across item and legislation, providing a
-            single flat list. Substances are duplicated where they appear in multiple items and/or legislations.
+        The substances from all items specified in the query are merged across item and legislation, providing a
+        single flat list. Substances are duplicated where they appear in multiple items and/or legislations.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>>    query = (
+        ...     MaterialImpactedSubstancesQuery()
+        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+        ...     .with_legislations(["REACH - The Candidate List"])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.impacted_substances
+        [<ImpactedSubstance: {"cas_number": 90481-04-2}>,
+         <ImpactedSubstance: {"cas_number": 98-95-3}>,
+         <ImpactedSubstance: {"cas_number": 117-81-7}>]
         """
 
         results = []
@@ -183,6 +210,25 @@ class ComplianceBaseClass(ABC):
 
         The compliance results from all items specified in the query are merged for each indicator by taking the
         worst result returned for that indicator.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> indicator = WatchListIndicator(
+        ...     name="Prop 65",
+        ...     legislation_names=["California Proposition 65 List"]
+        ... )
+        >>> query = (
+        ...     MaterialComplianceQuery()
+        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+        ...     .with_indicators([indicator])
+        ... )
+        >>> compliance_result = cxn.run(query)
+        >>> compliance_result.compliance_by_indicator
+        {'Prop 65': <WatchListIndicator,
+                name: Prop 65,
+                flag: WatchListFlag.WatchListAboveThreshold>
+        }
         """
 
         results = {}
@@ -221,9 +267,25 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             self._results.append(material_with_impacted_substances)
 
     @property
-    def impacted_substances_by_material_and_legislation(self) -> List[MaterialWithImpactedSubstancesResult]:
+    def impacted_substances_by_material_and_legislation(self) -> List["MaterialWithImpactedSubstancesResult"]:
         """The impacted substances for each legislation in the original query, grouped by material and
-        legislation."""
+        legislation.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> query = (
+        ...     MaterialImpactedSubstancesQuery()
+        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+        ...     .with_legislations(["REACH - The Candidate List"])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.impacted_substances_by_material_and_legislation
+        [<MaterialWithImpactedSubstancesResult({MaterialId: elastomer-butadienerubber}),
+                1 legislations>,
+         <MaterialWithImpactedSubstancesResult({MaterialId: NBR-100}),
+                1 legislations>]
+        """
 
         return self._results
 
@@ -259,8 +321,28 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
             self._results.append(material_with_compliance)
 
     @property
-    def compliance_by_material_and_indicator(self) -> List[MaterialWithComplianceResult]:
-        """The compliance status for each indicator in the original query, grouped by material."""
+    def compliance_by_material_and_indicator(self) -> List["MaterialWithComplianceResult"]:
+        """The compliance status for each indicator in the original query, grouped by material.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> indicator = WatchListIndicator(
+        ...     name="Prop 65",
+        ...     legislation_names=["California Proposition 65 List"]
+        ... )
+        >>> query = (
+        ...     MaterialComplianceQuery()
+        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+        ...     .with_indicators([indicator])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.compliance_by_part_and_indicator
+        [<MaterialWithComplianceResult({MaterialId: elastomer-butadienerubber}),
+                1 indicators>,
+         <MaterialWithComplianceResult({MaterialId: NBR-100}),
+                1 indicators>]
+        """
 
         return self._results
 
@@ -290,9 +372,23 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             self._results.append(part_with_impacted_substances)
 
     @property
-    def impacted_substances_by_part_and_legislation(self) -> List[PartWithImpactedSubstancesResult]:
+    def impacted_substances_by_part_and_legislation(self) -> List["PartWithImpactedSubstancesResult"]:
         """The impacted substances for each legislation in the original query, grouped by part and
-        legislation."""
+        legislation.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> query = (
+        ...     PartImpactedSubstancesQuery()
+        ...     .with_part_numbers(['DRILL', 'FLRY34'])
+        ...     .with_legislations(["REACH - The Candidate List"])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.impacted_substances_by_material_and_legislation
+        [<PartWithImpactedSubstancesResult({PartNumber: DRILL}), 1 legislations>,
+         <PartWithImpactedSubstancesResult({PartNumber: FLRY34}), 1 legislations>]
+        """
 
         return self._results
 
@@ -331,8 +427,26 @@ class PartComplianceQueryResult(ComplianceBaseClass):
             self._results.append(part_with_compliance)
 
     @property
-    def compliance_by_part_and_indicator(self) -> List[PartWithComplianceResult]:
-        """The compliance status for each indicator in the original query, grouped by part."""
+    def compliance_by_part_and_indicator(self) -> List["PartWithComplianceResult"]:
+        """The compliance status for each indicator in the original query, grouped by part.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> indicator = WatchListIndicator(
+        ...     name="Prop 65",
+        ...     legislation_names=["California Proposition 65 List"]
+        ... )
+        >>> query = (
+        ...     PartComplianceQuery()
+        ...     .with_part_numbers(['DRILL', 'FLRY34'])
+        ...     .with_indicators([indicator])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.compliance_by_part_and_indicator
+        [<PartWithComplianceResult({PartNumber: DRILL}), 1 indicators>,
+         <PartWithComplianceResult({PartNumber: FLRY34}), 1 indicators>]
+        """
 
         return self._results
 
@@ -367,9 +481,25 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             self._results.append(specification_with_impacted_substances)
 
     @property
-    def impacted_substances_by_specification_and_legislation(self) -> List[SpecificationWithImpactedSubstancesResult]:
+    def impacted_substances_by_specification_and_legislation(self) -> List["SpecificationWithImpactedSubstancesResult"]:
         """The impacted substances for each legislation in the original query, grouped by specification and
-        legislation."""
+        legislation.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> query = (
+        ...     SpecificationImpactedSubstancesQuery()
+        ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
+        ...     .with_legislations(["REACH - The Candidate List"])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.impacted_substances_by_material_and_legislation
+        [<SpecificationWithImpactedSubstancesResult({SpecificationId: MIL-A-8625}),
+                1 legislations>,
+         <SpecificationWithImpactedSubstancesResult({SpecificationId: PSP101}),
+                0 legislations>]
+        """
 
         return self._results
 
@@ -408,8 +538,28 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
             self._results.append(specification_with_compliance)
 
     @property
-    def compliance_by_specification_and_indicator(self) -> List[SpecificationWithComplianceResult]:
-        """The compliance status for each indicator in the original query, grouped by specification."""
+    def compliance_by_specification_and_indicator(self) -> List["SpecificationWithComplianceResult"]:
+        """The compliance status for each indicator in the original query, grouped by specification.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> indicator = WatchListIndicator(
+        ...     name="Prop 65",
+        ...     legislation_names=["California Proposition 65 List"]
+        ... )
+        >>> query = (
+        ...     SpecificationComplianceQuery()
+        ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
+        ...     .with_indicators([indicator])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.compliance_by_part_and_indicator
+        [<SpecificationWithComplianceResult({SpecificationId: MIL-A-8625}),
+                1 indicators>,
+        <SpecificationWithComplianceResult({SpecificationId: PSP101}),
+                1 indicators>]
+        """
 
         return self._results
 
@@ -444,8 +594,26 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
             self._results.append(substance_with_compliance)
 
     @property
-    def compliance_by_substance_and_indicator(self) -> List[SubstanceWithComplianceResult]:
-        """The compliance status for each indicator in the original query, grouped by substance."""
+    def compliance_by_substance_and_indicator(self) -> List["SubstanceWithComplianceResult"]:
+        """The compliance status for each indicator in the original query, grouped by substance.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> indicator = WatchListIndicator(
+        ...     name="Prop 65",
+        ...     legislation_names=["California Proposition 65 List"]
+        ... )
+        >>> query = (
+        ...     SubstanceComplianceQuery()
+        ...     .with_cas_numbers(['50-00-0', '57-24-9'])
+        ...     .with_indicators([indicator])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.compliance_by_part_and_indicator
+        [<SubstanceWithComplianceResult({"cas_number": 50-00-0}), 1 indicators>,
+         <SubstanceWithComplianceResult({"cas_number": 57-24-9}), 1 indicators>]
+        """
 
         return self._results
 
@@ -454,7 +622,9 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.BomImpactedSubstancesQuery`."""
 
-    def __init__(self, results: models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response):
+    def __init__(
+        self, results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response]
+    ):
         """
         Parameters
         ----------
@@ -462,8 +632,12 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             The low-level API objects returned by the REST API.
         """
 
-        self._results = [BoM1711WithImpactedSubstancesResult(legislations=results.legislations)]
         self.result_type_name = "Bom1711WithImpactedSubstances"
+        bom_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
+            result_type_name=self.result_type_name,
+            result_with_impacted_substances=results[0],
+        )
+        self._results = [bom_with_impacted_substances]
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response)
@@ -472,7 +646,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
     def __init__(
         self,
-        results: models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
+        results: List[models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -485,22 +659,39 @@ class BomComplianceQueryResult(ComplianceBaseClass):
              objects.
         """
 
-        part = results.parts[0]
-        part_with_compliance = PartWithComplianceResult(
-            indicator_results=part.indicators,
-            indicator_definitions=indicator_definitions,
-            reference_type=part.reference_type,
-            reference_value=part.reference_value,
-        )
-        part_with_compliance._add_child_parts(part.parts)
-        part_with_compliance._add_child_materials(part.materials)
-        part_with_compliance._add_child_specifications(part.specifications)
-        part_with_compliance._add_child_substances(part.substances)
-        self._results = [part_with_compliance]
         self.result_type_name = "PartWithCompliance"
+        result = results[0].parts[0]
+        part_with_compliance = ItemResultFactory.create_compliance_result(
+            result_type_name=self.result_type_name,
+            result_with_compliance=result,
+            indicator_definitions=indicator_definitions,
+        )
+        part_with_compliance._add_child_parts(result.parts)
+        part_with_compliance._add_child_materials(result.materials)
+        part_with_compliance._add_child_specifications(result.specifications)
+        part_with_compliance._add_child_substances(result.substances)
+        self._results = [part_with_compliance]
 
     @property
-    def compliance_by_part_and_indicator(self) -> List[PartWithComplianceResult]:
-        """The compliance status for each indicator in the original query."""
+    def compliance_by_part_and_indicator(self) -> List["PartWithComplianceResult"]:
+        """The compliance status for each indicator in the original query.
+
+        Examples
+        --------
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> bom = "<PartsEco xmlns..."
+        >>> indicator = WatchListIndicator(
+        ...     name="Prop 65",
+        ...     legislation_names=["California Proposition 65 List"]
+        ... )
+        >>> query = (
+        ...     BomComplianceQuery()
+        ...     .with_bom(bom)
+        ...     .with_indicators([indicator])
+        ... )
+        >>> result = cxn.run(query)
+        >>> result.compliance_by_part_and_indicator
+        [<PartWithComplianceResult, 1 indicators>]
+        """
 
         return self._results

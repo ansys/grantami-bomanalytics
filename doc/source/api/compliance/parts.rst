@@ -1,7 +1,7 @@
 .. _ref_bom_analytics_api_compliance_parts:
 
-Part Compliance Query
-=====================
+Part Compliance
+===============
 
 Query definition
 ~~~~~~~~~~~~~~~~

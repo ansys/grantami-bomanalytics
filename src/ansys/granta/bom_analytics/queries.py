@@ -17,7 +17,7 @@ Query_Result
 """
 
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Tuple, TypeVar, Generic, TYPE_CHECKING, Callable, Generator, Optional, Type
+from typing import Union, List, Dict, Tuple, TypeVar, TYPE_CHECKING, Callable, Generator, Optional, Type
 import warnings
 from numbers import Number
 import logging
@@ -121,7 +121,7 @@ class _RecordArgumentManager(_BaseArgumentManager):
         self._items.append(item)
 
     @property
-    def batched_record_arguments(self) -> Generator[Dict[str, List[Union[models.Model, str]]], None, None]:
+    def batched_arguments(self) -> Generator[Dict[str, List[Union[models.Model, str]]], None, None]:
         """A generator producing item request arguments as a list of instances of the appropriate Model. Each list
         of dicts will be at most `_batch_size` long.
 
@@ -139,7 +139,7 @@ class _RecordArgumentManager(_BaseArgumentManager):
         Examples
         --------
         >>> items = _RecordArgumentManager(item_type_name = "materials", batch_size = 100)
-        >>> items.batched_record_arguments
+        >>> items.batched_arguments
         {"materials": [{"reference_type": "material_id", "reference_value": "ABS"}, ...]  # Up to 100 items
         """
 
@@ -165,7 +165,7 @@ class _RecordArgumentManager(_BaseArgumentManager):
         return getattr(response, self.item_type_name)
 
 
-class _BaseQueryBuilder(Generic[Query_Builder], ABC):
+class _BaseQueryBuilder(ABC):
     """Base class for all queries."""
 
     _item_argument_manager = None
@@ -390,7 +390,7 @@ class _ApiMixin(api_base_class):
         self._validate_parameters()
         self._validate_items()
         result = []
-        for batch in self._item_argument_manager.batched_record_arguments:
+        for batch in self._item_argument_manager.batched_arguments:
             args = {**arguments, **batch}
             request = self._request_type(**args)
             response = api_method(request)
@@ -449,7 +449,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         Examples
         --------
         >>> indicator = WatchListIndicator(
-        ...     name="Indicator",
+        ...     name="Prop 65",
         ...     legislation_names=["California Proposition 65 List"]
         ... )
         >>> MaterialComplianceQuery().with_indicators([indicator])
@@ -631,7 +631,8 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Examples
         --------
-        >>> MaterialComplianceQuery().with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
+        >>> query = MaterialComplianceQuery()
+        >>> query.with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
         <MaterialCompliance: 2 materials, batch size = 100, 0 indicators>
         """
 
@@ -655,7 +656,7 @@ class MaterialComplianceQuery(_ComplianceMixin, _MaterialQueryBuilder):
     --------
     >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> indicator = WatchListIndicator(
-    ...     name="Indicator",
+    ...     name="Prop 65",
     ...     legislation_names=["California Proposition 65 List"]
     ... )
     >>> query = (
@@ -751,7 +752,7 @@ class PartComplianceQuery(_ComplianceMixin, _PartQueryBuilder):
     --------
     >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> indicator = WatchListIndicator(
-    ...     name="Indicator",
+    ...     name="Prop 65",
     ...     legislation_names=["California Proposition 65 List"]
     ... )
     >>> query = (
@@ -850,7 +851,7 @@ class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder)
     --------
     >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> indicator = WatchListIndicator(
-    ...     name="Indicator",
+    ...     name="Prop 65",
     ...     legislation_names=["California Proposition 65 List"]
     ... )
     >>> query = (
@@ -889,7 +890,8 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
     ...     .with_legislations(["REACH - The Candidate List"])
     ... )
     >>> cxn.run(query)
-    <SpecificationImpactedSubstancesQueryResult: 2 SpecificationWithImpactedSubstances results>
+    <SpecificationImpactedSubstancesQueryResult:
+                    2 SpecificationWithImpactedSubstances results>
     """
 
     def __init__(self):
@@ -1122,7 +1124,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Examples
         --------
         >>> query = SubstanceComplianceQuery()
-        >>> query = query.with_ec_numbers_and_amounts([('200-001-8', 25), ('200-319-7', 0.1)])
+        >>> query = query.with_ec_numbers_and_amounts([('200-001-8', 25),
+        ...                                            ('200-319-7', 0.1)])
         <SubstanceComplianceQuery: 2 substances, batch size = 500, 0 indicators>
         """
 
@@ -1150,7 +1153,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Examples
         --------
         >>> query = SubstanceComplianceQuery()
-        >>> query = query.with_chemical_names_and_amounts([('Formaldehyde', 25), ('Strychnine', 0.1)])
+        >>> query = query.with_chemical_names_and_amounts([('Formaldehyde', 25),
+        ...                                                ('Strychnine', 0.1)])
         <SubstanceComplianceQuery: 2 substances, batch size = 500, 0 indicators>
         """
 
@@ -1174,7 +1178,7 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
     --------
     >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> indicator = WatchListIndicator(
-    ...     name="Indicator",
+    ...     name="Prop 65",
     ...     legislation_names=["California Proposition 65 List"]
     ... )
     >>> query = (
@@ -1223,7 +1227,7 @@ class _BomArgumentManager(_BaseArgumentManager):
         self._items = value
 
     @property
-    def bom_argument(self) -> Dict[str, str]:
+    def batched_arguments(self) -> List[Dict[str, str]]:
         """Return the bom in a dictionary with a key allowing it to be passed as a kwarg to the request constructor.
 
         Returns
@@ -1233,11 +1237,23 @@ class _BomArgumentManager(_BaseArgumentManager):
         Examples
         --------
         >>> bom_item = _BomArgumentManager(bom = "<PartsEco xmlns...")
-        >>> bom_item.bom_argument
+        >>> bom_item.batched_arguments
         {"bom_xml1711": "<PartsEco xmlns..."}
         """
 
-        return {self.item_type_name: self._items}
+        return [{self.item_type_name: self._items}]
+
+    @staticmethod
+    def extract_results_from_response(response: models.Model) -> List[models.Model]:
+        """Extracts the individual results from a response object.
+
+        For Bom queries, there is nothing to do. The response is already the low level. Just wrap in a list.
+
+        Returns
+        -------
+            The response wrapped in a list.
+        """
+        return [response]
 
 
 class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
@@ -1274,29 +1290,7 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
 
-if TYPE_CHECKING:
-    bom_base_class = _Bom1711QueryBuilder, _ApiMixin
-else:
-    bom_base_class = object
-
-
-class _Bom1711QueryOverride(bom_base_class):
-    """Overrides the `_call_api` method in the `_ApiMixin` class.
-
-    This is needed because the Bom1711 endpoints accept a single bom as opposed to a list of items.
-    """
-
-    def _call_api(self, api_method, arguments) -> List[models.Model]:
-        self._validate_parameters()
-        self._validate_items()
-
-        args = {**arguments, **self._item_argument_manager.bom_argument}
-        request = self._request_type(**args)
-        response = api_method(body=request)
-        return response
-
-
-class BomComplianceQuery(_Bom1711QueryOverride, _ComplianceMixin, _Bom1711QueryBuilder):
+class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
     """Evaluate compliance for a Bill of Materials in the Ansys Granta 17/11 XML format against a number of indicators.
 
     All Bom-based queuries can only operate on a single Bom. As a result, the `.with_batch_size()` method is not
@@ -1313,7 +1307,7 @@ class BomComplianceQuery(_Bom1711QueryOverride, _ComplianceMixin, _Bom1711QueryB
     >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
     >>> bom = "<PartsEco xmlns..."
     >>> indicator = WatchListIndicator(
-    ...     name="Indicator",
+    ...     name="Prop 65",
     ...     legislation_names=["California Proposition 65 List"]
     ... )
     >>> query = (
@@ -1331,7 +1325,7 @@ class BomComplianceQuery(_Bom1711QueryOverride, _ComplianceMixin, _Bom1711QueryB
         self._api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_bom1711"
 
 
-class BomImpactedSubstancesQuery(_Bom1711QueryOverride, _ImpactedSubstanceMixin, _Bom1711QueryBuilder):
+class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     """Get the substances impacted by a list of legislations for a Bill of Materials in the Ansys Granta 17/11 XML
      format.
 

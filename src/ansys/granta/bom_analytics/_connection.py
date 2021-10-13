@@ -20,33 +20,76 @@ DEFAULT_DBKEY = "MI_Restricted_Substances"
 
 if TYPE_CHECKING:
     from ansys.granta.bom_analytics.queries import (
-        MaterialImpactedSubstances,
-        MaterialCompliance,
-        PartImpactedSubstances,
-        PartCompliance,
-        SpecificationImpactedSubstances,
-        SpecificationCompliance,
-        SubstanceCompliance,
-        BomImpactedSubstances,
-        BomCompliance,
+        MaterialImpactedSubstancesQuery,
+        MaterialComplianceQuery,
+        PartImpactedSubstancesQuery,
+        PartComplianceQuery,
+        SpecificationImpactedSubstancesQuery,
+        SpecificationComplianceQuery,
+        SubstanceComplianceQuery,
+        BomImpactedSubstancesQuery,
+        BomComplianceQuery,
         Yaml,
     )
     from ansys.granta.bom_analytics._query_results import (
-        MaterialImpactedSubstancesResult,
-        MaterialComplianceResult,
-        PartImpactedSubstancesResult,
-        PartComplianceResult,
-        SpecificationImpactedSubstancesResult,
-        SpecificationComplianceResult,
-        SubstanceComplianceResult,
-        BomImpactedSubstancesResult,
-        BomComplianceResult,
+        MaterialImpactedSubstancesQueryResult,
+        MaterialComplianceQueryResult,
+        PartImpactedSubstancesQueryResult,
+        PartComplianceQueryResult,
+        SpecificationImpactedSubstancesQueryResult,
+        SpecificationComplianceQueryResult,
+        SubstanceComplianceQueryResult,
+        BomImpactedSubstancesQueryResult,
+        BomComplianceQueryResult,
     )
 
 logger = logging.getLogger(__name__)
 
 
-class BomServicesClient(auth_common.ApiClient):
+class Connection(auth_common.ApiClientFactory):
+    """Build a connection to an instance of Granta MI.
+
+    Parameters
+    ----------
+    servicelayer_url
+        The url of the Granta MI Service layer.
+
+    Notes
+    -----
+    For advanced usage, including configuring any session-specific properties and timeouts, see the documentation of
+    the *auth_common* package.
+
+    This a builder class, which means you must call the `.build()` method to return the actual
+    connection object.
+
+    Builder classes are generally instantiated, configured, and then built. The examples below
+    show this in action, first by instantiating the Connection builder (i.e. `Connection()`),
+    then configuring the builder object (`.with_autologon()`), and then using the builder
+    object to build the connection itself (`.build()`).
+
+    Examples
+    --------
+    >>> Connection("http://my_mi_server/mi_servicelayer").with_autologon().build()
+    <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
+
+    >>> cxn = (
+    ...     Connection("http://my_mi_server/mi_servicelayer")
+    ...     .with_credentials(username="my_username", password="my_password")
+    ...     .build()
+    ... )
+    >>> cxn
+    <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
+    """
+
+    def build(self) -> "BomAnalyticsClient":
+        # Use the docstring on the method in the base class.
+        self._validate_builder()
+        client = BomAnalyticsClient(self._session, self._sl_url, self._session_configuration)
+        client.setup_client(bomanalytics.models)
+        return client
+
+
+class BomAnalyticsClient(auth_common.ApiClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._db_key = DEFAULT_DBKEY
@@ -72,27 +115,42 @@ class BomServicesClient(auth_common.ApiClient):
         substances_table_name: Optional[str] = None,
         coatings_table_name: Optional[str] = None,
     ):
-        """Configure the database key and table names if the defaults in Granta MI have been modified.
+        """Configure the database key and table names if different from the defaults.
 
-        The database key is required if something other than MI_Restricted_Substances is being used. Table names are
-        required if they have been modified from the defaults.
+        The database key is required if something other than MI_Restricted_Substances is being used. A table name should
+        only be specified if it has been modified from the defaults.
 
         Parameters
         ----------
         database_key
-            As-implemented database key of the Restricted Substances-based database.
+            The database key for the Restricted Substances database.
         material_universe_table_name
-            As-implemented name for the 'MaterialUniverse' table
+            The name of the table that implements the 'MaterialUniverse' schema.
         in_house_materials_table_name
-            As-implemented name for the 'Materials - in house' table
+            The name of the table that implements the 'Materials - in house' schema.
         specifications_table_name
-            As-implemented name for the 'Specifications' table
+            The name of the table that implements the 'Specifications' schema.
         products_and_parts_table_name
-            As-implemented name for the 'Products and parts' table
+            The name of the table that implements the 'Products and parts' schema.
         substances_table_name
-            As-implemented name for the 'Restricted Substances' table
+            The name of the table that implements the 'Restricted Substances' schema.
         coatings_table_name
-            As-implemented name for the 'Coatings' table
+            The name of the table that implements the 'Coatings' schema.
+
+        Notes
+        -----
+        The database key and table names are configurable, but only need to be specified if they have been modified
+        from the defaults. These are summarized below:
+
+        * Database key: MI_Restricted_Substances
+        * Table names:
+
+          - MaterialUniverse
+          - Materials - in house
+          - Specifications
+          - Products and parts
+          - Restricted Substances
+          - Coatings
 
         Examples
         --------
@@ -109,16 +167,88 @@ class BomServicesClient(auth_common.ApiClient):
         self._table_names["substances_table_name"] = substances_table_name
         self._table_names["coatings_table_name"] = coatings_table_name
 
+    @overload
+    def run(self, query: "MaterialImpactedSubstancesQuery") -> "MaterialImpactedSubstancesQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "MaterialComplianceQuery") -> "MaterialComplianceQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "PartImpactedSubstancesQuery") -> "PartImpactedSubstancesQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "PartComplianceQuery") -> "PartComplianceQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "SpecificationImpactedSubstancesQuery") -> "SpecificationImpactedSubstancesQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "SpecificationComplianceQuery") -> "SpecificationComplianceQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "SubstanceComplianceQuery") -> "SubstanceComplianceQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "BomImpactedSubstancesQuery") -> "BomImpactedSubstancesQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "BomComplianceQuery") -> "BomComplianceQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "Yaml") -> str:
+        ...
+
+    @overload
+    def run(self, query: Type["Yaml"]) -> str:
+        ...
+
+    def run(self, query):
+        """Run a query against the Granta MI database.
+
+        Parameters
+        ----------
+        query
+            A compliance, impacted substance, or yaml query object.
+
+        Returns
+        -------
+        Query Result
+            The specific result object based on the provided query, which contains either the compliance or
+            impacted substances results. In the case of a yaml query, returns a string.
+        """
+
+        logger.info(f"[TECHDOCS] Running query {query} with connection {self}")
+        api_instance = query.api_class(self)
+        return query._run_query(api_instance=api_instance, static_arguments=self._query_arguments)
+
     @property
     def _query_arguments(
         self,
     ) -> Dict[str, Union[str, bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]]:
-        """:obj:`dict`: A dictionary of ``**kwargs`` to be used to run a query.
+        """Generate the connection-level arguments for a query, i.e. the database key and table names.
 
-        The arguments returned here are limited to connection-level arguments, i.e. those that relate to the database
-        schema. Query-specific arguments (records, legislations, etc.) are added within the query object itself.
+        Query-specific arguments (records, legislations, etc.) are added within the query object itself.
 
-        The table mapping config is only created if at least one table has a non-default name.
+        Returns
+        -------
+        arguments
+            A dictionary of `**kwargs` to be used to run a query.
+
+        Notes
+        -----
+        The table mapping config is only created if at least one table has a non-default name. The low-level API
+        understands `{"config": None}` to mean default table names are being used.
+
+        The database key is always required. The default is only included here for convenience.
         """
 
         if any(self._table_names.values()):
@@ -138,103 +268,3 @@ class BomServicesClient(auth_common.ApiClient):
 
         arguments = {"config": config, "database_key": self._db_key}
         return arguments
-
-    @overload
-    def run(self, query: "MaterialImpactedSubstances") -> "MaterialImpactedSubstancesResult":
-        ...
-
-    @overload
-    def run(self, query: "MaterialCompliance") -> "MaterialComplianceResult":
-        ...
-
-    @overload
-    def run(self, query: "PartImpactedSubstances") -> "PartImpactedSubstancesResult":
-        ...
-
-    @overload
-    def run(self, query: "PartCompliance") -> "PartComplianceResult":
-        ...
-
-    @overload
-    def run(self, query: "SpecificationImpactedSubstances") -> "SpecificationImpactedSubstancesResult":
-        ...
-
-    @overload
-    def run(self, query: "SpecificationCompliance") -> "SpecificationComplianceResult":
-        ...
-
-    @overload
-    def run(self, query: "SubstanceCompliance") -> "SubstanceComplianceResult":
-        ...
-
-    @overload
-    def run(self, query: "BomImpactedSubstances") -> "BomImpactedSubstancesResult":
-        ...
-
-    @overload
-    def run(self, query: "BomCompliance") -> "BomComplianceResult":
-        ...
-
-    @overload
-    def run(self, query: "Yaml") -> str:
-        ...
-
-    @overload
-    def run(self, query: Type["Yaml"]) -> str:
-        ...
-
-    def run(self, query):
-        """Run the query against the Granta MI database and return the results.
-
-        Parameters
-        ----------
-        query
-            A compliance, impacted substance, or yaml query
-
-        Returns
-        -------
-        The corresponding result object based on the provided query.
-        """
-
-        logger.info(f"[TECHDOCS] Running query {query} with connection {self}")
-        api_instance = query.api_class(self)
-        return query.run_query(api_instance=api_instance, static_arguments=self._query_arguments)
-
-
-class Connection(auth_common.ApiClientFactory):
-    """Build a connection to an instance of Granta MI.
-
-    Parameters
-    ----------
-    servicelayer_url
-        The url to the Granta MI service layer
-
-    Notes
-    -----
-    This a builder class, which means you must call the `.build()` method to return the actual
-    connection object.
-
-    Builder classes are generally instantiated, configured, and then built. The examples below
-    show this in action, first by instantiating the Connection builder (i.e. `Connection()`),
-    then configuring the builder object (`.with_autologon()`), and then using the builder
-    object to build the connection itself (`.build()`).
-
-    Examples
-    --------
-    >>> Connection("http://my_mi_server/mi_servicelayer").with_autologon().build()
-    <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
-
-    >>> cxn = (
-    ...     Connection("http://my_mi_server/mi_servicelayer")
-    ...     .with_credentials(username="my_username", password="my_password")
-    ...     .build()
-    ... )
-    >>> cxn
-    <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
-    """
-
-    def build(self) -> BomServicesClient:
-        self._validate_builder()
-        client = BomServicesClient(self._session, self._sl_url, self._session_configuration)
-        client.setup_client(bomanalytics.models)
-        return client

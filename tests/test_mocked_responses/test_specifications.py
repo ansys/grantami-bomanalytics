@@ -15,7 +15,7 @@ from .common import (
 
 class TestImpactedSubstances:
     query = (
-        queries.SpecificationImpactedSubstances()
+        queries.SpecificationImpactedSubstancesQuery()
         .with_legislations(["Fake legislation"])
         .with_specification_ids(["Fake ID"])
     )
@@ -53,7 +53,7 @@ class TestImpactedSubstances:
 
 class TestCompliance:
     query = (
-        queries.SpecificationCompliance()
+        queries.SpecificationComplianceQuery()
         .with_indicators(
             [
                 indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),

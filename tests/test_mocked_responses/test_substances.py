@@ -10,7 +10,7 @@ from .common import (
 
 class TestCompliance:
     query = (
-        queries.SubstanceCompliance()
+        queries.SubstanceComplianceQuery()
         .with_indicators(
             [
                 indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),

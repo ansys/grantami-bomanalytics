@@ -32,6 +32,8 @@ Here's a brief example of how the client works:
 .. code:: python
 
     >>> from ansys.granta.bom_analytics import Connection, queries
+        >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().build()
+        >>> query = queries.MaterialImpactedSubstancesQuery().
     >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().build()
     >>> query = queries.MaterialImpactedSubstances(). \
     ...     with_material_ids(['plastic-abs-pvc-flame', 'stainless-216-annealed']). \

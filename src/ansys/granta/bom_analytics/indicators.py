@@ -22,15 +22,14 @@ class _Flag(Enum):
 
     Implements `__lt__`, allowing comparison of enum values.
 
-    Overrides `__new__` to populate the __doc__ on an enum member when it is defined.
+    Overrides `__new__` to populate the __doc__ on an enum member.
     """
 
-    def __new__(cls, value, doc=None):
-        self = object.__new__(cls)  # calling super().__new__(value) here would fail
-        self._value_ = value
-        if doc is not None:
-            self.__doc__ = doc
-        return self
+    def __new__(cls, value: int, doc: str) -> "_Flag":
+        obj = object.__new__(cls)
+        obj._value_ = value
+        obj.__doc__ = doc
+        return obj
 
     def __lt__(self, other):
         return self.value < other.value
@@ -38,40 +37,85 @@ class _Flag(Enum):
 
 class RoHSFlag(_Flag):
     """Permitted RoHS flag states. Increasing value means 'worse' compliance, i.e. the compliance result is worse the
-    further down the list the result appears."""
+    further down the list the result appears.
 
-    RohsNotImpacted = 1, """This substance is not impacted by the specified legislations. 
-    *Substance is not impacted.*"""
-    RohsBelowThreshold = 2, """This substance is impacted by the specified legislations, but appears in the parent item
-    in a quantity below that specified by the indicator. *Substance is not impacted.*"""
-    RohsCompliant = 3, """This item does not contain any substances impacted by the specified legislations. *Item is 
-    compliant.*"""
-    RohsCompliantWithExemptions = 4, """This item contains substances impacted by the specified legislations, but has
-    a compliant defined either on itself or a child item. *Item is compliant with exemptions.*"""
-    RohsAboveThreshold = 5, """This substance is impacted by the specified legislations and appears in the parent item
-    in a quantity above that specified by the indicator. *Substance is impacted.*"""
-    RohsNonCompliant = 6, """This item contains one or more substances impacted by the specified legislations. *Item is 
-    non-compliant.*"""
-    RohsUnknown = 7, """There is not enough information to determine compliance. *Compliance is unknown.*"""
+    See the Restricted Substances User Guide (available on the Ansys customer download site) for more details.
+    """
+
+    RohsNotImpacted = (
+        1,
+        """This substance is not impacted by the specified legislations. *Substance is not
+    impacted.*""",
+    )
+    RohsBelowThreshold = (
+        2,
+        """This substance is impacted by the specified legislations, but appears in the parent item
+    in a quantity below that specified by the indicator. *Substance is below threshold.*""",
+    )
+    RohsCompliant = (
+        3,
+        """This item either does not contain any substances impacted by the specified legislations, or
+    contains no substances above the specified threshold. *Item is compliant.*""",
+    )
+    RohsCompliantWithExemptions = (
+        4,
+        """This item contains substances impacted by the specified legislations, but an
+    exemption has been declared either on itself or a child item. *Item is compliant with exemptions.*""",
+    )
+    RohsAboveThreshold = (
+        5,
+        """This substance is impacted by the specified legislations and is present in a quantity
+    above that specified by the indicator. *Exemption for use required.*""",
+    )
+    RohsNonCompliant = (
+        6,
+        """This item contains one or more substances impacted by the specified legislations. *Item is 
+    non-compliant.*""",
+    )
+    RohsUnknown = (
+        7,
+        """One or more declarations are missing, and so there is not enough information to determine
+    compliance. *Compliance is unknown.*""",
+    )
 
 
 class WatchListFlag(_Flag):
     """Permitted Watch List flag states. Increasing value means 'worse' compliance, i.e. the compliance result is worse
-    the further down the list the result appears."""
+    the further down the list the result appears.
 
-    WatchListNotImpacted = 1, """This substance is not impacted by the specified legislations. 
-    *Substance is not impacted.*"""
-    WatchListCompliant = 2, """This item does not contain any substances impacted by the specified legislations. 
-    *Item is compliant.*"""
-    WatchListBelowThreshold = 3, """This substance is impacted by the specified legislations, but appears in the parent
-    item in a quantity below that specified by the indicator. *Substance is below threshold.*"""
-    WatchListAllSubstancesBelowThreshold = 4, """This item contains substances impacted by the specified legislations, 
-    but in quantities below the limit specified in the indicator. *Item is compliant, but with substances below 
-    threshold.*"""
-    WatchListAboveThreshold = 5, """This substance is impacted by the specified legislations and appears in the parent
-    item in a quantity above that specified by the indicator. *Substance is impacted.*"""
-    WatchListHasSubstanceAboveThreshold = 6, """This item contains one or more substances impacted by the specified
-    legislations. *Item is non-compliant.*"""
+    See the Restricted Substances User Guide (available on the Ansys customer download site) for more details.
+    """
+
+    WatchListNotImpacted = (
+        1,
+        """This substance is not impacted by the specified legislations. *Substance is not
+    impacted.*""",
+    )
+    WatchListCompliant = (
+        2,
+        """This item does not contain any substances impacted by the specified legislations. *Item
+    is compliant.*""",
+    )
+    WatchListBelowThreshold = (
+        3,
+        """This substance is impacted by the specified legislations, but appears in the parent
+    item in a quantity below that specified by the indicator. *Substance is below threshold.*""",
+    )
+    WatchListAllSubstancesBelowThreshold = (
+        4,
+        """This item contains no substances above the specified threshold. 
+    *Item is compliant.*""",
+    )
+    WatchListAboveThreshold = (
+        5,
+        """This substance is impacted by the specified legislations and appears in the parent
+    item in a quantity above that specified by the indicator. *Substance is impacted.*""",
+    )
+    WatchListHasSubstanceAboveThreshold = (
+        6,
+        """This item contains one or more substances impacted by the specified
+    legislations. *Item is non-compliant.*""",
+    )
     WatchListUnknown = 7, """There is not enough information to determine compliance. *Compliance is unknown.*"""
 
 
@@ -119,7 +163,7 @@ class _Indicator(ABC):
 
     @property
     def flag(self) -> _Flag:
-        """The state of this indicator. If the indicator is a definition, this property is `None`."""
+        """The state of this indicator. If the indicator is a definition only, this property is `None`."""
         return self._flag
 
     @flag.setter

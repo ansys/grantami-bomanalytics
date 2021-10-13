@@ -1,7 +1,10 @@
-.. ref_bom_analytics_connection:
+.. _ref_bom_analytics_connection:
 
-Connection
-==========
+Granta MI Connection
+====================
+
+Connection Builder
+~~~~~~~~~~~~~~~~~~
 
 .. py:currentmodule::ansys.granta.bom_analytics
 .. autoclass:: ansys.granta.bom_analytics.Connection
@@ -14,7 +17,10 @@ Connection
    .. automethod:: with_anonymous
 
 
-.. autoclass:: ansys.granta.bom_analytics._connection.BomServicesClient
+Bom Analyics Client
+~~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: ansys.granta.bom_analytics._connection.BomAnalyticsClient
    :members:
 
 

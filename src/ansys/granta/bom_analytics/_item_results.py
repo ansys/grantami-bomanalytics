@@ -324,22 +324,22 @@ class ImpactedSubstancesResultMixin:
             self.legislations[legislation.legislation_name] = new_legislation_result
 
 
-@ItemResultFactory.register("materialWithImpactedSubstances")
+@ItemResultFactory.register("MaterialWithImpactedSubstances")
 class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, MaterialDefinition):
     pass
 
 
-@ItemResultFactory.register("partWithImpactedSubstances")
+@ItemResultFactory.register("PartWithImpactedSubstances")
 class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefinition):
     pass
 
 
-@ItemResultFactory.register("specificationWithImpactedSubstances")
+@ItemResultFactory.register("SpecificationWithImpactedSubstances")
 class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, SpecificationDefinition):
     pass
 
 
-@ItemResultFactory.register("bom1711WithImpactedSubstances")
+@ItemResultFactory.register("Bom1711WithImpactedSubstances")
 class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin, BoM1711Definition):
     pass
 
@@ -445,7 +445,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
 
         for child_substance in child_substances:
             child_substance_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="substanceWithCompliance",
+                result_type_name="SubstanceWithCompliance",
                 result_with_compliance=child_substance,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -493,7 +493,7 @@ class ChildMaterialWithComplianceMixin(child_base_class):
 
         for child_material in child_materials:
             child_material_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="materialWithCompliance",
+                result_type_name="MaterialWithCompliance",
                 result_with_compliance=child_material,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -539,7 +539,7 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
 
         for child_specification in child_specifications:
             child_specification_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="specificationWithCompliance",
+                result_type_name="SpecificationWithCompliance",
                 result_with_compliance=child_specification,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -587,7 +587,7 @@ class ChildPartWithComplianceMixin(child_base_class):
 
         for child_part in child_parts:
             child_part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="partWithCompliance",
+                result_type_name="PartWithCompliance",
                 result_with_compliance=child_part,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -634,7 +634,7 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 
         for child_coating in child_coatings:
             child_coating_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="coatingWithCompliance",
+                result_type_name="CoatingWithCompliance",
                 result_with_compliance=child_coating,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -642,17 +642,17 @@ class ChildCoatingWithComplianceMixin(child_base_class):
             self.coatings.append(child_coating_with_compliance)
 
 
-@ItemResultFactory.register("substanceWithCompliance")
+@ItemResultFactory.register("SubstanceWithCompliance")
 class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
     pass
 
 
-@ItemResultFactory.register("materialWithCompliance")
+@ItemResultFactory.register("MaterialWithCompliance")
 class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialDefinition):
     pass
 
 
-@ItemResultFactory.register("partWithCompliance")
+@ItemResultFactory.register("PartWithCompliance")
 class PartWithComplianceResult(
     ChildPartWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,
@@ -664,7 +664,7 @@ class PartWithComplianceResult(
     pass
 
 
-@ItemResultFactory.register("specificationWithCompliance")
+@ItemResultFactory.register("SpecificationWithCompliance")
 class SpecificationWithComplianceResult(
     ChildCoatingWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,
@@ -676,12 +676,12 @@ class SpecificationWithComplianceResult(
     pass
 
 
-@ItemResultFactory.register("coatingWithCompliance")
+@ItemResultFactory.register("CoatingWithCompliance")
 class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingDefinition):
     pass
 
 
-@ItemResultFactory.register("bom1711WithCompliance")
+@ItemResultFactory.register("Bom1711WithCompliance")
 class BoM1711WithComplianceResult(
     ChildPartWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,

@@ -3,11 +3,16 @@
 API Reference
 =============
 
-The Bom Analytics API is split into three key sections, as shown below.
+The Bom Analytics API is split into three key sections, as shown below. The :ref:`ref_bom_analytics_connection` section
+describes how to connect to Granta MI, and, if required, configure any schema customizations in the API client. It
+also explains how to run queries.
+
+The :ref:`ref_bom_analytics_api_impactedsubstances_index` and :ref:`ref_bom_analytics_api_compliance_index` sections then
+explain how to build specific queries and how to interpret the results.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    connection
-   compliance/index
    impacted_substances/index
+   compliance/index

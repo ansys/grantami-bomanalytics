@@ -6,7 +6,7 @@ Part Compliance Query
 Query definition
 ~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics.queries.PartCompliance
+.. autoclass:: ansys.granta.bom_analytics.queries.PartComplianceQuery
    :members:
 
    .. automethod:: with_record_guids
@@ -21,7 +21,7 @@ Query definition
 Query result
 ~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics._query_results.PartComplianceResult
+.. autoclass:: ansys.granta.bom_analytics._query_results.PartComplianceQueryResult
    :members:
 
    .. autoproperty:: compliance_by_indicator

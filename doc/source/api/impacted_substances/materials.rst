@@ -7,7 +7,7 @@ Query definition
 ~~~~~~~~~~~~~~~~
 
 .. py:currentmodule::ansys.granta.bom_analytics.queries
-.. autoclass:: ansys.granta.bom_analytics.queries.MaterialImpactedSubstances
+.. autoclass:: ansys.granta.bom_analytics.queries.MaterialImpactedSubstancesQuery
    :members:
 
    .. automethod:: with_record_guids
@@ -21,7 +21,7 @@ Query result
 ~~~~~~~~~~~~
 
 .. py:currentmodule::ansys.granta.bom_analytics._query_results
-.. autoclass:: ansys.granta.bom_analytics._query_results.MaterialImpactedSubstancesResult
+.. autoclass:: ansys.granta.bom_analytics._query_results.MaterialImpactedSubstancesQueryResult
    :members:
 
    .. autoproperty:: impacted_substances_by_legislation

@@ -6,7 +6,7 @@ Specification Compliance Query
 Query definition
 ~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics.queries.SpecificationCompliance
+.. autoclass:: ansys.granta.bom_analytics.queries.SpecificationComplianceQuery
    :members:
 
    .. automethod:: with_record_guids
@@ -21,7 +21,7 @@ Query definition
 Query result
 ~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics._query_results.SpecificationComplianceResult
+.. autoclass:: ansys.granta.bom_analytics._query_results.SpecificationComplianceQueryResult
    :members:
 
    .. autoproperty:: compliance_by_indicator

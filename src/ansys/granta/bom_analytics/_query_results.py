@@ -4,7 +4,7 @@ Defines the representations of the query results themselves, which allows them t
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
 
-from typing import List, Dict, Type, Callable, Any, Union, TypeVar, TYPE_CHECKING
+from typing import List, Dict, Type, Callable, Any, Union, TypeVar
 from collections import defaultdict
 from abc import ABC
 
@@ -22,19 +22,6 @@ from ._item_results import (
     ImpactedSubstance,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
-
-if TYPE_CHECKING:
-    from .queries import (
-        MaterialImpactedSubstancesQuery,
-        MaterialComplianceQuery,
-        PartImpactedSubstancesQuery,
-        PartComplianceQuery,
-        SpecificationImpactedSubstancesQuery,
-        SpecificationComplianceQuery,
-        SubstanceComplianceQuery,
-        BomComplianceQuery,
-    )
-    from ._connection import Connection
 
 Query_Result = TypeVar(
     "Query_Result",
@@ -133,18 +120,10 @@ class ImpactedSubstancesBaseClass(ABC):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>>    query = (
-        ...     MaterialImpactedSubstancesQuery()
-        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-        ...     .with_legislations(["REACH - The Candidate List"])
-        ... )
-        >>> result = cxn.run(query)
+        >>> result: MaterialImpactedSubstancesQueryResult
         >>> result.impacted_substances_by_legislation
         {'REACH - The Candidate List': [
-            <ImpactedSubstance: {"cas_number": 90481-04-2}>,
-            <ImpactedSubstance: {"cas_number": 98-95-3}>,
-            <ImpactedSubstance: {"cas_number": 117-81-7}>]
+            <ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
         }
         """
 
@@ -168,17 +147,9 @@ class ImpactedSubstancesBaseClass(ABC):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>>    query = (
-        ...     MaterialImpactedSubstancesQuery()
-        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-        ...     .with_legislations(["REACH - The Candidate List"])
-        ... )
-        >>> result = cxn.run(query)
+        >>> result: MaterialImpactedSubstancesQueryResult
         >>> result.impacted_substances
-        [<ImpactedSubstance: {"cas_number": 90481-04-2}>,
-         <ImpactedSubstance: {"cas_number": 98-95-3}>,
-         <ImpactedSubstance: {"cas_number": 117-81-7}>]
+        [<ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
         """
 
         results = []
@@ -213,17 +184,7 @@ class ComplianceBaseClass(ABC):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>> indicator = WatchListIndicator(
-        ...     name="Prop 65",
-        ...     legislation_names=["California Proposition 65 List"]
-        ... )
-        >>> query = (
-        ...     MaterialComplianceQuery()
-        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-        ...     .with_indicators([indicator])
-        ... )
-        >>> compliance_result = cxn.run(query)
+        >>> compliance_result: MaterialComplianceQueryResult
         >>> compliance_result.compliance_by_indicator
         {'Prop 65': <WatchListIndicator,
                 name: Prop 65,
@@ -273,18 +234,10 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>> query = (
-        ...     MaterialImpactedSubstancesQuery()
-        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-        ...     .with_legislations(["REACH - The Candidate List"])
-        ... )
-        >>> result = cxn.run(query)
+        >>> result: MaterialImpactedSubstancesQueryResult
         >>> result.impacted_substances_by_material_and_legislation
         [<MaterialWithImpactedSubstancesResult({MaterialId: elastomer-butadienerubber}),
-                1 legislations>,
-         <MaterialWithImpactedSubstancesResult({MaterialId: NBR-100}),
-                1 legislations>]
+                1 legislations>,...]
         """
 
         return self._results
@@ -326,22 +279,10 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>> indicator = WatchListIndicator(
-        ...     name="Prop 65",
-        ...     legislation_names=["California Proposition 65 List"]
-        ... )
-        >>> query = (
-        ...     MaterialComplianceQuery()
-        ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-        ...     .with_indicators([indicator])
-        ... )
-        >>> result = cxn.run(query)
-        >>> result.compliance_by_part_and_indicator
+        >>> result: MaterialComplianceQueryResult
+        >>> result.compliance_by_material_and_indicator
         [<MaterialWithComplianceResult({MaterialId: elastomer-butadienerubber}),
-                1 indicators>,
-         <MaterialWithComplianceResult({MaterialId: NBR-100}),
-                1 indicators>]
+                1 indicators>, ...]
         """
 
         return self._results
@@ -378,16 +319,9 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>> query = (
-        ...     PartImpactedSubstancesQuery()
-        ...     .with_part_numbers(['DRILL', 'FLRY34'])
-        ...     .with_legislations(["REACH - The Candidate List"])
-        ... )
-        >>> result = cxn.run(query)
-        >>> result.impacted_substances_by_material_and_legislation
-        [<PartWithImpactedSubstancesResult({PartNumber: DRILL}), 1 legislations>,
-         <PartWithImpactedSubstancesResult({PartNumber: FLRY34}), 1 legislations>]
+        >>> result: PartImpactedSubstancesQueryResult
+        >>> result.impacted_substances_by_part_and_legislation
+        [<PartWithImpactedSubstancesResult({PartNumber: DRILL}), 1 legislations>,...]
         """
 
         return self._results
@@ -432,20 +366,9 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>> indicator = WatchListIndicator(
-        ...     name="Prop 65",
-        ...     legislation_names=["California Proposition 65 List"]
-        ... )
-        >>> query = (
-        ...     PartComplianceQuery()
-        ...     .with_part_numbers(['DRILL', 'FLRY34'])
-        ...     .with_indicators([indicator])
-        ... )
-        >>> result = cxn.run(query)
+        >>> result: PartComplianceQueryResult
         >>> result.compliance_by_part_and_indicator
-        [<PartWithComplianceResult({PartNumber: DRILL}), 1 indicators>,
-         <PartWithComplianceResult({PartNumber: FLRY34}), 1 indicators>]
+        [<PartWithComplianceResult({PartNumber: DRILL}), 1 indicators>,...]
         """
 
         return self._results
@@ -487,18 +410,10 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>> query = (
-        ...     SpecificationImpactedSubstancesQuery()
-        ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
-        ...     .with_legislations(["REACH - The Candidate List"])
-        ... )
-        >>> result = cxn.run(query)
-        >>> result.impacted_substances_by_material_and_legislation
+        >>> result: SpecificationImpactedSubstancesQueryResult
+        >>> result.impacted_substances_by_specification_and_legislation
         [<SpecificationWithImpactedSubstancesResult({SpecificationId: MIL-A-8625}),
-                1 legislations>,
-         <SpecificationWithImpactedSubstancesResult({SpecificationId: PSP101}),
-                0 legislations>]
+                1 legislations>, ...]
         """
 
         return self._results
@@ -543,22 +458,10 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>> indicator = WatchListIndicator(
-        ...     name="Prop 65",
-        ...     legislation_names=["California Proposition 65 List"]
-        ... )
-        >>> query = (
-        ...     SpecificationComplianceQuery()
-        ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
-        ...     .with_indicators([indicator])
-        ... )
-        >>> result = cxn.run(query)
-        >>> result.compliance_by_part_and_indicator
+        >>> result: SpecificationComplianceQueryResult
+        >>> result.compliance_by_specification_and_indicator
         [<SpecificationWithComplianceResult({SpecificationId: MIL-A-8625}),
-                1 indicators>,
-        <SpecificationWithComplianceResult({SpecificationId: PSP101}),
-                1 indicators>]
+                1 indicators>, ...]
         """
 
         return self._results
@@ -599,20 +502,9 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>> indicator = WatchListIndicator(
-        ...     name="Prop 65",
-        ...     legislation_names=["California Proposition 65 List"]
-        ... )
-        >>> query = (
-        ...     SubstanceComplianceQuery()
-        ...     .with_cas_numbers(['50-00-0', '57-24-9'])
-        ...     .with_indicators([indicator])
-        ... )
-        >>> result = cxn.run(query)
-        >>> result.compliance_by_part_and_indicator
-        [<SubstanceWithComplianceResult({"cas_number": 50-00-0}), 1 indicators>,
-         <SubstanceWithComplianceResult({"cas_number": 57-24-9}), 1 indicators>]
+        >>> result: SubstanceComplianceQueryResult
+        >>> result.compliance_by_substance_and_indicator
+        [<SubstanceWithComplianceResult({"cas_number": 50-00-0}), 1 indicators>, ...]
         """
 
         return self._results
@@ -678,18 +570,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-        >>> bom = "<PartsEco xmlns..."
-        >>> indicator = WatchListIndicator(
-        ...     name="Prop 65",
-        ...     legislation_names=["California Proposition 65 List"]
-        ... )
-        >>> query = (
-        ...     BomComplianceQuery()
-        ...     .with_bom(bom)
-        ...     .with_indicators([indicator])
-        ... )
-        >>> result = cxn.run(query)
+        >>> result: BomComplianceQueryResult
         >>> result.compliance_by_part_and_indicator
         [<PartWithComplianceResult, 1 indicators>]
         """

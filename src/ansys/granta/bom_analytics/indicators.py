@@ -140,7 +140,7 @@ class _Indicator(ABC):
         self._flag: Union[_Flag, None] = None
 
     @property
-    def definition(self):
+    def _definition(self):
         """The low-level API representation of this Indicator."""
         return models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
             name=self.name,

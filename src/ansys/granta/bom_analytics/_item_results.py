@@ -2,17 +2,6 @@
 
 Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
 queries. These are mostly extensions of the classes in _item_definitions.py.
-
-Attributes
-----------
-Impacted_Substances_REST_Result
-    The set of types that represent the low-level REST API items with impacted substances results.
-Item_With_Impacted_Substances_Result
-    The set of types that represent objects in this module with impacted substances results.
-Compliance_REST_Result
-    The set of types that represent the low-level REST API items with compliance results.
-Item_With_Compliance_Result
-    The set of types that represent objects in this module with compliance results.
 """
 
 from typing import List, Dict, Union, Callable, TYPE_CHECKING, Optional
@@ -26,9 +15,14 @@ from ._item_definitions import (
     BaseSubstanceReference,
     RecordDefinition,
     ReferenceType,
-    CoatingDefinition,
+    CoatingReference,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
+
+if TYPE_CHECKING:
+    from ._query_results import (
+        MaterialImpactedSubstancesQueryResult,
+    )
 
 Impacted_Substances_REST_Result = Union[
     models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial,
@@ -36,6 +30,7 @@ Impacted_Substances_REST_Result = Union[
     models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification,
     models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
 ]
+"""The set of types that represent the low-level REST API items with impacted substances results."""
 
 Item_With_Impacted_Substances_Result = Union[
     "MaterialWithImpactedSubstancesResult",
@@ -43,6 +38,7 @@ Item_With_Impacted_Substances_Result = Union[
     "SpecificationsWithImpactedSubstancesResult",
     "BoM1711WithImpactedSubstancesResult",
 ]
+"""The set of types that represent objects in this module with impacted substances results."""
 
 Compliance_REST_Result = Union[
     models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance,
@@ -51,6 +47,7 @@ Compliance_REST_Result = Union[
     models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance,
     models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance,
 ]
+"""The set of types that represent the low-level REST API items with compliance results."""
 
 Item_With_Compliance_Result = Union[
     "SubstanceWithComplianceResult",
@@ -59,19 +56,16 @@ Item_With_Compliance_Result = Union[
     "SpecificationsWithComplianceResult",
     "BoM1711WithComplianceResult",
 ]
+"""The set of types that represent objects in this module with compliance results."""
 
 
 class ItemResultFactory:
     """Creates item results for a given type of API query. The key to control which result type is created is the name
-     of the query class in `queries.py`.
-
-    Class Attributes
-    ----------------
-    registry : dict
-        Mapping between an item result class and the query type it supports.
+    of the query class in `queries.py`.
     """
 
     registry = {}
+    """Mapping between an item result class and the query type it supports."""
 
     @classmethod
     def register(cls, name: str) -> Callable:
@@ -79,7 +73,7 @@ class ItemResultFactory:
 
         Parameters
         ----------
-        name : str
+        name
             The name of the result type to be registered.
 
         Returns
@@ -104,14 +98,14 @@ class ItemResultFactory:
 
         Parameters
         ----------
-        result_type_name : str
+        result_type_name
             The name of the result for which an object is needed.
-        result_with_impacted_substances: `Impacted_Substances_Model_Result`
+        result_with_impacted_substances
             The result from the REST API describing the impacted substances for this particular item.
 
         Returns
         -------
-        `Impacted_Substances_Item_Result`
+        Impacted Substances Item Result
             An object that describes the substances that impacted a material, part, specification, or BoM. Substances
             are grouped by legislation.
 
@@ -145,17 +139,17 @@ class ItemResultFactory:
 
         Parameters
         ----------
-        result_type_name : str
+        result_type_name
             The name of the result for which an object is needed.
-        result_with_compliance : `Compliance_Model_Result`
+        result_with_compliance
             The result from the REST API describing the compliance for this particular item.
-        indicator_definitions : Dict[str, Union[`WatchListIndicator`, `RoHSIndicator`]]
+        indicator_definitions
             The definitions of the indicators supplied to the original query. Required since the REST API does not
             provide them in the response.
 
         Returns
         -------
-        `Compliance_Item_Result`
+        Compliance Item Result
             An object that describes the compliance of a substance, material, part, specification, or BoM. Is defined
             recursively, with each level of the BoM having a reported compliance status for each indicator.
 
@@ -202,14 +196,22 @@ class ItemResultFactory:
 
 
 class ImpactedSubstance(BaseSubstanceReference):
-    """Extension of `BaseSubstanceDefinition` which includes impacted substance results."""
+    """Represents a substance as it appears in a particular item. Includes
+
+    Examples
+    --------
+    >>> result: MaterialImpactedSubstancesQueryResult
+    >>> substance = result.impacted_substances[4]
+    >>> print(f"{substance.cas_number}: {substance.max_percentage_amount_in_material}")
+    1333-86-4: 20.0 %
+    """
 
     def __init__(
         self,
         reference_type: ReferenceType,
         reference_value: Union[int, str],
         max_percentage_amount_in_material: Optional[float],
-        legislation_threshold: float,
+        legislation_threshold: Optional[float],
     ):
         """
         Parameters
@@ -219,8 +221,8 @@ class ImpactedSubstance(BaseSubstanceReference):
         reference_value
             The value of the record reference. All are `str`, except for record history identities which are `int`.
         max_percentage_amount_in_material
-            The amount of this substance that occurs in the parent material. In the case where a range is specified in the
-            declaration, only the maximum is reported here.
+            The amount of this substance that occurs in the parent material. In the case where a range is specified in
+             the declaration, only the maximum is reported here.
         legislation_threshold
             The substance concentration threshold over which the material is non-compliant with the legislation.
         """
@@ -230,10 +232,10 @@ class ImpactedSubstance(BaseSubstanceReference):
             reference_value=reference_value,
         )
         self.max_percentage_amount_in_material: Optional[float] = max_percentage_amount_in_material
-        """The amount of this substance that occurs in the parent material. In the case where a range is specified in the
-            declaration, only the maximum is reported here."""
+        """The amount of this substance that occurs in the parent material. In the case where a range is specified in
+         the declaration, only the maximum is reported here."""
 
-        self.legislation_threshold: float = legislation_threshold
+        self.legislation_threshold: Optional[float] = legislation_threshold
         """The substance concentration threshold over which the material is non-compliant with the legislation."""
 
     def __repr__(self):
@@ -243,16 +245,19 @@ class ImpactedSubstance(BaseSubstanceReference):
             return f'<ImpactedSubstance: {{"ec_number": {self.ec_number}}}>'
         elif self.chemical_name:
             return f'<ImpactedSubstance: {{"chemical_name": {self.chemical_name}}}>'
-        elif self.record_guid:
-            return f'<ImpactedSubstance: {{"record_guid": {self.record_guid}}}>'
-        elif self.record_history_guid:
-            return f'<ImpactedSubstance: {{"record_history_guid": {self.record_history_guid}}}>'
-        elif self.record_history_identity:
-            return f'<ImpactedSubstance: {{"record_history_identity": {self.record_history_identity}}}>'
 
 
 class LegislationResult:
-    """Describes the result of an impacted substances query for a particular legislation."""
+    """Describes the result of an impacted substances query for a particular legislation.
+
+    Examples
+    --------
+    >>> result: MaterialImpactedSubstancesQueryResult
+    >>> result.impacted_substances_by_legislation["REACH - The Candidate List"]
+    {'REACH - The Candidate List': [
+        <ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
+    }
+    """
 
     def __init__(
         self,
@@ -305,8 +310,17 @@ class LegislationResult:
             impacted_substance.chemical_name = substance.substance_name
             self.substances.append(impacted_substance)
 
+    def __repr__(self):
+        return f'<{self.__class__.__name__}({{"name": {self.name}}}), {len(self.substances)} ImpactedSubstances>'
 
-class ImpactedSubstancesResultMixin:
+
+if TYPE_CHECKING:
+    impacted_substances_base_class = PartDefinition
+else:
+    impacted_substances_base_class = object
+
+
+class ImpactedSubstancesResultMixin(impacted_substances_base_class):
     """Adds results from an impacted substances query to an `ItemDefinition` class, turning it into an
     `ItemWithImpactedSubstancesResult` class.
 
@@ -330,20 +344,38 @@ class ImpactedSubstancesResultMixin:
 
         super().__init__(**kwargs)
 
-        self.legislations: Dict[str, LegislationResult] = {}
-        """Describes the substances in the `ItemDefinition` for a particular legislation. The legislation name is used
-        as the dictionary key."""
+        self._legislations: Dict[str, LegislationResult] = {}
 
         for legislation in legislations:
             new_legislation_result = LegislationResult(
                 name=legislation.legislation_name,
                 impacted_substances=legislation.impacted_substances,
             )
-            self.legislations[legislation.legislation_name] = new_legislation_result
+            self._legislations[legislation.legislation_name] = new_legislation_result
+
+    @property
+    def legislations(self) -> Dict[str, LegislationResult]:
+        """
+        Returns
+        -------
+            The substances impacted for a particular item, grouped by legislation name.
+
+        Examples
+        --------
+        >>> result: MaterialImpactedSubstancesQueryResult
+        >>> material_result = result.impacted_substances_by_material_and_legislation[0]
+        >>> material_result.legislations
+        {'California Proposition 65 List':
+                <LegislationResult({"name": California Proposition 65 List}),
+                    2 ImpactedSubstances>,
+        ... }
+        """
+
+        return self._legislations
 
     def __repr__(self):
-        reference_type = self.definition.reference_type
-        reference_value = self.definition.reference_value
+        reference_type = self._definition.reference_type
+        reference_value = self._definition.reference_value
         return (
             f'<{self.__class__.__name__}({{"{reference_type}": "{reference_value}"}}), '
             f"{len(self.legislations)} legislations>"
@@ -380,10 +412,10 @@ class ComplianceResultMixin:
 
     Parameters
     ----------
-    indicator_results : list of `models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult`
+    indicator_results
         Compliance of the `ItemDefinition` item for the specified indicators. Does not include the full indicator
         definition; only the indicator name
-    indicator_definitions : Dict[str, Union[`WatchListIndicator`, `RoHSIndicator`]]
+    indicator_definitions
         Used as a base to create the indicator results for both this item and the child substances.
     **kwargs
         Contains the `reference_type` and `reference_value` for `RecordDefinition`-based objects. Is empty
@@ -416,6 +448,8 @@ class ComplianceResultMixin:
     one of 'Part', 'Specification', 'Material', 'Coating', and 'Substance'. With the exception
     """
 
+    _definition = None  # Required for linter, is supplied by the main RecordDefinition-derived class
+
     def __init__(
         self,
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
@@ -432,8 +466,8 @@ class ComplianceResultMixin:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
     def __repr__(self):
-        reference_type = self.definition.reference_type
-        reference_value = self.definition.reference_value
+        reference_type = self._definition.reference_type
+        reference_value = self._definition.reference_value
         return (
             f'<{self.__class__.__name__}({{"{reference_type}": "{reference_value}"}}),'
             f" {len(self.indicators)} indicators>"
@@ -462,8 +496,21 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.substances: List[SubstanceWithComplianceResult] = []
-        """The substance compliance result objects that are direct children of this part."""
+        self._substances: List[SubstanceWithComplianceResult] = []
+
+    @property
+    def substances(self) -> List["SubstanceWithComplianceResult"]:
+        """The substance compliance result objects that are direct children of this item.
+
+        Examples
+        --------
+        >>> material_result: MaterialWithComplianceResult
+        >>> material_result.substances
+        [SubstanceWithComplianceResult({"MiRecordHistoryIdentity": 77107}),
+                1 indicators>, ...]
+        """
+
+        return self._substances
 
     def _add_child_substances(
         self, child_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance]
@@ -483,7 +530,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
                 result_with_compliance=child_substance,
                 indicator_definitions=self._indicator_definitions,
             )
-            self.substances.append(child_substance_with_compliance)
+            self._substances.append(child_substance_with_compliance)
 
 
 class ChildMaterialWithComplianceMixin(child_base_class):
@@ -498,17 +545,25 @@ class ChildMaterialWithComplianceMixin(child_base_class):
     **kwargs
         Contains other result objects depending on the parent item. Contains record references for
         `RecordDefinition`-based objects.
-
-    Attributes
-    ----------
-    materials : list of `MaterialWithComplianceResult`
-        The material result objects that are direct children of this part.
     """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.materials: List[MaterialWithComplianceResult] = []
-        """The material compliance result objects that are direct children of this part."""
+        self._materials: List[MaterialWithComplianceResult] = []
+
+    @property
+    def materials(self) -> List["MaterialWithComplianceResult"]:
+        """The material compliance result objects that are direct children of this part or substance.
+
+        Examples
+        --------
+        >>> part_result: PartWithComplianceResult
+        >>> part_result.materials
+        [<MaterialWithComplianceResult({"MiRecordHistoryIdentity": "11774"}),
+                1 indicators>, ...]
+        """
+
+        return self._materials
 
     def _add_child_materials(
         self,
@@ -532,7 +587,7 @@ class ChildMaterialWithComplianceMixin(child_base_class):
                 indicator_definitions=self._indicator_definitions,
             )
             child_material_with_compliance._add_child_substances(child_material.substances)
-            self.materials.append(child_material_with_compliance)
+            self._materials.append(child_material_with_compliance)
 
 
 class ChildSpecificationWithComplianceMixin(child_base_class):
@@ -552,8 +607,21 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.specifications: List[SpecificationWithComplianceResult] = []
-        """The specification compliance result objects that are direct children of this item."""
+        self._specifications: List[SpecificationWithComplianceResult] = []
+
+    @property
+    def specifications(self) -> List["SpecificationWithComplianceResult"]:
+        """The specification compliance result objects that are direct children of this item.
+
+        Examples
+        --------
+        >>> part_result: PartWithComplianceResult
+        >>> part_result.specifications
+        [<SpecificationWithComplianceResult({"MiRecordHistoryIdentity": "123456"}),
+                1 indicators>, ...]
+        """
+
+        return self._specifications
 
     def _add_child_specifications(
         self,
@@ -581,7 +649,7 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
             child_specification_with_compliance._add_child_specifications(child_specification.specifications)
             child_specification_with_compliance._add_child_coatings(child_specification.coatings)
             child_specification_with_compliance._add_child_substances(child_specification.substances)
-            self.specifications.append(child_specification_with_compliance)
+            self._specifications.append(child_specification_with_compliance)
 
 
 class ChildPartWithComplianceMixin(child_base_class):
@@ -600,8 +668,21 @@ class ChildPartWithComplianceMixin(child_base_class):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.parts: List[PartWithComplianceResult] = []
-        """The part compliance result objects that are direct children of this part."""
+        self._parts: List[PartWithComplianceResult] = []
+
+    @property
+    def parts(self) -> List["PartWithComplianceResult"]:
+        """The part compliance result objects that are direct children of this part.
+
+        Examples
+        --------
+        >>> part_result: PartWithComplianceResult
+        >>> part_result.parts
+        [<PartWithComplianceResult({"MiRecordHistoryIdentity": "564777"}),
+                1 indicators>, ...]
+        """
+
+        return self._parts
 
     def _add_child_parts(
         self,
@@ -629,7 +710,7 @@ class ChildPartWithComplianceMixin(child_base_class):
             child_part_with_compliance._add_child_specifications(child_part.specifications)
             child_part_with_compliance._add_child_materials(child_part.materials)
             child_part_with_compliance._add_child_substances(child_part.substances)
-            self.parts.append(child_part_with_compliance)
+            self._parts.append(child_part_with_compliance)
 
 
 class ChildCoatingWithComplianceMixin(child_base_class):
@@ -648,8 +729,21 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.coatings: List[CoatingWithComplianceResult] = []
-        """The coating result objects that are direct children of this specification."""
+        self._coatings: List[CoatingWithComplianceResult] = []
+
+    @property
+    def coatings(self) -> List["CoatingWithComplianceResult"]:
+        """The coating result objects that are direct children of this specification.
+
+        Examples
+        --------
+        >>> specification_results: SpecificationWithComplianceResult
+        >>> specification_results.coatings
+        [<CoatingWithComplianceResult({"MiRecordHistoryIdentity": 83291}),
+                1 indicators>, ...]
+        """
+
+        return self._coatings
 
     def _add_child_coatings(
         self,
@@ -673,13 +767,17 @@ class ChildCoatingWithComplianceMixin(child_base_class):
                 indicator_definitions=self._indicator_definitions,
             )
             child_coating_with_compliance._add_child_substances(child_coating.substances)
-            self.coatings.append(child_coating_with_compliance)
+            self._coatings.append(child_coating_with_compliance)
 
 
 @ItemResultFactory.register("SubstanceWithCompliance")
 class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
     def __repr__(self):
-        return f'<{self.__class__.__name__}({{"cas_number": {self.cas_number}}}), {len(self.indicators)} indicators>'
+        """Override required because a BaseSubstanceReference does not have a _definition."""
+        return (
+            f'<{self.__class__.__name__}({{"MiRecordHistoryIdentity": {self.record_history_identity}}}),'
+            f" {len(self.indicators)} indicators>"
+        )
 
 
 @ItemResultFactory.register("MaterialWithCompliance")
@@ -697,7 +795,7 @@ class PartWithComplianceResult(
     PartDefinition,
 ):
     def __repr__(self):
-        reference_value = self.definition.reference_value
+        reference_value = self._definition.reference_value
         if not reference_value:
             return f"<{self.__class__.__name__}, {len(self.indicators)} indicators>"
         else:
@@ -717,8 +815,13 @@ class SpecificationWithComplianceResult(
 
 
 @ItemResultFactory.register("CoatingWithCompliance")
-class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingDefinition):
-    pass
+class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
+    def __repr__(self):
+        """Override required because a CoatingReference does not have a _definition."""
+        return (
+            f'<{self.__class__.__name__}({{"MiRecordHistoryIdentity": {self.record_history_identity}}}),'
+            f" {len(self.indicators)} indicators>"
+        )
 
 
 @ItemResultFactory.register("Bom1711WithCompliance")

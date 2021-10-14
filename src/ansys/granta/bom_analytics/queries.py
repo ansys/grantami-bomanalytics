@@ -157,7 +157,7 @@ class _RecordArgumentManager(_BaseArgumentManager):
             raise RuntimeError('"batch_size" must be populated before record arguments can be generated.')
 
         for batch_number, i in enumerate(range(0, len(self._items), self.batch_size)):
-            batch = [i.definition for i in self._items][i : i + self.batch_size]  # noqa: E203 E501
+            batch = [i._definition for i in self._items][i : i + self.batch_size]  # noqa: E203 E501
             batch_str = ", ".join([f'"{item.reference_type}": "{item.reference_value}"' for item in batch])
             logger.debug(f"[TECHDOCS] Batch {batch_number + 1}, Items: {batch_str}")
             yield {self.item_type_name: batch}
@@ -495,7 +495,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         """
 
         api_method = getattr(api_instance, self._api_method)
-        arguments = {**static_arguments, "indicators": [i.definition for i in self._indicators.values()]}
+        arguments = {**static_arguments, "indicators": [i._definition for i in self._indicators.values()]}
 
         indicators_text = ", ".join(self._indicators)
         logger.debug(f"[TECHDOCS] Indicators: {indicators_text}")

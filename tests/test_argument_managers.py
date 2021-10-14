@@ -8,7 +8,7 @@ class MockRecordDefinition:
         reference_value: str
 
     def __init__(self, reference_type: str, reference_value: str):
-        self.definition = self.Definition(reference_type, reference_value)
+        self._definition = self.Definition(reference_type, reference_value)
 
 
 class TestRecordArgManager:

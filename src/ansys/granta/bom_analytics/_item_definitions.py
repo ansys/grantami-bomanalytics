@@ -91,7 +91,7 @@ class RecordDefinition(RecordReference):
 
     @property
     @abstractmethod
-    def definition(self) -> models.Model:
+    def _definition(self) -> models.Model:
         pass
 
 
@@ -121,7 +121,7 @@ class PartDefinition(RecordDefinition):
         self._model = models.GrantaBomAnalyticsServicesInterfaceCommonPartReference
 
     @property
-    def definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonPartReference:
+    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonPartReference:
         """The low-level API material definition.
 
         Returns
@@ -161,7 +161,7 @@ class MaterialDefinition(RecordDefinition):
         self._model = models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
 
     @property
-    def definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference:
+    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference:
         """The low-level API part definition.
 
         Returns
@@ -202,7 +202,7 @@ class SpecificationDefinition(RecordDefinition):
         self._model = models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference
 
     @property
-    def definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference:
+    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference:
         """The low-level API specification definition.
 
         Returns
@@ -314,7 +314,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         self._percentage_amount = value
 
     @property
-    def definition(self) -> models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount:
+    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount:
         """The low-level API substance definition.
 
         Returns
@@ -336,7 +336,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         return definition
 
 
-class CoatingDefinition(RecordReference, ABC):
+class CoatingReference(RecordReference, ABC):
     def __init__(
         self,
         reference_type: ReferenceType,

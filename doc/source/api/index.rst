@@ -10,6 +10,9 @@ also explains how to run queries.
 The :ref:`ref_bom_analytics_api_impactedsubstances_index` and :ref:`ref_bom_analytics_api_compliance_index` sections then
 explain how to build specific queries and how to interpret the results.
 
+Some of the examples given in the API Reference may use different classes than the one being documented. In all cases,
+both classes are equivalent in terms of the functionality being demonstrated.
+
 .. toctree::
    :maxdepth: 2
 

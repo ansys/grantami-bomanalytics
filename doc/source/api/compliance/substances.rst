@@ -42,4 +42,10 @@ Substance result
 .. autoclass:: ansys.granta.bom_analytics._item_results.SubstanceWithComplianceResult
    :members:
 
+   .. autoattribute:: cas_number
+   .. autoattribute:: ec_number
+   .. autoattribute:: chemical_name
+   .. autoattribute:: record_guid
+   .. autoattribute:: record_history_guid
+   .. autoattribute:: record_history_identity
    .. autoattribute:: indicators

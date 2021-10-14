@@ -34,6 +34,10 @@ Specification result
 .. autoclass:: ansys.granta.bom_analytics._item_results.SpecificationWithComplianceResult
    :members:
 
+   .. autoattribute:: specification_id
+   .. autoattribute:: record_guid
+   .. autoattribute:: record_history_guid
+   .. autoattribute:: record_history_identity
    .. autoattribute:: indicators
    .. autoattribute:: specifications
    .. autoattribute:: materials
@@ -47,5 +51,8 @@ Coating result
 .. autoclass:: ansys.granta.bom_analytics._item_results.CoatingWithComplianceResult
    :members:
 
+   .. autoattribute:: record_guid
+   .. autoattribute:: record_history_guid
+   .. autoattribute:: record_history_identity
    .. autoattribute:: indicators
    .. autoattribute:: substances

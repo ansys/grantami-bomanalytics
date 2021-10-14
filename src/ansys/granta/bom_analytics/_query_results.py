@@ -105,10 +105,10 @@ class ImpactedSubstancesBaseClass(ABC):
 
     # Used to satisfy the linter
     _results = []
-    result_type_name: str = ""
+    _result_type_name: str = ""
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self.result_type_name} results>"
+        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
 
     @property
     def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
@@ -170,10 +170,10 @@ class ComplianceBaseClass(ABC):
 
     # Used to satisfy the linter
     _results = []
-    result_type_name: str = ""
+    _result_type_name: str = ""
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self.result_type_name} results>"
+        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
 
     @property
     def compliance_by_indicator(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:
@@ -219,10 +219,10 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         """
 
         self._results = []
-        self.result_type_name = "MaterialWithImpactedSubstances"
+        self._result_type_name = "MaterialWithImpactedSubstances"
         for result in results:
             material_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name=self.result_type_name,
+                result_type_name=self._result_type_name,
                 result_with_impacted_substances=result,
             )
             self._results.append(material_with_impacted_substances)
@@ -263,10 +263,10 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
         """
 
         self._results = []
-        self.result_type_name = "MaterialWithCompliance"
+        self._result_type_name = "MaterialWithCompliance"
         for result in results:
             material_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self.result_type_name,
+                result_type_name=self._result_type_name,
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -304,10 +304,10 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         """
 
         self._results = []
-        self.result_type_name = "PartWithImpactedSubstances"
+        self._result_type_name = "PartWithImpactedSubstances"
         for result in results:
             part_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name=self.result_type_name,
+                result_type_name=self._result_type_name,
                 result_with_impacted_substances=result,
             )
             self._results.append(part_with_impacted_substances)
@@ -347,10 +347,10 @@ class PartComplianceQueryResult(ComplianceBaseClass):
         """
 
         self._results = []
-        self.result_type_name = "PartWithCompliance"
+        self._result_type_name = "PartWithCompliance"
         for result in results:
             part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self.result_type_name,
+                result_type_name=self._result_type_name,
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -395,10 +395,10 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         """
 
         self._results = []
-        self.result_type_name = "SpecificationWithImpactedSubstances"
+        self._result_type_name = "SpecificationWithImpactedSubstances"
         for result in results:
             specification_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name=self.result_type_name,
+                result_type_name=self._result_type_name,
                 result_with_impacted_substances=result,
             )
             self._results.append(specification_with_impacted_substances)
@@ -439,10 +439,10 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
         """
 
         self._results = []
-        self.result_type_name = "SpecificationWithCompliance"
+        self._result_type_name = "SpecificationWithCompliance"
         for result in results:
             specification_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self.result_type_name,
+                result_type_name=self._result_type_name,
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -487,10 +487,10 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
         """
 
         self._results = []
-        self.result_type_name = "SubstanceWithCompliance"
+        self._result_type_name = "SubstanceWithCompliance"
         for result in results:
             substance_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self.result_type_name,
+                result_type_name=self._result_type_name,
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -551,10 +551,10 @@ class BomComplianceQueryResult(ComplianceBaseClass):
              objects.
         """
 
-        self.result_type_name = "PartWithCompliance"
+        self._result_type_name = "PartWithCompliance"
         result = results[0].parts[0]
         part_with_compliance = ItemResultFactory.create_compliance_result(
-            result_type_name=self.result_type_name,
+            result_type_name=self._result_type_name,
             result_with_compliance=result,
             indicator_definitions=indicator_definitions,
         )

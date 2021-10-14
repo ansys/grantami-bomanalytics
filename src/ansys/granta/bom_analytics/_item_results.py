@@ -233,18 +233,16 @@ class ImpactedSubstance(BaseSubstanceReference):
         )
         self.max_percentage_amount_in_material: Optional[float] = max_percentage_amount_in_material
         """The amount of this substance that occurs in the parent material. In the case where a range is specified in
-         the declaration, only the maximum is reported here."""
+        the declaration, only the maximum is reported here. `None` means the percentage amount has not been specified,
+        not that the amount is 0 %."""
 
         self.legislation_threshold: Optional[float] = legislation_threshold
-        """The substance concentration threshold over which the material is non-compliant with the legislation."""
+        """The substance concentration threshold over which the material is non-compliant with the legislation. `None`
+        means the threshold has not been specified, not that the threshold is 0 %."""
 
     def __repr__(self):
-        if self.cas_number:
-            return f'<ImpactedSubstance: {{"cas_number": {self.cas_number}}}>'
-        elif self.ec_number:
-            return f'<ImpactedSubstance: {{"ec_number": {self.ec_number}}}>'
-        elif self.chemical_name:
-            return f'<ImpactedSubstance: {{"chemical_name": {self.chemical_name}}}>'
+        return f'<ImpactedSubstance: {{"cas_number": {self.cas_number}, ' \
+               f'"percent_amount": {self.max_percentage_amount_in_material}}}>'
 
 
 class LegislationResult:

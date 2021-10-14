@@ -22,24 +22,30 @@ generated code into an easy-to-use client library.
 
 Background
 ----------
-Lorem Ipsum
+TODO
 
 
 Quick Code
 ----------
-Here's a brief example of how the client works:
+Here's a brief example of how the package works:
 
 .. code:: python
 
+    >>> from pprint import pprint
     >>> from ansys.granta.bom_analytics import Connection, queries
-        >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().build()
-        >>> query = queries.MaterialImpactedSubstancesQuery().
     >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().build()
-    >>> query = queries.MaterialImpactedSubstances(). \
-    ...     with_material_ids(['plastic-abs-pvc-flame', 'stainless-216-annealed']). \
-    ...     with_legislations(['REACH - The Candidate List', 'TSCA Section 5(a) SNURS'])
+    >>> query = (
+    >>>     queries.MaterialImpactedSubstancesQuery()
+    >>>     .with_material_ids(['plastic-abs-pvc-flame'])
+    >>>     .with_legislations(['REACH - The Candidate List'])
+    >>> )
+    >>>
     >>> result = cxn.run(query)
-    >>> result.impacted_substances
+    >>> pprint(result.impacted_substances)
+    [<ImpactedSubstance: {"cas_number": 10108-64-2, "percent_amount": 1.9}>,
+     <ImpactedSubstance: {"cas_number": 107-06-2, "percent_amount": None}>,
+     <ImpactedSubstance: {"cas_number": 115-96-8, "percent_amount": 15.0}>,
+    ...
 
 The first step is to establish the connection to Granta MI. Then the query is created by first picking the type of
 query, in this case a query to find the substances impacting one or more materials, and then adding the materials and

@@ -44,7 +44,7 @@ class _BaseArgumentManager(ABC):
     """Outlines an interface for managing 'items' to be provided to the query, i.e. the record or bom-based dimension
     to a query.
 
-    Does not implement the method for generating the arguments themselves, since this depends on the type of `_items`.
+    Doesn't specify how the objects are added to the `_items` attribute, or how they are converted to attributes.
     """
 
     _items = None
@@ -59,11 +59,19 @@ class _BaseArgumentManager(ABC):
 
         Returns
         -------
-            The boolean cast of the `_items` attribute. If a sub-class implements `_items` to be something where the
-            boolean cast is inappropriate, this property should be overridden.
+            The boolean cast of the `_items` attribute.
         """
 
         return bool(self._items)
+
+    @property
+    @abstractmethod
+    def batched_arguments(self) -> Generator[Dict[str, List[Union[models.Model, str]]], None, None]:
+        pass
+
+    @abstractmethod
+    def extract_results_from_response(self, response: models.Model) -> List[models.Model]:
+        pass
 
 
 class _RecordArgumentManager(_BaseArgumentManager):
@@ -1243,11 +1251,10 @@ class _BomArgumentManager(_BaseArgumentManager):
 
         return [{self.item_type_name: self._items}]
 
-    @staticmethod
-    def extract_results_from_response(response: models.Model) -> List[models.Model]:
+    def extract_results_from_response(self, response: models.Model) -> List[models.Model]:
         """Extracts the individual results from a response object.
 
-        For Bom queries, there is nothing to do. The response is already the low level. Just wrap in a list.
+        For Bom queries, the result isn't contained within a larger response object, it's already the object we want.
 
         Returns
         -------

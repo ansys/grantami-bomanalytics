@@ -8,13 +8,17 @@ Notes
 Indicators define compliance in terms of one or more legislations and a concentration threshold. The flags (states) of
 an indicator represent the compliance status of that indicator against a certain substance, material, specification,
 or part.
-
 """
+
 from enum import Enum
 from abc import ABC
-from typing import List, Union, Optional
+from typing import List, Union, Optional, TYPE_CHECKING
 
 from ansys.granta.bomanalytics import models
+
+if TYPE_CHECKING:
+    from ._query_results import MaterialComplianceQueryResult
+    from .queries import MaterialComplianceQuery
 
 
 class _Flag(Enum):
@@ -225,11 +229,14 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
     >>> indicator = RoHSIndicator(name='RoHS substances',
     ...                           legislation_names=["EU Directive 2011/65/EU (RoHS 2)"],
     ...                           default_threshold_percentage=0.1)
+    >>> indicator
     <RoHSIndicator, name: Tracked substances>
-    >>> ...  # Perform a compliance query
+
+    >>> query = MaterialComplianceQuery.with_indicators([indicator])...
+    >>> result: MaterialComplianceQueryResult  # Perform a compliance query
     >>> indicator_result = result.compliance_by_material_and_indicator[0]['RoHS substances']
     >>> indicator_result.flag >= indicator.available_flags['RohsCompliantWithExemptions']
-    True  # The material is not compliant with RoHS 2
+    True  # The material is not compliant with the legislations in the indicator
     """
 
     available_flags = RoHSFlag
@@ -248,8 +255,8 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
 class WatchListIndicator(_Indicator):
     """Indicator object that represents Watch List-type compliance of a Bom object against one or more legislations.
 
-    Other `WatchListIndicator` objects with results can be compared, with 'less compliant' indicators being greater than
-    'more compliant' indicators.
+    Other `WatchListIndicator` objects with results can be compared, with 'less compliant' indicator flagas being
+    greater than 'more compliant' indicator flags.
 
     Parameters
     ----------
@@ -273,11 +280,14 @@ class WatchListIndicator(_Indicator):
     >>> indicator = RoHSIndicator(name='Tracked substances',
     ...                           legislation_names=["The SIN List 2.1 (Substitute It Now!)"],
     ...                           default_threshold_percentage=0.1)
+    >>> indicator
     <WatchListIndicator, name: Tracked substances>
-    >>> ...  # Perform a compliance query
+
+    >>> query = MaterialComplianceQuery.with_indicators([indicator])...
+    >>> result: MaterialComplianceQueryResult  # Perform a compliance query
     >>> indicator_result = result.compliance_by_material_and_indicator[0]['Tracked substances']
     >>> indicator_result.flag >= indicator.available_flags['WatchListAllSubstancesBelowThreshold']
-    True  # The material is not compliant with the SinList
+    True  # The material is not compliant with the legislations in the indicator
     """
 
     available_flags = WatchListFlag

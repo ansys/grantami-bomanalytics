@@ -13,7 +13,7 @@ of records accepts a Bill of Materials in Bom1711 XML format, which in turn incl
 
 In all cases, the impacted substances are determined by a list of legislations, identified by legislation name.
 
-The quantity of the substance in the parent item is not taken into consideration by these queries. If the quentity is
+The quantity of the substance in the parent item is not taken into consideration by these queries. If the quantity is
 important, i.e. to determine compliance against a legislation that imposes a certain threshold, the
 :ref:`ref_bom_analytics_api_compliance_index` should be used instead.
 

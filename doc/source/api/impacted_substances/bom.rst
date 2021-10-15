@@ -1,6 +1,6 @@
 .. _ref_bom_analytics_api_impactedsubstances_bom:
 
-Bom Impacted Substances
+BoM Impacted Substances
 =======================
 
 Query definition

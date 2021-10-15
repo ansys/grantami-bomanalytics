@@ -17,7 +17,7 @@ Connection Builder
    .. automethod:: with_anonymous
 
 
-Bom Analyics Client
+BoM Analyics Client
 ~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.granta.bom_analytics._connection.BomAnalyticsClient

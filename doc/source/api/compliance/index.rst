@@ -14,8 +14,8 @@ threshold; if a certain record directly or indirectly contains substances impact
 in an amount that exceeds the threshold, the record is not compliant with that indicator. See the definitions of the
 indicators for more details on the possible results.
 
-The :ref:`ref_bom_analytics_api_compliance_bom` query accepts a Bill of Materials in Bom1711 XML format, and
-returns the compliance status of the Bom based on the Granta MI records referenced by it.
+The :ref:`ref_bom_analytics_api_compliance_bom` query accepts a Bill of Materials in BoM 1711 XML format, and
+returns the compliance status of the BoM based on the Granta MI records referenced by it.
 
 The result of each query is in general a recursive BoM (or multi-level BoM) that shows the compliance and impacted
 substances at each level. If you are looking for a simple determination of the substances indirectly or directly

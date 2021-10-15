@@ -1,4 +1,4 @@
-"""Bom Analytics Bom query result definitions.
+"""BoM Analytics BoM query result definitions.
 
 Defines the representations of the query results themselves, which allows them to implement pivots and summaries over
 the entire query result, instead of being constrained to individual parts, materials, etc.

@@ -1,6 +1,6 @@
-"""Bom Analytics indicators.
+"""BoM Analytics indicators.
 
-There are two indicators supported by the Bom Analytics API. Each is implemented as a separate class. They are their
+There are two indicators supported by the BoM Analytics API. Each is implemented as a separate class. They are their
 own result, i.e. all that is needed to convert a definition to a result is to add a result flag.
 
 Notes
@@ -202,7 +202,7 @@ class _Indicator(ABC):
 
 
 class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, IndicatorDefinition vs Result
-    """Indicator object that represents RoHS-type compliance of a Bom object against one or more legislations.
+    """Indicator object that represents RoHS-type compliance of a BoM object against one or more legislations.
 
     Other `RoHSIndicator` objects with results can be compared, with 'less compliant' indicators being greater than
     'more compliant' indicators.
@@ -253,7 +253,7 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
 
 
 class WatchListIndicator(_Indicator):
-    """Indicator object that represents Watch List-type compliance of a Bom object against one or more legislations.
+    """Indicator object that represents Watch List-type compliance of a BoM object against one or more legislations.
 
     Other `WatchListIndicator` objects with results can be compared, with 'less compliant' indicator flagas being
     greater than 'more compliant' indicator flags.

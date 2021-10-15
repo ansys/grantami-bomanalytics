@@ -1,4 +1,4 @@
-"""Bom Analytics query builders.
+"""BoM Analytics query builders.
 
 Describes and implements the main interface for the Bom Analytics API. The builder objects here define
 the creation, validation, and execution of Impacted Substances and Compliance queries. One separate
@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 
 
 class _BaseArgumentManager(ABC):
-    """Outlines an interface for managing 'items' to be provided to the query, i.e. the record or bom-based dimension
+    """Outlines an interface for managing 'items' to be provided to the query, i.e. the record or BoM-based dimension
     to a query.
 
     Doesn't specify how the objects are added to the `_items` attribute, or how they are converted to attributes.

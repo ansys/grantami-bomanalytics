@@ -1,6 +1,6 @@
 .. _ref_bom_analytics_api_compliance_bom:
 
-Bom Compliance
+BoM Compliance
 ==============
 
 Query definition

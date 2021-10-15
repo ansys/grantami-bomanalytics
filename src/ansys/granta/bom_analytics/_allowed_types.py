@@ -1,4 +1,4 @@
-"""Bom Analytics runtime type checker.
+"""BoM Analytics runtime type checker.
 
 Provides a decorator that performs runtime type checking of the arguments passed into a function / method.
 

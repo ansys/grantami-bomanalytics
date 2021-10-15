@@ -9,7 +9,7 @@ This section gives an overview of the impacted substances API. The
 :ref:`ref_bom_analytics_api_impactedsubstances_parts` queries accept a list of references to records in a Granta MI
 database and determine the impacted substances both directly and indirectly associated with those records via associated
 records in the Granta MI database. The :ref:`ref_bom_analytics_api_impactedsubstances_bom` query is similar, but instead
-of records accepts a Bill of Materials in Bom1711 XML format, which in turn includes references to Granta MI records.
+of records accepts a Bill of Materials in 1711 XML format, which in turn includes references to Granta MI records.
 
 In all cases, the impacted substances are determined by a list of legislations, identified by legislation name.
 

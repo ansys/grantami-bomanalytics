@@ -1,4 +1,4 @@
-"""Bom Analytics Bom item result definitions.
+"""BoM Analytics BoM item result definitions.
 
 Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
 queries. These are mostly extensions of the classes in _item_definitions.py.

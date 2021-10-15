@@ -1,4 +1,4 @@
-"""Bom Analytics Bom item definitions.
+"""BoM Analytics BoM item definitions.
 
 Defines the representations of the items (materials, parts, specifications, and substances) that are added to queries.
 These are sub-classed in _bom_item_results.py to include the results of the queries.
@@ -262,7 +262,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
     reference_value
         The value of the record reference. All are `str`, except for record history identities which are `int`.
     percentage_amount
-        The amount of the substance that appears in the parent Bom item. Should be greater than 0 and less than or
+        The amount of the substance that appears in the parent BoM item. Should be greater than 0 and less than or
         equal to 100.
     """
 
@@ -349,7 +349,7 @@ class CoatingReference(RecordReference, ABC):
 
 
 class BoM1711Definition:
-    """Represents a Bom that is supplied as part of a Bom query.
+    """Represents a BoM that is supplied as part of a BoM query.
 
     The XML contains record references within it, so there are no explicit references to records in this object.
 
@@ -365,7 +365,7 @@ class BoM1711Definition:
 
     @property
     def definition(self) -> str:
-        """The low-level API Bom definition.
+        """The low-level API BoM definition.
 
         Returns
         -------

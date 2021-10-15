@@ -241,8 +241,10 @@ class ImpactedSubstance(BaseSubstanceReference):
         means the threshold has not been specified, not that the threshold is 0 %."""
 
     def __repr__(self):
-        return f'<ImpactedSubstance: {{"cas_number": {self.cas_number}, ' \
-               f'"percent_amount": {self.max_percentage_amount_in_material}}}>'
+        return (
+            f'<ImpactedSubstance: {{"cas_number": {self.cas_number}, '
+            f'"percent_amount": {self.max_percentage_amount_in_material}}}>'
+        )
 
 
 class LegislationResult:
@@ -313,12 +315,12 @@ class LegislationResult:
 
 
 if TYPE_CHECKING:
-    impacted_substances_base_class = PartDefinition
+    mixin_base_class = PartDefinition
 else:
-    impacted_substances_base_class = object
+    mixin_base_class = object
 
 
-class ImpactedSubstancesResultMixin(impacted_substances_base_class):
+class ImpactedSubstancesResultMixin(mixin_base_class):
     """Adds results from an impacted substances query to an `ItemDefinition` class, turning it into an
     `ItemWithImpactedSubstancesResult` class.
 
@@ -372,12 +374,7 @@ class ImpactedSubstancesResultMixin(impacted_substances_base_class):
         return self._legislations
 
     def __repr__(self):
-        reference_type = self._definition.reference_type
-        reference_value = self._definition.reference_value
-        return (
-            f'<{self.__class__.__name__}({{"{reference_type}": "{reference_value}"}}), '
-            f"{len(self.legislations)} legislations>"
-        )
+        return f"<{self.__class__.__name__}({self.record_reference}), {len(self.legislations)} legislations>"
 
 
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
@@ -400,7 +397,7 @@ class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin, BoM1711
     pass
 
 
-class ComplianceResultMixin:
+class ComplianceResultMixin(mixin_base_class):
     """Adds results from a compliance query to a class deriving from `ItemDefinition`, turning it into an
     `[ItemType]WithComplianceResult` class.
 
@@ -464,12 +461,7 @@ class ComplianceResultMixin:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
     def __repr__(self):
-        reference_type = self._definition.reference_type
-        reference_value = self._definition.reference_value
-        return (
-            f'<{self.__class__.__name__}({{"{reference_type}": "{reference_value}"}}),'
-            f" {len(self.indicators)} indicators>"
-        )
+        return f"<{self.__class__.__name__}({self.record_reference}), {len(self.indicators)} indicators>"
 
 
 if TYPE_CHECKING:
@@ -770,12 +762,7 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 
 @ItemResultFactory.register("SubstanceWithCompliance")
 class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
-    def __repr__(self):
-        """Override required because a BaseSubstanceReference does not have a _definition."""
-        return (
-            f'<{self.__class__.__name__}({{"MiRecordHistoryIdentity": {self.record_history_identity}}}),'
-            f" {len(self.indicators)} indicators>"
-        )
+    pass
 
 
 @ItemResultFactory.register("MaterialWithCompliance")
@@ -792,12 +779,7 @@ class PartWithComplianceResult(
     ComplianceResultMixin,
     PartDefinition,
 ):
-    def __repr__(self):
-        reference_value = self._definition.reference_value
-        if not reference_value:
-            return f"<{self.__class__.__name__}, {len(self.indicators)} indicators>"
-        else:
-            return super().__repr__()
+    pass
 
 
 @ItemResultFactory.register("SpecificationWithCompliance")
@@ -814,12 +796,7 @@ class SpecificationWithComplianceResult(
 
 @ItemResultFactory.register("CoatingWithCompliance")
 class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
-    def __repr__(self):
-        """Override required because a CoatingReference does not have a _definition."""
-        return (
-            f'<{self.__class__.__name__}({{"MiRecordHistoryIdentity": {self.record_history_identity}}}),'
-            f" {len(self.indicators)} indicators>"
-        )
+    pass
 
 
 @ItemResultFactory.register("Bom1711WithCompliance")

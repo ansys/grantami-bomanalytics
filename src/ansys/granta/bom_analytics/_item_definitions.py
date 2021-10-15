@@ -5,7 +5,7 @@ These are sub-classed in _bom_item_results.py to include the results of the quer
 """
 
 from abc import ABC, abstractmethod
-from typing import Callable, Type, Union, List, SupportsFloat
+from typing import Callable, Type, Union, List, SupportsFloat, Dict, Optional
 from enum import Enum, auto
 
 from ansys.granta.bomanalytics import models
@@ -57,37 +57,35 @@ class RecordReference(ABC):
         elif reference_type == ReferenceType.MiRecordHistoryGuid:
             self.record_history_guid = reference_value
 
-        self._model = None
-        """The low-level API class that defines this definition object. Is set for concrete subclasses."""
+    @property
+    def record_reference(self) -> Optional[Dict[str, str]]:
+        """Converts the separate reference attributes back into a single dict that describes the type and value.
+
+        Is used both to create the low-level API model object that references this record, and is returned as-is as the
+        repr for this (and sub) objects.
+        """
+
+        if self.record_guid:
+            return {"reference_type": ReferenceType.MiRecordGuid.name, "reference_value": self.record_guid}
+        if self.record_history_guid:
+            return {
+                "reference_type": ReferenceType.MiRecordHistoryGuid.name,
+                "reference_value": self.record_history_guid,
+            }
+        if self.record_history_identity:
+            return {
+                "reference_type": ReferenceType.MiRecordHistoryIdentity.name,
+                "reference_value": str(self.record_history_identity),
+            }
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}({self.record_reference})>"
 
 
 class RecordDefinition(RecordReference):
     """Adds the ability to generate a definition of the record reference that can be supplied to the low-level API
     to run a query. As a result, is only implemented for record references that can server as inputs to a query.
     """
-
-    def _create_definition(self):
-        """Instantiate the specific low-level API model class for this record.
-
-        Returns
-        -------
-        Definition
-            If one of the reference attributes defined in this class is populated, then an instantiated model is
-            returned. Otherwise `None` is returned.
-        """
-
-        if self.record_guid:
-            return self._model(reference_type=ReferenceType.MiRecordGuid.name, reference_value=self.record_guid)
-        if self.record_history_guid:
-            return self._model(
-                reference_type=ReferenceType.MiRecordHistoryGuid.name,
-                reference_value=self.record_history_guid,
-            )
-        if self.record_history_identity:
-            return self._model(
-                reference_type=ReferenceType.MiRecordHistoryIdentity.name,
-                reference_value=self.record_history_identity,
-            )
 
     @property
     @abstractmethod
@@ -118,7 +116,13 @@ class PartDefinition(RecordDefinition):
         self.part_number: Union[str, None] = None
         if reference_type == ReferenceType.PartNumber:
             self.part_number = reference_value
-        self._model = models.GrantaBomAnalyticsServicesInterfaceCommonPartReference
+
+    @property
+    def record_reference(self) -> Dict[str, str]:
+        return super().record_reference or {
+            "reference_type": ReferenceType.PartNumber.name,
+            "reference_value": self.part_number,
+        }
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonPartReference:
@@ -129,9 +133,7 @@ class PartDefinition(RecordDefinition):
         Definition
         """
 
-        result = super()._create_definition() or self._model(
-            reference_type=ReferenceType.PartNumber.name, reference_value=self.part_number
-        )
+        result = models.GrantaBomAnalyticsServicesInterfaceCommonPartReference(**self.record_reference)
         return result
 
 
@@ -158,20 +160,24 @@ class MaterialDefinition(RecordDefinition):
         self.material_id: Union[str, None] = None
         if reference_type == ReferenceType.MaterialId:
             self.material_id = reference_value
-        self._model = models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference
+
+    @property
+    def record_reference(self) -> Dict[str, str]:
+        return super().record_reference or {
+            "reference_type": ReferenceType.MaterialId.name,
+            "reference_value": self.material_id,
+        }
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference:
-        """The low-level API part definition.
+        """The low-level API material definition.
 
         Returns
         -------
         Definition
         """
 
-        result = super()._create_definition() or self._model(
-            reference_type=ReferenceType.MaterialId.name, reference_value=self.material_id
-        )
+        result = models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference(**self.record_reference)
         return result
 
 
@@ -199,20 +205,24 @@ class SpecificationDefinition(RecordDefinition):
         self.specification_id: Union[str, None] = None
         if reference_type == ReferenceType.SpecificationId:
             self.specification_id = reference_value
-        self._model = models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference
+
+    @property
+    def record_reference(self) -> Dict[str, str]:
+        return super().record_reference or {
+            "reference_type": ReferenceType.SpecificationId.name,
+            "reference_value": self.specification_id,
+        }
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference:
-        """The low-level API specification definition.
+        """The low-level API material definition.
 
         Returns
         -------
         Definition
         """
 
-        result = super()._create_definition() or self._model(
-            reference_type=ReferenceType.SpecificationId.name, reference_value=self.specification_id
-        )
+        result = models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference(**self.record_reference)
         return result
 
 
@@ -251,6 +261,18 @@ class BaseSubstanceReference(RecordReference, ABC):
         elif reference_type == ReferenceType.EcNumber:
             self.ec_number = reference_value
 
+    @property
+    def record_reference(self) -> Dict[str, str]:
+        definition = super().record_reference
+        if not definition:
+            if self.chemical_name:
+                definition = {"reference_type": ReferenceType.ChemicalName.name, "reference_value": self.chemical_name}
+            elif self.cas_number:
+                definition = {"reference_type": ReferenceType.CasNumber.name, "reference_value": self.cas_number}
+            elif self.ec_number:
+                definition = {"reference_type": ReferenceType.EcNumber.name, "reference_value": self.ec_number}
+        return definition
+
 
 class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
     """Concrete substance subclass which represents the definition of a substance as supplied to a compliance query.
@@ -281,9 +303,6 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         self._percentage_amount = None
         if percentage_amount:
             self.percentage_amount = percentage_amount
-        self._model = (
-            models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount  # noqa: E501
-        )
 
     @property
     def percentage_amount(self) -> float:
@@ -322,17 +341,9 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         Definition
         """
 
-        definition = super()._create_definition()
-        if not definition:
-            if self.chemical_name:
-                definition = self._model(
-                    reference_type=ReferenceType.ChemicalName.name, reference_value=self.chemical_name
-                )
-            elif self.cas_number:
-                definition = self._model(reference_type=ReferenceType.CasNumber.name, reference_value=self.cas_number)
-            elif self.ec_number:
-                definition = self._model(reference_type=ReferenceType.EcNumber.name, reference_value=self.ec_number)
-        definition.percentage_amount = self.percentage_amount
+        definition = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount(
+            **self.record_reference, percentage_amount=self.percentage_amount
+        )
         return definition
 
 
@@ -364,13 +375,14 @@ class BoM1711Definition:
         self._bom = bom
 
     @property
-    def definition(self) -> str:
+    def _definition(self) -> str:
         """The low-level API BoM definition.
 
         Returns
         -------
         Definition
         """
+
         return self._bom
 
 

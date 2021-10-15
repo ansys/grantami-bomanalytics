@@ -1,4 +1,4 @@
-"""Bom Analytics Bom query result definitions.
+"""BoM Analytics BoM query result definitions.
 
 Defines the representations of the query results themselves, which allows them to implement pivots and summaries over
 the entire query result, instead of being constrained to individual parts, materials, etc.
@@ -10,10 +10,8 @@ from abc import ABC
 
 from ansys.granta.bomanalytics import models
 
-from ._item_results import ItemResultFactory
-
-# Required for type hinting
 from ._item_results import (
+    ItemResultFactory,
     MaterialWithImpactedSubstancesResult,
     MaterialWithComplianceResult,
     PartWithImpactedSubstancesResult,
@@ -22,9 +20,8 @@ from ._item_results import (
     SpecificationWithComplianceResult,
     SubstanceWithComplianceResult,
     ImpactedSubstance,
-    BoM1711WithImpactedSubstancesResult,
 )
-from .indicators import Indicator_Definitions
+from .indicators import WatchListIndicator, RoHSIndicator
 
 Query_Result = TypeVar(
     "Query_Result",
@@ -35,15 +32,11 @@ Query_Result = TypeVar(
 
 class QueryResultFactory:
     """Creates query results for a given type of API query. The key to control which result type is created is the type
-     of the response from the low-level API.
-
-    Class Attributes
-    ----------------
-    registry : dict
-        Mapping between a query result class and the API response it supports.
+    of the response from the low-level API.
     """
 
-    registry = {}
+    registry: dict = {}
+    "Mapping between a query result class and the API response it supports."
 
     @classmethod
     def register(cls, response_type: Type[models.Model]) -> Callable:
@@ -51,7 +44,7 @@ class QueryResultFactory:
 
         Parameters
         ----------
-        response_type : Type[models.Model]
+        response_type
             The type of response to be registered.
 
         Returns
@@ -75,7 +68,7 @@ class QueryResultFactory:
 
         Parameters
         ----------
-        results : models.Model or list of models.Model
+        results
             The result or results returned from the low-level API.
         **kwargs
             All other arguments required to instantiate the item definition, including the `reference_value` for
@@ -110,20 +103,28 @@ class ImpactedSubstancesBaseClass(ABC):
     impacted substances by legislation only, or as a fully flattened list.
     """
 
-    _results = []  # Used to satisfy the linter
+    # Used to satisfy the linter
+    _results = []
+    _result_type_name: str = ""
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
 
     @property
-    def impacted_substances_by_legislation(
-        self,
-    ) -> Dict[str, List[ImpactedSubstance]]:
+    def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
         """A view of the results for an impacted substances query grouped by legislation only.
 
-        Returns
-        -------
-        dict of (str, list of `ImpactedSubstances`)
-            The substances from all items specified in the query are merged for each legislation, providing a single
-            list of impacted substances grouped by legislation only. Substances are duplicated where they appear in
-            multiple items for the same legislation.
+        The substances from all items specified in the query are merged for each legislation, providing a single
+        list of impacted substances grouped by legislation only. Substances are duplicated where they appear in
+        multiple items for the same legislation.
+
+        Examples
+        --------
+        >>> result: MaterialImpactedSubstancesQueryResult
+        >>> result.impacted_substances_by_legislation
+        {'REACH - The Candidate List': [
+            <ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
+        }
         """
 
         results = defaultdict(list)
@@ -135,17 +136,20 @@ class ImpactedSubstancesBaseClass(ABC):
                 results[legislation_name].extend(
                     legislation_result.substances
                 )  # TODO: Merge these property, i.e. take max amount? range?
-        return results
+        return dict(results)
 
     @property
-    def impacted_substances(self) -> List[ImpactedSubstance]:
+    def impacted_substances(self) -> List["ImpactedSubstance"]:
         """A view of the results for an impacted substances query flattened into a single list.
 
-        Returns
-        -------
-        list of `ImpactedSubstances`
-            The substances from all items specified in the query are merged across item and legislation, providing a
-            single flat list. Substances are duplicated where they appear in multiple items and/or legislations.
+        The substances from all items specified in the query are merged across item and legislation, providing a
+        single flat list. Substances are duplicated where they appear in multiple items and/or legislations.
+
+        Examples
+        --------
+        >>> result: MaterialImpactedSubstancesQueryResult
+        >>> result.impacted_substances
+        [<ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
         """
 
         results = []
@@ -164,17 +168,28 @@ class ComplianceBaseClass(ABC):
     compliance by indicator only.
     """
 
-    _results = []  # Used to satisfy the linter
+    # Used to satisfy the linter
+    _results = []
+    _result_type_name: str = ""
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
 
     @property
-    def compliance_by_indicator(self) -> Indicator_Definitions:
+    def compliance_by_indicator(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:
         """A view of the results for a compliance query grouped by indicator only.
 
-        Returns
-        -------
-        dict of (str, `WatchListIndicator` or `RoHSIndicator`)
-            The compliance results from all items specified in the query are merged for each indicator by taking the
-            worst result returned for that indicator.
+        The compliance results from all items specified in the query are merged for each indicator by taking the
+        worst result returned for that indicator.
+
+        Examples
+        --------
+        >>> compliance_result: MaterialComplianceQueryResult
+        >>> compliance_result.compliance_by_indicator
+        {'Prop 65': <WatchListIndicator,
+                name: Prop 65,
+                flag: WatchListFlag.WatchListAboveThreshold>
+        }
         """
 
         results = {}
@@ -189,63 +204,69 @@ class ComplianceBaseClass(ABC):
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial)
-class MaterialImpactedSubstancesResult(ImpactedSubstancesBaseClass):
-    """The result of a `MaterialImpactedSubstances` query.
-
-    Parameters
-    ----------
-    results : list of `models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial`
-    """
+class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
+    """The result of running a :class:`ansys.granta.bom_analytics.queries.MaterialImpactedSubstancesQuery`."""
 
     def __init__(
         self,
-        results: List[
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial  # noqa: E501
-        ],
+        results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial],
     ):
+        """
+        Parameters
+        ----------
+        results
+            The low-level API objects returned by the REST API.
+        """
+
         self._results = []
+        self._result_type_name = "MaterialWithImpactedSubstances"
         for result in results:
             material_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name="materialWithImpactedSubstances",
+                result_type_name=self._result_type_name,
                 result_with_impacted_substances=result,
             )
             self._results.append(material_with_impacted_substances)
 
     @property
-    def impacted_substances_by_material_and_legislation(
-        self,
-    ) -> List[MaterialWithImpactedSubstancesResult]:
-        """The result of a material with impacted substances query.
+    def impacted_substances_by_material_and_legislation(self) -> List["MaterialWithImpactedSubstancesResult"]:
+        """The impacted substances for each legislation in the original query, grouped by material and
+        legislation.
 
-        Returns
-        -------
-        list of `MaterialWithImpactedSubstancesResult`
-            Material definition objects with the substances impacted by the legislation specified in the query.
+        Examples
+        --------
+        >>> result: MaterialImpactedSubstancesQueryResult
+        >>> result.impacted_substances_by_material_and_legislation
+        [<MaterialWithImpactedSubstancesResult({MaterialId: elastomer-butadienerubber}),
+                1 legislations>,...]
         """
 
         return self._results
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance)
-class MaterialComplianceResult(ComplianceBaseClass):
-    """The result of a `MaterialCompliance` query.
-
-    Parameters
-    ----------
-    results : list of `models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance`
-    indicator_definitions : `Indicator_Definitions`
-        The indicator definitions supplied as part of the query. Used here as the base for the indicator result objects.
-    """
+class MaterialComplianceQueryResult(ComplianceBaseClass):
+    """The result of running a :class:`ansys.granta.bom_analytics.queries.MaterialComplianceQuery`."""
 
     def __init__(
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
-        indicator_definitions: Indicator_Definitions,
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
+        """
+        Parameters
+        ----------
+        results
+            The low-level API objects returned by the REST API.
+        indicator_definitions
+            The indicator definitions supplied as part of the query. Used here as the base for the indicator result
+             objects.
+        """
+
         self._results = []
+        self._result_type_name = "MaterialWithCompliance"
         for result in results:
             material_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="materialWithCompliance",
+                result_type_name=self._result_type_name,
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -253,75 +274,83 @@ class MaterialComplianceResult(ComplianceBaseClass):
             self._results.append(material_with_compliance)
 
     @property
-    def compliance_by_material_and_indicator(
-        self,
-    ) -> List[MaterialWithComplianceResult]:
-        """The compliance status for each indicator of each material in the original query.
+    def compliance_by_material_and_indicator(self) -> List["MaterialWithComplianceResult"]:
+        """The compliance status for each indicator in the original query, grouped by material.
 
-        Returns
-        ----------
-        list of `MaterialWithComplianceResult`
+        Examples
+        --------
+        >>> result: MaterialComplianceQueryResult
+        >>> result.compliance_by_material_and_indicator
+        [<MaterialWithComplianceResult({MaterialId: elastomer-butadienerubber}),
+                1 indicators>, ...]
         """
 
         return self._results
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart)
-class PartImpactedSubstancesResult(ImpactedSubstancesBaseClass):
-    """The result of a `PartImpactedSubstances` query.
-
-    Parameters
-    ----------
-    results : list of `models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart`
-    """
+class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
+    """The result of running a :class:`ansys.granta.bom_analytics.queries.PartImpactedSubstancesQuery`."""
 
     def __init__(
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart],
     ):
+        """
+        Parameters
+        ----------
+        results
+            The low-level API objects returned by the REST API.
+        """
+
         self._results = []
+        self._result_type_name = "PartWithImpactedSubstances"
         for result in results:
             part_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name="partWithImpactedSubstances",
+                result_type_name=self._result_type_name,
                 result_with_impacted_substances=result,
             )
             self._results.append(part_with_impacted_substances)
 
     @property
-    def impacted_substances_by_part_and_legislation(
-        self,
-    ) -> List[PartWithImpactedSubstancesResult]:
-        """The result of a material with impacted substances query.
+    def impacted_substances_by_part_and_legislation(self) -> List["PartWithImpactedSubstancesResult"]:
+        """The impacted substances for each legislation in the original query, grouped by part and
+        legislation.
 
-        Returns
-        -------
-        list of `PartWithImpactedSubstancesResult`
-            Part definition objects with the substances impacted by the legislation specified in the query.
+        Examples
+        --------
+        >>> result: PartImpactedSubstancesQueryResult
+        >>> result.impacted_substances_by_part_and_legislation
+        [<PartWithImpactedSubstancesResult({PartNumber: DRILL}), 1 legislations>,...]
         """
 
         return self._results
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance)
-class PartComplianceResult(ComplianceBaseClass):
-    """The result of a `PartCompliance` query.
-
-    Parameters
-    ----------
-    results : list of `models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance`
-    indicator_definitions : `Indicator_Definitions`
-        The indicator definitions supplied as part of the query. Used here as the base for the indicator result objects.
-    """
+class PartComplianceQueryResult(ComplianceBaseClass):
+    """The result of running a :class:`ansys.granta.bom_analytics.queries.PartComplianceQuery`."""
 
     def __init__(
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
-        indicator_definitions: Indicator_Definitions,
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
+        """
+        Parameters
+        ----------
+        results
+            The low-level API objects returned by the REST API.
+        indicator_definitions
+            The indicator definitions supplied as part of the query. Used here as the base for the indicator result
+             objects.
+        """
+
         self._results = []
+        self._result_type_name = "PartWithCompliance"
         for result in results:
             part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="partWithCompliance",
+                result_type_name=self._result_type_name,
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -332,14 +361,14 @@ class PartComplianceResult(ComplianceBaseClass):
             self._results.append(part_with_compliance)
 
     @property
-    def compliance_by_part_and_indicator(
-        self,
-    ) -> List[PartWithComplianceResult]:
-        """The compliance status for each indicator of each part in the original query.
+    def compliance_by_part_and_indicator(self) -> List["PartWithComplianceResult"]:
+        """The compliance status for each indicator in the original query, grouped by part.
 
-        Returns
-        ----------
-        list of `PartWithComplianceResult`
+        Examples
+        --------
+        >>> result: PartComplianceQueryResult
+        >>> result.compliance_by_part_and_indicator
+        [<PartWithComplianceResult({PartNumber: DRILL}), 1 indicators>,...]
         """
 
         return self._results
@@ -348,63 +377,72 @@ class PartComplianceResult(ComplianceBaseClass):
 @QueryResultFactory.register(
     models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
 )
-class SpecificationImpactedSubstancesResult(ImpactedSubstancesBaseClass):
-    """The result of a `SpecificationImpactedSubstances` query.
-
-    Parameters
-    ----------
-    results : list of `models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification`
-    """
+class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
+    """The result of running a :class:`ansys.granta.bom_analytics.queries.SpecificationImpactedSubstancesQuery`."""
 
     def __init__(
         self,
         results: List[
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification  # noqa: E501
+            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
+            # noqa: E501
         ],
     ):
+        """
+        Parameters
+        ----------
+        results
+            The low-level API objects returned by the REST API.
+        """
+
         self._results = []
+        self._result_type_name = "SpecificationWithImpactedSubstances"
         for result in results:
             specification_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name="specificationWithImpactedSubstances",
+                result_type_name=self._result_type_name,
                 result_with_impacted_substances=result,
             )
             self._results.append(specification_with_impacted_substances)
 
     @property
-    def impacted_substances_by_specification_and_legislation(
-        self,
-    ) -> List[SpecificationWithImpactedSubstancesResult]:
-        """The result of a specification with impacted substances query.
+    def impacted_substances_by_specification_and_legislation(self) -> List["SpecificationWithImpactedSubstancesResult"]:
+        """The impacted substances for each legislation in the original query, grouped by specification and
+        legislation.
 
-        Returns
-        -------
-        list of `SpecificationWithImpactedSubstancesResult`
-            Specification definition objects with the substances impacted by the legislation specified in the query.
+        Examples
+        --------
+        >>> result: SpecificationImpactedSubstancesQueryResult
+        >>> result.impacted_substances_by_specification_and_legislation
+        [<SpecificationWithImpactedSubstancesResult({SpecificationId: MIL-A-8625}),
+                1 legislations>, ...]
         """
 
         return self._results
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance)
-class SpecificationComplianceResult(ComplianceBaseClass):
-    """The result of a `SpecificationCompliance` query.
-
-    Parameters
-    ----------
-    results : list of `models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance`
-    indicator_definitions : `Indicator_Definitions`
-        The indicator definitions supplied as part of the query. Used here as the base for the indicator result objects.
-    """
+class SpecificationComplianceQueryResult(ComplianceBaseClass):
+    """The result of running a :class:`ansys.granta.bom_analytics.queries.SpecificationComplianceQuery`."""
 
     def __init__(
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
-        indicator_definitions: Indicator_Definitions,
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
+        """
+        Parameters
+        ----------
+        results
+            The low-level API objects returned by the REST API.
+        indicator_definitions
+            The indicator definitions supplied as part of the query. Used here as the base for the indicator result
+             objects.
+        """
+
         self._results = []
+        self._result_type_name = "SpecificationWithCompliance"
         for result in results:
             specification_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="specificationWithCompliance",
+                result_type_name=self._result_type_name,
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -415,112 +453,126 @@ class SpecificationComplianceResult(ComplianceBaseClass):
             self._results.append(specification_with_compliance)
 
     @property
-    def compliance_by_specification_and_indicator(
-        self,
-    ) -> List[SpecificationWithComplianceResult]:
-        """The compliance status for each indicator of each specification in the original query.
+    def compliance_by_specification_and_indicator(self) -> List["SpecificationWithComplianceResult"]:
+        """The compliance status for each indicator in the original query, grouped by specification.
 
-        Returns
-        ----------
-        list of `SpecificationWithComplianceResult`
+        Examples
+        --------
+        >>> result: SpecificationComplianceQueryResult
+        >>> result.compliance_by_specification_and_indicator
+        [<SpecificationWithComplianceResult({SpecificationId: MIL-A-8625}),
+                1 indicators>, ...]
         """
 
         return self._results
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance)
-class SubstanceComplianceResult(ComplianceBaseClass):
-    """The result of a `SubstanceCompliance` query.
-
-    Parameters
-    ----------
-    results : list of `models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance`
-    indicator_definitions : `Indicator_Definitions`
-        The indicator definitions supplied as part of the query. Used here as the base for the indicator result objects.
-    """
+class SubstanceComplianceQueryResult(ComplianceBaseClass):
+    """The result of running a :class:`ansys.granta.bom_analytics.queries.SubstanceComplianceQuery`."""
 
     def __init__(
         self,
         results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
-        indicator_definitions: Indicator_Definitions,
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
+        """
+        Parameters
+        ----------
+        results
+            The low-level API objects returned by the REST API.
+        indicator_definitions
+            The indicator definitions supplied as part of the query. Used here as the base for the indicator result
+             objects.
+        """
+
         self._results = []
+        self._result_type_name = "SubstanceWithCompliance"
         for result in results:
             substance_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="substanceWithCompliance",
+                result_type_name=self._result_type_name,
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
             self._results.append(substance_with_compliance)
 
     @property
-    def compliance_by_substance_and_indicator(
-        self,
-    ) -> List[SubstanceWithComplianceResult]:
-        """The compliance status for each indicator of each substance in the original query.
+    def compliance_by_substance_and_indicator(self) -> List["SubstanceWithComplianceResult"]:
+        """The compliance status for each indicator in the original query, grouped by substance.
 
-        Returns
-        ----------
-        list of `SubstanceWithComplianceResult`
+        Examples
+        --------
+        >>> result: SubstanceComplianceQueryResult
+        >>> result.compliance_by_substance_and_indicator
+        [<SubstanceWithComplianceResult({"cas_number": 50-00-0}), 1 indicators>, ...]
         """
 
         return self._results
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response)
-class BomImpactedSubstancesResult(ImpactedSubstancesBaseClass):
-    """The result of a `BomImpactedSubstances` query.
+class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
+    """The result of running a :class:`ansys.granta.bom_analytics.queries.BomImpactedSubstancesQuery`."""
 
-    Since by definition a Bom query is only ever on a single Bom, we only get a single result object. The property
-    implemented in the other impacted substances result classes that simply wraps `_results` is not useful here.
+    def __init__(
+        self, results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response]
+    ):
+        """
+        Parameters
+        ----------
+        results
+            The low-level API objects returned by the REST API.
+        """
 
-    Parameters
-    ----------
-    results : `models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response`
-    """
-
-    def __init__(self, results):
-        self._results = [BoM1711WithImpactedSubstancesResult(legislations=results.legislations)]
+        self.result_type_name = "Bom1711WithImpactedSubstances"
+        bom_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
+            result_type_name=self.result_type_name,
+            result_with_impacted_substances=results[0],
+        )
+        self._results = [bom_with_impacted_substances]
 
 
 @QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response)
-class BomComplianceResult(ComplianceBaseClass):
-    """The result of a `BomCompliance` query.
-
-    Parameters
-    ----------
-    results : `models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response`
-    indicator_definitions : `Indicator_Definitions`
-        The indicator definitions supplied as part of the query. Used here as the base for the indicator result objects.
-    """
+class BomComplianceQueryResult(ComplianceBaseClass):
+    """The result of running a :class:`ansys.granta.bom_analytics.queries.BomComplianceQuery`."""
 
     def __init__(
         self,
-        results,
-        indicator_definitions: Indicator_Definitions,
+        results: List[models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response],
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
-        part = results.parts[0]
-        part_with_compliance = PartWithComplianceResult(
-            indicator_results=part.indicators,
+        """
+        Parameters
+        ----------
+        results
+            The low-level API objects returned by the REST API.
+        indicator_definitions
+            The indicator definitions supplied as part of the query. Used here as the base for the indicator result
+             objects.
+        """
+
+        self._result_type_name = "PartWithCompliance"
+        result = results[0].parts[0]
+        part_with_compliance = ItemResultFactory.create_compliance_result(
+            result_type_name=self._result_type_name,
+            result_with_compliance=result,
             indicator_definitions=indicator_definitions,
-            reference_type=part.reference_type,
-            reference_value=part.reference_value,
         )
-        part_with_compliance._add_child_parts(part.parts)
-        part_with_compliance._add_child_materials(part.materials)
-        part_with_compliance._add_child_specifications(part.specifications)
-        part_with_compliance._add_child_substances(part.substances)
+        part_with_compliance._add_child_parts(result.parts)
+        part_with_compliance._add_child_materials(result.materials)
+        part_with_compliance._add_child_specifications(result.specifications)
+        part_with_compliance._add_child_substances(result.substances)
         self._results = [part_with_compliance]
 
     @property
-    def compliance_by_part_and_indicator(
-        self,
-    ) -> List[PartWithComplianceResult]:
-        """The compliance status for each indicator of each part in the original Bom.
+    def compliance_by_part_and_indicator(self) -> List["PartWithComplianceResult"]:
+        """The compliance status for each indicator in the original query.
 
-        Returns
-        ----------
-        list of `PartWithComplianceResult`
+        Examples
+        --------
+        >>> result: BomComplianceQueryResult
+        >>> result.compliance_by_part_and_indicator
+        [<PartWithComplianceResult, 1 indicators>]
         """
 
         return self._results

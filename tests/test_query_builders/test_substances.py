@@ -1,6 +1,6 @@
 from ..common import pytest, queries, check_query_manager_attributes
 
-SubstanceCompliance = queries.SubstanceCompliance
+SubstanceCompliance = queries.SubstanceComplianceQuery
 
 
 @pytest.mark.parametrize("values", [[], ["One chemical_name"], ["Two", "Chemical names"]])
@@ -21,7 +21,7 @@ class TestWithoutAmounts:
             "chemical_name",
             values,
         )
-        assert all([i.percentage_amount == i._default_percentage_amount for i in query._record_argument_manager._items])
+        assert all([i.percentage_amount == i._default_percentage_amount for i in query._item_argument_manager._items])
 
     def test_add_cas_numbers(self, values):
         query = SubstanceCompliance().with_cas_numbers(values)
@@ -39,7 +39,7 @@ class TestWithoutAmounts:
             "cas_number",
             values,
         )
-        assert all([i.percentage_amount == i._default_percentage_amount for i in query._record_argument_manager._items])
+        assert all([i.percentage_amount == i._default_percentage_amount for i in query._item_argument_manager._items])
 
     def test_add_ec_numbers(self, values):
         query = SubstanceCompliance().with_ec_numbers(values)
@@ -57,7 +57,7 @@ class TestWithoutAmounts:
             "ec_number",
             values,
         )
-        assert all([i.percentage_amount == i._default_percentage_amount for i in query._record_argument_manager._items])
+        assert all([i.percentage_amount == i._default_percentage_amount for i in query._item_argument_manager._items])
 
 
 @pytest.mark.parametrize("values", ["Strings are not allowed", [("id_with_amount", 12)], 12])
@@ -93,7 +93,7 @@ class TestWithoutAmountsWrongType:
 )
 class TestWithAmounts:
     def test_record_guids(self, values):
-        query = SubstanceCompliance().with_record_guids_with_amounts(values)
+        query = SubstanceCompliance().with_record_guids_and_amounts(values)
         assert isinstance(query, SubstanceCompliance)
         assert check_query_manager_attributes(
             query,
@@ -108,10 +108,10 @@ class TestWithAmounts:
             [v for (v, _) in values],
         )
         assert all(
-            [i._percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i._percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
         assert all(
-            [i.percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i.percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
 
     def test_record_history_guids(self, values):
@@ -130,10 +130,10 @@ class TestWithAmounts:
             [v for (v, _) in values],
         )
         assert all(
-            [i._percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i._percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
         assert all(
-            [i.percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i.percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
 
     def test_add_chemical_names(self, values):
@@ -152,10 +152,10 @@ class TestWithAmounts:
             [v for (v, _) in values],
         )
         assert all(
-            [i._percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i._percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
         assert all(
-            [i.percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i.percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
 
     def test_add_cas_numbers(self, values):
@@ -174,10 +174,10 @@ class TestWithAmounts:
             [v for (v, _) in values],
         )
         assert all(
-            [i._percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i._percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
         assert all(
-            [i.percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i.percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
 
     def test_add_ec_numbers(self, values):
@@ -196,10 +196,10 @@ class TestWithAmounts:
             [v for (v, _) in values],
         )
         assert all(
-            [i._percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i._percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
         assert all(
-            [i.percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
+            [i.percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)]
         )
 
 
@@ -219,20 +219,18 @@ def test_record_history_ids_with_amounts(values):
         "record_history_identity",
         [v for (v, _) in values],
     )
-    assert all(
-        [i._percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)]
-    )
-    assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._record_argument_manager._items, values)])
+    assert all([i._percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)])
+    assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)])
 
 
 @pytest.mark.parametrize("values", ["Strings are not allowed", [("id_without_amount", None)], 12])
 class TestWithAmountsWrongType:
     def test_record_guids(self, values):
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().with_record_guids_with_amounts(values)
+            SubstanceCompliance().with_record_guids_and_amounts(values)
         assert f"Incorrect type for value" in str(e.value)
         with pytest.raises(TypeError) as e:
-            SubstanceCompliance().with_record_guids_with_amounts(record_guids_and_amounts=values)
+            SubstanceCompliance().with_record_guids_and_amounts(record_guids_and_amounts=values)
         assert f"Incorrect type for value" in str(e.value)
 
     def test_record_history_guids(self, values):

@@ -9,27 +9,27 @@ from ..common import (
 
 
 RECORD_QUERY_TYPES: List = [
-    queries.MaterialImpactedSubstances,
-    queries.MaterialCompliance,
-    queries.PartImpactedSubstances,
-    queries.PartCompliance,
-    queries.SpecificationImpactedSubstances,
-    queries.SpecificationCompliance,
-    queries.SubstanceCompliance,
+    queries.MaterialImpactedSubstancesQuery,
+    queries.MaterialComplianceQuery,
+    queries.PartImpactedSubstancesQuery,
+    queries.PartComplianceQuery,
+    queries.SpecificationImpactedSubstancesQuery,
+    queries.SpecificationComplianceQuery,
+    queries.SubstanceComplianceQuery,
 ]
 
 COMPLIANCE_QUERY_TYPES: List = [
-    queries.MaterialCompliance,
-    queries.PartCompliance,
-    queries.SpecificationCompliance,
-    queries.SubstanceCompliance,
-    queries.BomCompliance,
+    queries.MaterialComplianceQuery,
+    queries.PartComplianceQuery,
+    queries.SpecificationComplianceQuery,
+    queries.SubstanceComplianceQuery,
+    queries.BomComplianceQuery,
 ]
 SUBSTANCE_QUERY_TYPES: List = [
-    queries.MaterialImpactedSubstances,
-    queries.PartImpactedSubstances,
-    queries.SpecificationImpactedSubstances,
-    queries.BomImpactedSubstances,
+    queries.MaterialImpactedSubstancesQuery,
+    queries.PartImpactedSubstancesQuery,
+    queries.SpecificationImpactedSubstancesQuery,
+    queries.BomImpactedSubstancesQuery,
 ]
 ALL_QUERY_TYPES = COMPLIANCE_QUERY_TYPES + SUBSTANCE_QUERY_TYPES
 

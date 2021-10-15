@@ -38,7 +38,7 @@ def test_material_definition(kwargs, variable_name):
     assert material_definition.__getattribute__(variable_name) == kwargs["reference_value"]
 
     mat_ref = MatRef(reference_type=kwargs["reference_type"].name, reference_value=kwargs["reference_value"])
-    assert material_definition.definition == mat_ref
+    assert material_definition._definition == mat_ref
 
 
 @pytest.mark.parametrize(
@@ -51,7 +51,7 @@ def test_part_definition(kwargs, variable_name):
     assert part_definition.__getattribute__(variable_name) == kwargs["reference_value"]
 
     part_ref = PartRef(reference_type=kwargs["reference_type"].name, reference_value=kwargs["reference_value"])
-    assert part_definition.definition == part_ref
+    assert part_definition._definition == part_ref
 
 
 @pytest.mark.parametrize(
@@ -64,7 +64,7 @@ def test_specification_definition(kwargs, variable_name):
     assert spec_definition.__getattribute__(variable_name) == kwargs["reference_value"]
 
     spec_ref = SpecRef(reference_type=kwargs["reference_type"].name, reference_value=kwargs["reference_value"])
-    assert spec_definition.definition == spec_ref
+    assert spec_definition._definition == spec_ref
 
 
 @pytest.mark.parametrize(
@@ -121,7 +121,7 @@ def test_substance_definition(kwargs, variable_name):
             reference_value=kwargs["reference_value"],
             percentage_amount=kwargs["percentage_amount"],
         )
-    assert substance_definition.definition == subs_ref
+    assert substance_definition._definition == subs_ref
 
 
 @pytest.mark.parametrize("percentage_amount", [-5, 150])

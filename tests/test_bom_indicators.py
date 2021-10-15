@@ -46,7 +46,7 @@ def test_indicator_definition(indicator, indicator_type):
 def test_indicator_definition_property(indicator):
     test_indicator = create_indicator(indicator)
 
-    definition = test_indicator.definition
+    definition = test_indicator._definition
     assert isinstance(definition, GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition)
     assert definition.to_dict()["name"] == test_indicator.name
     assert definition.to_dict()["legislation_names"] == test_indicator.legislation_names

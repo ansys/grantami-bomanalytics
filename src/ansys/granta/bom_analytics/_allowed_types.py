@@ -1,14 +1,14 @@
-"""Bom Analytics runtime type checker.
+"""BoM Analytics runtime type checker.
 
 Provides a decorator that performs runtime type checking of the arguments passed into a function / method.
 
 Attributes
 ----------
-T : TypeVar
+T
     Generic type to ensure static type checking works as expected.
 """
 
-from typing import Any, TypeVar, Type
+from typing import TypeVar, Type, Any
 import functools
 
 T = TypeVar("T")
@@ -20,7 +20,8 @@ def allowed_types(*types):
 
     Parameters
     ----------
-    *types : Tuple of objects who's type should match the corresponding function argument's type.
+    *types
+        Tuple of objects who's type should match the corresponding function argument's type.
 
     Raises
     ------
@@ -64,7 +65,7 @@ def allowed_types(*types):
     return decorator
 
 
-def _check_type(obj, allowed_type):
+def _check_type(obj, allowed_type: Any):
     """Recursively checks the type of an object against an allowed type.
 
     Recursive checking is performed if `allowed_type` is a container; first the type of the container itself is checked,
@@ -92,8 +93,6 @@ def _check_type(obj, allowed_type):
     `typing.Any` is also allowed as a type. This effectively allows type checking to be skipped for a particular `obj`.
     """
 
-    if allowed_type == Any:
-        return
     if isinstance(allowed_type, list):
         assert isinstance(obj, list)
         for value, item_type in zip(obj, allowed_type):

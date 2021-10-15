@@ -1,4 +1,5 @@
 from ._connection import Connection
 
-# TODO Logging?!
-# TODO use STK to extend bom services objects? e.g. adding all references to sparsely referenced object
+__version__ = "0.0.dev0"
+
+# TODO use STK to extend BoM services objects? e.g. adding all references to sparsely referenced object

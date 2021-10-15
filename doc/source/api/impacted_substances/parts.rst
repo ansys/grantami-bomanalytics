@@ -31,4 +31,8 @@ Part result
 .. autoclass:: ansys.granta.bom_analytics._item_results.PartWithImpactedSubstancesResult
    :members:
 
+   .. autoattribute:: part_number
+   .. autoattribute:: record_guid
+   .. autoattribute:: record_history_guid
+   .. autoattribute:: record_history_identity
    .. autoattribute:: legislations

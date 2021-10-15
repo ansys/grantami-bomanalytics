@@ -32,4 +32,8 @@ Specification result
 .. autoclass:: ansys.granta.bom_analytics._item_results.SpecificationWithImpactedSubstancesResult
    :members:
 
+   .. autoattribute:: specification_id
+   .. autoattribute:: record_guid
+   .. autoattribute:: record_history_guid
+   .. autoattribute:: record_history_identity
    .. autoattribute:: legislations

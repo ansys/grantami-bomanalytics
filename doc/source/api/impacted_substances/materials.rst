@@ -34,4 +34,8 @@ Material result
 .. autoclass:: ansys.granta.bom_analytics._item_results.MaterialWithImpactedSubstancesResult
    :members:
 
+   .. autoattribute:: material_id
+   .. autoattribute:: record_guid
+   .. autoattribute:: record_history_guid
+   .. autoattribute:: record_history_identity
    .. autoattribute:: legislations

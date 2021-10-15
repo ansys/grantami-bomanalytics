@@ -196,7 +196,7 @@ class ItemResultFactory:
 
 
 class ImpactedSubstance(BaseSubstanceReference):
-    """Represents a substance as it appears in a particular item. Includes
+    """Represents a substance impacted by a specific legislation for a specific item.
 
     Examples
     --------

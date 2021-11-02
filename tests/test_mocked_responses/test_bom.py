@@ -93,3 +93,11 @@ class TestCompliance:
 
         subs = response.compliance_by_part_and_indicator[0].parts[0].substances
         assert all([check_substance_attributes(sub) for sub in subs])
+
+    def test_compliance_result_indicators(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+
+        for result in response.compliance_by_part_and_indicator:
+            for k, v in result.indicators.items():
+                assert k in self.query._indicators  # The indicator name should be the same (string equality)
+                assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)

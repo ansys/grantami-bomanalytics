@@ -95,3 +95,11 @@ class TestCompliance:
         response = get_mocked_response(self.query, self.mock_key, connection)
 
         assert all([check_material_attributes(mat) for mat in response.compliance_by_material_and_indicator])
+
+    def test_compliance_result_indicators(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+
+        for result in response.compliance_by_material_and_indicator:
+            for k, v in result.indicators.items():
+                assert k in self.query._indicators  # The indicator name should be the same (string equality)
+                assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)

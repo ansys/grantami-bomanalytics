@@ -1,6 +1,8 @@
 from ..common import (
     pytest,
     Union,
+    List,
+    Dict,
     GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse,
     GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsResponse,
     GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse,
@@ -53,22 +55,21 @@ def _check_specific_substance(
     )
 
 
-def check_indicator(name: str, indicator: indicators._Indicator, impacted: bool = True):
+def check_indicators(
+    indicator_results: Dict[str, indicators._Indicator],
+    expected_results: List[indicators._Flag],
+):
+    return all(
+        _check_indicator(name, ind, res) for (name, ind), res in zip(indicator_results.items(), expected_results)
+    )
+
+
+def _check_indicator(name: str, indicator: indicators._Indicator, result: indicators._Flag):
     if name not in ["Indicator 1", "Indicator 2"]:
         return False
     if indicator.legislation_names != ["Mock"]:
         return False
-    if impacted:
-        if indicator.name == "Indicator 1" and indicator.flag.name == "WatchListAboveThreshold":
-            return True
-        if indicator.name == "Indicator 2" and indicator.flag.name == "RohsAboveThreshold":
-            return True
-    else:
-        if indicator.name == "Indicator 1" and indicator.flag.name == "WatchListNotImpacted":
-            return True
-        if indicator.name == "Indicator 2" and indicator.flag.name == "RohsNotImpacted":
-            return True
-    return False
+    return indicator.flag == result
 
 
 def check_part_attributes(part: PartWithComplianceResult):

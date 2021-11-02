@@ -4,10 +4,9 @@ from .common import (
     queries,
     indicators,
     check_substance,
-    check_indicator,
+    check_indicators,
     get_mocked_response,
     check_part_attributes,
-    check_material_attributes,
     check_substance_attributes,
 )
 
@@ -54,7 +53,11 @@ class TestCompliance:
         assert not part_0.materials
         assert not part_0.specifications
         assert not part_0.substances
-        assert all(check_indicator(name, ind, False) for name, ind in part_0.indicators.items())
+        part_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert check_indicators(part_0.indicators, part_0_result)
 
         # Level 1: Child part
         part_0_0 = part_0.parts[0]
@@ -65,7 +68,11 @@ class TestCompliance:
         assert not part_0_0.materials
         assert not part_0_0.specifications
         assert not part_0_0.parts
-        assert all(check_indicator(name, ind, False) for name, ind in part_0_0.indicators.items())
+        part_0_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        check_indicators(part_0_0.indicators, part_0_0_result)
 
         # Level 2: Child substance
         substance_0_0_0 = part_0_0.substances[0]
@@ -75,12 +82,14 @@ class TestCompliance:
         assert not substance_0_0_0.chemical_name
         assert not substance_0_0_0.record_history_guid
         assert not substance_0_0_0.record_guid
-        assert all(check_indicator(name, ind, False) for name, ind in substance_0_0_0.indicators.items())
+        substance_0_0_0_result = [indicators.WatchListFlag.WatchListNotImpacted, indicators.RoHSFlag.RohsNotImpacted]
+        check_indicators(substance_0_0_0.indicators, substance_0_0_0_result)
 
     def test_compliance_by_indicator(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
-        assert all(check_indicator(name, ind, False) for name, ind in response.compliance_by_indicator.items())
+        result = [indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold, indicators.RoHSFlag.RohsCompliant]
+        assert check_indicators(response.compliance_by_indicator, result)
 
     def test_compliance_result_objects_parts(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)

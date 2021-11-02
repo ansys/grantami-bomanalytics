@@ -241,8 +241,10 @@ class ImpactedSubstance(BaseSubstanceReference):
         means the threshold has not been specified, not that the threshold is 0 %."""
 
     def __repr__(self):
-        return f'<ImpactedSubstance: {{"cas_number": {self.cas_number}, ' \
-               f'"percent_amount": {self.max_percentage_amount_in_material}}}>'
+        return (
+            f'<ImpactedSubstance: {{"cas_number": {self.cas_number}, '
+            f'"percent_amount": {self.max_percentage_amount_in_material}}}>'
+        )
 
 
 class LegislationResult:

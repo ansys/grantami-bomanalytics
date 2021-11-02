@@ -4,7 +4,7 @@ from .common import (
     queries,
     indicators,
     check_substance,
-    check_indicator,
+    check_indicators,
     get_mocked_response,
     check_part_attributes,
     check_material_attributes,
@@ -74,52 +74,97 @@ class TestCompliance:
         assert not part_0.record_guid
         assert not part_0.record_history_guid
         assert not part_0.record_history_identity
-        assert all(check_indicator(name, ind) for name, ind in part_0.indicators.items())
+        part_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert check_indicators(part_0.indicators, part_0_result)
 
         part_0_0 = part_0.parts[0]
         assert part_0_0.record_history_identity == "987654"
-        assert all(check_indicator(name, ind) for name, ind in part_0_0.indicators.items())
+        part_0_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert check_indicators(part_0_0.indicators, part_0_0_result)
 
         part_1 = response.compliance_by_part_and_indicator[1]
         assert part_1.record_guid == "3df206df-9fc8-4859-90d4-3519764f8b55"
         assert not part_1.part_number
         assert not part_1.record_history_guid
         assert not part_1.record_history_identity
-        assert all(check_indicator(name, ind) for name, ind in part_1.indicators.items())
+        part_1_result = [
+            indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
+            indicators.RoHSFlag.RohsNonCompliant,
+        ]
+        assert check_indicators(part_1.indicators, part_1_result)
 
         material_1_0 = part_1.materials[0]
         assert material_1_0.record_history_identity == "111111"
-        assert all(check_indicator(name, ind) for name, ind in material_1_0.indicators.items())
+        material_1_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert check_indicators(material_1_0.indicators, material_1_0_result)
+
         material_1_1 = part_1.materials[1]
         assert material_1_1.record_history_identity == "222222"
-        assert all(check_indicator(name, ind) for name, ind in material_1_1.indicators.items())
+        material_1_1_result = [
+            indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
+            indicators.RoHSFlag.RohsNonCompliant,
+        ]
+        assert check_indicators(material_1_1.indicators, material_1_1_result)
 
     def test_compliance_by_part_and_indicator_substances(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         substance_0_0_0 = response.compliance_by_part_and_indicator[0].parts[0].substances[0]
         assert substance_0_0_0.record_history_identity == "62345"
-        assert all(check_indicator(name, ind) for name, ind in substance_0_0_0.indicators.items())
+        substance_0_0_0_result = [
+            indicators.WatchListFlag.WatchListNotImpacted,
+            indicators.RoHSFlag.RohsNotImpacted,
+        ]
+        assert check_indicators(substance_0_0_0.indicators, substance_0_0_0_result)
 
         substance_0_spec_0 = response.compliance_by_part_and_indicator[0].specifications[0].substances[0]
         assert substance_0_spec_0.record_history_identity == "12345"
-        assert all(check_indicator(name, ind) for name, ind in substance_0_spec_0.indicators.items())
+        substance_0_spec_0_result = [
+            indicators.WatchListFlag.WatchListBelowThreshold,
+            indicators.RoHSFlag.RohsBelowThreshold,
+        ]
+        assert check_indicators(substance_0_spec_0.indicators, substance_0_spec_0_result)
 
         substance_1_0_0 = response.compliance_by_part_and_indicator[1].materials[0].substances[0]
         assert substance_1_0_0.record_history_identity == "12345"
-        assert all(check_indicator(name, ind) for name, ind in substance_1_0_0.indicators.items())
+        substance_1_0_0_result = [
+            indicators.WatchListFlag.WatchListBelowThreshold,
+            indicators.RoHSFlag.RohsBelowThreshold,
+        ]
+        assert check_indicators(substance_1_0_0.indicators, substance_1_0_0_result)
 
         substance_1_1_0 = response.compliance_by_part_and_indicator[1].materials[1].substances[0]
         assert substance_1_1_0.record_history_identity == "12345"
-        assert all(check_indicator(name, ind) for name, ind in substance_1_1_0.indicators.items())
+        substance_1_1_0_result = [
+            indicators.WatchListFlag.WatchListBelowThreshold,
+            indicators.RoHSFlag.RohsBelowThreshold,
+        ]
+        assert check_indicators(substance_1_1_0.indicators, substance_1_1_0_result)
 
         substance_1_1_1 = response.compliance_by_part_and_indicator[1].materials[1].substances[1]
         assert substance_1_1_1.record_history_identity == "34567"
-        assert all(check_indicator(name, ind) for name, ind in substance_1_1_1.indicators.items())
+        substance_1_1_1_result = [
+            indicators.WatchListFlag.WatchListAboveThreshold,
+            indicators.RoHSFlag.RohsAboveThreshold,
+        ]
+        assert check_indicators(substance_1_1_1.indicators, substance_1_1_1_result)
 
     def test_compliance_by_indicator(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
-        assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())
+        result = [
+            indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
+            indicators.RoHSFlag.RohsNonCompliant,
+        ]
+        assert check_indicators(response.compliance_by_indicator, result)
 
     def test_compliance_result_objects_parts(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)

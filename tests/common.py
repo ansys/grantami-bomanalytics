@@ -1,4 +1,4 @@
-from typing import Union, List, Callable, Any
+from typing import Union, List, Callable, Any, Dict
 import pytest
 import pathlib
 from numbers import Number

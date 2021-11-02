@@ -5,7 +5,7 @@ queries. These are mostly extensions of the classes in _item_definitions.py.
 """
 
 from typing import List, Dict, Union, Callable, TYPE_CHECKING, Optional
-from copy import copy
+from copy import deepcopy
 from ansys.granta.bomanalytics import models
 from ._item_definitions import (
     MaterialDefinition,
@@ -456,7 +456,7 @@ class ComplianceResultMixin:
     ):
         super().__init__(**kwargs)
         self._indicator_definitions = indicator_definitions
-        self.indicators: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]] = copy(indicator_definitions)
+        self.indicators: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]] = deepcopy(indicator_definitions)
         """Created as a copy of the `indicator_definitions` parameter, with each indicator definition augmented with the
         result returned by the low-level API."""
 

@@ -1,5 +1,7 @@
 from .common import (
+    pytest,
     sample_bom,
+    sample_bom_complex,
     queries,
     LEGISLATIONS,
     INDICATORS,
@@ -79,16 +81,17 @@ class TestSubstancesQueries:
         assert response.compliance_by_indicator
 
 
+@pytest.mark.parametrize('bom', [sample_bom, sample_bom_complex])
 class TestBomQueries:
-    def test_impacted_substances(self, connection):
-        query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom).with_legislations(LEGISLATIONS)
+    def test_impacted_substances(self, bom, connection):
+        query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislations(LEGISLATIONS)
         response = connection.run(query)
 
         assert response.impacted_substances_by_legislation
         assert response.impacted_substances
 
-    def test_compliance(self, connection):
-        query = queries.BomComplianceQuery().with_bom(sample_bom).with_indicators(INDICATORS)
+    def test_compliance(self, bom, connection):
+        query = queries.BomComplianceQuery().with_bom(bom).with_indicators(INDICATORS)
         response = connection.run(query)
 
         assert response.compliance_by_part_and_indicator

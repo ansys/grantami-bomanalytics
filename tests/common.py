@@ -46,7 +46,7 @@ from ansys.granta.bom_analytics._item_results import (
     SubstanceWithComplianceResult,
     CoatingWithComplianceResult,
 )
-from .inputs import sample_bom, examples_as_strings
+from .inputs import sample_bom, sample_bom_complex, examples_as_strings
 
 LEGISLATIONS = ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]
 

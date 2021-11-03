@@ -60,6 +60,14 @@ class TestImpactedSubstances:
 
 
 class TestCompliance:
+    """ Check that each mocked result has the correct record references, indicator results, child objects, and bom
+    relationships.
+
+    A mocked query is used, populated by the examples included in the API definition.
+
+    Spec, coating, material and substance details are verified in separate methods.
+    """
+
     query = (
         queries.SpecificationComplianceQuery()
         .with_indicators(

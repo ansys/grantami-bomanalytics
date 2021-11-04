@@ -8,6 +8,12 @@ from .common import (
 
 
 class TestCompliance:
+    """Check that each mocked result has the correct record references, indicator results, child objects, and bom
+    relationships.
+
+    A mocked query is used, populated by the examples included in the API definition.
+    """
+
     query = (
         queries.SubstanceComplianceQuery()
         .with_indicators(

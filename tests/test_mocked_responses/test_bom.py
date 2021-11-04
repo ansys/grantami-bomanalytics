@@ -6,6 +6,7 @@ from .common import (
     get_mocked_response,
     PartValidator,
     SubstanceValidator,
+    MaterialValidator,
 )
 
 
@@ -30,6 +31,12 @@ class TestImpactedSubstances:
 
 
 class TestCompliance:
+    """Check that each mocked result has the correct record references, indicator results, child objects, and bom
+    relationships.
+
+    A mocked query is used, populated by the examples included in the API definition.
+    """
+
     query = (
         queries.BomComplianceQuery()
         .with_indicators(
@@ -44,9 +51,9 @@ class TestCompliance:
 
     def test_compliance_by_part_and_indicator(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
-        assert len(response.compliance_by_part_and_indicator) == 1
+        assert len(response.compliance_by_part_and_indicator) == 2
 
-        # Top level item
+        # Top level part 0
         part_0 = response.compliance_by_part_and_indicator[0]
         pv_0 = PartValidator(part_0)
         assert pv_0.check_reference()
@@ -78,10 +85,45 @@ class TestCompliance:
         assert sv_0_0_0.check_indicators(substance_0_0_0_result)
         assert sv_0_0_0.check_bom_structure()
 
+        # Top level part 1
+        part_1 = response.compliance_by_part_and_indicator[1]
+        pv_1 = PartValidator(part_1)
+        assert pv_0.check_reference()
+        part_1_result = [
+            indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
+            indicators.RoHSFlag.RohsNonCompliant,
+        ]
+        assert pv_1.check_indicators(part_1_result)
+        assert pv_1.check_empty_children(specifications=True, substances=True)
+        assert pv_1.check_bom_structure()
+
+        # Level 1: Child material
+        material_1_0 = response.compliance_by_part_and_indicator[1].materials[0]
+        mv_1_0 = MaterialValidator(material_1_0)
+        assert mv_1_0.check_reference(record_history_identity="111111")
+        material_1_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert mv_1_0.check_indicators(material_1_0_result)
+        assert mv_1_0.check_empty_children()
+        assert mv_1_0.check_bom_structure()
+
+        # Level 2: Child substance
+        substance_1_0_0 = response.compliance_by_part_and_indicator[1].materials[0].substances[0]
+        sv_1_0_0 = SubstanceValidator(substance_1_0_0)
+        assert sv_1_0_0.check_reference(record_history_identity="12345")
+        substance_1_0_0_result = [
+            indicators.WatchListFlag.WatchListBelowThreshold,
+            indicators.RoHSFlag.RohsBelowThreshold,
+        ]
+        assert sv_1_0_0.check_indicators(substance_1_0_0_result)
+        assert sv_1_0_0.check_bom_structure()
+
     def test_compliance_by_indicator(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
-        result = [indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold, indicators.RoHSFlag.RohsCompliant]
+        result = [indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold, indicators.RoHSFlag.RohsNonCompliant]
         assert all(
             [actual.flag == expected for actual, expected in zip(response.compliance_by_indicator.values(), result)]
         )

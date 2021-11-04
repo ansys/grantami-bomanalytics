@@ -551,18 +551,19 @@ class BomComplianceQueryResult(ComplianceBaseClass):
              objects.
         """
 
+        self._results = []
         self._result_type_name = "PartWithCompliance"
-        result = results[0].parts[0]
-        part_with_compliance = ItemResultFactory.create_compliance_result(
-            result_type_name=self._result_type_name,
-            result_with_compliance=result,
-            indicator_definitions=indicator_definitions,
-        )
-        part_with_compliance._add_child_parts(result.parts)
-        part_with_compliance._add_child_materials(result.materials)
-        part_with_compliance._add_child_specifications(result.specifications)
-        part_with_compliance._add_child_substances(result.substances)
-        self._results = [part_with_compliance]
+        for result in results[0].parts:
+            part_with_compliance = ItemResultFactory.create_compliance_result(
+                result_type_name=self._result_type_name,
+                result_with_compliance=result,
+                indicator_definitions=indicator_definitions,
+            )
+            part_with_compliance._add_child_parts(result.parts)
+            part_with_compliance._add_child_materials(result.materials)
+            part_with_compliance._add_child_specifications(result.specifications)
+            part_with_compliance._add_child_substances(result.substances)
+            self._results.append(part_with_compliance)
 
     @property
     def compliance_by_part_and_indicator(self) -> List["PartWithComplianceResult"]:

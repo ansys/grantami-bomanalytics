@@ -3,12 +3,9 @@ from .common import (
     GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
     queries,
     indicators,
-    check_substance,
-    check_indicator,
     get_mocked_response,
-    check_part_attributes,
-    check_material_attributes,
-    check_substance_attributes,
+    PartValidator,
+    SubstanceValidator,
 )
 
 
@@ -20,12 +17,16 @@ class TestImpactedSubstances:
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.impacted_substances_by_legislation) == 1
         legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
-        assert all([check_substance(s) for s in legislation])
+        for substance in legislation:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
 
     def test_impacted_substances(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.impacted_substances) == 2
-        assert all([check_substance(s) for s in response.impacted_substances])
+        for substance in response.impacted_substances:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
 
 
 class TestCompliance:
@@ -47,49 +48,48 @@ class TestCompliance:
 
         # Top level item
         part_0 = response.compliance_by_part_and_indicator[0]
-        assert not part_0.part_number
-        assert not part_0.record_guid
-        assert not part_0.record_history_guid
-        assert not part_0.record_history_identity
-        assert not part_0.materials
-        assert not part_0.specifications
-        assert not part_0.substances
-        assert all(check_indicator(name, ind, False) for name, ind in part_0.indicators.items())
+        pv_0 = PartValidator(part_0)
+        assert pv_0.check_reference()
+        part_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert pv_0.check_indicators(part_0_result)
+        assert pv_0.check_empty_children(materials=True, specifications=True, substances=True)
+        assert pv_0.check_bom_structure()
 
         # Level 1: Child part
         part_0_0 = part_0.parts[0]
-        assert not part_0_0.part_number
-        assert not part_0_0.record_guid
-        assert not part_0_0.record_history_guid
-        assert not part_0_0.record_history_identity
-        assert not part_0_0.materials
-        assert not part_0_0.specifications
-        assert not part_0_0.parts
-        assert all(check_indicator(name, ind, False) for name, ind in part_0_0.indicators.items())
+        pv_0_0 = PartValidator(part_0_0)
+        assert pv_0_0.check_reference()
+        part_0_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert pv_0_0.check_indicators(part_0_0_result)
+        assert pv_0_0.check_empty_children(materials=True, specifications=True, parts=True)
+        assert pv_0_0.check_bom_structure()
 
         # Level 2: Child substance
         substance_0_0_0 = part_0_0.substances[0]
-        assert substance_0_0_0.record_history_identity == "62345"
-        assert not substance_0_0_0.cas_number
-        assert not substance_0_0_0.ec_number
-        assert not substance_0_0_0.chemical_name
-        assert not substance_0_0_0.record_history_guid
-        assert not substance_0_0_0.record_guid
-        assert all(check_indicator(name, ind, False) for name, ind in substance_0_0_0.indicators.items())
+        sv_0_0_0 = SubstanceValidator(substance_0_0_0)
+        assert sv_0_0_0.check_reference(record_history_identity="62345")
+        substance_0_0_0_result = [indicators.WatchListFlag.WatchListNotImpacted, indicators.RoHSFlag.RohsNotImpacted]
+        assert sv_0_0_0.check_indicators(substance_0_0_0_result)
+        assert sv_0_0_0.check_bom_structure()
 
     def test_compliance_by_indicator(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
-        assert all(check_indicator(name, ind, False) for name, ind in response.compliance_by_indicator.items())
+        result = [indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold, indicators.RoHSFlag.RohsCompliant]
+        assert all(
+            [actual.flag == expected for actual, expected in zip(response.compliance_by_indicator.values(), result)]
+        )
 
-    def test_compliance_result_objects_parts(self, connection):
+    def test_indicator_results_are_separate_objects(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
 
-        parts = response.compliance_by_part_and_indicator + response.compliance_by_part_and_indicator[0].parts
-        assert all([check_part_attributes(part) for part in parts])
-
-    def test_compliance_result_objects_substances(self, connection):
-        response = get_mocked_response(self.query, self.mock_key, connection)
-
-        subs = response.compliance_by_part_and_indicator[0].parts[0].substances
-        assert all([check_substance_attributes(sub) for sub in subs])
+        for result in response.compliance_by_part_and_indicator:
+            for k, v in result.indicators.items():
+                assert k in self.query._indicators  # The indicator name should be the same (string equality)
+                assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)

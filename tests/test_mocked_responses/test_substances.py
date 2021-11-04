@@ -2,9 +2,8 @@ from .common import (
     GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
     queries,
     indicators,
-    check_indicator,
     get_mocked_response,
-    check_substance_attributes,
+    SubstanceValidator,
 )
 
 
@@ -26,29 +25,40 @@ class TestCompliance:
         assert len(response.compliance_by_substance_and_indicator) == 2
 
         substance_0 = response.compliance_by_substance_and_indicator[0]
-        assert substance_0.cas_number == "50-00-0"
-        assert not substance_0.ec_number
-        assert not substance_0.chemical_name
-        assert not substance_0.record_guid
-        assert not substance_0.record_history_guid
-        assert not substance_0.record_history_identity
-        assert all(check_indicator(name, ind) for name, ind in substance_0.indicators.items())
+        sv_0 = SubstanceValidator(substance_0)
+        assert sv_0.check_reference(cas_number="50-00-0")
+        substance_0_result = [
+            indicators.WatchListFlag.WatchListBelowThreshold,
+            indicators.RoHSFlag.RohsBelowThreshold,
+        ]
+        assert sv_0.check_indicators(substance_0_result)
+        assert sv_0.check_bom_structure()
 
         substance_1 = response.compliance_by_substance_and_indicator[1]
-        assert substance_1.chemical_name == "1,3-Butadiene"
-        assert not substance_1.ec_number
-        assert not substance_1.cas_number
-        assert not substance_1.record_guid
-        assert not substance_1.record_history_guid
-        assert not substance_1.record_history_identity
-        assert all(check_indicator(name, ind) for name, ind in substance_1.indicators.items())
+        sv_1 = SubstanceValidator(substance_1)
+        assert sv_1.check_reference(chemical_name="1,3-Butadiene")
+        substance_1_result = [
+            indicators.WatchListFlag.WatchListAboveThreshold,
+            indicators.RoHSFlag.RohsAboveThreshold,
+        ]
+        assert sv_1.check_indicators(substance_1_result)
+        assert sv_1.check_bom_structure()
 
     def test_compliance_by_indicator(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
-        assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())
+        result = [
+            indicators.WatchListFlag.WatchListAboveThreshold,
+            indicators.RoHSFlag.RohsAboveThreshold,
+        ]
+        assert all(
+            [actual.flag == expected for actual, expected in zip(response.compliance_by_indicator.values(), result)]
+        )
 
-    def test_compliance_result_objects(self, connection):
+    def test_indicator_results_are_separate_objects(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
 
-        assert all([check_substance_attributes(sub) for sub in response.compliance_by_substance_and_indicator])
+        for result in response.compliance_by_substance_and_indicator:
+            for k, v in result.indicators.items():
+                assert k in self.query._indicators  # The indicator name should be the same (string equality)
+                assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)

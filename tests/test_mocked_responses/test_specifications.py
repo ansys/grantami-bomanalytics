@@ -3,13 +3,11 @@ from .common import (
     GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse,
     queries,
     indicators,
-    check_substance,
-    check_indicator,
     get_mocked_response,
-    check_specification_attributes,
-    check_material_attributes,
-    check_coating_attributes,
-    check_substance_attributes,
+    SpecificationValidator,
+    CoatingValidator,
+    MaterialValidator,
+    SubstanceValidator,
 )
 
 
@@ -26,29 +24,39 @@ class TestImpactedSubstances:
         assert len(response.impacted_substances_by_specification_and_legislation) == 2
 
         spec_result_0 = response.impacted_substances_by_specification_and_legislation[0]
-        assert spec_result_0.record_history_identity == "14321"
+        specv_0 = SpecificationValidator(spec_result_0)
+        assert specv_0.check_reference(record_history_identity="14321")
         assert len(spec_result_0.legislations) == 1
         substances_0 = spec_result_0.legislations["The SIN List 2.1 (Substitute It Now!)"].substances
         assert len(substances_0) == 2
-        assert all([check_substance(s) for s in substances_0])
+        for substance in substances_0:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
 
         spec_result_1 = response.impacted_substances_by_specification_and_legislation[1]
-        assert spec_result_1.specification_id == "MSP89,TypeI"
+        specv_1 = SpecificationValidator(spec_result_1)
+        assert specv_1.check_reference(specification_id="MSP89,TypeI")
         assert len(spec_result_1.legislations) == 1
         substances_1 = spec_result_1.legislations["The SIN List 2.1 (Substitute It Now!)"].substances
         assert len(substances_1) == 2
-        assert all([check_substance(s) for s in substances_1])
+        for substance in substances_1:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
 
     def test_impacted_substances_by_legislation(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.impacted_substances_by_legislation) == 1
         legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
-        assert all([check_substance(s) for s in legislation])
+        for substance in legislation:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
 
     def test_impacted_substances(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.impacted_substances) == 4
-        assert all([check_substance(s) for s in response.impacted_substances])
+        for substance in response.impacted_substances:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
 
 
 class TestCompliance:
@@ -69,71 +77,144 @@ class TestCompliance:
         assert len(response.compliance_by_specification_and_indicator) == 2
 
         spec_0 = response.compliance_by_specification_and_indicator[0]
-        assert spec_0.specification_id == "MSP89,TypeI"
-        assert not spec_0.record_guid
-        assert not spec_0.record_history_guid
-        assert not spec_0.record_history_identity
-        assert all(check_indicator(name, ind) for name, ind in spec_0.indicators.items())
+        specv_0 = SpecificationValidator(spec_0)
+        assert specv_0.check_reference(specification_id="MSP89,TypeI")
+        spec_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert specv_0.check_indicators(spec_0_result)
+        assert specv_0.check_bom_structure()
+        assert specv_0.check_empty_children(materials=True, substances=True)
+
+        spec_0_0 = spec_0.specifications[0]
+        specv_0_0 = SpecificationValidator(spec_0_0)
+        assert specv_0_0.check_reference(record_history_identity="987654")
+        specv_0_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert specv_0_0.check_indicators(specv_0_0_result)
+        assert specv_0_0.check_bom_structure()
+        assert specv_0_0.check_empty_children(materials=True, specifications=True, coatings=True)
 
         spec_1 = response.compliance_by_specification_and_indicator[1]
-        assert not spec_1.specification_id
-        assert spec_1.record_guid == "3df206df-9fc8-4859-90d4-3519764f8b55"
-        assert not spec_1.record_history_guid
-        assert not spec_1.record_history_identity
-        assert all(check_indicator(name, ind) for name, ind in spec_1.indicators.items())
+        specv_1 = SpecificationValidator(spec_1)
+        assert specv_1.check_reference(record_guid="3df206df-9fc8-4859-90d4-3519764f8b55")
+        spec_1_result = [
+            indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
+            indicators.RoHSFlag.RohsNonCompliant,
+        ]
+        assert specv_1.check_indicators(spec_1_result)
+        assert specv_1.check_bom_structure()
+        assert specv_1.check_empty_children(specifications=True, coatings=True)
+
+    def test_compliance_by_specification_and_indicator_materials(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+
+        coating_0_0 = response.compliance_by_specification_and_indicator[0].coatings[0]
+        cv_0_0 = CoatingValidator(coating_0_0)
+        assert cv_0_0.check_reference(record_history_identity="987654")
+        coating_0_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert cv_0_0.check_indicators(coating_0_0_result)
+        assert cv_0_0.check_bom_structure()
+        assert cv_0_0.check_empty_children()
 
     def test_compliance_by_specification_and_indicator_coatings(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
 
-        coating_0_0 = response.compliance_by_specification_and_indicator[0].coatings[0]
-        assert coating_0_0.record_history_identity == "987654"
-        assert all(check_indicator(name, ind) for name, ind in coating_0_0.indicators.items())
+        material_1_0 = response.compliance_by_specification_and_indicator[1].materials[0]
+        mv_1_0 = MaterialValidator(material_1_0)
+        assert mv_1_0.check_reference(record_history_identity="111111")
+        material_1_0_result = [
+            indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
+            indicators.RoHSFlag.RohsCompliant,
+        ]
+        assert mv_1_0.check_indicators(material_1_0_result)
+        assert mv_1_0.check_bom_structure()
+        assert mv_1_0.check_empty_children()
 
     def test_compliance_by_specification_and_indicator_substances(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
 
-        substance_0_0 = response.compliance_by_specification_and_indicator[0].coatings[0].substances[0]
-        assert substance_0_0.record_history_identity == "62345"
-        assert all(check_indicator(name, ind) for name, ind in substance_0_0.indicators.items())
+        substance_0_coating_0_0 = response.compliance_by_specification_and_indicator[0].coatings[0].substances[0]
+        sv_0_0_0 = SubstanceValidator(substance_0_coating_0_0)
+        assert sv_0_0_0.check_reference(record_history_identity="62345")
+        substance_0_0_result = [
+            indicators.WatchListFlag.WatchListNotImpacted,
+            indicators.RoHSFlag.RohsNotImpacted,
+        ]
+        assert sv_0_0_0.check_indicators(substance_0_0_result)
+        assert sv_0_0_0.check_bom_structure()
 
         substance_1_0 = response.compliance_by_specification_and_indicator[1].substances[0]
-        assert substance_1_0.record_history_identity == "12345"
-        assert all(check_indicator(name, ind) for name, ind in substance_1_0.indicators.items())
+        sv_1_0 = SubstanceValidator(substance_1_0)
+        assert sv_1_0.check_reference(record_history_identity="12345")
+        substance_1_0_result = [
+            indicators.WatchListFlag.WatchListBelowThreshold,
+            indicators.RoHSFlag.RohsBelowThreshold,
+        ]
+        assert sv_1_0.check_indicators(substance_1_0_result)
+        assert sv_1_0.check_bom_structure()
 
         substance_1_1 = response.compliance_by_specification_and_indicator[1].substances[1]
-        assert substance_1_1.record_history_identity == "34567"
-        assert all(check_indicator(name, ind) for name, ind in substance_1_1.indicators.items())
+        sv_1_1 = SubstanceValidator(substance_1_1)
+        assert sv_1_1.check_reference(record_history_identity="34567")
+        substance_1_1_result = [
+            indicators.WatchListFlag.WatchListAboveThreshold,
+            indicators.RoHSFlag.RohsAboveThreshold,
+        ]
+        assert sv_1_1.check_indicators(substance_1_1_result)
+        assert sv_1_1.check_bom_structure()
+
+        substance_1_material_0_0 = response.compliance_by_specification_and_indicator[1].materials[0].substances[0]
+        sv_1_0_0 = SubstanceValidator(substance_1_material_0_0)
+        assert sv_1_0_0.check_reference(record_history_identity="12345")
+        substance_1_0_0_result = [
+            indicators.WatchListFlag.WatchListBelowThreshold,
+            indicators.RoHSFlag.RohsBelowThreshold,
+        ]
+        assert sv_1_0_0.check_indicators(substance_1_0_0_result)
+        assert sv_1_0_0.check_bom_structure()
+
+        substance_1_material_1_0 = response.compliance_by_specification_and_indicator[1].materials[1].substances[0]
+        sv_1_1_0 = SubstanceValidator(substance_1_material_1_0)
+        assert sv_1_1_0.check_reference(record_history_identity="12345")
+        substance_1_1_0_result = [
+            indicators.WatchListFlag.WatchListBelowThreshold,
+            indicators.RoHSFlag.RohsBelowThreshold,
+        ]
+        assert sv_1_1_0.check_indicators(substance_1_1_0_result)
+        assert sv_1_1_0.check_bom_structure()
+
+        substance_1_material_1_1 = response.compliance_by_specification_and_indicator[1].materials[1].substances[1]
+        sv_1_1_1 = SubstanceValidator(substance_1_material_1_1)
+        assert sv_1_1_1.check_reference(record_history_identity="34567")
+        substance_1_1_1_result = [
+            indicators.WatchListFlag.WatchListAboveThreshold,
+            indicators.RoHSFlag.RohsAboveThreshold,
+        ]
+        assert sv_1_1_1.check_indicators(substance_1_1_1_result)
+        assert sv_1_1_1.check_bom_structure()
 
     def test_compliance_by_indicator(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
         assert len(response.compliance_by_indicator) == 2
-        assert all(check_indicator(name, ind) for name, ind in response.compliance_by_indicator.items())
-
-    def test_compliance_result_objects_specifications(self, connection):
-        response = get_mocked_response(self.query, self.mock_key, connection)
-        specs = (
-            response.compliance_by_specification_and_indicator
-            + response.compliance_by_specification_and_indicator[0].specifications
+        result = [
+            indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
+            indicators.RoHSFlag.RohsNonCompliant,
+        ]
+        assert all(
+            [actual.flag == expected for actual, expected in zip(response.compliance_by_indicator.values(), result)]
         )
-        assert all([check_specification_attributes(spec) for spec in specs])
 
-    def test_compliance_result_objects_materials(self, connection):
+    def test_indicator_results_are_separate_objects(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
-        mats = response.compliance_by_specification_and_indicator[1].materials
-        assert all([check_material_attributes(mat) for mat in mats])
 
-    def test_compliance_result_objects_coatings(self, connection):
-        response = get_mocked_response(self.query, self.mock_key, connection)
-        coatings = response.compliance_by_specification_and_indicator[0].coatings
-        assert all([check_coating_attributes(coating) for coating in coatings])
-
-    def test_compliance_result_objects_substances(self, connection):
-        response = get_mocked_response(self.query, self.mock_key, connection)
-        subs = (
-            response.compliance_by_specification_and_indicator[0].coatings[0].substances
-            + response.compliance_by_specification_and_indicator[0].specifications[0].substances
-            + response.compliance_by_specification_and_indicator[1].materials[0].substances
-            + response.compliance_by_specification_and_indicator[1].materials[1].substances
-            + response.compliance_by_specification_and_indicator[1].substances
-        )
-        assert all([check_substance_attributes(sub) for sub in subs])
+        for result in response.compliance_by_specification_and_indicator:
+            for k, v in result.indicators.items():
+                assert k in self.query._indicators  # The indicator name should be the same (string equality)
+                assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)

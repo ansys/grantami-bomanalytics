@@ -1,0 +1,5 @@
+# Pycharm
+.idea/
+
+# Docs builds
+doc/build

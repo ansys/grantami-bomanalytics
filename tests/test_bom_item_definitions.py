@@ -15,7 +15,7 @@ from .common import (
 
 def test_bom_definition():
     bom_item = BoM1711Definition("TEST_BOM")
-    assert bom_item.definition == "TEST_BOM"
+    assert bom_item._definition == "TEST_BOM"
 
 
 common_test_cases = [

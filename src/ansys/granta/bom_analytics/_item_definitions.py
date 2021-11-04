@@ -215,7 +215,7 @@ class SpecificationDefinition(RecordDefinition):
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference:
-        """The low-level API material definition.
+        """The low-level API specification definition.
 
         Returns
         -------

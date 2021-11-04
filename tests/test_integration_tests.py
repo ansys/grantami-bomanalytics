@@ -81,7 +81,7 @@ class TestSubstancesQueries:
         assert response.compliance_by_indicator
 
 
-@pytest.mark.parametrize('bom', [sample_bom, sample_bom_complex])
+@pytest.mark.parametrize("bom", [sample_bom, sample_bom_complex])
 class TestBomQueries:
     def test_impacted_substances(self, bom, connection):
         query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislations(LEGISLATIONS)

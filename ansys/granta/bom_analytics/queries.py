@@ -24,7 +24,7 @@ import logging
 
 from ansys.granta.bomanalytics import models, api
 
-from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition
+from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition  # noqa: F401
 from ._allowed_types import allowed_types
 from ._query_results import (
     QueryResultFactory,
@@ -32,7 +32,7 @@ from ._query_results import (
     ImpactedSubstancesBaseClass,
 )
 from .indicators import _Indicator, WatchListIndicator, RoHSIndicator
-from ._connection import Connection
+from ._connection import Connection  # noqa: F401
 
 Query_Builder = TypeVar("Query_Builder", covariant=True, bound="_BaseQueryBuilder")
 Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])

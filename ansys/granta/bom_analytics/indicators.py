@@ -17,8 +17,8 @@ from typing import List, Union, Optional, TYPE_CHECKING
 from ansys.granta.bomanalytics import models
 
 if TYPE_CHECKING:
-    from ._query_results import MaterialComplianceQueryResult
-    from .queries import MaterialComplianceQuery
+    from ._query_results import MaterialComplianceQueryResult  # noqa: F401
+    from .queries import MaterialComplianceQuery  # noqa: F401
 
 
 class _Flag(Enum):
@@ -73,7 +73,7 @@ class RoHSFlag(_Flag):
     )
     RohsNonCompliant = (
         6,
-        """This item contains one or more substances impacted by the specified legislations. *Item is 
+        """This item contains one or more substances impacted by the specified legislations. *Item is
     non-compliant.*""",
     )
     RohsUnknown = (
@@ -107,7 +107,7 @@ class WatchListFlag(_Flag):
     )
     WatchListAllSubstancesBelowThreshold = (
         4,
-        """This item contains no substances above the specified threshold. 
+        """This item contains no substances above the specified threshold.
     *Item is compliant.*""",
     )
     WatchListAboveThreshold = (

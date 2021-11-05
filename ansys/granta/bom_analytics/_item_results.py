@@ -20,9 +20,7 @@ from ._item_definitions import (
 from .indicators import WatchListIndicator, RoHSIndicator
 
 if TYPE_CHECKING:
-    from ._query_results import (
-        MaterialImpactedSubstancesQueryResult,
-    )
+    from ._query_results import MaterialImpactedSubstancesQueryResult  # noqa: F401
 
 Impacted_Substances_REST_Result = Union[
     models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial,

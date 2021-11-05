@@ -43,3 +43,8 @@ test-output.xml
 .\#*
 /.ipynb_checkpoints
 
+# Pycharm
+.idea/
+
+# Docs builds
+doc/build

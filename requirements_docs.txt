@@ -1,3 +1,8 @@
 pyansys-sphinx-theme
 numpydoc
-sphinx==4.0.3
+sphinx
+sphinx_autodoc_typehints
+sphinx-notfound-page
+sphinx-copybutton
+enum_tools
+sphinx-toolbox

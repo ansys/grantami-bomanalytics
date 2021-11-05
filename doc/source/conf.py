@@ -1,8 +1,8 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath("../../src"))
-from ansys.granta import bom_analytics
+sys.path.insert(0, os.path.abspath("../.."))
+from ansys.granta.bom_analytics import __version__
 
 # -- Project information -----------------------------------------------------
 
@@ -11,8 +11,7 @@ copyright = "(c) 2021 ANSYS, Inc. All rights reserved"
 author = "ANSYS Inc."
 
 # The short X.Y version
-release = version = bom_analytics.__version__
-release = version = "0.0.dev0"
+release = version = __version__
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -132,4 +131,3 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ["search.html"]
->>>>>>> bom-services/main

@@ -22,7 +22,7 @@ import warnings
 from numbers import Number
 import logging
 
-from ansys.granta.bomanalytics import models, api
+from ansys.grantami.bomanalytics_openapi_client import models, api
 
 from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition  # noqa: F401
 from ._allowed_types import allowed_types

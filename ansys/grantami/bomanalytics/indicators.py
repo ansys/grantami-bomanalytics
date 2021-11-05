@@ -14,7 +14,7 @@ from enum import Enum
 from abc import ABC
 from typing import List, Union, Optional, TYPE_CHECKING
 
-from ansys.granta.bomanalytics import models
+from ansys.grantami.bomanalytics_openapi_client import models
 
 if TYPE_CHECKING:
     from ._query_results import MaterialComplianceQueryResult  # noqa: F401

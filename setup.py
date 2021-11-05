@@ -13,7 +13,7 @@ from setuptools import setup
 # the module
 HERE = os.path.abspath(os.path.dirname(__file__))
 __version__ = None
-version_file = os.path.join(HERE, 'ansys', 'product', 'library', '_version.py')
+version_file = os.path.join(HERE, 'ansys', 'grantami', 'bomanalytics', '_version.py')
 with io_open(version_file, mode='r') as fd:
     exec(fd.read())
 

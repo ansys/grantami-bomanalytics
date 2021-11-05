@@ -14,12 +14,13 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
 import logging
-from ansys.granta import bomanalytics, auth_common
+from ansys.grantami import openapi_client_common
+from ansys.grantami.bomanalytics_openapi_client import models
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 
 if TYPE_CHECKING:
-    from ansys.granta.bom_analytics.queries import (
+    from ansys.grantami.bomanalytics.queries import (
         MaterialImpactedSubstancesQuery,
         MaterialComplianceQuery,
         PartImpactedSubstancesQuery,
@@ -31,7 +32,7 @@ if TYPE_CHECKING:
         BomComplianceQuery,
         Yaml,
     )
-    from ansys.granta.bom_analytics._query_results import (
+    from ansys.grantami.bomanalytics._query_results import (
         MaterialImpactedSubstancesQueryResult,
         MaterialComplianceQueryResult,
         PartImpactedSubstancesQueryResult,
@@ -46,7 +47,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class Connection(auth_common.ApiClientFactory):
+class Connection(openapi_client_common.ApiClientFactory):
     """Build a connection to an instance of Granta MI.
 
     Parameters
@@ -85,11 +86,11 @@ class Connection(auth_common.ApiClientFactory):
         # Use the docstring on the method in the base class.
         self._validate_builder()
         client = BomAnalyticsClient(self._session, self._sl_url, self._session_configuration)
-        client.setup_client(bomanalytics.models)
+        client.setup_client(models)
         return client
 
 
-class BomAnalyticsClient(auth_common.ApiClient):
+class BomAnalyticsClient(openapi_client_common.ApiClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._db_key = DEFAULT_DBKEY
@@ -233,7 +234,7 @@ class BomAnalyticsClient(auth_common.ApiClient):
     @property
     def _query_arguments(
         self,
-    ) -> Dict[str, Union[str, bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]]:
+    ) -> Dict[str, Union[str, models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]]:
         """Generate the connection-level arguments for a query, i.e. the database key and table names.
 
         Query-specific arguments (records, legislations, etc.) are added within the query object itself.
@@ -252,7 +253,7 @@ class BomAnalyticsClient(auth_common.ApiClient):
         """
 
         if any(self._table_names.values()):
-            config = bomanalytics.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(**self._table_names)
+            config = models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(**self._table_names)
             table_mapping = [f"{n}: {v}" for n, v in self._table_names.items() if v]
             logger.info(f"[TECHDOCS] Using custom table config:")
             for line in table_mapping:

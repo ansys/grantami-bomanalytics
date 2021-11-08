@@ -14,8 +14,8 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
 import logging
-from ansys.grantami import openapi_client_common
-from ansys.grantami.bomanalytics_openapi_client import models
+from ansys.grantami import common
+from ansys.grantami.bomanalytics_codegen import models
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 
@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class Connection(openapi_client_common.ApiClientFactory):
+class Connection(common.ApiClientFactory):
     """Build a connection to an instance of Granta MI.
 
     Parameters
@@ -90,7 +90,7 @@ class Connection(openapi_client_common.ApiClientFactory):
         return client
 
 
-class BomAnalyticsClient(openapi_client_common.ApiClient):
+class BomAnalyticsClient(common.ApiClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._db_key = DEFAULT_DBKEY

@@ -6,7 +6,7 @@ queries. These are mostly extensions of the classes in _item_definitions.py.
 
 from typing import List, Dict, Union, Callable, TYPE_CHECKING, Optional
 from copy import deepcopy
-from ansys.grantami.bomanalytics_openapi_client import models
+from ansys.grantami.bomanalytics_codegen import models
 from ._item_definitions import (
     MaterialDefinition,
     PartDefinition,

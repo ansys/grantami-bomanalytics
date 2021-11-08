@@ -6,7 +6,7 @@ import random
 import os
 import requests_mock
 from dataclasses import dataclass
-from ansys.grantami.bomanalytics_openapi_client import (
+from ansys.grantami.bomanalytics_codegen import (
     models,
     GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
     GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,

@@ -30,13 +30,13 @@ with open(os.path.join(HERE, 'README.rst'), encoding='utf-8') as f:
 
 
 setup(
-    name='ansys-product-library',
-    packages=['ansys.product.library'],
+    name='ansys-grantami-bomanalytics',
+    packages=['ansys.grantami.bomanalytics'],
     version=__version__,
-    description='Template PyAnsys library',
+    description='Granta MI Bom Analytics',
     long_description=long_description,
     long_description_content_type='text/x-rst',
-    url='https://github.com/pyansys/template/',
+    url='https://github.com/pyansys/ansys-grantami-bomanalytics/',
     license='MIT',
     author='ANSYS, Inc.',  # this is required
     maintainer='PyAnsys developers',  # you can change this
@@ -47,7 +47,8 @@ setup(
     # Include all install requirements here.  If you have a longer
     # list, feel free just to create the list outside of ``setup`` and
     # add it here.
-    install_requires=[],
+    install_requires=['ansys-grantami-bomanalytics_codegen',
+                      'ansys-grantami-openapi_client_common'],
 
     # Plan on supporting only the currently supported versions of Python
     python_requires='>=3.6',

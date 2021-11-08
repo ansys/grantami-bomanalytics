@@ -8,7 +8,7 @@ from typing import List, Dict, Type, Callable, Any, Union, TypeVar
 from collections import defaultdict
 from abc import ABC
 
-from ansys.grantami.bomanalytics_openapi_client import models
+from ansys.grantami.bomanalytics_codegen import models
 
 from ._item_results import (
     ItemResultFactory,

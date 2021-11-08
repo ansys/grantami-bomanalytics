@@ -1,2 +1,0 @@
-ansys-granta-openapi_client_common
-ansys-granta-bomanalytics-openapi-codegen

@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from typing import Callable, Type, Union, List, SupportsFloat, Dict, Optional
 from enum import Enum, auto
 
-from ansys.grantami.bomanalytics_openapi_client import models
+from ansys.grantami.bomanalytics_codegen import models
 
 
 class ReferenceType(Enum):

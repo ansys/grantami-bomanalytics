@@ -3,13 +3,6 @@
 Common item results
 ===================
 
-Legislation result
-~~~~~~~~~~~~~~~~~~
-
-.. autoclass:: ansys.grantami.bomanalytics._item_results.LegislationResult
-   :members:
-
-
 Impacted substance result
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

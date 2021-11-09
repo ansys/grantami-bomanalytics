@@ -27,4 +27,5 @@ Bom result
 .. autoclass:: ansys.grantami.bomanalytics._item_results.BoM1711WithImpactedSubstancesResult
    :members:
 
-   .. autoattribute:: legislations
+   .. autoattribute:: substances_by_legislation
+   .. autoattribute:: substances

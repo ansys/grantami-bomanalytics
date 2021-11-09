@@ -132,9 +132,9 @@ class ImpactedSubstancesBaseClass(ABC):
             for (
                 legislation_name,
                 legislation_result,
-            ) in item_result.legislations.items():
+            ) in item_result.substances_by_legislation.items():
                 results[legislation_name].extend(
-                    legislation_result.substances
+                    legislation_result
                 )  # TODO: Merge these property, i.e. take max amount? range?
         return dict(results)
 
@@ -154,10 +154,8 @@ class ImpactedSubstancesBaseClass(ABC):
 
         results = []
         for item_result in self._results:
-            for legislation_result in item_result.legislations.values():
-                results.extend(
-                    legislation_result.substances
-                )  # TODO: Merge these property, i.e. take max amount? range?
+            for legislation_result in item_result.substances_by_legislation.values():
+                results.extend(legislation_result)  # TODO: Merge these property, i.e. take max amount? range?
         return results
 
 

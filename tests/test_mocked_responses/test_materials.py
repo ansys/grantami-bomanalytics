@@ -22,12 +22,19 @@ class TestImpactedSubstances:
         mat_results = response.impacted_substances_by_material_and_legislation[0]
         mv = MaterialValidator(mat_results)
         assert mv.check_reference(material_id="elastomer-butadienerubber")
-        legislations = mat_results.legislations
+
+        # Test flattened list of substances
+        assert len(mat_results.substances) == 2
+        for substance in mat_results.substances:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
+
+        # Test list of substances grouped by legislations
+        legislations = mat_results.substances_by_legislation
         assert len(legislations) == 1
-        legislation = legislations["The SIN List 2.1 (Substitute It Now!)"]
-        assert legislation.name == "The SIN List 2.1 (Substitute It Now!)"
-        assert len(legislation.substances) == 2
-        for substance in legislation.substances:
+        substances = legislations["The SIN List 2.1 (Substitute It Now!)"]
+        assert len(substances) == 2
+        for substance in substances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
 

@@ -26,22 +26,36 @@ class TestImpactedSubstances:
         part_0 = response.impacted_substances_by_part_and_legislation[0]
         pv_0 = PartValidator(part_0)
         pv_0.check_reference(record_history_identity="14321")
-        assert len(part_0.legislations) == 1
-        part_0_legislation = part_0.legislations["The SIN List 2.1 (Substitute It Now!)"]
-        assert part_0_legislation.name == "The SIN List 2.1 (Substitute It Now!)"
-        assert len(part_0_legislation.substances) == 2
-        for substance in part_0_legislation.substances:
+
+        # Test flattened list of substances
+        assert len(part_0.substances) == 2
+        for substance in part_0.substances:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
+
+        # Test list of substances grouped by legislations
+        assert len(part_0.substances_by_legislation) == 1
+        part_0_substances = part_0.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        assert len(part_0_substances) == 2
+        for substance in part_0_substances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
 
         part_1 = response.impacted_substances_by_part_and_legislation[1]
         pv_1 = PartValidator(part_1)
         pv_1.check_reference(part_number="AF-1235")
-        assert len(part_1.legislations) == 1
-        part_1_legislation = part_1.legislations["The SIN List 2.1 (Substitute It Now!)"]
-        assert part_1_legislation.name == "The SIN List 2.1 (Substitute It Now!)"
-        assert len(part_1_legislation.substances) == 2
-        for substance in part_1_legislation.substances:
+
+        # Test flattened list of substances
+        assert len(part_1.substances) == 2
+        for substance in part_1.substances:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
+
+        # Test list of substances grouped by legislations
+        assert len(part_1.substances_by_legislation) == 1
+        part_1_substances = part_1.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        assert len(part_1_substances) == 2
+        for substance in part_1_substances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
 

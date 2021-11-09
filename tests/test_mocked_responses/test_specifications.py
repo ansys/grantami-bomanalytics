@@ -26,8 +26,16 @@ class TestImpactedSubstances:
         spec_result_0 = response.impacted_substances_by_specification_and_legislation[0]
         specv_0 = SpecificationValidator(spec_result_0)
         assert specv_0.check_reference(record_history_identity="14321")
-        assert len(spec_result_0.legislations) == 1
-        substances_0 = spec_result_0.legislations["The SIN List 2.1 (Substitute It Now!)"].substances
+
+        # Test flattened list of substances
+        assert len(spec_result_0.substances) == 2
+        for substance in spec_result_0.substances:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
+
+        # Test list of substances grouped by legislations
+        assert len(spec_result_0.substances_by_legislation) == 1
+        substances_0 = spec_result_0.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
         assert len(substances_0) == 2
         for substance in substances_0:
             sv = SubstanceValidator(substance)
@@ -36,8 +44,16 @@ class TestImpactedSubstances:
         spec_result_1 = response.impacted_substances_by_specification_and_legislation[1]
         specv_1 = SpecificationValidator(spec_result_1)
         assert specv_1.check_reference(specification_id="MSP89,TypeI")
-        assert len(spec_result_1.legislations) == 1
-        substances_1 = spec_result_1.legislations["The SIN List 2.1 (Substitute It Now!)"].substances
+
+        # Test flattened list of substances
+        assert len(spec_result_1.substances) == 2
+        for substance in spec_result_1.substances:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
+
+        # Test list of substances grouped by legislations
+        assert len(spec_result_1.substances_by_legislation) == 1
+        substances_1 = spec_result_1.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
         assert len(substances_1) == 2
         for substance in substances_1:
             sv = SubstanceValidator(substance)

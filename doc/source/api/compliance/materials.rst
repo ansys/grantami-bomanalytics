@@ -7,7 +7,7 @@ Material Compliance
 Query definition
 ~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics.queries.MaterialComplianceQuery
+.. autoclass:: ansys.grantami.bomanalytics.queries.MaterialComplianceQuery
    :members:
 
    .. automethod:: with_record_guids
@@ -21,7 +21,7 @@ Query definition
 Query result
 ~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics._query_results.MaterialComplianceQueryResult
+.. autoclass:: ansys.grantami.bomanalytics._query_results.MaterialComplianceQueryResult
    :members:
 
    .. autoproperty:: compliance_by_indicator
@@ -29,8 +29,8 @@ Query result
 Material result
 ~~~~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.granta.bom_analytics._item_results
-.. autoclass:: ansys.granta.bom_analytics._item_results.MaterialWithComplianceResult
+.. py:currentmodule::ansys.grantami.bomanalytics._item_results
+.. autoclass:: ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult
    :members:
 
    .. autoattribute:: material_id

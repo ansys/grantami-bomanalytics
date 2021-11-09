@@ -6,14 +6,14 @@ Common item results
 Legislation result
 ~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics._item_results.LegislationResult
+.. autoclass:: ansys.grantami.bomanalytics._item_results.LegislationResult
    :members:
 
 
 Impacted substance result
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics._item_results.ImpactedSubstance
+.. autoclass:: ansys.grantami.bomanalytics._item_results.ImpactedSubstance
    :members:
 
    .. autoattribute:: cas_number

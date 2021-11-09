@@ -6,8 +6,8 @@ Substance Compliance
 Query definition
 ~~~~~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.granta.bom_analytics.queries
-.. autoclass:: ansys.granta.bom_analytics.queries.SubstanceComplianceQuery
+.. py:currentmodule::ansys.grantami.bomanalytics.queries
+.. autoclass:: ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery
    :members:
 
    .. automethod:: with_record_guids
@@ -29,8 +29,8 @@ Query definition
 Query result
 ~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.granta.bom_analytics._query_results
-.. autoclass:: ansys.granta.bom_analytics._query_results.SubstanceComplianceQueryResult
+.. py:currentmodule::ansys.grantami.bomanalytics._query_results
+.. autoclass:: ansys.grantami.bomanalytics._query_results.SubstanceComplianceQueryResult
    :members:
 
    .. autoproperty:: compliance_by_indicator
@@ -38,8 +38,8 @@ Query result
 Substance result
 ~~~~~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.granta.bom_analytics._item_results
-.. autoclass:: ansys.granta.bom_analytics._item_results.SubstanceWithComplianceResult
+.. py:currentmodule::ansys.grantami.bomanalytics._item_results
+.. autoclass:: ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult
    :members:
 
    .. autoattribute:: cas_number

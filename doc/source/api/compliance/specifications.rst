@@ -6,7 +6,7 @@ Specification Compliance
 Query definition
 ~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics.queries.SpecificationComplianceQuery
+.. autoclass:: ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery
    :members:
 
    .. automethod:: with_record_guids
@@ -21,7 +21,7 @@ Query definition
 Query result
 ~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics._query_results.SpecificationComplianceQueryResult
+.. autoclass:: ansys.grantami.bomanalytics._query_results.SpecificationComplianceQueryResult
    :members:
 
    .. autoproperty:: compliance_by_indicator
@@ -30,8 +30,8 @@ Query result
 Specification result
 ~~~~~~~~~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.granta.bom_analytics._item_results
-.. autoclass:: ansys.granta.bom_analytics._item_results.SpecificationWithComplianceResult
+.. py:currentmodule::ansys.grantami.bomanalytics._item_results
+.. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult
    :members:
 
    .. autoattribute:: specification_id
@@ -47,8 +47,8 @@ Specification result
 Coating result
 ~~~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.granta.bom_analytics._item_results
-.. autoclass:: ansys.granta.bom_analytics._item_results.CoatingWithComplianceResult
+.. py:currentmodule::ansys.grantami.bomanalytics._item_results
+.. autoclass:: ansys.grantami.bomanalytics._item_results.CoatingWithComplianceResult
    :members:
 
    .. autoattribute:: record_guid

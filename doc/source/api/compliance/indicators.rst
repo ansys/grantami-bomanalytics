@@ -3,19 +3,19 @@
 Indicators
 ==========
 
-.. py:currentmodule::ansys.granta.bom_analytics.indicators
-.. autoclass:: ansys.granta.bom_analytics.indicators.RoHSIndicator
+.. py:currentmodule::ansys.grantami.bomanalytics.indicators
+.. autoclass:: ansys.grantami.bomanalytics.indicators.RoHSIndicator
    :members:
 
    .. autoattribute:: available_flags
       :noindex:
 
-.. autoenum:: ansys.granta.bom_analytics.indicators.RoHSFlag
+.. autoenum:: ansys.grantami.bomanalytics.indicators.RoHSFlag
 
-.. autoclass:: ansys.granta.bom_analytics.indicators.WatchListIndicator
+.. autoclass:: ansys.grantami.bomanalytics.indicators.WatchListIndicator
    :members:
 
    .. autoattribute:: available_flags
       :noindex:
 
-.. autoenum:: ansys.granta.bom_analytics.indicators.WatchListFlag
+.. autoenum:: ansys.grantami.bomanalytics.indicators.WatchListFlag

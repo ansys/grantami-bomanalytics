@@ -2,7 +2,7 @@ import sys
 import os
 
 sys.path.insert(0, os.path.abspath("../.."))
-from ansys.granta.bom_analytics import __version__
+from ansys.grantami.bomanalytics import __version__
 
 # -- Project information -----------------------------------------------------
 

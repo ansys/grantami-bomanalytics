@@ -6,7 +6,7 @@ Specification Impacted Substances
 Query definition
 ~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics.queries.SpecificationImpactedSubstancesQuery
+.. autoclass:: ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery
    :members:
 
    .. automethod:: with_record_guids
@@ -19,7 +19,7 @@ Query definition
 Query result
 ~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics._query_results.SpecificationImpactedSubstancesQueryResult
+.. autoclass:: ansys.grantami.bomanalytics._query_results.SpecificationImpactedSubstancesQueryResult
    :members:
 
    .. autoproperty:: impacted_substances_by_legislation
@@ -29,7 +29,7 @@ Query result
 Specification result
 ~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.granta.bom_analytics._item_results.SpecificationWithImpactedSubstancesResult
+.. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithImpactedSubstancesResult
    :members:
 
    .. autoattribute:: specification_id

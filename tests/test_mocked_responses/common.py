@@ -28,47 +28,65 @@ from ..common import (
 
 
 @overload
-def get_mocked_response(query: queries.MaterialImpactedSubstancesQuery, result_model, connection) -> _query_results.MaterialImpactedSubstancesQueryResult:
+def get_mocked_response(
+    query: queries.MaterialImpactedSubstancesQuery, result_model, connection
+) -> _query_results.MaterialImpactedSubstancesQueryResult:
     ...
 
 
 @overload
-def get_mocked_response(query: queries.MaterialComplianceQuery, result_model, connection) -> _query_results.MaterialComplianceQueryResult:
+def get_mocked_response(
+    query: queries.MaterialComplianceQuery, result_model, connection
+) -> _query_results.MaterialComplianceQueryResult:
     ...
 
 
 @overload
-def get_mocked_response(query: queries.PartImpactedSubstancesQuery, result_model, connection) -> _query_results.PartImpactedSubstancesQueryResult:
+def get_mocked_response(
+    query: queries.PartImpactedSubstancesQuery, result_model, connection
+) -> _query_results.PartImpactedSubstancesQueryResult:
     ...
 
 
 @overload
-def get_mocked_response(query: queries.PartComplianceQuery, result_model, connection) -> _query_results.PartComplianceQueryResult:
+def get_mocked_response(
+    query: queries.PartComplianceQuery, result_model, connection
+) -> _query_results.PartComplianceQueryResult:
     ...
 
 
 @overload
-def get_mocked_response(query: queries.SpecificationImpactedSubstancesQuery, result_model, connection) -> _query_results.SpecificationImpactedSubstancesQueryResult:
+def get_mocked_response(
+    query: queries.SpecificationImpactedSubstancesQuery, result_model, connection
+) -> _query_results.SpecificationImpactedSubstancesQueryResult:
     ...
 
 
 @overload
-def get_mocked_response(query: queries.SpecificationComplianceQuery, result_model, connection) -> _query_results.SpecificationComplianceQueryResult:
+def get_mocked_response(
+    query: queries.SpecificationComplianceQuery, result_model, connection
+) -> _query_results.SpecificationComplianceQueryResult:
     ...
 
 
 @overload
-def get_mocked_response(query: queries.SubstanceComplianceQuery, result_model, connection) -> _query_results.SubstanceComplianceQueryResult:
+def get_mocked_response(
+    query: queries.SubstanceComplianceQuery, result_model, connection
+) -> _query_results.SubstanceComplianceQueryResult:
     ...
 
 
 @overload
-def get_mocked_response(query: queries.BomImpactedSubstancesQuery, result_model, connection) -> _query_results.BomImpactedSubstancesQueryResult:
+def get_mocked_response(
+    query: queries.BomImpactedSubstancesQuery, result_model, connection
+) -> _query_results.BomImpactedSubstancesQueryResult:
     ...
 
 
 @overload
-def get_mocked_response(query: queries.BomComplianceQuery, result_model, connection) -> _query_results.BomComplianceQueryResult:
+def get_mocked_response(
+    query: queries.BomComplianceQuery, result_model, connection
+) -> _query_results.BomComplianceQueryResult:
     ...
 
 

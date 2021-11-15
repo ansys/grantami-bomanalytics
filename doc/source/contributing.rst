@@ -4,26 +4,27 @@
 Contributing
 ============
 We absolutely welcome any code contributions and we hope that this
-guide will facilitate an understanding of the PyMAPDL code
-repository. It is important to note that while the PyMAPDL software
-package is maintained by Ansys and any submissions will be reviewed
-thoroughly before merging, we still seek to foster a community that
-can support user questions and develop new features to make this
-software a useful tool for all users.  As such, we welcome and
-encourage any questions or submissions to this repository.
+guide will facilitate an understanding of the Granta MI Bom
+Analytics code repository. It is important to note that while the
+Bom Analytics software package is maintained by Ansys and any
+submissions will be reviewed thoroughly before merging, we still
+seek to foster a community that can support user questions and
+develop new features to make this software a useful tool for all
+users.  As such, we welcome and encourage any questions or
+submissions to this repository.
 
 
 Cloning the Source Repository
 -----------------------------
 
-You can clone the source repository from `PyMAPDL
-GitHub <https://https://github.com/pyansys/pymapdl>`_
+You can clone the source repository from `Bom Analytics
+GitHub <https://github.com/pyansys/pyansys-granta-compliance>`_
 and install the latest version in development mode by running:
 
 .. code::
 
-    git clone https://github.com/pyansys/pymapdl
-    cd pymapdl
+    git clone https://github.com/pyansys/pyansys-granta-compliance
+    cd pyansys-granta-compliance
     pip install -e .
 
 
@@ -31,8 +32,8 @@ Questions
 ---------
 For general or technical questions about the project, its
 applications, or about software usage, please create an issue at
-`PyMAPDL Issues <https://github.com/pyansys/pymapdl/issues>`_ where the
-community or PyMAPDL developers can collectively address your
+`PyMAPDL Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
+where the community or PyMAPDL developers can collectively address your
 questions.  The project support team can be reached at
 `alexander.kaszynski@ansys.com <alexander.kaszynski@ansys.com>`_
 
@@ -44,7 +45,8 @@ will remain available on the issues page for other users.
 Reporting Bugs
 --------------
 If you encounter any bugs or crashes while using PyMAPDL, please
-report it at `PyMAPDL Issues <https://github.com/pyansys/pymapdl/issues>`_
+report it at
+`PyMAPDL Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
 with an appropriate label so we can promptly address it.  When
 reporting an issue, please be overly descriptive so that we may
 reproduce it. Whenever possible, please provide tracebacks,
@@ -53,8 +55,9 @@ screenshots, and sample files to help us address the issue.
 
 Feature Requests
 ----------------
-We encourage users to submit ideas for improvements to PyMAPDL!
-Please create an issue on the `PyMAPDL Issues <https://github.com/pyansys/pymapdl/issues>`_
+We encourage users to submit ideas for improvements to Granta MI Bom Analytics!
+Please create an issue on the
+`PyMAPDL Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
 with a **Feature Request** label to suggest an improvement.
 Please use a descriptive title and provide ample background information to help
 the community implement that functionality. For example, if you would like a
@@ -65,8 +68,8 @@ with. We will use the issue thread as a place to discuss and provide feedback.
 
 Contributing New Code
 ---------------------
-If you have an idea for how to improve PyMAPDL, consider first
-creating an issue as a feature request which we can use as a
+If you have an idea for how to improve Granta MI Bom Analytics,
+consider first creating an issue as a feature request which we can use as a
 discussion thread to work through how to implement the contribution.
 
 Once you are ready to start coding, please see the `Development
@@ -86,8 +89,8 @@ the original author to relicense the code.
 Development Practices
 ---------------------
 This section provides a guide to how we conduct development in the
-PyMAPDL repository. Please follow the practices outlined here when
-contributing directly to this repository.
+Granta MI Bom Analytics repository. Please follow the practices
+outlined here when contributing directly to this repository.
 
 Guidelines
 ~~~~~~~~~~
@@ -98,7 +101,7 @@ Consider the following general coding paradigms when contributing:
    silly as the core Python developers are sometimes, there's much to
    be gained by following the basic guidelines listed in PEP 20.
    Without repeating them here, focus on making your additions
-   intuitive, novel, and helpful for PyMAPDL and its users.
+   intuitive, novel, and helpful for Granta MI Bom Analytics and its users.
 
    When in doubt, ``import this``
 
@@ -119,11 +122,12 @@ is not available or commercial use is prohibited.
 Finally, please take a look at our `Code of Conduct <https://github.com/pyansys/pymapdl/blob/master/CODE_OF_CONDUCT.md>`_
 
 
-Contributing to PyMAPDL through GitHub
----------------------------------------------
-To submit new code to PyMAPDL, first fork the `Auth_Common GitHub Repo
-<https://github.com/pyansys/pymapdl>`_ and then clone the forked
-repository to your computer.  Next, create a new branch based on the
+Contributing to Granta MI Bom Analytics through GitHub
+------------------------------------------------------
+To submit new code to Granta MI Bom Analytics, first fork the
+`Granta MI Bom Analytics Repo
+<https://github.com/pyansys/pyansys-granta-compliance>`_ and then clone
+the forked repository to your computer.  Next, create a new branch based on the
 `Branch Naming Conventions Section <#branch-naming-conventions>`__ in
 your local repository.
 
@@ -139,9 +143,9 @@ section <#creating-a-new-pull-request>`__.
 
 Opening Issues
 ~~~~~~~~~~~~~~
-Should you come across a bug in ``auth_common`` or otherwise encounter some
-unexpected behaviour you should create an "issue" regarding it. Issues are
-created and submitted `here <https://github.com/pyansys/auth_common/issues>`_.
+Should you come across a bug in ``pyansys-granta-compliance`` or otherwise
+encounter some unexpected behaviour you should create an "issue" regarding it.
+Issues are created and submitted `here <https://github.com/pyansys/auth_common/issues>`_.
 Issues are used when developing to keep track of what is being
 worked on at any one time, and by who. We have two issue templates
 that we recommend you use:
@@ -165,7 +169,8 @@ discretion of the maintainers.
 Should it turn out the fix did not work, or your issue was closed
 erroneously, please re-open your issue with a comment addressing why.
 
-Open ended questions should be opened in `Discussions <https://github.com/pyansys/pymapdl/discussions>`_,
+Open ended questions should be opened in
+`Discussions <https://github.com/pyansys/pyansys-granta-compliance/discussions>`_,
 and should an issue generate additional discussion, further issues
 should be spun out into their own separate issues. This helps developers
 keep track of what is being done and what needs to be done.
@@ -175,9 +180,9 @@ Discussions
 ~~~~~~~~~~~
 
 General questions about PyMAPDL should be raised in
-`Discussions <https://github.com/pyansys/pymapdl/discussions>`_ in
-this repository rather than as issues themselves. Issues can be spun out of
-discussions depending on what is decided, but general Q&A content
+`Discussions <https://github.com/pyansys/pyansys-granta-compliance/discussions>`_
+in this repository rather than as issues themselves. Issues can be spun
+out of discussions depending on what is decided, but general Q&A content
 should start as discussions where possible.
 
 .. note::
@@ -188,15 +193,15 @@ should start as discussions where possible.
 Creating a New Pull Request
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Once you have tested your branch locally, create a pull request on
-`PyMAPDL <https://github.com/pyansys/pymapdl>`_ and target your
-merge to `main`.  This will automatically run continuous
+`Granta MI Bom Analytics <https://github.com/pyansys/pyansys-granta-compliance>`_
+and target your merge to `main`.  This will automatically run continuous
 integration (CI) testing and verify your changes will work across all
 supported platforms.
 
-For code verification, someone from the PyMAPDL developers team will
-review your code to verify your code meets our our standards.  Once
-approved, if you have write permission you may merge the branch.  If
-you don't have write permission, the reviewer or someone else with
+For code verification, someone from the Granta MI Bom Analytics developers
+team will review your code to verify your code meets our our standards.
+Once approved, if you have write permission you may merge the branch.
+If you don't have write permission, the reviewer or someone else with
 write permission will merge the branch and delete the PR branch.
 
 Since it may be necessary to merge your branch with the current
@@ -233,33 +238,8 @@ sequence locally to track down any new issues from your changes.
 
 .. code::
 
-    pip install -r requirements_test.txt
-
-Run the primary test suite and generate a coverage report with:
-
-.. code::
-
-    pytest -v --cov ansys-mapdl-core
-
-If you do not have MAPDL installed locally but still wish to run the
-unit testing, setup the following environment variables:
-
-.. code::
-
-    SET PYMAPDL_START_INSTANCE=False
-    SET PYMAPDL_PORT=<MAPDL Port> (default 50052)
-    SET PYMAPDL_IP=<MAPDL IP> (default 127.0.0.1)
-
-or in Linux
-
-.. code::
-
-    export PYMAPDL_START_INSTANCE=False
-    export PYMAPDL_PORT=<MAPDL Port> (default 50052)
-    export PYMAPDL_IP=<MAPDL IP> (default 127.0.0.1)
-
-This will tell the ``ansys.mapdl.core`` to attempt to connect to the existing
-MAPDL service by default when the ``launch_mapdl`` function is used.
+    pip install tox
+    tox -e coverage .
 
 
 Spelling and Code Style
@@ -281,9 +261,9 @@ ignored to ``ignore_words.txt``
 
 Documentation
 -------------
-Documentation for PyMAPDL is generated from three sources:
+Documentation for Granta MI Bom Analytics is generated from three sources:
 
-- Docstrings from the classes, functions, and modules of ``ansys.mapdl.core`` using `sphinx.ext.autodoc <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`_.
+- Docstrings from the classes, functions, and modules of ``ansys.grantami.bomanalytics`` using `sphinx.ext.autodoc <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`_.
 - Restructured test from `doc/`
 - Examples from `examples/`
 
@@ -293,9 +273,7 @@ the docstrings.  Full examples should be placed in `examples`.
 Adding a New Example
 ~~~~~~~~~~~~~~~~~~~~
 
-PyMAPDL examples come in two formats.  Basic code snippets demonstrating some functionality, or a full gallery examples.  Small code samples and snippets are contained in the `doc/source` directory, while the full gallery examples, meant to be run as individual downloadable scripts, are contained in the `examples` directory at the root of this repository.
-
-To add a fully fledged, standalone example, add your example to the `examples` directory within one of the applicable subfolders.  Should none of the existing directories match the category of your example, create a new directory with a `README.txt` describing the new category.  Additionally, as these examples are built using the sphinx gallery extension, follow coding guidelines as established by [Sphinx-Gallery](https://sphinx-gallery.github.io/stable/index.html)
+TODO
 
 
 Documentation Style and Organization
@@ -311,13 +289,14 @@ integration performed on GitHub Actions.
 
 Building the Documentation Locally
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Documentation for PyMAPDL is hosted at mapdldocs.pyansys.com and is
-automatically built and deployed using the GitHub Actions.  You can
-build and verify the html documentation locally by install ``sphinx``
-and the other documentation build dependencies by running the
-following from the PyMAPDL source directory:
+Documentation for Granta MI Bom Analytics is hosted at
+pyansys-grantami-bomanalytics.pyansys.com and is automatically built
+and deployed using the GitHub Actions.  You can build and verify the
+html documentation locally by install ``sphinx`` and the other
+documentation build dependencies by running the following from the
+Granta MI Bom Analytics source directory:
 
-First, optionally install ``ansys-mapdl-core`` in development mode with:
+First, optionally install ``bomanalytics`` in development mode with:
 
 .. code::
 
@@ -350,10 +329,10 @@ your browser.
 
 Continuous Integration and Continuous Delivery
 ----------------------------------------------
-The PyMAPDL project uses continuous integration and delivery (CI/CD)
-to automate the building, testing, and deployment tasks.  The CI
-Pipeline is deployed on both GitHub Actions and Azure Pipelines and
-performs following tasks:
+The Granta MI Bom Analytics project uses continuous integration
+and delivery (CI/CD) to automate the building, testing, and
+deployment tasks.  The CI Pipeline is deployed on both GitHub
+Actions and Azure Pipelines and performs following tasks:
 
 - Module wheel build
 - Core API testing
@@ -382,8 +361,8 @@ The main features of our branching model are:
   release branches will have their `__version__.py` updated and be
   tagged with a patched semantic version (e.g. `0.2.1`).  This
   triggers CI to push to PyPi, and allow us to rapidly push hotfixes
-  for past versions of ``ansys.mapdl.core`` without having to worry about
-  untested features.
+  for past versions of ``ansys.grantami.bomanalytics`` without having
+  to worry about untested features.
 - When a minor release candidate is ready, a new `release` branch will
   be created from `main` with the next incremented minor version
   (e.g. `release/0.2`), which will be thoroughly tested.  When deemed
@@ -398,8 +377,8 @@ The main features of our branching model are:
 Minor Release Steps
 ~~~~~~~~~~~~~~~~~~~
 Minor releases are feature and bug releases that improve the
-functionality and stability of ``PyMAPDL``.  Before a minor release is
-created the following will occur:
+functionality and stability of ``pyansys-granta-compliance``.
+Before a minor release is created the following will occur:
 
 1.  Create a new branch from the ``main`` branch with name
     ``release/MAJOR.MINOR`` (e.g. `release/0.2`).
@@ -420,12 +399,12 @@ cached.
 4. After building the documentation, open the local build and examine
    the examples gallery for any obvious issues.
 
-5. Update the version numbers in ``ansys/mapdl/reader/_version.py`` and commit it.
-   Push the branch to GitHub and create a new PR for this release that
-   merges it to main.  Development to main should be limited at
+5. Update the version numbers in ``ansys/grantami/bomanalytics/_version.py``
+   and commit it. Push the branch to GitHub and create a new PR for this
+   release that merges it to main.  Development to main should be limited at
    this point while effort is focused on the release.
 
-6. It is now the responsibility of the PyMAPDL community and
+6. It is now the responsibility of the PyAnsys community and
    developers to functionally test the new release.  It is best to
    locally install this branch and use it in production.  Any bugs
    identified should have their hotfixes pushed to this release
@@ -444,14 +423,14 @@ cached.
 
 8. Create a list of all changes for the release. It is often helpful
    to leverage `GitHub's compare feature
-   <https://github.com/pyansys/pymapdl/compare>`_ to see the
-   differences from the last tag and the `main` branch.  Be sure to
-   acknowledge new contributors by their GitHub username and place
-   mentions where appropriate if a specific contributor is to thank
-   for a new feature.
+   <https://github.com/pyansys/pyansys-granta-compliance/compare>`_
+   to see the differences from the last tag and the `main` branch.
+   Be sure to acknowledge new contributors by their GitHub username
+   and place mentions where appropriate if a specific contributor is
+   to thank for a new feature.
 
 9. Place your release notes from step 8 in the description within
-   `PyMAPDL Releases <https://github.com/pyansys/pymapdl/releases/new>`_
+   `PyMAPDL Releases <https://github.com/pyansys/pyansys-granta-compliance/releases/new>`_
 
 
 Patch Release Steps
@@ -465,7 +444,7 @@ should not wait until a minor release.  The steps for a patch release
 
 2. Update `__version__.py` with the next patch increment
    (e.g. `0.2.1`), commit it, and open a PR that merge with the
-   release branch.  This gives the PyMAPDL developers and community
+   release branch.  This gives the PyAnsys developers and community
    a chance to validate and approve the bugfix release.  Any
    additional hotfixes should be outside of this PR.
 

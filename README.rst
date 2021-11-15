@@ -1,66 +1,70 @@
-PyAnsys Library Template
-########################
-
-This repository is a template repository where you can `Create a
-repository from a template`_ and create a new PyAnsys project that
-follows the guidelines specified in the `PyAnsys Developer's Guide`_.
-
-The following sections should be filled and documented for your project.
-
-.. _Create a repository from a template: https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template
-.. _PyAnsys Developer's Guide: https://github.com/pyansys/about
-
+pyansys-granta-compliance
+#########################
 
 Project Overview
 ----------------
-Provide a description of your PyAnsys Python library.
+This project is part of the larger PyAnsys effort to facilitate the use
+of Ansys technologies directly from within Python.
+
+The Granta MI Restricted Substances solution includes a REST API for
+evaluating compliance of products, assemblies, specifications and
+materials against legislations. This package abstracts automatically-
+generated code into an easy-to-use client library.
 
 
 Installation
 ------------
-Include installation directions.  Note that this README will be
-included in your PyPI package, so be sure to include ``pip``
-directions along with developer installation directions.  For example.
-
-Install <PyAnsys Library> with:
+Install ansys-grantami-bomanalytics with:
 
 .. code::
 
-   pip install ansys-<product/service>-<library>
+   pip install ansys-grantami-bomanalytics
 
 Alternatively, clone and install in development mode with:
 
 .. code::
 
-   git clone https://github.com/pyansys/
-   cd <PyAnsys-Library>
+   git clone https://github.com/pyansys/pyansys-grantami-bomanalytics
+   cd pyansys-grantami-bomanalytics
    pip install -e .
 
 
 Documentation
 -------------
-Include a link to the full sphinx documentation.  For example `PyAnsys <https://docs.pyansys.com/>`_
+`PyAnsys <https://docs.pyansys.com/ansys-grantami-bomanalytics>`_
 
 
 Usage
 -----
-It's best to provide a sample code or even a figure demonstrating the usage of your library.  For example:
+Here's a brief example of how the package works:
 
 .. code:: python
 
-   >>> from ansys.<product/service> import <library>
-   >>> my_object.<library>()
-   >>> my_object.foo()
-   'bar'
+    >>> from pprint import pprint
+    >>> from ansys.granta.bom_analytics import Connection, queries
+    >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().build()
+    >>> query = (
+    >>>     queries.MaterialImpactedSubstancesQuery()
+    >>>     .with_material_ids(['plastic-abs-pvc-flame'])
+    >>>     .with_legislations(['REACH - The Candidate List'])
+    >>> )
+    >>>
+    >>> result = cxn.run(query)
+    >>> pprint(result.impacted_substances)
+    [<ImpactedSubstance: {"cas_number": 10108-64-2, "percent_amount": 1.9}>,
+     <ImpactedSubstance: {"cas_number": 107-06-2, "percent_amount": None}>,
+     <ImpactedSubstance: {"cas_number": 115-96-8, "percent_amount": 15.0}>,
+    ...
 
 
 Testing
 -------
-You can feel free to include this at the README level or in CONTRIBUTING.md
+See `Contributing <https://docs.pyansys.com/ansys-grantami-bomanalytics/contributing>`_
+for more details.
+
 
 
 License
 -------
-Be sure to point out your license (and any acknowledgments).  State
-that the full license can be found in the root directory of the
-repository.
+The library is provided under the terms of the MIT license, you can find
+the license text in the LICENSE file at the root of the repository.

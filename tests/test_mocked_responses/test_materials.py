@@ -15,11 +15,11 @@ class TestImpactedSubstances:
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse.__name__
 
-    def test_impacted_substances_by_material_and_legislation(self, connection):
+    def test_impacted_substances_by_material(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
-        assert len(response.impacted_substances_by_material_and_legislation) == 1
+        assert len(response.impacted_substances_by_material) == 1
 
-        mat_results = response.impacted_substances_by_material_and_legislation[0]
+        mat_results = response.impacted_substances_by_material[0]
         mv = MaterialValidator(mat_results)
         assert mv.check_reference(material_id="elastomer-butadienerubber")
 

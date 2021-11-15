@@ -339,12 +339,9 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         Examples
         --------
         >>> result: MaterialImpactedSubstancesQueryResult
-        >>> material_result = result.impacted_substances_by_material_and_legislation[0]
+        >>> material_result = result.impacted_substances_by_material[0]
         >>> material_result.substances_by_legislation
-        {'California Proposition 65 List':
-                <LegislationResult({"name": California Proposition 65 List}),
-                    2 ImpactedSubstances>,
-        ... }
+        {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
         """
 
         return self._substances
@@ -359,7 +356,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         Examples
         --------
         >>> result: MaterialImpactedSubstancesQueryResult
-        >>> material_result = result.impacted_substances_by_material_and_legislation[0]
+        >>> material_result = result.impacted_substances_by_material[0]
         >>> material_result.substances
         [<ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
         """

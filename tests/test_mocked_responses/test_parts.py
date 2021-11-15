@@ -19,11 +19,11 @@ class TestImpactedSubstances:
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse.__name__
 
-    def test_impacted_substances_by_part_and_legislation(self, connection):
+    def test_impacted_substances_by_part(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
 
-        assert len(response.impacted_substances_by_part_and_legislation) == 2
-        part_0 = response.impacted_substances_by_part_and_legislation[0]
+        assert len(response.impacted_substances_by_part) == 2
+        part_0 = response.impacted_substances_by_part[0]
         pv_0 = PartValidator(part_0)
         pv_0.check_reference(record_history_identity="14321")
 
@@ -41,7 +41,7 @@ class TestImpactedSubstances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
 
-        part_1 = response.impacted_substances_by_part_and_legislation[1]
+        part_1 = response.impacted_substances_by_part[1]
         pv_1 = PartValidator(part_1)
         pv_1.check_reference(part_number="AF-1235")
 

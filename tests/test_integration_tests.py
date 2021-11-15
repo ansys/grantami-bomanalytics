@@ -16,7 +16,8 @@ class TestMaterialQueries:
         response = connection.run(query)
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
-        assert response.impacted_substances_by_material_and_legislation
+        assert response.impacted_substances_by_material[0].substances
+        assert response.impacted_substances_by_material[0].substances_by_legislation
 
     def test_compliance(self, connection):
         query = queries.MaterialComplianceQuery().with_material_ids(self.ids).with_indicators(INDICATORS)
@@ -34,7 +35,8 @@ class TestPartQueries:
 
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
-        assert response.impacted_substances_by_part_and_legislation
+        assert response.impacted_substances_by_part[0].substances
+        assert response.impacted_substances_by_part[0].substances_by_legislation
 
     def test_compliance(self, connection):
         query = queries.PartComplianceQuery().with_part_numbers(self.ids).with_indicators(INDICATORS)
@@ -55,9 +57,10 @@ class TestSpecificationQueries:
         )
         response = connection.run(query)
 
-        assert response.impacted_substances_by_specification_and_legislation
-        assert response.impacted_substances_by_legislation
         assert response.impacted_substances
+        assert response.impacted_substances_by_legislation
+        assert response.impacted_substances_by_specification[0].substances
+        assert response.impacted_substances_by_specification[0].substances_by_legislation
 
     def test_compliance(self, connection):
         query = queries.SpecificationComplianceQuery().with_specification_ids(self.ids).with_indicators(INDICATORS)
@@ -87,8 +90,8 @@ class TestBomQueries:
         query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislations(LEGISLATIONS)
         response = connection.run(query)
 
-        assert response.impacted_substances_by_legislation
         assert response.impacted_substances
+        assert response.impacted_substances_by_legislation
 
     def test_compliance(self, bom, connection):
         query = queries.BomComplianceQuery().with_bom(bom).with_indicators(INDICATORS)

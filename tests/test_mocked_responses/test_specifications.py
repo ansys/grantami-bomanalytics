@@ -19,11 +19,11 @@ class TestImpactedSubstances:
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse.__name__
 
-    def test_impacted_substances_by_specification_and_legislation(self, connection):
+    def test_impacted_substances_by_specification(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
-        assert len(response.impacted_substances_by_specification_and_legislation) == 2
+        assert len(response.impacted_substances_by_specification) == 2
 
-        spec_result_0 = response.impacted_substances_by_specification_and_legislation[0]
+        spec_result_0 = response.impacted_substances_by_specification[0]
         specv_0 = SpecificationValidator(spec_result_0)
         assert specv_0.check_reference(record_history_identity="14321")
 
@@ -41,7 +41,7 @@ class TestImpactedSubstances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
 
-        spec_result_1 = response.impacted_substances_by_specification_and_legislation[1]
+        spec_result_1 = response.impacted_substances_by_specification[1]
         specv_1 = SpecificationValidator(spec_result_1)
         assert specv_1.check_reference(specification_id="MSP89,TypeI")
 

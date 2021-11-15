@@ -25,7 +25,7 @@ logger.setLevel(logging.INFO)
 
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection('http://azewqami6v4/mi_servicelayer').with_autologon().build()
+cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()
 
 # ## Defining an Indicator
 
@@ -74,7 +74,7 @@ print(f"PA66 (60% glass fiber): {pa_66.indicators['SVHC'].flag.name}")
 # legislation.
 
 above_threshold_flag = svhc_indicator.available_flags.WatchListAboveThreshold
-pa_66_svhcs = [sub for sub in pa_66.substances if sub.indicators['SVHC'].flag == above_threshold_flag]
+pa_66_svhcs = [sub for sub in pa_66.substances if sub.indicators['SVHC'] >= above_threshold_flag]
 print(f"{len(pa_66_svhcs)} SVHCs")
 for substance in pa_66_svhcs:
     print(f"Substance record history identity: {substance.record_history_identity}")

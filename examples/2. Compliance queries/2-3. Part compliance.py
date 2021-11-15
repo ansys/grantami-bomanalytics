@@ -78,7 +78,7 @@ print(f"Drill compliance status: {drill.indicators['SVHC'].flag.name}")
 # 'drill' part are available in the `parts` property.
 
 above_threshold_flag = svhc_indicator.available_flags.WatchListHasSubstanceAboveThreshold
-parts_contain_svhcs = [part for part in drill.parts if part.indicators['SVHC'].flag == above_threshold_flag]
+parts_contain_svhcs = [part for part in drill.parts if part.indicators['SVHC'] >= above_threshold_flag]
 print(f"{len(parts_contain_svhcs)} parts that contain SVHCs")
 for part in parts_contain_svhcs:
     print(f"Part: {part.record_history_identity}")
@@ -89,7 +89,7 @@ for part in parts_contain_svhcs:
 
 
 def recursively_print_parts_with_svhcs(parts, depth=0):
-    parts_contain_svhcs = [part for part in parts if part.indicators['SVHC'].flag == above_threshold_flag]
+    parts_contain_svhcs = [part for part in parts if part.indicators['SVHC'] >= above_threshold_flag]
     for part in parts_contain_svhcs:
         print(f"{'  '*depth}- Part: {part.record_history_identity}")
         recursively_print_parts_with_svhcs(part.parts, depth+1)
@@ -101,7 +101,7 @@ recursively_print_parts_with_svhcs(drill.parts)
 
 
 def recursively_print_parts_with_svhcs(parts, depth=0):
-    parts_contain_svhcs = [part for part in parts if part.indicators['SVHC'].flag == above_threshold_flag]
+    parts_contain_svhcs = [part for part in parts if part.indicators['SVHC'] >= above_threshold_flag]
     for part in parts_contain_svhcs:
         print(f"{'  '*depth}- Part: {part.record_history_identity}")
         recursively_print_parts_with_svhcs(part.parts, depth+1)
@@ -109,7 +109,7 @@ def recursively_print_parts_with_svhcs(parts, depth=0):
 
 
 def print_materials_with_svhcs(materials, depth=0):
-    mats_contain_svhcs = [mat for mat in materials if mat.indicators['SVHC'].flag == above_threshold_flag]
+    mats_contain_svhcs = [mat for mat in materials if mat.indicators['SVHC'] >= above_threshold_flag]
     for mat in mats_contain_svhcs:
         print(f"{'  '*depth}- Material: {mat.record_history_identity}")
 

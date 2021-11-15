@@ -74,13 +74,21 @@ cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
 # First build the query with the valid XML, and observe the response as expected.
 
 from ansys.grantami.bomanalytics import queries
-query = queries.BomImpactedSubstancesQuery().with_bom(valid_xml).with_legislations(['The SIN List 2.1 (Substitute It Now!)'])
+SIN_LIST = 'The SIN List 2.1 (Substitute It Now!)'
+query = queries.BomImpactedSubstancesQuery().with_bom(valid_xml).with_legislations([SIN_LIST])
 
-result = cxn.run(query)
-result
+query_result = cxn.run(query)
+query_result
+
+# We can re-use a function from a previous exercise to print the results.
+
+from tabulate import tabulate
+rows = [[substance.cas_number, substance.max_percentage_amount_in_material] for substance in query_result.impacted_substances]
+print(f'Substances impacted by "{SIN_LIST}" in a BoM (first 10 only, {len(rows)} total)')
+print(tabulate(rows[:10], headers=['CAS Number', 'Amount (wt. %)']))
 
 # Finally, try running a query with the broken XML and observe the stack trace returned by the package. This includes
 # the 400 response from the service layer. Uncomment to see the result.
 
-broken_query = queries.BomImpactedSubstancesQuery().with_bom(invalid_xml).with_legislations(['The SIN List 2.1 (Substitute It Now!)'])
+broken_query = queries.BomImpactedSubstancesQuery().with_bom(invalid_xml).with_legislations([SIN_LIST])
 # cxn.run(broken_query)

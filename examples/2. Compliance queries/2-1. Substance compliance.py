@@ -33,7 +33,7 @@ logger.setLevel(logging.INFO)
 
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection('http://azewqami6v4/mi_servicelayer').with_autologon().build()
+cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()
 
 # ## Defining an Indicator
 
@@ -84,8 +84,7 @@ sub_result
 compliant_substances = []
 non_compliant_substances = []
 for substance in sub_result.compliance_by_substance_and_indicator:
-    if substance.indicators['SVHC'].flag in [svhc_indicator.available_flags.WatchListHasSubstanceAboveThreshold,
-                                             svhc_indicator.available_flags.WatchListAboveThreshold]:
+    if substance.indicators['SVHC'] >= svhc_indicator.available_flags.WatchListAboveThreshold:
         non_compliant_substances.append(substance)
     else:
         compliant_substances.append(substance)
@@ -95,3 +94,13 @@ print(f"Compliant substances: {compliant_cas_numbers}")
 
 non_compliant_cas_numbers = ", ".join([sub.cas_number for sub in non_compliant_substances])
 print(f"SVHCs: {non_compliant_cas_numbers}")
+
+# Alternatively, using the `compliance_by_indicator` property will give us a single indicator result that contains
+# the worst case scenario for each material. This is useful in the scenario where a material contains the specified
+# substances, and we just want to know if the material is compliant. The compliance of the material is the worst
+# status of its child substances.
+
+if sub_result.compliance_by_indicator['SVHC'] >= svhc_indicator.available_flags.WatchListAboveThreshold:
+    print("One or more substances is an SVHC in a quantity > 0.1%")
+else:
+    print("No substances are SVHCs, or are present in a quantity < 0.1%")

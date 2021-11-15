@@ -37,7 +37,7 @@ class _Flag(Enum):
         return obj
 
     def __le__(self, other):
-        """ Allows comparison both to another flag and to an indicator that has this flag set as its result.
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
         ------
@@ -46,7 +46,7 @@ class _Flag(Enum):
         TypeError
             If the other object isn't this flag's type or this flag's indicator's type.
         """
-        
+
         return self.__eq__(other) or self < other
 
 
@@ -94,7 +94,7 @@ class RoHSFlag(_Flag):
     )
 
     def __lt__(self, other):
-        """ Allows comparison both to another flag and to an indicator that has this flag set as its result.
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
         ------
@@ -115,7 +115,7 @@ class RoHSFlag(_Flag):
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
 
     def __eq__(self, other):
-        """ Allows comparison both to another flag and to an indicator that has this flag set as its result.
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
         ------
@@ -176,7 +176,7 @@ class WatchListFlag(_Flag):
     WatchListUnknown = 7, """There is not enough information to determine compliance. *Compliance is unknown.*"""
 
     def __lt__(self, other):
-        """ Allows comparison both to another flag and to an indicator that has this flag set as its result.
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
         ------
@@ -197,7 +197,7 @@ class WatchListFlag(_Flag):
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
 
     def __eq__(self, other):
-        """ Allows comparison both to another flag and to an indicator that has this flag set as its result.
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
         ------
@@ -279,7 +279,7 @@ class _Indicator(ABC):
             raise KeyError(f'Unknown flag "{flag}" for indicator "{repr(self)}"').with_traceback(e.__traceback__)
 
     def __eq__(self, other):
-        """ Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
+        """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
 
         Raises
         ------
@@ -301,7 +301,7 @@ class _Indicator(ABC):
             raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
 
     def __lt__(self, other):
-        """ Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
+        """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
 
         Raises
         ------
@@ -323,7 +323,7 @@ class _Indicator(ABC):
             raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
 
     def __le__(self, other):
-        """ Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
+        """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
 
         Raises
         ------

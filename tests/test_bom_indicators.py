@@ -31,16 +31,20 @@ def get_low_flag(flag_enum):
 @pytest.mark.parametrize("indicator", [indicators.RoHSIndicator, indicators.WatchListIndicator])
 class TestFlagComparison:
     def test_flag_greater_than(self, indicator):
-        assert get_high_flag(indicator.available_flags) > get_random_flag(indicator.available_flags) \
-               > get_low_flag(indicator.available_flags)
+        high_flag = get_high_flag(indicator.available_flags)
+        middle_flag = get_random_flag(indicator.available_flags)
+        low_flag = get_low_flag(indicator.available_flags)
+        assert high_flag > middle_flag > low_flag
 
     def test_flag_greater_than_equal_to(self, indicator):
         flag = get_random_flag(indicator.available_flags)
         assert flag >= flag >= get_low_flag(indicator.available_flags)
 
     def test_flag_less_than(self, indicator):
-        assert get_low_flag(indicator.available_flags) < get_random_flag(indicator.available_flags) \
-               < get_high_flag(indicator.available_flags)
+        high_flag = get_high_flag(indicator.available_flags)
+        middle_flag = get_random_flag(indicator.available_flags)
+        low_flag = get_low_flag(indicator.available_flags)
+        assert low_flag < middle_flag < high_flag
 
     def test_flag_less_than_equal_to(self, indicator):
         flag = get_random_flag(indicator.available_flags)
@@ -103,8 +107,10 @@ class TestIndicators:
         test_indicator = create_indicator(indicator)
         test_indicator.flag = get_random_flag(test_indicator.available_flags).name
 
-        assert repr(test_indicator) == f"<{indicator.__name__}, name: {test_indicator.name}," \
-                                       f" flag: {str(test_indicator.flag)}>"
+        assert (
+            repr(test_indicator) == f"<{indicator.__name__}, name: {test_indicator.name},"
+            f" flag: {str(test_indicator.flag)}>"
+        )
 
     def test_indicator_repr_without_flag(self, indicator):
         test_indicator = create_indicator(indicator)
@@ -199,6 +205,7 @@ class TestIndicatorComparison:
         assert high_indicator >= test_indicator
         assert not same_indicator < test_indicator
         assert not high_indicator < test_indicator
+
 
 @pytest.mark.parametrize(
     "indicator, other_indicator",

@@ -1,4 +1,4 @@
-from typing import Union, List, Callable, Any, Dict
+from typing import Union, List, Callable, Any, Dict, overload
 import pytest
 import pathlib
 from numbers import Number
@@ -46,6 +46,7 @@ from ansys.grantami.bomanalytics._item_results import (
     SubstanceWithComplianceResult,
     CoatingWithComplianceResult,
 )
+from ansys.grantami.bomanalytics import _query_results
 from .inputs import sample_bom, sample_bom_complex, examples_as_strings
 
 LEGISLATIONS = ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]

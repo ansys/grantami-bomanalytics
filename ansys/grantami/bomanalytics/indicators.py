@@ -24,7 +24,8 @@ if TYPE_CHECKING:
 class _Flag(Enum):
     """Base class for flags (result states) of indicators.
 
-    Implements `__lt__`, allowing comparison of enum values.
+    Implements `__le__` , but relies on specific flag classes to implement other overloads to allow direct comparisons
+    with the containing Indicator.
 
     Overrides `__new__` to populate the __doc__ on an enum member.
     """
@@ -35,8 +36,18 @@ class _Flag(Enum):
         obj.__doc__ = doc
         return obj
 
-    def __lt__(self, other):
-        return self.value < other.value
+    def __le__(self, other):
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
+
+        Raises
+        ------
+        ValueError
+            If the other object is an indicator and has no value.
+        TypeError
+            If the other object isn't this flag's type or this flag's indicator's type.
+        """
+
+        return self.__eq__(other) or self < other
 
 
 class RoHSFlag(_Flag):
@@ -82,6 +93,48 @@ class RoHSFlag(_Flag):
     compliance. *Compliance is unknown.*""",
     )
 
+    def __lt__(self, other):
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
+
+        Raises
+        ------
+        ValueError
+            If the other object is an indicator and has no value.
+        TypeError
+            If the other object isn't this flag's type or this flag's indicator's type.
+        """
+
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        elif isinstance(other, RoHSIndicator):
+            if not other.flag:
+                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+            else:
+                return self.value < other.flag.value
+        else:
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+
+    def __eq__(self, other):
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
+
+        Raises
+        ------
+        ValueError
+            If the other object is an indicator and has no value.
+        TypeError
+            If the other object isn't this flag's type or this flag's indicator's type.
+        """
+
+        if self.__class__ is other.__class__:
+            return self is other
+        elif isinstance(other, RoHSIndicator):
+            if not other.flag:
+                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+            else:
+                return self is other.flag
+        else:
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+
 
 class WatchListFlag(_Flag):
     """Permitted Watch List flag states. Increasing value means 'worse' compliance, i.e. the compliance result is worse
@@ -121,6 +174,48 @@ class WatchListFlag(_Flag):
     legislations. *Item is non-compliant.*""",
     )
     WatchListUnknown = 7, """There is not enough information to determine compliance. *Compliance is unknown.*"""
+
+    def __lt__(self, other):
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
+
+        Raises
+        ------
+        ValueError
+            If the other object is an indicator and has no value.
+        TypeError
+            If the other object isn't this flag's type or this flag's indicator's type.
+        """
+
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        elif isinstance(other, WatchListIndicator):
+            if not other.flag:
+                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+            else:
+                return self.value < other.flag.value
+        else:
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+
+    def __eq__(self, other):
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
+
+        Raises
+        ------
+        ValueError
+            If the other object is an indicator and has no value.
+        TypeError
+            If the other object isn't this flag's type or this flag's indicator's type.
+        """
+
+        if self.__class__ is other.__class__:
+            return self is other
+        elif isinstance(other, WatchListIndicator):
+            if not other.flag:
+                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+            else:
+                return self is other.flag
+        else:
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
 
 
 class _Indicator(ABC):
@@ -167,7 +262,13 @@ class _Indicator(ABC):
 
     @property
     def flag(self) -> _Flag:
-        """The state of this indicator. If the indicator is a definition only, this property is `None`."""
+        """The state of this indicator. If the indicator is a definition only, this property is `None`.
+
+        Raises
+        ------
+        KeyError
+            If the value being set is not valid for this Indicator.
+        """
         return self._flag
 
     @flag.setter
@@ -178,26 +279,60 @@ class _Indicator(ABC):
             raise KeyError(f'Unknown flag "{flag}" for indicator "{repr(self)}"').with_traceback(e.__traceback__)
 
     def __eq__(self, other):
+        """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
+
+        Raises
+        ------
+        ValueError
+            If either this indicator or the other indicator has no value.
+        TypeError
+            If the other object isn't this indicator's type or this indicator's flag's type.
+        """
+
+        if not self.flag:
+            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
+        if isinstance(other, self.available_flags):
+            return self.flag is other
         if self.__class__ is not other.__class__:
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
         if self.flag and other.flag:
             return self.flag is other.flag
-        elif not self.flag:
-            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
         elif not other.flag:
             raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
 
     def __lt__(self, other):
+        """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
+
+        Raises
+        ------
+        ValueError
+            If either this indicator or the other indicator has no value.
+        TypeError
+            If the other object isn't this indicator's type or this indicator's flag's type.
+        """
+
+        if not self.flag:
+            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
+        if isinstance(other, self.available_flags):
+            return self.flag < other
         if self.__class__ is not other.__class__:
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
         if self.flag and other.flag:
             return self.flag < other.flag
-        elif not self.flag:
-            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
-        elif not other.flag:
+        else:
             raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
 
     def __le__(self, other):
+        """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
+
+        Raises
+        ------
+        ValueError
+            If either this indicator or the other indicator has no value.
+        TypeError
+            If the other object isn't this indicator's type or this indicator's flag's type.
+        """
+
         return self == other or self < other
 
 

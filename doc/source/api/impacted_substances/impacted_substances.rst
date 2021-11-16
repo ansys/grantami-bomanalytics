@@ -1,10 +1,8 @@
-.. _ref_bom_analytics_api_impactedsubstances_commonitems:
+.. _ref_bom_analytics_api_impactedsubstances_substances:
 
-Common item results
+Impacted substances
 ===================
 
-Impacted substance result
-~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.ImpactedSubstance
    :members:

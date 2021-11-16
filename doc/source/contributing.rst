@@ -32,7 +32,7 @@ Questions
 ---------
 For general or technical questions about the project, its
 applications, or about software usage, please create an issue at
-`PyMAPDL Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
+`Bom Analytics Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
 where the community or PyMAPDL developers can collectively address your
 questions.  The project support team can be reached at
 `alexander.kaszynski@ansys.com <alexander.kaszynski@ansys.com>`_
@@ -46,7 +46,7 @@ Reporting Bugs
 --------------
 If you encounter any bugs or crashes while using PyMAPDL, please
 report it at
-`PyMAPDL Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
+`Bom Analytics Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
 with an appropriate label so we can promptly address it.  When
 reporting an issue, please be overly descriptive so that we may
 reproduce it. Whenever possible, please provide tracebacks,
@@ -57,7 +57,7 @@ Feature Requests
 ----------------
 We encourage users to submit ideas for improvements to Granta MI Bom Analytics!
 Please create an issue on the
-`PyMAPDL Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
+`Bom Analytics Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
 with a **Feature Request** label to suggest an improvement.
 Please use a descriptive title and provide ample background information to help
 the community implement that functionality. For example, if you would like a
@@ -119,8 +119,6 @@ Consider the following general coding paradigms when contributing:
 Additionally, please do not include any data sets for which a license
 is not available or commercial use is prohibited.
 
-Finally, please take a look at our `Code of Conduct <https://github.com/pyansys/pymapdl/blob/master/CODE_OF_CONDUCT.md>`_
-
 
 Contributing to Granta MI Bom Analytics through GitHub
 ------------------------------------------------------
@@ -145,7 +143,8 @@ Opening Issues
 ~~~~~~~~~~~~~~
 Should you come across a bug in ``pyansys-granta-compliance`` or otherwise
 encounter some unexpected behaviour you should create an "issue" regarding it.
-Issues are created and submitted `here <https://github.com/pyansys/auth_common/issues>`_.
+Issues are created and submitted 
+`here <https://github.com/pyansys-granta-compliance/auth_common/issues>`_.
 Issues are used when developing to keep track of what is being
 worked on at any one time, and by who. We have two issue templates
 that we recommend you use:

@@ -29,15 +29,19 @@
 # Since this example is dealing with a JSON data structure, we can simply load it as a file and use the json library
 # to convert the text into a hierarchical set of dicts and lists.
 
+# + tags=[]
 import json
 from pprint import pprint
 with open("../supporting-files/source_data.json") as f:
     data = json.load(f)
 pprint(data)
+# -
 
 # The list of components will be used frequently, so store this in a variable for convenience.
 
+# + tags=[]
 components = data['components']
+# -
 
 # ## Getting the Compliance Status
 
@@ -45,22 +49,24 @@ components = data['components']
 # material (and not the component it is used in), we only need to get the compliance for the material once. We can use
 # a set to ensure we have only one copy of each material.
 
-material_ids = set()
-for component in components:
-    material_ids.update(component['materials'])
+# + tags=[]
+material_ids = {material for component in components for material in component['materials']}
 material_ids = list(material_ids)
 material_ids
+# -
 
 # Now we can feed the list of material IDs into a compliance query as shown in previous exercises.
 
+# + tags=[]
 from ansys.grantami.bomanalytics import Connection, queries, indicators
 cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
 svhc = indicators.WatchListIndicator(name="SVHC",
                                      legislation_names=["REACH - The Candidate List"],
                                      default_threshold_percentage=0.1)
-mat_query = queries.MaterialComplianceQuery().with_indicators([svhc]).with_material_ids(list(material_ids))
+mat_query = queries.MaterialComplianceQuery().with_indicators([svhc]).with_material_ids(material_ids)
 mat_results = cxn.run(mat_query)
 mat_results
+# -
 
 # ## Post-Processing the Results
 
@@ -97,8 +103,8 @@ component_results
 # a mapping between compliance statuses and approval requirements.
 
 result_map = {indicators.WatchListFlag.WatchListCompliant.name: "No Approval Required",
-              indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold.name: "Approval Required",
-              indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold.name: "Do Not Use"}
+              indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold.name: "Level 1 Approval Required",
+              indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold.name: "Level 2 Approval Required"}
 
 # We can now use this dictionary to map from the Granta MI result to the approval requirements.
 

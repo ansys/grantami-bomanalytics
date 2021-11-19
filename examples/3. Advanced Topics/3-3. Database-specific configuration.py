@@ -40,7 +40,7 @@ cxn
 # have been modified from the defaults. These are also provided to the .set_database_details() method in the same way.
 
 cxn.set_database_details(in_house_materials_table_name="ACME Materials")
-print(cxn._table_names)
+cxn
 
 # ## Batch Size
 

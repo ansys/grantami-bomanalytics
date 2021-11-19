@@ -53,9 +53,10 @@ cxn
 
 from ansys.grantami.bomanalytics import queries
 spec_query = queries.SpecificationComplianceQuery()
-print(spec_query._item_argument_manager.batch_size)
+spec_query
 
 # You can manually set the batch size by doing the following:
 
+# + tags=[]
 spec_query = spec_query.with_batch_size(5)
-print(spec_query._item_argument_manager.batch_size)
+spec_query

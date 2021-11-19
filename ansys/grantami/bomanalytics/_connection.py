@@ -104,7 +104,12 @@ class BomAnalyticsClient(common.ApiClient):
         }
 
     def __repr__(self):
-        return f"<BomServicesClient: url={self.api_url}>"
+        base_repr = f'<BomServicesClient: url="{self.api_url}", dbkey="{self._db_key}"'
+        custom_tables = ", ".join([f'{k}="{v}"' for k, v in self._table_names.items() if v])
+        if custom_tables:
+            return base_repr + f", {custom_tables}>"
+        else:
+            return base_repr + ">"
 
     def set_database_details(
         self,

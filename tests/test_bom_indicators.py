@@ -6,11 +6,20 @@ from .common import (
 )
 
 
-def create_indicator(indicator):
+def create_rohs_indicator(ignore_exemptions) -> indicators.RoHSIndicator:
+    return create_indicator(indicators.RoHSIndicator, ignore_exemptions=ignore_exemptions)
+
+
+def create_watchlist_indicator(ignore_process_chemicals) -> indicators.WatchListIndicator:
+    return create_indicator(indicators.WatchListIndicator, ignore_process_chemicals=ignore_process_chemicals)
+
+
+def create_indicator(indicator, **kwargs) -> indicators._Indicator:
     return indicator(
         name="TestIndicator",
         legislation_names=["Test legislation 1, Test legislation 2"],
         default_threshold_percentage=5,
+        **kwargs,
     )
 
 
@@ -62,33 +71,8 @@ class TestFlagComparison:
 
 @pytest.mark.parametrize("indicator", [indicators.RoHSIndicator, indicators.WatchListIndicator])
 class TestIndicators:
-    def test_indicator_definition(self, indicator):
-        test_indicator = create_indicator(indicator)
-
-        assert test_indicator.name == "TestIndicator"
-        assert test_indicator.legislation_names == ["Test legislation 1, Test legislation 2"]
-        assert test_indicator.default_threshold_percentage == 5
-        if indicator is indicators.RoHSIndicator:
-            assert test_indicator._indicator_type == "Rohs"
-        elif indicator is indicators.WatchListIndicator:
-            assert test_indicator._indicator_type == "WatchList"
-        else:
-            raise AssertionError
-        assert test_indicator.available_flags
-        assert not test_indicator.flag
-
-    def test_indicator_definition_property(self, indicator):
-        test_indicator = create_indicator(indicator)
-
-        definition = test_indicator._definition
-        assert isinstance(definition, GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition)
-        assert definition.to_dict()["name"] == test_indicator.name
-        assert definition.to_dict()["legislation_names"] == test_indicator.legislation_names
-        assert definition.to_dict()["default_threshold_percentage"] == test_indicator.default_threshold_percentage
-        assert definition.to_dict()["type"] == test_indicator._indicator_type
-
     def test_indicator_unknown_flag_key_error(self, indicator):
-        test_indicator = create_indicator(indicator)
+        test_indicator = create_indicator(indicator, )
         with pytest.raises(KeyError) as e:
             test_indicator.flag = "Invalid Flag"
         assert 'Unknown flag "Invalid Flag"' in str(e.value)
@@ -115,6 +99,54 @@ class TestIndicators:
     def test_indicator_repr_without_flag(self, indicator):
         test_indicator = create_indicator(indicator)
         assert repr(test_indicator) == f"<{indicator.__name__}, name: {test_indicator.name}>"
+
+
+class TestRohsIndicator:
+    test_indicator = create_rohs_indicator(ignore_exemptions=True)
+
+    def test_indicator_definition(self):
+        assert self.test_indicator.name == "TestIndicator"
+        assert self.test_indicator.legislation_names == ["Test legislation 1, Test legislation 2"]
+        assert self.test_indicator.default_threshold_percentage == 5
+        assert self.test_indicator._indicator_type == "Rohs"
+        assert self.test_indicator._ignore_exemptions is True
+        assert self.test_indicator.available_flags
+        assert not self.test_indicator.flag
+
+    def test_indicator_definition_property(self):
+        definition = self.test_indicator._definition
+        assert isinstance(definition, GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition)
+        def_dict = definition.to_dict()
+        assert def_dict["name"] == self.test_indicator.name
+        assert def_dict["legislation_names"] == self.test_indicator.legislation_names
+        assert def_dict["default_threshold_percentage"] == self.test_indicator.default_threshold_percentage
+        assert def_dict["type"] == self.test_indicator._indicator_type
+        assert def_dict["ignore_exemptions"] == self.test_indicator._ignore_exemptions
+        assert def_dict["ignore_process_chemicals"] is None
+
+
+class TestWatchListIndicator:
+    test_indicator = create_watchlist_indicator(ignore_process_chemicals=True)
+
+    def test_indicator_definition(self):
+        assert self.test_indicator.name == "TestIndicator"
+        assert self.test_indicator.legislation_names == ["Test legislation 1, Test legislation 2"]
+        assert self.test_indicator.default_threshold_percentage == 5
+        assert self.test_indicator._indicator_type == "WatchList"
+        assert self.test_indicator._ignore_process_chemicals is True
+        assert self.test_indicator.available_flags
+        assert not self.test_indicator.flag
+
+    def test_indicator_definition_property(self):
+        definition = self.test_indicator._definition
+        assert isinstance(definition, GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition)
+        def_dict = definition.to_dict()
+        assert def_dict["name"] == self.test_indicator.name
+        assert def_dict["legislation_names"] == self.test_indicator.legislation_names
+        assert def_dict["default_threshold_percentage"] == self.test_indicator.default_threshold_percentage
+        assert def_dict["type"] == self.test_indicator._indicator_type
+        assert def_dict["ignore_exemptions"] is None
+        assert def_dict["ignore_process_chemicals"] == self.test_indicator._ignore_process_chemicals
 
 
 @pytest.mark.parametrize("indicator", [indicators.RoHSIndicator, indicators.WatchListIndicator])

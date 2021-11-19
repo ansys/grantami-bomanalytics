@@ -11,7 +11,7 @@ or part.
 """
 
 from enum import Enum
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import List, Union, Optional, TYPE_CHECKING
 
 from ansys.grantami.bomanalytics_codegen import models
@@ -239,14 +239,10 @@ class _Indicator(ABC):
         self._flag: Union[_Flag, None] = None
 
     @property
-    def _definition(self):
-        """The low-level API representation of this Indicator."""
-        return models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
-            name=self.name,
-            legislation_names=self.legislation_names,
-            default_threshold_percentage=self.default_threshold_percentage,
-            type=self._indicator_type,
-        )
+    @abstractmethod
+    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition:
+        """Generates the low-level API indicator object."""
+        pass
 
     def __repr__(self):
         if not self._flag:
@@ -351,6 +347,8 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
     default_threshold_percentage
         The concentration of substance that will be determined to be non-compliant. Is only used if the legislation
         doesn't define a specific threshold for the substance.
+    ignore_exemptions
+        Whether exemptions added to parts will be considered when determining compliance against this indicator.
 
     Raises
     ------
@@ -363,7 +361,8 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
     --------
     >>> indicator = RoHSIndicator(name='RoHS substances',
     ...                           legislation_names=["EU Directive 2011/65/EU (RoHS 2)"],
-    ...                           default_threshold_percentage=0.1)
+    ...                           default_threshold_percentage=0.1,
+    ...                           ignore_exemptions=True)
     >>> indicator
     <RoHSIndicator, name: Tracked substances>
 
@@ -381,10 +380,23 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
         name: str,
         legislation_names: List[str],
         default_threshold_percentage: Optional[float] = None,
+        ignore_exemptions: bool = False,
     ):
         super().__init__(name, legislation_names, default_threshold_percentage)
+        self._ignore_exemptions: bool = ignore_exemptions
         self._indicator_type: str = "Rohs"
         self._flag: Optional[RoHSFlag] = None
+
+    @property
+    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition:
+        """Generates the low-level API indicator object."""
+        return models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
+            name=self.name,
+            legislation_names=self.legislation_names,
+            default_threshold_percentage=self.default_threshold_percentage,
+            type=self._indicator_type,
+            ignore_exemptions=self._ignore_exemptions,
+        )
 
 
 class WatchListIndicator(_Indicator):
@@ -402,6 +414,8 @@ class WatchListIndicator(_Indicator):
     default_threshold_percentage
         The concentration of substance that will be determined to be non-compliant. Is only used if the legislation
         doesn't define a specific threshold for the substance.
+    ignore_process_chemicals
+        Whether to ignore substances flagged as process chemicals when determining compliance against this indicator.
 
     Raises
     ------
@@ -414,7 +428,8 @@ class WatchListIndicator(_Indicator):
     --------
     >>> indicator = RoHSIndicator(name='Tracked substances',
     ...                           legislation_names=["The SIN List 2.1 (Substitute It Now!)"],
-    ...                           default_threshold_percentage=0.1)
+    ...                           default_threshold_percentage=0.1,
+    ...                           ignore_process_chemicals=True)
     >>> indicator
     <WatchListIndicator, name: Tracked substances>
 
@@ -432,7 +447,20 @@ class WatchListIndicator(_Indicator):
         name: str,
         legislation_names: List[str],
         default_threshold_percentage: Optional[float] = None,
+        ignore_process_chemicals: bool = False,
     ):
         super().__init__(name, legislation_names, default_threshold_percentage)
+        self._ignore_process_chemicals: bool = ignore_process_chemicals
         self._indicator_type: str = "WatchList"
         self._flag: Optional[WatchListFlag] = None
+
+    @property
+    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition:
+        """Generates the low-level API indicator object."""
+        return models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
+            name=self.name,
+            legislation_names=self.legislation_names,
+            default_threshold_percentage=self.default_threshold_percentage,
+            type=self._indicator_type,
+            ignore_process_chemicals=self._ignore_process_chemicals,
+        )

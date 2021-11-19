@@ -28,11 +28,6 @@
 # nested structure. The code here is presented without explanation, see other examples for more
 # detail.
 
-# + tags=[]
-import logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-
 from ansys.grantami.bomanalytics import Connection, indicators, queries
 
 cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()

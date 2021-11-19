@@ -65,14 +65,8 @@ result
 
 # ## Running an XML-based Query
 
-# Now we have validated the XML, we can build our XML BoM-based query.
+# Now we have validated the XML, we can build our XML BoM-based query. First, connect to Granta MI.
 
-# Set logging to INFO to eliminate some noise from the log entries.
-
-# + tags=[]
-import logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection

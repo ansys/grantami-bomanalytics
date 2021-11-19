@@ -22,16 +22,7 @@
 
 # ## Connecting to Granta MI
 
-# First set the log level to INFO, so we can see some key facts about the connection process.
-
-# + tags=[]
-import logging
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
-# -
-
-# Then import the bom analytics module and create the connection. See the example on creating connections for more
-# detail.
+# Import the bom analytics module and create the connection. See the example on creating connections for more detail.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection

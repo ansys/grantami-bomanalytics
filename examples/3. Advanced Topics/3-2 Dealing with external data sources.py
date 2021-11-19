@@ -13,21 +13,21 @@
 #     name: python3
 # ---
 
-# # Dealing with External Data Sources
+# # Determining Compliance for BoMs in External Data Sources
 
 # ## Introduction
 
-# It is common to deal with Bills of Materials or other data structures stored in a third party system or format. This
-# example shows an example of such a sitation applied to a simple JSON file structure, and produces a similar file
-# as an output with compliance results added. This approach can be used to build an integration with third-party systems
-# such as PLM or ERP systems.
+# It is common to deal with Bills of Materials or other data structures stored in a third party system. This
+# example shows a scenario where compliance needs to be determined for a BoM-type structure in a JSON file,
+# with the result added to the input file.
 
-# This example also uses materials from MaterialUniverse, but would work equally well using In House materials.
+# Whilst it is possible that data would be available in a JSON file, the intention is that the approach presented
+# here would be applicable for data in other formats, or data loaded from other software platform APIs.
 
-# ## Accessing the External Data
+# ## Load the External Data
 
-# Since this example is dealing with a JSON data structure, we can simply load it as a file and use the json library
-# to convert the text into a hierarchical set of dicts and lists.
+# First load the JSON file and use the `json` module
+# to convert the text into a hierarchical structure of `dict` and `list` objects.
 
 # + tags=[]
 import json
@@ -37,23 +37,27 @@ with open("../supporting-files/source_data.json") as f:
 pprint(data)
 # -
 
-# The list of components will be used frequently, so store this in a variable for convenience.
+# The list of components will be used frequently, so we can store this in a variable for convenience.
 
 # + tags=[]
 components = data['components']
 # -
 
-# ## Getting the Compliance Status
+# It is clear from viewing this data that some parts include multiple materials, and some materials appear in the JSON
+# file more than once. However, the material compliance is not dependent on the component it is used in, and the
+# compliance of a part only depends on the worst compliance status of the constituent materials. Therefore we can
+# simplify the compliance query by get the compliance for the unique set of materials in the JSON file, and perform some
+# data manipulation of the results.
 
-# Some materials appear in the JSON file more than once. However, since the compliance of a material only depends on the
-# material (and not the component it is used in), we only need to get the compliance for the material once. We can use
-# a set to ensure we have only one copy of each material.
+# We can use a set comprehension to get the unique materials, which we can then cast into a list.
 
 # + tags=[]
 material_ids = {material for component in components for material in component['materials']}
 material_ids = list(material_ids)
 material_ids
 # -
+
+# ## Getting the Compliance Status
 
 # Now we can feed the list of material IDs into a compliance query as shown in previous exercises.
 
@@ -70,65 +74,81 @@ mat_results
 
 # ## Post-Processing the Results
 
-# We now have results from Granta MI that tell us the compliance status for each material, but this isn't precisely the
-# question we are asking. We need to determine the compliance status for each component. In the case where a component
-# contains only one material, the result can simply be copied over.
+# The results above describe the compliance status for each material, but some further work needs to be performed to
+# provide the compliance status for all the components in the original JSON.
 
-# However, in the case where a component contains multiple materials we need to perform some additional calculations.
-# In these situations, the compliance of the component will be determined by the worst result for all materials in that
-# component.
+# In the case where a component contains only one material, the result can simply be copied over.
+# In the general case, moving from material compliance to component compliance just means taking
+# the worst compliance across all the constituent materials.
 
 # To do this, we first create a dictionary that maps a material ID to the indicator result returned by the query.
 
+# + tags=[]
 material_lookup = {mat.material_id: mat.indicators['SVHC'] for mat in mat_results.compliance_by_material_and_indicator}
+# -
 
 # Next define a function that takes a list of material IDs and returns the worst compliance status for all of them.
-# We can use the built-in max() function to do this, since the WatchListIndicator functions can be compared with > and <
-# operators, where a worse result is 'greater than' a better result.
+# We can use the built-in `max()` function to do this, since `WatchListIndicator` objects can be compared with > and <
+# operators. The convention is that a worse result is 'greater than' a better result.
 
 
-def rollup_material_results(material_ids) -> indicators.WatchListFlag:
+# + tags=[]
+def rollup_material_results(material_ids) -> str:
     indicator_results = [material_lookup[mat_id] for mat_id in material_ids]
     worst_result = max(indicator_results)
     return worst_result.flag.name
 
 
-# Now call this function for the list of materials on each component.
+# -
 
-component_results = [rollup_material_results(component['materials']) for component in components]
+# Now call this function for each component in a `dict` comprehension, giving us a mapping between part number
+# and compliance status.
+
+# + tags=[]
+component_results = {component['part_number']: rollup_material_results(component['materials'])
+                     for component in components}
 component_results
+# -
 
 # These results include the text as defined by the API. However, let's say in this example we are using the compliance
 # status to determine the approvals required to release the part in a design review process. As a result, we can define
 # a mapping between compliance statuses and approval requirements.
 
+# + tags=[]
 result_map = {indicators.WatchListFlag.WatchListCompliant.name: "No Approval Required",
               indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold.name: "Level 1 Approval Required",
               indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold.name: "Level 2 Approval Required"}
+# -
 
 # We can now use this dictionary to map from the Granta MI result to the approval requirements.
 
-results = [result_map[res] for res in component_results]
+# + tags=[]
+results = {part_number: result_map[result] for part_number, result in component_results.items()}
 results
+# -
 
-# ## Final Steps
+# ## Write the Output
 
-# To finish the example, we can create a new results dict and add both the results and the component information for
-# each component.
+# For the final result, we can take our result `dict` and use it to extend the original JSON data structure with
+# the approval requirements added in.
 
-new_components = []
-for component, result in zip(components, results):
-    new_component = {}
-    new_component['compliance'] = result
-    new_component.update(component)
-    new_components.append(new_component)
+# +
+components_with_result = []
+for component in components:
+    component_with_result = component
+    part_number = component['part_number']
+    component_with_result['approval'] = results[part_number]
+    components_with_result.append(component_with_result)
 
 data_results = {}
-data_results['components'] = new_components
+data_results['components'] = components_with_result
+# -
 
-# Finally, printing the results shows the compliance result.
+# Finally, printing the results shows the new data structure with the results included.
 
+# + tags=[]
 pprint(data_results)
+# -
 
 # ## Summary
 

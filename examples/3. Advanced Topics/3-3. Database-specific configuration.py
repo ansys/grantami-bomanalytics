@@ -13,7 +13,34 @@
 #     name: python3
 # ---
 
-# # Database-Specific Configuration
+# # Database-Specific Configuration Options
+
+# The BoM Analytics package will work with an off-the-shelf Granta MI Restricted Substances database. However, there are
+# some situations in which additional run-time configuration changes are required:
+#     
+# - If the database key or table names have been modified from their default values, these must be set on the
+#   `Connection` object
+# - If the number of linked records is very large, the batch sizes should be changed for each query (see xxxx for more
+#   details)
+
+# ## Specifying a Custom Database Key or Table Name
+
+# The default database key of MI_Restricted_Substances is used by default if not specified. To specify an alternative,
+# use the `Connection.set_database_details()` method. This database key will be used for all queries made with this
+# `Connection` object.
+
+# + tags=[]
+from ansys.grantami.bomanalytics import Connection
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+cxn.set_database_details(database_key="ACME_SUBSTANCES_DATABASE")
+cxn
+# -
+
+# It is also possible to specify alternative names for the relevant Restricted Substances tables, in the case that they
+# have been modified from the defaults. These are also provided to the .set_database_details() method in the same way.
+
+cxn.set_database_details(in_house_materials_table_name="ACME Materials")
+print(cxn._table_names)
 
 # ## Batch Size
 
@@ -32,22 +59,3 @@ print(spec_query._item_argument_manager.batch_size)
 
 spec_query = spec_query.with_batch_size(5)
 print(spec_query._item_argument_manager.batch_size)
-
-# ## Specifying a database key
-
-# The default database key of MI_Restricted_Substances is used by default if not specified. To specify an alternative,
-# specify this on the connection object. This database key will be used for all queries made with this connection
-# object.
-
-from ansys.grantami.bomanalytics import Connection
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-cxn.set_database_details(database_key="ACME_SUBSTANCES_DATABASE")
-print(cxn._db_key)
-
-# ## Specifying custom table names
-
-# It is also possible to specify alternative names for the relevant Restricted Substances tables, in the case that they
-# have been modified from the defaults. These are also provided to the .set_database_details() method in the same way.
-
-cxn.set_database_details(in_house_materials_table_name="ACME Materials")
-print(cxn._table_names)

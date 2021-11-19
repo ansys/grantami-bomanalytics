@@ -95,9 +95,9 @@ is_query_result = cxn.run(is_query)
 is_query_result
 # -
 
-# The `BomImpactedSubstancesQueryResult` object returned after running the ImpactedSubsances query now behaves similarly
-# to any other Impacted Substances result object. For example, we can print all subtances impacted by the legislation
-# using an approach from a previous example.
+# The `BomImpactedSubstancesQueryResult` object returned after running the ImpactedSubstances query now behaves
+# similarly to any other Impacted Substances result object. For example, we can print all substances impacted by the
+# legislation using an approach from a previous example.
 
 # + tags=[]
 from tabulate import tabulate

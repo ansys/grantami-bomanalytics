@@ -201,7 +201,7 @@ recursively_print_parts_with_svhcs(wing.parts)
 # ### compliance_by_indicator
 
 # Alternatively, using the `compliance_by_indicator` property will give us a single indicator result that rolls up the
-# results across all parts in the query. This would be useful in a sitation where we have a 'concept' assembly stored
+# results across all parts in the query. This would be useful in a situation where we have a 'concept' assembly stored
 # outside of Granta MI, and we want to determine its compliance. We know it contains the sub-assemblies specified in the
 # query above, and so using `compliance_by_indicator` will tell us if that concept assembly is compliant based on the
 # worst result of the individual sub-assemblies.

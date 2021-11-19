@@ -125,7 +125,7 @@ print(f"SVHCs: {non_compliant_cas_numbers}")
 # ### compliance_by_indicator
 
 # Alternatively, using the `compliance_by_indicator` property will give us a single indicator result that rolls up the
-# results across all substances in the query. This would be useful in a sitation where we have a 'concept' material
+# results across all substances in the query. This would be useful in a situation where we have a 'concept' material
 # stored outside of Granta MI, and we want to determine its compliance. We know it contains the substances specified in
 # the query above, and so using `compliance_by_indicator` will tell us if that concept material is compliant based on
 # the worst result of the individual substances.

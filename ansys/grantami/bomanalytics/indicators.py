@@ -358,7 +358,7 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
         If two indicators are compared which both don't have a result flag
 
     Notes
-    ----
+    -----
     The RoHS indicator is designed to be used with RoHS-type legislations (e.g. RoHS, RoHS China) however this is not
     enforced. Substances marked as 'Process Chemicals'[1]_ are always ignored, and exceptions are supported (unless
     explicitly ignored by specifying `ignore_exemptions=True` when creating the Indicator. The possible result flags for

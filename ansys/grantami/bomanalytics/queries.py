@@ -17,7 +17,7 @@ Query_Result
 """
 
 from abc import ABC, abstractmethod
-from typing import Union, List, Dict, Tuple, TypeVar, TYPE_CHECKING, Callable, Generator, Optional, Type
+from typing import Union, List, Dict, Tuple, TypeVar, TYPE_CHECKING, Callable, Generator, Optional, Type, Set
 import warnings
 from numbers import Number
 import logging
@@ -254,13 +254,13 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @typechecked
-    def with_record_history_ids(self: Query_Builder, record_history_identities: List[int]) -> Query_Builder:
+    def with_record_history_ids(self: Query_Builder, record_history_identities: Union[List[int], Set[int]]) -> Query_Builder:
         """Add a list of record history identities to a query.
 
         Parameters
         ----------
         record_history_identities
-            List of record history identities to be added to the query
+            Record history identities to be added to the query
 
         Returns
         -------
@@ -280,13 +280,13 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @typechecked
-    def with_record_history_guids(self: Query_Builder, record_history_guids: List[str]) -> Query_Builder:
+    def with_record_history_guids(self: Query_Builder, record_history_guids: Union[List[str], Set[str]]) -> Query_Builder:
         """Add a list of record history guids to a query.
 
         Parameters
         ----------
         record_history_guids
-            List of record history guids to be added to the query
+            Record history guids to be added to the query
 
         Returns
         -------
@@ -308,13 +308,13 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @typechecked
-    def with_record_guids(self: Query_Builder, record_guids: List[str]) -> Query_Builder:
+    def with_record_guids(self: Query_Builder, record_guids: Union[List[str], Set[str]]) -> Query_Builder:
         """Add a list of record guids to a query.
 
         Parameters
         ----------
         record_guids
-            List of record guids to be added to the query
+            Record guids to be added to the query
 
         Returns
         -------
@@ -340,7 +340,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         Parameters
         ----------
         stk_records
-            List of record definitions
+            STK record definitions
 
         Returns
         -------
@@ -440,15 +440,13 @@ class _ComplianceMixin(_ApiMixin, ABC):
         return f"<{self.__class__.__name__}: {self._item_argument_manager}, {len(self._indicators)} indicators>"
 
     @typechecked
-    def with_indicators(
-        self: Query_Builder, indicators: List[Union[WatchListIndicator, RoHSIndicator]]
-    ) -> Query_Builder:
+    def with_indicators(self: Query_Builder, indicators: List[Union[WatchListIndicator, RoHSIndicator]]) -> Query_Builder:
         """Add a list of indicators against which to evaluate compliance.
 
         Parameters
         ----------
         indicators
-            List of Indicator definitions to be included in this query.
+            Indicator definitions to be included in this query.
 
         Returns
         -------
@@ -544,7 +542,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         return f"<{self.__class__.__name__}: {self._item_argument_manager}, {len(self._legislations)} legislations>"
 
     @typechecked
-    def with_legislations(self: Query_Builder, legislation_names: List[str]) -> Query_Builder:
+    def with_legislations(self: Query_Builder, legislation_names: Union[List[str], Set[str]]) -> Query_Builder:
         """Add a list of legislations to retrieve the impacted substances for.
 
         Parameters
@@ -623,7 +621,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._item_argument_manager.batch_size = 100
 
     @typechecked
-    def with_material_ids(self: Query_Builder, material_ids: List[str]) -> Query_Builder:
+    def with_material_ids(self: Query_Builder, material_ids: Union[List[str], Set[str]]) -> Query_Builder:
         """Add a list of materials referenced by Material ID attribute value to a material query.
 
         Material IDs are valid for both *MaterialUnvierse* and *Materials - in house* records.
@@ -722,7 +720,7 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._item_argument_manager.batch_size = 10
 
     @typechecked
-    def with_part_numbers(self: Query_Builder, part_numbers: List[str]) -> Query_Builder:
+    def with_part_numbers(self: Query_Builder, part_numbers: Union[List[str], Set[str]]) -> Query_Builder:
         """Add a list of part numbers to a part query.
 
         Parameters
@@ -818,7 +816,7 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._item_argument_manager.batch_size = 10
 
     @typechecked
-    def with_specification_ids(self: Query_Builder, specification_ids: List[str]) -> Query_Builder:
+    def with_specification_ids(self: Query_Builder, specification_ids: Union[List[str], Set[str]]) -> Query_Builder:
         """Add a list of specification IDs to a specification query.
 
         Parameters
@@ -920,7 +918,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._item_argument_manager.batch_size = 500
 
     @typechecked
-    def with_cas_numbers(self: Query_Builder, cas_numbers: List[str]) -> Query_Builder:
+    def with_cas_numbers(self: Query_Builder, cas_numbers: Union[List[str], Set[str]]) -> Query_Builder:
         """Add a list of CAS numbers to a substance query. The amount of substance in the material will be set to 100%.
 
         Parameters
@@ -944,7 +942,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @typechecked
-    def with_ec_numbers(self: Query_Builder, ec_numbers: List[str]) -> Query_Builder:
+    def with_ec_numbers(self: Query_Builder, ec_numbers: Union[List[str], Set[str]]) -> Query_Builder:
         """Add a list of EC numbers to a substance query. The amount of substance in the material will be set to 100%.
 
         Parameters
@@ -968,7 +966,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @typechecked
-    def with_chemical_names(self: Query_Builder, chemical_names: List[str]) -> Query_Builder:
+    def with_chemical_names(self: Query_Builder, chemical_names: Union[List[str], Set[str]]) -> Query_Builder:
         """Add a list of chemical names to a substance query. The amount of substance in the material will be set to
         100%.
 
@@ -992,9 +990,9 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._item_argument_manager.append_record_definition(item_reference)
         return self
 
-    @typechecked
     def with_record_history_ids_and_amounts(
-        self: Query_Builder, record_history_identities_and_amounts: List[Tuple[int, Number]]
+        self: Query_Builder,
+        record_history_identities_and_amounts: Union[List[Tuple[int, Number]], Set[Tuple[int, Number]]],
     ) -> Query_Builder:
         """Add a list of record history identities and amounts to a substance query.
 
@@ -1024,7 +1022,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @typechecked
     def with_record_history_guids_and_amounts(
-        self: Query_Builder, record_history_guids_and_amounts: List[Tuple[str, Number]]
+        self: Query_Builder, record_history_guids_and_amounts: Union[List[Tuple[str, Number]], Set[Tuple[str, Number]]]
     ) -> Query_Builder:
         """Add a list of record history guids and amounts to a substance query.
 
@@ -1057,7 +1055,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @typechecked
     def with_record_guids_and_amounts(
-        self: Query_Builder, record_guids_and_amounts: List[Tuple[str, Number]]
+        self: Query_Builder, record_guids_and_amounts: Union[List[Tuple[str, Number]], Set[Tuple[str, Number]]]
     ) -> Query_Builder:
         """Add a list of record guids and amounts to a substance query.
 
@@ -1088,7 +1086,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @typechecked
     def with_cas_numbers_and_amounts(
-        self: Query_Builder, cas_numbers_and_amounts: List[Tuple[str, Number]]
+        self: Query_Builder, cas_numbers_and_amounts: Union[List[Tuple[str, Number]], Set[Tuple[str, Number]]]
     ) -> Query_Builder:
         """Add a list of CAS numbers and amounts to a substance query.
 
@@ -1116,7 +1114,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @typechecked
     def with_ec_numbers_and_amounts(
-        self: Query_Builder, ec_numbers_and_amounts: List[Tuple[str, Number]]
+        self: Query_Builder, ec_numbers_and_amounts: Union[List[Tuple[str, Number]], Set[Tuple[str, Number]]]
     ) -> Query_Builder:
         """Add a list of EC numbers and amounts to a substance query.
 
@@ -1145,7 +1143,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @typechecked
     def with_chemical_names_and_amounts(
-        self: Query_Builder, chemical_names_and_amounts: List[Tuple[str, Number]]
+        self: Query_Builder, chemical_names_and_amounts: Union[List[Tuple[str, Number]], Set[Tuple[str, Number]]]
     ) -> Query_Builder:
         """Add a list of chemical names and amounts to a substance query.
 

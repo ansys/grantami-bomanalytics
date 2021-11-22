@@ -72,7 +72,9 @@ class TestFlagComparison:
 @pytest.mark.parametrize("indicator", [indicators.RoHSIndicator, indicators.WatchListIndicator])
 class TestIndicators:
     def test_indicator_unknown_flag_key_error(self, indicator):
-        test_indicator = create_indicator(indicator, )
+        test_indicator = create_indicator(
+            indicator,
+        )
         with pytest.raises(KeyError) as e:
             test_indicator.flag = "Invalid Flag"
         assert 'Unknown flag "Invalid Flag"' in str(e.value)

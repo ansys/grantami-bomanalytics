@@ -46,30 +46,21 @@ class TestAddPropertiesToRecordQueries:
 
     @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS[1:])
     def test_record_guids_wrong_type(self, query_type, test_values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             query_type().with_record_guids(test_values)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             query_type().with_record_guids(record_guids=test_values)
-        assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("test_values", TEST_HISTORY_IDS[1:])
     def test_record_history_guids_wrong_type(self, query_type, test_values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             query_type().with_record_history_guids(test_values)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             query_type().with_record_history_guids(record_history_guids=test_values)
-        assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("test_values", TEST_GUIDS[1:])
     def test_record_history_ids_wrong_type(self, query_type, test_values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             query_type().with_record_history_ids(test_values)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             query_type().with_record_history_ids(record_history_identities=test_values)
-        assert "Incorrect type for value" in str(e.value)
 
     def test_no_items_raises_warning(self, query_type):
         query = query_type()
@@ -101,12 +92,9 @@ class TestAddIndicators:
 
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
     def test_compliance_query_wrong_type_fails(self, query_type):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             query_type().with_indicators(LEGISLATIONS)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             query_type().with_indicators(indicators=LEGISLATIONS)
-        assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("query_type", SUBSTANCE_QUERY_TYPES)
     def test_impacted_substances_query_attribute_error(self, query_type):
@@ -124,12 +112,9 @@ class TestAddLegislations:
 
     @pytest.mark.parametrize("query_type", SUBSTANCE_QUERY_TYPES)
     def test_impacted_substances_query_wrong_type_fails(self, query_type):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             query_type().with_legislations(INDICATORS)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             query_type().with_legislations(legislations=INDICATORS)
-        assert "Incorrect type for value" in str(e.value)
 
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
     def test_compliance_query_attribute_error(self, query_type):
@@ -156,9 +141,6 @@ class TestBatchSize:
         batch_size,
     ):
         query = query_type()
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             query.with_batch_size(batch_size)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             query.with_batch_size(batch_size=batch_size)
-        assert "Incorrect type for value" in str(e.value)

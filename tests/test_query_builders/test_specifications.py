@@ -24,9 +24,6 @@ def test_add_spec_ids(query_type, spec_ids):
     "query_type", [queries.SpecificationComplianceQuery, queries.SpecificationImpactedSubstancesQuery]
 )
 def test_add_spec_ids_wrong_type(query_type):
-    with pytest.raises(TypeError) as e:
+    with pytest.raises(TypeError):
         query_type().with_specification_ids("Strings are not allowed")
-    assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)
-    with pytest.raises(TypeError) as e:
         query_type().with_specification_ids(specification_ids="Strings are not allowed")
-    assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)

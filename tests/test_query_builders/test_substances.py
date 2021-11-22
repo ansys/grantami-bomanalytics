@@ -63,28 +63,19 @@ class TestWithoutAmounts:
 @pytest.mark.parametrize("values", ["Strings are not allowed", [("id_with_amount", 12)], 12])
 class TestWithoutAmountsWrongType:
     def test_add_chemical_names(self, values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             SubstanceCompliance().with_chemical_names(values)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             SubstanceCompliance().with_chemical_names(chemical_names=values)
-        assert "Incorrect type for value" in str(e.value)
 
     def test_add_cas_numbers(self, values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             SubstanceCompliance().with_cas_numbers(values)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             SubstanceCompliance().with_cas_numbers(cas_numbers=values)
-        assert "Incorrect type for value" in str(e.value)
 
     def test_add_ec_numbers(self, values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             SubstanceCompliance().with_ec_numbers(values)
-        assert "Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             SubstanceCompliance().with_ec_numbers(ec_numbers=values)
-        assert "Incorrect type for value" in str(e.value)
 
 
 @pytest.mark.parametrize(
@@ -226,49 +217,31 @@ def test_record_history_ids_with_amounts(values):
 @pytest.mark.parametrize("values", ["Strings are not allowed", [("id_without_amount", None)], 12])
 class TestWithAmountsWrongType:
     def test_record_guids(self, values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             SubstanceCompliance().with_record_guids_and_amounts(values)
-        assert f"Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             SubstanceCompliance().with_record_guids_and_amounts(record_guids_and_amounts=values)
-        assert f"Incorrect type for value" in str(e.value)
 
     def test_record_history_guids(self, values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             SubstanceCompliance().with_record_history_guids_and_amounts(values)
-        assert f"Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             SubstanceCompliance().with_record_history_guids_and_amounts(record_history_guids_and_amounts=values)
-        assert f"Incorrect type for value" in str(e.value)
 
     def test_record_history_ids(self, values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             SubstanceCompliance().with_record_history_ids_and_amounts(values)
-        assert f"Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             SubstanceCompliance().with_record_history_ids_and_amounts(record_history_identities_and_amounts=values)
-        assert f"Incorrect type for value" in str(e.value)
 
     def test_add_chemical_names(self, values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             SubstanceCompliance().with_chemical_names_and_amounts(values)
-        assert f"Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             SubstanceCompliance().with_chemical_names_and_amounts(chemical_names_and_amounts=values)
-        assert f"Incorrect type for value" in str(e.value)
 
     def test_add_cas_numbers(self, values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             SubstanceCompliance().with_cas_numbers_and_amounts(values)
-        assert f"Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             SubstanceCompliance().with_cas_numbers_and_amounts(cas_numbers_and_amounts=values)
-        assert f"Incorrect type for value" in str(e.value)
 
     def test_add_ec_numbers(self, values):
-        with pytest.raises(TypeError) as e:
+        with pytest.raises(TypeError):
             SubstanceCompliance().with_ec_numbers_and_amounts(values)
-        assert f"Incorrect type for value" in str(e.value)
-        with pytest.raises(TypeError) as e:
             SubstanceCompliance().with_ec_numbers_and_amounts(ec_numbers_and_amounts=values)
-        assert f"Incorrect type for value" in str(e.value)

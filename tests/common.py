@@ -29,7 +29,6 @@ from ansys.grantami.bomanalytics import (
     indicators,
     Connection,
 )
-from ansys.grantami.bomanalytics._allowed_types import allowed_types, _check_type
 from ansys.grantami.bomanalytics.indicators import _Indicator
 from ansys.grantami.bomanalytics._item_definitions import (
     BoM1711Definition,

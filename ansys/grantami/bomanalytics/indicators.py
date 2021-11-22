@@ -54,7 +54,7 @@ class RoHSFlag(_Flag):
     """Permitted RoHS flag states. Increasing value means 'worse' compliance, i.e. the compliance result is worse the
     further down the list the result appears.
 
-    See the Restricted Substances User Guide (available on the Ansys customer download site) for more details.
+    See the Restricted Substances Reports User Guide for more details.
     """
 
     RohsNotImpacted = (
@@ -140,7 +140,7 @@ class WatchListFlag(_Flag):
     """Permitted Watch List flag states. Increasing value means 'worse' compliance, i.e. the compliance result is worse
     the further down the list the result appears.
 
-    See the Restricted Substances User Guide (available on the Ansys customer download site) for more details.
+    See the Restricted Substances Reports User Guide for more details.
     """
 
     WatchListNotImpacted = (
@@ -357,6 +357,13 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
     ValueError
         If two indicators are compared which both don't have a result flag
 
+    Notes
+    -----
+    The RoHS indicator is designed to be used with RoHS-type legislations (e.g. RoHS, RoHS China) however this is not
+    enforced. Substances marked as 'Process Chemicals'[1]_ are always ignored, and exceptions are supported (unless
+    explicitly ignored by specifying `ignore_exemptions=True` when creating the Indicator. The possible result flags for
+    the indicator distinguish between an item being compliant, compliant with exemptions, or non-compliant.
+
     Examples
     --------
     >>> indicator = RoHSIndicator(name='RoHS substances',
@@ -423,6 +430,14 @@ class WatchListIndicator(_Indicator):
         If two differently-typed indicators are compared
     ValueError
         If two indicators are compared which both don't have a result flag
+
+    Notes
+    -----
+    The Watch List indicator is designed to be used with REACH legislations or internal watch lists, however this is not
+    enforced. Substances marked as 'Process Chemicals'[1]_ are usually included, but can be ignored by specifying
+    `ignore_process_chemicals=True` when creating the Indicator. Exemptions are always ignored. The possible result
+    flags for the indicator distinguish between an item being compliant, compliant but with substances below the
+    threshold, or non-compliant.
 
     Examples
     --------

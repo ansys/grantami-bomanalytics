@@ -32,6 +32,13 @@ for this package are as follows:
   systems, for example PLM or ERP systems
 
 
+Dependencies
+------------
+To use this package you will require access to a Granta MI server
+that includes the MI Restricted Substances Reports version 2022R1
+or later.
+
+
 Background
 ----------
 The Granta MI Restricted Substances solution includes a REST API for

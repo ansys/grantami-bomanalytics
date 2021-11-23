@@ -74,6 +74,24 @@ class TestImpactedSubstances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
 
+    def test_query_result_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert repr(response) == '<PartImpactedSubstancesQueryResult: 2 PartWithImpactedSubstances results>'
+
+    def test_impacted_substances_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert "ImpactedSubstance" in repr(response.impacted_substances)
+
+    def test_impacted_substances_by_part_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert "PartWithImpactedSubstancesResult" in repr(response.impacted_substances_by_part)
+
+    def test_impacted_substances_by_legislation_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        for legislation in response.impacted_substances_by_legislation.keys():
+            assert legislation in repr(response.impacted_substances_by_legislation)
+        assert "ImpactedSubstance" in repr(response.impacted_substances_by_legislation)
+
 
 class TestCompliance:
     """Check that each mocked result has the correct record references, indicator results, child objects, and bom
@@ -262,3 +280,16 @@ class TestCompliance:
             for k, v in result.indicators.items():
                 assert k in self.query._indicators  # The indicator name should be the same (string equality)
                 assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)
+
+    def test_query_result_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert repr(response) == '<PartComplianceQueryResult: 2 PartWithCompliance results>'
+
+    def test_compliance_by_indicator_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        for indicator in response.compliance_by_indicator.keys():
+            assert indicator in repr(response.compliance_by_indicator)
+
+    def test_compliance_by_part_and_indicator_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert "PartWithComplianceResult" in repr(response.compliance_by_part_and_indicator)

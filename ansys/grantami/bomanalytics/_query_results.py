@@ -519,9 +519,9 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             The low-level API objects returned by the REST API.
         """
 
-        self.result_type_name = "Bom1711WithImpactedSubstances"
+        self._result_type_name = "BomWithImpactedSubstances"
         bom_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-            result_type_name=self.result_type_name,
+            result_type_name=self._result_type_name,
             result_with_impacted_substances=results[0],
         )
         self._results = [bom_with_impacted_substances]

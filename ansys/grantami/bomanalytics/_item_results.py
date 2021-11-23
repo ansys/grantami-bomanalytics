@@ -240,7 +240,7 @@ class ImpactedSubstance(BaseSubstanceReference):
 
     def __repr__(self):
         return (
-            f'<ImpactedSubstance: {{"cas_number": {self.cas_number}, '
+            f'<ImpactedSubstance: {{"cas_number": "{self.cas_number}", '
             f'"percent_amount": {self.max_percentage_amount_in_material}}}>'
         )
 
@@ -275,13 +275,14 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
         super().__init__(**kwargs)
 
-        self._substances: Dict[str, List[ImpactedSubstance]] = {}
+        self._substances_by_legislation: Dict[str, List[ImpactedSubstance]] = {}
 
         for legislation in legislations:
             new_substances = [
                 self._create_impacted_substance(substance) for substance in legislation.impacted_substances
             ]
-            self._substances[legislation.legislation_name] = new_substances
+            self._substances_by_legislation[legislation.legislation_name] = new_substances
+
 
     @staticmethod
     def _create_impacted_substance(
@@ -344,7 +345,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
         """
 
-        return self._substances
+        return self._substances_by_legislation
 
     @property
     def substances(self) -> List[ImpactedSubstance]:
@@ -367,7 +368,9 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         return results
 
     def __repr__(self):
-        return f"<{self.__class__.__name__}({self.record_reference}), {len(self.substances)} legislations>"
+        return (
+            f"<{self.__class__.__name__}({self.record_reference}), {len(self.substances_by_legislation)} legislations>"
+        )
 
 
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
@@ -385,9 +388,10 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
     pass
 
 
-@ItemResultFactory.register("Bom1711WithImpactedSubstances")
+@ItemResultFactory.register("BomWithImpactedSubstances")
 class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin, BoM1711Definition):
-    pass
+    def __repr__(self):
+        return f"<{self.__class__.__name__}(), {len(self.substances_by_legislation)} legislations>"
 
 
 class ComplianceResultMixin(mixin_base_class):
@@ -789,16 +793,4 @@ class SpecificationWithComplianceResult(
 
 @ItemResultFactory.register("CoatingWithCompliance")
 class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
-    pass
-
-
-@ItemResultFactory.register("Bom1711WithCompliance")
-class BoM1711WithComplianceResult(
-    ChildPartWithComplianceMixin,
-    ChildSpecificationWithComplianceMixin,
-    ChildMaterialWithComplianceMixin,
-    ChildSubstanceWithComplianceMixin,
-    ComplianceResultMixin,
-    BoM1711Definition,
-):
     pass

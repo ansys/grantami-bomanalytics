@@ -3,7 +3,10 @@ from ..common import pytest, queries, check_query_manager_attributes
 SubstanceCompliance = queries.SubstanceComplianceQuery
 
 
-@pytest.mark.parametrize("values", [[], ["One chemical_name"], ["Two", "Chemical names"]])
+@pytest.mark.parametrize("values", [[],
+                                    ["One subs id"],
+                                    ["Two", "subs ids"],
+                                    {"Set", "subs ids"}])
 class TestWithoutAmounts:
     def test_add_chemical_names(self, values):
         query = SubstanceCompliance().with_chemical_names(values)
@@ -60,7 +63,11 @@ class TestWithoutAmounts:
         assert all([i.percentage_amount == i._default_percentage_amount for i in query._item_argument_manager._items])
 
 
-@pytest.mark.parametrize("values", ["Strings are not allowed", [("id_with_amount", 12)], 12])
+@pytest.mark.parametrize("values", ["Strings are not allowed",
+                                    [("id_with_amount", 12)],
+                                    12,
+                                    {("id", 12)}, {12}]
+                         )
 class TestWithoutAmountsWrongType:
     def test_add_chemical_names(self, values):
         with pytest.raises(TypeError):
@@ -79,8 +86,10 @@ class TestWithoutAmountsWrongType:
 
 
 @pytest.mark.parametrize(
-    "values",
-    [([("One chemical_name", 12.5)]), ([("Two", 0.001), ("Chemical names", 100)])],
+    "values", [[("One subs id", 12.5)],
+               {("One subs set id", 12.5)},
+               [("Two", 0.001), ("subs ids", 100)],
+               {("Set", 0.001), ("subs ids", 100)}],
 )
 class TestWithAmounts:
     def test_record_guids(self, values):
@@ -194,7 +203,10 @@ class TestWithAmounts:
         )
 
 
-@pytest.mark.parametrize("values", [([(123, 12.5)]), ([(234, 0.001), (345, 100)])])
+@pytest.mark.parametrize("values", [[(123, 12.5)],
+                                    {(123, 12.5)},
+                                    [(234, 0.001), (345, 100)],
+                                    {(234, 0.001), (345, 100)}])
 def test_record_history_ids_with_amounts(values):
     query = SubstanceCompliance().with_record_history_ids_and_amounts(values)
     assert isinstance(query, SubstanceCompliance)
@@ -214,7 +226,14 @@ def test_record_history_ids_with_amounts(values):
     assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)])
 
 
-@pytest.mark.parametrize("values", ["Strings are not allowed", [("id_without_amount", None)], 12])
+@pytest.mark.parametrize("values", ["Strings are not allowed",
+                                    [("id_without_amount", None)],
+                                    12,
+                                    {23},
+                                    {"String on it's own in a set"},
+                                    [[234, 0.001], (345, 100)],
+                                    [(234, 0.001), {345, 100}],
+                                    ])
 class TestWithAmountsWrongType:
     def test_record_guids(self, values):
         with pytest.raises(TypeError):

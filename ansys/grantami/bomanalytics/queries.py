@@ -254,7 +254,9 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @typechecked
-    def with_record_history_ids(self: Query_Builder, record_history_identities: Union[List[int], Set[int]]) -> Query_Builder:
+    def with_record_history_ids(
+        self: Query_Builder, record_history_identities: Union[List[int], Set[int]]
+    ) -> Query_Builder:
         """Add a list of record history identities to a query.
 
         Parameters
@@ -280,7 +282,9 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @typechecked
-    def with_record_history_guids(self: Query_Builder, record_history_guids: Union[List[str], Set[str]]) -> Query_Builder:
+    def with_record_history_guids(
+        self: Query_Builder, record_history_guids: Union[List[str], Set[str]]
+    ) -> Query_Builder:
         """Add a list of record history guids to a query.
 
         Parameters
@@ -440,7 +444,9 @@ class _ComplianceMixin(_ApiMixin, ABC):
         return f"<{self.__class__.__name__}: {self._item_argument_manager}, {len(self._indicators)} indicators>"
 
     @typechecked
-    def with_indicators(self: Query_Builder, indicators: List[Union[WatchListIndicator, RoHSIndicator]]) -> Query_Builder:
+    def with_indicators(
+        self: Query_Builder, indicators: List[Union[WatchListIndicator, RoHSIndicator]]
+    ) -> Query_Builder:
         """Add a list of indicators against which to evaluate compliance.
 
         Parameters
@@ -990,6 +996,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._item_argument_manager.append_record_definition(item_reference)
         return self
 
+    @typechecked
     def with_record_history_ids_and_amounts(
         self: Query_Builder,
         record_history_identities_and_amounts: Union[List[Tuple[int, Number]], Set[Tuple[int, Number]]],

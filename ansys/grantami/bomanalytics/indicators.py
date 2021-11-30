@@ -12,9 +12,9 @@ or part.
 
 from enum import Enum
 from abc import ABC, abstractmethod
-from typing import List, Union, Optional, TYPE_CHECKING
+from typing import List, Union, Optional, TYPE_CHECKING, Type
 
-from ansys.grantami.bomanalytics_codegen import models
+from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 
 if TYPE_CHECKING:
     from ._query_results import MaterialComplianceQueryResult  # noqa: F401
@@ -224,7 +224,7 @@ class _Indicator(ABC):
     Allows for comparison of same-typed indicators that both have results.
     """
 
-    available_flags = None
+    available_flags: Type[_Flag] = _Flag
 
     def __init__(
         self,
@@ -232,11 +232,11 @@ class _Indicator(ABC):
         legislation_names: List[str],
         default_threshold_percentage: Union[float, None] = None,
     ):
-        self.name: str = name
-        self.legislation_names: List[str] = legislation_names
-        self.default_threshold_percentage: float = default_threshold_percentage
-        self._indicator_type: Union[str, None] = None
-        self._flag: Union[_Flag, None] = None
+        self.name = name
+        self.legislation_names = legislation_names
+        self.default_threshold_percentage = default_threshold_percentage
+        self._indicator_type: Optional[str] = None
+        self._flag: Optional[_Flag] = None
 
     @property
     @abstractmethod
@@ -257,7 +257,7 @@ class _Indicator(ABC):
         return result
 
     @property
-    def flag(self) -> _Flag:
+    def flag(self) -> Optional[_Flag]:
         """The state of this indicator. If the indicator is a definition only, this property is `None`.
 
         Raises
@@ -270,7 +270,7 @@ class _Indicator(ABC):
     @flag.setter
     def flag(self, flag: str):
         try:
-            self._flag: _Flag = self.__class__.available_flags[flag]
+            self._flag = self.__class__.available_flags[flag]
         except KeyError as e:
             raise KeyError(f'Unknown flag "{flag}" for indicator "{repr(self)}"').with_traceback(e.__traceback__)
 

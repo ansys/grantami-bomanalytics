@@ -15,7 +15,7 @@ class TestRecordArgManager:
     def test_uninitialized_configuration(self):
         am = queries._RecordArgumentManager()
         assert am.batch_size is None
-        assert am.item_type_name is None
+        assert am.item_type_name == ""
         assert am.__repr__() == "<_RecordArgumentManager {record_type_name: None, batch_size: None}, length = 0>"
 
     def test_no_record_type_raises_runtime_error(self):

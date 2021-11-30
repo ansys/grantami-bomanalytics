@@ -22,7 +22,7 @@ import warnings
 from numbers import Number
 import logging
 
-from ansys.grantami.bomanalytics_codegen import models, api
+from ansys.grantami.bomanalytics_codegen import models, api  # type: ignore[import]
 
 from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition  # noqa: F401
 from ._allowed_types import allowed_types
@@ -34,7 +34,7 @@ from ._query_results import (
 from .indicators import _Indicator, WatchListIndicator, RoHSIndicator
 from ._connection import Connection  # noqa: F401
 
-Query_Builder = TypeVar("Query_Builder", covariant=True, bound="_BaseQueryBuilder")
+Query_Builder = TypeVar("Query_Builder", covariant=True, bound=Union["_BaseQueryBuilder", "_ApiMixin"])
 Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])
 
 logger = logging.getLogger(__name__)
@@ -47,11 +47,8 @@ class _BaseArgumentManager(ABC):
     Doesn't specify how the objects are added to the `_items` attribute, or how they are converted to attributes.
     """
 
-    _items = None
-    """ Describes the items to be passed to the low-level API. The type is determined in the concrete class. """
-
-    item_type_name: str = ""
-    """ The name of the item collection as defined by the low-level API, e.g. 'materials', 'parts'. """
+    _items: List = []
+    """ Describes the bom items to be passed to the low-level API. The type is determined in the concrete class. """
 
     @property
     def is_populated(self) -> bool:
@@ -63,11 +60,6 @@ class _BaseArgumentManager(ABC):
         """
 
         return bool(self._items)
-
-    @property
-    @abstractmethod
-    def batched_arguments(self) -> Generator[Dict[str, List[Union[models.Model, str]]], None, None]:
-        pass
 
     @abstractmethod
     def extract_results_from_response(self, response: models.Model) -> List[models.Model]:
@@ -87,11 +79,11 @@ class _RecordArgumentManager(_BaseArgumentManager):
         The number of items to be included in a single request.
     """
 
-    def __init__(self, item_type_name: Optional[str] = None, batch_size: Optional[int] = None):
+    def __init__(self, item_type_name: str = "", batch_size: Optional[int] = None):
         super().__init__()
-        self._items: List = []
-        """The definition objects added to this object to be used in a query."""
-        self.item_type_name: Optional[str] = item_type_name
+        self._items = []
+        """ The name of the item collection as defined by the low-level API, e.g. 'materials', 'parts'. """
+        self.item_type_name = item_type_name
         self.batch_size: Optional[int] = batch_size
 
     def __str__(self) -> str:
@@ -151,7 +143,7 @@ class _RecordArgumentManager(_BaseArgumentManager):
         {"materials": [{"reference_type": "material_id", "reference_value": "ABS"}, ...]  # Up to 100 items
         """
 
-        if self.item_type_name is None:
+        if not self.item_type_name:
             raise RuntimeError('"item_type_name" must be populated before record arguments can be generated.')
         if self.batch_size is None:
             raise RuntimeError('"batch_size" must be populated before record arguments can be generated.')
@@ -176,8 +168,6 @@ class _RecordArgumentManager(_BaseArgumentManager):
 class _BaseQueryBuilder(ABC):
     """Base class for all queries."""
 
-    _item_argument_manager = None
-
     def _validate_items(self) -> None:
         """Perform pre-flight checks on the items that have been added to the query.
 
@@ -187,10 +177,10 @@ class _BaseQueryBuilder(ABC):
             If no items have been added to the query, warn that the response will be empty.
         """
 
-        if not self._item_argument_manager.is_populated:
+        if not self._item_argument_manager.is_populated:  # type: ignore[attr-defined]
             warnings.warn(
-                f"No {self._item_argument_manager.item_type_name} have been added to the query. Server response "
-                f"will be empty.",
+                f"No {self._item_argument_manager.item_type_name} have been added to the query."  # type: ignore[attr-defined]
+                f" Server response will be empty.",
                 RuntimeWarning,
             )
 
@@ -398,11 +388,11 @@ class _ApiMixin(api_base_class):
         self._validate_parameters()
         self._validate_items()
         result = []
-        for batch in self._item_argument_manager.batched_arguments:
+        for batch in self._item_argument_manager.batched_arguments:  # type: ignore[attr-defined]
             args = {**arguments, **batch}
             request = self._request_type(**args)
             response = api_method(request)
-            result.extend(self._item_argument_manager.extract_results_from_response(response))
+            result.extend(self._item_argument_manager.extract_results_from_response(response))  # type: ignore[attr-defined]
         return result
 
     @abstractmethod
@@ -437,7 +427,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {self._item_argument_manager}, {len(self._indicators)} indicators>"
+        return f"<{self.__class__.__name__}: {self._item_argument_manager}, {len(self._indicators)} indicators>"  # type: ignore[attr-defined]
 
     @allowed_types(object, [_Indicator])
     def with_indicators(
@@ -501,7 +491,9 @@ class _ComplianceMixin(_ApiMixin, ABC):
         logger.debug(f"[TECHDOCS] Indicators: {indicators_text}")
 
         result_raw = self._call_api(api_method, arguments)
-        result = QueryResultFactory.create_result(results=result_raw, indicator_definitions=self._indicators)
+        result: Query_Result = QueryResultFactory.create_result(
+            results=result_raw, indicator_definitions=self._indicators
+        )
         return result
 
     def _validate_parameters(self):
@@ -541,7 +533,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {self._item_argument_manager}, {len(self._legislations)} legislations>"
+        return f"<{self.__class__.__name__}: {self._item_argument_manager}, {len(self._legislations)} legislations>"  # type: ignore[attr-defined]
 
     @allowed_types(object, [str])
     def with_legislations(self: Query_Builder, legislation_names: List[str]) -> Query_Builder:
@@ -593,9 +585,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         logger.debug(f"[TECHDOCS] Legislation names: {legislations_text}")
 
         result_raw = self._call_api(api_method, arguments)
-        if not result_raw:
-            return []
-        result = QueryResultFactory.create_result(results=result_raw)
+        result: Query_Result = QueryResultFactory.create_result(results=result_raw)
         return result
 
     def _validate_parameters(self):

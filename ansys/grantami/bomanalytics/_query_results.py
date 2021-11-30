@@ -4,7 +4,7 @@ Defines the representations of the query results themselves, which allows them t
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
 
-from typing import List, Dict, Type, Callable, Any, Union, TypeVar
+from typing import List, Dict, Type, Callable, Any, Union, TypeVar, TYPE_CHECKING
 from collections import defaultdict
 from abc import ABC
 
@@ -23,11 +23,8 @@ from ._item_results import (
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
-Query_Result = TypeVar(
-    "Query_Result",
-    covariant=True,
-    bound=Union["ImpactedSubstancesBaseClass", "ComplianceBaseClass"],
-)
+if TYPE_CHECKING:
+    from .queries import Query_Result
 
 
 class QueryResultFactory:
@@ -60,7 +57,7 @@ class QueryResultFactory:
         return inner
 
     @classmethod
-    def create_result(cls, results: Union[List[models.Model], models.Model], **kwargs) -> Query_Result:
+    def create_result(cls, results: Union[List[models.Model], models.Model], **kwargs) -> "Query_Result":
         """Factory method to return a specific query result.
 
         Uses the type of the `results` parameter to determine which specific `Query_Result` to return. If `results` is a

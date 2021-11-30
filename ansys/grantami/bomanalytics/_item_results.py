@@ -4,9 +4,9 @@ Defines the representations of the items (materials, parts, specifications, and 
 queries. These are mostly extensions of the classes in _item_definitions.py.
 """
 
-from typing import List, Dict, Union, Callable, TYPE_CHECKING, Optional
+from typing import List, Dict, Union, Callable, TYPE_CHECKING, Optional, overload, TypeVar, Type
 from copy import deepcopy
-from ansys.grantami.bomanalytics_codegen import models
+from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 from ._item_definitions import (
     MaterialDefinition,
     PartDefinition,
@@ -22,39 +22,37 @@ from .indicators import WatchListIndicator, RoHSIndicator
 if TYPE_CHECKING:
     from ._query_results import MaterialImpactedSubstancesQueryResult  # noqa: F401
 
-Impacted_Substances_REST_Result = Union[
-    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial,
-    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart,
-    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification,
-    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
-]
-"""The set of types that represent the low-level REST API items with impacted substances results."""
-
-Item_With_Impacted_Substances_Result = Union[
-    "MaterialWithImpactedSubstancesResult",
-    "PartWithImpactedSubstancesResult",
-    "SpecificationsWithImpactedSubstancesResult",
-    "BoM1711WithImpactedSubstancesResult",
-]
-"""The set of types that represent objects in this module with impacted substances results."""
-
-Compliance_REST_Result = Union[
-    models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance,
-    models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance,
-    models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance,
-    models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance,
-    models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance,
-]
-"""The set of types that represent the low-level REST API items with compliance results."""
-
-Item_With_Compliance_Result = Union[
-    "SubstanceWithComplianceResult",
-    "MaterialWithComplianceResult",
-    "PartWithComplianceResult",
-    "SpecificationsWithComplianceResult",
-    "BoM1711WithComplianceResult",
-]
-"""The set of types that represent objects in this module with compliance results."""
+REST_Material_Result = TypeVar(
+    "REST_Material_Result",
+    bound=Union[
+        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial,
+        models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance,
+    ],
+)
+REST_Part_Result = TypeVar(
+    "REST_Part_Result",
+    bound=Union[
+        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart,
+        models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance,
+    ],
+)
+REST_Specification_Result = TypeVar(
+    "REST_Specification_Result",
+    bound=Union[
+        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification,
+        models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance,
+    ],
+)
+REST_Substance_Result = TypeVar(
+    "REST_Substance_Result", bound=models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
+)
+REST_Coating_Result = TypeVar(
+    "REST_Coating_Result", bound=models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance
+)
+REST_Bom_Result = TypeVar(
+    "REST_Bom_Result", bound=models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
+)
+Item_Result = Union[Type["ImpactedSubstancesResultMixin"], Type["ComplianceResultMixin"]]
 
 
 class ItemResultFactory:
@@ -62,7 +60,7 @@ class ItemResultFactory:
     of the query class in `queries.py`.
     """
 
-    registry = {}
+    registry: Dict[str, Item_Result] = {}
     """Mapping between an item result class and the query type it supports."""
 
     @classmethod
@@ -80,18 +78,42 @@ class ItemResultFactory:
             The function that's being decorated.
         """
 
-        def inner(result_class: RecordDefinition) -> RecordDefinition:
+        def inner(result_class: Item_Result) -> Item_Result:
             cls.registry[name] = result_class
             return result_class
 
         return inner
 
     @classmethod
+    @overload
     def create_impacted_substances_result(
-        cls,
-        result_type_name: str,
-        result_with_impacted_substances: Impacted_Substances_REST_Result,
-    ) -> Item_With_Impacted_Substances_Result:
+        cls, result_type_name, result_with_impacted_substances: REST_Material_Result
+    ) -> "MaterialWithImpactedSubstancesResult":
+        ...
+
+    @classmethod
+    @overload
+    def create_impacted_substances_result(  # type: ignore[misc]
+        cls, result_type_name, result_with_impacted_substances: REST_Part_Result
+    ) -> "PartWithImpactedSubstancesResult":
+        ...
+
+    @classmethod
+    @overload
+    def create_impacted_substances_result(  # type: ignore[misc]
+        cls, result_type_name, result_with_impacted_substances: REST_Specification_Result
+    ) -> "SpecificationWithImpactedSubstancesResult":
+        ...
+
+    @classmethod
+    @overload
+    def create_impacted_substances_result(  # type: ignore[misc]
+        cls, result_type_name, result_with_impacted_substances: REST_Bom_Result
+    ) -> "BoM1711WithImpactedSubstancesResult":
+        ...
+
+    @classmethod
+    def create_impacted_substances_result(cls, result_type_name: str, result_with_impacted_substances):
         """Factory method to return a specific impacted substances result.
 
         Parameters
@@ -114,6 +136,7 @@ class ItemResultFactory:
         """
 
         item_result_class = cls.registry[result_type_name]
+        assert issubclass(item_result_class, ImpactedSubstancesResultMixin)
         try:
             reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
             item_result = item_result_class(
@@ -127,12 +150,47 @@ class ItemResultFactory:
         return item_result
 
     @classmethod
+    @overload
+    def create_compliance_result(
+        cls, result_type_name, result_with_compliance: REST_Material_Result, indicator_definitions
+    ) -> "MaterialWithComplianceResult":
+        ...
+
+    @classmethod
+    @overload
+    def create_compliance_result(  # type: ignore[misc]
+        cls, result_type_name, result_with_compliance: REST_Part_Result, indicator_definitions
+    ) -> "PartWithComplianceResult":
+        ...
+
+    @classmethod
+    @overload
+    def create_compliance_result(  # type: ignore[misc]
+        cls, result_type_name, result_with_compliance: REST_Specification_Result, indicator_definitions
+    ) -> "SpecificationWithComplianceResult":
+        ...
+
+    @classmethod
+    @overload
+    def create_compliance_result(  # type: ignore[misc]
+        cls, result_type_name, result_with_compliance: REST_Coating_Result, indicator_definitions
+    ) -> "CoatingWithComplianceResult":
+        ...
+
+    @classmethod
+    @overload
+    def create_compliance_result(  # type: ignore[misc]
+        cls, result_type_name, result_with_compliance: REST_Substance_Result, indicator_definitions
+    ) -> "SubstanceWithComplianceResult":
+        ...
+
+    @classmethod
     def create_compliance_result(
         cls,
         result_type_name: str,
-        result_with_compliance: Compliance_REST_Result,
+        result_with_compliance,
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
-    ) -> Item_With_Compliance_Result:
+    ):
         """Factory method to return a specific item result.
 
         Parameters
@@ -159,6 +217,7 @@ class ItemResultFactory:
 
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
         item_result_class = cls.registry[result_type_name]
+        assert issubclass(item_result_class, ComplianceResultMixin)
         item_result = item_result_class(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
@@ -391,7 +450,7 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
 
 
 @ItemResultFactory.register("Bom1711WithImpactedSubstances")
-class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin, BoM1711Definition):
+class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
     pass
 
 
@@ -794,16 +853,4 @@ class SpecificationWithComplianceResult(
 
 @ItemResultFactory.register("CoatingWithCompliance")
 class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
-    pass
-
-
-@ItemResultFactory.register("Bom1711WithCompliance")
-class BoM1711WithComplianceResult(
-    ChildPartWithComplianceMixin,
-    ChildSpecificationWithComplianceMixin,
-    ChildMaterialWithComplianceMixin,
-    ChildSubstanceWithComplianceMixin,
-    ComplianceResultMixin,
-    BoM1711Definition,
-):
     pass

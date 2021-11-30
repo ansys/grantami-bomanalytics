@@ -4,13 +4,13 @@ Defines the representations of the query results themselves, which allows them t
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
 
-from typing import List, Dict, Type, Callable, Any, Union, TypeVar, TYPE_CHECKING
+from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
 from collections import defaultdict
 from abc import ABC
 
-from ansys.grantami.bomanalytics_codegen import models
+from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 
-from ._item_results import (
+from ._item_results import (  # type: ignore[import]
     ItemResultFactory,
     MaterialWithImpactedSubstancesResult,
     MaterialWithComplianceResult,
@@ -100,12 +100,8 @@ class ImpactedSubstancesBaseClass(ABC):
     impacted substances by legislation only, or as a fully flattened list.
     """
 
-    # Used to satisfy the linter
-    _results = []
-    _result_type_name: str = ""
-
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
+        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"  # type: ignore[attr-defined]
 
     @property
     def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
@@ -125,7 +121,7 @@ class ImpactedSubstancesBaseClass(ABC):
         """
 
         results = defaultdict(list)
-        for item_result in self._results:
+        for item_result in self._results:  # type: ignore[attr-defined]
             for (
                 legislation_name,
                 legislation_result,
@@ -150,7 +146,7 @@ class ImpactedSubstancesBaseClass(ABC):
         """
 
         results = []
-        for item_result in self._results:
+        for item_result in self._results:  # type: ignore[attr-defined]
             for legislation_result in item_result.legislations.values():
                 results.extend(
                     legislation_result.substances
@@ -165,12 +161,8 @@ class ComplianceBaseClass(ABC):
     compliance by indicator only.
     """
 
-    # Used to satisfy the linter
-    _results = []
-    _result_type_name: str = ""
-
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
+        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"  # type: ignore[attr-defined]
 
     @property
     def compliance_by_indicator(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:
@@ -190,7 +182,7 @@ class ComplianceBaseClass(ABC):
         """
 
         results = {}
-        for result in self._results:
+        for result in self._results:  # type: ignore[attr-defined]
             for indicator_name, indicator_result in result.indicators.items():
                 if indicator_name not in results:
                     results[indicator_name] = indicator_result
@@ -550,7 +542,8 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         self._results = []
         self._result_type_name = "PartWithCompliance"
-        for result in results[0].parts:
+        parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance] = results[0].parts
+        for result in parts:
             part_with_compliance = ItemResultFactory.create_compliance_result(
                 result_type_name=self._result_type_name,
                 result_with_compliance=result,

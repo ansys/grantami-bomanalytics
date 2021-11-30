@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from typing import Callable, Type, Union, List, SupportsFloat, Dict, Optional
 from enum import Enum, auto
 
-from ansys.grantami.bomanalytics_codegen import models
+from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 
 
 class ReferenceType(Enum):
@@ -47,15 +47,15 @@ class RecordReference(ABC):
         reference_type: ReferenceType,
         reference_value: Union[int, str],
     ):
-        self.record_history_identity: Union[int, None] = None
-        self.record_guid: Union[str, None] = None
-        self.record_history_guid: Union[str, None] = None
+        self.record_history_identity: Optional[int] = None
+        self.record_guid: Optional[str] = None
+        self.record_history_guid: Optional[str] = None
         if reference_type == ReferenceType.MiRecordHistoryIdentity:
-            self.record_history_identity = reference_value
+            self.record_history_identity = int(reference_value)
         elif reference_type == ReferenceType.MiRecordGuid:
-            self.record_guid = reference_value
+            self.record_guid = str(reference_value)
         elif reference_type == ReferenceType.MiRecordHistoryGuid:
-            self.record_history_guid = reference_value
+            self.record_history_guid = str(reference_value)
 
     @property
     def record_reference(self) -> Optional[Dict[str, str]]:
@@ -77,6 +77,7 @@ class RecordReference(ABC):
                 "reference_type": ReferenceType.MiRecordHistoryIdentity.name,
                 "reference_value": str(self.record_history_identity),
             }
+        return None
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.record_reference})>"
@@ -113,15 +114,15 @@ class PartDefinition(RecordDefinition):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self.part_number: Union[str, None] = None
+        self.part_number: Optional[str] = None
         if reference_type == ReferenceType.PartNumber:
-            self.part_number = reference_value
+            self.part_number = str(reference_value)
 
     @property
     def record_reference(self) -> Dict[str, str]:
         return super().record_reference or {
             "reference_type": ReferenceType.PartNumber.name,
-            "reference_value": self.part_number,
+            "reference_value": str(self.part_number),
         }
 
     @property
@@ -157,15 +158,15 @@ class MaterialDefinition(RecordDefinition):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self.material_id: Union[str, None] = None
+        self.material_id: Optional[str] = None
         if reference_type == ReferenceType.MaterialId:
-            self.material_id = reference_value
+            self.material_id = str(reference_value)
 
     @property
     def record_reference(self) -> Dict[str, str]:
         return super().record_reference or {
             "reference_type": ReferenceType.MaterialId.name,
-            "reference_value": self.material_id,
+            "reference_value": str(self.material_id),
         }
 
     @property
@@ -202,15 +203,15 @@ class SpecificationDefinition(RecordDefinition):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self.specification_id: Union[str, None] = None
+        self.specification_id: Optional[str] = None
         if reference_type == ReferenceType.SpecificationId:
-            self.specification_id = reference_value
+            self.specification_id = str(reference_value)
 
     @property
     def record_reference(self) -> Dict[str, str]:
         return super().record_reference or {
             "reference_type": ReferenceType.SpecificationId.name,
-            "reference_value": self.specification_id,
+            "reference_value": str(self.specification_id),
         }
 
     @property
@@ -251,15 +252,15 @@ class BaseSubstanceReference(RecordReference, ABC):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self.chemical_name: Union[str, None] = None
-        self.cas_number: Union[str, None] = None
-        self.ec_number: Union[str, None] = None
+        self.chemical_name: Optional[str] = None
+        self.cas_number: Optional[str] = None
+        self.ec_number: Optional[str] = None
         if reference_type == ReferenceType.ChemicalName:
-            self.chemical_name = reference_value
+            self.chemical_name = str(reference_value)
         elif reference_type == ReferenceType.CasNumber:
-            self.cas_number = reference_value
+            self.cas_number = str(reference_value)
         elif reference_type == ReferenceType.EcNumber:
-            self.ec_number = reference_value
+            self.ec_number = str(reference_value)
 
     @property
     def record_reference(self) -> Dict[str, str]:
@@ -271,6 +272,8 @@ class BaseSubstanceReference(RecordReference, ABC):
                 definition = {"reference_type": ReferenceType.CasNumber.name, "reference_value": self.cas_number}
             elif self.ec_number:
                 definition = {"reference_type": ReferenceType.EcNumber.name, "reference_value": self.ec_number}
+            else:
+                raise RuntimeError
         return definition
 
 
@@ -370,7 +373,7 @@ class BoM1711Definition:
         The bill of materials in XML 1711 format.
     """
 
-    def __init__(self, bom: Union[str, None] = None):
+    def __init__(self, bom: str):
         super().__init__()
         self._bom = bom
 
@@ -391,7 +394,7 @@ class AbstractBomFactory:
     request object in the low-level API.
     """
 
-    registry = {}
+    registry: Dict[Type[models.Model], Type["BomItemDefinitionFactory"]] = {}
     """Mapping between a factory class and the definition object it can create"""
 
     @classmethod
@@ -408,7 +411,7 @@ class AbstractBomFactory:
             The function that's being decorated.
         """
 
-        def inner(item_factory: BomItemDefinitionFactory) -> BomItemDefinitionFactory:
+        def inner(item_factory: Type[BomItemDefinitionFactory]) -> Type[BomItemDefinitionFactory]:
             for request_type in request_types:
                 cls.registry[request_type] = item_factory
             return item_factory

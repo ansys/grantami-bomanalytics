@@ -31,12 +31,26 @@ class _Flag(Enum):
     """
 
     def __new__(cls, value: int, doc: str) -> "_Flag":
-        obj = object.__new__(cls)
+        obj: _Flag = object.__new__(cls)
         obj._value_ = value
         obj.__doc__ = doc
         return obj
 
-    def __le__(self, other):
+    @abstractmethod
+    def __lt__(self, other: "_Flag") -> bool:
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
+
+        Raises
+        ------
+        ValueError
+            If the other object is an indicator and has no value.
+        TypeError
+            If the other object isn't this flag's type or this flag's indicator's type.
+        """
+
+        pass
+
+    def __le__(self, other: "_Flag") -> bool:
         """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
@@ -93,28 +107,19 @@ class RoHSFlag(_Flag):
     compliance. *Compliance is unknown.*""",
     )
 
-    def __lt__(self, other):
-        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
-
-        Raises
-        ------
-        ValueError
-            If the other object is an indicator and has no value.
-        TypeError
-            If the other object isn't this flag's type or this flag's indicator's type.
-        """
-
-        if self.__class__ is other.__class__:
-            return self.value < other.value
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            result: bool = self.value < other.value
         elif isinstance(other, RoHSIndicator):
             if not other.flag:
                 raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
             else:
-                return self.value < other.flag.value
+                result = self.value < other.flag.value
         else:
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        return result
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
@@ -125,7 +130,7 @@ class RoHSFlag(_Flag):
             If the other object isn't this flag's type or this flag's indicator's type.
         """
 
-        if self.__class__ is other.__class__:
+        if isinstance(other, self.__class__):
             return self is other
         elif isinstance(other, RoHSIndicator):
             if not other.flag:
@@ -175,28 +180,19 @@ class WatchListFlag(_Flag):
     )
     WatchListUnknown = 7, """There is not enough information to determine compliance. *Compliance is unknown.*"""
 
-    def __lt__(self, other):
-        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
-
-        Raises
-        ------
-        ValueError
-            If the other object is an indicator and has no value.
-        TypeError
-            If the other object isn't this flag's type or this flag's indicator's type.
-        """
-
-        if self.__class__ is other.__class__:
-            return self.value < other.value
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            result: bool = self.value < other.value
         elif isinstance(other, WatchListIndicator):
             if not other.flag:
                 raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
             else:
-                return self.value < other.flag.value
+                result = self.value < other.flag.value
         else:
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        return result
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
@@ -207,7 +203,7 @@ class WatchListFlag(_Flag):
             If the other object isn't this flag's type or this flag's indicator's type.
         """
 
-        if self.__class__ is other.__class__:
+        if isinstance(other, self.__class__):
             return self is other
         elif isinstance(other, WatchListIndicator):
             if not other.flag:
@@ -224,7 +220,7 @@ class _Indicator(ABC):
     Allows for comparison of same-typed indicators that both have results.
     """
 
-    available_flags: Type[_Flag] = _Flag
+    available_flags: Type[_Flag]
 
     def __init__(
         self,
@@ -244,13 +240,13 @@ class _Indicator(ABC):
         """Generates the low-level API indicator object."""
         pass
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if not self._flag:
             return f"<{self.__class__.__name__}, name: {self.name}>"
         else:
             return f"<{self.__class__.__name__}, name: {self.name}, flag: {str(self.flag)}>"
 
-    def __str__(self):
+    def __str__(self) -> str:
         result = self.name
         if self.flag:
             result = f"{result}, {self.flag.name}"
@@ -268,13 +264,13 @@ class _Indicator(ABC):
         return self._flag
 
     @flag.setter
-    def flag(self, flag: str):
+    def flag(self, flag: str) -> None:
         try:
             self._flag = self.__class__.available_flags[flag]
         except KeyError as e:
             raise KeyError(f'Unknown flag "{flag}" for indicator "{repr(self)}"').with_traceback(e.__traceback__)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
 
         Raises
@@ -288,15 +284,16 @@ class _Indicator(ABC):
         if not self.flag:
             raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
         if isinstance(other, self.available_flags):
-            return self.flag is other
-        if self.__class__ is not other.__class__:
+            result: bool = self.flag is other
+        if not isinstance(other, self.__class__):
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
         if self.flag and other.flag:
-            return self.flag is other.flag
+            result = self.flag is other.flag
         elif not other.flag:
             raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+        return result
 
-    def __lt__(self, other):
+    def __lt__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
 
         Raises
@@ -311,14 +308,14 @@ class _Indicator(ABC):
             raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
         if isinstance(other, self.available_flags):
             return self.flag < other
-        if self.__class__ is not other.__class__:
+        if not isinstance(other, self.__class__):
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
         if self.flag and other.flag:
             return self.flag < other.flag
         else:
             raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
 
-    def __le__(self, other):
+    def __le__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
 
         Raises
@@ -388,7 +385,7 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
         legislation_names: List[str],
         default_threshold_percentage: Optional[float] = None,
         ignore_exemptions: bool = False,
-    ):
+    ) -> None:
         super().__init__(name, legislation_names, default_threshold_percentage)
         self._ignore_exemptions: bool = ignore_exemptions
         self._indicator_type: str = "Rohs"
@@ -463,7 +460,7 @@ class WatchListIndicator(_Indicator):
         legislation_names: List[str],
         default_threshold_percentage: Optional[float] = None,
         ignore_process_chemicals: bool = False,
-    ):
+    ) -> None:
         super().__init__(name, legislation_names, default_threshold_percentage)
         self._ignore_process_chemicals: bool = ignore_process_chemicals
         self._indicator_type: str = "WatchList"

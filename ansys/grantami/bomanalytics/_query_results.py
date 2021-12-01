@@ -4,13 +4,13 @@ Defines the representations of the query results themselves, which allows them t
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
 
-from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
+from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING, TypedDict, Optional
 from collections import defaultdict
 from abc import ABC
 
 from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 
-from ._item_results import (  # type: ignore[import]
+from ._item_results import (
     ItemResultFactory,
     MaterialWithImpactedSubstancesResult,
     MaterialWithComplianceResult,
@@ -21,10 +21,11 @@ from ._item_results import (  # type: ignore[import]
     SubstanceWithComplianceResult,
     ImpactedSubstance,
 )
-from .indicators import WatchListIndicator, RoHSIndicator
+from .indicators import WatchListIndicator, RoHSIndicator, _Indicator
 
 if TYPE_CHECKING:
     from .queries import Query_Result
+    from ._item_definitions import ReferenceType
 
 
 class QueryResultFactory:
@@ -32,7 +33,7 @@ class QueryResultFactory:
     of the response from the low-level API.
     """
 
-    registry: dict = {}
+    registry: Dict = {}
     "Mapping between a query result class and the API response it supports."
 
     @classmethod
@@ -57,7 +58,7 @@ class QueryResultFactory:
         return inner
 
     @classmethod
-    def create_result(cls, results: Union[List[models.Model], models.Model], **kwargs) -> "Query_Result":
+    def create_result(cls, results: Union[List[models.Model], models.Model], **kwargs: Dict) -> "Query_Result":
         """Factory method to return a specific query result.
 
         Uses the type of the `results` parameter to determine which specific `Query_Result` to return. If `results` is a
@@ -90,7 +91,8 @@ class QueryResultFactory:
         except KeyError as e:
             raise RuntimeError(f'Unregistered response type "{response_type}"').with_traceback(e.__traceback__)
 
-        return item_factory_class(results, **kwargs)
+        item_result: Query_Result = item_factory_class(results, **kwargs)
+        return item_result
 
 
 class ImpactedSubstancesBaseClass(ABC):

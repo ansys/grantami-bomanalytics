@@ -47,7 +47,7 @@ class _BaseArgumentManager(ABC):
     Doesn't specify how the objects are added to the `_items` attribute, or how they are converted to attributes.
     """
 
-    _items: List = []
+    _items: List
     """ Describes the bom items to be passed to the low-level API. The type is determined in the concrete class. """
 
     @property
@@ -79,7 +79,7 @@ class _RecordArgumentManager(_BaseArgumentManager):
         The number of items to be included in a single request.
     """
 
-    def __init__(self, item_type_name: str = "", batch_size: Optional[int] = None):
+    def __init__(self, item_type_name: str = "", batch_size: Optional[int] = None) -> None:
         super().__init__()
         self._items = []
         """ The name of the item collection as defined by the low-level API, e.g. 'materials', 'parts'. """
@@ -103,7 +103,7 @@ class _RecordArgumentManager(_BaseArgumentManager):
             batch_text = f"batch_size: {self.batch_size}"
         return f"<{self.__class__.__name__} {{{item_text}, {batch_text}}}, length = {len(self._items)}>"
 
-    def append_record_definition(self, item: RecordDefinition):
+    def append_record_definition(self, item: RecordDefinition) -> None:
         """Append a specific record definition to the argument manager.
 
         Parameters
@@ -162,7 +162,8 @@ class _RecordArgumentManager(_BaseArgumentManager):
             The attribute containing the list of results identified by `self.record_type_name`.
         """
 
-        return getattr(response, self.item_type_name)
+        results: List[models.Model] = getattr(response, self.item_type_name)
+        return results
 
 
 class _BaseQueryBuilder(ABC):
@@ -192,7 +193,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
     here, since record-based queries are the only queries which can operate on multiple items.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._item_argument_manager = _RecordArgumentManager()
 
     def __repr__(self) -> str:
@@ -342,8 +343,9 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         <MaterialCompliance: 2 materials, batch size = 100, 0 indicators>
         """
 
-        record_guids = [r["record_guid"] for r in stk_records]  # TODO Handle database key
-        return self.with_record_guids(record_guids)
+        record_guids: List[str] = [r["record_guid"] for r in stk_records]  # TODO Handle database key
+        query_builder: Query_Builder = self.with_record_guids(record_guids)
+        return query_builder
 
 
 if TYPE_CHECKING:
@@ -359,9 +361,9 @@ class _ApiMixin(api_base_class):
     concepts related to the parameter dimension of a query, including validation.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self._request_type = None
+        self._request_type: Type[models.Model]
         """The type of object to be sent to the Granta MI server. The actual value is set in the concrete class
          definition."""
 
@@ -402,7 +404,7 @@ class _ApiMixin(api_base_class):
         pass
 
     @abstractmethod
-    def _validate_parameters(self):
+    def _validate_parameters(self) -> None:
         pass
 
 
@@ -413,7 +415,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
     MI, and creating the compliance result objects.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._indicators: Dict[str, _Indicator] = {}
         """The indicators added to the query."""
@@ -496,7 +498,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         )
         return result
 
-    def _validate_parameters(self):
+    def _validate_parameters(self) -> None:
         """Perform pre-flight checks on the indicators that have been added to the query.
 
         Warns
@@ -519,7 +521,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     Granta MI, and creating the impacted substance result objects.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._legislations: List[str] = []
         """The legislation names added to the query."""
@@ -588,7 +590,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         result: Query_Result = QueryResultFactory.create_result(results=result_raw)
         return result
 
-    def _validate_parameters(self):
+    def _validate_parameters(self) -> None:
         """Perform pre-flight checks on the legislations that have been added to the query.
 
         Warns
@@ -607,7 +609,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
 class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
     """Sub-class for all queries where the items added to the query are direct references to material records."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._item_argument_manager.item_type_name = "materials"
         self._item_argument_manager.batch_size = 100
@@ -666,7 +668,7 @@ class MaterialComplianceQuery(_ComplianceMixin, _MaterialQueryBuilder):
     <MaterialComplianceQueryResult: 2 MaterialWithCompliance results>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
@@ -694,7 +696,7 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
     <MaterialImpactedSubstancesQueryResult: 2 MaterialWithImpactedSubstances results>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest  # noqa: E501
@@ -706,7 +708,7 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
 class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
     """Sub-class for all queries where the items added to the query are direct references to part records."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._item_argument_manager.item_type_name = "parts"
         self._item_argument_manager.batch_size = 10
@@ -762,7 +764,7 @@ class PartComplianceQuery(_ComplianceMixin, _PartQueryBuilder):
     <PartComplianceQueryResult: 2 PartWithCompliance results>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
@@ -790,7 +792,7 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
     <PartImpactedSubstancesQueryResult: 2 PartWithImpactedSubstances results>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest  # noqa: E501
@@ -802,7 +804,7 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
 class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
     """Sub-class for all queries where the items added to the query are direct references to specification records."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._item_argument_manager.item_type_name = "specifications"
         self._item_argument_manager.batch_size = 10
@@ -861,7 +863,7 @@ class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder)
     <SpecificationComplianceQueryResult: 2 SpecificationWithCompliance results>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest  # noqa: E501
@@ -892,7 +894,7 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
                     2 SpecificationWithImpactedSubstances results>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest  # noqa: E501
@@ -904,7 +906,7 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
 class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     """Sub-class for all queries where the items added to the query are direct references to substance records."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._item_argument_manager.item_type_name = "substances"
         self._item_argument_manager.batch_size = 500
@@ -1188,7 +1190,7 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
     <SubstanceComplianceQueryResult: 2 SubstanceWithCompliance results>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
@@ -1201,12 +1203,11 @@ class _BomArgumentManager(_BaseArgumentManager):
     Implements the `_items` attribute as a string, since only one Bom can be sent to the server in a single query.
     """
 
-    def __init__(self):
-        self._items: str = ""
+    def __init__(self) -> None:
         self.item_type_name = "bom_xml1711"
 
     def __repr__(self) -> str:
-        return f'<_BomArgumentManager {{bom: "{self._items[:100]}"}}>'
+        return f'<_BomArgumentManager {{bom: "{self._items[0][:100]}"}}>'
 
     @property
     def bom(self) -> str:
@@ -1218,11 +1219,12 @@ class _BomArgumentManager(_BaseArgumentManager):
         bom
             The Bom that will be used for the query.
         """
-        return self._items
+        bom: str = self._items[0]
+        return bom
 
     @bom.setter
-    def bom(self, value: str):
-        self._items = value
+    def bom(self, value: str) -> None:
+        self._items = [value]
 
     @property
     def batched_arguments(self) -> List[Dict[str, str]]:
@@ -1239,7 +1241,7 @@ class _BomArgumentManager(_BaseArgumentManager):
         {"bom_xml1711": "<PartsEco xmlns..."}
         """
 
-        return [{self.item_type_name: self._items}]
+        return [{self.item_type_name: self._items[0]}]
 
     def extract_results_from_response(self, response: models.Model) -> List[models.Model]:
         """Extracts the individual results from a response object.
@@ -1256,7 +1258,7 @@ class _BomArgumentManager(_BaseArgumentManager):
 class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
     """Sub-class for all queries where the items added to the query are Boms."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._item_argument_manager = _BomArgumentManager()
 
     @allowed_types(object, str)
@@ -1316,7 +1318,7 @@ class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
     <BomComplianceQueryResult: 1 PartWithCompliance results>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request
         self._api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_bom1711"
@@ -1345,7 +1347,7 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     <BomImpactedSubstancesQueryResult: 1 Bom1711WithImpactedSubstances results>
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._request_type = (
             models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request  # noqa: E501
@@ -1374,7 +1376,7 @@ class Yaml:
     api_class = api.DocumentationApi
 
     @staticmethod
-    def _run_query(api_instance: api.DocumentationApi, **kwargs) -> str:
+    def _run_query(api_instance: api.DocumentationApi, **kwargs: Dict) -> str:
         """Gets the yaml representation of the API from Granta MI.
 
         Parameters
@@ -1387,4 +1389,5 @@ class Yaml:
             The yaml definition of the Bom Analytics API.
         """
 
-        return api_instance.get_miservicelayer_bom_analytics_v1svc_yaml()
+        result: str = api_instance.get_miservicelayer_bom_analytics_v1svc_yaml()
+        return result

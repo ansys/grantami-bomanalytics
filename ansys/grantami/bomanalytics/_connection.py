@@ -12,7 +12,7 @@ DEFAULT_DBKEY : str
     The default database key for Restricted Substances. Used if a database key isn't specified.
 """
 
-from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
+from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Tuple
 import logging
 from ansys.openapi import common  # type: ignore[import]
 from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
@@ -33,6 +33,8 @@ if TYPE_CHECKING:
         Yaml,
     )
     from ansys.grantami.bomanalytics._query_results import (  # type: ignore[import]
+        ComplianceBaseClass,
+        ImpactedSubstancesBaseClass,
         MaterialImpactedSubstancesQueryResult,
         MaterialComplianceQueryResult,
         PartImpactedSubstancesQueryResult,
@@ -91,7 +93,7 @@ class Connection(common.ApiClientFactory):
 
 
 class BomAnalyticsClient(common.ApiClient):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Tuple, **kwargs: Dict) -> None:
         super().__init__(*args, **kwargs)
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
@@ -103,7 +105,7 @@ class BomAnalyticsClient(common.ApiClient):
             "coatings_table_name": None,
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<BomServicesClient: url={self.api_url}>"
 
     def set_database_details(
@@ -115,7 +117,7 @@ class BomAnalyticsClient(common.ApiClient):
         products_and_parts_table_name: Optional[str] = None,
         substances_table_name: Optional[str] = None,
         coatings_table_name: Optional[str] = None,
-    ):
+    ) -> None:
         """Configure the database key and table names if different from the defaults.
 
         The database key is required if something other than MI_Restricted_Substances is being used. A table name should
@@ -169,7 +171,7 @@ class BomAnalyticsClient(common.ApiClient):
         self._table_names["coatings_table_name"] = coatings_table_name
 
     @overload
-    def run(self, query: "MaterialImpactedSubstancesQuery") -> "MaterialImpactedSubstancesQueryResult":  # type: ignore[misc]
+    def run(self, query: "MaterialImpactedSubstancesQuery") -> "MaterialImpactedSubstancesQueryResult":
         ...
 
     @overload
@@ -212,7 +214,7 @@ class BomAnalyticsClient(common.ApiClient):
     def run(self, query: Type["Yaml"]) -> str:  # type: ignore[misc]
         ...
 
-    def run(self, query):
+    def run(self, query):  # type: ignore[no-untyped-def]
         """Run a query against the Granta MI database.
 
         Parameters

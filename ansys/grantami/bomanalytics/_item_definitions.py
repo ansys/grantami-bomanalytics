@@ -51,11 +51,11 @@ class RecordReference(ABC):
         self.record_guid: Optional[str] = None
         self.record_history_guid: Optional[str] = None
         if reference_type == ReferenceType.MiRecordHistoryIdentity:
-            self.record_history_identity = int(reference_value)
+            self.record_history_identity = reference_value  # type: ignore[assignment]
         elif reference_type == ReferenceType.MiRecordGuid:
-            self.record_guid = str(reference_value)
+            self.record_guid = reference_value  # type: ignore[assignment]
         elif reference_type == ReferenceType.MiRecordHistoryGuid:
-            self.record_history_guid = str(reference_value)
+            self.record_history_guid = reference_value  # type: ignore[assignment]
 
     @property
     def record_reference(self) -> Optional[Dict[str, str]]:
@@ -116,14 +116,20 @@ class PartDefinition(RecordDefinition):
         )
         self.part_number: Optional[str] = None
         if reference_type == ReferenceType.PartNumber:
-            self.part_number = str(reference_value)
+            self.part_number = reference_value  # type: ignore[assignment]
 
     @property
     def record_reference(self) -> Dict[str, str]:
-        return super().record_reference or {
-            "reference_type": ReferenceType.PartNumber.name,
-            "reference_value": str(self.part_number),
-        }
+        record_ref = super().record_reference
+        if record_ref:
+            return record_ref
+        elif self.part_number:
+            return {
+                "reference_type": ReferenceType.PartNumber.name,
+                "reference_value": self.part_number,
+            }
+        else:
+            raise RuntimeError("Bom item doesn't have a valid record identifier.")
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonPartReference:
@@ -160,14 +166,20 @@ class MaterialDefinition(RecordDefinition):
         )
         self.material_id: Optional[str] = None
         if reference_type == ReferenceType.MaterialId:
-            self.material_id = str(reference_value)
+            self.material_id = reference_value  # type: ignore[assignment]
 
     @property
     def record_reference(self) -> Dict[str, str]:
-        return super().record_reference or {
-            "reference_type": ReferenceType.MaterialId.name,
-            "reference_value": str(self.material_id),
-        }
+        record_ref = super().record_reference
+        if record_ref:
+            return record_ref
+        elif self.material_id:
+            return {
+                "reference_type": ReferenceType.MaterialId.name,
+                "reference_value": self.material_id,
+            }
+        else:
+            raise RuntimeError("Bom item doesn't have a valid record identifier.")
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference:
@@ -205,14 +217,20 @@ class SpecificationDefinition(RecordDefinition):
         )
         self.specification_id: Optional[str] = None
         if reference_type == ReferenceType.SpecificationId:
-            self.specification_id = str(reference_value)
+            self.specification_id = reference_value  # type: ignore[assignment]
 
     @property
     def record_reference(self) -> Dict[str, str]:
-        return super().record_reference or {
-            "reference_type": ReferenceType.SpecificationId.name,
-            "reference_value": str(self.specification_id),
-        }
+        record_ref = super().record_reference
+        if record_ref:
+            return record_ref
+        elif self.specification_id:
+            return {
+                "reference_type": ReferenceType.SpecificationId.name,
+                "reference_value": self.specification_id,
+            }
+        else:
+            raise RuntimeError("Bom item doesn't have a valid record identifier.")
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference:
@@ -256,25 +274,25 @@ class BaseSubstanceReference(RecordReference, ABC):
         self.cas_number: Optional[str] = None
         self.ec_number: Optional[str] = None
         if reference_type == ReferenceType.ChemicalName:
-            self.chemical_name = str(reference_value)
+            self.chemical_name = reference_value  # type: ignore[assignment]
         elif reference_type == ReferenceType.CasNumber:
-            self.cas_number = str(reference_value)
+            self.cas_number = reference_value  # type: ignore[assignment]
         elif reference_type == ReferenceType.EcNumber:
-            self.ec_number = str(reference_value)
+            self.ec_number = reference_value  # type: ignore[assignment]
 
     @property
     def record_reference(self) -> Dict[str, str]:
-        definition = super().record_reference
-        if not definition:
+        record_ref = super().record_reference
+        if not record_ref:
             if self.chemical_name:
-                definition = {"reference_type": ReferenceType.ChemicalName.name, "reference_value": self.chemical_name}
+                record_ref = {"reference_type": ReferenceType.ChemicalName.name, "reference_value": self.chemical_name}
             elif self.cas_number:
-                definition = {"reference_type": ReferenceType.CasNumber.name, "reference_value": self.cas_number}
+                record_ref = {"reference_type": ReferenceType.CasNumber.name, "reference_value": self.cas_number}
             elif self.ec_number:
-                definition = {"reference_type": ReferenceType.EcNumber.name, "reference_value": self.ec_number}
+                record_ref = {"reference_type": ReferenceType.EcNumber.name, "reference_value": self.ec_number}
             else:
-                raise RuntimeError
-        return definition
+                raise RuntimeError("Bom item doesn't have a valid record identifier.")
+        return record_ref
 
 
 class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
@@ -327,7 +345,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         return self._percentage_amount or self.__class__._default_percentage_amount
 
     @percentage_amount.setter
-    def percentage_amount(self, value: SupportsFloat):
+    def percentage_amount(self, value: SupportsFloat) -> None:
         if not isinstance(value, SupportsFloat):
             raise TypeError(f'percentage_amount must be a number. Specified type was "{type(value)}"')
         value = float(value)
@@ -419,7 +437,7 @@ class AbstractBomFactory:
         return inner
 
     @classmethod
-    def create_factory_for_request_type(cls, request_type: Type[models.Model]):
+    def create_factory_for_request_type(cls, request_type: Type[models.Model]) -> "BomItemDefinitionFactory":
         """Factory method to instantiate and return a specific item definition factory.
 
         Parameters
@@ -456,17 +474,17 @@ class BomItemDefinitionFactory(ABC):
 
     @staticmethod
     @abstractmethod
-    def create_definition_by_record_history_identity(record_history_identity: int):
+    def create_definition_by_record_history_identity(record_history_identity: int) -> "RecordDefinition":
         pass
 
     @staticmethod
     @abstractmethod
-    def create_definition_by_record_guid(record_guid: str):
+    def create_definition_by_record_guid(record_guid: str) -> "RecordDefinition":
         pass
 
     @staticmethod
     @abstractmethod
-    def create_definition_by_record_history_guid(record_history_guid: str):
+    def create_definition_by_record_history_guid(record_history_guid: str) -> "RecordDefinition":
         pass
 
 
@@ -527,7 +545,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
         return MaterialDefinition(reference_type=ReferenceType.MiRecordGuid, reference_value=record_guid)
 
     @staticmethod
-    def create_definition_by_material_id(material_id) -> MaterialDefinition:
+    def create_definition_by_material_id(material_id: str) -> MaterialDefinition:
         """Instantiate and return a `MaterialDefinition` object based on the provided material ID.
 
         Parameters
@@ -599,7 +617,7 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
         return PartDefinition(reference_type=ReferenceType.MiRecordGuid, reference_value=record_guid)
 
     @staticmethod
-    def create_definition_by_part_number(part_number) -> PartDefinition:
+    def create_definition_by_part_number(part_number: str) -> PartDefinition:
         """Instantiate and return a `PartDefinition` object based on the provided part number.
 
         Parameters
@@ -673,7 +691,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
         return SpecificationDefinition(reference_type=ReferenceType.MiRecordGuid, reference_value=record_guid)
 
     @staticmethod
-    def create_definition_by_specification_id(specification_id) -> SpecificationDefinition:
+    def create_definition_by_specification_id(specification_id: str) -> SpecificationDefinition:
         """Instantiate and return a `SpecificationDefinition` object based on the provided specification id.
 
         Parameters
@@ -797,7 +815,7 @@ class BomFactory:
     """Creates bom definition objects."""
 
     @staticmethod
-    def create_definition(bom) -> BoM1711Definition:
+    def create_definition(bom: str) -> BoM1711Definition:
         """Instantiate and return a `Bom1711Definition` object based on the provided bom.
 
         Parameters

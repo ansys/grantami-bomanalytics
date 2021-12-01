@@ -3,17 +3,14 @@
 Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
 queries. These are mostly extensions of the classes in _item_definitions.py.
 """
-
-from typing import List, Dict, Union, Callable, TYPE_CHECKING, Optional, overload, TypeVar, Type
+from typing import List, Dict, Union, Callable, TYPE_CHECKING, Optional, overload, TypeVar, Type, Any
 from copy import deepcopy
 from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 from ._item_definitions import (
     MaterialDefinition,
     PartDefinition,
     SpecificationDefinition,
-    BoM1711Definition,
     BaseSubstanceReference,
-    RecordDefinition,
     ReferenceType,
     CoatingReference,
 )
@@ -22,37 +19,44 @@ from .indicators import WatchListIndicator, RoHSIndicator
 if TYPE_CHECKING:
     from ._query_results import MaterialImpactedSubstancesQueryResult  # noqa: F401
 
-REST_Material_Result = TypeVar(
-    "REST_Material_Result",
+Result_Model_Material = TypeVar(
+    "Result_Model_Material",
     bound=Union[
         models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial,
         models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance,
     ],
 )
-REST_Part_Result = TypeVar(
-    "REST_Part_Result",
+Result_Model_Part = TypeVar(
+    "Result_Model_Part",
     bound=Union[
         models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart,
         models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance,
     ],
 )
-REST_Specification_Result = TypeVar(
-    "REST_Specification_Result",
+Result_Model_Specification = TypeVar(
+    "Result_Model_Specification",
     bound=Union[
         models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification,
         models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance,
     ],
 )
-REST_Substance_Result = TypeVar(
-    "REST_Substance_Result", bound=models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
+Result_Model_Substance = TypeVar(
+    "Result_Model_Substance", bound=models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
 )
-REST_Coating_Result = TypeVar(
-    "REST_Coating_Result", bound=models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance
+Result_Model_Coating = TypeVar(
+    "Result_Model_Coating", bound=models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance
 )
-REST_Bom_Result = TypeVar(
-    "REST_Bom_Result", bound=models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
+Result_Model_Bom = TypeVar(
+    "Result_Model_Bom", bound=models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
 )
+Result_Model_Any = Union[Result_Model_Part,
+                         Result_Model_Material,
+                         Result_Model_Specification,
+                         Result_Model_Coating,
+                         Result_Model_Substance,
+                         Result_Model_Bom]
 Item_Result = Union[Type["ImpactedSubstancesResultMixin"], Type["ComplianceResultMixin"]]
+Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
 class ItemResultFactory:
@@ -87,33 +91,33 @@ class ItemResultFactory:
     @classmethod
     @overload
     def create_impacted_substances_result(
-        cls, result_type_name, result_with_impacted_substances: REST_Material_Result
+        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Material
     ) -> "MaterialWithImpactedSubstancesResult":
         ...
 
     @classmethod
     @overload
     def create_impacted_substances_result(  # type: ignore[misc]
-        cls, result_type_name, result_with_impacted_substances: REST_Part_Result
+        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Part
     ) -> "PartWithImpactedSubstancesResult":
         ...
 
     @classmethod
     @overload
     def create_impacted_substances_result(  # type: ignore[misc]
-        cls, result_type_name, result_with_impacted_substances: REST_Specification_Result
+        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Specification
     ) -> "SpecificationWithImpactedSubstancesResult":
         ...
 
     @classmethod
     @overload
     def create_impacted_substances_result(  # type: ignore[misc]
-        cls, result_type_name, result_with_impacted_substances: REST_Bom_Result
+        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Bom
     ) -> "BoM1711WithImpactedSubstancesResult":
         ...
 
     @classmethod
-    def create_impacted_substances_result(cls, result_type_name: str, result_with_impacted_substances):
+    def create_impacted_substances_result(cls, result_type_name: str, result_with_impacted_substances: Result_Model_Any) -> "ImpactedSubstancesResultMixin":
         """Factory method to return a specific impacted substances result.
 
         Parameters
@@ -152,35 +156,35 @@ class ItemResultFactory:
     @classmethod
     @overload
     def create_compliance_result(
-        cls, result_type_name, result_with_compliance: REST_Material_Result, indicator_definitions
+        cls, result_type_name: str, result_with_compliance: Result_Model_Material, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
     ) -> "MaterialWithComplianceResult":
         ...
 
     @classmethod
     @overload
     def create_compliance_result(  # type: ignore[misc]
-        cls, result_type_name, result_with_compliance: REST_Part_Result, indicator_definitions
+        cls, result_type_name: str, result_with_compliance: Result_Model_Part, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
     ) -> "PartWithComplianceResult":
         ...
 
     @classmethod
     @overload
     def create_compliance_result(  # type: ignore[misc]
-        cls, result_type_name, result_with_compliance: REST_Specification_Result, indicator_definitions
+        cls, result_type_name: str, result_with_compliance: Result_Model_Specification, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
     ) -> "SpecificationWithComplianceResult":
         ...
 
     @classmethod
     @overload
     def create_compliance_result(  # type: ignore[misc]
-        cls, result_type_name, result_with_compliance: REST_Coating_Result, indicator_definitions
+        cls, result_type_name: str, result_with_compliance: Result_Model_Coating, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
     ) -> "CoatingWithComplianceResult":
         ...
 
     @classmethod
     @overload
     def create_compliance_result(  # type: ignore[misc]
-        cls, result_type_name, result_with_compliance: REST_Substance_Result, indicator_definitions
+        cls, result_type_name: str, result_with_compliance: Result_Model_Substance, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
     ) -> "SubstanceWithComplianceResult":
         ...
 
@@ -188,9 +192,9 @@ class ItemResultFactory:
     def create_compliance_result(
         cls,
         result_type_name: str,
-        result_with_compliance,
+        result_with_compliance: Result_Model_Any,
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
-    ):
+    ) -> "ComplianceResultMixin":
         """Factory method to return a specific item result.
 
         Parameters
@@ -297,7 +301,7 @@ class ImpactedSubstance(BaseSubstanceReference):
         """The substance concentration threshold over which the material is non-compliant with the legislation. `None`
         means the threshold has not been specified, not that the threshold is 0 %."""
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'<ImpactedSubstance: {{"cas_number": {self.cas_number}, '
             f'"percent_amount": {self.max_percentage_amount_in_material}}}>'
@@ -367,7 +371,7 @@ class LegislationResult:
             impacted_substance.chemical_name = substance.substance_name
             self.substances.append(impacted_substance)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'<{self.__class__.__name__}({{"name": {self.name}}}), {len(self.substances)} ImpactedSubstances>'
 
 
@@ -387,8 +391,8 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
     def __init__(
         self,
         legislations: List[models.GrantaBomAnalyticsServicesInterfaceCommonLegislationWithImpactedSubstances],
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         """
         Parameters
         ----------
@@ -430,7 +434,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
         return self._legislations
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.record_reference}), {len(self.legislations)} legislations>"
 
 
@@ -506,8 +510,8 @@ class ComplianceResultMixin(mixin_base_class):
         self,
         indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__(**kwargs)
         self._indicator_definitions = indicator_definitions
         self.indicators: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]] = deepcopy(indicator_definitions)
@@ -517,7 +521,7 @@ class ComplianceResultMixin(mixin_base_class):
         for indicator_result in indicator_results:
             self.indicators[indicator_result.name].flag = indicator_result.flag
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.record_reference}), {len(self.indicators)} indicators>"
 
 
@@ -541,7 +545,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
         `RecordDefinition`-based objects.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._substances: List[SubstanceWithComplianceResult] = []
 
@@ -561,7 +565,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
 
     def _add_child_substances(
         self, child_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance]
-    ):
+    ) -> None:
         """Populate the `substances` attribute based on a provided list of low-level API substance with compliance
         results.
 
@@ -594,7 +598,7 @@ class ChildMaterialWithComplianceMixin(child_base_class):
         `RecordDefinition`-based objects.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._materials: List[MaterialWithComplianceResult] = []
 
@@ -615,7 +619,7 @@ class ChildMaterialWithComplianceMixin(child_base_class):
     def _add_child_materials(
         self,
         child_materials: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
-    ):
+    ) -> None:
         """Populate the `materials` attribute based on a provided list of low-level API materials with compliance
         results.
 
@@ -652,7 +656,7 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
         `RecordDefinition`-based objects.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._specifications: List[SpecificationWithComplianceResult] = []
 
@@ -673,7 +677,7 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
     def _add_child_specifications(
         self,
         child_specifications: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
-    ):
+    ) -> None:
         """Populate the `specifications` attribute based on a provided list of low-level API specifications with
         compliance results.
 
@@ -713,7 +717,7 @@ class ChildPartWithComplianceMixin(child_base_class):
         `RecordDefinition`-based objects.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._parts: List[PartWithComplianceResult] = []
 
@@ -734,7 +738,7 @@ class ChildPartWithComplianceMixin(child_base_class):
     def _add_child_parts(
         self,
         child_parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
-    ):
+    ) -> None:
         """Populate the `parts` attribute based on a provided list of low-level API parts with compliance
         results.
 
@@ -774,7 +778,7 @@ class ChildCoatingWithComplianceMixin(child_base_class):
         `RecordDefinition`-based objects.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self._coatings: List[CoatingWithComplianceResult] = []
 
@@ -795,7 +799,7 @@ class ChildCoatingWithComplianceMixin(child_base_class):
     def _add_child_coatings(
         self,
         child_coatings: List[models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance],
-    ):
+    ) -> None:
         """Populate the `coatings` attribute based on a provided list of low-level API coatings with compliance
         results.
 

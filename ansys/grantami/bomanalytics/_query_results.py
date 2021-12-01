@@ -4,7 +4,7 @@ Defines the representations of the query results themselves, which allows them t
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
 
-from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING, TypedDict, Optional
+from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
 from collections import defaultdict
 from abc import ABC
 
@@ -21,11 +21,10 @@ from ._item_results import (
     SubstanceWithComplianceResult,
     ImpactedSubstance,
 )
-from .indicators import WatchListIndicator, RoHSIndicator, _Indicator
+from .indicators import WatchListIndicator, RoHSIndicator
 
 if TYPE_CHECKING:
     from .queries import Query_Result
-    from ._item_definitions import ReferenceType
 
 
 class QueryResultFactory:

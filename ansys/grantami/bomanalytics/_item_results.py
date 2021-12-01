@@ -49,12 +49,14 @@ Result_Model_Coating = TypeVar(
 Result_Model_Bom = TypeVar(
     "Result_Model_Bom", bound=models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
 )
-Result_Model_Any = Union[Result_Model_Part,
-                         Result_Model_Material,
-                         Result_Model_Specification,
-                         Result_Model_Coating,
-                         Result_Model_Substance,
-                         Result_Model_Bom]
+Result_Model_Any = Union[
+    Result_Model_Part,
+    Result_Model_Material,
+    Result_Model_Specification,
+    Result_Model_Coating,
+    Result_Model_Substance,
+    Result_Model_Bom,
+]
 Item_Result = Union[Type["ImpactedSubstancesResultMixin"], Type["ComplianceResultMixin"]]
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
@@ -117,7 +119,9 @@ class ItemResultFactory:
         ...
 
     @classmethod
-    def create_impacted_substances_result(cls, result_type_name: str, result_with_impacted_substances: Result_Model_Any) -> "ImpactedSubstancesResultMixin":
+    def create_impacted_substances_result(
+        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Any
+    ) -> "ImpactedSubstancesResultMixin":
         """Factory method to return a specific impacted substances result.
 
         Parameters
@@ -156,35 +160,50 @@ class ItemResultFactory:
     @classmethod
     @overload
     def create_compliance_result(
-        cls, result_type_name: str, result_with_compliance: Result_Model_Material, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+        cls,
+        result_type_name: str,
+        result_with_compliance: Result_Model_Material,
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ) -> "MaterialWithComplianceResult":
         ...
 
     @classmethod
     @overload
     def create_compliance_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_compliance: Result_Model_Part, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+        cls,
+        result_type_name: str,
+        result_with_compliance: Result_Model_Part,
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ) -> "PartWithComplianceResult":
         ...
 
     @classmethod
     @overload
     def create_compliance_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_compliance: Result_Model_Specification, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+        cls,
+        result_type_name: str,
+        result_with_compliance: Result_Model_Specification,
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ) -> "SpecificationWithComplianceResult":
         ...
 
     @classmethod
     @overload
     def create_compliance_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_compliance: Result_Model_Coating, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+        cls,
+        result_type_name: str,
+        result_with_compliance: Result_Model_Coating,
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ) -> "CoatingWithComplianceResult":
         ...
 
     @classmethod
     @overload
     def create_compliance_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_compliance: Result_Model_Substance, indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+        cls,
+        result_type_name: str,
+        result_with_compliance: Result_Model_Substance,
+        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ) -> "SubstanceWithComplianceResult":
         ...
 

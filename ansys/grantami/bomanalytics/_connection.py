@@ -33,8 +33,6 @@ if TYPE_CHECKING:
         Yaml,
     )
     from ansys.grantami.bomanalytics._query_results import (  # type: ignore[import]
-        ComplianceBaseClass,
-        ImpactedSubstancesBaseClass,
         MaterialImpactedSubstancesQueryResult,
         MaterialComplianceQueryResult,
         PartImpactedSubstancesQueryResult,

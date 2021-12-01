@@ -32,6 +32,7 @@ with open(os.path.join(HERE, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='ansys-grantami-bomanalytics',
     packages=['ansys.grantami.bomanalytics'],
+    package_data={'ansys.grantami.bomanalytics': ['py.typed']},
     version=__version__,
     description='Granta MI Bom Analytics',
     long_description=long_description,

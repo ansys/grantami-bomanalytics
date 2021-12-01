@@ -20,7 +20,7 @@ from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 
 if TYPE_CHECKING:
-    from ansys.grantami.bomanalytics.queries import (  # type: ignore[import]
+    from ansys.grantami.bomanalytics.queries import (
         MaterialImpactedSubstancesQuery,
         MaterialComplianceQuery,
         PartImpactedSubstancesQuery,
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
         BomComplianceQuery,
         Yaml,
     )
-    from ansys.grantami.bomanalytics._query_results import (  # type: ignore[import]
+    from ansys.grantami.bomanalytics._query_results import (
         MaterialImpactedSubstancesQueryResult,
         MaterialComplianceQueryResult,
         PartImpactedSubstancesQueryResult,
@@ -173,43 +173,43 @@ class BomAnalyticsClient(common.ApiClient):
         ...
 
     @overload
-    def run(self, query: "MaterialComplianceQuery") -> "MaterialComplianceQueryResult":  # type: ignore[misc]
+    def run(self, query: "MaterialComplianceQuery") -> "MaterialComplianceQueryResult":
         ...
 
     @overload
-    def run(self, query: "PartImpactedSubstancesQuery") -> "PartImpactedSubstancesQueryResult":  # type: ignore[misc]
+    def run(self, query: "PartImpactedSubstancesQuery") -> "PartImpactedSubstancesQueryResult":
         ...
 
     @overload
-    def run(self, query: "PartComplianceQuery") -> "PartComplianceQueryResult":  # type: ignore[misc]
+    def run(self, query: "PartComplianceQuery") -> "PartComplianceQueryResult":
         ...
 
     @overload
-    def run(self, query: "SpecificationImpactedSubstancesQuery") -> "SpecificationImpactedSubstancesQueryResult":  # type: ignore[misc]
+    def run(self, query: "SpecificationImpactedSubstancesQuery") -> "SpecificationImpactedSubstancesQueryResult":
         ...
 
     @overload
-    def run(self, query: "SpecificationComplianceQuery") -> "SpecificationComplianceQueryResult":  # type: ignore[misc]
+    def run(self, query: "SpecificationComplianceQuery") -> "SpecificationComplianceQueryResult":
         ...
 
     @overload
-    def run(self, query: "SubstanceComplianceQuery") -> "SubstanceComplianceQueryResult":  # type: ignore[misc]
+    def run(self, query: "SubstanceComplianceQuery") -> "SubstanceComplianceQueryResult":
         ...
 
     @overload
-    def run(self, query: "BomImpactedSubstancesQuery") -> "BomImpactedSubstancesQueryResult":  # type: ignore[misc]
+    def run(self, query: "BomImpactedSubstancesQuery") -> "BomImpactedSubstancesQueryResult":
         ...
 
     @overload
-    def run(self, query: "BomComplianceQuery") -> "BomComplianceQueryResult":  # type: ignore[misc]
+    def run(self, query: "BomComplianceQuery") -> "BomComplianceQueryResult":
         ...
 
     @overload
-    def run(self, query: "Yaml") -> str:  # type: ignore[misc]
+    def run(self, query: "Yaml") -> str:
         ...
 
     @overload
-    def run(self, query: Type["Yaml"]) -> str:  # type: ignore[misc]
+    def run(self, query: Type["Yaml"]) -> str:
         ...
 
     def run(self, query):  # type: ignore[no-untyped-def]

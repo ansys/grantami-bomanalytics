@@ -65,14 +65,14 @@ class TestRecordArgManager:
 class TestBomArgManager:
     def test_uninitialized_configuration(self):
         am = queries._BomArgumentManager()
-        assert isinstance(am._items, str)
-        assert am._items == ""
+        assert isinstance(am._items[0], str)
+        assert am._items[0] == ""
         assert am.__repr__() == '<_BomArgumentManager {bom: ""}>'
 
     @pytest.mark.parametrize("bom", ["Test bom less than 100 chars", sample_bom])
     def test_add_bom(self, bom):
         am = queries._BomArgumentManager()
-        am._items = bom
-        assert am._items == bom
+        am._items = [bom]
+        assert am._items[0] == bom
         assert am.batched_arguments == [{"bom_xml1711": bom}]
         assert am.__repr__() == f'<_BomArgumentManager {{bom: "{bom[:100]}"}}>'

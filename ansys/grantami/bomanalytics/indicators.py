@@ -283,15 +283,8 @@ class _Indicator(ABC):
 
         if not self.flag:
             raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
-        if isinstance(other, self.available_flags):
-            result: bool = self.flag is other
-        if not isinstance(other, self.__class__):
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
-        if self.flag and other.flag:
-            result = self.flag is other.flag
-        elif not other.flag:
-            raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
-        return result
+        other_flag = self._get_flag_from_object(other)
+        return self.flag is other_flag
 
     def __lt__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
@@ -306,13 +299,46 @@ class _Indicator(ABC):
 
         if not self.flag:
             raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
-        if isinstance(other, self.available_flags):
-            return self.flag < other
-        if not isinstance(other, self.__class__):
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
-        if self.flag and other.flag:
-            return self.flag < other.flag
+        other_flag = self._get_flag_from_object(other)
+        return self.flag < other_flag
+
+    def _get_flag_from_object(self, other: object) -> _Flag:
+        """Get the flag from the other object, regardless of if it is an Indicator or a Flag.
+
+        Returns
+        -------
+        The flag object extracted from `other`
+
+        Raises
+        ------
+        RuntimeError
+            If an unhandled error occurs during the comparison. A descriptive TypeError or ValueError should always
+            be raised instead.
+        """
+        self._check_type_and_value_compatibility(other)
+        if isinstance(other, _Indicator) and other.flag:
+            flag = other.flag
+        elif isinstance(other, _Flag):
+            flag = other
         else:
+            raise RuntimeError
+        return flag
+
+    def _check_type_and_value_compatibility(self, other: object) -> None:
+        """Check if the type and value of self and other are compatible such that they can be compared.
+
+        Raises
+        ------
+        ValueError
+            If the other indicator has no flag, and therefore no basis for comparison.
+        TypeError
+            If the other object is a different _Indicator subtype or an incompatible_Flag subtype.
+        """
+        if isinstance(other, _Indicator) and not isinstance(other, self.__class__):
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        if isinstance(other, _Flag) and not isinstance(other, self.available_flags):
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        if isinstance(other, _Indicator) and not other.flag:
             raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
 
     def __le__(self, other: object) -> bool:

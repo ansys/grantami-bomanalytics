@@ -1200,11 +1200,13 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
 class _BomArgumentManager(_BaseArgumentManager):
     """Store a bom for use in queries and generate the kwarg to be sent to the server.
 
-    Implements the `_items` attribute as a string, since only one Bom can be sent to the server in a single query.
+    `_items` must be a list because of the base class, but only ever contains a single string since only one Bom can be
+     sent to the server in a single query.
     """
 
     def __init__(self) -> None:
         self.item_type_name = "bom_xml1711"
+        self._items = [""]
 
     def __repr__(self) -> str:
         return f'<_BomArgumentManager {{bom: "{self._items[0][:100]}"}}>'

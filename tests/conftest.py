@@ -36,7 +36,8 @@ def pytest_generate_tests(metafunc):
     """
 
     if 'example_script' in metafunc.fixturenames:
-        example_path = pathlib.Path("../examples")
+        this_file = pathlib.Path(__file__).parent.resolve()
+        example_path = this_file / pathlib.Path("../examples")
         output_files = discover_python_scripts(example_path)
         file_names = [str(file) for file in output_files]
         metafunc.parametrize('example_script', output_files, ids=file_names)

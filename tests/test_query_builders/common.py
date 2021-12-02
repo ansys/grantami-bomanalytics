@@ -1,11 +1,5 @@
-from ..common import (
-    pytest,
-    List,
-    LEGISLATIONS,
-    INDICATORS,
-    check_query_manager_attributes,
-    queries,
-)
+from typing import List
+from ansys.grantami.bomanalytics import queries
 
 
 RECORD_QUERY_TYPES: List = [

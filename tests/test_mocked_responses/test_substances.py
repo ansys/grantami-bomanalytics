@@ -1,10 +1,8 @@
-from .common import (
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
-    queries,
-    indicators,
-    get_mocked_response,
-    SubstanceValidator,
+from ansys.grantami.bomanalytics import queries, indicators
+from ansys.grantami.bomanalytics_codegen.models import (
+    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse
 )
+from .common import get_mocked_response, SubstanceValidator
 
 
 class TestCompliance:

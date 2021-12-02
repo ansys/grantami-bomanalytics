@@ -1,6 +1,4 @@
-from .common import (
-    pytest,
-)
+import pytest
 
 
 @pytest.mark.parametrize(

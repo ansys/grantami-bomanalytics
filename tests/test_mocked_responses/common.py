@@ -1,28 +1,6 @@
-from ..common import (
-    pytest,
-    Union,
-    List,
-    Dict,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
-    queries,
-    indicators,
-    examples_as_strings,
-    requests_mock,
-    check_query_manager_attributes,
-    PartWithComplianceResult,
-    SpecificationWithComplianceResult,
-    MaterialWithComplianceResult,
-    SubstanceWithComplianceResult,
-    CoatingWithComplianceResult,
-)
+import requests_mock
+from ansys.grantami.bomanalytics import indicators
+from ..inputs import examples_as_strings
 
 
 def get_mocked_response(query, result_model, connection):

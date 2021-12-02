@@ -1,4 +1,6 @@
-from ..common import pytest, queries, check_query_manager_attributes
+import pytest
+from ansys.grantami.bomanalytics import queries
+from ..common import check_query_manager_attributes
 
 
 @pytest.mark.parametrize("query_type", [queries.PartComplianceQuery, queries.PartImpactedSubstancesQuery])

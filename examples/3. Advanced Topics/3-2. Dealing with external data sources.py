@@ -32,6 +32,7 @@
 # + tags=[]
 import json
 from pprint import pprint
+
 with open("../supporting-files/source_data.json") as f:
     data = json.load(f)
 pprint(data)
@@ -40,7 +41,7 @@ pprint(data)
 # The list of components will be used frequently, so we can store this in a variable for convenience.
 
 # + tags=[]
-components = data['components']
+components = data["components"]
 # -
 
 # It is clear from viewing this data that some parts include multiple materials, and some materials appear in the JSON
@@ -52,7 +53,7 @@ components = data['components']
 # We can use a set comprehension to get the unique materials, which we can then cast into a list.
 
 # + tags=[]
-material_ids = {material for component in components for material in component['materials']}
+material_ids = {m for comp in components for m in comp["materials"]}
 material_ids = list(material_ids)
 material_ids
 # -
@@ -63,11 +64,18 @@ material_ids
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection, queries, indicators
+
 cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
-svhc = indicators.WatchListIndicator(name="SVHC",
-                                     legislation_names=["REACH - The Candidate List"],
-                                     default_threshold_percentage=0.1)
-mat_query = queries.MaterialComplianceQuery().with_indicators([svhc]).with_material_ids(material_ids)
+svhc = indicators.WatchListIndicator(
+    name="SVHC",
+    legislation_names=["REACH - The Candidate List"],
+    default_threshold_percentage=0.1,
+)
+mat_query = (
+    queries.MaterialComplianceQuery()
+    .with_indicators([svhc])
+    .with_material_ids(material_ids)
+)
 mat_results = cxn.run(mat_query)
 mat_results
 # -
@@ -84,7 +92,8 @@ mat_results
 # To do this, we first create a dictionary that maps a material ID to the indicator result returned by the query.
 
 # + tags=[]
-material_lookup = {mat.material_id: mat.indicators['SVHC'] for mat in mat_results.compliance_by_material_and_indicator}
+material_lookup = {mat.material_id: mat.indicators["SVHC"]
+                   for mat in mat_results.compliance_by_material_and_indicator}
 # -
 
 # Next define a function that takes a list of material IDs and returns the worst compliance status for all of them.
@@ -93,7 +102,7 @@ material_lookup = {mat.material_id: mat.indicators['SVHC'] for mat in mat_result
 
 
 # + tags=[]
-def rollup_material_results(material_ids) -> str:
+def rollup_results(material_ids) -> str:
     indicator_results = [material_lookup[mat_id] for mat_id in material_ids]
     worst_result = max(indicator_results)
     return worst_result.flag.name
@@ -105,8 +114,8 @@ def rollup_material_results(material_ids) -> str:
 # and compliance status.
 
 # + tags=[]
-component_results = {component['part_number']: rollup_material_results(component['materials'])
-                     for component in components}
+component_results = {comp["part_number"]: rollup_results(comp["materials"])
+                     for comp in components}
 component_results
 # -
 
@@ -115,15 +124,19 @@ component_results
 # a mapping between compliance statuses and approval requirements.
 
 # + tags=[]
-result_map = {indicators.WatchListFlag.WatchListCompliant.name: "No Approval Required",
-              indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold.name: "Level 1 Approval Required",
-              indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold.name: "Level 2 Approval Required"}
+flags = indicators.WatchListFlag
+result_map = {
+    flags.WatchListCompliant.name: "No Approval Required",
+    flags.WatchListAllSubstancesBelowThreshold.name: "Level 1 Approval Required",
+    flags.WatchListHasSubstanceAboveThreshold.name: "Level 2 Approval Required",
+}
 # -
 
 # We can now use this dictionary to map from the Granta MI result to the approval requirements.
 
 # + tags=[]
-results = {part_number: result_map[result] for part_number, result in component_results.items()}
+results = {part_number: result_map[result]
+           for part_number, result in component_results.items()}
 results
 # -
 
@@ -136,12 +149,12 @@ results
 components_with_result = []
 for component in components:
     component_with_result = component
-    part_number = component['part_number']
-    component_with_result['approval'] = results[part_number]
+    part_number = component["part_number"]
+    component_with_result["approval"] = results[part_number]
     components_with_result.append(component_with_result)
 
 data_results = {}
-data_results['components'] = components_with_result
+data_results["components"] = components_with_result
 # -
 
 # Finally, printing the results shows the new data structure with the results included.

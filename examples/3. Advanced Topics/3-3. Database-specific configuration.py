@@ -17,7 +17,7 @@
 
 # The BoM Analytics package will work with an off-the-shelf Granta MI Restricted Substances database. However, there are
 # some situations in which additional run-time configuration changes are required:
-#     
+#
 # - If the database key or table names have been modified from their default values, these must be set on the
 #   `Connection` object
 # - If the number of linked records is very large, the batch sizes should be changed for each query (see xxxx for more
@@ -31,6 +31,7 @@
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
+
 cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
 cxn.set_database_details(database_key="ACME_SUBSTANCES_DATABASE")
 cxn
@@ -52,6 +53,7 @@ cxn
 # To see the default batch size, use the batch_size property on the query.
 
 from ansys.grantami.bomanalytics import queries
+
 spec_query = queries.SpecificationComplianceQuery()
 spec_query
 

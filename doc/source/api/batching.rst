@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_connection:
+.. _ref_bom_analytics_batching:
 
 Batching Requests
 =================

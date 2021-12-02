@@ -17,5 +17,6 @@ both classes are equivalent in terms of the functionality being demonstrated.
    :maxdepth: 2
 
    connection
+   batching
    impacted_substances/index
    compliance/index

@@ -25,6 +25,7 @@ extensions = [
     "sphinx.ext.extlinks",
     "sphinx.ext.coverage",
     "enum_tools.autoenum",
+    "nbsphinx",
 ]
 
 # return type inline with the description.

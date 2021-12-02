@@ -26,7 +26,8 @@
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
-cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()
+
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
 # -
 
 # ## Building and Running the Query
@@ -37,18 +38,22 @@ cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()
 # First specify some constants that contain the material and legislation references we will use.
 
 # + tags=[]
-PPS_ID = 'plastic-pps-generalpurpose'
-PC_ID = 'plastic-pc-20carbonfiber'
-SIN_LIST = 'The SIN List 2.1 (Substitute It Now!)'
-REACH = 'REACH - The Candidate List'
+PPS_ID = "plastic-pps-generalpurpose"
+PC_ID = "plastic-pc-20carbonfiber"
+SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
+REACH = "REACH - The Candidate List"
 # -
 
 # Next import the queries module and build the query with the references in the previous cell.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
-mat_query = queries.MaterialImpactedSubstancesQuery()
-mat_query = mat_query.with_material_ids([PPS_ID, PC_ID]).with_legislations([REACH, SIN_LIST])
+
+mat_query = (
+    queries.MaterialImpactedSubstancesQuery()
+    .with_material_ids([PPS_ID, PC_ID])
+    .with_legislations([REACH, SIN_LIST])
+)
 # -
 
 # Finally, run the query. Passing a `MaterialImpactedSubstancesQuery` object to the `Connection.run()` method returns a
@@ -59,13 +64,11 @@ results = cxn.run(mat_query)
 results
 # -
 
-# ## Understanding the Query Results
-
 # A `MaterialImpactedSubstancesQueryResult` object contains three properties:
 # `impacted_substances_by_material_and_legislation`, `impacted_substances_by_legislation`, and `impacted_substances`.
 # They provide different views of the impacted substances at different levels of granularity.
 
-# ### impacted_substances_by_material_and_legislation
+# ## impacted_substances_by_material_and_legislation
 
 # This property is structured first as a list of `materialWithImpactedSubstancesResult` objects, each of which contains
 # a dictionary of lists of `ImpactedSubstance` objects, which represent the substances impacted by that legislation.
@@ -76,7 +79,8 @@ results
 # + tags=[]
 substances_by_material = {}
 for material in results.impacted_substances_by_material_and_legislation:
-    substances_by_material[material.material_id] = material.legislations[SIN_LIST].substances
+    substances = material.legislations[SIN_LIST].substances
+    substances_by_material[material.material_id] = substances
 # -
 
 # Then use the `tabulate` package to print a table of the substances and their quantities for the polycarbonate
@@ -84,14 +88,15 @@ for material in results.impacted_substances_by_material_and_legislation:
 
 # + tags=[]
 from tabulate import tabulate
-rows = [[substance.cas_number, substance.max_percentage_amount_in_material]
-        for substance in substances_by_material[PC_ID]]
 
-print(f'Substances impacted by "{SIN_LIST}" in "{PC_ID}" (first 10 only, {len(rows)} total)')
-print(tabulate(rows[:10], headers=['CAS Number', 'Amount (wt. %)']))
+rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
+    for substance in substances_by_material[PC_ID]]
+
+print(f'Substances impacted by "{SIN_LIST}" in "{PC_ID}" (10/{len(rows)})')
+print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ### impacted_substances_by_legislation
+# ## impacted_substances_by_legislation
 
 # This property merges the results across all materials, resulting in a single dictionary of legislations that contain
 # all impacted substances for all materials.
@@ -101,12 +106,13 @@ print(tabulate(rows[:10], headers=['CAS Number', 'Amount (wt. %)']))
 
 # + tags=[]
 material_substances_sin = results.impacted_substances_by_legislation[SIN_LIST]
-rows = [[substance.cas_number, substance.max_percentage_amount_in_material] for substance in material_substances_sin]
-print(f'Substances impacted by "{SIN_LIST}" in all materials (first 10 only, {len(rows)} total)')
-print(tabulate(rows[:10], headers=['CAS Number', 'Amount (wt. %)']))
+rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
+    for substance in material_substances_sin]
+print(f'Substances impacted by "{SIN_LIST}" in all materials (10/{len(rows)})')
+print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ### impacted_substances
+# ## impacted_substances
 
 # This property reduces the granularity further to produce a single flattened list of substances across all legislations
 # for all materials.
@@ -117,6 +123,7 @@ print(tabulate(rows[:10], headers=['CAS Number', 'Amount (wt. %)']))
 
 # + tags=[]
 material_substances_all = results.impacted_substances
-rows = [[substance.cas_number, substance.max_percentage_amount_in_material] for substance in material_substances_all]
-print(f"Impacted substances across all materials and legislations (first 10 only, {len(rows)} total)")
-print(tabulate(rows[:10], headers=['CAS Number', 'Amount (wt. %)']))
+rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
+    for substance in material_substances_all]
+print(f"Impacted substances for all materials and legislations (10/{len(rows)})")
+print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))

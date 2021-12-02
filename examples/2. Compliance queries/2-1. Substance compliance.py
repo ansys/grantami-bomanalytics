@@ -23,7 +23,8 @@
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
-cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()
+
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
 # -
 
 # ## Defining an Indicator
@@ -44,10 +45,15 @@ cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()
 # + tags=[]
 from ansys.grantami.bomanalytics import indicators
 
-svhc_indicator = indicators.WatchListIndicator(name="SVHC",
-                                               legislation_names=["REACH - The Candidate List"],
-                                               default_threshold_percentage=0.1)
-sin_indicator = indicators.WatchListIndicator(name="SIN", legislation_names=['The SIN List 2.1 (Substitute It Now!)'])
+svhc = indicators.WatchListIndicator(
+    name="SVHC",
+    legislation_names=["REACH - The Candidate List"],
+    default_threshold_percentage=0.1,
+)
+sin = indicators.WatchListIndicator(
+    name="SIN",
+    legislation_names=["The SIN List 2.1 (Substitute It Now!)"]
+)
 
 
 # + [markdown] tags=[]
@@ -60,11 +66,12 @@ sin_indicator = indicators.WatchListIndicator(name="SIN", legislation_names=['Th
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
-sub_query = queries.SubstanceComplianceQuery().with_indicators([svhc_indicator, sin_indicator])
-sub_query = sub_query.with_cas_numbers_and_amounts([('50-00-0', 10),
-                                                    ('110-00-9', 25),
-                                                    ('302-17-0', 100),
-                                                    ('7440-23-5', 100)])
+
+sub_query = queries.SubstanceComplianceQuery().with_indicators([svhc, sin])
+sub_query = sub_query.with_cas_numbers_and_amounts([("50-00-0", 10),
+                                                    ("110-00-9", 25),
+                                                    ("302-17-0", 100),
+                                                    ("7440-23-5", 100)])
 # -
 
 # Finally, run the query. Passing a `SubstanceComplianceQuery` object to the `Connection.run()` method returns a
@@ -75,13 +82,10 @@ sub_result = cxn.run(sub_query)
 sub_result
 
 # + [markdown] tags=[]
-# ## Understanding the Query Results
-
-# + [markdown] tags=[]
 # The result object contains two properties, `compliance_by_substance_and_indicator` and `compliance_by_indicator`.
 # -
 
-# ### compliance_by_substance_and_indicator
+# ## compliance_by_substance_and_indicator
 
 # + [markdown] tags=[]
 # `compliance_by_substance_and_indicator` contains a list of `SubstanceWithComplianceResult` objects that contain the
@@ -96,8 +100,10 @@ sub_result
 # + tags=[]
 compliant_substances = []
 non_compliant_substances = []
+threshold = svhc.available_flags.WatchListAboveThreshold
+
 for substance in sub_result.compliance_by_substance_and_indicator:
-    if substance.indicators['SVHC'] >= svhc_indicator.available_flags.WatchListAboveThreshold:
+    if (substance.indicators["SVHC"] >= threshold):
         non_compliant_substances.append(substance)
     else:
         compliant_substances.append(substance)
@@ -106,15 +112,15 @@ for substance in sub_result.compliance_by_substance_and_indicator:
 # Now print the SVHC and Non-SVHC substances.
 
 # + tags=[]
-compliant_cas_numbers = ", ".join([sub.cas_number for sub in compliant_substances])
-print(f"Non-SVHC substances: {compliant_cas_numbers}")
+compliant_cas_numbers = [sub.cas_number for sub in compliant_substances]
+print(f'Non-SVHC substances: {", ".join(compliant_cas_numbers)}')
 
 # + tags=[]
-non_compliant_cas_numbers = ", ".join([sub.cas_number for sub in non_compliant_substances])
-print(f"SVHCs: {non_compliant_cas_numbers}")
+non_compliant_cas_numbers = [sub.cas_number for sub in non_compliant_substances]
+print(f'SVHCs: {", ".join(non_compliant_cas_numbers)}')
 # -
 
-# ### compliance_by_indicator
+# ## compliance_by_indicator
 
 # Alternatively, using the `compliance_by_indicator` property will give us a single indicator result that rolls up the
 # results across all substances in the query. This would be useful in a situation where we have a 'concept' material
@@ -123,10 +129,10 @@ print(f"SVHCs: {non_compliant_cas_numbers}")
 # the worst result of the individual substances.
 
 # + tags=[]
-if sub_result.compliance_by_indicator['SVHC'] >= svhc_indicator.available_flags.WatchListAboveThreshold:
+if sub_result.compliance_by_indicator["SVHC"] >= threshold:
     print("One or more substances is an SVHC in a quantity > 0.1%")
 else:
-    print("No substances are SVHCs, or are present in a quantity < 0.1%")
+    print("No SVHCs, or SVHCs are present in a quantity < 0.1%")
 # -
 
 # Note that this cannot tell us which substance is responsible for the non-compliance. This would require performing a

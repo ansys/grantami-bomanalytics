@@ -30,11 +30,17 @@
 
 from ansys.grantami.bomanalytics import Connection, indicators, queries
 
-cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()
-svhc_indicator = indicators.WatchListIndicator(name="SVHC",
-                                               legislation_names=["REACH - The Candidate List"],
-                                               default_threshold_percentage=0.1)
-part_query = queries.PartComplianceQuery().with_record_history_ids([565060]).with_indicators([svhc_indicator])
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+svhc = indicators.WatchListIndicator(
+    name="SVHC",
+    legislation_names=["REACH - The Candidate List"],
+    default_threshold_percentage=0.1,
+)
+part_query = (
+    queries.PartComplianceQuery()
+    .with_record_history_ids([565060])
+    .with_indicators([svhc])
+)
 part_result = cxn.run(part_query)
 # -
 
@@ -43,7 +49,10 @@ part_result = cxn.run(part_query)
 # under the root part.
 
 for part in part_result.compliance_by_part_and_indicator[0].parts:
-    print(f"Part ID: {part.record_history_identity}, Compliance: {part.indicators['SVHC'].flag}")
+    print(
+        f"Part ID: {part.record_history_identity}, "
+        f"Compliance: {part.indicators['SVHC'].flag}"
+    )
 
 # However, it is less useful to be able to compare items at different levels. For this, we can flatten the data into a
 # tabular structure.
@@ -64,11 +73,13 @@ def create_dict(item, item_type, level, parent_id):
     """Add a BoM item to a list"""
     item_id = item.record_history_identity
     indicator = item.indicators["SVHC"]
-    row = {"Item": item_id,
-           "Parent": parent_id,
-           "Type": item_type,
-           "SVHC": indicator,
-           "Level": level}
+    row = {
+        "Item": item_id,
+        "Parent": parent_id,
+        "Type": item_type,
+        "SVHC": indicator,
+        "Level": level,
+    }
     return row
 
 
@@ -78,11 +89,13 @@ def create_dict(item, item_type, level, parent_id):
 # child item types it can contain.
 
 
-schema = {"Part": ["Part", "Specification", "Material", "Substance"],
-          "Specification": ["Specification", "Coating", "Material", "Substance"],
-          "Material": ["Substance"],
-          "Coating": ["Substance"],
-          "Substance": []}
+schema = {
+    "Part": ["Part", "Specification", "Material", "Substance"],
+    "Specification": ["Specification", "Coating", "Material", "Substance"],
+    "Material": ["Substance"],
+    "Coating": ["Substance"],
+    "Substance": [],
+}
 
 
 # The function itself performs the flattening via a stack-based approach, by which the children of the item currently
@@ -97,16 +110,19 @@ schema = {"Part": ["Part", "Specification", "Material", "Substance"],
 from collections import deque
 
 
-def process_bom(root_part):
+def flatten_bom(root_part):
     result = []  # List that will contain all dicts
-    
+
     # The stack contains a deque of tuples: (item_object, item_type, level, parent_id)
-    items_to_process = deque([(root_part, "Part", 0, None)])  # Seed the stack with the root part.
+    # First seed the stack with the root part
+    items_to_process = deque([(root_part, "Part", 0, None)])
 
     while items_to_process:
-        # Get the next item from the stack, create the dict, and append it to the result list
+        # Get the next item from the stack
         item_object, item_type, level, parent = items_to_process.pop()
+        # Create the dict
         row = create_dict(item_object, item_type, level, parent)
+        # Append it to the result list
         result.append(row)
 
         # Compute the properties for the child items
@@ -116,15 +132,20 @@ def process_bom(root_part):
 
         # Add the child items to the stack
         if "Part" in child_items:
-            items_to_process.extend([(p,  "Part", child_level, item_id) for p in item_object.parts])
+            items_to_process.extend([(p, "Part", child_level, item_id)
+                                     for p in item_object.parts])
         if "Specification" in child_items:
-            items_to_process.extend([(s, "Specification", child_level, item_id) for s in item_object.specifications])
+            items_to_process.extend([(s, "Specification", child_level, item_id)
+                                     for s in item_object.specifications])
         if "Material" in child_items:
-            items_to_process.extend([(m, "Material", child_level, item_id) for m in item_object.materials])
+            items_to_process.extend([(m, "Material", child_level, item_id)
+                                     for m in item_object.materials])
         if "Coating" in child_items:
-            items_to_process.extend([(c, "Coating", child_level, item_id) for c in item_object.coatings])
+            items_to_process.extend([(c, "Coating", child_level, item_id)
+                                     for c in item_object.coatings])
         if "Substance" in child_items:
-            items_to_process.extend([(s, "Substance", child_level, item_id) for s in item_object.substances])
+            items_to_process.extend([(s, "Substance", child_level, item_id)
+                                     for s in item_object.substances])
 
     # When the stack is empty, the while loop exists. Return the result list.
     return result
@@ -137,7 +158,8 @@ def process_bom(root_part):
 
 # + tags=[]
 import pandas as pd
-data = process_bom(part_result.compliance_by_part_and_indicator[0])
+
+data = flatten_bom(part_result.compliance_by_part_and_indicator[0])
 df_full = pd.DataFrame(data)
 print(f"{len(df_full)} rows")
 df_full.head()
@@ -146,7 +168,7 @@ df_full.head()
 # ## Post-processing the DataFrame
 
 # Now we have the data in a `DataFrame` we can perform operations across all levels of the structure more easily.
-# For example, we can delete all rows that are less than the 'Above Threshold' state, retaining only rows that are 
+# For example, we can delete all rows that are less than the 'Above Threshold' state, retaining only rows that are
 # non-compliant. Note that this reduces the number of rows significantly.
 
 # + tags=[]

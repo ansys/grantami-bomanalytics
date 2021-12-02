@@ -3,6 +3,11 @@
 Compliance Examples
 ===================
 
+These scripts demonstrate how to determine compliance against one or more legislations for substances, materials, and
+parts in a Granta MI Restricted Substances database. An equivalent script can be written for Specifications, consult the
+:ref:`ref_bom_analytics_api_index` for details. To determine the compliance of an XML BoM, see
+:ref:`ref_bom_analytics_advanced`.
+
 .. toctree::
    :maxdepth: 1
 

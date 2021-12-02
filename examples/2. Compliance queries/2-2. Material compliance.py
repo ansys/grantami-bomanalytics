@@ -25,7 +25,8 @@
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
-cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()
+
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
 # -
 
 # ## Defining an Indicator
@@ -46,10 +47,15 @@ cxn = Connection('http://localhost/mi_servicelayer').with_autologon().build()
 # + tags=[]
 from ansys.grantami.bomanalytics import indicators
 
-svhc_indicator = indicators.WatchListIndicator(name="SVHC",
-                                               legislation_names=["REACH - The Candidate List"],
-                                               default_threshold_percentage=0.1)
-sin_indicator = indicators.WatchListIndicator(name="SIN", legislation_names=['The SIN List 2.1 (Substitute It Now!)'])
+svhc = indicators.WatchListIndicator(
+    name="SVHC",
+    legislation_names=["REACH - The Candidate List"],
+    default_threshold_percentage=0.1,
+)
+sin = indicators.WatchListIndicator(
+    name="SIN",
+    legislation_names=["The SIN List 2.1 (Substitute It Now!)"]
+)
 
 
 # + [markdown] tags=[]
@@ -62,10 +68,11 @@ sin_indicator = indicators.WatchListIndicator(name="SIN", legislation_names=['Th
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
-mat_query = queries.MaterialComplianceQuery().with_indicators([svhc_indicator, sin_indicator])
-mat_query = mat_query.with_material_ids(['plastic-pa66-60glassfiber',
-                                         'zinc-pb-cdlow-alloy-z21220-rolled',
-                                         'stainless-316h'])
+
+mat_query = queries.MaterialComplianceQuery().with_indicators([svhc, sin])
+mat_query = mat_query.with_material_ids(["plastic-pa66-60glassfiber",
+                                         "zinc-pb-cdlow-alloy-z21220-rolled",
+                                         "stainless-316h"])
 # -
 
 # Finally, run the query. Passing a `MaterialComplianceQuery` object to the `Connection.run()` method returns a
@@ -76,13 +83,10 @@ mat_result = cxn.run(mat_query)
 mat_result
 
 # + [markdown] tags=[]
-# ## Understanding the Query Results
-
-# + [markdown] tags=[]
 # The result object contains two properties, `compliance_by_material_and_indicator` and `compliance_by_indicator`.
 # -
 
-# ### compliance_by_material_and_indicator
+# ## compliance_by_material_and_indicator
 
 # + [markdown] tags=[]
 # `compliance_by_material_and_indicator` contains a list of `MaterialWithComplianceResult` objects that contain the
@@ -101,10 +105,6 @@ print(f"PA66 (60% glass fiber): {pa_66.indicators['SVHC'].flag.name}")
 # The reinforced PA66 record has the status of 'WatchListHasSubstanceAboveThreshold', which tells us the material is not
 # compliant with the indicator, and therefore contains SVHCs above the 0.1% threshold.
 
-# + [markdown] tags=[]
-# #### Substances Above Threshold (Non-Compliance)
-# -
-
 # To understand which substances have caused this status, we can print the substances that are not compliant with the
 # legislation. The possible states of the indicator are available on the `Indicator.available_flags` attribute, and can
 # be compared using standard Python operators.
@@ -112,20 +112,18 @@ print(f"PA66 (60% glass fiber): {pa_66.indicators['SVHC'].flag.name}")
 # For substances, the critical threshold is the state 'WatchListAboveThreshold'.
 
 # + tags=[]
-above_threshold_flag = svhc_indicator.available_flags.WatchListAboveThreshold
-pa_66_svhcs = [sub for sub in pa_66.substances if sub.indicators['SVHC'] >= above_threshold_flag]
+above_threshold_flag = svhc.available_flags.WatchListAboveThreshold
+pa_66_svhcs = [sub for sub in pa_66.substances
+               if sub.indicators["SVHC"] >= above_threshold_flag
+]
 print(f"{len(pa_66_svhcs)} SVHCs")
-for substance in pa_66_svhcs:
-    print(f"Substance record history identity: {substance.record_history_identity}")
+for sub in pa_66_svhcs:
+    print(f"Substance record history identity: {sub.record_history_identity}")
 # -
 
 # Note that children of the items passed into the compliance query are returned with record references based
 # on record history identities only. The Python STK can be used to translate these record history identities into CAS
 # Numbers if required.
-
-# + [markdown] tags=[]
-# #### Substances Below Threshold (Partial Compliance)
-# -
 
 # Next, look at the state of the zinc alloy record.
 
@@ -140,14 +138,14 @@ print(f"Zn-Pb-Cd low alloy: {zn_pb_cd.indicators['SVHC'].flag.name}")
 # We can print these substances using the 'WatchListBelowThreshold' flag as the threshold.
 
 # + tags=[]
-below_threshold_flag = svhc_indicator.available_flags.WatchListBelowThreshold
-zn_svhcs_below_threshold = [sub for sub in zn_pb_cd.substances if sub.indicators['SVHC'].flag == below_threshold_flag]
+below_threshold_flag = svhc.available_flags.WatchListBelowThreshold
+zn_svhcs_below_threshold = [sub for sub in zn_pb_cd.substances
+                            if sub.indicators["SVHC"].flag == below_threshold_flag]
 print(f"{len(zn_svhcs_below_threshold)} SVHCs below threshold")
 for substance in zn_svhcs_below_threshold:
-    print(f"Substance record history identity: {substance.record_history_identity}")
-
-# + [markdown] tags=[]
-# #### No Impacted Substances (Fully Compliant)
+    print(
+        f"Substance record history identity: {substance.record_history_identity}"
+    )
 # -
 
 # Finally, look at the stainless steel record.
@@ -163,14 +161,18 @@ print(f"316H stainless steel: {ss_316h.indicators['SVHC'].flag.name}")
 # We can print these substances using the 'WatchListNotImpacted' flag as the threshold.
 
 # + tags=[]
-not_impacted_flag = svhc_indicator.available_flags.WatchListNotImpacted
-ss_not_impacted = [sub for sub in ss_316h.substances if sub.indicators['SVHC'].flag == not_impacted_flag]
+not_impacted_flag = svhc.available_flags.WatchListNotImpacted
+ss_not_impacted = [
+    sub
+    for sub in ss_316h.substances
+    if sub.indicators["SVHC"].flag == not_impacted_flag
+]
 print(f"{len(ss_not_impacted)} non-SVHC substances")
-for substance in ss_not_impacted:
-    print(f"Substance record history identity: {substance.record_history_identity}")
+for sub in ss_not_impacted:
+    print(f"Substance record history identity: {sub.record_history_identity}")
 # -
 
-# ### compliance_by_indicator
+# ## compliance_by_indicator
 
 # Alternatively, using the `compliance_by_indicator` property will give us a single indicator result that rolls up the
 # results across all materials in the query. This would be useful in a station where we have a 'concept' assembly
@@ -179,10 +181,10 @@ for substance in ss_not_impacted:
 # the worst result of the individual materials.
 
 # + tags=[]
-if mat_result.compliance_by_indicator['SVHC'] >= svhc_indicator.available_flags.WatchListAboveThreshold:
+if mat_result.compliance_by_indicator["SVHC"] >= above_threshold_flag:
     print("One or more materials contains an SVHC in a quantity > 0.1%")
 else:
-    print("No materials contain SVHCs, or SVHCs are present in a quantity < 0.1%")
+    print("No SVHCs, or SVHCs are present in a quantity < 0.1%")
 # -
 
 # Note that this cannot tell us which material is responsible for the non-compliance. This would require performing a

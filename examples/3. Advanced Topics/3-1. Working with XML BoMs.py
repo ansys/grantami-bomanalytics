@@ -59,21 +59,22 @@ result
 invalid_xml_file = "../supporting-files/invalid-bom.xml"
 with open(invalid_xml_file) as f:
     invalid_xml = f.read()
-result = xml_validator(invalid_xml, "../supporting-files/BillOfMaterialsEco.xsd")
+result = xml_validator(
+    invalid_xml, "../supporting-files/BillOfMaterialsEco.xsd"
+)
 result
 # -
 
-# ## Running an XML-based Query
+# ## Running an Impacted Substances XML-based Query
 
 # Now we have validated the XML, we can build our XML BoM-based query. First, connect to Granta MI.
 
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
+
 cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
 # -
-
-# ### BomImpactedSubstancesQuery
 
 # The Impacted Substances BoM query behaves similar to other Impacted Substances queries. However, a BoM query can only
 # accept a single BoM at a time, and so we only ever receive a single list of substances impacted by the specified
@@ -81,12 +82,17 @@ cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
-SIN_LIST = 'The SIN List 2.1 (Substitute It Now!)'
-is_query = queries.BomImpactedSubstancesQuery().with_bom(valid_xml).with_legislations([SIN_LIST])
+
+SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
+impacted_substances_query = (
+    queries.BomImpactedSubstancesQuery()
+    .with_bom(valid_xml)
+    .with_legislations([SIN_LIST])
+)
 
 # + tags=[]
-is_query_result = cxn.run(is_query)
-is_query_result
+impacted_substances_result = cxn.run(impacted_substances_query)
+impacted_substances_result
 # -
 
 # The `BomImpactedSubstancesQueryResult` object returned after running the ImpactedSubstances query now behaves
@@ -95,27 +101,37 @@ is_query_result
 
 # + tags=[]
 from tabulate import tabulate
-rows = [[substance.cas_number, substance.max_percentage_amount_in_material]
-        for substance in is_query_result.impacted_substances]
-print(f'Substances impacted by "{SIN_LIST}" in a BoM (first 10 only, {len(rows)} total)')
-print(tabulate(rows[:10], headers=['CAS Number', 'Amount (wt. %)']))
+
+rows = [
+    [substance.cas_number, substance.max_percentage_amount_in_material]
+    for substance in impacted_substances_result.impacted_substances
+]
+print(f'Substances impacted by "{SIN_LIST}" in a BoM (10/{len(rows)})')
+print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# #### BomComplianceQuery
+# ## Running an Compliance XML-based Query
 
 # Running a BoM Compliance Query produces the same result as if we had stored the Bom structure as linked 'Products and
 # Parts' records in Granta MI.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import indicators
-svhc_indicator = indicators.WatchListIndicator(name="SVHC",
-                                               legislation_names=["REACH - The Candidate List"],
-                                               default_threshold_percentage=0.1)
-c_query = queries.BomComplianceQuery().with_bom(valid_xml).with_indicators([svhc_indicator])
+
+svhc = indicators.WatchListIndicator(
+    name="SVHC",
+    legislation_names=["REACH - The Candidate List"],
+    default_threshold_percentage=0.1,
+)
+compliance_query = (
+    queries.BomComplianceQuery()
+    .with_bom(valid_xml)
+    .with_indicators([svhc])
+)
 
 # + tags=[]
-c_query_result = cxn.run(c_query)
-c_query_result
+compliance_result = cxn.run(compliance_query)
+compliance_result
 # -
 
 # The `BomComplianceQueryResult` object returned after running the Compliance query contains a list of
@@ -123,17 +139,21 @@ c_query_result
 # printing the compliance status of the BoM.
 
 # + tags=[]
-root_part = c_query_result.compliance_by_part_and_indicator[0]
+root_part = compliance_result.compliance_by_part_and_indicator[0]
 print(f"BoM Compliance Status: {root_part.indicators['SVHC'].flag.name}")
 # -
 
-# #### Invalid BoM Exception
+# ## Invalid BoM Exception
 
 # If we were to try the same query with the invalid BoM, we would see a stack trace informing us that MI Servicelayer
 # responded with a 500 HTTP response code. Change the constant below to True to raise the exception.
 
 # + tags=[]
-broken_query = queries.BomImpactedSubstancesQuery().with_bom(invalid_xml).with_legislations([SIN_LIST])
+broken_query = (
+    queries.BomImpactedSubstancesQuery()
+    .with_bom(invalid_xml)
+    .with_legislations([SIN_LIST])
+)
 
 RUN_QUERY = False
 

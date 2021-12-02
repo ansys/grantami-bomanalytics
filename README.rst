@@ -40,15 +40,19 @@ Here's a brief example of how the package works:
 
 .. code:: python
 
+    Connect and query the Granta service.
+
     >>> from pprint import pprint
     >>> from ansys.granta.bom_analytics import Connection, queries
     >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().build()
     >>> query = (
-    >>>     queries.MaterialImpactedSubstancesQuery()
-    >>>     .with_material_ids(['plastic-abs-pvc-flame'])
-    >>>     .with_legislations(['REACH - The Candidate List'])
-    >>> )
-    >>>
+    ...     queries.MaterialImpactedSubstancesQuery()
+    ...     .with_material_ids(['plastic-abs-pvc-flame'])
+    ...     .with_legislations(['REACH - The Candidate List'])
+    ... )
+
+    Print out the result from the query.
+
     >>> result = cxn.run(query)
     >>> pprint(result.impacted_substances)
     [<ImpactedSubstance: {"cas_number": 10108-64-2, "percent_amount": 1.9}>,
@@ -61,7 +65,6 @@ Testing
 -------
 See `Contributing <https://docs.pyansys.com/ansys-grantami-bomanalytics/contributing>`_
 for more details.
-
 
 
 License

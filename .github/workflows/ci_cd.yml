@@ -31,5 +31,5 @@ jobs:
           make codespell
 
       - name: flake8
-        run: |
-          make flake8
+        if: always()
+        run: make flake8

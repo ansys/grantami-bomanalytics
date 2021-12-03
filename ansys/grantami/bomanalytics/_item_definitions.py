@@ -66,7 +66,10 @@ class RecordReference(ABC):
         """
 
         if self.record_guid:
-            result = {"reference_type": ReferenceType.MiRecordGuid.name, "reference_value": self.record_guid}
+            result: Dict[str, Optional[str]] = {
+                "reference_type": ReferenceType.MiRecordGuid.name,
+                "reference_value": self.record_guid,
+            }
         elif self.record_history_guid:
             result = {
                 "reference_type": ReferenceType.MiRecordHistoryGuid.name,

@@ -9,6 +9,8 @@ from .common import (
     STK_OBJECT,
 )
 
+indicators = list(INDICATORS.values())
+
 
 @pytest.mark.parametrize("query_type", RECORD_QUERY_TYPES)
 class TestAddPropertiesToRecordQueries:
@@ -92,9 +94,9 @@ class TestAddPropertiesToRecordQueries:
 class TestAddIndicators:
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)
     def test_compliance_query_success(self, query_type):
-        query = query_type().with_indicators(INDICATORS)
-        assert len(query._indicators) == len(INDICATORS)
-        for indicator in INDICATORS:
+        query = query_type().with_indicators(indicators)
+        assert len(query._indicators) == len(indicators)
+        for indicator in indicators:
             assert query._indicators[indicator.name] is indicator
 
     @pytest.mark.parametrize("query_type", COMPLIANCE_QUERY_TYPES)

@@ -1,5 +1,6 @@
 from ansys.grantami.bomanalytics import indicators
 
+
 LEGISLATIONS = ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]
 
 
@@ -15,7 +16,8 @@ one_legislation_indicator = indicators.RoHSIndicator(
 )
 
 
-INDICATORS = [two_legislation_indicator, one_legislation_indicator]
+INDICATORS = {"Two legislations": two_legislation_indicator,
+              "One legislation": one_legislation_indicator}
 
 
 def check_query_manager_attributes(query_manager, none_attributes, populated_attributes, populated_values):

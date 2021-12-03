@@ -38,4 +38,5 @@ Material result
    .. autoattribute:: record_guid
    .. autoattribute:: record_history_guid
    .. autoattribute:: record_history_identity
-   .. autoattribute:: legislations
+   .. autoattribute:: substances_by_legislation
+   .. autoattribute:: substances

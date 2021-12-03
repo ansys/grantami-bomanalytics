@@ -132,9 +132,9 @@ class ImpactedSubstancesBaseClass(ABC):
             for (
                 legislation_name,
                 legislation_result,
-            ) in item_result.legislations.items():
+            ) in item_result.substances_by_legislation.items():
                 results[legislation_name].extend(
-                    legislation_result.substances
+                    legislation_result
                 )  # TODO: Merge these property, i.e. take max amount? range?
         return dict(results)
 
@@ -154,10 +154,8 @@ class ImpactedSubstancesBaseClass(ABC):
 
         results = []
         for item_result in self._results:
-            for legislation_result in item_result.legislations.values():
-                results.extend(
-                    legislation_result.substances
-                )  # TODO: Merge these property, i.e. take max amount? range?
+            for legislation_result in item_result.substances_by_legislation.values():
+                results.extend(legislation_result)  # TODO: Merge these property, i.e. take max amount? range?
         return results
 
 
@@ -228,14 +226,13 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             self._results.append(material_with_impacted_substances)
 
     @property
-    def impacted_substances_by_material_and_legislation(self) -> List["MaterialWithImpactedSubstancesResult"]:
-        """The impacted substances for each legislation in the original query, grouped by material and
-        legislation.
+    def impacted_substances_by_material(self) -> List["MaterialWithImpactedSubstancesResult"]:
+        """The impacted substances returned by the query, grouped by material.
 
         Examples
         --------
         >>> result: MaterialImpactedSubstancesQueryResult
-        >>> result.impacted_substances_by_material_and_legislation
+        >>> result.impacted_substances_by_material
         [<MaterialWithImpactedSubstancesResult({MaterialId: elastomer-butadienerubber}),
                 1 legislations>,...]
         """
@@ -313,14 +310,13 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             self._results.append(part_with_impacted_substances)
 
     @property
-    def impacted_substances_by_part_and_legislation(self) -> List["PartWithImpactedSubstancesResult"]:
-        """The impacted substances for each legislation in the original query, grouped by part and
-        legislation.
+    def impacted_substances_by_part(self) -> List["PartWithImpactedSubstancesResult"]:
+        """The impacted substances returned by the query, grouped by part.
 
         Examples
         --------
         >>> result: PartImpactedSubstancesQueryResult
-        >>> result.impacted_substances_by_part_and_legislation
+        >>> result.impacted_substances_by_part
         [<PartWithImpactedSubstancesResult({PartNumber: DRILL}), 1 legislations>,...]
         """
 
@@ -404,14 +400,13 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             self._results.append(specification_with_impacted_substances)
 
     @property
-    def impacted_substances_by_specification_and_legislation(self) -> List["SpecificationWithImpactedSubstancesResult"]:
-        """The impacted substances for each legislation in the original query, grouped by specification and
-        legislation.
+    def impacted_substances_by_specification(self) -> List["SpecificationWithImpactedSubstancesResult"]:
+        """The impacted substances returned by the query, grouped by specification.
 
         Examples
         --------
         >>> result: SpecificationImpactedSubstancesQueryResult
-        >>> result.impacted_substances_by_specification_and_legislation
+        >>> result.impacted_substances_by_specification
         [<SpecificationWithImpactedSubstancesResult({SpecificationId: MIL-A-8625}),
                 1 legislations>, ...]
         """
@@ -524,9 +519,9 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             The low-level API objects returned by the REST API.
         """
 
-        self.result_type_name = "Bom1711WithImpactedSubstances"
+        self._result_type_name = "BomWithImpactedSubstances"
         bom_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-            result_type_name=self.result_type_name,
+            result_type_name=self._result_type_name,
             result_with_impacted_substances=results[0],
         )
         self._results = [bom_with_impacted_substances]

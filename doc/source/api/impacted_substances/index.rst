@@ -24,4 +24,4 @@ important, i.e. to determine compliance against a legislation that imposes a cer
    specifications
    parts
    bom
-   common_items
+   impacted_substances

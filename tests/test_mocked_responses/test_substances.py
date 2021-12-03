@@ -68,3 +68,16 @@ class TestCompliance:
             for k, v in result.indicators.items():
                 assert k in self.query._indicators  # The indicator name should be the same (string equality)
                 assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)
+
+    def test_query_result_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert repr(response) == '<SubstanceComplianceQueryResult: 2 SubstanceWithCompliance results>'
+
+    def test_compliance_by_indicator_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        for indicator in response.compliance_by_indicator.keys():
+            assert indicator in repr(response.compliance_by_indicator)
+
+    def test_compliance_by_substance_and_indicator_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert "SubstanceWithComplianceResult" in repr(response.compliance_by_substance_and_indicator)

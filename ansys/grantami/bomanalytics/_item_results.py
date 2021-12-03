@@ -322,76 +322,9 @@ class ImpactedSubstance(BaseSubstanceReference):
 
     def __repr__(self) -> str:
         return (
-            f'<ImpactedSubstance: {{"cas_number": {self.cas_number}, '
+            f'<ImpactedSubstance: {{"cas_number": "{self.cas_number}", '
             f'"percent_amount": {self.max_percentage_amount_in_material}}}>'
         )
-
-
-class LegislationResult:
-    """Describes the result of an impacted substances query for a particular legislation.
-
-    Examples
-    --------
-    >>> result: MaterialImpactedSubstancesQueryResult
-    >>> result.impacted_substances_by_legislation["REACH - The Candidate List"]
-    {'REACH - The Candidate List': [
-        <ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
-    }
-    """
-
-    def __init__(
-        self,
-        name: str,
-        impacted_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance],
-    ):
-        """
-        Parameters
-        ----------
-        name
-            The name of the legislation.
-        impacted_substances
-            The result from the low-level API that describes which substances appear in the parent item.
-
-        Raises
-        ------
-        RuntimeError
-            If the substance returned by the low-level API does not contain a reference.
-        """
-
-        self.name: str = name
-        self.substances: List[ImpactedSubstance] = []
-        """ The substances found that are impacted by this legislation, along with the amount in the parent item
-         if specified. """
-
-        for substance in impacted_substances:
-            if substance.cas_number:
-                reference_type = ReferenceType.CasNumber
-                reference_value = substance.cas_number
-            elif substance.ec_number:
-                reference_type = ReferenceType.EcNumber
-                reference_value = substance.ec_number
-            elif substance.substance_name:
-                reference_type = ReferenceType.ChemicalName
-                reference_value = substance.substance_name
-            else:
-                raise RuntimeError(
-                    "Substance result returned from Granta MI has no reference. Ensure any substances "
-                    "in your request include references, and check you are using an up-to-date version "
-                    "of the base bom analytics package."
-                )
-            impacted_substance = ImpactedSubstance(
-                max_percentage_amount_in_material=substance.max_percentage_amount_in_material,  # noqa: E501
-                legislation_threshold=substance.legislation_threshold,
-                reference_type=reference_type,
-                reference_value=reference_value,
-            )
-            impacted_substance.ec_number = substance.ec_number
-            impacted_substance.cas_number = substance.cas_number
-            impacted_substance.chemical_name = substance.substance_name
-            self.substances.append(impacted_substance)
-
-    def __repr__(self) -> str:
-        return f'<{self.__class__.__name__}({{"name": {self.name}}}), {len(self.substances)} ImpactedSubstances>'
 
 
 if TYPE_CHECKING:
@@ -424,17 +357,63 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
         super().__init__(**kwargs)
 
-        self._legislations: Dict[str, LegislationResult] = {}
+        self._substances_by_legislation: Dict[str, List[ImpactedSubstance]] = {}
 
         for legislation in legislations:
-            new_legislation_result = LegislationResult(
-                name=legislation.legislation_name,
-                impacted_substances=legislation.impacted_substances,
+            new_substances = [
+                self._create_impacted_substance(substance) for substance in legislation.impacted_substances
+            ]
+            self._substances_by_legislation[legislation.legislation_name] = new_substances
+
+
+    @staticmethod
+    def _create_impacted_substance(
+        substance: models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance,
+    ) -> ImpactedSubstance:
+
+        """Creates an ImpactedSubstance result object based on the corresponding object returned from the low-level
+        API.
+
+        Parameters
+        ----------
+        substance
+            An impacted substance result object returned by the low-level API.
+
+        Returns
+        -------
+
+        impacted_substance
+            The corresponding object in this API.
+        """
+
+        if substance.cas_number:
+            reference_type = ReferenceType.CasNumber
+            reference_value = substance.cas_number
+        elif substance.ec_number:
+            reference_type = ReferenceType.EcNumber
+            reference_value = substance.ec_number
+        elif substance.substance_name:
+            reference_type = ReferenceType.ChemicalName
+            reference_value = substance.substance_name
+        else:
+            raise RuntimeError(
+                "Substance result returned from Granta MI has no reference. Ensure any substances "
+                "in your request include references, and check you are using an up-to-date version "
+                "of the base bom analytics package."
             )
-            self._legislations[legislation.legislation_name] = new_legislation_result
+        impacted_substance = ImpactedSubstance(
+            max_percentage_amount_in_material=substance.max_percentage_amount_in_material,  # noqa: E501
+            legislation_threshold=substance.legislation_threshold,
+            reference_type=reference_type,
+            reference_value=reference_value,
+        )
+        impacted_substance.ec_number = substance.ec_number
+        impacted_substance.cas_number = substance.cas_number
+        impacted_substance.chemical_name = substance.substance_name
+        return impacted_substance
 
     @property
-    def legislations(self) -> Dict[str, LegislationResult]:
+    def substances_by_legislation(self) -> Dict[str, List[ImpactedSubstance]]:
         """
         Returns
         -------
@@ -443,18 +422,37 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         Examples
         --------
         >>> result: MaterialImpactedSubstancesQueryResult
-        >>> material_result = result.impacted_substances_by_material_and_legislation[0]
-        >>> material_result.legislations
-        {'California Proposition 65 List':
-                <LegislationResult({"name": California Proposition 65 List}),
-                    2 ImpactedSubstances>,
-        ... }
+        >>> material_result = result.impacted_substances_by_material[0]
+        >>> material_result.substances_by_legislation
+        {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
         """
 
-        return self._legislations
+        return self._substances_by_legislation
+
+    @property
+    def substances(self) -> List[ImpactedSubstance]:
+        """
+        Returns
+        -------
+            The substances impacted for a particular item as a flattened list.
+
+        Examples
+        --------
+        >>> result: MaterialImpactedSubstancesQueryResult
+        >>> material_result = result.impacted_substances_by_material[0]
+        >>> material_result.substances
+        [<ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
+        """
+
+        results = []
+        for legislation_result in self.substances_by_legislation.values():
+            results.extend(legislation_result)  # TODO: Merge these property, i.e. take max amount? range?
+        return results
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}({self.record_reference}), {len(self.legislations)} legislations>"
+        return (
+            f"<{self.__class__.__name__}({self.record_reference}), {len(self.substances_by_legislation)} legislations>"
+        )
 
 
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
@@ -472,9 +470,10 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
     pass
 
 
-@ItemResultFactory.register("Bom1711WithImpactedSubstances")
+@ItemResultFactory.register("BomWithImpactedSubstances")
 class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
-    pass
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}(), {len(self.substances_by_legislation)} legislations>"
 
 
 class ComplianceResultMixin(mixin_base_class):

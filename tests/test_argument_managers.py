@@ -1,4 +1,7 @@
-from .common import queries, pytest, dataclass, sample_bom
+import pytest
+from dataclasses import dataclass
+from ansys.grantami.bomanalytics import queries
+from .inputs import sample_bom
 
 
 class MockRecordDefinition:

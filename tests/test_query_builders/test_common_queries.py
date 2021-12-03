@@ -1,13 +1,12 @@
+import pytest
+from ..common import LEGISLATIONS, INDICATORS
 from .common import (
-    pytest,
     RECORD_QUERY_TYPES,
     COMPLIANCE_QUERY_TYPES,
     SUBSTANCE_QUERY_TYPES,
     TEST_HISTORY_IDS,
     TEST_GUIDS,
     STK_OBJECT,
-    LEGISLATIONS,
-    INDICATORS,
 )
 
 indicators = list(INDICATORS.values())

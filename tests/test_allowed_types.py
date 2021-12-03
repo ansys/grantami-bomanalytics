@@ -1,10 +1,6 @@
-from .common import (
-    pytest,
-    Number,
-    Any,
-    allowed_types,
-    _check_type,
-)
+import pytest
+from numbers import Number
+from ansys.grantami.bomanalytics._allowed_types import allowed_types, _check_type
 
 
 def test_allowed_types_args():

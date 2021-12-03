@@ -1,11 +1,12 @@
-from .common import (
+from ansys.grantami.bomanalytics import queries, indicators
+from ansys.grantami.bomanalytics_codegen.models import (
     GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse,
     GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsResponse,
-    queries,
-    indicators,
+)
+from .common import (
     get_mocked_response,
-    MaterialValidator,
     SubstanceValidator,
+    MaterialValidator,
 )
 
 

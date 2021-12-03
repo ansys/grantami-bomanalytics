@@ -1,11 +1,7 @@
-from .common import (
-    pytest,
-    sample_bom,
-    sample_bom_complex,
-    queries,
-    LEGISLATIONS,
-    INDICATORS,
-)
+import pytest
+from .inputs import sample_bom, sample_bom_complex
+from ansys.grantami.bomanalytics import queries
+from .common import LEGISLATIONS, INDICATORS
 
 indicators = list(INDICATORS.values())
 

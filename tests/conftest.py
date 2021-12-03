@@ -1,9 +1,7 @@
-from .common import (
-    pytest,
-    os,
-    Connection,
-    requests_mock,
-)
+import pytest
+import os
+import requests_mock
+from ansys.grantami.bomanalytics import Connection
 
 
 @pytest.fixture(scope="session")

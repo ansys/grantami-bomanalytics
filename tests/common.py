@@ -1,55 +1,5 @@
-from typing import Union, List, Callable, Any, Dict, overload
-import pytest
-import pathlib
-from numbers import Number
-import random
-import os
-import requests_mock
-from dataclasses import dataclass
-from ansys.grantami.bomanalytics_codegen import (
-    models,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
-    GrantaBomAnalyticsServicesInterfaceCommonMaterialReference,
-    GrantaBomAnalyticsServicesInterfaceCommonPartReference,
-    GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount,
-    GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition,
-)
+from ansys.grantami.bomanalytics import indicators
 
-from ansys.grantami.bomanalytics import (
-    queries,
-    indicators,
-    Connection,
-)
-from ansys.grantami.bomanalytics._allowed_types import allowed_types, _check_type
-from ansys.grantami.bomanalytics.indicators import _Indicator
-from ansys.grantami.bomanalytics._item_definitions import (
-    BoM1711Definition,
-    MaterialDefinition,
-    SpecificationDefinition,
-    PartDefinition,
-    SubstanceDefinition,
-    ReferenceType,
-)
-from ansys.grantami.bomanalytics._item_results import (
-    PartWithComplianceResult,
-    SpecificationWithComplianceResult,
-    MaterialWithComplianceResult,
-    SubstanceWithComplianceResult,
-    CoatingWithComplianceResult,
-    ImpactedSubstance,
-    ItemResultFactory,
-)
-from ansys.grantami.bomanalytics import _query_results
-from .inputs import sample_bom, sample_bom_complex, examples_as_strings
 
 LEGISLATIONS = ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]
 

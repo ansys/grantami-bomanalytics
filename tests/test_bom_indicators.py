@@ -1,9 +1,7 @@
-from .common import (
-    pytest,
-    random,
-    indicators,
-    GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition,
-)
+import pytest
+import random
+from ansys.grantami.bomanalytics import indicators
+from ansys.grantami.bomanalytics_codegen import GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition
 
 
 def create_rohs_indicator(ignore_exemptions) -> indicators.RoHSIndicator:

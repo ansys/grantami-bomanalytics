@@ -1,30 +1,7 @@
-from ..common import (
-    pytest,
-    Union,
-    List,
-    Dict,
-    overload,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
-    queries,
-    indicators,
-    examples_as_strings,
-    requests_mock,
-    check_query_manager_attributes,
-    PartWithComplianceResult,
-    SpecificationWithComplianceResult,
-    MaterialWithComplianceResult,
-    SubstanceWithComplianceResult,
-    CoatingWithComplianceResult,
-    _query_results,
-)
+import requests_mock
+from typing import overload
+from ansys.grantami.bomanalytics import indicators, queries, _query_results
+from ..inputs import examples_as_strings
 
 
 @overload

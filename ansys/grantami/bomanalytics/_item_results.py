@@ -283,7 +283,6 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
             ]
             self._substances_by_legislation[legislation.legislation_name] = new_substances
 
-
     @staticmethod
     def _create_impacted_substance(
         substance: models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance,

@@ -446,8 +446,8 @@ class AbstractBomFactory:
 class BomItemDefinitionFactory(ABC):
     """Base factory to create a specific definition object. Applies to definitions based on records only.
 
-    These factories intentionally abstract away the concept of :class:`ReferenceType` and expose separate static methods to
-    create definitions based on a specific reference type, which more closely relates to the structure in the
+    These factories intentionally abstract away the concept of :class:`ReferenceType` and expose separate static methods
+    to create definitions based on a specific reference type, which more closely relates to the structure in the
     :mod:`queries.py` builder.
     """
 

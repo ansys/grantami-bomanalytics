@@ -1,12 +1,9 @@
-from .common import (
-    pytest,
-    dataclass,
-    ItemResultFactory,
-    ImpactedSubstance,
-    ReferenceType,
-    INDICATORS,
-    models,
-)
+import pytest
+from dataclasses import dataclass
+from ansys.grantami.bomanalytics_codegen import models
+from ansys.grantami.bomanalytics._item_definitions import ReferenceType
+from ansys.grantami.bomanalytics._item_results import ImpactedSubstance, ItemResultFactory
+from .common import INDICATORS
 
 
 @dataclass
@@ -95,6 +92,7 @@ def test_impacted_substances_bom_repr():
     for legislation in legislation_results:
         assert legislation.legislation_name in repr(result.substances_by_legislation)
     assert "ImpactedSubstance" in repr(result.substances_by_legislation)
+
 
 @pytest.mark.parametrize("result_type", ["PartWithCompliance",
                                          "MaterialWithCompliance",

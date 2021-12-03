@@ -5,7 +5,7 @@ These are sub-classed in _bom_item_results.py to include the results of the quer
 """
 
 from abc import ABC, abstractmethod
-from typing import Callable, Type, Union, List, SupportsFloat, Dict, Optional
+from typing import Callable, Type, Union, List, SupportsFloat, Dict, Optional, cast
 from enum import Enum, auto
 
 from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
@@ -47,15 +47,15 @@ class RecordReference(ABC):
         reference_type: ReferenceType,
         reference_value: Union[int, str, None],
     ):
-        self.record_history_identity: Optional[int] = None
-        self.record_guid: Optional[str] = None
-        self.record_history_guid: Optional[str] = None
+        self.record_history_identity = None
+        self.record_guid = None
+        self.record_history_guid = None
         if reference_type == ReferenceType.MiRecordHistoryIdentity:
-            self.record_history_identity = reference_value  # type: ignore[assignment]
+            self.record_history_identity = cast(int, reference_value)
         elif reference_type == ReferenceType.MiRecordGuid:
-            self.record_guid = reference_value  # type: ignore[assignment]
+            self.record_guid = cast(str, reference_value)
         elif reference_type == ReferenceType.MiRecordHistoryGuid:
-            self.record_history_guid = reference_value  # type: ignore[assignment]
+            self.record_history_guid = cast(str, reference_value)
 
     @property
     def record_reference(self) -> Dict[str, Optional[str]]:
@@ -122,9 +122,9 @@ class PartDefinition(RecordDefinition):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self.part_number: Optional[str] = None
+        self.part_number = None
         if reference_type == ReferenceType.PartNumber:
-            self.part_number = reference_value  # type: ignore[assignment]
+            self.part_number = cast(str, reference_value)
 
     @property
     def record_reference(self) -> Dict[str, Optional[str]]:
@@ -169,9 +169,9 @@ class MaterialDefinition(RecordDefinition):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self.material_id: Optional[str] = None
+        self.material_id = None
         if reference_type == ReferenceType.MaterialId:
-            self.material_id = reference_value  # type: ignore[assignment]
+            self.material_id = cast(str, reference_value)
 
     @property
     def record_reference(self) -> Dict[str, Optional[str]]:
@@ -217,9 +217,9 @@ class SpecificationDefinition(RecordDefinition):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self.specification_id: Optional[str] = None
+        self.specification_id = None
         if reference_type == ReferenceType.SpecificationId:
-            self.specification_id = reference_value  # type: ignore[assignment]
+            self.specification_id = cast(str, reference_value)
 
     @property
     def record_reference(self) -> Dict[str, Optional[str]]:
@@ -269,15 +269,15 @@ class BaseSubstanceReference(RecordReference, ABC):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self.chemical_name: Optional[str] = None
-        self.cas_number: Optional[str] = None
-        self.ec_number: Optional[str] = None
+        self.chemical_name = None
+        self.cas_number = None
+        self.ec_number = None
         if reference_type == ReferenceType.ChemicalName:
-            self.chemical_name = reference_value  # type: ignore[assignment]
+            self.chemical_name = cast(str, reference_value)
         elif reference_type == ReferenceType.CasNumber:
-            self.cas_number = reference_value  # type: ignore[assignment]
+            self.cas_number = cast(str, reference_value)
         elif reference_type == ReferenceType.EcNumber:
-            self.ec_number = reference_value  # type: ignore[assignment]
+            self.ec_number = cast(str, reference_value)
 
     @property
     def record_reference(self) -> Dict[str, Optional[str]]:

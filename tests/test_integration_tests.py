@@ -7,6 +7,8 @@ from .common import (
     INDICATORS,
 )
 
+indicators = list(INDICATORS.values())
+
 
 class TestMaterialQueries:
     ids = ["plastic-abs-pvc-flame", "plastic-pmma-pc"]
@@ -16,10 +18,11 @@ class TestMaterialQueries:
         response = connection.run(query)
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
-        assert response.impacted_substances_by_material_and_legislation
+        assert response.impacted_substances_by_material[0].substances
+        assert response.impacted_substances_by_material[0].substances_by_legislation
 
     def test_compliance(self, connection):
-        query = queries.MaterialComplianceQuery().with_material_ids(self.ids).with_indicators(INDICATORS)
+        query = queries.MaterialComplianceQuery().with_material_ids(self.ids).with_indicators(indicators)
         response = connection.run(query)
         assert response.compliance_by_indicator
         assert response.compliance_by_material_and_indicator
@@ -34,10 +37,11 @@ class TestPartQueries:
 
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
-        assert response.impacted_substances_by_part_and_legislation
+        assert response.impacted_substances_by_part[0].substances
+        assert response.impacted_substances_by_part[0].substances_by_legislation
 
     def test_compliance(self, connection):
-        query = queries.PartComplianceQuery().with_part_numbers(self.ids).with_indicators(INDICATORS)
+        query = queries.PartComplianceQuery().with_part_numbers(self.ids).with_indicators(indicators)
         response = connection.run(query)
 
         assert response.compliance_by_indicator
@@ -55,12 +59,13 @@ class TestSpecificationQueries:
         )
         response = connection.run(query)
 
-        assert response.impacted_substances_by_specification_and_legislation
-        assert response.impacted_substances_by_legislation
         assert response.impacted_substances
+        assert response.impacted_substances_by_legislation
+        assert response.impacted_substances_by_specification[0].substances
+        assert response.impacted_substances_by_specification[0].substances_by_legislation
 
     def test_compliance(self, connection):
-        query = queries.SpecificationComplianceQuery().with_specification_ids(self.ids).with_indicators(INDICATORS)
+        query = queries.SpecificationComplianceQuery().with_specification_ids(self.ids).with_indicators(indicators)
         response = connection.run(query)
 
         assert response.compliance_by_specification_and_indicator
@@ -73,7 +78,7 @@ class TestSubstancesQueries:
             queries.SubstanceComplianceQuery()
             .with_cas_numbers(["50-00-0", "57-24-9"])
             .with_cas_numbers_and_amounts([("1333-86-4", 25), ("75-74-1", 50)])
-            .with_indicators(INDICATORS)
+            .with_indicators(indicators)
         )
         response = connection.run(query)
 
@@ -87,11 +92,11 @@ class TestBomQueries:
         query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislations(LEGISLATIONS)
         response = connection.run(query)
 
-        assert response.impacted_substances_by_legislation
         assert response.impacted_substances
+        assert response.impacted_substances_by_legislation
 
     def test_compliance(self, bom, connection):
-        query = queries.BomComplianceQuery().with_bom(bom).with_indicators(INDICATORS)
+        query = queries.BomComplianceQuery().with_bom(bom).with_indicators(indicators)
         response = connection.run(query)
 
         assert response.compliance_by_part_and_indicator

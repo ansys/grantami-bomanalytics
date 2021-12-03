@@ -19,29 +19,43 @@ class TestImpactedSubstances:
     )
     mock_key = GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse.__name__
 
-    def test_impacted_substances_by_part_and_legislation(self, connection):
+    def test_impacted_substances_by_part(self, connection):
         response = get_mocked_response(self.query, self.mock_key, connection)
 
-        assert len(response.impacted_substances_by_part_and_legislation) == 2
-        part_0 = response.impacted_substances_by_part_and_legislation[0]
+        assert len(response.impacted_substances_by_part) == 2
+        part_0 = response.impacted_substances_by_part[0]
         pv_0 = PartValidator(part_0)
         pv_0.check_reference(record_history_identity="14321")
-        assert len(part_0.legislations) == 1
-        part_0_legislation = part_0.legislations["The SIN List 2.1 (Substitute It Now!)"]
-        assert part_0_legislation.name == "The SIN List 2.1 (Substitute It Now!)"
-        assert len(part_0_legislation.substances) == 2
-        for substance in part_0_legislation.substances:
+
+        # Test flattened list of substances
+        assert len(part_0.substances) == 2
+        for substance in part_0.substances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
 
-        part_1 = response.impacted_substances_by_part_and_legislation[1]
+        # Test list of substances grouped by legislations
+        assert len(part_0.substances_by_legislation) == 1
+        part_0_substances = part_0.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        assert len(part_0_substances) == 2
+        for substance in part_0_substances:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
+
+        part_1 = response.impacted_substances_by_part[1]
         pv_1 = PartValidator(part_1)
         pv_1.check_reference(part_number="AF-1235")
-        assert len(part_1.legislations) == 1
-        part_1_legislation = part_1.legislations["The SIN List 2.1 (Substitute It Now!)"]
-        assert part_1_legislation.name == "The SIN List 2.1 (Substitute It Now!)"
-        assert len(part_1_legislation.substances) == 2
-        for substance in part_1_legislation.substances:
+
+        # Test flattened list of substances
+        assert len(part_1.substances) == 2
+        for substance in part_1.substances:
+            sv = SubstanceValidator(substance)
+            sv.check_substance_details()
+
+        # Test list of substances grouped by legislations
+        assert len(part_1.substances_by_legislation) == 1
+        part_1_substances = part_1.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        assert len(part_1_substances) == 2
+        for substance in part_1_substances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
 
@@ -59,6 +73,24 @@ class TestImpactedSubstances:
         for substance in response.impacted_substances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
+
+    def test_query_result_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert repr(response) == '<PartImpactedSubstancesQueryResult: 2 PartWithImpactedSubstances results>'
+
+    def test_impacted_substances_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert "ImpactedSubstance" in repr(response.impacted_substances)
+
+    def test_impacted_substances_by_part_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert "PartWithImpactedSubstancesResult" in repr(response.impacted_substances_by_part)
+
+    def test_impacted_substances_by_legislation_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        for legislation in response.impacted_substances_by_legislation.keys():
+            assert legislation in repr(response.impacted_substances_by_legislation)
+        assert "ImpactedSubstance" in repr(response.impacted_substances_by_legislation)
 
 
 class TestCompliance:
@@ -248,3 +280,16 @@ class TestCompliance:
             for k, v in result.indicators.items():
                 assert k in self.query._indicators  # The indicator name should be the same (string equality)
                 assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)
+
+    def test_query_result_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert repr(response) == '<PartComplianceQueryResult: 2 PartWithCompliance results>'
+
+    def test_compliance_by_indicator_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        for indicator in response.compliance_by_indicator.keys():
+            assert indicator in repr(response.compliance_by_indicator)
+
+    def test_compliance_by_part_and_indicator_repr(self, connection):
+        response = get_mocked_response(self.query, self.mock_key, connection)
+        assert "PartWithComplianceResult" in repr(response.compliance_by_part_and_indicator)

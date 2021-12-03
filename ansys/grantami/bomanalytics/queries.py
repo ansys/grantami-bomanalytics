@@ -117,7 +117,10 @@ class _RecordArgumentManager(_BaseArgumentManager):
         >>> items = _RecordArgumentManager(item_type_name = "parts", batch_size = 100)
         >>> items.append_record_definition(part_definition)
         """
-
+        if not all(item.record_reference.values()):
+            raise TypeError("Attempted to add a RecordDefinition-derived object with a null record reference to a"
+                            " query. This is not supported; RecordDefinition-derived objects without record references"
+                            " can only be used as result objects for BoM queries.")
         self._items.append(item)
 
     @property

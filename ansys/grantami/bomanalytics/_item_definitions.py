@@ -45,7 +45,7 @@ class RecordReference(ABC):
     def __init__(
         self,
         reference_type: ReferenceType,
-        reference_value: Union[int, str],
+        reference_value: Union[int, str, None],
     ):
         self.record_history_identity: Optional[int] = None
         self.record_guid: Optional[str] = None
@@ -58,7 +58,7 @@ class RecordReference(ABC):
             self.record_history_guid = reference_value  # type: ignore[assignment]
 
     @property
-    def record_reference(self) -> Optional[Dict[str, str]]:
+    def record_reference(self) -> Dict[str, Optional[str]]:
         """Converts the separate reference attributes back into a single dict that describes the type and value.
 
         Is used both to create the low-level API model object that references this record, and is returned as-is as the
@@ -77,7 +77,10 @@ class RecordReference(ABC):
                 "reference_type": ReferenceType.MiRecordHistoryIdentity.name,
                 "reference_value": str(self.record_history_identity),
             }
-        return None
+        return {
+                "reference_type": None,
+                "reference_value": None,
+            }
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.record_reference})>"
@@ -108,7 +111,7 @@ class PartDefinition(RecordDefinition):
     def __init__(
         self,
         reference_type: ReferenceType,
-        reference_value: Union[int, str],
+        reference_value: Union[int, str, None],
     ):
         super().__init__(
             reference_type=reference_type,
@@ -119,17 +122,14 @@ class PartDefinition(RecordDefinition):
             self.part_number = reference_value  # type: ignore[assignment]
 
     @property
-    def record_reference(self) -> Dict[str, str]:
-        record_ref = super().record_reference
-        if record_ref:
-            return record_ref
-        elif self.part_number:
+    def record_reference(self) -> Dict[str, Optional[str]]:
+        if self.part_number:
             return {
                 "reference_type": ReferenceType.PartNumber.name,
                 "reference_value": self.part_number,
             }
         else:
-            raise RuntimeError("Bom item doesn't have a valid record identifier.")
+            return super().record_reference
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonPartReference:
@@ -158,7 +158,7 @@ class MaterialDefinition(RecordDefinition):
     def __init__(
         self,
         reference_type: ReferenceType,
-        reference_value: Union[int, str],
+        reference_value: Union[int, str, None],
     ):
         super().__init__(
             reference_type=reference_type,
@@ -169,17 +169,14 @@ class MaterialDefinition(RecordDefinition):
             self.material_id = reference_value  # type: ignore[assignment]
 
     @property
-    def record_reference(self) -> Dict[str, str]:
-        record_ref = super().record_reference
-        if record_ref:
-            return record_ref
-        elif self.material_id:
+    def record_reference(self) -> Dict[str, Optional[str]]:
+        if self.material_id:
             return {
                 "reference_type": ReferenceType.MaterialId.name,
                 "reference_value": self.material_id,
             }
         else:
-            raise RuntimeError("Bom item doesn't have a valid record identifier.")
+            return super().record_reference
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference:
@@ -209,7 +206,7 @@ class SpecificationDefinition(RecordDefinition):
     def __init__(
         self,
         reference_type: ReferenceType,
-        reference_value: Union[int, str],
+        reference_value: Union[int, str, None],
     ):
         super().__init__(
             reference_type=reference_type,
@@ -220,17 +217,14 @@ class SpecificationDefinition(RecordDefinition):
             self.specification_id = reference_value  # type: ignore[assignment]
 
     @property
-    def record_reference(self) -> Dict[str, str]:
-        record_ref = super().record_reference
-        if record_ref:
-            return record_ref
-        elif self.specification_id:
+    def record_reference(self) -> Dict[str, Optional[str]]:
+        if self.specification_id:
             return {
                 "reference_type": ReferenceType.SpecificationId.name,
                 "reference_value": self.specification_id,
             }
         else:
-            raise RuntimeError("Bom item doesn't have a valid record identifier.")
+            return super().record_reference
 
     @property
     def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference:
@@ -264,7 +258,7 @@ class BaseSubstanceReference(RecordReference, ABC):
     def __init__(
         self,
         reference_type: ReferenceType,
-        reference_value: Union[int, str],
+        reference_value: Union[int, str, None],
     ):
         super().__init__(
             reference_type=reference_type,
@@ -281,18 +275,15 @@ class BaseSubstanceReference(RecordReference, ABC):
             self.ec_number = reference_value  # type: ignore[assignment]
 
     @property
-    def record_reference(self) -> Dict[str, str]:
-        record_ref = super().record_reference
-        if not record_ref:
-            if self.chemical_name:
-                record_ref = {"reference_type": ReferenceType.ChemicalName.name, "reference_value": self.chemical_name}
-            elif self.cas_number:
-                record_ref = {"reference_type": ReferenceType.CasNumber.name, "reference_value": self.cas_number}
-            elif self.ec_number:
-                record_ref = {"reference_type": ReferenceType.EcNumber.name, "reference_value": self.ec_number}
-            else:
-                raise RuntimeError("Bom item doesn't have a valid record identifier.")
-        return record_ref
+    def record_reference(self) -> Dict[str, Optional[str]]:
+        if self.chemical_name:
+            return {"reference_type": ReferenceType.ChemicalName.name, "reference_value": self.chemical_name}
+        elif self.cas_number:
+            return {"reference_type": ReferenceType.CasNumber.name, "reference_value": self.cas_number}
+        elif self.ec_number:
+            return{"reference_type": ReferenceType.EcNumber.name, "reference_value": self.ec_number}
+        else:
+            return super().record_reference
 
 
 class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
@@ -314,7 +305,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
     def __init__(
         self,
         reference_type: ReferenceType,
-        reference_value: Union[int, str],
+        reference_value: Union[int, str, None],
         percentage_amount: Union[float, None] = None,
     ):
         super().__init__(
@@ -372,7 +363,7 @@ class CoatingReference(RecordReference, ABC):
     def __init__(
         self,
         reference_type: ReferenceType,
-        reference_value: Union[int, str],
+        reference_value: Union[int, str, None],
     ):
         super().__init__(
             reference_type=reference_type,

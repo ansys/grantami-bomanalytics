@@ -10,6 +10,11 @@ class MockRecordDefinition:
     def __init__(self, reference_type: str, reference_value: str):
         self._definition = self.Definition(reference_type, reference_value)
 
+    @property
+    def record_reference(self) -> str:
+        return {"reference_type": self._definition.reference_type,
+                "reference_value": self._definition.reference_value}
+
 
 class TestRecordArgManager:
     def test_uninitialized_configuration(self):
@@ -34,6 +39,18 @@ class TestRecordArgManager:
         am = queries._RecordArgumentManager(batch_size=100, item_type_name="TEST_RECORD")
         args = list(am.batched_arguments)
         assert args == []
+
+    @pytest.mark.parametrize("reference_type", ["test_string", None])
+    @pytest.mark.parametrize("reference_value", ["test_string", None])
+    def test_add_null_record_ref_to_arg_manager_runtime_error(self, reference_type, reference_value):
+        if reference_type and reference_value:  # We don't want to test the case where both are truthy
+            return
+        am = queries._RecordArgumentManager()
+        record_def = MockRecordDefinition(reference_type=reference_type, reference_value=reference_value)
+        with pytest.raises(TypeError) as e:
+            am.append_record_definition(record_def)
+        assert "Attempted to add a RecordDefinition-derived object with a null record reference to a query."\
+               in str(e.value)
 
     @pytest.mark.parametrize("number_of_records", [1, 2, 3, 4, 49, 50, 51, 99, 100, 101, 200, 500, 1000])
     @pytest.mark.parametrize("batch_size", [1, 2, 50, 100])

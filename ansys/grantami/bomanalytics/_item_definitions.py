@@ -66,21 +66,23 @@ class RecordReference(ABC):
         """
 
         if self.record_guid:
-            return {"reference_type": ReferenceType.MiRecordGuid.name, "reference_value": self.record_guid}
-        if self.record_history_guid:
-            return {
+            result = {"reference_type": ReferenceType.MiRecordGuid.name, "reference_value": self.record_guid}
+        elif self.record_history_guid:
+            result = {
                 "reference_type": ReferenceType.MiRecordHistoryGuid.name,
                 "reference_value": self.record_history_guid,
             }
-        if self.record_history_identity:
-            return {
+        elif self.record_history_identity:
+            result = {
                 "reference_type": ReferenceType.MiRecordHistoryIdentity.name,
                 "reference_value": str(self.record_history_identity),
             }
-        return {
+        else:
+            result = {
                 "reference_type": None,
                 "reference_value": None,
             }
+        return result
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}({self.record_reference})>"
@@ -281,7 +283,7 @@ class BaseSubstanceReference(RecordReference, ABC):
         elif self.cas_number:
             return {"reference_type": ReferenceType.CasNumber.name, "reference_value": self.cas_number}
         elif self.ec_number:
-            return{"reference_type": ReferenceType.EcNumber.name, "reference_value": self.ec_number}
+            return {"reference_type": ReferenceType.EcNumber.name, "reference_value": self.ec_number}
         else:
             return super().record_reference
 

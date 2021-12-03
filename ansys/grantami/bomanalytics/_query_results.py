@@ -3,7 +3,6 @@
 Defines the representations of the query results themselves, which allows them to implement pivots and summaries over
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
-
 from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
 from collections import defaultdict
 from abc import ABC
@@ -102,7 +101,11 @@ class ImpactedSubstancesBaseClass(ABC):
     """
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"  # type: ignore[attr-defined]
+        result = (
+            f"<{self.__class__.__name__}: {len(self._results)} "  # type: ignore[attr-defined]
+            f"{self._result_type_name} results>"
+        )
+        return result
 
     @property
     def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
@@ -161,7 +164,11 @@ class ComplianceBaseClass(ABC):
     """
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"  # type: ignore[attr-defined]
+        result = (
+            f"<{self.__class__.__name__}: {len(self._results)} "  # type: ignore[attr-defined]
+            f"{self._result_type_name} results>"
+        )
+        return result
 
     @property
     def compliance_by_indicator(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:

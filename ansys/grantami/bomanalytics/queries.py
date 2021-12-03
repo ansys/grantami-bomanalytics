@@ -118,9 +118,11 @@ class _RecordArgumentManager(_BaseArgumentManager):
         >>> items.append_record_definition(part_definition)
         """
         if not all(item.record_reference.values()):
-            raise TypeError("Attempted to add a RecordDefinition-derived object with a null record reference to a"
-                            " query. This is not supported; RecordDefinition-derived objects without record references"
-                            " can only be used as result objects for BoM queries.")
+            raise TypeError(
+                "Attempted to add a RecordDefinition-derived object with a null record reference to a"
+                " query. This is not supported; RecordDefinition-derived objects without record references"
+                " can only be used as result objects for BoM queries."
+            )
         self._items.append(item)
 
     @property
@@ -183,8 +185,8 @@ class _BaseQueryBuilder(ABC):
 
         if not self._item_argument_manager.is_populated:  # type: ignore[attr-defined]
             warnings.warn(
-                f"No {self._item_argument_manager.item_type_name} have been added to the query."  # type: ignore[attr-defined]
-                f" Server response will be empty.",
+                f"No {self._item_argument_manager.item_type_name} have been added to the "  # type: ignore[attr-defined]
+                "query. Server response will be empty.",
                 RuntimeWarning,
             )
 
@@ -397,7 +399,9 @@ class _ApiMixin(api_base_class):
             args = {**arguments, **batch}
             request = self._request_type(**args)
             response = api_method(request)
-            result.extend(self._item_argument_manager.extract_results_from_response(response))  # type: ignore[attr-defined]
+            result.extend(
+                self._item_argument_manager.extract_results_from_response(response)  # type: ignore[attr-defined]
+            )
         return result
 
     @abstractmethod
@@ -432,7 +436,11 @@ class _ComplianceMixin(_ApiMixin, ABC):
         only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {self._item_argument_manager}, {len(self._indicators)} indicators>"  # type: ignore[attr-defined]
+        result = (
+            f"<{self.__class__.__name__}: {self._item_argument_manager},"  # type: ignore[attr-defined]
+            f" {len(self._indicators)} indicators>"
+        )
+        return result
 
     @allowed_types(object, [_Indicator])
     def with_indicators(
@@ -538,7 +546,11 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {self._item_argument_manager}, {len(self._legislations)} legislations>"  # type: ignore[attr-defined]
+        result = (
+            f"<{self.__class__.__name__}: {self._item_argument_manager}, "  # type: ignore[attr-defined]
+            f"{len(self._legislations)} legislations>"
+        )
+        return result
 
     @allowed_types(object, [str])
     def with_legislations(self: Query_Builder, legislation_names: List[str]) -> Query_Builder:

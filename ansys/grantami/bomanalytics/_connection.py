@@ -20,7 +20,7 @@ from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 
 if TYPE_CHECKING:
-    from ansys.grantami.bomanalytics.queries import (
+    from .queries import (
         MaterialImpactedSubstancesQuery,
         MaterialComplianceQuery,
         PartImpactedSubstancesQuery,
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
         BomComplianceQuery,
         Yaml,
     )
-    from ansys.grantami.bomanalytics._query_results import (
+    from ._query_results import (
         MaterialImpactedSubstancesQueryResult,
         MaterialComplianceQueryResult,
         PartImpactedSubstancesQueryResult,

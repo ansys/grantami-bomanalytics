@@ -15,3 +15,7 @@ codespell:
 flake8:
 	@echo "Running flake8"
 	@flake8 .
+
+mypy:
+	@echo "Running mypy"
+	@mypy

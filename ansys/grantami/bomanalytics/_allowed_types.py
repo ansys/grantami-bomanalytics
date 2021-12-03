@@ -8,6 +8,8 @@ T
     Generic type to ensure static type checking works as expected.
 """
 
+# mypy: ignore-errors
+
 from typing import TypeVar, Type, Any
 import functools
 

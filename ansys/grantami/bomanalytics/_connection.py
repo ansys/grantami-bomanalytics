@@ -12,14 +12,18 @@ DEFAULT_DBKEY : str
     The default database key for Restricted Substances. Used if a database key isn't specified.
 """
 
-from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Tuple
+from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
 import logging
+from urllib.parse import urljoin
 from ansys.openapi import common  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
+SERVICE_PATH = "BomAnalytics/v1.svc"
 
 if TYPE_CHECKING:
+    import requests  # type: ignore[import]
+    from ansys.openapi.common import SessionConfiguration  # type: ignore[import]
     from .queries import (
         MaterialImpactedSubstancesQuery,
         MaterialComplianceQuery,
@@ -57,8 +61,8 @@ class Connection(common.ApiClientFactory):
 
     Notes
     -----
-    For advanced usage, including configuring any session-specific properties and timeouts, see the documentation of
-    the *auth_common* package.
+    For advanced usage, including configuring any session-specific properties and timeouts, see the
+    `ansys-openapi-common` package documentation.
 
     This a builder class, which means you must call the `.build()` method to return the actual
     connection object.
@@ -85,14 +89,19 @@ class Connection(common.ApiClientFactory):
     def build(self) -> "BomAnalyticsClient":
         # Use the docstring on the method in the base class.
         self._validate_builder()
-        client = BomAnalyticsClient(self._session, self._sl_url, self._session_configuration)
+        client = BomAnalyticsClient(session=self._session,
+                                    sl_url=self._sl_url,
+                                    session_configuration=self._session_configuration)
         client.setup_client(models)
         return client
 
 
 class BomAnalyticsClient(common.ApiClient):
-    def __init__(self, *args: Tuple, **kwargs: Dict) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, session: "requests.Session", sl_url: str, session_configuration: "SessionConfiguration") -> None:
+        service_url = urljoin(sl_url, SERVICE_PATH)
+        super().__init__(session=session, api_url=service_url, configuration=session_configuration)
+
+        self._sl_url = sl_url
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,
@@ -104,7 +113,7 @@ class BomAnalyticsClient(common.ApiClient):
         }
 
     def __repr__(self) -> str:
-        base_repr = f'<BomServicesClient: url="{self.api_url}", dbkey="{self._db_key}"'
+        base_repr = f'<BomServicesClient: url="{self._sl_url}", dbkey="{self._db_key}"'
         custom_tables = ", ".join([f'{k}="{v}"' for k, v in self._table_names.items() if v])
         if custom_tables:
             return base_repr + f", {custom_tables}>"

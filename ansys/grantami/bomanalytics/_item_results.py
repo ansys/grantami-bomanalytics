@@ -5,7 +5,7 @@ queries. These are mostly extensions of the classes in _item_definitions.py.
 """
 from typing import List, Dict, Union, Callable, TYPE_CHECKING, Optional, overload, TypeVar, Type, Any
 from copy import deepcopy
-from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 from ._item_definitions import (
     MaterialDefinition,
     PartDefinition,
@@ -22,32 +22,32 @@ if TYPE_CHECKING:
 Result_Model_Material = TypeVar(
     "Result_Model_Material",
     bound=Union[
-        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial,
-        models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance,
+        models.GetImpactedSubstancesForMaterialsMaterial,
+        models.CommonMaterialWithCompliance,
     ],
 )
 Result_Model_Part = TypeVar(
     "Result_Model_Part",
     bound=Union[
-        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart,
-        models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance,
+        models.GetImpactedSubstancesForPartsPart,
+        models.CommonPartWithCompliance,
     ],
 )
 Result_Model_Specification = TypeVar(
     "Result_Model_Specification",
     bound=Union[
-        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification,
-        models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance,
+        models.GetImpactedSubstancesForSpecificationsSpecification,
+        models.CommonSpecificationWithCompliance,
     ],
 )
 Result_Model_Substance = TypeVar(
-    "Result_Model_Substance", bound=models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance
+    "Result_Model_Substance", bound=models.CommonSubstanceWithCompliance
 )
 Result_Model_Coating = TypeVar(
-    "Result_Model_Coating", bound=models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance
+    "Result_Model_Coating", bound=models.CommonCoatingWithCompliance
 )
 Result_Model_Bom = TypeVar(
-    "Result_Model_Bom", bound=models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response
+    "Result_Model_Bom", bound=models.GetImpactedSubstancesForBom1711Response
 )
 Result_Model_Any = Union[
     Result_Model_Part,
@@ -342,7 +342,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
     def __init__(
         self,
-        legislations: List[models.GrantaBomAnalyticsServicesInterfaceCommonLegislationWithImpactedSubstances],
+        legislations: List[models.CommonLegislationWithImpactedSubstances],
         **kwargs: Any,
     ) -> None:
         """
@@ -367,7 +367,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
     @staticmethod
     def _create_impacted_substance(
-        substance: models.GrantaBomAnalyticsServicesInterfaceCommonImpactedSubstance,
+        substance: models.CommonImpactedSubstance,
     ) -> ImpactedSubstance:
 
         """Creates an ImpactedSubstance result object based on the corresponding object returned from the low-level
@@ -525,7 +525,7 @@ class ComplianceResultMixin(mixin_base_class):
 
     def __init__(
         self,
-        indicator_results: List[models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorResult],
+        indicator_results: List[models.CommonIndicatorResult],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
         **kwargs: Any,
     ) -> None:
@@ -581,7 +581,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
         return self._substances
 
     def _add_child_substances(
-        self, child_substances: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance]
+        self, child_substances: List[models.CommonSubstanceWithCompliance]
     ) -> None:
         """Populate the `substances` attribute based on a provided list of low-level API substance with compliance
         results.
@@ -635,7 +635,7 @@ class ChildMaterialWithComplianceMixin(child_base_class):
 
     def _add_child_materials(
         self,
-        child_materials: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
+        child_materials: List[models.CommonMaterialWithCompliance],
     ) -> None:
         """Populate the `materials` attribute based on a provided list of low-level API materials with compliance
         results.
@@ -693,7 +693,7 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
 
     def _add_child_specifications(
         self,
-        child_specifications: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
+        child_specifications: List[models.CommonSpecificationWithCompliance],
     ) -> None:
         """Populate the `specifications` attribute based on a provided list of low-level API specifications with
         compliance results.
@@ -754,7 +754,7 @@ class ChildPartWithComplianceMixin(child_base_class):
 
     def _add_child_parts(
         self,
-        child_parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
+        child_parts: List[models.CommonPartWithCompliance],
     ) -> None:
         """Populate the `parts` attribute based on a provided list of low-level API parts with compliance
         results.
@@ -815,7 +815,7 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 
     def _add_child_coatings(
         self,
-        child_coatings: List[models.GrantaBomAnalyticsServicesInterfaceCommonCoatingWithCompliance],
+        child_coatings: List[models.CommonCoatingWithCompliance],
     ) -> None:
         """Populate the `coatings` attribute based on a provided list of low-level API coatings with compliance
         results.

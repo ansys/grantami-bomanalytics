@@ -7,7 +7,7 @@ from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
 from collections import defaultdict
 from abc import ABC
 
-from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 from ._item_results import (
     ItemResultFactory,
@@ -198,13 +198,13 @@ class ComplianceBaseClass(ABC):
         return results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial)
+@QueryResultFactory.register(models.GetImpactedSubstancesForMaterialsMaterial)
 class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.MaterialImpactedSubstancesQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial],
+        results: List[models.GetImpactedSubstancesForMaterialsMaterial],
     ):
         """
         Parameters
@@ -237,13 +237,13 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance)
+@QueryResultFactory.register(models.CommonMaterialWithCompliance)
 class MaterialComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.MaterialComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
+        results: List[models.CommonMaterialWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -282,13 +282,13 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart)
+@QueryResultFactory.register(models.GetImpactedSubstancesForPartsPart)
 class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.PartImpactedSubstancesQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart],
+        results: List[models.GetImpactedSubstancesForPartsPart],
     ):
         """
         Parameters
@@ -320,13 +320,13 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance)
+@QueryResultFactory.register(models.CommonPartWithCompliance)
 class PartComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.PartComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
+        results: List[models.CommonPartWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -368,7 +368,7 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
 
 @QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
+    models.GetImpactedSubstancesForSpecificationsSpecification
 )
 class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.SpecificationImpactedSubstancesQuery`."""
@@ -376,7 +376,7 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     def __init__(
         self,
         results: List[
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
+            models.GetImpactedSubstancesForSpecificationsSpecification
             # noqa: E501
         ],
     ):
@@ -411,13 +411,13 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance)
+@QueryResultFactory.register(models.CommonSpecificationWithCompliance)
 class SpecificationComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.SpecificationComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
+        results: List[models.CommonSpecificationWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -459,13 +459,13 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance)
+@QueryResultFactory.register(models.CommonSubstanceWithCompliance)
 class SubstanceComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.SubstanceComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
+        results: List[models.CommonSubstanceWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -502,12 +502,12 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response)
+@QueryResultFactory.register(models.GetImpactedSubstancesForBom1711Response)
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.BomImpactedSubstancesQuery`."""
 
     def __init__(
-        self, results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response]
+        self, results: List[models.GetImpactedSubstancesForBom1711Response]
     ):
         """
         Parameters
@@ -524,13 +524,13 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         self._results = [bom_with_impacted_substances]
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response)
+@QueryResultFactory.register(models.GetComplianceForBom1711Response)
 class BomComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.BomComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response],
+        results: List[models.GetComplianceForBom1711Response],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -545,7 +545,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         self._results = []
         self._result_type_name = "PartWithCompliance"
-        parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance] = results[0].parts
+        parts: List[models.CommonPartWithCompliance] = results[0].parts
         for result in parts:
             part_with_compliance = ItemResultFactory.create_compliance_result(
                 result_type_name=self._result_type_name,

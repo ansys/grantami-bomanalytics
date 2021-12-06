@@ -48,8 +48,8 @@ setup(
     # Include all install requirements here.  If you have a longer
     # list, feel free just to create the list outside of ``setup`` and
     # add it here.
-    install_requires=['ansys-grantami-bomanalytics_codegen',
-                      'ansys-grantami-openapi_client_common'],
+    install_requires=['ansys-grantami-bomanalytics-openapi',
+                      'ansys-openapi-common'],
 
     # Plan on supporting only the currently supported versions of Python
     python_requires='>=3.6',

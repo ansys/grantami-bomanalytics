@@ -14,7 +14,7 @@ from enum import Enum
 from abc import ABC, abstractmethod
 from typing import List, Union, Optional, TYPE_CHECKING, Type
 
-from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 if TYPE_CHECKING:
     from ._query_results import MaterialComplianceQueryResult  # noqa: F401
@@ -236,7 +236,7 @@ class _Indicator(ABC):
 
     @property
     @abstractmethod
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition:
+    def _definition(self) -> models.CommonIndicatorDefinition:
         """Generates the low-level API indicator object."""
         pass
 
@@ -418,9 +418,9 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
         self._flag: Optional[RoHSFlag] = None
 
     @property
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition:
+    def _definition(self) -> models.CommonIndicatorDefinition:
         """Generates the low-level API indicator object."""
-        return models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
+        return models.CommonIndicatorDefinition(
             name=self.name,
             legislation_names=self.legislation_names,
             default_threshold_percentage=self.default_threshold_percentage,
@@ -493,9 +493,9 @@ class WatchListIndicator(_Indicator):
         self._flag: Optional[WatchListFlag] = None
 
     @property
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition:
+    def _definition(self) -> models.CommonIndicatorDefinition:
         """Generates the low-level API indicator object."""
-        return models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
+        return models.CommonIndicatorDefinition(
             name=self.name,
             legislation_names=self.legislation_names,
             default_threshold_percentage=self.default_threshold_percentage,

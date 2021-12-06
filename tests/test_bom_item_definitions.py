@@ -7,11 +7,11 @@ from ansys.grantami.bomanalytics._item_definitions import (
     SubstanceDefinition,
     ReferenceType,
 )
-from ansys.grantami.bomanalytics_codegen import (
-    GrantaBomAnalyticsServicesInterfaceCommonMaterialReference as MatRef,
-    GrantaBomAnalyticsServicesInterfaceCommonPartReference as PartRef,
-    GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference as SpecRef,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount as SubsRef,
+from ansys.grantami.bomanalytics_openapi import (
+    CommonMaterialReference as MatRef,
+    CommonPartReference as PartRef,
+    CommonSpecificationReference as SpecRef,
+    GetComplianceForSubstancesSubstanceWithAmount as SubsRef,
 )
 
 

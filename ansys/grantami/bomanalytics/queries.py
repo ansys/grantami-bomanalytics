@@ -22,7 +22,7 @@ import warnings
 from numbers import Number
 import logging
 
-from ansys.grantami.bomanalytics_codegen import models, api  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models, api  # type: ignore[import]
 
 from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition  # noqa: F401
 from ._allowed_types import allowed_types
@@ -685,9 +685,9 @@ class MaterialComplianceQuery(_ComplianceMixin, _MaterialQueryBuilder):
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest
+        self._request_type = models.GetComplianceForMaterialsRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-        self._api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_materials"
+        self._api_method = "post_compliance_materials"
 
 
 class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBuilder):
@@ -714,10 +714,10 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
     def __init__(self) -> None:
         super().__init__()
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest  # noqa: E501
+            models.GetImpactedSubstancesForMaterialsRequest  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-        self._api_method = "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_materials"
+        self._api_method = "post_impactedsubstances_materials"
 
 
 class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
@@ -781,9 +781,9 @@ class PartComplianceQuery(_ComplianceMixin, _PartQueryBuilder):
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest
+        self._request_type = models.GetComplianceForPartsRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-        self._api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_parts"
+        self._api_method = "post_compliance_parts"
 
 
 class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
@@ -810,10 +810,10 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest  # noqa: E501
+            models.GetImpactedSubstancesForPartsRequest  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-        self._api_method = "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_parts"
+        self._api_method = "post_impactedsubstances_parts"
 
 
 class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
@@ -881,10 +881,10 @@ class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder)
     def __init__(self) -> None:
         super().__init__()
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest  # noqa: E501
+            models.GetComplianceForSpecificationsRequest  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-        self._api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_specifications"
+        self._api_method = "post_compliance_specifications"
 
 
 class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _SpecificationQueryBuilder):
@@ -912,10 +912,10 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
     def __init__(self) -> None:
         super().__init__()
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest  # noqa: E501
+            models.GetImpactedSubstancesForSpecificationsRequest  # noqa: E501
         )
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-        self._api_method = "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_specifications"
+        self._api_method = "post_impactedsubstances_specifications"
 
 
 class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
@@ -1207,9 +1207,9 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest
+        self._request_type = models.GetComplianceForSubstancesRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
-        self._api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_substances"
+        self._api_method = "post_compliance_substances"
 
 
 class _BomArgumentManager(_BaseArgumentManager):
@@ -1337,8 +1337,8 @@ class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request
-        self._api_method = "post_miservicelayer_bom_analytics_v1svc_compliance_bom1711"
+        self._request_type = models.GetComplianceForBom1711Request
+        self._api_method = "post_compliance_bom1711"
 
 
 class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
@@ -1367,9 +1367,9 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = (
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request  # noqa: E501
+            models.GetImpactedSubstancesForBom1711Request  # noqa: E501
         )
-        self._api_method = "post_miservicelayer_bom_analytics_v1svc_impactedsubstances_bom1711"
+        self._api_method = "post_impactedsubstances_bom1711"
 
 
 class Yaml:
@@ -1406,5 +1406,5 @@ class Yaml:
             The yaml definition of the Bom Analytics API.
         """
 
-        result: str = api_instance.get_miservicelayer_bom_analytics_v1svc_yaml()
+        result: str = api_instance.get_yaml()
         return result

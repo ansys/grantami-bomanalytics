@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from typing import Callable, Type, Union, List, SupportsFloat, Dict, Optional, cast
 from enum import Enum, auto
 
-from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 
 class ReferenceType(Enum):
@@ -137,7 +137,7 @@ class PartDefinition(RecordDefinition):
             return super().record_reference
 
     @property
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonPartReference:
+    def _definition(self) -> models.CommonPartReference:
         """The low-level API material definition.
 
         Returns
@@ -145,7 +145,7 @@ class PartDefinition(RecordDefinition):
         Definition
         """
 
-        result = models.GrantaBomAnalyticsServicesInterfaceCommonPartReference(**self.record_reference)
+        result = models.CommonPartReference(**self.record_reference)
         return result
 
 
@@ -184,7 +184,7 @@ class MaterialDefinition(RecordDefinition):
             return super().record_reference
 
     @property
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference:
+    def _definition(self) -> models.CommonMaterialReference:
         """The low-level API material definition.
 
         Returns
@@ -192,7 +192,7 @@ class MaterialDefinition(RecordDefinition):
         Definition
         """
 
-        result = models.GrantaBomAnalyticsServicesInterfaceCommonMaterialReference(**self.record_reference)
+        result = models.CommonMaterialReference(**self.record_reference)
         return result
 
 
@@ -232,7 +232,7 @@ class SpecificationDefinition(RecordDefinition):
             return super().record_reference
 
     @property
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference:
+    def _definition(self) -> models.CommonSpecificationReference:
         """The low-level API specification definition.
 
         Returns
@@ -240,7 +240,7 @@ class SpecificationDefinition(RecordDefinition):
         Definition
         """
 
-        result = models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationReference(**self.record_reference)
+        result = models.CommonSpecificationReference(**self.record_reference)
         return result
 
 
@@ -350,7 +350,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         self._percentage_amount = value
 
     @property
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount:
+    def _definition(self) -> models.GetComplianceForSubstancesSubstanceWithAmount:
         """The low-level API substance definition.
 
         Returns
@@ -358,7 +358,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         Definition
         """
 
-        definition = models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesSubstanceWithAmount(
+        definition = models.GetComplianceForSubstancesSubstanceWithAmount(
             **self.record_reference, percentage_amount=self.percentage_amount
         )
         return definition
@@ -486,8 +486,8 @@ class BomItemDefinitionFactory(ABC):
 
 @AbstractBomFactory.register(
     [
-        models.GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsRequest,
-        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsRequest,
+        models.GetComplianceForMaterialsRequest,
+        models.GetImpactedSubstancesForMaterialsRequest,
     ]
 )
 class MaterialDefinitionFactory(BomItemDefinitionFactory):
@@ -558,8 +558,8 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
 
 @AbstractBomFactory.register(
     [
-        models.GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsRequest,
-        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsRequest,
+        models.GetComplianceForPartsRequest,
+        models.GetImpactedSubstancesForPartsRequest,
     ]
 )
 class PartDefinitionFactory(BomItemDefinitionFactory):
@@ -630,8 +630,8 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
 
 @AbstractBomFactory.register(
     [
-        models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsRequest,
-        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsRequest,
+        models.GetComplianceForSpecificationsRequest,
+        models.GetImpactedSubstancesForSpecificationsRequest,
     ]
 )
 class SpecificationDefinitionFactory(BomItemDefinitionFactory):
@@ -702,7 +702,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
         return SpecificationDefinition(reference_type=ReferenceType.SpecificationId, reference_value=specification_id)
 
 
-@AbstractBomFactory.register([models.GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesRequest])
+@AbstractBomFactory.register([models.GetComplianceForSubstancesRequest])
 class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
     """Creates substance compliance definition objects."""
 
@@ -803,8 +803,8 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
 @AbstractBomFactory.register(
     [
-        models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Request,
-        models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Request,
+        models.GetComplianceForBom1711Request,
+        models.GetImpactedSubstancesForBom1711Request,
     ]
 )
 class BomFactory:

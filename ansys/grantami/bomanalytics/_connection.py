@@ -15,7 +15,7 @@ DEFAULT_DBKEY : str
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Tuple
 import logging
 from ansys.openapi import common  # type: ignore[import]
-from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 
@@ -239,7 +239,7 @@ class BomAnalyticsClient(common.ApiClient):
     @property
     def _query_arguments(
         self,
-    ) -> Dict[str, Union[str, models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]]:
+    ) -> Dict[str, Union[str, models.CommonRequestConfig, None]]:
         """Generate the connection-level arguments for a query, i.e. the database key and table names.
 
         Query-specific arguments (records, legislations, etc.) are added within the query object itself.
@@ -258,7 +258,7 @@ class BomAnalyticsClient(common.ApiClient):
         """
 
         if any(self._table_names.values()):
-            config = models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(**self._table_names)
+            config = models.CommonRequestConfig(**self._table_names)
             table_mapping = [f"{n}: {v}" for n, v in self._table_names.items() if v]
             logger.info(f"[TECHDOCS] Using custom table config:")
             for line in table_mapping:

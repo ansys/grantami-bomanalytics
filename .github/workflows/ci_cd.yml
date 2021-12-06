@@ -33,3 +33,7 @@ jobs:
       - name: flake8
         if: always()
         run: make flake8
+
+      - name: mypy
+        if: always()
+        run: make mypy

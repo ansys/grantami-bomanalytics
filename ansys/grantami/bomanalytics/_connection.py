@@ -12,15 +12,15 @@ DEFAULT_DBKEY : str
     The default database key for Restricted Substances. Used if a database key isn't specified.
 """
 
-from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
+from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Tuple
 import logging
-from ansys.grantami import common
-from ansys.grantami.bomanalytics_codegen import models
+from ansys.openapi import common  # type: ignore[import]
+from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 
 if TYPE_CHECKING:
-    from ansys.grantami.bomanalytics.queries import (
+    from .queries import (
         MaterialImpactedSubstancesQuery,
         MaterialComplianceQuery,
         PartImpactedSubstancesQuery,
@@ -32,7 +32,7 @@ if TYPE_CHECKING:
         BomComplianceQuery,
         Yaml,
     )
-    from ansys.grantami.bomanalytics._query_results import (
+    from ._query_results import (
         MaterialImpactedSubstancesQueryResult,
         MaterialComplianceQueryResult,
         PartImpactedSubstancesQueryResult,
@@ -91,7 +91,7 @@ class Connection(common.ApiClientFactory):
 
 
 class BomAnalyticsClient(common.ApiClient):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Tuple, **kwargs: Dict) -> None:
         super().__init__(*args, **kwargs)
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
@@ -103,7 +103,7 @@ class BomAnalyticsClient(common.ApiClient):
             "coatings_table_name": None,
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         base_repr = f'<BomServicesClient: url="{self.api_url}", dbkey="{self._db_key}"'
         custom_tables = ", ".join([f'{k}="{v}"' for k, v in self._table_names.items() if v])
         if custom_tables:
@@ -120,7 +120,7 @@ class BomAnalyticsClient(common.ApiClient):
         products_and_parts_table_name: Optional[str] = None,
         substances_table_name: Optional[str] = None,
         coatings_table_name: Optional[str] = None,
-    ):
+    ) -> None:
         """Configure the database key and table names if different from the defaults.
 
         The database key is required if something other than MI_Restricted_Substances is being used. A table name should
@@ -217,7 +217,7 @@ class BomAnalyticsClient(common.ApiClient):
     def run(self, query: Type["Yaml"]) -> str:
         ...
 
-    def run(self, query):
+    def run(self, query):  # type: ignore[no-untyped-def]
         """Run a query against the Granta MI database.
 
         Parameters

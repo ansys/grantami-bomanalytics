@@ -3,12 +3,11 @@
 Defines the representations of the query results themselves, which allows them to implement pivots and summaries over
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
-
-from typing import List, Dict, Type, Callable, Any, Union, TypeVar
+from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
 from collections import defaultdict
 from abc import ABC
 
-from ansys.grantami.bomanalytics_codegen import models
+from ansys.grantami.bomanalytics_codegen import models  # type: ignore[import]
 
 from ._item_results import (
     ItemResultFactory,
@@ -23,11 +22,8 @@ from ._item_results import (
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
-Query_Result = TypeVar(
-    "Query_Result",
-    covariant=True,
-    bound=Union["ImpactedSubstancesBaseClass", "ComplianceBaseClass"],
-)
+if TYPE_CHECKING:
+    from .queries import Query_Result
 
 
 class QueryResultFactory:
@@ -35,7 +31,7 @@ class QueryResultFactory:
     of the response from the low-level API.
     """
 
-    registry: dict = {}
+    registry: Dict = {}
     "Mapping between a query result class and the API response it supports."
 
     @classmethod
@@ -60,7 +56,7 @@ class QueryResultFactory:
         return inner
 
     @classmethod
-    def create_result(cls, results: Union[List[models.Model], models.Model], **kwargs) -> Query_Result:
+    def create_result(cls, results: Union[List[models.Model], models.Model], **kwargs: Dict) -> "Query_Result":
         """Factory method to return a specific query result.
 
         Uses the type of the `results` parameter to determine which specific `Query_Result` to return. If `results` is a
@@ -93,7 +89,8 @@ class QueryResultFactory:
         except KeyError as e:
             raise RuntimeError(f'Unregistered response type "{response_type}"').with_traceback(e.__traceback__)
 
-        return item_factory_class(results, **kwargs)
+        item_result: Query_Result = item_factory_class(results, **kwargs)
+        return item_result
 
 
 class ImpactedSubstancesBaseClass(ABC):
@@ -103,12 +100,12 @@ class ImpactedSubstancesBaseClass(ABC):
     impacted substances by legislation only, or as a fully flattened list.
     """
 
-    # Used to satisfy the linter
-    _results = []
-    _result_type_name: str = ""
-
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
+        result = (
+            f"<{self.__class__.__name__}: {len(self._results)} "  # type: ignore[attr-defined]
+            f"{self._result_type_name} results>"
+        )
+        return result
 
     @property
     def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
@@ -128,7 +125,7 @@ class ImpactedSubstancesBaseClass(ABC):
         """
 
         results = defaultdict(list)
-        for item_result in self._results:
+        for item_result in self._results:  # type: ignore[attr-defined]
             for (
                 legislation_name,
                 legislation_result,
@@ -153,7 +150,7 @@ class ImpactedSubstancesBaseClass(ABC):
         """
 
         results = []
-        for item_result in self._results:
+        for item_result in self._results:  # type: ignore[attr-defined]
             for legislation_result in item_result.substances_by_legislation.values():
                 results.extend(legislation_result)  # TODO: Merge these property, i.e. take max amount? range?
         return results
@@ -166,12 +163,12 @@ class ComplianceBaseClass(ABC):
     compliance by indicator only.
     """
 
-    # Used to satisfy the linter
-    _results = []
-    _result_type_name: str = ""
-
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
+        result = (
+            f"<{self.__class__.__name__}: {len(self._results)} "  # type: ignore[attr-defined]
+            f"{self._result_type_name} results>"
+        )
+        return result
 
     @property
     def compliance_by_indicator(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:
@@ -191,7 +188,7 @@ class ComplianceBaseClass(ABC):
         """
 
         results = {}
-        for result in self._results:
+        for result in self._results:  # type: ignore[attr-defined]
             for indicator_name, indicator_result in result.indicators.items():
                 if indicator_name not in results:
                     results[indicator_name] = indicator_result
@@ -548,7 +545,8 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         self._results = []
         self._result_type_name = "PartWithCompliance"
-        for result in results[0].parts:
+        parts: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance] = results[0].parts
+        for result in parts:
             part_with_compliance = ItemResultFactory.create_compliance_result(
                 result_type_name=self._result_type_name,
                 result_with_compliance=result,

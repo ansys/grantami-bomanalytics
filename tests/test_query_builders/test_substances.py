@@ -225,7 +225,11 @@ def test_record_history_ids_with_amounts(values):
     assert all([i.percentage_amount == amount for i, (_, amount) in zip(query._item_argument_manager._items, values)])
 
 
-@pytest.mark.parametrize("values", ["Strings are not allowed", [("id_without_amount", None)], 12])
+@pytest.mark.parametrize("values", ["Strings are not allowed",
+                                    [("id_without_amount", None)],
+                                    12,
+                                    ("id_with_text_amount", "23"),
+                                    ("id_with_complex_number", complex(5, 1))])
 class TestWithAmountsWrongType:
     def test_record_guids(self, values):
         with pytest.raises(TypeError) as e:

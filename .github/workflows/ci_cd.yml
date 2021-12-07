@@ -230,6 +230,7 @@ jobs:
           make -C doc html SPHINXOPTS="-W"
 
       - name: Build PDF Documentation
+        if: ${{ false }}
         run: |
           sudo apt update
           sudo apt-get install -y texlive-latex-extra latexmk
@@ -243,6 +244,7 @@ jobs:
           retention-days: 7
 
       - name: Upload PDF Documentation
+        if: ${{ false }}
         uses: actions/upload-artifact@v2
         with:
           name: Documentation-pdf

@@ -45,6 +45,8 @@ TEST_HISTORY_IDS = [
         456,
         789,
     ],
+    {123},
+    {456, 789}
 ]
 
 STK_OBJECT = [

@@ -16,10 +16,39 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
+
+      - name: Create local deps folder
+        run: |
+          mkdir -p deps
+
+      - name: Copy client common wheel
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
+          workflow: ci_cd.yml
+          workflow_conclusion: success
+          name: ansys-grantami-common-wheel
+          path: deps
+          repo: pyansys/openapi-client-common
+          check_artifacts: false
+          search_artifacts: false
+
+      - name: Copy client library
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
+          workflow: build_and_test_library.yml
+          workflow_conclusion: success
+          name: ansys-grantami-bomanalytics-openapi-wheel
+          path: deps
+          repo: pyansys/granta-compliance-api
+          check_artifacts: false
+          search_artifacts: false
 
       - name: Install style requirements
         run: |

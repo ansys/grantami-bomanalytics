@@ -115,7 +115,7 @@ print(f"PA66 (60% glass fiber): {pa_66.indicators['SVHC'].flag.name}")
 above_threshold_flag = svhc.available_flags.WatchListAboveThreshold
 pa_66_svhcs = [sub for sub in pa_66.substances
                if sub.indicators["SVHC"] >= above_threshold_flag
-]
+               ]
 print(f"{len(pa_66_svhcs)} SVHCs")
 for sub in pa_66_svhcs:
     print(f"Substance record history identity: {sub.record_history_identity}")

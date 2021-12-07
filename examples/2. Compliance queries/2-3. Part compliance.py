@@ -216,4 +216,3 @@ if part_result.compliance_by_indicator["SVHC"] >= above_threshold_flag:
     print("One or more sub-assemblies contains an SVHC in a quantity > 0.1%")
 else:
     print("No SVHCs, or SVHCs are present in a quantity < 0.1%")
-

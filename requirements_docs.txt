@@ -9,3 +9,5 @@ sphinx-toolbox
 jupyterlab
 jupytext
 lxml
+tabulate
+pandas

@@ -1,5 +1,4 @@
-# check spelling, codestyle
-name: GitHub CI
+name: Pre-merge checks
 
 # run only on main branch.  This avoids duplicated actions on PRs
 on:
@@ -25,15 +24,194 @@ jobs:
       - name: Install style requirements
         run: |
           pip install -r requirements_style.txt --disable-pip-version-check
+          pip install tox
 
       - name: Codespell
         run: |
           make codespell
 
-      - name: flake8
+      - name: Lint and Type Check
         if: always()
-        run: make flake8
+        run: tox -e lint
 
-      - name: mypy
-        if: always()
-        run: make mypy
+  build:
+    name: Build package
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install build requirements
+        run: pip install wheel
+
+      - name: Create local deps folder
+        run: |
+          mkdir -p deps
+
+      - name: Copy client common wheel
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
+          workflow: ci_cd.yml
+          workflow_conclusion: success
+          name: ansys-grantami-common-wheel
+          path: deps
+          repo: pyansys/openapi-client-common
+          check_artifacts: false
+          search_artifacts: false
+
+      - name: Copy client library
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
+          workflow: build_and_test_library.yml
+          workflow_conclusion: success
+          name: ansys-grantami-bomanalytics-openapi-wheel
+          path: deps
+          repo: pyansys/granta-compliance-api
+          check_artifacts: false
+          search_artifacts: false
+
+      - name: Create wheel
+        run: python -m build
+
+      - name: Validate wheel
+        run: |
+          pip install twine
+          twine check dist/*
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ansys-grantami-bomanalytics-wheel
+          path: dist/
+          retention-days: 7
+
+  test:
+    name: Unit test on supported platforms
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ '3.6', '3.7', '3.8', '3.9', '3.10' ]
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install kerberos headers
+        run: sudo apt install libkrb5-dev
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Create local deps folder
+        run: |
+          mkdir -p deps
+
+      - name: Copy client common wheel
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
+          workflow: ci_cd.yml
+          workflow_conclusion: success
+          name: ansys-grantami-common-wheel
+          path: deps
+          repo: pyansys/openapi-client-common
+          check_artifacts: false
+          search_artifacts: false
+
+      - name: Copy client library
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
+          workflow: build_and_test_library.yml
+          workflow_conclusion: success
+          name: ansys-grantami-bomanalytics-openapi-wheel
+          path: deps
+          repo: pyansys/granta-compliance-api
+          check_artifacts: false
+          search_artifacts: false
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox tox-gh-actions
+
+      - name: Test with tox (no integration tests)
+        run: tox -- -m "not integration"
+
+  docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install kerberos headers
+        run: sudo apt install libkrb5-dev
+
+      - name: Create local deps folder
+        run: |
+          mkdir -p deps
+
+      - name: Copy client common wheel
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
+          workflow: ci_cd.yml
+          workflow_conclusion: success
+          name: ansys-grantami-common-wheel
+          path: deps
+          repo: pyansys/openapi-client-common
+          check_artifacts: false
+          search_artifacts: false
+
+      - name: Copy client library
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
+          workflow: build_and_test_library.yml
+          workflow_conclusion: success
+          name: ansys-grantami-bomanalytics-openapi-wheel
+          path: deps
+          repo: pyansys/granta-compliance-api
+          check_artifacts: false
+          search_artifacts: false
+
+      - name: Install library
+        run: pip install .
+
+      - name: Build HTML
+        run: |
+          pip install -r requirements_docs.txt
+          make -C doc html SPHINXOPTS="-W"
+
+      - name: Build PDF Documentation
+        run: |
+          sudo apt update
+          sudo apt-get install -y texlive-latex-extra latexmk
+          make -C doc latexpdf
+
+      - name: Upload HTML Documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: Documentation-html
+          path: doc/build/html
+          retention-days: 7
+
+      - name: Upload PDF Documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: Documentation-pdf
+          path: doc/build/latex/*.pdf
+          retention-days: 7

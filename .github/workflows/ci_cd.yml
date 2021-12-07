@@ -76,7 +76,7 @@ jobs:
           python-version: 3.8
 
       - name: Install build requirements
-        run: pip install wheel
+        run: pip install build wheel
 
       - name: Create local deps folder
         run: |
@@ -218,7 +218,7 @@ jobs:
           search_artifacts: false
 
       - name: Install library
-        run: pip install .
+        run: pip install . --find-links ./deps
 
       - name: Build HTML
         run: |

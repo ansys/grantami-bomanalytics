@@ -1,4 +1,7 @@
 import pytest
+import requests_mock
+import os
+from ansys.grantami.bomanalytics import _connection, Connection
 
 
 @pytest.mark.parametrize(
@@ -52,3 +55,26 @@ def test_repr_custom_dbkey_custom_table(mock_connection):
     mock_connection.set_database_details(database_key="RS_DB", specifications_table_name="My Specs")
     assert repr(mock_connection) == '<BomServicesClient: url="http://localhost/mi_servicelayer", ' \
                                     'dbkey="RS_DB", specifications_table_name="My Specs">'
+
+
+class TestConnectToSL:
+    @pytest.mark.parametrize("sl_url", ["http://host/path/",
+                                        "http://host/path",
+                                        "https://host/path/",
+                                        "https://host/path"])
+    def test_mocked(self, sl_url):
+        with requests_mock.Mocker() as m:
+            m.get(requests_mock.ANY, text="")
+            connection = Connection(servicelayer_url=sl_url).with_anonymous().build()
+        sl_url_stripped = sl_url.strip("/")
+        assert connection.api_url == sl_url_stripped + _connection.SERVICE_PATH
+
+    @pytest.mark.integration
+    @pytest.mark.parametrize("trailing_slash", [True, False])
+    def test_real(self, trailing_slash):
+        url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer") + ("/" if trailing_slash else "")
+        _ = (
+            Connection(servicelayer_url=url)
+            .with_credentials(username=os.getenv("TEST_USER"), password=os.getenv("TEST_PASS"))
+            .build()
+        )

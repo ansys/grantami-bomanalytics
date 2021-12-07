@@ -5,8 +5,9 @@ These are sub-classed in _bom_item_results.py to include the results of the quer
 """
 
 from abc import ABC, abstractmethod
-from typing import Callable, Type, Union, List, SupportsFloat, Dict, Optional, cast
+from typing import Callable, Type, Union, List, Dict, Optional, cast
 from enum import Enum, auto
+import numbers
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
@@ -341,8 +342,8 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         return self._percentage_amount or self.__class__._default_percentage_amount
 
     @percentage_amount.setter
-    def percentage_amount(self, value: SupportsFloat) -> None:
-        if not isinstance(value, SupportsFloat):
+    def percentage_amount(self, value: float) -> None:
+        if not isinstance(value, numbers.Real):
             raise TypeError(f'percentage_amount must be a number. Specified type was "{type(value)}"')
         value = float(value)
         if not 0.0 < value <= 100.0:

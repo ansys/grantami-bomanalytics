@@ -52,7 +52,8 @@ jobs:
 
       - name: Install style requirements
         run: |
-          pip install -r requirements_style.txt --disable-pip-version-check
+          python -m pip install --upgrade pip
+          pip install -r requirements_style.txt
           pip install tox
 
       - name: Codespell

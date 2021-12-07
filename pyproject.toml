@@ -1,0 +1,48 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py36,py37,py38,py39,py310
+isolated_build = True
+
+[gh-actions]
+python =
+    3.6: py36
+    3.7: py37
+    3.8: py38
+    3.9: py39, coverage
+    3.10: py310
+
+[testenv]
+deps =
+    ansys-openapi-common
+    ansys-grantami-bomanalytics-openapi
+    pytest
+    pytest-cov
+    requests-mock
+    dataclasses; python_version < '3.7'
+install_command = pip install --pre --find-links ./deps {opts} {packages}
+commands = pytest ./tests {posargs}
+
+[testenv:coverage]
+deps = {[testenv]deps}
+commands = pytest --cov=ansys.grantami.bomanalytics ./tests {posargs}
+
+[testenv:lint]
+deps =
+    codespell==2.1.0
+    flake8==3.9.2
+    black
+    mypy==0.910
+    {[testenv]deps}
+
+commands =
+    flake8 ./ansys ./tests
+    mypy
+"""

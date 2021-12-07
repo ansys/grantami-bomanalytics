@@ -6,6 +6,7 @@ from .common import LEGISLATIONS, INDICATORS
 indicators = list(INDICATORS.values())
 
 
+@pytest.mark.integration
 class TestMaterialQueries:
     ids = ["plastic-abs-pvc-flame", "plastic-pmma-pc"]
 
@@ -24,6 +25,7 @@ class TestMaterialQueries:
         assert response.compliance_by_material_and_indicator
 
 
+@pytest.mark.integration
 class TestPartQueries:
     ids = ["DRILL", "asm_flap_mating"]
 
@@ -44,6 +46,7 @@ class TestPartQueries:
         assert response.compliance_by_part_and_indicator
 
 
+@pytest.mark.integration
 class TestSpecificationQueries:
     ids = ["MIL-C-20218,TypeII", "MIL-PRF-24635,TypeII,Class1"]
 
@@ -68,6 +71,7 @@ class TestSpecificationQueries:
         assert response.compliance_by_indicator
 
 
+@pytest.mark.integration
 class TestSubstancesQueries:
     def test_compliance(self, connection):
         query = (
@@ -82,6 +86,7 @@ class TestSubstancesQueries:
         assert response.compliance_by_indicator
 
 
+@pytest.mark.integration
 @pytest.mark.parametrize("bom", [sample_bom, sample_bom_complex])
 class TestBomQueries:
     def test_impacted_substances(self, bom, connection):
@@ -99,5 +104,6 @@ class TestBomQueries:
         assert response.compliance_by_indicator
 
 
+@pytest.mark.integration
 def test_yaml(connection):
     assert connection.run(queries.Yaml)

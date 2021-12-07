@@ -1,5 +1,0 @@
-ansys-granta-openapi_client_common
-ansys-granta-bomanalytics_codegen
-pytest
-pytest-cov
-requests-mock

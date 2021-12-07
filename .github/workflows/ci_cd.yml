@@ -22,6 +22,9 @@ jobs:
         with:
           python-version: 3.8
 
+      - name: Install kerberos headers
+        run: sudo apt install libkrb5-dev
+
       - name: Create local deps folder
         run: |
           mkdir -p deps

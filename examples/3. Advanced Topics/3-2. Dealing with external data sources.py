@@ -54,7 +54,6 @@ components = data["components"]
 
 # + tags=[]
 material_ids = {m for comp in components for m in comp["materials"]}
-material_ids = list(material_ids)
 material_ids
 # -
 

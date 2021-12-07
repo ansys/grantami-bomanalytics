@@ -75,21 +75,22 @@ part_result
 # -
 
 # A `PartImpactedSubstancesQueryResult` object contains three properties:
-# `impacted_substances_by_part_and_legislation`, `impacted_substances_by_legislation`, and `impacted_substances`.
-# They provide different views of the impacted substances at different levels of granularity.
+# `impacted_substances_by_part`, `impacted_substances_by_legislation`, and `impacted_substances`. They provide different
+# views of the impacted substances at different levels of granularity.
 
-# ## impacted_substances_by_part_and_legislation
+# ## impacted_substances_by_part
 
 # This property is structured first as a list of `partWithImpactedSubstancesResult` objects, each of which contains
-# a dictionary of lists of `ImpactedSubstance` objects, which represent the substances impacted by that legislation.
+# a dictionary of lists of `ImpactedSubstance` objects keyed by legislation, or a single flat list of all
+# substances.
 
 # First, we can simplify the structure somewhat because we are only using only Part Numbers. The cell below creates a
 # dictionary that maps Part Numbers to lists of substances impacted by the 'SIN List'.
 
 # + tags=[]
 substances_by_part = {}
-for part in part_result.impacted_substances_by_part_and_legislation:
-    part_substances = part.legislations[SIN_LIST].substances
+for part in part_result.impacted_substances_by_part:
+    part_substances = part.substances_by_legislation[SIN_LIST]
     substances_by_part[part.part_number] = part_substances
 # -
 

@@ -1,4 +1,9 @@
-from .common import pathlib, subprocess, sys
+import pytest
+import sys
+import subprocess
+import pathlib
+
+pytestmark = pytest.mark.integration
 
 
 def test_examples(example_script: pathlib.Path):

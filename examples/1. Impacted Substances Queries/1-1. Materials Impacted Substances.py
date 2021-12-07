@@ -65,21 +65,22 @@ results
 # -
 
 # A `MaterialImpactedSubstancesQueryResult` object contains three properties:
-# `impacted_substances_by_material_and_legislation`, `impacted_substances_by_legislation`, and `impacted_substances`.
-# They provide different views of the impacted substances at different levels of granularity.
+# `impacted_substances_by_material`, `impacted_substances_by_legislation`, and `impacted_substances`. They provide
+# different views of the impacted substances at different levels of granularity.
 
-# ## impacted_substances_by_material_and_legislation
+# ## impacted_substances_by_material
 
 # This property is structured first as a list of `materialWithImpactedSubstancesResult` objects, each of which contains
-# a dictionary of lists of `ImpactedSubstance` objects, which represent the substances impacted by that legislation.
+# a dictionary of lists of `ImpactedSubstance` objects keyed by legislation, or a single flat list of all
+# substances.
 
 # First, we can simplify the structure somewhat because we are only using Material IDs. The cell below creates a
 # dictionary that maps Material IDs to lists of substances impacted by the 'SIN List'.
 
 # + tags=[]
 substances_by_material = {}
-for material in results.impacted_substances_by_material_and_legislation:
-    substances = material.legislations[SIN_LIST].substances
+for material in results.impacted_substances_by_material:
+    substances = material.substances_by_legislation[SIN_LIST]
     substances_by_material[material.material_id] = substances
 # -
 

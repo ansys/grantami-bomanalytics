@@ -1,0 +1,39 @@
+# check spelling, codestyle
+name: GitHub CI
+
+# run only on main branch.  This avoids duplicated actions on PRs
+on:
+  pull_request:
+  push:
+    tags:
+      - "*"
+    branches:
+      - main
+
+jobs:
+  style:
+    name: Style Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install style requirements
+        run: |
+          pip install -r requirements_style.txt --disable-pip-version-check
+
+      - name: Codespell
+        run: |
+          make codespell
+
+      - name: flake8
+        if: always()
+        run: make flake8
+
+      - name: mypy
+        if: always()
+        run: make mypy

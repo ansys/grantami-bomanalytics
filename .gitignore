@@ -35,7 +35,10 @@ _autosummary
 
 
 # Testing
+.tox
+.mypy_cache
 .coverage
+htmlcov
 *,cover
 test-output.xml
 
@@ -51,3 +54,6 @@ doc/build
 
 # ipynb (generated from py files on docs build)
 *.ipynb
+
+# Pypi things
+deps

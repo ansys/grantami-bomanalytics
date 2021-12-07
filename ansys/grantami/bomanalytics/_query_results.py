@@ -3,12 +3,11 @@
 Defines the representations of the query results themselves, which allows them to implement pivots and summaries over
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
-
-from typing import List, Dict, Type, Callable, Any, Union, TypeVar
+from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
 from collections import defaultdict
 from abc import ABC
 
-from ansys.grantami.bomanalytics_codegen import models
+from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 from ._item_results import (
     ItemResultFactory,
@@ -23,11 +22,8 @@ from ._item_results import (
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
-Query_Result = TypeVar(
-    "Query_Result",
-    covariant=True,
-    bound=Union["ImpactedSubstancesBaseClass", "ComplianceBaseClass"],
-)
+if TYPE_CHECKING:
+    from .queries import Query_Result
 
 
 class QueryResultFactory:
@@ -35,7 +31,7 @@ class QueryResultFactory:
     of the response from the low-level API.
     """
 
-    registry: dict = {}
+    registry: Dict = {}
     "Mapping between a query result class and the API response it supports."
 
     @classmethod
@@ -60,7 +56,7 @@ class QueryResultFactory:
         return inner
 
     @classmethod
-    def create_result(cls, results: Union[List[models.Model], models.Model], **kwargs) -> Query_Result:
+    def create_result(cls, results: Union[List[models.Model], models.Model], **kwargs: Dict) -> "Query_Result":
         """Factory method to return a specific query result.
 
         Uses the type of the `results` parameter to determine which specific `Query_Result` to return. If `results` is a
@@ -93,7 +89,8 @@ class QueryResultFactory:
         except KeyError as e:
             raise RuntimeError(f'Unregistered response type "{response_type}"').with_traceback(e.__traceback__)
 
-        return item_factory_class(results, **kwargs)
+        item_result: Query_Result = item_factory_class(results, **kwargs)
+        return item_result
 
 
 class ImpactedSubstancesBaseClass(ABC):
@@ -103,12 +100,12 @@ class ImpactedSubstancesBaseClass(ABC):
     impacted substances by legislation only, or as a fully flattened list.
     """
 
-    # Used to satisfy the linter
-    _results = []
-    _result_type_name: str = ""
-
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
+        result = (
+            f"<{self.__class__.__name__}: {len(self._results)} "  # type: ignore[attr-defined]
+            f"{self._result_type_name} results>"
+        )
+        return result
 
     @property
     def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
@@ -128,13 +125,13 @@ class ImpactedSubstancesBaseClass(ABC):
         """
 
         results = defaultdict(list)
-        for item_result in self._results:
+        for item_result in self._results:  # type: ignore[attr-defined]
             for (
                 legislation_name,
                 legislation_result,
-            ) in item_result.legislations.items():
+            ) in item_result.substances_by_legislation.items():
                 results[legislation_name].extend(
-                    legislation_result.substances
+                    legislation_result
                 )  # TODO: Merge these property, i.e. take max amount? range?
         return dict(results)
 
@@ -153,11 +150,9 @@ class ImpactedSubstancesBaseClass(ABC):
         """
 
         results = []
-        for item_result in self._results:
-            for legislation_result in item_result.legislations.values():
-                results.extend(
-                    legislation_result.substances
-                )  # TODO: Merge these property, i.e. take max amount? range?
+        for item_result in self._results:  # type: ignore[attr-defined]
+            for legislation_result in item_result.substances_by_legislation.values():
+                results.extend(legislation_result)  # TODO: Merge these property, i.e. take max amount? range?
         return results
 
 
@@ -168,12 +163,12 @@ class ComplianceBaseClass(ABC):
     compliance by indicator only.
     """
 
-    # Used to satisfy the linter
-    _results = []
-    _result_type_name: str = ""
-
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
+        result = (
+            f"<{self.__class__.__name__}: {len(self._results)} "  # type: ignore[attr-defined]
+            f"{self._result_type_name} results>"
+        )
+        return result
 
     @property
     def compliance_by_indicator(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:
@@ -193,7 +188,7 @@ class ComplianceBaseClass(ABC):
         """
 
         results = {}
-        for result in self._results:
+        for result in self._results:  # type: ignore[attr-defined]
             for indicator_name, indicator_result in result.indicators.items():
                 if indicator_name not in results:
                     results[indicator_name] = indicator_result
@@ -203,13 +198,13 @@ class ComplianceBaseClass(ABC):
         return results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial)
+@QueryResultFactory.register(models.GetImpactedSubstancesForMaterialsMaterial)
 class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.MaterialImpactedSubstancesQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsMaterial],
+        results: List[models.GetImpactedSubstancesForMaterialsMaterial],
     ):
         """
         Parameters
@@ -228,14 +223,13 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             self._results.append(material_with_impacted_substances)
 
     @property
-    def impacted_substances_by_material_and_legislation(self) -> List["MaterialWithImpactedSubstancesResult"]:
-        """The impacted substances for each legislation in the original query, grouped by material and
-        legislation.
+    def impacted_substances_by_material(self) -> List["MaterialWithImpactedSubstancesResult"]:
+        """The impacted substances returned by the query, grouped by material.
 
         Examples
         --------
         >>> result: MaterialImpactedSubstancesQueryResult
-        >>> result.impacted_substances_by_material_and_legislation
+        >>> result.impacted_substances_by_material
         [<MaterialWithImpactedSubstancesResult({MaterialId: elastomer-butadienerubber}),
                 1 legislations>,...]
         """
@@ -243,13 +237,13 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance)
+@QueryResultFactory.register(models.CommonMaterialWithCompliance)
 class MaterialComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.MaterialComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonMaterialWithCompliance],
+        results: List[models.CommonMaterialWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -288,13 +282,13 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart)
+@QueryResultFactory.register(models.GetImpactedSubstancesForPartsPart)
 class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.PartImpactedSubstancesQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsPart],
+        results: List[models.GetImpactedSubstancesForPartsPart],
     ):
         """
         Parameters
@@ -313,27 +307,26 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             self._results.append(part_with_impacted_substances)
 
     @property
-    def impacted_substances_by_part_and_legislation(self) -> List["PartWithImpactedSubstancesResult"]:
-        """The impacted substances for each legislation in the original query, grouped by part and
-        legislation.
+    def impacted_substances_by_part(self) -> List["PartWithImpactedSubstancesResult"]:
+        """The impacted substances returned by the query, grouped by part.
 
         Examples
         --------
         >>> result: PartImpactedSubstancesQueryResult
-        >>> result.impacted_substances_by_part_and_legislation
+        >>> result.impacted_substances_by_part
         [<PartWithImpactedSubstancesResult({PartNumber: DRILL}), 1 legislations>,...]
         """
 
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance)
+@QueryResultFactory.register(models.CommonPartWithCompliance)
 class PartComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.PartComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonPartWithCompliance],
+        results: List[models.CommonPartWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -375,7 +368,7 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
 
 @QueryResultFactory.register(
-    models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
+    models.GetImpactedSubstancesForSpecificationsSpecification
 )
 class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.SpecificationImpactedSubstancesQuery`."""
@@ -383,7 +376,7 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     def __init__(
         self,
         results: List[
-            models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsSpecification
+            models.GetImpactedSubstancesForSpecificationsSpecification
             # noqa: E501
         ],
     ):
@@ -404,14 +397,13 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             self._results.append(specification_with_impacted_substances)
 
     @property
-    def impacted_substances_by_specification_and_legislation(self) -> List["SpecificationWithImpactedSubstancesResult"]:
-        """The impacted substances for each legislation in the original query, grouped by specification and
-        legislation.
+    def impacted_substances_by_specification(self) -> List["SpecificationWithImpactedSubstancesResult"]:
+        """The impacted substances returned by the query, grouped by specification.
 
         Examples
         --------
         >>> result: SpecificationImpactedSubstancesQueryResult
-        >>> result.impacted_substances_by_specification_and_legislation
+        >>> result.impacted_substances_by_specification
         [<SpecificationWithImpactedSubstancesResult({SpecificationId: MIL-A-8625}),
                 1 legislations>, ...]
         """
@@ -419,13 +411,13 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance)
+@QueryResultFactory.register(models.CommonSpecificationWithCompliance)
 class SpecificationComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.SpecificationComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSpecificationWithCompliance],
+        results: List[models.CommonSpecificationWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -467,13 +459,13 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance)
+@QueryResultFactory.register(models.CommonSubstanceWithCompliance)
 class SubstanceComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.SubstanceComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceCommonSubstanceWithCompliance],
+        results: List[models.CommonSubstanceWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -510,12 +502,12 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response)
+@QueryResultFactory.register(models.GetImpactedSubstancesForBom1711Response)
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.BomImpactedSubstancesQuery`."""
 
     def __init__(
-        self, results: List[models.GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response]
+        self, results: List[models.GetImpactedSubstancesForBom1711Response]
     ):
         """
         Parameters
@@ -524,21 +516,21 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             The low-level API objects returned by the REST API.
         """
 
-        self.result_type_name = "Bom1711WithImpactedSubstances"
+        self._result_type_name = "BomWithImpactedSubstances"
         bom_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-            result_type_name=self.result_type_name,
+            result_type_name=self._result_type_name,
             result_with_impacted_substances=results[0],
         )
         self._results = [bom_with_impacted_substances]
 
 
-@QueryResultFactory.register(models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response)
+@QueryResultFactory.register(models.GetComplianceForBom1711Response)
 class BomComplianceQueryResult(ComplianceBaseClass):
     """The result of running a :class:`ansys.granta.bom_analytics.queries.BomComplianceQuery`."""
 
     def __init__(
         self,
-        results: List[models.GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response],
+        results: List[models.GetComplianceForBom1711Response],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ):
         """
@@ -553,7 +545,8 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         self._results = []
         self._result_type_name = "PartWithCompliance"
-        for result in results[0].parts:
+        parts: List[models.CommonPartWithCompliance] = results[0].parts
+        for result in parts:
             part_with_compliance = ItemResultFactory.create_compliance_result(
                 result_type_name=self._result_type_name,
                 result_with_compliance=result,

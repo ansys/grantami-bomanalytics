@@ -12,9 +12,9 @@ or part.
 
 from enum import Enum
 from abc import ABC, abstractmethod
-from typing import List, Union, Optional, TYPE_CHECKING
+from typing import List, Union, Optional, TYPE_CHECKING, Type
 
-from ansys.grantami.bomanalytics_codegen import models
+from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 if TYPE_CHECKING:
     from ._query_results import MaterialComplianceQueryResult  # noqa: F401
@@ -31,12 +31,26 @@ class _Flag(Enum):
     """
 
     def __new__(cls, value: int, doc: str) -> "_Flag":
-        obj = object.__new__(cls)
+        obj: _Flag = object.__new__(cls)
         obj._value_ = value
         obj.__doc__ = doc
         return obj
 
-    def __le__(self, other):
+    @abstractmethod
+    def __lt__(self, other: "_Flag") -> bool:
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
+
+        Raises
+        ------
+        ValueError
+            If the other object is an indicator and has no value.
+        TypeError
+            If the other object isn't this flag's type or this flag's indicator's type.
+        """
+
+        pass
+
+    def __le__(self, other: "_Flag") -> bool:
         """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
@@ -93,28 +107,19 @@ class RoHSFlag(_Flag):
     compliance. *Compliance is unknown.*""",
     )
 
-    def __lt__(self, other):
-        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
-
-        Raises
-        ------
-        ValueError
-            If the other object is an indicator and has no value.
-        TypeError
-            If the other object isn't this flag's type or this flag's indicator's type.
-        """
-
-        if self.__class__ is other.__class__:
-            return self.value < other.value
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            result: bool = self.value < other.value
         elif isinstance(other, RoHSIndicator):
             if not other.flag:
                 raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
             else:
-                return self.value < other.flag.value
+                result = self.value < other.flag.value
         else:
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        return result
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
@@ -125,7 +130,7 @@ class RoHSFlag(_Flag):
             If the other object isn't this flag's type or this flag's indicator's type.
         """
 
-        if self.__class__ is other.__class__:
+        if isinstance(other, self.__class__):
             return self is other
         elif isinstance(other, RoHSIndicator):
             if not other.flag:
@@ -175,28 +180,19 @@ class WatchListFlag(_Flag):
     )
     WatchListUnknown = 7, """There is not enough information to determine compliance. *Compliance is unknown.*"""
 
-    def __lt__(self, other):
-        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
-
-        Raises
-        ------
-        ValueError
-            If the other object is an indicator and has no value.
-        TypeError
-            If the other object isn't this flag's type or this flag's indicator's type.
-        """
-
-        if self.__class__ is other.__class__:
-            return self.value < other.value
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, self.__class__):
+            result: bool = self.value < other.value
         elif isinstance(other, WatchListIndicator):
             if not other.flag:
                 raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
             else:
-                return self.value < other.flag.value
+                result = self.value < other.flag.value
         else:
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        return result
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
@@ -207,7 +203,7 @@ class WatchListFlag(_Flag):
             If the other object isn't this flag's type or this flag's indicator's type.
         """
 
-        if self.__class__ is other.__class__:
+        if isinstance(other, self.__class__):
             return self is other
         elif isinstance(other, WatchListIndicator):
             if not other.flag:
@@ -224,7 +220,7 @@ class _Indicator(ABC):
     Allows for comparison of same-typed indicators that both have results.
     """
 
-    available_flags = None
+    available_flags: Type[_Flag]
 
     def __init__(
         self,
@@ -232,32 +228,32 @@ class _Indicator(ABC):
         legislation_names: List[str],
         default_threshold_percentage: Union[float, None] = None,
     ):
-        self.name: str = name
-        self.legislation_names: List[str] = legislation_names
-        self.default_threshold_percentage: float = default_threshold_percentage
-        self._indicator_type: Union[str, None] = None
-        self._flag: Union[_Flag, None] = None
+        self.name = name
+        self.legislation_names = legislation_names
+        self.default_threshold_percentage = default_threshold_percentage
+        self._indicator_type: Optional[str] = None
+        self._flag: Optional[_Flag] = None
 
     @property
     @abstractmethod
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition:
+    def _definition(self) -> models.CommonIndicatorDefinition:
         """Generates the low-level API indicator object."""
         pass
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if not self._flag:
             return f"<{self.__class__.__name__}, name: {self.name}>"
         else:
             return f"<{self.__class__.__name__}, name: {self.name}, flag: {str(self.flag)}>"
 
-    def __str__(self):
+    def __str__(self) -> str:
         result = self.name
         if self.flag:
             result = f"{result}, {self.flag.name}"
         return result
 
     @property
-    def flag(self) -> _Flag:
+    def flag(self) -> Optional[_Flag]:
         """The state of this indicator. If the indicator is a definition only, this property is `None`.
 
         Raises
@@ -268,13 +264,13 @@ class _Indicator(ABC):
         return self._flag
 
     @flag.setter
-    def flag(self, flag: str):
+    def flag(self, flag: str) -> None:
         try:
-            self._flag: _Flag = self.__class__.available_flags[flag]
+            self._flag = self.__class__.available_flags[flag]
         except KeyError as e:
             raise KeyError(f'Unknown flag "{flag}" for indicator "{repr(self)}"').with_traceback(e.__traceback__)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
 
         Raises
@@ -287,16 +283,10 @@ class _Indicator(ABC):
 
         if not self.flag:
             raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
-        if isinstance(other, self.available_flags):
-            return self.flag is other
-        if self.__class__ is not other.__class__:
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
-        if self.flag and other.flag:
-            return self.flag is other.flag
-        elif not other.flag:
-            raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+        other_flag = self._get_flag_from_object(other)
+        return self.flag is other_flag
 
-    def __lt__(self, other):
+    def __lt__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
 
         Raises
@@ -309,16 +299,49 @@ class _Indicator(ABC):
 
         if not self.flag:
             raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
-        if isinstance(other, self.available_flags):
-            return self.flag < other
-        if self.__class__ is not other.__class__:
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
-        if self.flag and other.flag:
-            return self.flag < other.flag
+        other_flag = self._get_flag_from_object(other)
+        return self.flag < other_flag
+
+    def _get_flag_from_object(self, other: object) -> _Flag:
+        """Get the flag from the other object, regardless of if it is an Indicator or a Flag.
+
+        Returns
+        -------
+        The flag object extracted from `other`
+
+        Raises
+        ------
+        RuntimeError
+            If an unhandled error occurs during the comparison. A descriptive TypeError or ValueError should always
+            be raised instead.
+        """
+        self._check_type_and_value_compatibility(other)
+        if isinstance(other, _Indicator) and other.flag:
+            flag = other.flag
+        elif isinstance(other, _Flag):
+            flag = other
         else:
+            raise RuntimeError
+        return flag
+
+    def _check_type_and_value_compatibility(self, other: object) -> None:
+        """Check if the type and value of self and other are compatible such that they can be compared.
+
+        Raises
+        ------
+        ValueError
+            If the other indicator has no flag, and therefore no basis for comparison.
+        TypeError
+            If the other object is a different _Indicator subtype or an incompatible_Flag subtype.
+        """
+        if isinstance(other, _Indicator) and not isinstance(other, self.__class__):
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        if isinstance(other, _Flag) and not isinstance(other, self.available_flags):
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+        if isinstance(other, _Indicator) and not other.flag:
             raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
 
-    def __le__(self, other):
+    def __le__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
 
         Raises
@@ -388,16 +411,16 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
         legislation_names: List[str],
         default_threshold_percentage: Optional[float] = None,
         ignore_exemptions: bool = False,
-    ):
+    ) -> None:
         super().__init__(name, legislation_names, default_threshold_percentage)
         self._ignore_exemptions: bool = ignore_exemptions
         self._indicator_type: str = "Rohs"
         self._flag: Optional[RoHSFlag] = None
 
     @property
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition:
+    def _definition(self) -> models.CommonIndicatorDefinition:
         """Generates the low-level API indicator object."""
-        return models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
+        return models.CommonIndicatorDefinition(
             name=self.name,
             legislation_names=self.legislation_names,
             default_threshold_percentage=self.default_threshold_percentage,
@@ -463,16 +486,16 @@ class WatchListIndicator(_Indicator):
         legislation_names: List[str],
         default_threshold_percentage: Optional[float] = None,
         ignore_process_chemicals: bool = False,
-    ):
+    ) -> None:
         super().__init__(name, legislation_names, default_threshold_percentage)
         self._ignore_process_chemicals: bool = ignore_process_chemicals
         self._indicator_type: str = "WatchList"
         self._flag: Optional[WatchListFlag] = None
 
     @property
-    def _definition(self) -> models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition:
+    def _definition(self) -> models.CommonIndicatorDefinition:
         """Generates the low-level API indicator object."""
-        return models.GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition(
+        return models.CommonIndicatorDefinition(
             name=self.name,
             legislation_names=self.legislation_names,
             default_threshold_percentage=self.default_threshold_percentage,

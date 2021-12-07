@@ -1,9 +1,7 @@
-from .common import (
-    pytest,
-    random,
-    indicators,
-    GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition,
-)
+import pytest
+import random
+from ansys.grantami.bomanalytics import indicators
+from ansys.grantami.bomanalytics_openapi import CommonIndicatorDefinition
 
 
 def create_rohs_indicator(ignore_exemptions) -> indicators.RoHSIndicator:
@@ -115,7 +113,7 @@ class TestRohsIndicator:
 
     def test_indicator_definition_property(self):
         definition = self.test_indicator._definition
-        assert isinstance(definition, GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition)
+        assert isinstance(definition, CommonIndicatorDefinition)
         def_dict = definition.to_dict()
         assert def_dict["name"] == self.test_indicator.name
         assert def_dict["legislation_names"] == self.test_indicator.legislation_names
@@ -139,7 +137,7 @@ class TestWatchListIndicator:
 
     def test_indicator_definition_property(self):
         definition = self.test_indicator._definition
-        assert isinstance(definition, GrantaBomAnalyticsServicesInterfaceCommonIndicatorDefinition)
+        assert isinstance(definition, CommonIndicatorDefinition)
         def_dict = definition.to_dict()
         assert def_dict["name"] == self.test_indicator.name
         assert def_dict["legislation_names"] == self.test_indicator.legislation_names

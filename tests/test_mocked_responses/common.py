@@ -1,28 +1,70 @@
-from ..common import (
-    pytest,
-    Union,
-    List,
-    Dict,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForMaterialsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForMaterialsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForPartsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForPartsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForSpecificationsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSpecificationsResponse,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForSubstancesResponse,
-    GrantaBomAnalyticsServicesInterfaceGetImpactedSubstancesForBom1711Response,
-    GrantaBomAnalyticsServicesInterfaceGetComplianceForBom1711Response,
-    queries,
-    indicators,
-    examples_as_strings,
-    requests_mock,
-    check_query_manager_attributes,
-    PartWithComplianceResult,
-    SpecificationWithComplianceResult,
-    MaterialWithComplianceResult,
-    SubstanceWithComplianceResult,
-    CoatingWithComplianceResult,
-)
+import requests_mock
+from typing import overload
+from ansys.grantami.bomanalytics import indicators, queries, _query_results
+from ..inputs import examples_as_strings
+
+
+@overload
+def get_mocked_response(
+    query: queries.MaterialImpactedSubstancesQuery, result_model, connection
+) -> _query_results.MaterialImpactedSubstancesQueryResult:
+    ...
+
+
+@overload
+def get_mocked_response(
+    query: queries.MaterialComplianceQuery, result_model, connection
+) -> _query_results.MaterialComplianceQueryResult:
+    ...
+
+
+@overload
+def get_mocked_response(
+    query: queries.PartImpactedSubstancesQuery, result_model, connection
+) -> _query_results.PartImpactedSubstancesQueryResult:
+    ...
+
+
+@overload
+def get_mocked_response(
+    query: queries.PartComplianceQuery, result_model, connection
+) -> _query_results.PartComplianceQueryResult:
+    ...
+
+
+@overload
+def get_mocked_response(
+    query: queries.SpecificationImpactedSubstancesQuery, result_model, connection
+) -> _query_results.SpecificationImpactedSubstancesQueryResult:
+    ...
+
+
+@overload
+def get_mocked_response(
+    query: queries.SpecificationComplianceQuery, result_model, connection
+) -> _query_results.SpecificationComplianceQueryResult:
+    ...
+
+
+@overload
+def get_mocked_response(
+    query: queries.SubstanceComplianceQuery, result_model, connection
+) -> _query_results.SubstanceComplianceQueryResult:
+    ...
+
+
+@overload
+def get_mocked_response(
+    query: queries.BomImpactedSubstancesQuery, result_model, connection
+) -> _query_results.BomImpactedSubstancesQueryResult:
+    ...
+
+
+@overload
+def get_mocked_response(
+    query: queries.BomComplianceQuery, result_model, connection
+) -> _query_results.BomComplianceQueryResult:
+    ...
 
 
 def get_mocked_response(query, result_model, connection):

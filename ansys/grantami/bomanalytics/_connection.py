@@ -14,13 +14,16 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
 import logging
-from ansys.openapi import common
-from ansys.grantami.bomanalytics_codegen import models
+from ansys.openapi import common  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
+SERVICE_PATH = "/BomAnalytics/v1.svc"
 
 if TYPE_CHECKING:
-    from ansys.grantami.bomanalytics.queries import (
+    import requests  # type: ignore[import]
+    from ansys.openapi.common import SessionConfiguration  # type: ignore[import]
+    from .queries import (
         MaterialImpactedSubstancesQuery,
         MaterialComplianceQuery,
         PartImpactedSubstancesQuery,
@@ -32,7 +35,7 @@ if TYPE_CHECKING:
         BomComplianceQuery,
         Yaml,
     )
-    from ansys.grantami.bomanalytics._query_results import (
+    from ._query_results import (
         MaterialImpactedSubstancesQueryResult,
         MaterialComplianceQueryResult,
         PartImpactedSubstancesQueryResult,
@@ -57,8 +60,8 @@ class Connection(common.ApiClientFactory):
 
     Notes
     -----
-    For advanced usage, including configuring any session-specific properties and timeouts, see the documentation of
-    the *auth_common* package.
+    For advanced usage, including configuring any session-specific properties and timeouts, see the
+    `ansys-openapi-common` package documentation.
 
     This a builder class, which means you must call the `.build()` method to return the actual
     connection object.
@@ -85,14 +88,22 @@ class Connection(common.ApiClientFactory):
     def build(self) -> "BomAnalyticsClient":
         # Use the docstring on the method in the base class.
         self._validate_builder()
-        client = BomAnalyticsClient(self._session, self._sl_url, self._session_configuration)
+        client = BomAnalyticsClient(session=self._session,
+                                    sl_url=self._sl_url,
+                                    session_configuration=self._session_configuration)
         client.setup_client(models)
         return client
 
 
 class BomAnalyticsClient(common.ApiClient):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, session: "requests.Session", sl_url: str, session_configuration: "SessionConfiguration") -> None:
+        self._sl_url = sl_url.strip("/")
+        self._service_url = self._sl_url + SERVICE_PATH
+        logger.debug("Creating BomAnalyticsClient")
+        logger.debug(f"Base Servicelayer url: {self._sl_url}")
+        logger.debug(f"Service url: {self._service_url}")
+        super().__init__(session=session, api_url=self._service_url, configuration=session_configuration)
+
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,
@@ -103,8 +114,8 @@ class BomAnalyticsClient(common.ApiClient):
             "coatings_table_name": None,
         }
 
-    def __repr__(self):
-        base_repr = f'<BomServicesClient: url="{self.api_url}", dbkey="{self._db_key}"'
+    def __repr__(self) -> str:
+        base_repr = f'<BomServicesClient: url="{self._sl_url}", dbkey="{self._db_key}"'
         custom_tables = ", ".join([f'{k}="{v}"' for k, v in self._table_names.items() if v])
         if custom_tables:
             return base_repr + f", {custom_tables}>"
@@ -120,7 +131,7 @@ class BomAnalyticsClient(common.ApiClient):
         products_and_parts_table_name: Optional[str] = None,
         substances_table_name: Optional[str] = None,
         coatings_table_name: Optional[str] = None,
-    ):
+    ) -> None:
         """Configure the database key and table names if different from the defaults.
 
         The database key is required if something other than MI_Restricted_Substances is being used. A table name should
@@ -217,7 +228,7 @@ class BomAnalyticsClient(common.ApiClient):
     def run(self, query: Type["Yaml"]) -> str:
         ...
 
-    def run(self, query):
+    def run(self, query):  # type: ignore[no-untyped-def]
         """Run a query against the Granta MI database.
 
         Parameters
@@ -239,7 +250,7 @@ class BomAnalyticsClient(common.ApiClient):
     @property
     def _query_arguments(
         self,
-    ) -> Dict[str, Union[str, models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig, None]]:
+    ) -> Dict[str, Union[str, models.CommonRequestConfig, None]]:
         """Generate the connection-level arguments for a query, i.e. the database key and table names.
 
         Query-specific arguments (records, legislations, etc.) are added within the query object itself.
@@ -258,7 +269,7 @@ class BomAnalyticsClient(common.ApiClient):
         """
 
         if any(self._table_names.values()):
-            config = models.GrantaBomAnalyticsServicesInterfaceCommonRequestConfig(**self._table_names)
+            config = models.CommonRequestConfig(**self._table_names)
             table_mapping = [f"{n}: {v}" for n, v in self._table_names.items() if v]
             logger.info(f"[TECHDOCS] Using custom table config:")
             for line in table_mapping:

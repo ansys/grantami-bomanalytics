@@ -14,12 +14,11 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
 import logging
-from urllib.parse import urljoin
 from ansys.openapi import common  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
-SERVICE_PATH = "BomAnalytics/v1.svc"
+SERVICE_PATH = "/BomAnalytics/v1.svc"
 
 if TYPE_CHECKING:
     import requests  # type: ignore[import]
@@ -98,10 +97,10 @@ class Connection(common.ApiClientFactory):
 
 class BomAnalyticsClient(common.ApiClient):
     def __init__(self, session: "requests.Session", sl_url: str, session_configuration: "SessionConfiguration") -> None:
-        service_url = urljoin(sl_url, SERVICE_PATH)
-        super().__init__(session=session, api_url=service_url, configuration=session_configuration)
+        self._sl_url = sl_url.strip("/")
+        self._service_url = self._sl_url + SERVICE_PATH
+        super().__init__(session=session, api_url=self._service_url, configuration=session_configuration)
 
-        self._sl_url = sl_url
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,

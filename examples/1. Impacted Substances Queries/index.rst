@@ -12,5 +12,5 @@ in a Granta MI Restricted Substances database. An equivalent script can be writt
 .. toctree::
    :maxdepth: 1
 
-   1-1. Materials Impacted Substances.ipynb
-   1-2. Parts Impacted Substances.ipynb
+   1-1. Materials impacted substances.ipynb
+   1-2. Parts impacted substances.ipynb

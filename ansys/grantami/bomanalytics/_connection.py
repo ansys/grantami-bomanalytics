@@ -99,6 +99,9 @@ class BomAnalyticsClient(common.ApiClient):
     def __init__(self, session: "requests.Session", sl_url: str, session_configuration: "SessionConfiguration") -> None:
         self._sl_url = sl_url.strip("/")
         self._service_url = self._sl_url + SERVICE_PATH
+        logger.debug("Creating BomAnalyticsClient")
+        logger.debug(f"Base Servicelayer url: {self._sl_url}")
+        logger.debug(f"Service url: {self._service_url}")
         super().__init__(session=session, api_url=self._service_url, configuration=session_configuration)
 
         self._db_key = DEFAULT_DBKEY

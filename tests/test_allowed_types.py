@@ -1,10 +1,10 @@
 import pytest
 from numbers import Number
-from ansys.grantami.bomanalytics._allowed_types import allowed_types, _check_type
+from ansys.grantami.bomanalytics._allowed_types import validate_argument_type, _check_type
 
 
 def test_allowed_types_args():
-    @allowed_types(int)
+    @validate_argument_type(int)
     def test_function(*args):
         return args
 
@@ -14,7 +14,7 @@ def test_allowed_types_args():
 
 
 def test_allowed_types_kwargs():
-    @allowed_types(int)
+    @validate_argument_type(int)
     def test_function(*args, **kwargs):
         return kwargs
 
@@ -23,7 +23,7 @@ def test_allowed_types_kwargs():
 
 
 def test_different_lengths_type_error():
-    @allowed_types(int)
+    @validate_argument_type(int)
     def test_function(*args):
         return args
 
@@ -33,13 +33,13 @@ def test_different_lengths_type_error():
 
 
 def test_different_types_type_error():
-    @allowed_types(int)
+    @validate_argument_type(int)
     def test_function(*args):
         return args
 
     with pytest.raises(TypeError) as e:
         test_function("self", "test")
-    assert f'Incorrect type for value "test". Expected "<class \'int\'>"' == str(e.value)
+    assert f'Incorrect type for value "test". Expected "(<class \'int\'>,)"' == str(e.value)
 
 
 @pytest.mark.parametrize(

@@ -14,7 +14,7 @@ import functools
 T = TypeVar("T")
 
 
-def allowed_types(*types: Any) -> Callable:
+def validate_argument_type(*allowed_types: Any) -> Callable:
     """Decorator function that validates the types of values passed into a method. The decorator accepts one or more
     objects against which the types are checked.
 
@@ -27,7 +27,7 @@ def allowed_types(*types: Any) -> Callable:
 
     Parameters
     ----------
-    *types
+    *allowed_types
         Tuple of objects who's type should match the corresponding function argument's type.
 
     Raises
@@ -42,7 +42,7 @@ def allowed_types(*types: Any) -> Callable:
 
     Examples
     --------
-    >>> @check_types([str]):
+    >>> @validate_argument_type([str]):
     >>> def process_records(self, records):
     >>>    ...
 
@@ -61,23 +61,23 @@ def allowed_types(*types: Any) -> Callable:
                 raise TypeError(f"The allowed_types decorator can only be used on a method called with exactly one "
                                 f'argument. The method "{method.__name__}" was called with {len(values)} arguments.')
             value = values[0]
-            result = any([_check_type_wrapper(value, allowed_type) for allowed_type in types])
+            result = any([_check_type_wrapper(value, allowed_type) for allowed_type in allowed_types])
             if not result:
-                raise TypeError(f'Incorrect type for value "{value}". Expected "{types}"')
+                raise TypeError(f'Incorrect type for value "{value}". Expected "{allowed_types}"')
             return method(*args, **kwargs)  # type: ignore[call-arg]
         return check_types
     return decorator
 
 
-def _check_type_wrapper(obj: Any, allowed_type: Any) -> bool:
+def _check_type_wrapper(value_obj: Any, type_obj: Any) -> bool:
     try:
-        _check_type(obj, allowed_type)
+        _check_type(value_obj, type_obj)
         return True
     except AssertionError:
         return False
 
 
-def _check_type(obj: Any, allowed_type: Any) -> None:
+def _check_type(value_obj: Any, type_obj: Any) -> None:
     """Recursively checks the type of an object against an allowed type.
 
     Recursive checking is performed if `allowed_type` is a container; first the type of the container itself is checked,
@@ -85,9 +85,9 @@ def _check_type(obj: Any, allowed_type: Any) -> None:
 
     Parameters
     ----------
-    obj
+    value_obj
         The object to be checked
-    allowed_type
+    type_obj
         The object to be checked against
 
     Returns
@@ -103,37 +103,37 @@ def _check_type(obj: Any, allowed_type: Any) -> None:
         If a container's length is mismatched against the object being checked.
     """
 
-    if isinstance(allowed_type, (list, tuple)):
-        assert isinstance(obj, (list, tuple))
-        if len(allowed_type) == 1:
-            contained_type = allowed_type[0]
-            for value in obj:
+    if isinstance(type_obj, (list, tuple)):
+        assert isinstance(value_obj, (list, tuple))
+        if len(type_obj) == 1:
+            contained_type = type_obj[0]
+            for value in value_obj:
                 _check_type(value, contained_type)
-        elif len(allowed_type) == len(obj):
-            for value, contained_type in zip(obj, allowed_type):
+        elif len(type_obj) == len(value_obj):
+            for value, contained_type in zip(value_obj, type_obj):
                 _check_type(value, contained_type)
         else:
             raise ValueError("List or tuple containers must be either of length 1 or the same length as the object"
                              "being checked."
-                             f"Container length: {len(allowed_type)}, object length: {len(obj)}")
-    elif isinstance(allowed_type, set):
-        assert isinstance(obj, set)
-        if len(allowed_type) != 1:
+                             f"Container length: {len(type_obj)}, object length: {len(value_obj)}")
+    elif isinstance(type_obj, set):
+        assert isinstance(value_obj, set)
+        if len(type_obj) != 1:
             raise ValueError("Sets must be homogeneous, i.e. they can only contain a single object against which the"
                              " type should be checked.")
-        contained_type = next(iter(allowed_type))
-        for value in obj:
+        contained_type = next(iter(type_obj))
+        for value in value_obj:
             _check_type(value, contained_type)
-    elif isinstance(allowed_type, dict):
-        assert isinstance(obj, dict)
-        if len(allowed_type) != 1:
+    elif isinstance(type_obj, dict):
+        assert isinstance(value_obj, dict)
+        if len(type_obj) != 1:
             raise ValueError("Dictionaries must be homogeneous, i.e. they can only contain a single object against"
                              " which the type should be checked.")
-        contained_key_type = next(iter(allowed_type.keys()))
-        for key in obj.keys():
+        contained_key_type = next(iter(type_obj.keys()))
+        for key in value_obj.keys():
             _check_type(key, contained_key_type)
-        contained_value_type = next(iter(allowed_type.values()))
-        for value in obj.values():
+        contained_value_type = next(iter(type_obj.values()))
+        for value in value_obj.values():
             _check_type(value, contained_value_type)
     else:
-        assert isinstance(obj, allowed_type)
+        assert isinstance(value_obj, type_obj)

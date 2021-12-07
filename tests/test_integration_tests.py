@@ -3,6 +3,8 @@ from .inputs import sample_bom, sample_bom_complex
 from ansys.grantami.bomanalytics import queries
 from .common import LEGISLATIONS, INDICATORS
 
+pytestmark = pytest.mark.integration
+
 indicators = list(INDICATORS.values())
 
 

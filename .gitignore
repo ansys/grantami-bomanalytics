@@ -35,7 +35,10 @@ _autosummary
 
 
 # Testing
+.tox
+.mypy_cache
 .coverage
+htmlcov
 *,cover
 test-output.xml
 
@@ -48,3 +51,6 @@ test-output.xml
 
 # Docs builds
 doc/build
+
+# Pypi things
+deps

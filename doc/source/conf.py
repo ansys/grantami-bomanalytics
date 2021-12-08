@@ -168,3 +168,9 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
 # Note: Call `make clean` to force a rebuild, which will delete the 'examples' output folder
 if not examples_output_dir.is_dir() and os.getenv("BUILD_DOCS"):
     _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
+
+if not os.getenv("BUILD_DOCS"):
+    examples_output_dir.mkdir(parents=False, exist_ok=False)
+    example_index = examples_output_dir / Path("index.rst")
+    with open(example_index, "w") as f:
+        f.write("Example Scripts\n===============\n\nExample build skipped")

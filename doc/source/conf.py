@@ -189,6 +189,7 @@ assert (cwd.name == "source")
 EXAMPLES_DIR_NAME = "examples"
 examples_output_dir = Path(EXAMPLES_DIR_NAME).absolute()
 examples_source_dir = Path("../../" + EXAMPLES_DIR_NAME).absolute()
+EXAMPLE_FLAG = os.getenv("BUILD_EXAMPLES")
 
 
 def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
@@ -210,10 +211,12 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
 # If we don't have an examples folder, create it by copying notebooks and supporting files
 # If we already have an output directory then don't do anything.
 # Note: Call `make clean` to force a rebuild, which will delete the 'examples' output folder
-if not examples_output_dir.is_dir() and os.getenv("BUILD_DOCS"):
+# Only include examples if the environment variable is set to True
+if not examples_output_dir.is_dir() and EXAMPLE_FLAG:
     _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
 
-if not os.getenv("BUILD_DOCS"):
+# If we are skipping docs, create a placeholder index.rst file to avoid sphinx errors.
+if not EXAMPLE_FLAG:
     examples_output_dir.mkdir(parents=False, exist_ok=False)
     example_index = examples_output_dir / Path("index.rst")
     with open(example_index, "w") as f:

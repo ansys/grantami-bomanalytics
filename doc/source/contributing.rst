@@ -269,6 +269,9 @@ Documentation for Granta MI Bom Analytics is generated from three sources:
 General usage and API descriptions should be placed within `doc/source` and
 the docstrings.  Full examples should be placed in `examples`.
 
+Examples are only built if the environment variable 'BUILD_EXAMPLES' is set to True.
+Otherwise, the example build is skipped and a placeholder page is inserted into the
+documentation.
 
 Adding a New Example
 ~~~~~~~~~~~~~~~~~~~~

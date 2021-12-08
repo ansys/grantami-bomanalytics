@@ -6,6 +6,7 @@ Ansys Granta MI Bom Analytics API Documentation
    :maxdepth: 3
 
    api/index
+   examples/index
    contributing
 
 

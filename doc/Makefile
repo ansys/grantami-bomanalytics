@@ -19,6 +19,7 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 
-# customized clean due to examples gallery
+# customized clean due to examples notebooks
 clean:
 	rm -rf build
+	rm -rf source/examples

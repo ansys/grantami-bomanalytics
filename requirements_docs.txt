@@ -6,3 +6,9 @@ sphinx-notfound-page
 sphinx-copybutton
 enum_tools
 sphinx-toolbox
+jupyterlab
+jupytext
+lxml
+tabulate
+pandas
+nbsphinx

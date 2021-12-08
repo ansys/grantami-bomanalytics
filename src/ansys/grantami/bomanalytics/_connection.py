@@ -12,12 +12,10 @@ DEFAULT_DBKEY : str
     The default database key for Restricted Substances. Used if a database key isn't specified.
 """
 
-from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
+from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
 import logging
-import requests  # type: ignore[import]
 
 from ansys.openapi import common  # type: ignore[import]
-from ansys.openapi.common import SessionConfiguration  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
@@ -91,19 +89,19 @@ class Connection(common.ApiClientFactory):
         self._validate_builder()
         client = BomAnalyticsClient(session=self._session,
                                     sl_url=self._sl_url,
-                                    session_configuration=self._session_configuration)
+                                    configuration=self._session_configuration)
         client.setup_client(models)
         return client
 
 
 class BomAnalyticsClient(common.ApiClient):
-    def __init__(self, session: requests.Session, sl_url: str, session_configuration: SessionConfiguration) -> None:
+    def __init__(self, sl_url: str, **kwargs: Any) -> None:
         self._sl_url = sl_url.strip("/")
         self._service_url = self._sl_url + SERVICE_PATH
         logger.debug("Creating BomAnalyticsClient")
         logger.debug(f"Base Servicelayer url: {self._sl_url}")
         logger.debug(f"Service url: {self._service_url}")
-        super().__init__(session=session, api_url=self._service_url, configuration=session_configuration)
+        super().__init__(api_url=self._service_url, **kwargs)
 
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {

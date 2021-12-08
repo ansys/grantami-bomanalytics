@@ -6,7 +6,7 @@ from ansys.grantami.bomanalytics import __version__
 
 # -- Project information -----------------------------------------------------
 
-project = "ansys.granta.bom_analytics"
+project = "ansys.grantami.bomanalytics"
 copyright = "(c) 2021 ANSYS, Inc. All rights reserved"
 author = "ANSYS Inc."
 
@@ -71,7 +71,7 @@ copybutton_prompt_is_regexp = True
 # -- Options for HTML output -------------------------------------------------
 html_theme = "pyansys_sphinx_theme"
 html_logo = "https://docs.pyansys.com/_static/pyansys-logo-black-cropped.png"
-html_theme_options = {"github_url": "https://github.com/pyansys/granta-bom-analytics", "show_prev_next": False}
+html_theme_options = {"github_url": "https://github.com/pyansys/grantami-bomanalytics", "show_prev_next": False}
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -86,7 +86,7 @@ latex_elements = {}
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "pyansys.tex", "ansys.granta.bom_analytics Documentation", author, "manual"),
+    (master_doc, "pyansys.tex", "ansys.grantami.bomanalytics Documentation", author, "manual"),
 ]
 
 
@@ -94,7 +94,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "ansys.granta.bom_analytics", "ansys.granta.bom_analytics Documentation", [author], 1)]
+man_pages = [(master_doc, "ansys.grantami.bomanalytics", "ansys.grantami.bomanalytics Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -105,10 +105,10 @@ man_pages = [(master_doc, "ansys.granta.bom_analytics", "ansys.granta.bom_analyt
 texinfo_documents = [
     (
         master_doc,
-        "ansys.granta.bom_analytics",
-        "ansys.granta.bom_analytics Documentation",
+        "ansys.grantami.bomanalytics",
+        "ansys.grantami.bomanalytics Documentation",
         author,
-        "ansys.granta.bom_analytics",
+        "ansys.grantami.bomanalytics",
         "Python interface to the Granta MI Restricted Substances module",
         "Engineering Software",
     ),

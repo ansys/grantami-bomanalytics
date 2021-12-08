@@ -11,3 +11,4 @@ jupytext
 lxml
 tabulate
 pandas
+nbsphinx

@@ -46,6 +46,6 @@ deps =
     {[testenv]deps}
 
 commands =
-    flake8 ./ansys ./tests
+    flake8 ./src ./tests
     mypy
 """

@@ -14,7 +14,10 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
 import logging
+import requests  # type: ignore[import]
+
 from ansys.openapi import common  # type: ignore[import]
+from ansys.openapi.common import SessionConfiguration  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"

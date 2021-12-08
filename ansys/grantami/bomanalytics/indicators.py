@@ -178,7 +178,10 @@ class WatchListFlag(_Flag):
         """This item contains one or more substances impacted by the specified
     legislations. *Item is non-compliant.*""",
     )
-    WatchListUnknown = 7, """There is not enough information to determine compliance. *Compliance is unknown.*"""
+    WatchListUnknown = (
+        7,
+        """There is not enough information to determine compliance. *Compliance is unknown.*""",
+    )
 
     def __lt__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
@@ -363,14 +366,14 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
 
     Parameters
     ----------
-    name
+    name : str
         The name of the indicator. Used to identify the indicator in the query result.
-    legislation_names
+    legislation_names : list[str]
         The legislations against which compliance will be determined.
-    default_threshold_percentage
+    default_threshold_percentage : Optional[float]
         The concentration of substance that will be determined to be non-compliant. Is only used if the legislation
         doesn't define a specific threshold for the substance.
-    ignore_exemptions
+    ignore_exemptions : Optional[bool]
         Whether exemptions added to parts will be considered when determining compliance against this indicator.
 
     Raises
@@ -379,6 +382,11 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
         If two differently-typed indicators are compared
     ValueError
         If two indicators are compared which both don't have a result flag
+
+    Attributes
+    ----------
+    available_flags : Type[:class:`~ansys.grantami.bomanalytics.indicators.RoHSFlag`]
+        The possible states of this indicator.
 
     Notes
     -----
@@ -437,14 +445,14 @@ class WatchListIndicator(_Indicator):
 
     Parameters
     ----------
-    name
+    name : str
         The name of the indicator. Used to identify the indicator in the query result.
-    legislation_names
+    legislation_names : list[str]
         The legislations against which compliance will be determined.
-    default_threshold_percentage
+    default_threshold_percentage : Optional[float]
         The concentration of substance that will be determined to be non-compliant. Is only used if the legislation
         doesn't define a specific threshold for the substance.
-    ignore_process_chemicals
+    ignore_process_chemicals : Optional[bool]
         Whether to ignore substances flagged as process chemicals when determining compliance against this indicator.
 
     Raises
@@ -453,6 +461,11 @@ class WatchListIndicator(_Indicator):
         If two differently-typed indicators are compared
     ValueError
         If two indicators are compared which both don't have a result flag
+
+    Attributes
+    ----------
+    available_flags : Type[:class:`~ansys.grantami.bomanalytics.indicators.WatchListFlag`]
+        The possible states of this indicator.
 
     Notes
     -----

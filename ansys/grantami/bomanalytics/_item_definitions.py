@@ -283,11 +283,20 @@ class BaseSubstanceReference(RecordReference, ABC):
     @property
     def record_reference(self) -> Dict[str, Optional[str]]:
         if self.chemical_name:
-            return {"reference_type": ReferenceType.ChemicalName.name, "reference_value": self.chemical_name}
+            return {
+                "reference_type": ReferenceType.ChemicalName.name,
+                "reference_value": self.chemical_name,
+            }
         elif self.cas_number:
-            return {"reference_type": ReferenceType.CasNumber.name, "reference_value": self.cas_number}
+            return {
+                "reference_type": ReferenceType.CasNumber.name,
+                "reference_value": self.cas_number,
+            }
         elif self.ec_number:
-            return {"reference_type": ReferenceType.EcNumber.name, "reference_value": self.ec_number}
+            return {
+                "reference_type": ReferenceType.EcNumber.name,
+                "reference_value": self.ec_number,
+            }
         else:
             return super().record_reference
 
@@ -471,7 +480,9 @@ class BomItemDefinitionFactory(ABC):
 
     @staticmethod
     @abstractmethod
-    def create_definition_by_record_history_identity(record_history_identity: int) -> "RecordDefinition":
+    def create_definition_by_record_history_identity(
+        record_history_identity: int,
+    ) -> "RecordDefinition":
         pass
 
     @staticmethod
@@ -495,7 +506,9 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
     """Creates material definition objects."""
 
     @staticmethod
-    def create_definition_by_record_history_identity(record_history_identity: int) -> MaterialDefinition:
+    def create_definition_by_record_history_identity(
+        record_history_identity: int,
+    ) -> MaterialDefinition:
         """Instantiate and return a `MaterialDefinition` object based on the provided record history identity.
 
         Parameters
@@ -508,7 +521,8 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
         """
 
         return MaterialDefinition(
-            reference_type=ReferenceType.MiRecordHistoryIdentity, reference_value=record_history_identity
+            reference_type=ReferenceType.MiRecordHistoryIdentity,
+            reference_value=record_history_identity,
         )
 
     @staticmethod
@@ -567,7 +581,9 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
     """Creates part definition objects."""
 
     @staticmethod
-    def create_definition_by_record_history_identity(record_history_identity: int) -> PartDefinition:
+    def create_definition_by_record_history_identity(
+        record_history_identity: int,
+    ) -> PartDefinition:
         """Instantiate and return a `PartDefinition` object based on the provided record history identity.
 
         Parameters
@@ -580,7 +596,8 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
         """
 
         return PartDefinition(
-            reference_type=ReferenceType.MiRecordHistoryIdentity, reference_value=record_history_identity
+            reference_type=ReferenceType.MiRecordHistoryIdentity,
+            reference_value=record_history_identity,
         )
 
     @staticmethod
@@ -639,7 +656,9 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
     """Creates specification definition objects."""
 
     @staticmethod
-    def create_definition_by_record_history_identity(record_history_identity: int) -> SpecificationDefinition:
+    def create_definition_by_record_history_identity(
+        record_history_identity: int,
+    ) -> SpecificationDefinition:
         """Instantiate and return a `SpecificationDefinition` object based on the provided record history identity.
 
         Parameters
@@ -652,11 +671,14 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
         """
 
         return SpecificationDefinition(
-            reference_type=ReferenceType.MiRecordHistoryIdentity, reference_value=record_history_identity
+            reference_type=ReferenceType.MiRecordHistoryIdentity,
+            reference_value=record_history_identity,
         )
 
     @staticmethod
-    def create_definition_by_record_history_guid(record_history_guid: str) -> SpecificationDefinition:
+    def create_definition_by_record_history_guid(
+        record_history_guid: str,
+    ) -> SpecificationDefinition:
         """Instantiate and return a `SpecificationDefinition` object based on the provided record history GUID.
 
         Parameters
@@ -708,7 +730,9 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
     """Creates substance compliance definition objects."""
 
     @staticmethod
-    def create_definition_by_record_history_identity(record_history_identity: int) -> SubstanceDefinition:
+    def create_definition_by_record_history_identity(
+        record_history_identity: int,
+    ) -> SubstanceDefinition:
         """Instantiate and return a `SubstanceDefinition` object based on the provided record history identity.
 
         Parameters
@@ -721,7 +745,8 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
         """
 
         return SubstanceDefinition(
-            reference_type=ReferenceType.MiRecordHistoryIdentity, reference_value=record_history_identity
+            reference_type=ReferenceType.MiRecordHistoryIdentity,
+            reference_value=record_history_identity,
         )
 
     @staticmethod

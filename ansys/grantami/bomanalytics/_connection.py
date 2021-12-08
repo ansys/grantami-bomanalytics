@@ -12,7 +12,7 @@ DEFAULT_DBKEY : str
     The default database key for Restricted Substances. Used if a database key isn't specified.
 """
 
-from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
+from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
 import logging
 from ansys.openapi import common  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
@@ -21,8 +21,6 @@ DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
 
 if TYPE_CHECKING:
-    import requests  # type: ignore[import]
-    from ansys.openapi.common import SessionConfiguration  # type: ignore[import]
     from .queries import (
         MaterialImpactedSubstancesQuery,
         MaterialComplianceQuery,
@@ -52,11 +50,6 @@ logger = logging.getLogger(__name__)
 
 class Connection(common.ApiClientFactory):
     """Build a connection to an instance of Granta MI.
-
-    Parameters
-    ----------
-    servicelayer_url
-        The url of the Granta MI Service layer.
 
     Notes
     -----
@@ -88,21 +81,25 @@ class Connection(common.ApiClientFactory):
     def build(self) -> "BomAnalyticsClient":
         # Use the docstring on the method in the base class.
         self._validate_builder()
-        client = BomAnalyticsClient(session=self._session,
-                                    sl_url=self._sl_url,
-                                    session_configuration=self._session_configuration)
+        client = BomAnalyticsClient(
+            session=self._session, sl_url=self._sl_url, configuration=self._session_configuration
+        )
         client.setup_client(models)
         return client
 
 
 class BomAnalyticsClient(common.ApiClient):
-    def __init__(self, session: "requests.Session", sl_url: str, session_configuration: "SessionConfiguration") -> None:
+    """The class used to communicate with Granta MI. It is instantiated by the
+    :class:`~ansys.grantami.bomanalytics.Connection` class defined above, and should not be instantiated directly.
+    """
+
+    def __init__(self, sl_url: str, **kwargs: Any) -> None:
         self._sl_url = sl_url.strip("/")
         self._service_url = self._sl_url + SERVICE_PATH
         logger.debug("Creating BomAnalyticsClient")
         logger.debug(f"Base Servicelayer url: {self._sl_url}")
         logger.debug(f"Service url: {self._service_url}")
-        super().__init__(session=session, api_url=self._service_url, configuration=session_configuration)
+        super().__init__(api_url=self._service_url, **kwargs)
 
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
@@ -134,24 +131,24 @@ class BomAnalyticsClient(common.ApiClient):
     ) -> None:
         """Configure the database key and table names if different from the defaults.
 
-        The database key is required if something other than MI_Restricted_Substances is being used. A table name should
-        only be specified if it has been modified from the defaults.
+        The database key is required if Granta MI is configured to use a value other than 'MI_Restricted_Substances'.
+        A table name is required if it has been modified from the defaults.
 
         Parameters
         ----------
-        database_key
+        database_key : Optional[str]
             The database key for the Restricted Substances database.
-        material_universe_table_name
+        material_universe_table_name : Optional[str]
             The name of the table that implements the 'MaterialUniverse' schema.
-        in_house_materials_table_name
+        in_house_materials_table_name : Optional[str]
             The name of the table that implements the 'Materials - in house' schema.
-        specifications_table_name
+        specifications_table_name : Optional[str]
             The name of the table that implements the 'Specifications' schema.
-        products_and_parts_table_name
+        products_and_parts_table_name : Optional[str]
             The name of the table that implements the 'Products and parts' schema.
-        substances_table_name
+        substances_table_name : Optional[str]
             The name of the table that implements the 'Restricted Substances' schema.
-        coatings_table_name
+        coatings_table_name : Optional[str]
             The name of the table that implements the 'Coatings' schema.
 
         Notes

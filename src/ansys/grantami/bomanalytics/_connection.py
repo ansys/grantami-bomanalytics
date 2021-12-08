@@ -14,15 +14,16 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type
 import logging
-from ansys.openapi import common  # type: ignore[import]
+import requests  # type: ignore[import]
+
+from ansys.openapi import common
+from ansys.openapi.common import SessionConfiguration  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
 
 if TYPE_CHECKING:
-    import requests  # type: ignore[import]
-    from ansys.openapi.common import SessionConfiguration  # type: ignore[import]
     from .queries import (
         MaterialImpactedSubstancesQuery,
         MaterialComplianceQuery,
@@ -96,7 +97,7 @@ class Connection(common.ApiClientFactory):
 
 
 class BomAnalyticsClient(common.ApiClient):
-    def __init__(self, session: "requests.Session", sl_url: str, session_configuration: "SessionConfiguration") -> None:
+    def __init__(self, session: requests.Session, sl_url: str, session_configuration: SessionConfiguration) -> None:
         self._sl_url = sl_url.strip("/")
         self._service_url = self._sl_url + SERVICE_PATH
         logger.debug("Creating BomAnalyticsClient")

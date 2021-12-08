@@ -284,7 +284,7 @@ described above, the py files are converted back into jupyter notebooks and
 are executed, which populates the output cells.
 
 This conversion between notebooks and plain python files is performed by
-[nb-convert](https://nbconvert.readthedocs.io/en/latest/), see the nb-convert
+`nb-convert <https://nbconvert.readthedocs.io/en/latest/>`_, see the nb-convert
 documentation for installation instructions.
 
 

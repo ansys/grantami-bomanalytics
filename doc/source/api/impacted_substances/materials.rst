@@ -6,7 +6,6 @@ Material Impacted Substances
 Query definition
 ~~~~~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.grantami.bomanalytics.queries
 .. autoclass:: ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery
    :members:
 
@@ -20,23 +19,15 @@ Query definition
 Query result
 ~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.grantami.bomanalytics._query_results
 .. autoclass:: ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult
    :members:
+   :exclude-members: impacted_substances_by_material
 
-   .. autoproperty:: impacted_substances_by_legislation
-   .. autoproperty:: impacted_substances
+   .. autoattribute:: impacted_substances_by_material
+   .. autoattribute:: impacted_substances_by_legislation
+   .. autoattribute:: impacted_substances
 
 Material result
 ~~~~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.grantami.bomanalytics._item_results
 .. autoclass:: ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult
-   :members:
-
-   .. autoattribute:: material_id
-   .. autoattribute:: record_guid
-   .. autoattribute:: record_history_guid
-   .. autoattribute:: record_history_identity
-   .. autoattribute:: substances_by_legislation
-   .. autoattribute:: substances

@@ -20,8 +20,8 @@ important, i.e. to determine compliance against a legislation that imposes a cer
 .. toctree::
    :maxdepth: 3
 
-   materials
-   specifications
    parts
+   specifications
+   materials
    bom
    impacted_substances

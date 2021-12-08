@@ -22,6 +22,3 @@ BoM Analyics Client
 
 .. autoclass:: ansys.grantami.bomanalytics._connection.BomAnalyticsClient
    :members:
-
-
-

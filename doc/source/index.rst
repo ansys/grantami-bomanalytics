@@ -55,14 +55,14 @@ percentage content of all SVHCs in an ABS/PVC blend:
 .. code:: python
 
     >>> from pprint import pprint
-    >>> from ansys.granta.bom_analytics import Connection, queries
-    >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().build()
+    >>> from ansys.grantami.bomanalytics import Connection, queries
+    >>> cxn = Connection(servicelayer_url="http://localhost/mi_servicelayer") \
+    ...     .with_autologon().build()
     >>> query = (
-    >>>     queries.MaterialImpactedSubstancesQuery()
-    >>>     .with_material_ids(['plastic-abs-pvc-flame'])
-    >>>     .with_legislations(['REACH - The Candidate List'])
-    >>> )
-    >>>
+    ...     queries.MaterialImpactedSubstancesQuery()
+    ...     .with_material_ids(['plastic-abs-pvc-flame'])
+    ...     .with_legislations(['REACH - The Candidate List'])
+    ... )
     >>> result = cxn.run(query)
     >>> pprint(result.impacted_substances)
     [<ImpactedSubstance: {"cas_number": 10108-64-2, "percent_amount": 1.9}>,
@@ -72,22 +72,22 @@ percentage content of all SVHCs in an ABS/PVC blend:
 
 The sequence of events is as follows:
 
-1. Establish the connection to Granta MI.
-2. Create the appropriate query:
+1. Connect to Granta MI.
+2. Create the appropriate query, choosing between:
 
-   - Compliance or impacted substances.
-   - Materials, parts, specifications, substances, or an XML BoM.
+   - *Query type*: Compliance or impacted substances.
+   - *Reference type*: Materials, parts, specifications, substances, or an XML BoM.
 
-3. Specify the legislations and BoM items of interest.
+3. Specify the legislations and records of interest.
 4. Run the query.
 5. Process the results.
 
 
 API Reference
-~~~~~~~~~~~~~
+-------------
 For full details of the API available see the API reference: :ref:`ref_bom_analytics_api_index`.
 
 Project Index
-*************
+-------------
 
 * :ref:`genindex`

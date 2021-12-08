@@ -25,9 +25,10 @@ contained within a item represented by a Granta MI record, consider the
 .. toctree::
    :maxdepth: 3
 
-   indicators
-   substances
-   materials
-   specifications
    parts
+   specifications
+   materials
+   substances
    bom
+   indicators
+

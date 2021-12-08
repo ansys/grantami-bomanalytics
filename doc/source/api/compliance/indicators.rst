@@ -18,12 +18,7 @@ Reports User Guide' that was supplied with the Restricted Substances Reports Bun
 RoHS Indicator
 --------------
 
-.. py:currentmodule::ansys.grantami.bomanalytics.indicators
 .. autoclass:: ansys.grantami.bomanalytics.indicators.RoHSIndicator
-   :members:
-
-   .. autoattribute:: available_flags
-      :noindex:
 
 .. autoenum:: ansys.grantami.bomanalytics.indicators.RoHSFlag
 
@@ -32,10 +27,6 @@ Watch List Indicator
 --------------------
 
 .. autoclass:: ansys.grantami.bomanalytics.indicators.WatchListIndicator
-   :members:
-
-   .. autoattribute:: available_flags
-      :noindex:
 
 .. autoenum:: ansys.grantami.bomanalytics.indicators.WatchListFlag
 

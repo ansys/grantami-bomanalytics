@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 import jupytext
 
-sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, os.path.abspath("../../src"))
 from ansys.grantami.bomanalytics import __version__
 
 # -- Project information -----------------------------------------------------
@@ -166,5 +166,5 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
 # If we don't have an examples folder, create it by copying notebooks and supporting files
 # If we already have an output directory then don't do anything.
 # Note: Call `make clean` to force a rebuild, which will delete the 'examples' output folder
-if not examples_output_dir.is_dir():
+if not examples_output_dir.is_dir() and os.getenv("BUILD_DOCS"):
     _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)

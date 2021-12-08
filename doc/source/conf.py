@@ -2,14 +2,17 @@ import sys
 import os
 from datetime import datetime
 from pyansys_sphinx_theme import pyansys_logo_black
+import shutil
+from pathlib import Path
+import jupytext
 
-sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, os.path.abspath("../../src"))
 from ansys.grantami.bomanalytics import __version__
 
 
 # -- Project information -----------------------------------------------------
 
-project = "ansys.granta.bom_analytics"
+project = "ansys.grantami.bomanalytics"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS Inc."
 
@@ -29,6 +32,7 @@ extensions = [
     "sphinx.ext.extlinks",
     "sphinx.ext.coverage",
     "enum_tools.autoenum",
+    "nbsphinx",
 ]
 
 add_module_names = False
@@ -130,7 +134,7 @@ latex_elements = {}
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "pyansys.tex", "ansys.granta.bom_analytics Documentation", author, "manual"),
+    (master_doc, "pyansys.tex", "ansys.grantami.bomanalytics Documentation", author, "manual"),
 ]
 
 
@@ -138,7 +142,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "ansys.granta.bom_analytics", "ansys.granta.bom_analytics Documentation", [author], 1)]
+man_pages = [(master_doc, "ansys.grantami.bomanalytics", "ansys.grantami.bomanalytics Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -149,10 +153,10 @@ man_pages = [(master_doc, "ansys.granta.bom_analytics", "ansys.granta.bom_analyt
 texinfo_documents = [
     (
         master_doc,
-        "ansys.granta.bom_analytics",
-        "ansys.granta.bom_analytics Documentation",
+        "ansys.grantami.bomanalytics",
+        "ansys.grantami.bomanalytics Documentation",
         author,
-        "ansys.granta.bom_analytics",
+        "ansys.grantami.bomanalytics",
         "Python interface to the Granta MI Restricted Substances module",
         "Engineering Software",
     ),
@@ -175,3 +179,42 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ["search.html"]
+
+
+# -- Example Script functions -------------------------------------------------
+
+# Define some important paths and check were are where we expect to be
+cwd = Path(os.getcwd())
+assert (cwd.name == "source")
+EXAMPLES_DIR_NAME = "examples"
+examples_output_dir = Path(EXAMPLES_DIR_NAME).absolute()
+examples_source_dir = Path("../../" + EXAMPLES_DIR_NAME).absolute()
+
+
+def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
+    for root, dirs, files in os.walk(source_dir):
+        root_path = Path(root)
+        index = root_path.parts.index(EXAMPLES_DIR_NAME) + 1  # Path elements below examples
+        root_output_path = output_dir.joinpath(*root_path.parts[index:])
+        root_output_path.mkdir(parents=False, exist_ok=False)  # Create new folders in corresponding output location
+        for file in files:
+            file_source_path = root_path / Path(file)
+            file_output_path = root_output_path / Path(file)
+            if file_source_path.suffix == ".py":  # Convert python scripts to jupyter notebooks
+                ntbk = jupytext.read(file_source_path)
+                jupytext.write(ntbk, file_output_path.with_suffix(".ipynb"))
+            else:  # Copy everything else (ReST text files and supporting files)
+                shutil.copy(file_source_path, file_output_path)
+
+
+# If we don't have an examples folder, create it by copying notebooks and supporting files
+# If we already have an output directory then don't do anything.
+# Note: Call `make clean` to force a rebuild, which will delete the 'examples' output folder
+if not examples_output_dir.is_dir() and os.getenv("BUILD_DOCS"):
+    _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
+
+if not os.getenv("BUILD_DOCS"):
+    examples_output_dir.mkdir(parents=False, exist_ok=False)
+    example_index = examples_output_dir / Path("index.rst")
+    with open(example_index, "w") as f:
+        f.write("Example Scripts\n===============\n\nExample build skipped")

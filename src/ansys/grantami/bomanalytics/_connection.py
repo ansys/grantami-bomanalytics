@@ -14,6 +14,7 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
 import logging
+
 from ansys.openapi import common  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 

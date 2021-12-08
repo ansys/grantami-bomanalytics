@@ -27,6 +27,9 @@ deps =
     pytest-cov
     requests-mock
     dataclasses; python_version < '3.7'
+    lxml
+    tabulate
+    pandas
 install_command = pip install --pre --find-links ./deps {opts} {packages}
 commands = pytest ./tests {posargs}
 
@@ -43,6 +46,6 @@ deps =
     {[testenv]deps}
 
 commands =
-    flake8 ./ansys ./tests
+    flake8 ./src ./tests
     mypy
 """

@@ -44,13 +44,16 @@ test-output.xml
 
 \#*
 .\#*
-/.ipynb_checkpoints
+.ipynb_checkpoints
 
 # Pycharm
 .idea/
 
 # Docs builds
 doc/build
+
+# ipynb (generated from py files on docs build)
+*.ipynb
 
 # Pypi things
 deps

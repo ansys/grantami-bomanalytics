@@ -75,6 +75,6 @@ class TestConnectToSL:
         url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer") + ("/" if trailing_slash else "")
         _ = (
             Connection(servicelayer_url=url)
-            .with_credentials(username=os.getenv("TEST_USER"), password=os.getenv("TEST_PASS"))
+            .with_autologon()
             .build()
         )

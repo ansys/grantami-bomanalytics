@@ -32,6 +32,8 @@ napoleon_use_rtype = False
 
 add_module_names = False
 
+set_type_checking_flag = True
+
 # static path
 html_static_path = ["_static"]
 

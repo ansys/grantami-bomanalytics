@@ -36,7 +36,11 @@ Dependencies
 ------------
 To use this package you will require access to a Granta MI server
 that includes the MI Restricted Substances Reports version 2022R1
-or later.
+or later. This package also has the following Python package
+dependencies (installed automatically by pip):
+
+- ansys-grantami-bomanalytics-openapi
+- ansys-openapi-common
 
 
 Background

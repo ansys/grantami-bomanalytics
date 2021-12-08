@@ -33,9 +33,9 @@ Questions
 For general or technical questions about the project, its
 applications, or about software usage, please create an issue at
 `Bom Analytics Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
-where the community or PyMAPDL developers can collectively address your
+where the community or PyAnsys developers can collectively address your
 questions.  The project support team can be reached at
-`alexander.kaszynski@ansys.com <alexander.kaszynski@ansys.com>`_
+`andrew.grigg@ansys.com <andrew.grigg@ansys.com>`_
 
 By posting on the issues page, your question can be addressed by
 community members with the needed expertise and the knowledge gained
@@ -44,8 +44,8 @@ will remain available on the issues page for other users.
 
 Reporting Bugs
 --------------
-If you encounter any bugs or crashes while using PyMAPDL, please
-report it at
+If you encounter any bugs or crashes while using Granta MI Bom
+Analytics, please report it at
 `Bom Analytics Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
 with an appropriate label so we can promptly address it.  When
 reporting an issue, please be overly descriptive so that we may
@@ -178,7 +178,7 @@ keep track of what is being done and what needs to be done.
 Discussions
 ~~~~~~~~~~~
 
-General questions about PyMAPDL should be raised in
+General questions about Granta MI Bom Analytics should be raised in
 `Discussions <https://github.com/pyansys/pyansys-granta-compliance/discussions>`_
 in this repository rather than as issues themselves. Issues can be spun
 out of discussions depending on what is decided, but general Q&A content
@@ -269,10 +269,23 @@ Documentation for Granta MI Bom Analytics is generated from three sources:
 General usage and API descriptions should be placed within `doc/source` and
 the docstrings.  Full examples should be placed in `examples`.
 
+
 Adding a New Example
 ~~~~~~~~~~~~~~~~~~~~
 
-TODO
+Examples are included to give more context around the core functionality
+described in the API documentation. Additional examples are welcomed,
+especially if they cover a key use-case of the package which has not
+previously been covered.
+
+Examples are authored using Jupyter Notebooks, but are converted into
+plain .py files before being checked in. As part of the doc build process
+described above, the py files are converted back into jupyter notebooks and
+are executed, which populates the output cells.
+
+This conversion between notebooks and plain python files is performed by
+[nb-convert](https://nbconvert.readthedocs.io/en/latest/), see the nb-convert
+documentation for installation instructions.
 
 
 Documentation Style and Organization
@@ -429,7 +442,7 @@ cached.
    to thank for a new feature.
 
 9. Place your release notes from step 8 in the description within
-   `PyMAPDL Releases <https://github.com/pyansys/pyansys-granta-compliance/releases/new>`_
+   `Bom Analytics Releases <https://github.com/pyansys/pyansys-granta-compliance/releases/new>`_
 
 
 Patch Release Steps

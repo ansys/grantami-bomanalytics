@@ -119,7 +119,7 @@ copybutton_prompt_is_regexp = True
 # -- Options for HTML output -------------------------------------------------
 html_theme = "pyansys_sphinx_theme"
 html_logo = pyansys_logo_black
-html_theme_options = {"github_url": "https://github.com/pyansys/granta-bom-analytics", "show_prev_next": False}
+html_theme_options = {"github_url": "https://github.com/pyansys/granta-bomanalytics", "show_prev_next": False}
 
 # -- Options for HTMLHelp output ---------------------------------------------
 

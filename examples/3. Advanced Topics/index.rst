@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_advanced:
+.. _ref_grantami_bomanalytics_advanced:
 
 Advanced Examples
 =================

@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_api_compliance_bom:
+.. _ref_grantami_bomanalytics_api_compliance_bom:
 
 BoM Compliance
 ==============

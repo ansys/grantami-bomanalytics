@@ -43,7 +43,7 @@ Here's a brief example of how the package works:
     Connect and query the Granta service.
 
     >>> from pprint import pprint
-    >>> from ansys.granta.bom_analytics import Connection, queries
+    >>> from ansys.grantami.bomanalytics import Connection, queries
     >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().build()
     >>> query = (
     ...     queries.MaterialImpactedSubstancesQuery()

@@ -18,7 +18,7 @@ Cloning the Source Repository
 -----------------------------
 
 You can clone the source repository from `Bom Analytics
-GitHub <https://github.com/pyansys/pyansys-granta-compliance>`_
+GitHub <https://github.com/pyansys/grantami-bomanalytics>`_
 and install the latest version in development mode by running:
 
 .. code::
@@ -32,7 +32,7 @@ Questions
 ---------
 For general or technical questions about the project, its
 applications, or about software usage, please create an issue at
-`Bom Analytics Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
+`Bom Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_
 where the community or PyAnsys developers can collectively address your
 questions.  The project support team can be reached at
 `andrew.grigg@ansys.com <andrew.grigg@ansys.com>`_
@@ -46,7 +46,7 @@ Reporting Bugs
 --------------
 If you encounter any bugs or crashes while using Granta MI Bom
 Analytics, please report it at
-`Bom Analytics Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
+`Bom Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_
 with an appropriate label so we can promptly address it.  When
 reporting an issue, please be overly descriptive so that we may
 reproduce it. Whenever possible, please provide tracebacks,
@@ -57,7 +57,7 @@ Feature Requests
 ----------------
 We encourage users to submit ideas for improvements to Granta MI Bom Analytics!
 Please create an issue on the
-`Bom Analytics Issues <https://github.com/pyansys/pyansys-granta-compliance/issues>`_
+`Bom Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_
 with a **Feature Request** label to suggest an improvement.
 Please use a descriptive title and provide ample background information to help
 the community implement that functionality. For example, if you would like a
@@ -124,7 +124,7 @@ Contributing to Granta MI Bom Analytics through GitHub
 ------------------------------------------------------
 To submit new code to Granta MI Bom Analytics, first fork the
 `Granta MI Bom Analytics Repo
-<https://github.com/pyansys/pyansys-granta-compliance>`_ and then clone
+<https://github.com/pyansys/grantami-bomanalytics>`_ and then clone
 the forked repository to your computer.  Next, create a new branch based on the
 `Branch Naming Conventions Section <#branch-naming-conventions>`__ in
 your local repository.
@@ -169,7 +169,7 @@ Should it turn out the fix did not work, or your issue was closed
 erroneously, please re-open your issue with a comment addressing why.
 
 Open ended questions should be opened in
-`Discussions <https://github.com/pyansys/pyansys-granta-compliance/discussions>`_,
+`Discussions <https://github.com/pyansys/grantami-bomanalytics/discussions>`_,
 and should an issue generate additional discussion, further issues
 should be spun out into their own separate issues. This helps developers
 keep track of what is being done and what needs to be done.
@@ -179,7 +179,7 @@ Discussions
 ~~~~~~~~~~~
 
 General questions about Granta MI Bom Analytics should be raised in
-`Discussions <https://github.com/pyansys/pyansys-granta-compliance/discussions>`_
+`Discussions <https://github.com/pyansys/grantami-bomanalytics/discussions>`_
 in this repository rather than as issues themselves. Issues can be spun
 out of discussions depending on what is decided, but general Q&A content
 should start as discussions where possible.
@@ -192,7 +192,7 @@ should start as discussions where possible.
 Creating a New Pull Request
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Once you have tested your branch locally, create a pull request on
-`Granta MI Bom Analytics <https://github.com/pyansys/pyansys-granta-compliance>`_
+`Granta MI Bom Analytics <https://github.com/pyansys/grantami-bomanalytics>`_
 and target your merge to `main`.  This will automatically run continuous
 integration (CI) testing and verify your changes will work across all
 supported platforms.
@@ -438,14 +438,14 @@ cached.
 
 8. Create a list of all changes for the release. It is often helpful
    to leverage `GitHub's compare feature
-   <https://github.com/pyansys/pyansys-granta-compliance/compare>`_
+   <https://github.com/pyansys/grantami-bomanalytics/compare>`_
    to see the differences from the last tag and the `main` branch.
    Be sure to acknowledge new contributors by their GitHub username
    and place mentions where appropriate if a specific contributor is
    to thank for a new feature.
 
 9. Place your release notes from step 8 in the description within
-   `Bom Analytics Releases <https://github.com/pyansys/pyansys-granta-compliance/releases/new>`_
+   `Bom Analytics Releases <https://github.com/pyansys/grantami-bomanalytics/releases/new>`_
 
 
 Patch Release Steps

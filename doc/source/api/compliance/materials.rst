@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_api_compliance_materials:
+.. _ref_grantami_bomanalytics_api_compliance_materials:
 
 Material Compliance
 ===================

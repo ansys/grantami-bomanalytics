@@ -90,7 +90,7 @@ The sequence of events is as follows:
 
 API Reference
 -------------
-For full details of the API available see the API reference: :ref:`ref_bom_analytics_api_index`.
+For full details of the API available see the API reference: :ref:`ref_grantami_bomanalytics_api_index`.
 
 Project Index
 -------------

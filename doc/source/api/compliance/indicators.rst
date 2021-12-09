@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_api_compliance_indicators:
+.. _ref_grantami_bomanalytics_api_compliance_indicators:
 
 Indicators
 ==========
@@ -32,5 +32,6 @@ Watch List Indicator
 
 
 .. [1] A substance is determined to be a Process Chemical if either the substance category is set as 'Used in
-   production' or 'May be used in production' in the tabular row where it is referenced, or if the substance is included in
-   a material and the material type is set as 'Process' in the tabular row that links the material to a specification.
+   production' or 'May be used in production' in the tabular row where it is referenced, or if the substance is included
+   in a material and the material type is set as 'Process' in the tabular row that links the material to a
+   specification.

@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_api_impactedsubstances_substances:
+.. _ref_grantami_bomanalytics_api_impactedsubstances_substances:
 
 Impacted substances
 ===================

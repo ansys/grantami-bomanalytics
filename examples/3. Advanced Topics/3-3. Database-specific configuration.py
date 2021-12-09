@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Database-Specific Configuration Options
+# # [TECHDOCS]Database-Specific Configuration Options
 
 # The BoM Analytics package will work with an off-the-shelf Granta MI Restricted Substances database. However, there are
 # some situations in which additional run-time configuration changes are required:

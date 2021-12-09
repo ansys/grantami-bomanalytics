@@ -58,9 +58,9 @@ def validate_argument_type(*allowed_types: Any) -> Callable:
         def check_types(*args: Any, **kwargs: Any) -> T:
             values = list(args)[1:] + list(kwargs.values())
             if len(values) != 1:
-                raise TypeError(f"[TECHDOCS]The allowed_types decorator can only be used on a method called with exactly"
-                                f' one argument. The method "{method.__name__}" was called with {len(values)}'
-                                f' arguments.')
+                raise TypeError(f"[TECHDOCS]The allowed_types decorator can only be used on a method called with "
+                                f'exactly one argument. The method "{method.__name__}" was called with {len(values)} '
+                                f'arguments.')
             value = values[0]
             result = any([_check_type_wrapper(value, allowed_type) for allowed_type in allowed_types])
             if not result:

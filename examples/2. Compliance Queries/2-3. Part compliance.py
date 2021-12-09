@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Performing a Part Compliance Query
+# # [TECHDOCS]Performing a Part Compliance Query
 
 # A Part Compliance Query determines whether one or more parts are compliant with the specified indicators. This is
 # done by first finding all substances directly or indirectly associated with that part, determining compliance for

@@ -14,7 +14,7 @@
 # ---
 
 # + [markdown] tags=[]
-# # Performing a Part Impacted Substances Query
+# # [TECHDOCS]Performing a Part Impacted Substances Query
 # -
 
 # A Part Impacted Substances Query is used to extract the substances associated with a part that are impacted by one or

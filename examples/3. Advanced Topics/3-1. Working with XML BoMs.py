@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Performing a BoM Query
+# # [TECHDOCS]Performing a BoM Query
 
 # Both ImpactedSubstances queries and Compliance queries can be performed on an XML Bill of Materials instead of a list
 # of Granta MI records. The Bill of Materials must be in the Granta 17/11 format, and this example shows how to use the

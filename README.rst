@@ -44,7 +44,7 @@ Here's a brief example of how the package works:
 
     >>> from pprint import pprint
     >>> from ansys.grantami.bomanalytics import Connection, queries
-    >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().build()
+    >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().connect()
     >>> query = (
     ...     queries.MaterialImpactedSubstancesQuery()
     ...     .with_material_ids(['plastic-abs-pvc-flame'])

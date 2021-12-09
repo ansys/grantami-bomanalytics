@@ -57,29 +57,30 @@ class Connection(common.ApiClientFactory):
     For advanced usage, including configuring any session-specific properties and timeouts, see the
     `ansys-openapi-common` package documentation.
 
-    This a builder class, which means you must call the `.build()` method to return the actual
-    connection object.
+    The connection to Granta MI is created in 3 stages:
 
-    Builder classes are generally instantiated, configured, and then built. The examples below
-    show this in action, first by instantiating the Connection builder (i.e. `Connection()`),
-    then configuring the builder object (`.with_autologon()`), and then using the builder
-    object to build the connection itself (`.build()`).
+    1. Create the connection builder object and specify the server to be connected to.
+    2. Specify the authentication method to be used for the connection and provide credentials if required.
+    3. Connect to the server; the connection object is returned.
+
+    The examples below show examples of this process with different authentication methods.
 
     Examples
     --------
-    >>> Connection("http://my_mi_server/mi_servicelayer").with_autologon().build()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
+    >>> cxn
     <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
 
     >>> cxn = (
     ...     Connection("http://my_mi_server/mi_servicelayer")
     ...     .with_credentials(username="my_username", password="my_password")
-    ...     .build()
+    ...     .connect()
     ... )
     >>> cxn
     <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
     """
 
-    def build(self) -> "BomAnalyticsClient":
+    def connect(self) -> "BomAnalyticsClient":
         # Use the docstring on the method in the base class.
         self._validate_builder()
         client = BomAnalyticsClient(
@@ -169,7 +170,7 @@ class BomAnalyticsClient(common.ApiClient):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
         >>> cxn.set_database_details(database_key = "MY_RS_DB",
         ...                          in_house_materials_table_name = "My Materials")
         """

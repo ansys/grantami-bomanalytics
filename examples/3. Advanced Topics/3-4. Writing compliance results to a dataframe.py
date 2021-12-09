@@ -30,7 +30,7 @@
 
 from ansys.grantami.bomanalytics import Connection, indicators, queries
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
 svhc = indicators.WatchListIndicator(
     name="SVHC",
     legislation_names=["REACH - The Candidate List"],

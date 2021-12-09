@@ -62,7 +62,7 @@ percentage content of all SVHCs in an ABS/PVC blend:
     >>> from pprint import pprint
     >>> from ansys.grantami.bomanalytics import Connection, queries
     >>> cxn = Connection(servicelayer_url="http://localhost/mi_servicelayer") \
-    ...     .with_autologon().build()
+    ...     .with_autologon().connect()
     >>> query = (
     ...     queries.MaterialImpactedSubstancesQuery()
     ...     .with_material_ids(['plastic-abs-pvc-flame'])

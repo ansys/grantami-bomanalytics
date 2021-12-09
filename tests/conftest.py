@@ -11,7 +11,7 @@ def connection():
     connection = (
         Connection(servicelayer_url=os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer"))
         .with_autologon()
-        .build()
+        .connect()
     )
     return connection
 
@@ -23,7 +23,7 @@ def mock_connection():
         connection = (
             Connection(servicelayer_url=os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer"))
             .with_anonymous()
-            .build()
+            .connect()
         )
     return connection
 

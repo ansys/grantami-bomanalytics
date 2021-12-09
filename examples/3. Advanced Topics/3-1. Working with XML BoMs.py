@@ -73,7 +73,7 @@ result
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
 # -
 
 # The Impacted Substances BoM query behaves similar to other Impacted Substances queries. However, a BoM query can only

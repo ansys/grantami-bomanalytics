@@ -5,7 +5,7 @@ Batching Requests
 
 Introduction
 ------------
-The queries that can be performed with this package are batched if they exceed a certain size. This is achieved by
+[TECHDOCS] The queries that can be performed with this package are batched if they exceed a certain size. This is achieved by
 splitting the list of parts, materials, etc. into smaller lists below a certain size to reduce the overall time taken
 to perform the query.
 

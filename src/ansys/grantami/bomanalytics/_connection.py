@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 class Connection(common.ApiClientFactory):
-    """Build a connection to an instance of Granta MI.
+    """[TECHDOCS] Build a connection to an instance of Granta MI.
 
     Notes
     -----
@@ -91,7 +91,7 @@ class Connection(common.ApiClientFactory):
 
 
 class BomAnalyticsClient(common.ApiClient):
-    """The class used to communicate with Granta MI. It is instantiated by the
+    """[TECHDOCS] The class used to communicate with Granta MI. It is instantiated by the
     :class:`~ansys.grantami.bomanalytics.Connection` class defined above, and should not be instantiated directly.
     """
 
@@ -131,7 +131,7 @@ class BomAnalyticsClient(common.ApiClient):
         substances_table_name: Optional[str] = None,
         coatings_table_name: Optional[str] = None,
     ) -> None:
-        """Configure the database key and table names if different from the defaults.
+        """[TECHDOCS] Configure the database key and table names if different from the defaults.
 
         The database key is required if Granta MI is configured to use a value other than 'MI_Restricted_Substances'.
         A table name is required if it has been modified from the defaults.
@@ -228,7 +228,7 @@ class BomAnalyticsClient(common.ApiClient):
         ...
 
     def run(self, query):  # type: ignore[no-untyped-def]
-        """Run a query against the Granta MI database.
+        """[TECHDOCS] Run a query against the Granta MI database.
 
         Parameters
         ----------

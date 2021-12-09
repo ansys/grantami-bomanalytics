@@ -65,45 +65,45 @@ class _Flag(Enum):
 
 
 class RoHSFlag(_Flag):
-    """Permitted RoHS flag states. Increasing value means 'worse' compliance, i.e. the compliance result is worse the
-    further down the list the result appears.
+    """[TECHDOCS] Permitted RoHS flag states. Increasing value means 'worse' compliance, i.e. the compliance result is
+    worse the further down the list the result appears.
 
     See the Restricted Substances Reports User Guide for more details.
     """
 
     RohsNotImpacted = (
         1,
-        """This substance is not impacted by the specified legislations. *Substance is not
+        """[TECHDOCS] This substance is not impacted by the specified legislations. *Substance is not
     impacted.*""",
     )
     RohsBelowThreshold = (
         2,
-        """This substance is impacted by the specified legislations, but appears in the parent item
+        """[TECHDOCS] This substance is impacted by the specified legislations, but appears in the parent item
     in a quantity below that specified by the indicator. *Substance is below threshold.*""",
     )
     RohsCompliant = (
         3,
-        """This item either does not contain any substances impacted by the specified legislations, or
+        """[TECHDOCS] This item either does not contain any substances impacted by the specified legislations, or
     contains no substances above the specified threshold. *Item is compliant.*""",
     )
     RohsCompliantWithExemptions = (
         4,
-        """This item contains substances impacted by the specified legislations, but an
+        """[TECHDOCS] This item contains substances impacted by the specified legislations, but an
     exemption has been declared either on itself or a child item. *Item is compliant with exemptions.*""",
     )
     RohsAboveThreshold = (
         5,
-        """This substance is impacted by the specified legislations and is present in a quantity
+        """[TECHDOCS] This substance is impacted by the specified legislations and is present in a quantity
     above that specified by the indicator. *Exemption for use required.*""",
     )
     RohsNonCompliant = (
         6,
-        """This item contains one or more substances impacted by the specified legislations. *Item is
+        """[TECHDOCS] This item contains one or more substances impacted by the specified legislations. *Item is
     non-compliant.*""",
     )
     RohsUnknown = (
         7,
-        """One or more declarations are missing, and so there is not enough information to determine
+        """[TECHDOCS] One or more declarations are missing, and so there is not enough information to determine
     compliance. *Compliance is unknown.*""",
     )
 
@@ -142,45 +142,45 @@ class RoHSFlag(_Flag):
 
 
 class WatchListFlag(_Flag):
-    """Permitted Watch List flag states. Increasing value means 'worse' compliance, i.e. the compliance result is worse
-    the further down the list the result appears.
+    """[TECHDOCS] Permitted Watch List flag states. Increasing value means 'worse' compliance, i.e. the compliance
+    result is worse the further down the list the result appears.
 
     See the Restricted Substances Reports User Guide for more details.
     """
 
     WatchListNotImpacted = (
         1,
-        """This substance is not impacted by the specified legislations. *Substance is not
+        """[TECHDOCS] This substance is not impacted by the specified legislations. *Substance is not
     impacted.*""",
     )
     WatchListCompliant = (
         2,
-        """This item does not contain any substances impacted by the specified legislations. *Item
+        """[TECHDOCS] This item does not contain any substances impacted by the specified legislations. *Item
     is compliant.*""",
     )
     WatchListBelowThreshold = (
         3,
-        """This substance is impacted by the specified legislations, but appears in the parent
+        """[TECHDOCS] This substance is impacted by the specified legislations, but appears in the parent
     item in a quantity below that specified by the indicator. *Substance is below threshold.*""",
     )
     WatchListAllSubstancesBelowThreshold = (
         4,
-        """This item contains no substances above the specified threshold.
+        """[TECHDOCS] This item contains no substances above the specified threshold.
     *Item is compliant.*""",
     )
     WatchListAboveThreshold = (
         5,
-        """This substance is impacted by the specified legislations and appears in the parent
+        """[TECHDOCS] This substance is impacted by the specified legislations and appears in the parent
     item in a quantity above that specified by the indicator. *Substance is impacted.*""",
     )
     WatchListHasSubstanceAboveThreshold = (
         6,
-        """This item contains one or more substances impacted by the specified
+        """[TECHDOCS] This item contains one or more substances impacted by the specified
     legislations. *Item is non-compliant.*""",
     )
     WatchListUnknown = (
         7,
-        """There is not enough information to determine compliance. *Compliance is unknown.*""",
+        """[TECHDOCS] There is not enough information to determine compliance. *Compliance is unknown.*""",
     )
 
     def __lt__(self, other: object) -> bool:
@@ -257,7 +257,7 @@ class _Indicator(ABC):
 
     @property
     def flag(self) -> Optional[_Flag]:
-        """The state of this indicator. If the indicator is a definition only, this property is `None`.
+        """[TECHDOCS] The state of this indicator. If the indicator is a definition only, this property is `None`.
 
         Raises
         ------
@@ -359,7 +359,8 @@ class _Indicator(ABC):
 
 
 class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, IndicatorDefinition vs Result
-    """Indicator object that represents RoHS-type compliance of a BoM object against one or more legislations.
+    """[TECHDOCS] Indicator object that represents RoHS-type compliance of a BoM object against one or more
+    legislations.
 
     Other `RoHSIndicator` objects with results can be compared, with 'less compliant' indicators being greater than
     'more compliant' indicators.
@@ -438,7 +439,8 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
 
 
 class WatchListIndicator(_Indicator):
-    """Indicator object that represents Watch List-type compliance of a BoM object against one or more legislations.
+    """[TECHDOCS] Indicator object that represents Watch List-type compliance of a BoM object against one or more
+    legislations.
 
     Other `WatchListIndicator` objects with results can be compared, with 'less compliant' indicator flagas being
     greater than 'more compliant' indicator flags.

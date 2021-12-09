@@ -1,9 +1,9 @@
-pyansys-granta-compliance
-#########################
+ansys-grantami-bomanalytics
+###########################
 
 Project Overview
 ----------------
-This project is part of the larger PyAnsys effort to facilitate the use
+[TECHDOCS] This project is part of the larger PyAnsys effort to facilitate the use
 of Ansys technologies directly from within Python.
 
 The Granta MI Restricted Substances solution includes a REST API for
@@ -24,8 +24,8 @@ Alternatively, clone and install in development mode with:
 
 .. code::
 
-   git clone https://github.com/pyansys/pyansys-grantami-bomanalytics
-   cd pyansys-grantami-bomanalytics
+   git clone https://github.com/pyansys/grantami-bomanalytics
+   cd grantami-bomanalytics
    pip install -e .
 
 

@@ -12,7 +12,7 @@ Ansys Granta MI Bom Analytics API Documentation
 
 Introduction and Purpose
 ------------------------
-This project is part of the larger PyAnsys effort to facilitate the use
+[TECHDOCS] This project is part of the larger PyAnsys effort to facilitate the use
 of Ansys technologies directly from within Python.
 
 Granta MI provides a mature and feature-rich method for managing

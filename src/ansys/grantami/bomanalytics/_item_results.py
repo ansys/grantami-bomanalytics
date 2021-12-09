@@ -281,7 +281,7 @@ class ItemResultFactory:
 
 
 class ImpactedSubstance(BaseSubstanceReference):
-    """Represents a substance impacted by a legislation. This object includes two categories of
+    """[TECHDOCS] Represents a substance impacted by a legislation. This object includes two categories of
     attributes:
 
       - The reference to the substance in Granta MI. These attributes are all populated if data for them exists in
@@ -483,8 +483,8 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
 class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, MaterialDefinition):
-    """An individual material included as part of an impacted substances query result. This object includes two
-    categories of attributes:
+    """[TECHDOCS] An individual material included as part of an impacted substances query result. This object includes
+    two categories of attributes:
 
       - The reference to the material in Granta MI
       - The impacted substances associated with this material, both as a flat list and separated by legislation
@@ -512,7 +512,7 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
 
 @ItemResultFactory.register("PartWithImpactedSubstances")
 class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefinition):
-    """An individual part included as part of an impacted substances query result. This object includes two
+    """[TECHDOCS] An individual part included as part of an impacted substances query result. This object includes two
     categories of attributes:
 
       - The reference to the part in Granta MI
@@ -541,8 +541,8 @@ class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefini
 
 @ItemResultFactory.register("SpecificationWithImpactedSubstances")
 class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, SpecificationDefinition):
-    """An individual specification included as part of an impacted substances query result. This object includes two
-    categories of attributes:
+    """[TECHDOCS] An individual specification included as part of an impacted substances query result. This object
+    includes two categories of attributes:
 
       - The reference to the specification in Granta MI
       - The impacted substances associated with this specification, both as a flat list and separated by legislation
@@ -572,8 +572,8 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
 
 @ItemResultFactory.register("BomWithImpactedSubstances")
 class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
-    """This class is instantiated, but since a BoM query can only return a single Impacted Substances result, this
-    type is hidden and never seen by the user. As a result it is not documented.
+    """[TECHDOCS] This class is instantiated, but since a BoM query can only return a single Impacted Substances result,
+    this type is hidden and never seen by the user. As a result it is not documented.
 
     An individual BoM included as part of an impacted substances query result. This object includes only the impacted
     substances associated with the BoM, both as a flat list and separated by legislation. There is no item representing
@@ -597,7 +597,7 @@ class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
 
 
 class ComplianceResultMixin(mixin_base_class):
-    """Adds results from a compliance query to a class deriving from `ItemDefinition`, turning it into an
+    """[TECHDOCS] Adds results from a compliance query to a class deriving from `ItemDefinition`, turning it into an
     `[ItemType]WithComplianceResult` class.
 
     A compliance query returns a Bom-like result (see Notes for more background), with indicator results attached to
@@ -977,8 +977,8 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 
 @ItemResultFactory.register("SubstanceWithCompliance")
 class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
-    """An individual substance included as part of a compliance query result. This object includes three categories of
-    attributes:
+    """[TECHDOCS] An individual substance included as part of a compliance query result. This object includes three
+    categories of attributes:
 
       - The reference to the substance in Granta MI
       - The compliance status of this substance, stored in a dictionary of one or more indicator objects
@@ -1005,8 +1005,8 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReferenc
 
 @ItemResultFactory.register("MaterialWithCompliance")
 class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialDefinition):
-    """An individual material included as part of a compliance query result. This object includes three categories of
-    attributes:
+    """[TECHDOCS] An individual material included as part of a compliance query result. This object includes three
+    categories of attributes:
 
       - The reference to the material in Granta MI
       - The compliance status of this material, stored in a dictionary of one or more indicator objects
@@ -1043,8 +1043,8 @@ class PartWithComplianceResult(
     ComplianceResultMixin,
     PartDefinition,
 ):
-    """An individual part included as part of a compliance query result. This object includes three categories of
-    attributes:
+    """[TECHDOCS] An individual part included as part of a compliance query result. This object includes three
+    categories of attributes:
 
       - The reference to the part in Granta MI (if the part references a record)
       - The compliance status of this part, stored in a dictionary of one or more indicator objects
@@ -1087,8 +1087,8 @@ class SpecificationWithComplianceResult(
     ComplianceResultMixin,
     SpecificationDefinition,
 ):
-    """An individual specification included as part of a compliance query result. This object includes three categories
-    of attributes:
+    """[TECHDOCS] An individual specification included as part of a compliance query result. This object includes three
+    categories of attributes:
 
       - The reference to the specification in Granta MI
       - The compliance status of this specification, stored in a dictionary of one or more indicator objects
@@ -1124,8 +1124,8 @@ class SpecificationWithComplianceResult(
 
 @ItemResultFactory.register("CoatingWithCompliance")
 class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
-    """An individual coating included as part of a compliance query result. This object includes three categories of
-    attributes:
+    """[TECHDOCS] An individual coating included as part of a compliance query result. This object includes three
+    categories of attributes:
 
       - The reference to the coating in Granta MI
       - The compliance status of this coating, stored in one or more indicator objects

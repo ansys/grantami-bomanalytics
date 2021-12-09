@@ -23,7 +23,7 @@ and install the latest version in development mode by running:
 
 .. code::
 
-    git clone https://github.com/pyansys/pyansys-granta-compliance
+    git clone https://github.com/pyansys/grantami-bomanalytics
     cd pyansys-granta-compliance
     pip install -e .
 
@@ -276,7 +276,7 @@ documentation.
 Adding a New Example
 ~~~~~~~~~~~~~~~~~~~~
 
-Examples are included to give more context around the core functionality
+[TECHDOCS] Examples are included to give more context around the core functionality
 described in the API documentation. Additional examples are welcomed,
 especially if they cover a key use-case of the package which has not
 previously been covered.

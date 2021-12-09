@@ -35,7 +35,7 @@ jobs:
           workflow_conclusion: success
           name: ansys-grantami-common-wheel
           path: deps
-          repo: pyansys/openapi-client-common
+          repo: pyansys/openapi-common
           check_artifacts: false
           search_artifacts: false
 
@@ -47,7 +47,7 @@ jobs:
           workflow_conclusion: success
           name: ansys-grantami-bomanalytics-openapi-wheel
           path: deps
-          repo: pyansys/granta-compliance-api
+          repo: pyansys/grantami-bomanalytics-openapi
           check_artifacts: false
           search_artifacts: false
 
@@ -95,7 +95,7 @@ jobs:
           workflow_conclusion: success
           name: ansys-grantami-common-wheel
           path: deps
-          repo: pyansys/openapi-client-common
+          repo: pyansys/openapi-common
           check_artifacts: false
           search_artifacts: false
 
@@ -107,7 +107,7 @@ jobs:
           workflow_conclusion: success
           name: ansys-grantami-bomanalytics-openapi-wheel
           path: deps
-          repo: pyansys/granta-compliance-api
+          repo: pyansys/grantami-bomanalytics-openapi
           check_artifacts: false
           search_artifacts: false
 
@@ -155,7 +155,7 @@ jobs:
           workflow_conclusion: success
           name: ansys-grantami-common-wheel
           path: deps
-          repo: pyansys/openapi-client-common
+          repo: pyansys/openapi-common
           check_artifacts: false
           search_artifacts: false
 
@@ -167,7 +167,7 @@ jobs:
           workflow_conclusion: success
           name: ansys-grantami-bomanalytics-openapi-wheel
           path: deps
-          repo: pyansys/granta-compliance-api
+          repo: pyansys/grantami-bomanalytics-openapi
           check_artifacts: false
           search_artifacts: false
 
@@ -206,7 +206,7 @@ jobs:
           workflow_conclusion: success
           name: ansys-grantami-common-wheel
           path: deps
-          repo: pyansys/openapi-client-common
+          repo: pyansys/openapi-common
           check_artifacts: false
           search_artifacts: false
 
@@ -218,7 +218,7 @@ jobs:
           workflow_conclusion: success
           name: ansys-grantami-bomanalytics-openapi-wheel
           path: deps
-          repo: pyansys/granta-compliance-api
+          repo: pyansys/grantami-bomanalytics-openapi
           check_artifacts: false
           search_artifacts: false
 

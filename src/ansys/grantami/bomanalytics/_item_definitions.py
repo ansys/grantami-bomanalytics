@@ -353,10 +353,10 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
     @percentage_amount.setter
     def percentage_amount(self, value: float) -> None:
         if not isinstance(value, numbers.Real):
-            raise TypeError(f'percentage_amount must be a number. Specified type was "{type(value)}"')
+            raise TypeError(f'[TECHDOCS]percentage_amount must be a number. Specified type was "{type(value)}"')
         value = float(value)
         if not 0.0 < value <= 100.0:
-            raise ValueError(f'percentage_amount must be between 0 and 100. Specified value was "{value}"')
+            raise ValueError(f'[TECHDOCS]percentage_amount must be between 0 and 100. Specified value was "{value}"')
         self._percentage_amount = value
 
     @property
@@ -465,7 +465,7 @@ class AbstractBomFactory:
         try:
             item_factory_class = cls.registry[request_type]
         except KeyError as e:
-            raise RuntimeError(f'Unregistered request type "{request_type}"').with_traceback(e.__traceback__)
+            raise RuntimeError(f'[TECHDOCS]Unregistered request type "{request_type}"').with_traceback(e.__traceback__)
         item_factory = item_factory_class()
         return item_factory
 

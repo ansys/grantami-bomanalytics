@@ -87,7 +87,8 @@ class QueryResultFactory:
         try:
             item_factory_class = cls.registry[response_type]
         except KeyError as e:
-            raise RuntimeError(f'Unregistered response type "{response_type}"').with_traceback(e.__traceback__)
+            raise RuntimeError(f'[TECHDOCS]Unregistered response type'
+                               f' "{response_type}"').with_traceback(e.__traceback__)
 
         item_result: Query_Result = item_factory_class(results, **kwargs)
         return item_result

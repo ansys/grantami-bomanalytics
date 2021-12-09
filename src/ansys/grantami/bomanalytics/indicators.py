@@ -112,11 +112,11 @@ class RoHSFlag(_Flag):
             result: bool = self.value < other.value
         elif isinstance(other, RoHSIndicator):
             if not other.flag:
-                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+                raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
             else:
                 result = self.value < other.flag.value
         else:
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
         return result
 
     def __eq__(self, other: object) -> bool:
@@ -134,11 +134,11 @@ class RoHSFlag(_Flag):
             return self is other
         elif isinstance(other, RoHSIndicator):
             if not other.flag:
-                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+                raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
             else:
                 return self is other.flag
         else:
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
 
 
 class WatchListFlag(_Flag):
@@ -188,11 +188,11 @@ class WatchListFlag(_Flag):
             result: bool = self.value < other.value
         elif isinstance(other, WatchListIndicator):
             if not other.flag:
-                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+                raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
             else:
                 result = self.value < other.flag.value
         else:
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
         return result
 
     def __eq__(self, other: object) -> bool:
@@ -210,11 +210,11 @@ class WatchListFlag(_Flag):
             return self is other
         elif isinstance(other, WatchListIndicator):
             if not other.flag:
-                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+                raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
             else:
                 return self is other.flag
         else:
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
 
 
 class _Indicator(ABC):
@@ -271,7 +271,8 @@ class _Indicator(ABC):
         try:
             self._flag = self.__class__.available_flags[flag]
         except KeyError as e:
-            raise KeyError(f'Unknown flag "{flag}" for indicator "{repr(self)}"').with_traceback(e.__traceback__)
+            raise KeyError(f'[TECHDOCS]Unknown flag "{flag}" for indicator'
+                           f' "{repr(self)}"').with_traceback(e.__traceback__)
 
     def __eq__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
@@ -285,7 +286,7 @@ class _Indicator(ABC):
         """
 
         if not self.flag:
-            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
+            raise ValueError(f"[TECHDOCS]Indicator {str(self)} has no flag, so cannot be compared")
         other_flag = self._get_flag_from_object(other)
         return self.flag is other_flag
 
@@ -301,7 +302,7 @@ class _Indicator(ABC):
         """
 
         if not self.flag:
-            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
+            raise ValueError(f"[TECHDOCS]Indicator {str(self)} has no flag, so cannot be compared")
         other_flag = self._get_flag_from_object(other)
         return self.flag < other_flag
 
@@ -338,11 +339,11 @@ class _Indicator(ABC):
             If the other object is a different _Indicator subtype or an incompatible_Flag subtype.
         """
         if isinstance(other, _Indicator) and not isinstance(other, self.__class__):
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
         if isinstance(other, _Flag) and not isinstance(other, self.available_flags):
-            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
         if isinstance(other, _Indicator) and not other.flag:
-            raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
+            raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
 
     def __le__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.

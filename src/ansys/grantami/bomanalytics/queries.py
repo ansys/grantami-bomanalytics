@@ -130,7 +130,7 @@ class _RecordArgumentManager(_BaseArgumentManager):
         """
         if not all(item.record_reference.values()):
             raise TypeError(
-                "Attempted to add a RecordDefinition-derived object with a null record reference to a"
+                "[TECHDOCS]Attempted to add a RecordDefinition-derived object with a null record reference to a"
                 " query. This is not supported; RecordDefinition-derived objects without record references"
                 " can only be used as result objects for BoM queries."
             )
@@ -160,9 +160,9 @@ class _RecordArgumentManager(_BaseArgumentManager):
         """
 
         if not self.item_type_name:
-            raise RuntimeError('"item_type_name" must be populated before record arguments can be generated.')
+            raise RuntimeError('[TECHDOCS]"item_type_name" must be populated before record arguments can be generated.')
         if self.batch_size is None:
-            raise RuntimeError('"batch_size" must be populated before record arguments can be generated.')
+            raise RuntimeError('[TECHDOCS]"batch_size" must be populated before record arguments can be generated.')
 
         for batch_number, i in enumerate(range(0, len(self._items), self.batch_size)):
             batch = [i._definition for i in self._items][i : i + self.batch_size]  # noqa: E203 E501
@@ -259,7 +259,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         """
 
         if batch_size < 1:
-            raise ValueError("Batch must be a positive integer")
+            raise ValueError("[TECHDOCS]Batch must be a positive integer")
         self._item_argument_manager.batch_size = batch_size
         return self
 

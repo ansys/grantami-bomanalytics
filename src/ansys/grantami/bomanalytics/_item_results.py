@@ -277,7 +277,8 @@ class ItemResultFactory:
         try:
             return ReferenceType[reference_type]
         except KeyError as e:
-            raise KeyError(f"Unknown reference_type {reference_type} returned.").with_traceback(e.__traceback__)
+            raise KeyError(f"[TECHDOCS]Unknown reference_type {reference_type} "
+                           f"returned.").with_traceback(e.__traceback__)
 
 
 class ImpactedSubstance(BaseSubstanceReference):
@@ -421,7 +422,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
             reference_value = substance.substance_name
         else:
             raise RuntimeError(
-                "Substance result returned from Granta MI has no reference. Ensure any substances "
+                "[TECHDOCS]Substance result returned from Granta MI has no reference. Ensure any substances "
                 "in your request include references, and check you are using an up-to-date version "
                 "of the base bom analytics package."
             )

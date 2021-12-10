@@ -40,7 +40,7 @@ Here's a brief example of how the package works:
 
 .. code:: python
 
-    Connect and query the Granta service.
+    # Connect and query the Granta service.
 
     >>> from pprint import pprint
     >>> from ansys.grantami.bomanalytics import Connection, queries
@@ -51,7 +51,7 @@ Here's a brief example of how the package works:
     ...     .with_legislations(['REACH - The Candidate List'])
     ... )
 
-    Print out the result from the query.
+    # Print out the result from the query.
 
     >>> result = cxn.run(query)
     >>> pprint(result.impacted_substances)

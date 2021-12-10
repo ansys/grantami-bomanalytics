@@ -1,8 +1,8 @@
-.. _ref_bom_analytics_api_compliance_indicators:
+.. _ref_grantami_bomanalytics_api_compliance_indicators:
 
 Indicators
 ==========
-The BoM Analytics API determines compliance against an Indicator, which can essentially be thought of as a legislation
+[TECHDOCS] The BoM Analytics API determines compliance against an Indicator, which can essentially be thought of as a legislation
 with a threshold. If a substance appears in a certain item either directly or indirectly in a quantity that exceeds that
 threshold as impacted by the legislation, the item is non-compliant with that Indicator. In the case where the
 legislation defines a per-substance threshold (e.g. RoHS), then this per-substance threshold will be used instead.
@@ -18,12 +18,7 @@ Reports User Guide' that was supplied with the Restricted Substances Reports Bun
 RoHS Indicator
 --------------
 
-.. py:currentmodule::ansys.grantami.bomanalytics.indicators
 .. autoclass:: ansys.grantami.bomanalytics.indicators.RoHSIndicator
-   :members:
-
-   .. autoattribute:: available_flags
-      :noindex:
 
 .. autoenum:: ansys.grantami.bomanalytics.indicators.RoHSFlag
 
@@ -32,14 +27,11 @@ Watch List Indicator
 --------------------
 
 .. autoclass:: ansys.grantami.bomanalytics.indicators.WatchListIndicator
-   :members:
-
-   .. autoattribute:: available_flags
-      :noindex:
 
 .. autoenum:: ansys.grantami.bomanalytics.indicators.WatchListFlag
 
 
 .. [1] A substance is determined to be a Process Chemical if either the substance category is set as 'Used in
-   production' or 'May be used in production' in the tabular row where it is referenced, or if the substance is included in
-   a material and the material type is set as 'Process' in the tabular row that links the material to a specification.
+   production' or 'May be used in production' in the tabular row where it is referenced, or if the substance is included
+   in a material and the material type is set as 'Process' in the tabular row that links the material to a
+   specification.

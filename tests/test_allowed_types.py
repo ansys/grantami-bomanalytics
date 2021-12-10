@@ -39,7 +39,7 @@ def test_different_types_type_error():
 
     with pytest.raises(TypeError) as e:
         test_function("self", "test")
-    assert f'Incorrect type for value "test". Expected "(<class \'int\'>,)"' == str(e.value)
+    assert f'Incorrect type for value "test". Expected "(<class \'int\'>,)"' in str(e.value)
 
 
 @pytest.mark.parametrize(

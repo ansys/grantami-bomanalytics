@@ -131,7 +131,7 @@ def test_substance_definition_out_of_range_value_error(percentage_amount):
     substance_definition = SubstanceDefinition(reference_type=ReferenceType.MiRecordGuid, reference_value="12345")
     with pytest.raises(ValueError) as e:
         substance_definition.percentage_amount = percentage_amount
-    assert f'percentage_amount must be between 0 and 100. Specified value was "{float(percentage_amount)}"' == str(
+    assert f'percentage_amount must be between 0 and 100. Specified value was "{float(percentage_amount)}"' in str(
         e.value
     )
 
@@ -141,4 +141,4 @@ def test_substance_definition_wrong_type_type_error(percentage_amount):
     substance_definition = SubstanceDefinition(reference_type=ReferenceType.MiRecordGuid, reference_value="12345")
     with pytest.raises(TypeError) as e:
         substance_definition.percentage_amount = percentage_amount
-    assert f'percentage_amount must be a number. Specified type was "{type(percentage_amount)}"' == str(e.value)
+    assert f'percentage_amount must be a number. Specified type was "{type(percentage_amount)}"' in str(e.value)

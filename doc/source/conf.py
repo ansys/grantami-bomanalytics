@@ -1,5 +1,7 @@
 import sys
 import os
+from datetime import datetime
+from pyansys_sphinx_theme import pyansys_logo_black
 import shutil
 from pathlib import Path
 import jupytext
@@ -7,10 +9,11 @@ import jupytext
 sys.path.insert(0, os.path.abspath("../../src"))
 from ansys.grantami.bomanalytics import __version__
 
+
 # -- Project information -----------------------------------------------------
 
 project = "ansys.grantami.bomanalytics"
-copyright = "(c) 2021 ANSYS, Inc. All rights reserved"
+copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS Inc."
 
 # The short X.Y version
@@ -18,12 +21,13 @@ release = version = __version__
 
 # -- General configuration ---------------------------------------------------
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.napoleon",
-    "sphinx.ext.doctest",
-    "sphinx_autodoc_typehints",
-    "sphinx.ext.autosummary",
-    "notfound.extension",
+    'sphinx.ext.autodoc',
+    'sphinx_autodoc_typehints',
+    'numpydoc',
+    'sphinx.ext.doctest',
+    'sphinx.ext.autosummary',
+    'notfound.extension',
+    "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "sphinx.ext.extlinks",
     "sphinx.ext.coverage",
@@ -31,13 +35,53 @@ extensions = [
     "nbsphinx",
 ]
 
-# return type inline with the description.
-napoleon_use_rtype = False
-
 add_module_names = False
+typehints_fully_qualified = True
+typehints_document_rtype = False
+
+# Intersphinx mapping
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/dev", None),
+
+    # kept here as an example
+
+    # "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
+    # "numpy": ("https://numpy.org/devdocs", None),
+    # "matplotlib": ("https://matplotlib.org/stable", None),
+    # "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
+    # "pyvista": ("https://docs.pyvista.org/", None),
+}
+
+# numpydoc configuration
+numpydoc_show_class_members = False
+numpydoc_xref_param_type = True
+
+# Consider enabling numpydoc validation. See:
+# https://numpydoc.readthedocs.io/en/latest/validation.html#
+numpydoc_validate = True
+numpydoc_validation_checks = {
+    "GL06",  # Found unknown section
+    "GL07",  # Sections are in the wrong order.
+    "GL08",  # The object does not have a docstring
+    "GL09",  # Deprecation warning should precede extended summary
+    "GL10",  # reST directives {directives} must be followed by two colons
+    "SS01",  # No summary found
+    "SS02",  # Summary does not start with a capital letter
+    # "SS03", # Summary does not end with a period
+    "SS04",  # Summary contains heading whitespaces
+    # "SS05", # Summary must start with infinitive verb, not third person
+    "RT02",  # The first line of the Returns section should contain only the
+    # type, unless multiple values are being returned"
+}
 
 # static path
 html_static_path = ["_static"]
+
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = [
+    'css/example-block.css',
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -74,8 +118,8 @@ copybutton_prompt_is_regexp = True
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = "pyansys_sphinx_theme"
-html_logo = "https://docs.pyansys.com/_static/pyansys-logo-black-cropped.png"
-html_theme_options = {"github_url": "https://github.com/pyansys/grantami-bomanalytics", "show_prev_next": False}
+html_logo = pyansys_logo_black
+html_theme_options = {"github_url": "https://github.com/pyansys/granta-bomanalytics", "show_prev_next": False}
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -145,6 +189,7 @@ assert (cwd.name == "source")
 EXAMPLES_DIR_NAME = "examples"
 examples_output_dir = Path(EXAMPLES_DIR_NAME).absolute()
 examples_source_dir = Path("../../" + EXAMPLES_DIR_NAME).absolute()
+EXAMPLE_FLAG = os.getenv("BUILD_EXAMPLES")
 
 
 def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
@@ -166,10 +211,12 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
 # If we don't have an examples folder, create it by copying notebooks and supporting files
 # If we already have an output directory then don't do anything.
 # Note: Call `make clean` to force a rebuild, which will delete the 'examples' output folder
-if not examples_output_dir.is_dir() and os.getenv("BUILD_DOCS"):
+# Only include examples if the environment variable is set to True
+if not examples_output_dir.is_dir() and EXAMPLE_FLAG:
     _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
 
-if not os.getenv("BUILD_DOCS"):
+# If we are skipping docs, create a placeholder index.rst file to avoid sphinx errors.
+if not EXAMPLE_FLAG:
     examples_output_dir.mkdir(parents=False, exist_ok=False)
     example_index = examples_output_dir / Path("index.rst")
     with open(example_index, "w") as f:

@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Performing a Material Compliance Query
+# # [TECHDOCS]Performing a Material Compliance Query
 
 # A Material Compliance Query determines whether one or more materials are compliant with the specified indicators. This
 # is done by first determining compliance for the substances associated with the material, and then rolling up the
@@ -26,7 +26,7 @@
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
 # -
 
 # ## Defining an Indicator

@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_connection:
+.. _ref_grantami_bomanalytics_connection:
 
 Granta MI Connection
 ====================
@@ -6,7 +6,6 @@ Granta MI Connection
 Connection Builder
 ~~~~~~~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.grantami.bomanalytics
 .. autoclass:: ansys.grantami.bomanalytics.Connection
    :members:
 
@@ -22,6 +21,3 @@ BoM Analyics Client
 
 .. autoclass:: ansys.grantami.bomanalytics._connection.BomAnalyticsClient
    :members:
-
-
-

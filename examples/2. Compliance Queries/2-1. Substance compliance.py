@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Performing a Substance Compliance Query
+# # [TECHDOCS]Performing a Substance Compliance Query
 
 # A Substance Compliance Query determines whether one or more substances are compliant with the specified indicators.
 
@@ -24,7 +24,7 @@
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
 # -
 
 # ## Defining an Indicator

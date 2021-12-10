@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Performing a Material Impacted Substances Query
+# # [TECHDOCS]Performing a Material Impacted Substances Query
 
 # A Material Impacted Substances Query is used to extract the substances associated with a material that are impacted by
 # one or more defined legislations.
@@ -27,7 +27,7 @@
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
 # -
 
 # ## Building and Running the Query

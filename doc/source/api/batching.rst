@@ -1,11 +1,11 @@
-.. _ref_bom_analytics_batching:
+.. _ref_grantami_bomanalytics_batching:
 
 Batching Requests
 =================
 
 Introduction
 ------------
-The queries that can be performed with this package are batched if they exceed a certain size. This is achieved by
+[TECHDOCS] The queries that can be performed with this package are batched if they exceed a certain size. This is achieved by
 splitting the list of parts, materials, etc. into smaller lists below a certain size to reduce the overall time taken
 to perform the query.
 
@@ -30,7 +30,3 @@ Large Numbers of Indicators and Legislations
 The queries can only be batched in the 'item' dimension; there is no facility to split the query by the number of
 legislations or indicators. As a result, if the impacted substances or compliance queries are evaluated against a large
 number (i.e. > 10) of legislations or lists, it will be required to reduce the batch size.
-
-Performance Tuning
-------------------
-How might you go about performance tuning?

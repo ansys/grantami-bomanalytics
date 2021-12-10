@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_api_compliance_parts:
+.. _ref_grantami_bomanalytics_api_compliance_parts:
 
 Part Compliance
 ===============
@@ -9,13 +9,13 @@ Query definition
 .. autoclass:: ansys.grantami.bomanalytics.queries.PartComplianceQuery
    :members:
 
+   .. automethod:: with_indicators
+   .. automethod:: with_part_numbers
    .. automethod:: with_record_guids
    .. automethod:: with_record_history_guids
    .. automethod:: with_record_history_ids
    .. automethod:: with_stk_records
-   .. automethod:: with_part_numbers
    .. automethod:: with_batch_size
-   .. automethod:: with_indicators
 
 
 Query result
@@ -23,23 +23,13 @@ Query result
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.PartComplianceQueryResult
    :members:
+   :exclude-members: compliance_by_part_and_indicator
 
-   .. autoproperty:: compliance_by_indicator
+   .. autoattribute:: compliance_by_indicator
+   .. autoattribute:: compliance_by_part_and_indicator
 
 
 Part result
 ~~~~~~~~~~~
 
-.. py:currentmodule::ansys.grantami.bomanalytics._item_results
 .. autoclass:: ansys.grantami.bomanalytics._item_results.PartWithComplianceResult
-   :members:
-
-   .. autoattribute:: part_number
-   .. autoattribute:: record_guid
-   .. autoattribute:: record_history_guid
-   .. autoattribute:: record_history_identity
-   .. autoattribute:: indicators
-   .. autoattribute:: parts
-   .. autoattribute:: materials
-   .. autoattribute:: specifications
-   .. autoattribute:: substances

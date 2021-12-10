@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_api_impactedsubstances_specifications:
+.. _ref_grantami_bomanalytics_api_impactedsubstances_specifications:
 
 Specification Impacted Substances
 =================================
@@ -9,32 +9,25 @@ Query definition
 .. autoclass:: ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery
    :members:
 
+   .. automethod:: with_legislations
+   .. automethod:: with_specification_ids
    .. automethod:: with_record_guids
    .. automethod:: with_record_history_guids
    .. automethod:: with_record_history_ids
-   .. automethod:: with_specification_ids
    .. automethod:: with_batch_size
-   .. automethod:: with_legislations
 
 Query result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.SpecificationImpactedSubstancesQueryResult
    :members:
+   :exclude-members: impacted_substances_by_specification
 
-   .. autoproperty:: impacted_substances_by_legislation
-   .. autoproperty:: impacted_substances
-
+   .. autoattribute:: impacted_substances_by_specification
+   .. autoattribute:: impacted_substances_by_legislation
+   .. autoattribute:: impacted_substances
 
 Specification result
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithImpactedSubstancesResult
-   :members:
-
-   .. autoattribute:: specification_id
-   .. autoattribute:: record_guid
-   .. autoattribute:: record_history_guid
-   .. autoattribute:: record_history_identity
-   .. autoattribute:: substances_by_legislation
-   .. autoattribute:: substances

@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Writing Compliance Results to a DataFrame
+# # [TECHDOCS]Writing Compliance Results to a DataFrame
 
 # ## Introduction
 
@@ -22,7 +22,7 @@
 # This example shows an example of how the data could be translated from one format to another, and makes use
 # of a `pandas.DataFrame` object to store the tabulated data.
 
-# # Perform a Compliance Query
+# ## Perform a Compliance Query
 
 # The first step is to perform a compliance query on an assembly that will result in a deeply
 # nested structure. The code here is presented without explanation, see other examples for more
@@ -30,7 +30,7 @@
 
 from ansys.grantami.bomanalytics import Connection, indicators, queries
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
 svhc = indicators.WatchListIndicator(
     name="SVHC",
     legislation_names=["REACH - The Candidate List"],

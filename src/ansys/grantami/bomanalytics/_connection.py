@@ -50,57 +50,57 @@ logger = logging.getLogger(__name__)
 
 
 class Connection(common.ApiClientFactory):
-    """Build a connection to an instance of Granta MI.
-
-    Parameters
-    ----------
-    servicelayer_url
-        The url of the Granta MI Service layer.
+    """[TECHDOCS] Build a connection to an instance of Granta MI.
 
     Notes
     -----
     For advanced usage, including configuring any session-specific properties and timeouts, see the
     `ansys-openapi-common` package documentation.
 
-    This a builder class, which means you must call the `.build()` method to return the actual
-    connection object.
+    The connection to Granta MI is created in 3 stages:
 
-    Builder classes are generally instantiated, configured, and then built. The examples below
-    show this in action, first by instantiating the Connection builder (i.e. `Connection()`),
-    then configuring the builder object (`.with_autologon()`), and then using the builder
-    object to build the connection itself (`.build()`).
+    1. Create the connection builder object and specify the server to be connected to.
+    2. Specify the authentication method to be used for the connection and provide credentials if required.
+    3. Connect to the server; the connection object is returned.
+
+    The examples below show examples of this process with different authentication methods.
 
     Examples
     --------
-    >>> Connection("http://my_mi_server/mi_servicelayer").with_autologon().build()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
+    >>> cxn
     <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
 
     >>> cxn = (
     ...     Connection("http://my_mi_server/mi_servicelayer")
     ...     .with_credentials(username="my_username", password="my_password")
-    ...     .build()
+    ...     .connect()
     ... )
     >>> cxn
     <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
     """
 
-    def build(self) -> "BomAnalyticsClient":
+    def connect(self) -> "BomAnalyticsClient":
         # Use the docstring on the method in the base class.
         self._validate_builder()
-        client = BomAnalyticsClient(session=self._session,
-                                    sl_url=self._sl_url,
-                                    configuration=self._session_configuration)
+        client = BomAnalyticsClient(
+            session=self._session, sl_url=self._sl_url, configuration=self._session_configuration
+        )
         client.setup_client(models)
         return client
 
 
 class BomAnalyticsClient(common.ApiClient):
+    """[TECHDOCS] The class used to communicate with Granta MI. It is instantiated by the
+    :class:`~ansys.grantami.bomanalytics.Connection` class defined above, and should not be instantiated directly.
+    """
+
     def __init__(self, sl_url: str, **kwargs: Any) -> None:
         self._sl_url = sl_url.strip("/")
         self._service_url = self._sl_url + SERVICE_PATH
-        logger.debug("Creating BomAnalyticsClient")
-        logger.debug(f"Base Servicelayer url: {self._sl_url}")
-        logger.debug(f"Service url: {self._service_url}")
+        logger.debug("[TECHDOCS]Creating BomAnalyticsClient")
+        logger.debug(f"[TECHDOCS]Base Servicelayer url: {self._sl_url}")
+        logger.debug(f"[TECHDOCS]Service url: {self._service_url}")
         super().__init__(api_url=self._service_url, **kwargs)
 
         self._db_key = DEFAULT_DBKEY
@@ -131,26 +131,26 @@ class BomAnalyticsClient(common.ApiClient):
         substances_table_name: Optional[str] = None,
         coatings_table_name: Optional[str] = None,
     ) -> None:
-        """Configure the database key and table names if different from the defaults.
+        """[TECHDOCS] Configure the database key and table names if different from the defaults.
 
-        The database key is required if something other than MI_Restricted_Substances is being used. A table name should
-        only be specified if it has been modified from the defaults.
+        The database key is required if Granta MI is configured to use a value other than 'MI_Restricted_Substances'.
+        A table name is required if it has been modified from the defaults.
 
         Parameters
         ----------
-        database_key
+        database_key : Optional[str]
             The database key for the Restricted Substances database.
-        material_universe_table_name
+        material_universe_table_name : Optional[str]
             The name of the table that implements the 'MaterialUniverse' schema.
-        in_house_materials_table_name
+        in_house_materials_table_name : Optional[str]
             The name of the table that implements the 'Materials - in house' schema.
-        specifications_table_name
+        specifications_table_name : Optional[str]
             The name of the table that implements the 'Specifications' schema.
-        products_and_parts_table_name
+        products_and_parts_table_name : Optional[str]
             The name of the table that implements the 'Products and parts' schema.
-        substances_table_name
+        substances_table_name : Optional[str]
             The name of the table that implements the 'Restricted Substances' schema.
-        coatings_table_name
+        coatings_table_name : Optional[str]
             The name of the table that implements the 'Coatings' schema.
 
         Notes
@@ -170,7 +170,7 @@ class BomAnalyticsClient(common.ApiClient):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
         >>> cxn.set_database_details(database_key = "MY_RS_DB",
         ...                          in_house_materials_table_name = "My Materials")
         """
@@ -228,7 +228,7 @@ class BomAnalyticsClient(common.ApiClient):
         ...
 
     def run(self, query):  # type: ignore[no-untyped-def]
-        """Run a query against the Granta MI database.
+        """[TECHDOCS] Run a query against the Granta MI database.
 
         Parameters
         ----------

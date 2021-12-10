@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Performing a BoM Query
+# # [TECHDOCS]Performing a BoM Query
 
 # Both ImpactedSubstances queries and Compliance queries can be performed on an XML Bill of Materials instead of a list
 # of Granta MI records. The Bill of Materials must be in the Granta 17/11 format, and this example shows how to use the
@@ -73,7 +73,7 @@ result
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
 # -
 
 # The Impacted Substances BoM query behaves similar to other Impacted Substances queries. However, a BoM query can only

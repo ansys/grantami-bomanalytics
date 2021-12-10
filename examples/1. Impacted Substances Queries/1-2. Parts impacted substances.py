@@ -14,7 +14,7 @@
 # ---
 
 # + [markdown] tags=[]
-# # Performing a Part Impacted Substances Query
+# # [TECHDOCS]Performing a Part Impacted Substances Query
 # -
 
 # A Part Impacted Substances Query is used to extract the substances associated with a part that are impacted by one or
@@ -31,7 +31,7 @@
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().build()
+cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
 
 # + [markdown] tags=[]
 # ## Building and Running the Query

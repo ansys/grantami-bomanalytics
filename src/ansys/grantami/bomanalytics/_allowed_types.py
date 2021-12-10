@@ -58,12 +58,13 @@ def validate_argument_type(*allowed_types: Any) -> Callable:
         def check_types(*args: Any, **kwargs: Any) -> T:
             values = list(args)[1:] + list(kwargs.values())
             if len(values) != 1:
-                raise TypeError(f"The allowed_types decorator can only be used on a method called with exactly one "
-                                f'argument. The method "{method.__name__}" was called with {len(values)} arguments.')
+                raise TypeError(f"[TECHDOCS]The allowed_types decorator can only be used on a method called with "
+                                f'exactly one argument. The method "{method.__name__}" was called with {len(values)} '
+                                f'arguments.')
             value = values[0]
             result = any([_check_type_wrapper(value, allowed_type) for allowed_type in allowed_types])
             if not result:
-                raise TypeError(f'Incorrect type for value "{value}". Expected "{allowed_types}"')
+                raise TypeError(f'[TECHDOCS]Incorrect type for value "{value}". Expected "{allowed_types}"')
             return method(*args, **kwargs)  # type: ignore[call-arg]
         return check_types
     return decorator
@@ -113,22 +114,22 @@ def _check_type(value_obj: Any, type_obj: Any) -> None:
             for value, contained_type in zip(value_obj, type_obj):
                 _check_type(value, contained_type)
         else:
-            raise ValueError("List or tuple containers must be either of length 1 or the same length as the object"
-                             "being checked."
-                             f"Container length: {len(type_obj)}, object length: {len(value_obj)}")
+            raise ValueError("[TECHDOCS]List or tuple containers must be either of length 1 or the same length as the "
+                             "object being checked."
+                             f"[TECHDOCS]Container length: {len(type_obj)}, object length: {len(value_obj)}")
     elif isinstance(type_obj, set):
         assert isinstance(value_obj, set)
         if len(type_obj) != 1:
-            raise ValueError("Sets must be homogeneous, i.e. they can only contain a single object against which the"
-                             " type should be checked.")
+            raise ValueError("[TECHDOCS]Sets must be homogeneous, i.e. they can only contain a single object against "
+                             "which the type should be checked.")
         contained_type = next(iter(type_obj))
         for value in value_obj:
             _check_type(value, contained_type)
     elif isinstance(type_obj, dict):
         assert isinstance(value_obj, dict)
         if len(type_obj) != 1:
-            raise ValueError("Dictionaries must be homogeneous, i.e. they can only contain a single object against"
-                             " which the type should be checked.")
+            raise ValueError("[TECHDOCS]Dictionaries must be homogeneous, i.e. they can only contain a single object "
+                             "against which the type should be checked.")
         contained_key_type = next(iter(type_obj.keys()))
         for key in value_obj.keys():
             _check_type(key, contained_key_type)

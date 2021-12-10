@@ -1,5 +1,4 @@
-.. _ref_bom_analytics_api_compliance_materials:
-
+.. _ref_grantami_bomanalytics_api_compliance_materials:
 
 Material Compliance
 ===================
@@ -10,32 +9,25 @@ Query definition
 .. autoclass:: ansys.grantami.bomanalytics.queries.MaterialComplianceQuery
    :members:
 
+   .. automethod:: with_indicators
+   .. automethod:: with_material_ids
    .. automethod:: with_record_guids
    .. automethod:: with_record_history_guids
    .. automethod:: with_record_history_ids
    .. automethod:: with_stk_records
-   .. automethod:: with_material_ids
    .. automethod:: with_batch_size
-   .. automethod:: with_indicators
 
 Query result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.MaterialComplianceQueryResult
    :members:
+   :exclude-members: compliance_by_material_and_indicator
 
-   .. autoproperty:: compliance_by_indicator
+   .. autoattribute:: compliance_by_indicator
+   .. autoattribute:: compliance_by_material_and_indicator
 
 Material result
 ~~~~~~~~~~~~~~~
 
-.. py:currentmodule::ansys.grantami.bomanalytics._item_results
 .. autoclass:: ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult
-   :members:
-
-   .. autoattribute:: material_id
-   .. autoattribute:: record_guid
-   .. autoattribute:: record_history_guid
-   .. autoattribute:: record_history_identity
-   .. autoattribute:: indicators
-   .. autoattribute:: substances

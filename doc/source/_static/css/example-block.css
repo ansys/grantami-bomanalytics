@@ -1,0 +1,14 @@
+/* Custom CSS file to clean up the spacing around the Example div blocks. Ensure the whitespace groups the
+example block more naturally with the Class above, as opposed to the methods below.*/
+
+/* Examples title text */
+p.rubric {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* Example box */
+div.doctest.highlight-default.notranslate {
+  margin-top: 0px;
+  margin-bottom: 35px;
+}

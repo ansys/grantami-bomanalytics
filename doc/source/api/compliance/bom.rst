@@ -1,4 +1,4 @@
-.. _ref_bom_analytics_api_compliance_bom:
+.. _ref_grantami_bomanalytics_api_compliance_bom:
 
 BoM Compliance
 ==============
@@ -9,14 +9,15 @@ Query definition
 .. autoclass:: ansys.grantami.bomanalytics.queries.BomComplianceQuery
    :members:
 
-   .. automethod:: with_bom
    .. automethod:: with_indicators
+   .. automethod:: with_bom
 
 Query result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.BomComplianceQueryResult
    :members:
+   :exclude-members: compliance_by_part_and_indicator
 
-   .. autoproperty:: compliance_by_indicator
-
+   .. autoattribute:: compliance_by_indicator
+   .. autoattribute:: compliance_by_part_and_indicator

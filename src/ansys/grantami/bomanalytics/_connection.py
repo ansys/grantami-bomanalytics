@@ -20,6 +20,7 @@ from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
+OIDC_HEADER_APPLICATION_NAME = "MI Scripting Toolkit"
 
 if TYPE_CHECKING:
     from .queries import (
@@ -83,9 +84,11 @@ class Connection(common.ApiClientFactory):
     def connect(self) -> "BomAnalyticsClient":
         # Use the docstring on the method in the base class.
         self._validate_builder()
-        client = BomAnalyticsClient(
-            session=self._session, sl_url=self._sl_url, configuration=self._session_configuration
-        )
+        session_configuration = self._session_configuration
+        session_configuration.headers["X-Granta-ApplicationName"] = OIDC_HEADER_APPLICATION_NAME
+        client = BomAnalyticsClient(session=self._session,
+                                    servicelayer_url=self._api_url,
+                                    configuration=session_configuration)
         client.setup_client(models)
         return client
 
@@ -95,13 +98,13 @@ class BomAnalyticsClient(common.ApiClient):
     :class:`~ansys.grantami.bomanalytics.Connection` class defined above, and should not be instantiated directly.
     """
 
-    def __init__(self, sl_url: str, **kwargs: Any) -> None:
-        self._sl_url = sl_url.strip("/")
-        self._service_url = self._sl_url + SERVICE_PATH
+    def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
+        self._sl_url = servicelayer_url.strip("/")
+        sl_url_with_service = self._sl_url + SERVICE_PATH
         logger.debug("[TECHDOCS]Creating BomAnalyticsClient")
         logger.debug(f"[TECHDOCS]Base Servicelayer url: {self._sl_url}")
-        logger.debug(f"[TECHDOCS]Service url: {self._service_url}")
-        super().__init__(api_url=self._service_url, **kwargs)
+        logger.debug(f"[TECHDOCS]Service url: {sl_url_with_service}")
+        super().__init__(api_url=sl_url_with_service, **kwargs)
 
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {

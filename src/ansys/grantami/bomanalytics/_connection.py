@@ -20,6 +20,7 @@ from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
+OIDC_HEADER_APPLICATION_NAME = "MI Scripting Toolkit"
 
 if TYPE_CHECKING:
     from .queries import (
@@ -83,9 +84,11 @@ class Connection(common.ApiClientFactory):
     def connect(self) -> "BomAnalyticsClient":
         # Use the docstring on the method in the base class.
         self._validate_builder()
-        client = BomAnalyticsClient(
-            session=self._session, sl_url=self._sl_url, configuration=self._session_configuration
-        )
+        session_configuration = self._session_configuration
+        session_configuration.headers["X-Granta-ApplicationName"] = OIDC_HEADER_APPLICATION_NAME
+        client = BomAnalyticsClient(session=self._session,
+                                    sl_url=self._sl_url,
+                                    session_configuration=session_configuration)
         client.setup_client(models)
         return client
 

@@ -65,7 +65,7 @@ class TestConnectToSL:
     def test_mocked(self, sl_url):
         with requests_mock.Mocker() as m:
             m.get(requests_mock.ANY, text="")
-            connection = Connection(servicelayer_url=sl_url).with_anonymous().connect()
+            connection = Connection(api_url=sl_url).with_anonymous().connect()
         sl_url_stripped = sl_url.strip("/")
         assert connection.api_url == sl_url_stripped + _connection.SERVICE_PATH
 
@@ -74,7 +74,7 @@ class TestConnectToSL:
     def test_real(self, trailing_slash):
         url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer") + ("/" if trailing_slash else "")
         _ = (
-            Connection(servicelayer_url=url)
+            Connection(api_url=url)
             .with_autologon()
             .connect()
         )

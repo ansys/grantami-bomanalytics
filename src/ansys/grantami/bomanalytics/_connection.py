@@ -87,7 +87,7 @@ class Connection(common.ApiClientFactory):
         session_configuration = self._session_configuration
         session_configuration.headers["X-Granta-ApplicationName"] = OIDC_HEADER_APPLICATION_NAME
         client = BomAnalyticsClient(session=self._session,
-                                    api_url=self._api_url,
+                                    servicelayer_url=self._api_url,
                                     configuration=session_configuration)
         client.setup_client(models)
         return client
@@ -98,13 +98,13 @@ class BomAnalyticsClient(common.ApiClient):
     :class:`~ansys.grantami.bomanalytics.Connection` class defined above, and should not be instantiated directly.
     """
 
-    def __init__(self, api_url: str, **kwargs: Any) -> None:
-        self._api_url = api_url.strip("/")
-        self._service_url = self._api_url + SERVICE_PATH
+    def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
+        self._sl_url = servicelayer_url.strip("/")
+        sl_url_with_service = self._sl_url + SERVICE_PATH
         logger.debug("[TECHDOCS]Creating BomAnalyticsClient")
-        logger.debug(f"[TECHDOCS]Base Servicelayer url: {self._api_url}")
-        logger.debug(f"[TECHDOCS]Service url: {self._service_url}")
-        super().__init__(api_url=self._service_url, **kwargs)
+        logger.debug(f"[TECHDOCS]Base Servicelayer url: {self._sl_url}")
+        logger.debug(f"[TECHDOCS]Service url: {sl_url_with_service}")
+        super().__init__(api_url=sl_url_with_service, **kwargs)
 
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
@@ -117,7 +117,7 @@ class BomAnalyticsClient(common.ApiClient):
         }
 
     def __repr__(self) -> str:
-        base_repr = f'<BomServicesClient: url="{self._api_url}", dbkey="{self._db_key}"'
+        base_repr = f'<BomServicesClient: url="{self._sl_url}", dbkey="{self._db_key}"'
         custom_tables = ", ".join([f'{k}="{v}"' for k, v in self._table_names.items() if v])
         if custom_tables:
             return base_repr + f", {custom_tables}>"

@@ -24,6 +24,9 @@
 # Whilst it is possible that data would be available in a JSON file, the intention is that the approach presented
 # here would be applicable for data in other formats, or data loaded from other software platform APIs.
 
+# The external data source used in this example can be downloaded
+# [here](supporting-files/source_data.json).
+
 # ## Load the External Data
 
 # First load the JSON file and use the `json` module
@@ -33,7 +36,7 @@
 import json
 from pprint import pprint
 
-with open("../supporting-files/source_data.json") as f:
+with open("supporting-files/source_data.json") as f:
     data = json.load(f)
 pprint(data)
 # -

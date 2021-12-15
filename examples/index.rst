@@ -10,7 +10,7 @@ other Python structures such as Pandas DataFrames.
 .. toctree::
    :maxdepth: 2
 
-   1. Impacted Substances Queries/index
-   2. Compliance Queries/index
-   3. Advanced Topics/index
+   1_Impacted_Substances_Queries/index
+   2_Compliance_Queries/index
+   3_Advanced_Topics/index
 

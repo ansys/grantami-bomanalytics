@@ -11,6 +11,6 @@ XML BoM, see :ref:`ref_grantami_bomanalytics_advanced`.
 .. toctree::
    :maxdepth: 1
 
-   2-1. Substance compliance.ipynb
-   2-2. Material compliance.ipynb
-   2-3. Part compliance.ipynb
+   2-1_Substance_compliance.ipynb
+   2-2_Material_compliance.ipynb
+   2-3_Part_compliance.ipynb

@@ -1446,9 +1446,9 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
         Notes
         -----
         The XML schema is defined by the schema document
-        :download:`BillOfMaterialsEco.xsd </_static/BillOfMaterialsEco.xsd>`, which in turn references
-        :download:`grantarecord1205.xsd</_static/grantarecord1205.xsd>`. Together, these XSD files can be used to
-        validate that the BoM is both valid XML and adheres to the 17/11 BoM XML schema.
+        :download:`BillOfMaterialsEco.xsd </_static/xml_schemas/BillOfMaterialsEco.xsd>`, which in turn references
+        :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD files can be
+        used to validate that the BoM is both valid XML and adheres to the 17/11 BoM XML schema.
 
         Examples
         --------

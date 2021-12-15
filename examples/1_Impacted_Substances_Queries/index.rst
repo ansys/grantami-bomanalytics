@@ -12,5 +12,5 @@ the :ref:`ref_grantami_bomanalytics_api_index` for details. To determine the sub
 .. toctree::
    :maxdepth: 1
 
-   1-1. Materials impacted substances.ipynb
-   1-2. Parts impacted substances.ipynb
+   1-1_Materials_impacted_substances.ipynb
+   1-2_Parts_impacted_substances.ipynb

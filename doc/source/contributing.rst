@@ -281,9 +281,9 @@ described in the API documentation. Additional examples are welcomed,
 especially if they cover a key use-case of the package which has not
 previously been covered.
 
-Examples are authored using Jupyter Notebooks, but are converted into
+Examples are authored using Jupyter notebooks, but are converted into
 plain .py files before being checked in. As part of the doc build process
-described above, the py files are converted back into Jupyter Notebooks and
+described above, the py files are converted back into Jupyter notebooks and
 are executed, which populates the output cells.
 
 This conversion between notebooks and plain python files is performed by

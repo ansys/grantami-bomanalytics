@@ -112,7 +112,7 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 
 # ## Running an Compliance XML-based Query
 
-# Running a BoM Compliance Query produces the same result as if we had stored the Bom structure as linked 'Products and
+# Running a BoM Compliance Query produces the same result as if we had stored the BoM structure as linked 'Products and
 # Parts' records in Granta MI.
 
 # + tags=[]

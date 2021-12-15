@@ -61,7 +61,7 @@ for part in part_result.compliance_by_part_and_indicator[0].parts:
 
 # We will flatten the data into a `list` of `dict` objects, where each `dict` represents an 'item' in the
 # hierarchy, and each value in the `dict` represents a property of that item. This structure can then either
-# be used directly or can be used to construct a `DataFrame.
+# be used directly or can be used to construct a `DataFrame`.
 
 # First define a helper function that will transform a ComplianceResult object into a dict. In addition to storing
 # properties that are intrinsic to the item (e.g. the ID, the type, and the SVHC result), we also want to store

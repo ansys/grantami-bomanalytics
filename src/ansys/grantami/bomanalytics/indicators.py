@@ -443,7 +443,7 @@ class WatchListIndicator(_Indicator):
     """[TECHDOCS] Indicator object that represents Watch List-type compliance of a BoM object against one or more
     legislations.
 
-    Other `WatchListIndicator` objects with results can be compared, with 'less compliant' indicator flagas being
+    Other `WatchListIndicator` objects with results can be compared, with 'less compliant' indicator flags being
     greater than 'more compliant' indicator flags.
 
     Parameters

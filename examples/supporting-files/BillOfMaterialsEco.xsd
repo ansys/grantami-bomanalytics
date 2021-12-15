@@ -250,7 +250,7 @@
           <xsd:restriction base="xsd:string">
             <xsd:enumeration value="Mass">
               <xsd:annotation>
-                <xsd:documentation>If the process affects the bulk of the material or part (e.g. it is a shaping process) then the amount of material affected by the process should be specifed. The amount may be specified as a percentage by weight or an absolute value.</xsd:documentation>
+                <xsd:documentation>If the process affects the bulk of the material or part (e.g. it is a shaping process) then the amount of material affected by the process should be specified. The amount may be specified as a percentage by weight or an absolute value.</xsd:documentation>
               </xsd:annotation>
             </xsd:enumeration>
             <xsd:enumeration value="MassRemoved">

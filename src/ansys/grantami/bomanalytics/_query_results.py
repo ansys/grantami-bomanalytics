@@ -189,7 +189,7 @@ class ComplianceBaseClass(ABC):
 
         Returns
         -------
-        indicator_results : dict[str, :class:`~ansys.grantami.bomanalytics.indicators.WatchListIndicator` | :class:`~ansys.grantami.bomanalytics.indicators.RoHSIndicator`]  # noqa: E501
+        dict[str, |WatchListIndicator| | |RoHSIndicator|]
 
         Examples
         --------
@@ -249,7 +249,7 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         Returns
         -------
-        impacted_substances_by_material : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult`]  # noqa: E501
+        list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult`]
 
         Examples
         --------
@@ -307,7 +307,7 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 
         Returns
         -------
-        compliance_by_material_and_indicator : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult`]  # noqa: E501
+        list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult`]
 
         Examples
         --------
@@ -359,7 +359,7 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         Returns
         -------
-        impacted_substances_by_part : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithImpactedSubstancesResult`]  # noqa: E501
+        list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithImpactedSubstancesResult`]
 
         Examples
         --------
@@ -417,7 +417,7 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
         Returns
         -------
-        compliance_by_part_and_indicator : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithComplianceResult`]  # noqa: E501
+        list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithComplianceResult`]
 
         Examples
         --------
@@ -441,13 +441,7 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     directly.
     """
 
-    def __init__(
-        self,
-        results: List[
-            models.GetImpactedSubstancesForSpecificationsSpecification
-            # noqa: E501
-        ],
-    ):
+    def __init__(self, results: List[models.GetImpactedSubstancesForSpecificationsSpecification]):
         """
         Parameters
         ----------
@@ -474,7 +468,7 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         Returns
         -------
-        impacted_substances_by_specification : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithImpactedSubstancesResult`]  # noqa: E501
+        list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithImpactedSubstancesResult`]
 
         Examples
         --------
@@ -535,7 +529,7 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 
         Returns
         -------
-        compliance_by_specification_and_indicator : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult`]  # noqa: E501
+        list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult`]
 
         Examples
         --------
@@ -590,7 +584,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 
         Returns
         -------
-        compliance_by_substance_and_indicator : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]  # noqa: E501
+        list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
 
         Examples
         --------
@@ -677,7 +671,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         Returns
         -------
-        compliance_by_part_and_indicator : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithComplianceResult`]  # noqa: E501
+        list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithComplianceResult`]
 
         Examples
         --------

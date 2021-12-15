@@ -1,3 +1,4 @@
+.. include:: ../../_replacements.rst
 .. _ref_grantami_bomanalytics_api_compliance_bom:
 
 BoM Compliance

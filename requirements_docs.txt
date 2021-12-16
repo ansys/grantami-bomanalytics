@@ -1,6 +1,6 @@
 pyansys-sphinx-theme
 numpydoc
-sphinx
+sphinx==4.2.0
 sphinx_autodoc_typehints
 sphinx-notfound-page
 sphinx-copybutton

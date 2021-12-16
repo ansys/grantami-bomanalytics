@@ -28,9 +28,27 @@
 # nested structure. The code here is presented without explanation, see other examples for more
 # detail.
 
+# + tags=[]
+user_name = "my_username"
+password = "my_password"
+server_url = "http://my_grantami_service/mi_servicelayer"
+# -
+
+# + nbsphinx="hidden"
+import os
+
+# This cell is included for package CI/CD purposes only, and is removed when generating the HTML documentation.
+# It will have no effect if the environment variables referenced below are unset.
+
+user_name = os.getenv("TEST_USER", user_name)
+password = os.getenv("TEST_PASS", password)
+server_url = os.getenv("TEST_SL_URL", server_url)
+# -
+
+# + tags=[]
 from ansys.grantami.bomanalytics import Connection, indicators, queries
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+cxn = Connection(server_url).with_credentials(user_name, password).connect()
 svhc = indicators.WatchListIndicator(
     name="SVHC",
     legislation_names=["REACH - The Candidate List"],

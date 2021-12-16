@@ -427,7 +427,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
                 "of the base bom analytics package."
             )
         impacted_substance = ImpactedSubstance(
-            max_percentage_amount_in_material=substance.max_percentage_amount_in_material,  # noqa: E501
+            max_percentage_amount_in_material=substance.max_percentage_amount_in_material,
             legislation_threshold=substance.legislation_threshold,
             reference_type=reference_type,
             reference_value=reference_value,
@@ -992,7 +992,7 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReferenc
     chemical_name : Optional[str]
     record_history_guid : Optional[str]
     record_guid : Optional[str]
-    indicators : dict[str, :class:`~ansys.grantami.bomanalytics.indicators.WatchListIndicator` | :class:`~ansys.grantami.bomanalytics.indicators.RoHSIndicator`]  # noqa: E501
+    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
         The compliance status of this item for each indicator included in the original query.
 
     Notes
@@ -1019,7 +1019,7 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
     material_id : Optional[str]
     record_history_guid : Optional[str]
     record_guid : Optional[str]
-    indicators : dict[str, :class:`~ansys.grantami.bomanalytics.indicators.WatchListIndicator` | :class:`~ansys.grantami.bomanalytics.indicators.RoHSIndicator`]  # noqa: E501
+    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
         The compliance status of this item for each indicator included in the original query.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
         The substance compliance result objects that are direct children of this part in the BoM.
@@ -1057,7 +1057,7 @@ class PartWithComplianceResult(
     part_number : Optional[str]
     record_history_guid : Optional[str]
     record_guid : Optional[str]
-    indicators : dict[str, :class:`~ansys.grantami.bomanalytics.indicators.WatchListIndicator` | :class:`~ansys.grantami.bomanalytics.indicators.RoHSIndicator`]  # noqa: E501
+    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
         The compliance status of this item for each indicator included in the original query.
     parts : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithComplianceResult`]
         The part compliance result objects that are direct children of this part in the BoM.
@@ -1101,7 +1101,7 @@ class SpecificationWithComplianceResult(
     specification_id : Optional[str]
     record_history_guid : Optional[str]
     record_guid : Optional[str]
-    indicators : dict[str, :class:`~ansys.grantami.bomanalytics.indicators.WatchListIndicator` | :class:`~ansys.grantami.bomanalytics.indicators.RoHSIndicator`]  # noqa: E501
+    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
         The compliance status of this item for each indicator included in the original query.
     specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult`]
         The specification compliance result objects that are direct children of this part in the BoM.
@@ -1136,7 +1136,7 @@ class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceR
     ----------
     record_history_identity : int
         Default reference type for compliance items returned as children of the queried item.
-    indicators : dict[str, :class:`~ansys.grantami.bomanalytics.indicators.WatchListIndicator` | :class:`~ansys.grantami.bomanalytics.indicators.RoHSIndicator`]  # noqa: E501
+    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
         The compliance status of this item for each indicator included in the original query.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
         The substance compliance result objects that are direct children of this part in the BoM.

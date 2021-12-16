@@ -28,9 +28,27 @@
 # nested structure. The code here is presented without explanation, see other examples for more
 # detail.
 
+# + tags=[]
+user_name = "my_username"
+password = "my_password"
+server_url = "http://my_grantami_service/mi_servicelayer"
+# -
+
+# + nbsphinx="hidden"
+import os
+
+# This cell is included for package CI/CD purposes only, and is removed when generating the HTML documentation.
+# It will have no effect if the environment variables referenced below are unset.
+
+user_name = os.getenv("TEST_USER", user_name)
+password = os.getenv("TEST_PASS", password)
+server_url = os.getenv("TEST_SL_URL", server_url)
+# -
+
+# + tags=[]
 from ansys.grantami.bomanalytics import Connection, indicators, queries
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+cxn = Connection(server_url).with_credentials(user_name, password).connect()
 svhc = indicators.WatchListIndicator(
     name="SVHC",
     legislation_names=["REACH - The Candidate List"],
@@ -61,7 +79,7 @@ for part in part_result.compliance_by_part_and_indicator[0].parts:
 
 # We will flatten the data into a `list` of `dict` objects, where each `dict` represents an 'item' in the
 # hierarchy, and each value in the `dict` represents a property of that item. This structure can then either
-# be used directly or can be used to construct a `DataFrame.
+# be used directly or can be used to construct a `DataFrame`.
 
 # First define a helper function that will transform a ComplianceResult object into a dict. In addition to storing
 # properties that are intrinsic to the item (e.g. the ID, the type, and the SVHC result), we also want to store

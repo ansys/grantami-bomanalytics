@@ -24,7 +24,7 @@ and install the latest version in development mode by running:
 .. code::
 
     git clone https://github.com/pyansys/grantami-bomanalytics
-    cd pyansys-granta-compliance
+    cd grantami-bomanalytics
     pip install -e .
 
 
@@ -141,10 +141,10 @@ section <#creating-a-new-pull-request>`__.
 
 Opening Issues
 ~~~~~~~~~~~~~~
-Should you come across a bug in ``pyansys-granta-compliance`` or otherwise
+Should you come across a bug in ``ansys-grantami-bomanalytics`` or otherwise
 encounter some unexpected behaviour you should create an "issue" regarding it.
 Issues are created and submitted 
-`here <https://github.com/pyansys-granta-compliance/auth_common/issues>`_.
+`here <https://github.com/pyansys/grantami-bomanalytics/issues>`_.
 Issues are used when developing to keep track of what is being
 worked on at any one time, and by who. We have two issue templates
 that we recommend you use:
@@ -198,7 +198,7 @@ integration (CI) testing and verify your changes will work across all
 supported platforms.
 
 For code verification, someone from the Granta MI Bom Analytics developers
-team will review your code to verify your code meets our our standards.
+team will review your code to verify your code meets our standards.
 Once approved, if you have write permission you may merge the branch.
 If you don't have write permission, the reviewer or someone else with
 write permission will merge the branch and delete the PR branch.
@@ -263,7 +263,7 @@ Documentation
 Documentation for Granta MI Bom Analytics is generated from three sources:
 
 - Docstrings from the classes, functions, and modules of ``ansys.grantami.bomanalytics`` using `sphinx.ext.autodoc <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`_.
-- Restructured test from `doc/`
+- Restructured text from `doc/`
 - Examples from `examples/`
 
 General usage and API descriptions should be placed within `doc/source` and
@@ -281,9 +281,9 @@ described in the API documentation. Additional examples are welcomed,
 especially if they cover a key use-case of the package which has not
 previously been covered.
 
-Examples are authored using Jupyter Notebooks, but are converted into
+Examples are authored using Jupyter notebooks, but are converted into
 plain .py files before being checked in. As part of the doc build process
-described above, the py files are converted back into jupyter notebooks and
+described above, the py files are converted back into Jupyter notebooks and
 are executed, which populates the output cells.
 
 This conversion between notebooks and plain python files is performed by
@@ -305,7 +305,7 @@ integration performed on GitHub Actions.
 Building the Documentation Locally
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Documentation for Granta MI Bom Analytics is hosted at
-pyansys-grantami-bomanalytics.pyansys.com and is automatically built
+`<http://grantami-bomanalytics.pyansys.com>`_ and is automatically built
 and deployed using the GitHub Actions.  You can build and verify the
 html documentation locally by install ``sphinx`` and the other
 documentation build dependencies by running the following from the
@@ -392,7 +392,7 @@ The main features of our branching model are:
 Minor Release Steps
 ~~~~~~~~~~~~~~~~~~~
 Minor releases are feature and bug releases that improve the
-functionality and stability of ``pyansys-granta-compliance``.
+functionality and stability of ``ansys-grantami-bomanalytics``.
 Before a minor release is created the following will occur:
 
 1.  Create a new branch from the ``main`` branch with name

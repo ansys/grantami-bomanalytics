@@ -24,6 +24,9 @@
 # Whilst it is possible that data would be available in a JSON file, the intention is that the approach presented
 # here would be applicable for data in other formats, or data loaded from other software platform APIs.
 
+# The external data source used in this example can be downloaded
+# [here](supporting-files/source_data.json).
+
 # ## Load the External Data
 
 # First load the JSON file and use the `json` module
@@ -33,7 +36,7 @@
 import json
 from pprint import pprint
 
-with open("../supporting-files/source_data.json") as f:
+with open("supporting-files/source_data.json") as f:
     data = json.load(f)
 pprint(data)
 # -
@@ -62,9 +65,26 @@ material_ids
 # Now we can feed the list of material IDs into a compliance query as shown in previous exercises.
 
 # + tags=[]
-from ansys.grantami.bomanalytics import Connection, queries, indicators
+user_name = "my_username"
+password = "my_password"
+server_url = "http://my_grantami_service/mi_servicelayer"
+# -
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+# + nbsphinx="hidden"
+import os
+
+# This cell is included for package CI/CD purposes only, and is removed when generating the HTML documentation.
+# It will have no effect if the environment variables referenced below are unset.
+
+user_name = os.getenv("TEST_USER", user_name)
+password = os.getenv("TEST_PASS", password)
+server_url = os.getenv("TEST_SL_URL", server_url)
+# -
+
+# + tags=[]
+from ansys.grantami.bomanalytics import Connection, indicators, queries
+
+cxn = Connection(server_url).with_credentials(user_name, password).connect()
 svhc = indicators.WatchListIndicator(
     name="SVHC",
     legislation_names=["REACH - The Candidate List"],

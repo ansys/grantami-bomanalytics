@@ -8,7 +8,7 @@ Advanced Examples
 .. toctree::
    :maxdepth: 1
 
-   3-1. Working with XML BoMs.ipynb
-   3-2. Dealing with external data sources.ipynb
-   3-3. Database-specific configuration.ipynb
-   3-4. Writing compliance results to a dataframe.ipynb
+   3-1_Working_with_XML_BoMs.ipynb
+   3-2_Dealing_with_external_data_sources.ipynb
+   3-3_Database-specific_configuration.ipynb
+   3-4_Writing_compliance_results_to_a_dataframe.ipynb

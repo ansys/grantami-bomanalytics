@@ -21,12 +21,32 @@
 
 # ## Connecting to Granta MI
 
-# Import the bom analytics module and create the connection. See the example on creating connections for more detail.
+# First define the username, password, and url we will use to connect to the Granta MI server.
+
+# + tags=[]
+user_name = "my_username"
+password = "my_password"
+server_url = "http://my_grantami_service/mi_servicelayer"
+# -
+
+# + nbsphinx="hidden"
+import os
+
+# This cell is included for package CI/CD purposes only, and is removed when generating the HTML documentation.
+# It will have no effect if the environment variables referenced below are unset.
+
+user_name = os.getenv("TEST_USER", user_name)
+password = os.getenv("TEST_PASS", password)
+server_url = os.getenv("TEST_SL_URL", server_url)
+# -
+
+# Now import the `ansys-grantami-bomanalytics` module and create the connection. See the example on creating connections
+# for more detail.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+cxn = Connection(server_url).with_credentials(user_name, password).connect()
 # -
 
 # ## Defining an Indicator

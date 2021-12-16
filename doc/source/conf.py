@@ -201,11 +201,10 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
         for file in files:
             file_source_path = root_path / Path(file)
             file_output_path = root_output_path / Path(file)
-            if file_source_path.suffix == ".py":  # Convert python scripts to jupyter notebooks
+            shutil.copy(file_source_path, file_output_path)  # Copy everything
+            if file_source_path.suffix == ".py":  # Also convert python scripts to jupyter notebooks
                 ntbk = jupytext.read(file_source_path)
                 jupytext.write(ntbk, file_output_path.with_suffix(".ipynb"))
-            else:  # Copy everything else (ReST text files and supporting files)
-                shutil.copy(file_source_path, file_output_path)
 
 
 # If we don't have an examples folder, create it by copying notebooks and supporting files
@@ -221,3 +220,11 @@ if not EXAMPLE_FLAG:
     example_index = examples_output_dir / Path("index.rst")
     with open(example_index, "w") as f:
         f.write("Example Scripts\n===============\n\nExample build skipped")
+
+
+nbsphinx_prolog = """
+Right-click and save as to download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb>` or a
+:download:`python script </{{ env.docname }}.py>`.
+
+----
+"""

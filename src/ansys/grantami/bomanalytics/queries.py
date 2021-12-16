@@ -501,7 +501,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
 
         Parameters
         ----------
-        indicators : list[:class:`~ansys.grantami.bomanalytics.indicators.WatchListIndicator` | :class:`~ansys.grantami.bomanalytics.indicators.RoHSIndicator`]  # noqa: E501
+        indicators : list[|WatchListIndicator| | |RoHSIndicator|]
 
         Returns
         -------
@@ -785,7 +785,7 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type = models.GetImpactedSubstancesForMaterialsRequest  # noqa: E501
+        self._request_type = models.GetImpactedSubstancesForMaterialsRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_impactedsubstances_materials"
 
@@ -887,7 +887,7 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type = models.GetImpactedSubstancesForPartsRequest  # noqa: E501
+        self._request_type = models.GetImpactedSubstancesForPartsRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_impactedsubstances_parts"
 
@@ -963,7 +963,7 @@ class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder)
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type = models.GetComplianceForSpecificationsRequest  # noqa: E501
+        self._request_type = models.GetComplianceForSpecificationsRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_compliance_specifications"
 
@@ -993,7 +993,7 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type = models.GetImpactedSubstancesForSpecificationsRequest  # noqa: E501
+        self._request_type = models.GetImpactedSubstancesForSpecificationsRequest
         self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_impactedsubstances_specifications"
 
@@ -1446,9 +1446,9 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
         Notes
         -----
         The XML schema is defined by the schema document
-        :download:`BillOfMaterialsEco.xsd </_static/BillOfMaterialsEco.xsd>`, which in turn references
-        :download:`grantarecord1205.xsd</_static/grantarecord1205.xsd>`. Together, these XSD files can be used to
-        validate that the BoM is both valid XML and adheres to the 17/11 BoM XML schema.
+        :download:`BillOfMaterialsEco.xsd </_static/xml_schemas/BillOfMaterialsEco.xsd>`, which in turn references
+        :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD files can be
+        used to validate that the BoM is both valid XML and adheres to the 17/11 BoM XML schema.
 
         Examples
         --------
@@ -1527,7 +1527,7 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type = models.GetImpactedSubstancesForBom1711Request  # noqa: E501
+        self._request_type = models.GetImpactedSubstancesForBom1711Request
         self._api_method = "post_impactedsubstances_bom1711"
 
 

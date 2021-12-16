@@ -10,7 +10,7 @@ from ansys.grantami.bomanalytics import Connection
 def connection():
     connection = (
         Connection(api_url=os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer"))
-        .with_autologon()
+        .with_credentials(os.getenv("TEST_USER"), os.getenv("TEST_PASS"))
         .connect()
     )
     return connection

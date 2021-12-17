@@ -276,7 +276,7 @@ documentation.
 Adding a New Example
 ~~~~~~~~~~~~~~~~~~~~
 
-[TECHDOCS] Examples are included to give more context around the core functionality
+Examples are included to give more context around the core functionality
 described in the API documentation. Additional examples are welcomed,
 especially if they cover a key use-case of the package which has not
 previously been covered.

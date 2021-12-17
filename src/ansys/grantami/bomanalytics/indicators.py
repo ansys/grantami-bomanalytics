@@ -65,7 +65,7 @@ class _Flag(Enum):
 
 
 class RoHSFlag(_Flag):
-    """[TECHDOCS] Permitted RoHS flag states. Increasing value means 'worse' compliance, i.e. the compliance result is
+    """Permitted RoHS flag states. A larger value means the item is less compliant, i.e. the compliance result is
     worse the further down the list the result appears.
 
     See the Restricted Substances Reports User Guide for more details.
@@ -73,37 +73,37 @@ class RoHSFlag(_Flag):
 
     RohsNotImpacted = (
         1,
-        """[TECHDOCS] This substance is not impacted by the specified legislations. *Substance is not
+        """ This substance is not impacted by the specified legislations. *Substance is not
     impacted.*""",
     )
     RohsBelowThreshold = (
         2,
-        """[TECHDOCS] This substance is impacted by the specified legislations, but appears in the parent item
+        """ This substance is impacted by the specified legislations, but appears in the parent item
     in a quantity below that specified by the indicator. *Substance is below threshold.*""",
     )
     RohsCompliant = (
         3,
-        """[TECHDOCS] This item either does not contain any substances impacted by the specified legislations, or
+        """ This item either does not contain any substances impacted by the specified legislations, or
     contains no substances above the specified threshold. *Item is compliant.*""",
     )
     RohsCompliantWithExemptions = (
         4,
-        """[TECHDOCS] This item contains substances impacted by the specified legislations, but an
+        """ This item contains substances impacted by the specified legislations, but an
     exemption has been declared either on itself or a child item. *Item is compliant with exemptions.*""",
     )
     RohsAboveThreshold = (
         5,
-        """[TECHDOCS] This substance is impacted by the specified legislations and is present in a quantity
+        """ This substance is impacted by the specified legislations and is present in a quantity
     above that specified by the indicator. *Exemption for use required.*""",
     )
     RohsNonCompliant = (
         6,
-        """[TECHDOCS] This item contains one or more substances impacted by the specified legislations. *Item is
+        """ This item contains one or more substances impacted by the specified legislations. *Item is
     non-compliant.*""",
     )
     RohsUnknown = (
         7,
-        """[TECHDOCS] One or more declarations are missing, and so there is not enough information to determine
+        """ One or more declarations are missing, and so there is not enough information to determine
     compliance. *Compliance is unknown.*""",
     )
 
@@ -112,11 +112,11 @@ class RoHSFlag(_Flag):
             result: bool = self.value < other.value
         elif isinstance(other, RoHSIndicator):
             if not other.flag:
-                raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
+                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
             else:
                 result = self.value < other.flag.value
         else:
-            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
         return result
 
     def __eq__(self, other: object) -> bool:
@@ -127,22 +127,22 @@ class RoHSFlag(_Flag):
         ValueError
             If the other object is an indicator and has no value.
         TypeError
-            If the other object isn't this flag's type or this flag's indicator's type.
+            If the other object isn't the same type as this flag or this flag's indicator.
         """
 
         if isinstance(other, self.__class__):
             return self is other
         elif isinstance(other, RoHSIndicator):
             if not other.flag:
-                raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
+                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
             else:
                 return self is other.flag
         else:
-            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
 
 
 class WatchListFlag(_Flag):
-    """[TECHDOCS] Permitted Watch List flag states. Increasing value means 'worse' compliance, i.e. the compliance
+    """Permitted Watch List flag states. Increasing value means less compliance, i.e. the compliance
     result is worse the further down the list the result appears.
 
     See the Restricted Substances Reports User Guide for more details.
@@ -150,37 +150,37 @@ class WatchListFlag(_Flag):
 
     WatchListNotImpacted = (
         1,
-        """[TECHDOCS] This substance is not impacted by the specified legislations. *Substance is not
+        """ This substance is not impacted by the specified legislations. *Substance is not
     impacted.*""",
     )
     WatchListCompliant = (
         2,
-        """[TECHDOCS] This item does not contain any substances impacted by the specified legislations. *Item
+        """ This item does not contain any substances impacted by the specified legislations. *Item
     is compliant.*""",
     )
     WatchListBelowThreshold = (
         3,
-        """[TECHDOCS] This substance is impacted by the specified legislations, but appears in the parent
+        """ This substance is impacted by the specified legislations, but appears in the parent
     item in a quantity below that specified by the indicator. *Substance is below threshold.*""",
     )
     WatchListAllSubstancesBelowThreshold = (
         4,
-        """[TECHDOCS] This item contains no substances above the specified threshold.
+        """ This item contains no substances above the specified threshold.
     *Item is compliant.*""",
     )
     WatchListAboveThreshold = (
         5,
-        """[TECHDOCS] This substance is impacted by the specified legislations and appears in the parent
+        """ This substance is impacted by the specified legislations and appears in the parent
     item in a quantity above that specified by the indicator. *Substance is impacted.*""",
     )
     WatchListHasSubstanceAboveThreshold = (
         6,
-        """[TECHDOCS] This item contains one or more substances impacted by the specified
+        """ This item contains one or more substances impacted by the specified
     legislations. *Item is non-compliant.*""",
     )
     WatchListUnknown = (
         7,
-        """[TECHDOCS] There is not enough information to determine compliance. *Compliance is unknown.*""",
+        """ There is not enough information to determine compliance. *Compliance is unknown.*""",
     )
 
     def __lt__(self, other: object) -> bool:
@@ -188,11 +188,11 @@ class WatchListFlag(_Flag):
             result: bool = self.value < other.value
         elif isinstance(other, WatchListIndicator):
             if not other.flag:
-                raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
+                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
             else:
                 result = self.value < other.flag.value
         else:
-            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
         return result
 
     def __eq__(self, other: object) -> bool:
@@ -210,11 +210,11 @@ class WatchListFlag(_Flag):
             return self is other
         elif isinstance(other, WatchListIndicator):
             if not other.flag:
-                raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
+                raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
             else:
                 return self is other.flag
         else:
-            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
 
 
 class _Indicator(ABC):
@@ -257,7 +257,7 @@ class _Indicator(ABC):
 
     @property
     def flag(self) -> Optional[_Flag]:
-        """[TECHDOCS] The state of this indicator. If the indicator is a definition only, this property is `None`.
+        """The state of this indicator. If the indicator is a definition only, this property is `None`.
 
         Raises
         ------
@@ -271,8 +271,7 @@ class _Indicator(ABC):
         try:
             self._flag = self.__class__.available_flags[flag]
         except KeyError as e:
-            raise KeyError(f'[TECHDOCS]Unknown flag "{flag}" for indicator'
-                           f' "{repr(self)}"').with_traceback(e.__traceback__)
+            raise KeyError(f'Unknown flag "{flag}" for Indicator' f' "{repr(self)}"').with_traceback(e.__traceback__)
 
     def __eq__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
@@ -286,7 +285,7 @@ class _Indicator(ABC):
         """
 
         if not self.flag:
-            raise ValueError(f"[TECHDOCS]Indicator {str(self)} has no flag, so cannot be compared")
+            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
         other_flag = self._get_flag_from_object(other)
         return self.flag is other_flag
 
@@ -302,7 +301,7 @@ class _Indicator(ABC):
         """
 
         if not self.flag:
-            raise ValueError(f"[TECHDOCS]Indicator {str(self)} has no flag, so cannot be compared")
+            raise ValueError(f"Indicator {str(self)} has no flag, so cannot be compared")
         other_flag = self._get_flag_from_object(other)
         return self.flag < other_flag
 
@@ -339,11 +338,11 @@ class _Indicator(ABC):
             If the other object is a different _Indicator subtype or an incompatible_Flag subtype.
         """
         if isinstance(other, _Indicator) and not isinstance(other, self.__class__):
-            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
         if isinstance(other, _Flag) and not isinstance(other, self.available_flags):
-            raise TypeError(f"[TECHDOCS]Cannot compare {type(self)} with {type(other)}")
+            raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
         if isinstance(other, _Indicator) and not other.flag:
-            raise ValueError(f"[TECHDOCS]Indicator {str(other)} has no flag, so cannot be compared")
+            raise ValueError(f"Indicator {str(other)} has no flag, so cannot be compared")
 
     def __le__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
@@ -360,7 +359,7 @@ class _Indicator(ABC):
 
 
 class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, IndicatorDefinition vs Result
-    """[TECHDOCS] Indicator object that represents RoHS-type compliance of a BoM object against one or more
+    """Indicator object that represents RoHS-type compliance of a BoM object against one or more
     legislations.
 
     Other `RoHSIndicator` objects with results can be compared, with 'less compliant' indicators being greater than
@@ -394,8 +393,8 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
     -----
     The RoHS indicator is designed to be used with RoHS-type legislations (e.g. RoHS, RoHS China) however this is not
     enforced. Substances marked as 'Process Chemicals'[1]_ are always ignored, and exceptions are supported (unless
-    explicitly ignored by specifying `ignore_exemptions=True` when creating the Indicator. The possible result flags for
-    the indicator distinguish between an item being compliant, compliant with exemptions, or non-compliant.
+    explicitly ignored by specifying `ignore_exemptions=True` when creating the Indicator). The possible result flags
+    for the indicator distinguish between an item being compliant, compliant with exemptions, or non-compliant.
 
     Examples
     --------
@@ -440,7 +439,7 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
 
 
 class WatchListIndicator(_Indicator):
-    """[TECHDOCS] Indicator object that represents Watch List-type compliance of a BoM object against one or more
+    """Indicator object that represents Watch List-type compliance of a BoM object against one or more
     legislations.
 
     Other `WatchListIndicator` objects with results can be compared, with 'less compliant' indicator flags being
@@ -453,7 +452,7 @@ class WatchListIndicator(_Indicator):
     legislation_names : list[str]
         The legislations against which compliance will be determined.
     default_threshold_percentage : Optional[float]
-        The concentration of substance that will be determined to be non-compliant. Is only used if the legislation
+        The concentration of substance that will be determined to be non-compliant. Only used if the legislation
         doesn't define a specific threshold for the substance.
     ignore_process_chemicals : Optional[bool]
         Whether to ignore substances flagged as process chemicals when determining compliance against this indicator.
@@ -491,7 +490,7 @@ class WatchListIndicator(_Indicator):
     >>> result: MaterialComplianceQueryResult  # Perform a compliance query
     >>> indicator_result = result.compliance_by_material_and_indicator[0]['Tracked substances']
     >>> indicator_result.flag >= indicator.available_flags['WatchListAllSubstancesBelowThreshold']
-    True  # The material is not compliant with the legislations in the indicator
+    True  # The material is not compliant with the legislations in the Indicator
     """
 
     available_flags = WatchListFlag

@@ -1,4 +1,4 @@
-Ansys Granta MI Bom Analytics API Documentation
+Ansys Granta MI BoM Analytics API Documentation
 ===============================================
 
 .. toctree::
@@ -12,13 +12,13 @@ Ansys Granta MI Bom Analytics API Documentation
 
 Introduction and Purpose
 ------------------------
-[TECHDOCS] This project is part of the larger PyAnsys effort to facilitate the use
+This project is part of the larger PyAnsys effort to facilitate the use
 of Ansys technologies directly from within Python.
 
 Granta MI provides a mature and feature-rich method for managing
 compliance data as part of the Restricted Substances solution.
-When combined with the Bom Analyzer and the Restricted Substances
-reporting bundle, the data managed in Granta MI can be leveraged to
+When combined with the Granta MI BoM Analyzer and Restricted Substances
+Reports, the data managed in Granta MI can be leveraged to
 determine compliance for complex specification hierarchies, assemblies,
 and even entire products.
 
@@ -36,7 +36,7 @@ for this package are as follows:
 Dependencies
 ------------
 To use this package you will require access to a Granta MI server
-that includes the MI Restricted Substances Reports version 2022R1
+that includes MI Restricted Substances Reports 2022 R1
 or later. This package also has the following Python package
 dependencies (installed automatically by pip):
 
@@ -80,7 +80,7 @@ The sequence of events is as follows:
 1. Connect to Granta MI.
 2. Create the appropriate query, choosing between:
 
-   - *Query type*: Compliance or impacted substances.
+   - *Query type*: Compliance or Impacted Substances.
    - *Reference type*: Materials, parts, specifications, substances, or an XML BoM.
 
 3. Specify the legislations and records of interest.

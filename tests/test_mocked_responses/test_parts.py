@@ -77,7 +77,7 @@ class TestImpactedSubstances:
 
     def test_query_result_repr(self, mock_connection):
         response = get_mocked_response(self.query, self.mock_key, mock_connection)
-        assert repr(response) == '<PartImpactedSubstancesQueryResult: 2 PartWithImpactedSubstances results>'
+        assert repr(response) == "<PartImpactedSubstancesQueryResult: 2 PartWithImpactedSubstances results>"
 
     def test_impacted_substances_repr(self, mock_connection):
         response = get_mocked_response(self.query, self.mock_key, mock_connection)
@@ -284,7 +284,7 @@ class TestCompliance:
 
     def test_query_result_repr(self, mock_connection):
         response = get_mocked_response(self.query, self.mock_key, mock_connection)
-        assert repr(response) == '<PartComplianceQueryResult: 2 PartWithCompliance results>'
+        assert repr(response) == "<PartComplianceQueryResult: 2 PartWithCompliance results>"
 
     def test_compliance_by_indicator_repr(self, mock_connection):
         response = get_mocked_response(self.query, self.mock_key, mock_connection)

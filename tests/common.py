@@ -13,5 +13,4 @@ one_legislation_indicator = indicators.RoHSIndicator(
     default_threshold_percentage=0.01,
 )
 
-INDICATORS = {"Two legislations": two_legislation_indicator,
-              "One legislation": one_legislation_indicator}
+INDICATORS = {"Two legislations": two_legislation_indicator, "One legislation": one_legislation_indicator}

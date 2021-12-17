@@ -3,7 +3,7 @@ ansys-grantami-bomanalytics
 
 Project Overview
 ----------------
-[TECHDOCS] This project is part of the larger PyAnsys effort to facilitate the use
+This project is part of the larger PyAnsys effort to facilitate the use
 of Ansys technologies directly from within Python.
 
 The Granta MI Restricted Substances solution includes a REST API for

@@ -364,7 +364,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
 
         This should only be used with the corresponding method in the MI Scripting Toolkit which generates a
         :class:`dict` of the appropriate shape. This method will be introduced in the next version of the MI Scripting
-         Toolkit.
+        Toolkit.
 
         If the MI Scripting Toolkit method is not available, we recommend using the :meth:`with_record_history_ids`
         method instead.

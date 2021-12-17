@@ -221,7 +221,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
 
         Default values are set based on typical usage of the Restricted Substances database. This value can be changed
         to optimize performance if required on a query-by-query basis if it is known that certain records contain
-        particcularly large or small numbers of associated records.
+        particularly large or small numbers of associated records.
 
         Parameters
         ----------

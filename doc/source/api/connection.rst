@@ -16,8 +16,8 @@ Connection Builder
    .. automethod:: with_anonymous
 
 
-BoM Analyics Client
-~~~~~~~~~~~~~~~~~~~
+BoM Analytics Client
+~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._connection.BomAnalyticsClient
    :members:

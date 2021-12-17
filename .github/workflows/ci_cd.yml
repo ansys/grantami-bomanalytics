@@ -236,12 +236,14 @@ jobs:
       - name: Build HTML
         run: |
           pip install -r requirements_docs.txt
+          export BUILD_EXAMPLES=1
           make -C doc html SPHINXOPTS="-W"
 
       - name: Build PDF Documentation
         run: |
           sudo apt update
           sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
+          export BUILD_EXAMPLES=1
           make -C doc latexpdf
 
       - name: Upload HTML Documentation

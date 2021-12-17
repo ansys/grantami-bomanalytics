@@ -13,16 +13,16 @@
 #     name: python3
 # ---
 
-# # [TECHDOCS]Performing a Material Impacted Substances Query
+# # Performing a Material Impacted Substances Query
 
-# A Material Impacted Substances Query is used to extract the substances associated with a material that are impacted by
+# A Material Impacted Substances Query is used to identify the substances associated with a material that are impacted by
 # one or more defined legislations.
 
 # This example shows how to perform an Impacted Substance query on material records, and how to process the results.
 
 # ## Connecting to Granta MI
 
-# First define the username, password, and url we will use to connect to the Granta MI server.
+# First define the username, password, and URL we will use to connect to the Granta MI server.
 
 # + tags=[]
 user_name = "my_username"

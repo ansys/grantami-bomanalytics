@@ -65,7 +65,7 @@ class _Flag(Enum):
 
 
 class RoHSFlag(_Flag):
-    """ Permitted RoHS flag states. A larger value means the item is less compliant, i.e. the compliance result is
+    """Permitted RoHS flag states. A larger value means the item is less compliant, i.e. the compliance result is
     worse the further down the list the result appears.
 
     See the Restricted Substances Reports User Guide for more details.
@@ -120,7 +120,7 @@ class RoHSFlag(_Flag):
         return result
 
     def __eq__(self, other: object) -> bool:
-        """ Allows comparison both to another flag and to an indicator that has this flag set as its result.
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
         ------
@@ -142,7 +142,7 @@ class RoHSFlag(_Flag):
 
 
 class WatchListFlag(_Flag):
-    """ Permitted Watch List flag states. Increasing value means less compliance, i.e. the compliance
+    """Permitted Watch List flag states. Increasing value means less compliance, i.e. the compliance
     result is worse the further down the list the result appears.
 
     See the Restricted Substances Reports User Guide for more details.
@@ -196,7 +196,7 @@ class WatchListFlag(_Flag):
         return result
 
     def __eq__(self, other: object) -> bool:
-        """ Allows comparison both to another flag and to an indicator that has this flag set as its result.
+        """Allows comparison both to another flag and to an indicator that has this flag set as its result.
 
         Raises
         ------
@@ -257,7 +257,7 @@ class _Indicator(ABC):
 
     @property
     def flag(self) -> Optional[_Flag]:
-        """ The state of this indicator. If the indicator is a definition only, this property is `None`.
+        """The state of this indicator. If the indicator is a definition only, this property is `None`.
 
         Raises
         ------
@@ -271,8 +271,7 @@ class _Indicator(ABC):
         try:
             self._flag = self.__class__.available_flags[flag]
         except KeyError as e:
-            raise KeyError(f'Unknown flag "{flag}" for Indicator'
-                           f' "{repr(self)}"').with_traceback(e.__traceback__)
+            raise KeyError(f'Unknown flag "{flag}" for Indicator' f' "{repr(self)}"').with_traceback(e.__traceback__)
 
     def __eq__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.
@@ -360,7 +359,7 @@ class _Indicator(ABC):
 
 
 class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, IndicatorDefinition vs Result
-    """ Indicator object that represents RoHS-type compliance of a BoM object against one or more
+    """Indicator object that represents RoHS-type compliance of a BoM object against one or more
     legislations.
 
     Other `RoHSIndicator` objects with results can be compared, with 'less compliant' indicators being greater than
@@ -394,8 +393,8 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
     -----
     The RoHS indicator is designed to be used with RoHS-type legislations (e.g. RoHS, RoHS China) however this is not
     enforced. Substances marked as 'Process Chemicals'[1]_ are always ignored, and exceptions are supported (unless
-    explicitly ignored by specifying `ignore_exemptions=True` when creating the Indicator). The possible result flags for
-    the indicator distinguish between an item being compliant, compliant with exemptions, or non-compliant.
+    explicitly ignored by specifying `ignore_exemptions=True` when creating the Indicator). The possible result flags
+    for the indicator distinguish between an item being compliant, compliant with exemptions, or non-compliant.
 
     Examples
     --------
@@ -440,7 +439,7 @@ class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, I
 
 
 class WatchListIndicator(_Indicator):
-    """ Indicator object that represents Watch List-type compliance of a BoM object against one or more
+    """Indicator object that represents Watch List-type compliance of a BoM object against one or more
     legislations.
 
     Other `WatchListIndicator` objects with results can be compared, with 'less compliant' indicator flags being

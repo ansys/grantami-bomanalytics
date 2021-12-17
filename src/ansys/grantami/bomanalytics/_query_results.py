@@ -87,8 +87,7 @@ class QueryResultFactory:
         try:
             item_factory_class = cls.registry[response_type]
         except KeyError as e:
-            raise RuntimeError(f'Unregistered response type'
-                               f' "{response_type}"').with_traceback(e.__traceback__)
+            raise RuntimeError(f"Unregistered response type" f' "{response_type}"').with_traceback(e.__traceback__)
 
         item_result: Query_Result = item_factory_class(results, **kwargs)
         return item_result
@@ -110,7 +109,7 @@ class ImpactedSubstancesBaseClass(ABC):
 
     @property
     def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
-        """ A view of the results for an Impacted Substances query, grouped by legislation only.
+        """A view of the results for an Impacted Substances query, grouped by legislation only.
 
         The substances from all items specified in the query are merged for each legislation, providing a single
         list of impacted substances grouped by legislation only. Substances are duplicated where they appear in
@@ -142,7 +141,7 @@ class ImpactedSubstancesBaseClass(ABC):
 
     @property
     def impacted_substances(self) -> List["ImpactedSubstance"]:
-        """ A view of the results for an Impacted Substances query, flattened into a single list.
+        """A view of the results for an Impacted Substances query, flattened into a single list.
 
         The substances from all items specified in the query are merged across item and legislation, providing a
         single flat list. Substances are duplicated where they appear in multiple items or legislations.
@@ -181,7 +180,7 @@ class ComplianceBaseClass(ABC):
 
     @property
     def compliance_by_indicator(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:
-        """ The compliance status for each indicator in the original query. The indicator name
+        """The compliance status for each indicator in the original query. The indicator name
         is used as the dictionary key.
 
         The result for each indicator is determined by taking the worst result for that indicator across all items
@@ -214,7 +213,7 @@ class ComplianceBaseClass(ABC):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForMaterialsMaterial)
 class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """ The result of running a :class:`~ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery`.
+    """The result of running a :class:`~ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery`.
     Describes the substances in the specified materials impacted by one or more legislations.
 
     Notes
@@ -245,10 +244,11 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
     @property
     def impacted_substances_by_material(self) -> List["MaterialWithImpactedSubstancesResult"]:
-        """ The impacted substances for each material specified in the original query.
+        """The impacted substances for each material specified in the original query.
 
         Returns
-        -------      list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult`]
+        -------
+        list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult`]
 
         Examples
         --------
@@ -263,7 +263,7 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 @QueryResultFactory.register(models.CommonMaterialWithCompliance)
 class MaterialComplianceQueryResult(ComplianceBaseClass):
-    """ The result of running a :class:`~ansys.grantami.bomanalytics.queries.MaterialComplianceQuery`.
+    """The result of running a :class:`~ansys.grantami.bomanalytics.queries.MaterialComplianceQuery`.
     Describes the compliance status of materials against one or more indicators.
 
     Notes
@@ -300,7 +300,7 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 
     @property
     def compliance_by_material_and_indicator(self) -> List["MaterialWithComplianceResult"]:
-        """ The compliance status for each material specified in the original query.
+        """The compliance status for each material specified in the original query.
 
         Since materials do not have a single well-defined reference, the results are provided as a flat list.
 
@@ -321,7 +321,7 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForPartsPart)
 class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """ The result of running a :class:`~ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery`.
+    """The result of running a :class:`~ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery`.
     Describes the substances in the specified parts impacted by one or more legislations.
 
     Notes
@@ -352,7 +352,7 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
     @property
     def impacted_substances_by_part(self) -> List["PartWithImpactedSubstancesResult"]:
-        """ The impacted substances for each part specified in the original query.
+        """The impacted substances for each part specified in the original query.
 
         Since parts do not have a single well-defined reference, the results are provided as a flat list.
 
@@ -372,7 +372,7 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 @QueryResultFactory.register(models.CommonPartWithCompliance)
 class PartComplianceQueryResult(ComplianceBaseClass):
-    """ The result of running a :class:`~ansys.grantami.bomanalytics.queries.PartComplianceQuery`. Describes
+    """The result of running a :class:`~ansys.grantami.bomanalytics.queries.PartComplianceQuery`. Describes
     the compliance status of parts against one or more indicators.
 
     Notes
@@ -412,7 +412,7 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
     @property
     def compliance_by_part_and_indicator(self) -> List["PartWithComplianceResult"]:
-        """ The compliance status for each part specified in the original query.
+        """The compliance status for each part specified in the original query.
 
         Returns
         -------
@@ -430,7 +430,7 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForSpecificationsSpecification)
 class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """ The result of running a
+    """The result of running a
     :class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery`. Describes the substances in the
     specified specifications impacted by one or more legislations.
 
@@ -461,12 +461,13 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     def impacted_substances_by_specification(
         self,
     ) -> List["SpecificationWithImpactedSubstancesResult"]:
-        """ The impacted substances for each specification specified in the original query.
+        """The impacted substances for each specification specified in the original query.
 
         Since specifications do not have a single well-defined reference, the results are provided as a flat list.
 
         Returns
-        -------  list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithImpactedSubstancesResult`]
+        -------
+        list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithImpactedSubstancesResult`]
 
         Examples
         --------
@@ -481,7 +482,7 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 @QueryResultFactory.register(models.CommonSpecificationWithCompliance)
 class SpecificationComplianceQueryResult(ComplianceBaseClass):
-    """ The result of running a :class:`~ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery`.
+    """The result of running a :class:`~ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery`.
     Describes the compliance status of specifications against one or more indicators.
 
     Notes
@@ -523,7 +524,7 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
     def compliance_by_specification_and_indicator(
         self,
     ) -> List["SpecificationWithComplianceResult"]:
-        """ The compliance status for each specification specified in the original query.
+        """The compliance status for each specification specified in the original query.
 
         Returns
         -------
@@ -542,7 +543,7 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.CommonSubstanceWithCompliance)
 class SubstanceComplianceQueryResult(ComplianceBaseClass):
-    """ The result of running a :class:`~ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery`.
+    """The result of running a :class:`~ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery`.
     Describes the compliance status of substances against one or more indicators.
 
     Notes
@@ -578,7 +579,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 
     @property
     def compliance_by_substance_and_indicator(self) -> List["SubstanceWithComplianceResult"]:
-        """ The compliance status for each substance specified in the original query.
+        """The compliance status for each substance specified in the original query.
 
         Returns
         -------
@@ -596,7 +597,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForBom1711Response)
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """ The result of running a :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`.
+    """The result of running a :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`.
     Describes the substances in the specified BoM impacted by one or more legislations.
 
     Notes
@@ -623,7 +624,7 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 @QueryResultFactory.register(models.GetComplianceForBom1711Response)
 class BomComplianceQueryResult(ComplianceBaseClass):
-    """ The result of running a :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`. Summarizes
+    """The result of running a :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`. Summarizes
     the compliance status of a BoM against one or more indicators.
 
     Notes
@@ -664,7 +665,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
     @property
     def compliance_by_part_and_indicator(self) -> List["PartWithComplianceResult"]:
-        """ The compliance status for each root part included in the BoM specified in the original
+        """The compliance status for each root part included in the BoM specified in the original
         query.
 
         Returns

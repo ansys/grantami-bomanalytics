@@ -15,8 +15,7 @@ class MockRecordDefinition:
 
     @property
     def record_reference(self) -> str:
-        return {"reference_type": self._definition.reference_type,
-                "reference_value": self._definition.reference_value}
+        return {"reference_type": self._definition.reference_type, "reference_value": self._definition.reference_value}
 
 
 class TestRecordArgManager:
@@ -52,8 +51,9 @@ class TestRecordArgManager:
         record_def = MockRecordDefinition(reference_type=reference_type, reference_value=reference_value)
         with pytest.raises(TypeError) as e:
             am.append_record_definition(record_def)
-        assert "Attempted to add a RecordDefinition-derived object with a null record reference to a query."\
-               in str(e.value)
+        assert "Attempted to add a RecordDefinition-derived object with a null record reference to a query." in str(
+            e.value
+        )
 
     @pytest.mark.parametrize("number_of_records", [1, 2, 3, 4, 49, 50, 51, 99, 100, 101, 200, 500, 1000])
     @pytest.mark.parametrize("batch_size", [1, 2, 50, 100])

@@ -1,7 +1,5 @@
 from ansys.grantami.bomanalytics import queries, indicators
-from ansys.grantami.bomanalytics_openapi.models import (
-    GetComplianceForSubstancesResponse
-)
+from ansys.grantami.bomanalytics_openapi.models import GetComplianceForSubstancesResponse
 from .common import get_mocked_response, SubstanceValidator
 
 
@@ -69,7 +67,7 @@ class TestCompliance:
 
     def test_query_result_repr(self, mock_connection):
         response = get_mocked_response(self.query, self.mock_key, mock_connection)
-        assert repr(response) == '<SubstanceComplianceQueryResult: 2 SubstanceWithCompliance results>'
+        assert repr(response) == "<SubstanceComplianceQueryResult: 2 SubstanceWithCompliance results>"
 
     def test_compliance_by_indicator_repr(self, mock_connection):
         response = get_mocked_response(self.query, self.mock_key, mock_connection)

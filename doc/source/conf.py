@@ -162,6 +162,8 @@ texinfo_documents = [
     ),
 ]
 
+latex_engine = 'xelatex'
+
 
 # -- Options for Epub output -------------------------------------------------
 

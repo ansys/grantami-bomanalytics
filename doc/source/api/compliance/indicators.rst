@@ -2,17 +2,17 @@
 
 Indicators
 ==========
-[TECHDOCS] The BoM Analytics API determines compliance against an Indicator, which can essentially be thought of as a legislation
-with a threshold. If a substance appears in a certain item either directly or indirectly in a quantity that exceeds that
-threshold as impacted by the legislation, the item is non-compliant with that Indicator. In the case where the
+The BoM Analytics API determines compliance against an Indicator, which essentially represents a legislation
+with a threshold. If a substance appears in a certain item, either directly or indirectly, in a quantity that exceeds that
+threshold, the item is non-compliant with that Indicator. In cases where the
 legislation defines a per-substance threshold (e.g. RoHS), then this per-substance threshold will be used instead.
 
 Indicators can include a list of legislations, in which case a substance will be impacted by the indicator if it is
-impacted by one or more legislations included in that legislation.
+impacted by one or more legislations included in that indicator.
 
-However, there are two different types of indicator that compute compliance in slightly different ways. It is therefore
+There are two different types of indicator, and they compute compliance in slightly different ways. It is therefore
 important to understand the differences between them. For more details, please see the 'Granta MI Restricted Substances
-Reports User Guide' that was supplied with the Restricted Substances Reports Bundle.
+Reports User Guide' supplied with Granta MI Restricted Substances Reports.
 
 
 RoHS Indicator

@@ -4,7 +4,7 @@
 Substance Compliance
 ====================
 
-Query definition
+Query Definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery
@@ -26,7 +26,7 @@ Query definition
    .. automethod:: with_stk_records
    .. automethod:: with_batch_size
 
-Query result
+Query Result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.SubstanceComplianceQueryResult
@@ -36,7 +36,7 @@ Query result
    .. autoattribute:: compliance_by_indicator
    .. autoattribute:: compliance_by_substance_and_indicator
 
-Substance result
+Substance Result
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult

@@ -4,7 +4,7 @@
 Specification Compliance
 ========================
 
-Query definition
+Query Definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery
@@ -19,7 +19,7 @@ Query definition
    .. automethod:: with_batch_size
 
 
-Query result
+Query Result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.SpecificationComplianceQueryResult
@@ -30,13 +30,13 @@ Query result
    .. autoattribute:: compliance_by_specification_and_indicator
 
 
-Specification result
+Specification Result
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult
 
 
-Coating result
+Coating Result
 ~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.CoatingWithComplianceResult

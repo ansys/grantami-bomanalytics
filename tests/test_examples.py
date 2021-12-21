@@ -7,7 +7,7 @@ import backoff
 pytestmark = pytest.mark.integration
 
 
-@backoff.on_exception(backoff.expo,
+@backoff.on_exception(backoff.constant,
                       AssertionError,
                       max_tries=5)
 def test_examples(example_script: pathlib.Path):

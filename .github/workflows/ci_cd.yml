@@ -182,8 +182,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install tox tox-gh-actions
 
-      - name: Test with tox (no integration tests)
-        run: tox -- -m "not integration"
+      - name: Test with tox
+        run: tox
+        env:
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
   docs:
     name: Build Documentation
@@ -237,6 +241,11 @@ jobs:
         run: |
           pip install -r requirements_docs.txt
           make -C doc html SPHINXOPTS="-W"
+        env:
+          BUILD_EXAMPLES: 1
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
       - name: Build PDF Documentation
         if: ${{ false }}

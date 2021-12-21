@@ -47,7 +47,7 @@ class TestPartQueries:
 
 
 class TestSpecificationQueries:
-    ids = ["MIL-C-20218,TypeII", "MIL-PRF-24635,TypeII,Class1"]
+    ids = ["MIL-DTL-53039,TypeI", "AMS2404,Class1"]
 
     def test_impacted_substances(self, connection):
         query = (

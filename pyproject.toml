@@ -30,6 +30,7 @@ deps =
     lxml
     tabulate
     pandas
+    backoff
 install_command = pip install --pre --find-links ./deps {opts} {packages}
 commands = pytest ./tests {posargs}
 

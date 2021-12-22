@@ -88,9 +88,11 @@ class TestSubstancesQueries:
         assert response.compliance_by_indicator
 
 
-@pytest.mark.parametrize("configurable_connection, bom",
-                         [(False, sample_bom_complex), (True, sample_bom_custom_db)],
-                         indirect=["configurable_connection"])
+@pytest.mark.parametrize(
+    "configurable_connection, bom",
+    [(False, sample_bom_complex), (True, sample_bom_custom_db)],
+    indirect=["configurable_connection"],
+)
 class TestBomQueries:
     def test_impacted_substances(self, bom, configurable_connection):
         query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislations(LEGISLATIONS)

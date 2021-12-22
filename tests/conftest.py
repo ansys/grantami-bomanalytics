@@ -21,8 +21,9 @@ def default_connection():
 def configurable_connection(request):
     connection = Connection(api_url=sl_url).with_credentials(username, password).connect()
     if request.param:
-        connection.set_database_details(database_key="MI_Restricted_Substances_Custom_Tables",
-                                        **{pn: tn for pn, tn in CUSTOM_TABLES})
+        connection.set_database_details(
+            database_key="MI_Restricted_Substances_Custom_Tables", **{pn: tn for pn, tn in CUSTOM_TABLES}
+        )
     else:
         connection.set_database_details()
     return connection

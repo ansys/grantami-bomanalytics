@@ -4,15 +4,27 @@ import requests_mock
 import pathlib
 from typing import List
 from ansys.grantami.bomanalytics import Connection
+from .common import CUSTOM_TABLES
+
+sl_url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
+username = os.getenv("TEST_USER")
+password = os.getenv("TEST_PASS")
 
 
 @pytest.fixture(scope="session")
-def connection():
-    connection = (
-        Connection(api_url=os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer"))
-        .with_credentials(os.getenv("TEST_USER"), os.getenv("TEST_PASS"))
-        .connect()
-    )
+def default_connection():
+    connection = Connection(api_url=sl_url).with_credentials(username, password).connect()
+    return connection
+
+
+@pytest.fixture
+def configurable_connection(request):
+    connection = Connection(api_url=sl_url).with_credentials(username, password).connect()
+    if request.param:
+        connection.set_database_details(database_key="MI_Restricted_Substances_Custom_Tables",
+                                        **{pn: tn for pn, tn in CUSTOM_TABLES})
+    else:
+        connection.set_database_details()
     return connection
 
 
@@ -20,9 +32,7 @@ def connection():
 def mock_connection():
     with requests_mock.Mocker() as m:
         m.get(requests_mock.ANY, text="")
-        connection = (
-            Connection(api_url=os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")).with_anonymous().connect()
-        )
+        connection = Connection(api_url=sl_url).with_anonymous().connect()
     return connection
 
 

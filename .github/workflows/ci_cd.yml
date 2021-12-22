@@ -133,12 +133,10 @@ jobs:
   test:
     name: Unit test on supported platforms
     runs-on: ubuntu-latest
-    concurrency:
-      group: grantami_testing_server
 
     strategy:
       matrix:
-        python-version: [ '3.10' ]
+        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
     steps:
       - uses: actions/checkout@v1
 
@@ -195,8 +193,6 @@ jobs:
   docs:
     name: Build Documentation
     runs-on: ubuntu-latest
-    concurrency:
-      group: grantami_testing_server
 
     steps:
       - uses: actions/checkout@v2

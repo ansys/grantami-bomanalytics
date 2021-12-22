@@ -130,10 +130,9 @@ jobs:
     name: Integration tests on subset of platforms
     runs-on: ${{ matrix.os }}
     needs: [style, unit_tests]
-    concurrency:
-      group: grantami_testing_server
 
     strategy:
+      max-parallel: 1
       matrix:
         os: [ubuntu-latest]
         python-version: [ '3.7', '3.8', '3.9', '3.10' ]

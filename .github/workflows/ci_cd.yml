@@ -134,11 +134,7 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        os: [ubuntu-latest]
-        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
-        include:
-          - os: windows-latest
-            python-version: '3.10'
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v1
@@ -147,10 +143,10 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt install libkrb5-dev
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.8'
 
       - name: Create local deps folder
         run: |

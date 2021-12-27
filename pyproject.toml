@@ -32,6 +32,10 @@ deps =
     pandas
 install_command = pip install --pre --find-links ./deps {opts} {packages}
 commands = pytest ./tests {posargs}
+passenv =
+    TEST_SL_URL
+    TEST_USER
+    TEST_PASS
 
 [testenv:coverage]
 deps = {[testenv]deps}

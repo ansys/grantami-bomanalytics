@@ -15,7 +15,6 @@
                             <Percentage>66</Percentage>
                             <MISubstanceReference>
                                 <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
-                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">41656452-1b2c-4ded-ad1b-1df8b3cf6e7e</recordGUID>
                                 <recordHistoryGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">af1cb650-6db5-49d6-b4a2-0eee9a090207</recordHistoryGUID>
                             </MISubstanceReference>
                             <Name>Lead oxide</Name>
@@ -32,7 +31,6 @@
                             <Percentage>80</Percentage>
                             <MIMaterialReference>
                                 <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
-                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">9ec40360-0cd7-44a4-9c8b-56d53452ae2c</recordGUID>
                                 <recordHistoryGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">ab4147f6-0e97-47f0-be53-cb5d17dfa82b</recordHistoryGUID>
                             </MIMaterialReference>
                         </Material>

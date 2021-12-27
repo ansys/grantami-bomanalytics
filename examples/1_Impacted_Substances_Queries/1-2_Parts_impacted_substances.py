@@ -139,7 +139,7 @@ print(tabulate(rows, headers=["CAS Number", "Amount (wt. %)"]))
 part_substances_sin = part_result.impacted_substances_by_legislation[SIN_LIST]
 rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
         for substance in part_substances_sin]
-print('Substances impacted by "{SIN_LIST}" in all parts (10/{len(rows)})')
+print(f'Substances impacted by "{SIN_LIST}" in all parts (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 

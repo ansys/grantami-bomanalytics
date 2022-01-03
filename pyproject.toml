@@ -49,10 +49,10 @@ deps =
     mypy==0.910
 
 commands =
+    codespell ./src ./tests ./examples ./doc/source
     flake8 ./src ./tests ./examples
     black ./src ./tests --check --line-length=120
     mypy ./src
-    codespell ./src ./tests ./examples ./doc/source
 """
 
 [mypy]

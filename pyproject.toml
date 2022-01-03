@@ -31,7 +31,7 @@ deps =
     tabulate
     pandas
 install_command = pip install --pre --find-links ./deps {opts} {packages}
-commands = pytest ./tests {posargs}
+commands = pytest {posargs}
 passenv =
     TEST_SL_URL
     TEST_USER
@@ -47,9 +47,26 @@ deps =
     flake8==3.9.2
     black
     mypy==0.910
-    {[testenv]deps}
 
 commands =
-    flake8 ./src ./tests
-    mypy
+    flake8 ./src ./tests ./examples
+    black ./src ./tests --check --line-length=120
+    mypy ./src
+    codespell ./src ./tests ./examples ./doc/source
 """
+
+[mypy]
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+check_untyped_defs = true
+show_error_codes = true
+
+[tool.pytest.ini_options]
+testpaths = "./tests"
+markers = [
+    """integration: test requires a real database (deselect with '-m \"not integration\"')"""
+]

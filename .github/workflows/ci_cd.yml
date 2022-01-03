@@ -62,11 +62,7 @@ jobs:
           pip install tox
           pip install -r requirements_style.txt
 
-      - name: Codespell
-        run: |
-          make codespell
-
-      - name: Lint and Type Check
+      - name: Spell, Lint and Type Check
         if: always()
         run: tox -e lint
 

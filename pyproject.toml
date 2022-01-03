@@ -55,7 +55,7 @@ commands =
     mypy ./src
 """
 
-[mypy]
+[tool.mypy]
 warn_return_any = true
 warn_unused_configs = true
 warn_redundant_casts = true

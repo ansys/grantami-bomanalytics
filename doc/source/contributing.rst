@@ -243,10 +243,12 @@ Tests can be performed using ``tox``.
     tox -e coverage .
 
 
-Spelling and Code Style
-~~~~~~~~~~~~~~~~~~~~~~~
-Spelling and coding style is validated with ``codespell``, ``flake8``,
-and ``black``. These tools are also executed using ``tox``.
+Static Analysis
+~~~~~~~~~~~~~~~
+Spell checking, coding style, and type checking is validated with the
+``codespell``, ``flake8``, ``black``, and ``mypy`` tools. These tools
+can be executed manually, but are easily run together with standard
+settings using ``tox``.
 
 .. code::
 
@@ -260,10 +262,17 @@ to be ignored to ``ignore_words.txt``.
 defined in `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_, and will
 report any non-compliance.
 
-The command above runs ``black`` in a 'check' mode, which ensures the
+The tox command above runs ``black`` in a 'check' mode, which ensures the
 specified files are formatted according to the ``black`` style. It is
 advised to run ``black`` before pushing git commits, which will ensure
 your changes are compliant with the ``black`` style.
+
+``mypy`` is used for static type checking. Python is a dynamically typed
+language, however including type hints allows those parts of the codebase
+to be analysed and validated statically. This package includes type hints
+throughout, which provides benefits both when developing this package and
+using it as a component in other projects.
+
 
 Documentation
 -------------

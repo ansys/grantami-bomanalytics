@@ -32,6 +32,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-common-wheel
           path: deps
@@ -44,6 +45,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: build_and_test_library.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-bomanalytics-openapi-wheel
           path: deps
@@ -91,6 +93,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-common-wheel
           path: deps
@@ -103,6 +106,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: build_and_test_library.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-bomanalytics-openapi-wheel
           path: deps
@@ -149,6 +153,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-common-wheel
           path: deps
@@ -161,6 +166,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: build_and_test_library.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-bomanalytics-openapi-wheel
           path: deps
@@ -205,6 +211,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-common-wheel
           path: deps
@@ -217,6 +224,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: build_and_test_library.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-bomanalytics-openapi-wheel
           path: deps
@@ -267,6 +275,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-common-wheel
           path: deps
@@ -279,6 +288,7 @@ jobs:
         with:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: build_and_test_library.yml
+          workflow_conclusion: success
           branch: main
           name: ansys-grantami-bomanalytics-openapi-wheel
           path: deps

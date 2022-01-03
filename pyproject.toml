@@ -51,7 +51,7 @@ deps =
 commands =
     codespell ./src ./tests ./examples ./doc/source
     flake8 ./src ./tests ./examples
-    black ./src ./tests --check --line-length=120
+    black ./src ./tests --check
     mypy ./src
 """
 
@@ -70,3 +70,6 @@ testpaths = "./tests"
 markers = [
     """integration: test requires a real database (deselect with '-m \"not integration\"')"""
 ]
+
+[tool.black]
+line-length = 120

@@ -309,7 +309,6 @@ jobs:
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
       - name: Build PDF Documentation
-        if: ${{ false }}
         run: |
           sudo apt update
           sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy

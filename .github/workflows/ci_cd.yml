@@ -317,7 +317,7 @@ jobs:
         if: ${{ false }}
         run: |
           sudo apt update
-          sudo apt-get install -y texlive-latex-extra latexmk
+          sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
           make -C doc latexpdf
 
       - name: Upload HTML Documentation

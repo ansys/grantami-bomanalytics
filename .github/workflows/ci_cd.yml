@@ -33,7 +33,6 @@ jobs:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
           workflow_conclusion: success
-          branch: main
           name: ansys-grantami-common-wheel
           path: deps
           repo: pyansys/openapi-common
@@ -94,7 +93,6 @@ jobs:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
           workflow_conclusion: success
-          branch: main
           name: ansys-grantami-common-wheel
           path: deps
           repo: pyansys/openapi-common
@@ -154,7 +152,6 @@ jobs:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
           workflow_conclusion: success
-          branch: main
           name: ansys-grantami-common-wheel
           path: deps
           repo: pyansys/openapi-common
@@ -212,7 +209,6 @@ jobs:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
           workflow_conclusion: success
-          branch: main
           name: ansys-grantami-common-wheel
           path: deps
           repo: pyansys/openapi-common
@@ -276,7 +272,6 @@ jobs:
           github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
           workflow: ci_cd.yml
           workflow_conclusion: success
-          branch: main
           name: ansys-grantami-common-wheel
           path: deps
           repo: pyansys/openapi-common

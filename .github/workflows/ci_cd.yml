@@ -59,7 +59,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install tox
-          pip install -r requirements_style.txt
 
       - name: Spell, Lint and Type Check
         if: always()

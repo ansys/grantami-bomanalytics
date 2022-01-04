@@ -324,7 +324,6 @@ jobs:
           retention-days: 7
 
       - name: Upload PDF Documentation
-        if: ${{ false }}
         uses: actions/upload-artifact@v2
         with:
           name: Documentation-pdf

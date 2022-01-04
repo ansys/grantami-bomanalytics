@@ -228,12 +228,14 @@ code.
 -  ``testing/``: improvements or changes to testing
 -  ``release/``: releases (see below)
 
+
 Testing
 ~~~~~~~
 Periodically when making changes, be sure to test locally before
 creating a pull request. The following tests will be executed after
 any commit or pull request, so we ask that you perform the following
 sequence locally to track down any new issues from your changes.
+Tests can be performed using ``tox``.
 
 .. code::
 
@@ -241,21 +243,35 @@ sequence locally to track down any new issues from your changes.
     tox -e coverage .
 
 
-Spelling and Code Style
-~~~~~~~~~~~~~~~~~~~~~~~
-If you are using Linux or Mac OS, run check spelling and coding style
-with:
+Static Analysis
+~~~~~~~~~~~~~~~
+Spell checking, coding style, and type checking is validated with the
+``codespell``, ``flake8``, ``black``, and ``mypy`` tools. These tools
+can be executed manually, but are easily run together with standard
+settings using ``tox``.
 
 .. code::
 
-   make
+   tox -e lint
 
-Any misspelled words will be reported.  You can add words to be
-ignored to ``ignore_words.txt``
+``codespell`` is used to check spelling in the source code, tests, and
+documentation. Any misspelled words will be reported.  You can add words
+to be ignored to ``ignore_words.txt``.
 
-.. code::
+``flake8`` and ``black`` enforce compliance with the style guidelines
+defined in `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_, and will
+report any non-compliance.
 
-    codespell ./ "*.pyc,*.txt,*.gif,*.png,*.jpg,*.js,*.html,*.doctree,*.ttf,*.woff,*.woff2,*.eot,*.mp4,*.inv,*.pickle,*.ipynb,flycheck*,./.git/*,./.hypothesis/*,*.yml,./doc/build/*,./doc/images/*,./dist/*,*~,.hypothesis*,./doc/source/examples/*,*cover,*.dat,*.mac,\#*,build,./docker/mapdl/v211,./factory/*,./ansys/mapdl/core/mapdl_functions.py,PKG-INFO" -I "ignore_words.txt"
+The tox command above runs ``black`` in a 'check' mode, which ensures the
+specified files are formatted according to the ``black`` style. It is
+advised to run ``black`` before pushing git commits, which will ensure
+your changes are compliant with the ``black`` style.
+
+``mypy`` is used for static type checking. Python is a dynamically typed
+language, however including type hints allows those parts of the codebase
+to be analysed and validated statically. This package includes type hints
+throughout, which provides benefits both when developing this package and
+using it as a component in other projects.
 
 
 Documentation

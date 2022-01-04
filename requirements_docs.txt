@@ -1,6 +1,6 @@
 pyansys-sphinx-theme
 numpydoc
-sphinx==4.2.0
+sphinx==4.2.0 # sphinx>4.2.0 not supported by enum_tools==0.6.5
 sphinx_autodoc_typehints
 sphinx-notfound-page
 sphinx-copybutton

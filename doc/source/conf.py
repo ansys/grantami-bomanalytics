@@ -137,7 +137,7 @@ latex_engine = 'xelatex'
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "pyansys.tex", "ansys.grantami.bomanalytics Documentation", author, "manual"),
+    ("latexindex", "pyansys.tex", "ansys.grantami.bomanalytics Documentation", author, "manual"),
 ]
 
 

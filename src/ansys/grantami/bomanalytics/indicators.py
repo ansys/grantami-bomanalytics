@@ -73,8 +73,8 @@ class RoHSFlag(_Flag):
 
     RohsNotImpacted = (
         1,
-        """ This substance is not impacted by the specified legislations. *Substance is not
-    impacted.*""",
+        """ This substance is not impacted by the specified legislations. 
+    *Substance is not impacted.*""",
     )
     RohsBelowThreshold = (
         2,
@@ -98,8 +98,8 @@ class RoHSFlag(_Flag):
     )
     RohsNonCompliant = (
         6,
-        """ This item contains one or more substances impacted by the specified legislations. *Item is
-    non-compliant.*""",
+        """ This item contains one or more substances impacted by the specified legislations. 
+    *Item is non-compliant.*""",
     )
     RohsUnknown = (
         7,
@@ -150,13 +150,13 @@ class WatchListFlag(_Flag):
 
     WatchListNotImpacted = (
         1,
-        """ This substance is not impacted by the specified legislations. *Substance is not
-    impacted.*""",
+        """ This substance is not impacted by the specified legislations. 
+    *Substance is not impacted.*""",
     )
     WatchListCompliant = (
         2,
-        """ This item does not contain any substances impacted by the specified legislations. *Item
-    is compliant.*""",
+        """ This item does not contain any substances impacted by the specified legislations. 
+    *Item is compliant.*""",
     )
     WatchListBelowThreshold = (
         3,

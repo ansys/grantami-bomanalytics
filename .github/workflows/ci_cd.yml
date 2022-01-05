@@ -309,11 +309,12 @@ jobs:
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
       - name: Build PDF Documentation
-        if: ${{ false }}
         run: |
           sudo apt update
-          sudo apt-get install -y texlive-latex-extra latexmk
+          sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
           make -C doc latexpdf
+        env:
+          BUILD_EXAMPLES: 1
 
       - name: Upload HTML Documentation
         uses: actions/upload-artifact@v2
@@ -323,7 +324,6 @@ jobs:
           retention-days: 7
 
       - name: Upload PDF Documentation
-        if: ${{ false }}
         uses: actions/upload-artifact@v2
         with:
           name: Documentation-pdf

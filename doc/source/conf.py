@@ -128,13 +128,16 @@ htmlhelp_basename = "pybomanalyticsdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
-latex_elements = {}
+latex_elements = {
+  'extraclassoptions': 'openany,oneside'
+}
+latex_engine = 'xelatex'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "pyansys.tex", "ansys.grantami.bomanalytics Documentation", author, "manual"),
+    ("latexindex", "pyansys.tex", "ansys.grantami.bomanalytics Documentation", author, "manual"),
 ]
 
 

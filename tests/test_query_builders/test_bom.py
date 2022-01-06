@@ -6,7 +6,7 @@ from ansys.grantami.bomanalytics import queries
 def test_add_bom(query_type):
     query = query_type().with_bom("TEST BOM")
     assert isinstance(query, query_type)
-    assert query._item_argument_manager.bom == "TEST BOM"
+    assert query._data.bom == "TEST BOM"
 
 
 @pytest.mark.parametrize("query_type", [queries.BomComplianceQuery, queries.BomImpactedSubstancesQuery])

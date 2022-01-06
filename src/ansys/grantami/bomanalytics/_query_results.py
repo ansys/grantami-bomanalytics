@@ -56,7 +56,9 @@ class QueryResultFactory:
         return inner
 
     @classmethod
-    def create_result(cls, results: Union[List[models.Model], models.Model], **kwargs: Dict) -> "Query_Result":
+    def create_result(
+        cls, results: Union[List[models.Model], models.Model], messages: List[models.CommonLogEntry], **kwargs: Dict
+    ) -> "Query_Result":
         """Factory method to return a specific query result.
 
         Uses the type of the `results` parameter to determine which specific `Query_Result` to return. If `results` is a
@@ -66,6 +68,8 @@ class QueryResultFactory:
         ----------
         results
             The result or results returned from the low-level API.
+        messages
+            [TECHDOCS] Logs returned by Granta MI describing any problems encountered when running the query.
         **kwargs
             All other arguments required to instantiate the item definition, including the `reference_value` for
             `RecordDefinition`-based results.
@@ -89,18 +93,25 @@ class QueryResultFactory:
         except KeyError as e:
             raise RuntimeError(f"Unregistered response type" f' "{response_type}"').with_traceback(e.__traceback__)
 
-        item_result: Query_Result = item_factory_class(results, **kwargs)
+        item_result: Query_Result = item_factory_class(results=results, messages=messages, **kwargs)
         return item_result
 
 
-class ImpactedSubstancesBaseClass(ABC):
+class ResultBaseClass(ABC):
+    def __init__(self, messages: List[models.CommonLogEntry]):
+        self.messages = []
+        for message in messages:
+            self.messages.append({message.severity: message.message})
+
+
+class ImpactedSubstancesBaseClass(ResultBaseClass):
     """Base class for an impacted substances query result.
 
     This is where generic 'pivots' on the result are implemented, such as aggregating over all items to give a view of
     impacted substances by legislation only, or as a fully flattened list.
     """
 
-    _results: list
+    _results: List
     _result_type_name: str
 
     def __repr__(self) -> str:
@@ -164,14 +175,14 @@ class ImpactedSubstancesBaseClass(ABC):
         return results
 
 
-class ComplianceBaseClass(ABC):
+class ComplianceBaseClass(ResultBaseClass):
     """Base class for a compliance query result.
 
     This is where generic 'pivots' on the result are implemented, such as aggregating over all items to give a view of
     compliance by indicator only.
     """
 
-    _results: list
+    _results: List
     _result_type_name: str
 
     def __repr__(self) -> str:
@@ -225,6 +236,7 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     def __init__(
         self,
         results: List[models.GetImpactedSubstancesForMaterialsMaterial],
+        messages: List[models.CommonLogEntry],
     ):
         """
         Parameters
@@ -233,6 +245,7 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             The low-level API objects returned by the REST API.
         """
 
+        super().__init__(messages)
         self._results = []
         self._result_type_name = "MaterialWithImpactedSubstances"
         for result in results:
@@ -276,6 +289,7 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
         self,
         results: List[models.CommonMaterialWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        messages: List[models.CommonLogEntry],
     ):
         """
         Parameters
@@ -287,6 +301,7 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
              objects.
         """
 
+        super().__init__(messages)
         self._results = []
         self._result_type_name = "MaterialWithCompliance"
         for result in results:
@@ -333,6 +348,7 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     def __init__(
         self,
         results: List[models.GetImpactedSubstancesForPartsPart],
+        messages: List[models.CommonLogEntry],
     ):
         """
         Parameters
@@ -341,6 +357,7 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             The low-level API objects returned by the REST API.
         """
 
+        super().__init__(messages)
         self._results = []
         self._result_type_name = "PartWithImpactedSubstances"
         for result in results:
@@ -385,6 +402,7 @@ class PartComplianceQueryResult(ComplianceBaseClass):
         self,
         results: List[models.CommonPartWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        messages: List[models.CommonLogEntry],
     ):
         """
         Parameters
@@ -396,6 +414,7 @@ class PartComplianceQueryResult(ComplianceBaseClass):
              objects.
         """
 
+        super().__init__(messages)
         self._results = []
         self._result_type_name = "PartWithCompliance"
         for result in results:
@@ -440,7 +459,11 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     directly.
     """
 
-    def __init__(self, results: List[models.GetImpactedSubstancesForSpecificationsSpecification]):
+    def __init__(
+        self,
+        results: List[models.GetImpactedSubstancesForSpecificationsSpecification],
+        messages: List[models.CommonLogEntry],
+    ):
         """
         Parameters
         ----------
@@ -448,6 +471,7 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             The low-level API objects returned by the REST API.
         """
 
+        super().__init__(messages)
         self._results = []
         self._result_type_name = "SpecificationWithImpactedSubstances"
         for result in results:
@@ -495,6 +519,7 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
         self,
         results: List[models.CommonSpecificationWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        messages: List[models.CommonLogEntry],
     ):
         """
         Parameters
@@ -506,6 +531,7 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
              objects.
         """
 
+        super().__init__(messages)
         self._results = []
         self._result_type_name = "SpecificationWithCompliance"
         for result in results:
@@ -556,6 +582,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
         self,
         results: List[models.CommonSubstanceWithCompliance],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        messages: List[models.CommonLogEntry],
     ):
         """
         Parameters
@@ -567,6 +594,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
              objects.
         """
 
+        super().__init__(messages)
         self._results = []
         self._result_type_name = "SubstanceWithCompliance"
         for result in results:
@@ -606,7 +634,11 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     directly.
     """
 
-    def __init__(self, results: List[models.GetImpactedSubstancesForBom1711Response]):
+    def __init__(
+        self,
+        results: List[models.GetImpactedSubstancesForBom1711Response],
+        messages: List[models.CommonLogEntry],
+    ):
         """
         Parameters
         ----------
@@ -614,6 +646,7 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
             The low-level API objects returned by the REST API.
         """
 
+        super().__init__(messages)
         self._result_type_name = "BomWithImpactedSubstances"
         bom_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
             result_type_name=self._result_type_name,
@@ -637,6 +670,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
         self,
         results: List[models.GetComplianceForBom1711Response],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        messages: List[models.CommonLogEntry],
     ):
         """
         Parameters
@@ -648,6 +682,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
              objects.
         """
 
+        super().__init__(messages)
         self._results = []
         self._result_type_name = "PartWithCompliance"
         parts: List[models.CommonPartWithCompliance] = results[0].parts

@@ -122,7 +122,7 @@ class TestCompliance:
         # Part 0
         part_0 = response.compliance_by_part_and_indicator[0]
         pv_0 = PartValidator(part_0)
-        assert pv_0.check_reference(part_number="AF-1235")
+        assert pv_0.check_reference(part_number="FLRY33")
         part_0_result = [
             indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
             indicators.RoHSFlag.RohsCompliant,

@@ -46,6 +46,7 @@ if TYPE_CHECKING:
         BomImpactedSubstancesQueryResult,
         BomComplianceQueryResult,
     )
+    from exceptions import GrantaMIException
 
 logger = logging.getLogger(__name__)
 
@@ -243,6 +244,12 @@ class BomAnalyticsClient(common.ApiClient):
         Query Result
             The specific result object based on the provided query, which contains either the compliance or
             impacted substances results. In the case of a yaml query, returns a string.
+
+        Raises
+        ------
+        GrantaMIException
+            [TECHDOCS] If a message is returned with a severity of "error" or "critical". Generally indicates that the
+            query couldn't run at all, e.g. because of a missing database.
         """
 
         logger.info(f"Running query {query} with connection {self}")

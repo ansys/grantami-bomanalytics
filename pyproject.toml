@@ -22,7 +22,7 @@ python =
 [testenv]
 deps =
     ansys-openapi-common
-    ansys-grantami-bomanalytics-openapi
+    ansys-grantami-bomanalytics-openapi==0.1.0.dev12
     pytest
     pytest-cov
     requests-mock

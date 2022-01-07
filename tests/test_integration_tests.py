@@ -1,6 +1,6 @@
 import pytest
 from .inputs import sample_bom_complex, sample_bom_custom_db
-from ansys.grantami.bomanalytics import queries, exceptions
+from ansys.grantami.bomanalytics import queries, GrantaMIException
 from .common import LEGISLATIONS, INDICATORS
 
 pytestmark = pytest.mark.integration
@@ -112,14 +112,14 @@ class TestBomQueries:
 @pytest.mark.parametrize("configurable_connection", ["MI_Missing_Database"], indirect=["configurable_connection"])
 def test_missing_database_raises_grantami_exception(configurable_connection):
     query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["mat_id"]).with_legislations(LEGISLATIONS)
-    with pytest.raises(exceptions.GrantaMIException) as e:
+    with pytest.raises(GrantaMIException) as e:
         configurable_connection.run(query)
     assert "Analysis cannot be performed without a DB key." in str(e.value)
 
 
 def test_missing_table_raises_grantami_exception(default_connection):
     query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_custom_db).with_legislations(LEGISLATIONS)
-    with pytest.raises(exceptions.GrantaMIException) as e:
+    with pytest.raises(GrantaMIException) as e:
         default_connection.run(query)
     assert "Table name" in str(e.value) and "not found in database" in str(e.value)
 

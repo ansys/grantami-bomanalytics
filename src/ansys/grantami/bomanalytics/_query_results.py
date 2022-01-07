@@ -4,7 +4,7 @@ Defines the representations of the query results themselves, which allows them t
 the entire query result, instead of being constrained to individual parts, materials, etc.
 """
 from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from abc import ABC
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
@@ -97,11 +97,12 @@ class QueryResultFactory:
         return item_result
 
 
+LogMessage = namedtuple("LogMessage", ["severity", "message"])
+
+
 class ResultBaseClass(ABC):
-    def __init__(self, messages: List[models.CommonLogEntry]):
-        self.messages = []
-        for message in messages:
-            self.messages.append({message.severity: message.message})
+    def __init__(self, log_messages: List[LogMessage]) -> None:
+        self.messages = [LogMessage(severity=msg.severity, message=msg.message) for msg in log_messages]
 
 
 class ImpactedSubstancesBaseClass(ResultBaseClass):

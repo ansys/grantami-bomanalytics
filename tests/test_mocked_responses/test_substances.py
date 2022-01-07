@@ -1,9 +1,9 @@
 from ansys.grantami.bomanalytics import queries, indicators
 from ansys.grantami.bomanalytics_openapi.models import GetComplianceForSubstancesResponse
-from .common import get_mocked_response, SubstanceValidator
+from .common import BaseMockTester, SubstanceValidator
 
 
-class TestCompliance:
+class TestCompliance(BaseMockTester):
     """Check that each mocked result has the correct record references, indicator results, child objects, and bom
     relationships.
 
@@ -23,7 +23,7 @@ class TestCompliance:
     mock_key = GetComplianceForSubstancesResponse.__name__
 
     def test_compliance_by_substance_and_indicator(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert len(response.compliance_by_substance_and_indicator) == 2
 
         substance_0 = response.compliance_by_substance_and_indicator[0]
@@ -47,7 +47,7 @@ class TestCompliance:
         assert sv_1.check_bom_structure()
 
     def test_compliance_by_indicator(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert len(response.compliance_by_indicator) == 2
         result = [
             indicators.WatchListFlag.WatchListAboveThreshold,
@@ -58,7 +58,7 @@ class TestCompliance:
         )
 
     def test_indicator_results_are_separate_objects(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
 
         for result in response.compliance_by_substance_and_indicator:
             for k, v in result.indicators.items():
@@ -66,14 +66,14 @@ class TestCompliance:
                 assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)
 
     def test_query_result_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert repr(response) == "<SubstanceComplianceQueryResult: 2 SubstanceWithCompliance results>"
 
     def test_compliance_by_indicator_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         for indicator in response.compliance_by_indicator.keys():
             assert indicator in repr(response.compliance_by_indicator)
 
     def test_compliance_by_substance_and_indicator_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert "SubstanceWithComplianceResult" in repr(response.compliance_by_substance_and_indicator)

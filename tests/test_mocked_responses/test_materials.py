@@ -4,20 +4,20 @@ from ansys.grantami.bomanalytics_openapi.models import (
     GetComplianceForMaterialsResponse,
 )
 from .common import (
-    get_mocked_response,
+    BaseMockTester,
     SubstanceValidator,
     MaterialValidator,
 )
 
 
-class TestImpactedSubstances:
+class TestImpactedSubstances(BaseMockTester):
     query = (
         queries.MaterialImpactedSubstancesQuery().with_legislations(["Fake legislation"]).with_material_ids(["Fake ID"])
     )
     mock_key = GetImpactedSubstancesForMaterialsResponse.__name__
 
     def test_impacted_substances_by_material(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert len(response.impacted_substances_by_material) == 1
 
         mat_results = response.impacted_substances_by_material[0]
@@ -40,7 +40,7 @@ class TestImpactedSubstances:
             sv.check_substance_details()
 
     def test_impacted_substances_by_legislation(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert len(response.impacted_substances_by_legislation) == 1
         legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
         for substance in legislation:
@@ -48,32 +48,32 @@ class TestImpactedSubstances:
             sv.check_substance_details()
 
     def test_impacted_substances(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert len(response.impacted_substances) == 2
         for substance in response.impacted_substances:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
 
     def test_query_result_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert repr(response) == "<MaterialImpactedSubstancesQueryResult: 1 MaterialWithImpactedSubstances results>"
 
     def test_impacted_substances_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert "ImpactedSubstance" in repr(response.impacted_substances)
 
     def test_impacted_substances_by_material_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert "MaterialWithImpactedSubstancesResult" in repr(response.impacted_substances_by_material)
 
     def test_impacted_substances_by_legislation_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         for legislation in response.impacted_substances_by_legislation.keys():
             assert legislation in repr(response.impacted_substances_by_legislation)
         assert "ImpactedSubstance" in repr(response.impacted_substances_by_legislation)
 
 
-class TestCompliance:
+class TestCompliance(BaseMockTester):
     """Check that each mocked result has the correct record references, indicator results, child objects, and bom
     relationships.
 
@@ -95,7 +95,7 @@ class TestCompliance:
     mock_key = GetComplianceForMaterialsResponse.__name__
 
     def test_compliance_by_material_and_indicator(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert len(response.compliance_by_material_and_indicator) == 2
 
         mat_0 = response.compliance_by_material_and_indicator[0]
@@ -119,7 +119,7 @@ class TestCompliance:
         assert mv_1.check_bom_structure()
 
     def test_compliance_by_material_and_indicator_substances(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
 
         substance_0_0 = response.compliance_by_material_and_indicator[0].substances[0]
         sv_0_0 = SubstanceValidator(substance_0_0)
@@ -152,7 +152,7 @@ class TestCompliance:
         assert sv_1_1.check_bom_structure()
 
     def test_compliance_by_indicator(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert len(response.compliance_by_indicator) == 2
         result = [indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold, indicators.RoHSFlag.RohsNonCompliant]
         assert all(
@@ -160,7 +160,7 @@ class TestCompliance:
         )
 
     def test_indicator_results_are_separate_objects(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
 
         for result in response.compliance_by_material_and_indicator:
             for k, v in result.indicators.items():
@@ -168,14 +168,14 @@ class TestCompliance:
                 assert v is not self.query._indicators[k]  # The indicator object should be a copy (non-identity)
 
     def test_query_result_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert repr(response) == "<MaterialComplianceQueryResult: 2 MaterialWithCompliance results>"
 
     def test_compliance_by_indicator_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         for indicator in response.compliance_by_indicator.keys():
             assert indicator in repr(response.compliance_by_indicator)
 
     def test_compliance_by_material_and_indicator_repr(self, mock_connection):
-        response = get_mocked_response(self.query, self.mock_key, mock_connection)
+        response = self.get_mocked_response(mock_connection)
         assert "MaterialWithComplianceResult" in repr(response.compliance_by_material_and_indicator)

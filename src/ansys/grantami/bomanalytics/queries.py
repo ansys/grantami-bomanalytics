@@ -23,7 +23,6 @@ from typing import (
     Dict,
     Tuple,
     TypeVar,
-    TYPE_CHECKING,
     Callable,
     Generator,
     Optional,
@@ -44,7 +43,7 @@ from ._query_results import (
 )
 from .indicators import _Indicator, WatchListIndicator, RoHSIndicator
 from ._connection import Connection  # noqa: F401
-from .exceptions import GrantaMIException
+from ._exceptions import GrantaMIException
 
 Query_Builder = TypeVar("Query_Builder", covariant=True, bound=Union["_BaseQueryBuilder", "_ApiMixin"])
 Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])
@@ -56,7 +55,8 @@ class _BaseQueryDataManager(ABC):
     """Outlines an interface for managing 'items' to be provided to the query, i.e. the record or BoM-based dimension
     to a query.
 
-    Doesn't specify how the objects are added to the `_item_definitions` attribute, or how they are converted to attributes.
+    Doesn't specify how the objects are added to the `_item_definitions` attribute, or how they are converted to
+    attributes.
     """
 
     _item_definitions: List
@@ -112,21 +112,21 @@ class _BaseQueryDataManager(ABC):
         self._item_results.extend(results)
 
     @staticmethod
-    def _check_messages(messages: List[models.CommonLogEntry]) -> None:
+    def _check_messages(log_messages: List[models.CommonLogEntry]) -> None:
         """Check the response from the server for critical errors.
 
         Parameters
         ----------
-        messages
+        log_messages
             The messages returned by the server when executing the query.
 
         Raises
         ------
         GrantaMIException
-            A message with severity "critical" or "error" was returned by the server.
+            A message with severity "critical" was returned by the server.
         """
 
-        errors = [message.message for message in messages if message.severity in ["critical", "error"]]
+        errors = [log_message.message for log_message in log_messages if log_message.severity == "critical"]
         if errors:
             error_text = "\n".join(errors)
             raise GrantaMIException(error_text)
@@ -1420,8 +1420,8 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
 class _BomQueryDataManager(_BaseQueryDataManager):
     """Store a BoM for use in queries and generate the kwarg to be sent to the server.
 
-    `_item_definitions` must be a list because of the base class, but only ever contains a single string since only one BoM can be
-     sent to the server in a single query.
+    `_item_definitions` must be a list because of the base class, but only ever contains a single string since only one
+    BoM can be sent to the server in a single query.
     """
 
     def __init__(self) -> None:
@@ -1436,7 +1436,7 @@ class _BomQueryDataManager(_BaseQueryDataManager):
     @property
     def bom(self) -> str:
         """Since only one BoM is used per query, this property enforces the fact that only one BoM can be stored per
-         instance of `_BomQueryDataManager`.
+        instance of `_BomQueryDataManager`.
 
         Returns
         -------

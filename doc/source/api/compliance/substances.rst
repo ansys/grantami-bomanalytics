@@ -35,6 +35,7 @@ Query Result
 
    .. autoattribute:: compliance_by_indicator
    .. autoattribute:: compliance_by_substance_and_indicator
+   .. autoattribute:: messages
 
 Substance Result
 ~~~~~~~~~~~~~~~~

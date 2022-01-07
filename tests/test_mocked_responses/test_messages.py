@@ -1,6 +1,6 @@
 import json
 import pytest
-from ansys.grantami.bomanalytics import queries, exceptions
+from ansys.grantami.bomanalytics import queries, GrantaMIException
 from ansys.grantami.bomanalytics._query_results import LogMessage
 from .common import BaseMockTester
 from ..inputs import examples_as_dicts
@@ -12,7 +12,7 @@ class TestMessages(BaseMockTester):
 
     def test_critical_error_raises_exception(self, mock_connection):
         response = {"LogMessages": [{"Severity": "critical", "Message": "shit's on fire, yo"}]}
-        with pytest.raises(exceptions.GrantaMIException) as e:
+        with pytest.raises(GrantaMIException) as e:
             self.get_mocked_response(mock_connection, response=json.dumps(response))
         assert str(e.value) == response["LogMessages"][0]["Message"]
 

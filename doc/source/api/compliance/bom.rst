@@ -22,3 +22,4 @@ Query Result
 
    .. autoattribute:: compliance_by_indicator
    .. autoattribute:: compliance_by_part_and_indicator
+   .. autoattribute:: messages

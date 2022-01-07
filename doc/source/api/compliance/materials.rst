@@ -27,6 +27,7 @@ Query Result
 
    .. autoattribute:: compliance_by_indicator
    .. autoattribute:: compliance_by_material_and_indicator
+   .. autoattribute:: messages
 
 Material Result
 ~~~~~~~~~~~~~~~

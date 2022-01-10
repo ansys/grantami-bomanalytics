@@ -39,7 +39,7 @@ passenv =
 
 [testenv:coverage]
 deps = {[testenv]deps}
-commands = pytest --cov=ansys.grantami.bomanalytics ./tests {posargs}
+commands = pytest --cov=ansys.grantami.bomanalytics --cov-report=xml ./tests {posargs}
 
 [testenv:lint]
 deps =

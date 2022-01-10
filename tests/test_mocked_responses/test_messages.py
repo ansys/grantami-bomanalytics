@@ -50,14 +50,14 @@ class TestMessages(BaseMockTester):
         mock_response = examples_as_dicts[mock_key]
 
         error_message = "This is a non-critical info message"
-        messages = [{"Severity": "info", "Message": error_message}]
+        messages = [{"Severity": "information", "Message": error_message}]
         mock_response["LogMessages"] = messages
 
         with caplog.at_level(logging.INFO):
             query_result = self.get_mocked_response(mock_connection, response=json.dumps(mock_response))
 
         assert len(messages) == len(query_result.messages)
-        assert LogMessage(severity="info", message=error_message) in query_result.messages
+        assert LogMessage(severity="information", message=error_message) in query_result.messages
         assert self.check_log(caplog, "INFO", error_message)
 
     @staticmethod

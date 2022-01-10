@@ -49,7 +49,12 @@ Query_Builder = TypeVar("Query_Builder", covariant=True, bound=Union["_BaseQuery
 Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])
 
 logger = logging.getLogger(__name__)
-EXCEPTION_MAP = {"critical": logger.critical, "error": logger.error, "warning": logger.warning, "info": logger.info}
+EXCEPTION_MAP = {
+    "critical": logger.critical,
+    "error": logger.error,
+    "warning": logger.warning,
+    "information": logger.info,
+}
 """Map between log severity strings returned by the Granta MI server and Python logger methods."""
 
 

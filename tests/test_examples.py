@@ -1,12 +1,17 @@
 import pytest
-import sys
 import subprocess
 import pathlib
+import os
 
 pytestmark = pytest.mark.integration
 
+env = os.environ.copy()
+env["IPYTHONDIR"] = str(pathlib.Path("../.ipython").absolute())
+
 
 def test_examples(example_script: pathlib.Path):
-    p = subprocess.Popen([sys.executable, str(example_script)], cwd=example_script.parent)  # str() needed in py <= 3.7
+    p = subprocess.Popen(["ipython", str(example_script)],  # str() needed in py <= 3.7
+                         cwd=example_script.parent,
+                         env=env)
     p.wait()
     assert p.returncode == 0

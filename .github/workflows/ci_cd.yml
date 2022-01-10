@@ -121,6 +121,13 @@ jobs:
       - name: Test with tox (no integration tests)
         run: tox -- -m "not integration"
 
+      - name: Upload coverage report
+        if: matrix.python-version == "3.10"
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   integration_tests:
     name: Integration tests on subset of platforms
     runs-on: ${{ matrix.os }}

@@ -91,7 +91,7 @@ query
 # consolidate the above cells to create the object in a single step:
 
 # + tags=[]
-query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislations(["REACH - The Candidate List"])
+query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislations(["REACH - The Candidate List"])  # noqa: E501
 query
 # -
 

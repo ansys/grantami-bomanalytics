@@ -49,6 +49,8 @@ Query_Builder = TypeVar("Query_Builder", covariant=True, bound=Union["_BaseQuery
 Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])
 
 logger = logging.getLogger(__name__)
+EXCEPTION_MAP = {"critical": logger.critical, "error": logger.error, "warning": logger.warning, "info": logger.info}
+"""Map between log severity strings returned by the Granta MI server and Python logger methods."""
 
 
 class _BaseQueryDataManager(ABC):
@@ -106,14 +108,15 @@ class _BaseQueryDataManager(ABC):
            The response as returned by the low-level API.
         """
 
-        self._check_messages(response.log_messages)
+        self._emit_log_messages(response.log_messages)
         self._messages.extend(response.log_messages)
         results = self._extract_results_from_response(response)
         self._item_results.extend(results)
 
     @staticmethod
-    def _check_messages(log_messages: List[models.CommonLogEntry]) -> None:
-        """Check the response from the server for critical errors.
+    def _emit_log_messages(log_messages: List[models.CommonLogEntry]) -> None:
+        """Emit log entries for all messages using the appropriate method based on their severity. Raise an exception
+        for any critical errors.
 
         Parameters
         ----------
@@ -126,9 +129,14 @@ class _BaseQueryDataManager(ABC):
             A message with severity "critical" was returned by the server.
         """
 
-        errors = [log_message.message for log_message in log_messages if log_message.severity == "critical"]
-        if errors:
-            error_text = "\n".join(errors)
+        exception_messages = []
+        for log_msg in log_messages:
+            log_method = EXCEPTION_MAP.get(log_msg.severity, logger.warning)
+            log_method(log_msg.message)
+            if log_method == logger.critical:
+                exception_messages.append(log_msg.message)
+        if exception_messages:
+            error_text = "\n".join(exception_messages)
             raise GrantaMIException(error_text)
 
     @abstractmethod

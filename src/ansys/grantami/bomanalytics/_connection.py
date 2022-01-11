@@ -47,7 +47,7 @@ if TYPE_CHECKING:
         BomComplianceQueryResult,
     )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("ansys.grantami.bomanalytics")
 
 
 class Connection(common.ApiClientFactory):

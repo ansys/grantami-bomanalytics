@@ -131,10 +131,23 @@ result.impacted_substances
 
 # ## Logging
 
-# All query results also contain a list of messages that were returned by the server when running the query. These are
-# sorted in order of decreasing severity. The same messages are logged in the Service Layer log file. These messages are
-# also visible as logs if the standard Python `logging` module is used.
+# All query results contain a list of messages that were returned by the server when running the query. These are
+# sorted in order of decreasing severity. The same messages are also available in the Service Layer log file.
 
 # + tags=[]
 result.messages
+# -
+
+# These messages are also available via the standard `logging` module using the 'ansys.grantami.bomanalytics' logger.
+# Alternatively, omit the logger name to get the root logger, which will include messages logged by all packages.
+# The code below creates a log handler that outputs all bomanalytics messages with severity INFO and above to either the
+# terminal or the notebook.
+
+# + tags=[]
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("ansys.grantami.bomanalytics")
+
+result = cxn.run(query)
 # -

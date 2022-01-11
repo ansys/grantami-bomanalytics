@@ -48,7 +48,7 @@ from ._exceptions import GrantaMIException
 Query_Builder = TypeVar("Query_Builder", covariant=True, bound=Union["_BaseQueryBuilder", "_ApiMixin"])
 Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("ansys.grantami.bomanalytics")
 EXCEPTION_MAP = {
     "critical": logger.critical,
     "error": logger.error,

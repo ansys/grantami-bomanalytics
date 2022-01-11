@@ -28,6 +28,7 @@ Query Result
 
    .. autoattribute:: compliance_by_indicator
    .. autoattribute:: compliance_by_specification_and_indicator
+   .. autoattribute:: messages
 
 
 Specification Result

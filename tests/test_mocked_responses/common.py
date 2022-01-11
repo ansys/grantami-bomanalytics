@@ -1,79 +1,22 @@
 import requests_mock
-from typing import overload
-from ansys.grantami.bomanalytics import indicators, queries, _query_results
+from ansys.grantami.bomanalytics import indicators, queries
 from ..inputs import examples_as_strings
 
 
-@overload
-def get_mocked_response(
-    query: queries.MaterialImpactedSubstancesQuery, result_model, connection
-) -> _query_results.MaterialImpactedSubstancesQueryResult:
-    ...
+class BaseMockTester:
+    mock_key: str
+    query: queries._BaseQueryBuilder
 
-
-@overload
-def get_mocked_response(
-    query: queries.MaterialComplianceQuery, result_model, connection
-) -> _query_results.MaterialComplianceQueryResult:
-    ...
-
-
-@overload
-def get_mocked_response(
-    query: queries.PartImpactedSubstancesQuery, result_model, connection
-) -> _query_results.PartImpactedSubstancesQueryResult:
-    ...
-
-
-@overload
-def get_mocked_response(
-    query: queries.PartComplianceQuery, result_model, connection
-) -> _query_results.PartComplianceQueryResult:
-    ...
-
-
-@overload
-def get_mocked_response(
-    query: queries.SpecificationImpactedSubstancesQuery, result_model, connection
-) -> _query_results.SpecificationImpactedSubstancesQueryResult:
-    ...
-
-
-@overload
-def get_mocked_response(
-    query: queries.SpecificationComplianceQuery, result_model, connection
-) -> _query_results.SpecificationComplianceQueryResult:
-    ...
-
-
-@overload
-def get_mocked_response(
-    query: queries.SubstanceComplianceQuery, result_model, connection
-) -> _query_results.SubstanceComplianceQueryResult:
-    ...
-
-
-@overload
-def get_mocked_response(
-    query: queries.BomImpactedSubstancesQuery, result_model, connection
-) -> _query_results.BomImpactedSubstancesQueryResult:
-    ...
-
-
-@overload
-def get_mocked_response(
-    query: queries.BomComplianceQuery, result_model, connection
-) -> _query_results.BomComplianceQueryResult:
-    ...
-
-
-def get_mocked_response(query, result_model, connection):
-    text = examples_as_strings[result_model]
-    with requests_mock.Mocker() as m:
-        m.get(requests_mock.ANY, text="")
-        m.post(url=requests_mock.ANY, text=text)
-        response = connection.run(query)
-    return response
+    def get_mocked_response(self, connection, response=None):
+        if response:
+            text = response
+        else:
+            text = examples_as_strings[self.mock_key]
+        with requests_mock.Mocker() as m:
+            m.get(requests_mock.ANY, text="")
+            m.post(url=requests_mock.ANY, text=text)
+            response = connection.run(self.query)
+        return response
 
 
 class ObjValidator:

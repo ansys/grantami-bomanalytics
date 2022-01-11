@@ -26,6 +26,7 @@ Query Result
    .. autoattribute:: impacted_substances_by_material
    .. autoattribute:: impacted_substances_by_legislation
    .. autoattribute:: impacted_substances
+   .. autoattribute:: messages
 
 Material Result
 ~~~~~~~~~~~~~~~

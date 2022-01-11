@@ -26,6 +26,7 @@ Query Result
    .. autoattribute:: impacted_substances_by_specification
    .. autoattribute:: impacted_substances_by_legislation
    .. autoattribute:: impacted_substances
+   .. autoattribute:: messages
 
 Specification Result
 ~~~~~~~~~~~~~~~~~~~~

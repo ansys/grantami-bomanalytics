@@ -233,7 +233,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: '3.10'
 
       - name: Install kerberos headers
         run: sudo apt install libkrb5-dev
@@ -272,11 +272,10 @@ jobs:
           search_artifacts: false
 
       - name: Install library
-        run: pip install . --find-links ./deps
+        run: pip install .[doc] --find-links ./deps
 
       - name: Build HTML
-        run: |
-          pip install -r requirements_docs.txt
+        run:
           make -C doc html SPHINXOPTS="-W"
         env:
           BUILD_EXAMPLES: 1

@@ -203,43 +203,12 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
-
-      - name: Install build requirements
-        run: pip install build wheel
-
-      - name: Create local deps folder
-        run: |
-          mkdir -p deps
-
-      - name: Copy client common wheel
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: ci_cd.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-common-wheel
-          path: deps
-          repo: pyansys/openapi-common
-          check_artifacts: false
-          search_artifacts: false
-
-      - name: Copy client library
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: build_and_test_library.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-bomanalytics-openapi-wheel
-          path: deps
-          repo: pyansys/grantami-bomanalytics-openapi
-          check_artifacts: false
-          search_artifacts: false
+          python-version: '3.10''
 
       - name: Create wheel
-        run: python -m build
+        run: |
+          pip install build
+          python -m build --wheel
 
       - name: Validate wheel
         run: |

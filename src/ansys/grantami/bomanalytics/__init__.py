@@ -1,3 +1,5 @@
+"""Perform compliance analysis on materials data stored in Granta MI."""
+
 from ._connection import Connection
 from ._exceptions import GrantaMIException
 

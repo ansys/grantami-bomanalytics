@@ -66,6 +66,78 @@ Item_Result = Union[Type["ImpactedSubstancesResultMixin"], Type["ComplianceResul
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
+class SubstanceMerger:
+    """Merges `ImpactedSubstance` objects into a single list without duplicates (keyed by CAS number)."""
+
+    def __init__(self) -> None:
+        self._data: Dict[str, ImpactedSubstance] = {}
+
+    def add_substance(self, substance: "ImpactedSubstance") -> None:
+        """Add a new `ImpactedSubstance` object. If this object shares a CAS Number with an `ImpactedSubstance` that's
+        already been added, then merge it's amount and legislation threshold.
+
+        No additional merging of additional IDs is required since the CAS Number is enforced as unique within Granta MI.
+
+        The `ImpactedSubstance.max_percentage_amount_in_material` value is updated if the new value is greater than
+        the existing value, since a higher percentage amount is less compliant.
+
+        The `ImpactedSubstance.legislation_threshold` value is updated if the new value is lower than the existing
+        value, since a lower threshold is less compliant.
+
+        Parameters
+        ----------
+        substance : ImpactedSubstance
+            The substance to be added to this `SubstanceMerger` object.
+
+        Raises
+        ------
+        RuntimeError
+            If a substance is provided with an empty CAS Number.
+        """
+
+        cas_number = substance.cas_number
+        if not cas_number:
+            raise RuntimeError(
+                "Substance result returned from Granta MI has no CAS Number. Ensure any substances "
+                "in your request include references, and check you are using an up-to-date version "
+                "of the base BoM Analytics package."
+            )
+        if cas_number not in self._data:
+            self._data[cas_number] = deepcopy(substance)
+
+        current_substance = self._data[cas_number]
+        if current_substance.max_percentage_amount_in_material is None:
+            self._data[cas_number].max_percentage_amount_in_material = substance.max_percentage_amount_in_material
+        elif (
+            substance.max_percentage_amount_in_material
+            and substance.max_percentage_amount_in_material > current_substance.max_percentage_amount_in_material
+        ):
+            self._data[cas_number].max_percentage_amount_in_material = substance.max_percentage_amount_in_material
+
+        if current_substance.legislation_threshold is None:
+            self._data[cas_number].legislation_threshold = substance.legislation_threshold
+        elif (
+            substance.legislation_threshold
+            and substance.legislation_threshold < current_substance.legislation_threshold
+        ):
+            self._data[cas_number].legislation_threshold = substance.legislation_threshold
+
+    def clear_legislation_threshold(self) -> None:
+        """Remove the `legislation_threshold` property from all referenced `ImpactedSubstance` objects.
+
+        If the merging has been performed across multiple legislations, the `legislation_threshold` property is no
+        longer accurate and should be removed to avoid ambiguity.
+        """
+
+        for substance in self._data.values():
+            substance.legislation_threshold = None
+
+    @property
+    def substances(self) -> List["ImpactedSubstance"]:
+        """The resulting list of `ImpactedSubstance` objects."""
+        return list(self._data.values())
+
+
 class ItemResultFactory:
     """Creates item results for a given type of API query. The key to control which result type is created is the name
     of the query class in `queries.py`.
@@ -438,11 +510,11 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
     @property
     def substances_by_legislation(self) -> Dict[str, List[ImpactedSubstance]]:
-        """
+        """The substances impacted for a particular item, grouped by legislation name.
+
         Returns
         -------
         substances_by_legislation : dict[str, list[ImpactedSubstance]]
-            The substances impacted for a particular item, grouped by legislation name.
 
         Examples
         --------
@@ -456,11 +528,13 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
     @property
     def substances(self) -> List[ImpactedSubstance]:
-        """
+        """The substances impacted by all queried legislations as a flattened list. Since these `ImpactedSubstance`
+        objects refer to substances potentially impacted by multiple legislations, the `legislation_threshold` property
+        is set to `None`.
+
         Returns
         -------
         substances : list[ImpactedSubstance]
-            The substances impacted for a particular item as a flattened list.
 
         Examples
         --------
@@ -470,10 +544,12 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         [<ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
         """
 
-        results = []
+        result_merger = SubstanceMerger()
         for legislation_result in self.substances_by_legislation.values():
-            results.extend(legislation_result)  # TODO: Merge these property, i.e. take max amount? range?
-        return results
+            for new_substance in legislation_result:
+                result_merger.add_substance(new_substance)
+        result_merger.clear_legislation_threshold()
+        return result_merger.substances
 
     def __repr__(self) -> str:
         return (

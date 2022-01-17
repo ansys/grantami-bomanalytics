@@ -19,6 +19,7 @@ from ._item_results import (
     SpecificationWithComplianceResult,
     SubstanceWithComplianceResult,
     ImpactedSubstance,
+    SubstanceMerger,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
@@ -160,8 +161,9 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
         """A view of the results for an Impacted Substances query, grouped by legislation only.
 
         The substances from all items specified in the query are merged for each legislation, providing a single
-        list of impacted substances grouped by legislation only. Substances are duplicated where they appear in
-        multiple items for the same legislation.
+        list of impacted substances grouped by legislation only. If the same substance appears multiple times in the
+        same result for different items they have been merged, taking the highest 'amount' and lowest 'threshold' of all
+        instances of the substance.
 
         Returns
         -------
@@ -176,23 +178,27 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
         }
         """
 
-        results = defaultdict(list)
+        substance_merger_per_legislation: Dict[str, SubstanceMerger] = defaultdict(SubstanceMerger)
         for item_result in self._results:
-            for (
-                legislation_name,
-                legislation_result,
-            ) in item_result.substances_by_legislation.items():
-                results[legislation_name].extend(
-                    legislation_result
-                )  # TODO: Merge these property, i.e. take max amount? range?
-        return dict(results)
+            for legislation_name, legislation_result in item_result.substances_by_legislation.items():
+                for substance in legislation_result:
+                    substance_merger_per_legislation[legislation_name].add_substance(substance)
+
+        results = {}
+        for legislation_name, merger in substance_merger_per_legislation.items():
+            results[legislation_name] = merger.substances
+        return results
 
     @property
     def impacted_substances(self) -> List["ImpactedSubstance"]:
         """A view of the results for an Impacted Substances query, flattened into a single list.
 
         The substances from all items specified in the query are merged across item and legislation, providing a
-        single flat list. Substances are duplicated where they appear in multiple items or legislations.
+        single flat list. Since these `ImpactedSubstance` objects refer to substances potentially impacted by multiple
+        legislations, the `legislation_threshold` property is set to `None`.
+
+        If the same substance appears multiple times in the same result for different items they have been merged,
+        taking the highest 'amount' of all instances of the substance.
 
         Returns
         -------
@@ -205,11 +211,13 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
         [<ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
         """
 
-        results = []
+        substance_merger = SubstanceMerger()
         for item_result in self._results:
             for legislation_result in item_result.substances_by_legislation.values():
-                results.extend(legislation_result)  # TODO: Merge these property, i.e. take max amount? range?
-        return results
+                for substance in legislation_result:
+                    substance_merger.add_substance(substance)
+        substance_merger.clear_legislation_threshold()
+        return substance_merger.substances
 
 
 class ComplianceBaseClass(ResultBaseClass):

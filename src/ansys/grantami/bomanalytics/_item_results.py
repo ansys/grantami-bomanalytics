@@ -472,7 +472,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
         results = []
         for legislation_result in self.substances_by_legislation.values():
-            results.extend(legislation_result)  # TODO: Merge these property, i.e. take max amount? range?
+            results.extend(legislation_result)
         return results
 
     def __repr__(self) -> str:

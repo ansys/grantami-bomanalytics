@@ -186,7 +186,9 @@ jobs:
           pip install tox tox-gh-actions
 
       - name: Check server is ready
-        run: python cicd/check_server.py
+        run: |
+          pip install requests
+          python cicd/check_server.py
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}

@@ -39,6 +39,7 @@ packages = [
 python = "^3.7"
 
 # Packages for core library
+importlib_metadata = { version = "^1.0", python  = "<3.8" }
 ansys_openapi-common = "0.1.0.dev0"
 ansys-grantami-bomanalytics-openapi = "0.1.0.dev12"
 

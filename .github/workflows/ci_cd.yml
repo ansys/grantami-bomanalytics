@@ -24,17 +24,13 @@ jobs:
           python-version: "3.10"
 
       - name: Create local deps folder
-        run: |
-          mkdir -p deps
+        run: mkdir -p deps
 
       - name: Install style requirements
-        run: |
-          python -m pip install --upgrade pip
-          pip install tox
+        run: pip install tox --disable-pip-version-check
 
       - name: Spell, Lint and Type Check
-        if: always()
-        run: tox -e lint
+        run: tox -e style
 
   unit_tests:
     name: Unit tests, Linux, all Python versions
@@ -85,9 +81,7 @@ jobs:
           search_artifacts: false
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install tox tox-gh-actions==2.9.1
+        run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
 
       - name: Test with tox (no integration tests)
         run: tox -- -m "not integration"
@@ -121,8 +115,7 @@ jobs:
           python-version: '3.8'
 
       - name: Create local deps folder
-        run: |
-          mkdir -p deps
+        run: mkdir -p deps
 
       - name: Copy client common wheel
         uses: dawidd6/action-download-artifact@v2
@@ -151,9 +144,7 @@ jobs:
           search_artifacts: false
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install tox tox-gh-actions==2.9.1
+        run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
 
       - name: Test with tox (integration tests only)
         run: tox -- -m "integration"
@@ -177,12 +168,12 @@ jobs:
 
       - name: Create wheel
         run: |
-          pip install poetry
+          pip install poetry --disable-pip-version-check
           poetry build
 
       - name: Validate wheel
         run: |
-          pip install twine
+          pip install twine --disable-pip-version-check
           twine check dist/*
 
       - name: Upload wheel artifact
@@ -212,8 +203,7 @@ jobs:
         run: sudo apt install pandoc
 
       - name: Create local deps folder
-        run: |
-          mkdir -p deps
+        run: mkdir -p deps
 
       - name: Copy client common wheel
         uses: dawidd6/action-download-artifact@v2
@@ -242,7 +232,7 @@ jobs:
           search_artifacts: false
 
       - name: Install library
-        run: pip install .[doc] --find-links ./deps
+        run: pip install .[doc] --find-links ./deps --disable-pip-version-check
 
       - name: Build HTML
         run:

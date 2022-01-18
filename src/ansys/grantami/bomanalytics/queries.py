@@ -32,7 +32,6 @@ import warnings
 from numbers import Number
 
 from ansys.grantami.bomanalytics_openapi import models, api  # type: ignore[import]
-from ansys.grantami.bomanalytics._logger import logger
 
 from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition  # noqa: F401
 from ._allowed_types import validate_argument_type
@@ -44,6 +43,7 @@ from ._query_results import (
 from .indicators import _Indicator, WatchListIndicator, RoHSIndicator
 from ._connection import Connection  # noqa: F401
 from ._exceptions import GrantaMIException
+from ._logger import logger
 
 Query_Builder = TypeVar("Query_Builder", covariant=True, bound=Union["_BaseQueryBuilder", "_ApiMixin"])
 Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])

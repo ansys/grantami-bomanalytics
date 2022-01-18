@@ -16,7 +16,7 @@ from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
 
 from ansys.openapi import common  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
-from ansys.grantami.bomanalytics._logger import logger
+from ._logger import logger
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"

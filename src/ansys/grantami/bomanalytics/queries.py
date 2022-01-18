@@ -478,7 +478,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         <MaterialCompliance: 2 materials, batch size = 100, 0 indicators>
         """
 
-        record_guids: List[str] = [r["record_guid"] for r in stk_records]  # TODO Handle database key
+        record_guids: List[str] = [r["record_guid"] for r in stk_records]
         query_builder: Query_Builder = self.with_record_guids(record_guids)
         return query_builder
 

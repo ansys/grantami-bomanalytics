@@ -9,5 +9,3 @@ except ImportError:
     from importlib_metadata import metadata as metadata_backport  # type: ignore[import]
 
     __version__ = metadata_backport("ansys-grantami-bomanalytics")["version"]
-
-# TODO use STK to extend BoM services objects? e.g. adding all references to sparsely referenced object

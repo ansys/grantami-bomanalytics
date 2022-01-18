@@ -208,7 +208,7 @@ jobs:
       - name: Create wheel
         run: |
           pip install poetry
-          poetry --wheel
+          poetry build
 
       - name: Validate wheel
         run: |

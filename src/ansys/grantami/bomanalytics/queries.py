@@ -30,9 +30,9 @@ from typing import (
 )
 import warnings
 from numbers import Number
-import logging
 
 from ansys.grantami.bomanalytics_openapi import models, api  # type: ignore[import]
+from ansys.grantami.bomanalytics._logger import logger
 
 from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition  # noqa: F401
 from ._allowed_types import validate_argument_type
@@ -48,7 +48,6 @@ from ._exceptions import GrantaMIException
 Query_Builder = TypeVar("Query_Builder", covariant=True, bound=Union["_BaseQueryBuilder", "_ApiMixin"])
 Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])
 
-logger = logging.getLogger("ansys.grantami.bomanalytics")
 EXCEPTION_MAP = {
     "critical": logger.critical,
     "error": logger.error,

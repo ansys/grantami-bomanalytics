@@ -1,46 +1,142 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel",
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "ansys-grantami-bomanalytics"
+description = "Perform compliance analysis on materials data stored in Granta MI."
+version = "0.1.0.dev0"
+license = "MIT"
+authors = ["ANSYS, Inc."]
+maintainers = ["PyAnsys Maintainers <pyansys.maintainers@ansys.com>"]
+repository = "https://github.com/pyansys/grantami-bomanalytics"
+readme = "README.rst"
+keywords = [
+  "Ansys",
+  "Granta MI",
+  "Bill of Materials",
 ]
-build-backend = "setuptools.build_meta"
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX",
+  "Operating System :: MacOS",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Private :: Do Not Upload"
+]
+packages = [
+  { include = "**/*.py", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+# Packages for core library
+importlib_metadata = { version = "^1.0", python  = "<3.8" }
+ansys_openapi-common = "0.1.0.dev0"
+ansys-grantami-bomanalytics-openapi = "0.1.0.dev12"
+
+# Test and examples packages
+pytest = { version = "*", optional = true }
+pytest-cov = { version = "*", optional = true }
+requests-mock = { version = "*", optional = true }
+ipython = { version = "*", optional = true }
+
+# Doc packages
+pyansys-sphinx-theme = { version = "0.2.0", optional = true }
+numpydoc = { version = "1.1.0", optional = true }
+sphinx = { version = "4.2.0", optional = true }   # sphinx>4.2.0 not supported by enum_tools==0.6.5
+sphinx_autodoc_typehints = { version = "1.14.1", optional = true }
+sphinx-notfound-page = { version = "0.8", optional = true }
+sphinx-copybutton = { version = "0.4.0", optional = true }
+enum_tools = { version = "0.6.5", optional = true }
+sphinx-toolbox = { version = "2.15.3", optional = true }  # Required by enum_tools
+jupytext = { version = "1.13.3", optional = true }
+nbsphinx = { version = "0.8.7", optional = true }
+
+# Common packages for test, examples, and docs
+jupyterlab = [
+  { version = "*", optional = true },
+  { version = "3.2.4", markers = "extra == 'doc'", optional = true },
+]
+lxml = [
+  { version = "*", optional = true },
+  { version = "4.6.4", markers = "extra == 'doc'", optional = true },
+]
+pandas = [
+  { version = "*", optional = true },
+  { version = "1.3.4", markers = "extra == 'doc'", optional = true },
+]
+tabulate = [
+  { version = "*", optional = true },
+  { version = "0.8.9", markers = "extra == 'doc'", optional = true },
+]
+
+
+[tool.poetry.extras]
+test = [
+  "pytest",
+  "pytest-cov",
+  "requests-mock",
+  "lxml",
+  "tabulate",
+  "pandas",
+  "ipython",
+]
+
+doc = [
+  "pyansys-sphinx-theme",
+  "numpydoc",
+  "sphinx",
+  "sphinx-autodoc-typehints",
+  "sphinx-notfound-page",
+  "sphinx-copybutton=",
+  "enum_tools",
+  "sphinx-toolbox",
+  "jupyterlab",
+  "jupytext",
+  "lxml",
+  "tabulate",
+  "pandas",
+  "nbsphinx",
+]
+
+examples = [
+  "lxml",
+  "tabulate",
+  "pandas",
+  "jupyterlab",
+]
 
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py36,py37,py38,py39,coverage
+envlist = py37,py38,py39,py310
 isolated_build = True
 
 [gh-actions]
 python =
-    3.6: py36
     3.7: py37
     3.8: py38
     3.9: py39
-    3.10: coverage
+    3.10: py310
 
 [testenv]
 deps =
-    ansys-openapi-common
-    ansys-grantami-bomanalytics-openapi==0.1.0.dev12
-    pytest
-    pytest-cov
-    requests-mock
-    dataclasses; python_version < '3.7'
-    lxml
-    tabulate
-    pandas
-    ipython
+  .[test]
 install_command = pip install --pre --find-links ./deps {opts} {packages}
-commands = pytest {posargs}
+commands = pytest --cov=ansys.grantami.bomanalytics --cov-report=xml {posargs}
 passenv =
     TEST_SL_URL
     TEST_USER
     TEST_PASS
-
-[testenv:coverage]
-deps = {[testenv]deps}
-commands = pytest --cov=ansys.grantami.bomanalytics --cov-report=xml ./tests {posargs}
 
 [testenv:lint]
 deps =

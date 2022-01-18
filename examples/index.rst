@@ -7,6 +7,13 @@ Example Scripts
 cover the different types of queries. The third section covers more advanced functionality, including how to make use of
 other Python structures such as Pandas DataFrames.
 
+Install the dependencies required to run these examples with:
+
+.. code::
+
+   pip install ansys-grantami-bomanalytics[examples]
+
+
 .. toctree::
    :maxdepth: 2
 

@@ -183,7 +183,6 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
             for legislation_name, legislation_result in item_result.substances_by_legislation.items():
                 for substance in legislation_result:
                     substance_merger_per_legislation[legislation_name].add_substance(substance)
-
         results = {}
         for legislation_name, merger in substance_merger_per_legislation.items():
             results[legislation_name] = merger.substances

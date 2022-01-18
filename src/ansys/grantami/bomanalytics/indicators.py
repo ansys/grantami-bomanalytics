@@ -358,7 +358,7 @@ class _Indicator(ABC):
         return self == other or self < other
 
 
-class RoHSIndicator(_Indicator):  # TODO Think about the class hierarchy here, IndicatorDefinition vs Result
+class RoHSIndicator(_Indicator):
     """Indicator object that represents RoHS-type compliance of a BoM object against one or more
     legislations.
 

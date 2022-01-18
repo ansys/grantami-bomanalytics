@@ -185,6 +185,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install tox tox-gh-actions
 
+      - name: Check server is ready
+        run: python cicd/check_server.py
+        env:
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+
       - name: Test with tox (integration tests only)
         run: tox -- -m "integration"
         env:

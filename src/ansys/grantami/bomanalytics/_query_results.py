@@ -182,9 +182,7 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
                 legislation_name,
                 legislation_result,
             ) in item_result.substances_by_legislation.items():
-                results[legislation_name].extend(
-                    legislation_result
-                )
+                results[legislation_name].extend(legislation_result)
         return dict(results)
 
     @property

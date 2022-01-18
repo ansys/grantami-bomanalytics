@@ -1,7 +1,13 @@
-"""Perform compliance analysis on materials data stored in Granta MI."""
-
 from ._connection import Connection
 from ._exceptions import GrantaMIException
 
-__version__ = "0.1.0dev"
+try:
+    from importlib import metadata as metadata
+
+    __version__ = metadata.version("ansys-grantami-bomanalytics")
+except ImportError:
+    from importlib_metadata import metadata as metadata_backport
+
+    __version__ = metadata_backport("ansys-grantami-bomanalytics")["version"]
+
 # TODO use STK to extend BoM services objects? e.g. adding all references to sparsely referenced object

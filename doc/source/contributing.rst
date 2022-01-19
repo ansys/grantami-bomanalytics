@@ -22,7 +22,7 @@ repository:
 .. code::
 
     git clone https://github.com/pyansys/grantami-bomanalytics
-    cd openapi-common
+    cd grantami-bomanalytics
     pip install .
 
 
@@ -33,10 +33,10 @@ this project to submit questions, report bugs, and request new features.
 
 To reach the project support team, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_.
 
-Viewing OpenAPI Client Documentation
-------------------------------------
-Documentation for the latest stable release of the OpenAPI Client
-is hosted at `OpenAPI Client Documentation <https://aedtdocs.pyansys.com>`_.
+Viewing Granta MI BoM Analytics Documentation
+---------------------------------------------
+Documentation for the latest stable release of Granta MI BoM Analytics
+is hosted at `Granta MI BoM Analytics Documentation <https://aedtdocs.pyansys.com>`_.
 
 Examples
 --------

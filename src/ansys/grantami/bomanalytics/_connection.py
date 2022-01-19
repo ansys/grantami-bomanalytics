@@ -21,7 +21,18 @@ from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
 OIDC_HEADER_APPLICATION_NAME = "MI Scripting Toolkit"
-USER_AGENT = "Ansys Granta MI BoM Analytics"
+
+
+def generate_user_agent() -> str:
+    import platform
+    from . import __version__, _PACKAGE_NAME
+
+    os_version = platform.platform()
+    python_implementation = platform.python_implementation()
+    python_version = platform.python_version()
+    package_version = __version__
+    return f"{_PACKAGE_NAME}/{package_version} {python_implementation}/{python_version} ({os_version})"
+
 
 if TYPE_CHECKING:
     from .queries import (
@@ -107,7 +118,7 @@ class BomAnalyticsClient(common.ApiClient):
         logger.debug(f"Service URL: {sl_url_with_service}")
         super().__init__(api_url=sl_url_with_service, **kwargs)
 
-        self.user_agent = USER_AGENT
+        self.user_agent = generate_user_agent()
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,

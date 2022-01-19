@@ -59,7 +59,7 @@ jobs:
         run: tox -e style
 
   unit_tests:
-    name: Unit tests, Linux, all Python versions
+    name: Unit tests
     runs-on: ubuntu-latest
 
     strategy:
@@ -119,7 +119,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
 
   integration_tests:
-    name: Integration tests, Linux and Windows, one Python version
+    name: Integration tests
     runs-on: ${{ matrix.os }}
     needs: [style, unit_tests]
 

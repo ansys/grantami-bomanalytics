@@ -14,13 +14,14 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
 
-from ansys.openapi import common  # type: ignore[import]
+from ansys.openapi.common import ApiClientFactory, ApiClient, generate_user_agent  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 from ._logger import logger
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
 OIDC_HEADER_APPLICATION_NAME = "MI Scripting Toolkit"
+
 
 if TYPE_CHECKING:
     from .queries import (
@@ -48,7 +49,7 @@ if TYPE_CHECKING:
     )
 
 
-class Connection(common.ApiClientFactory):
+class Connection(ApiClientFactory):
     """Connect to an instance of Granta MI.
 
     Notes
@@ -91,19 +92,21 @@ class Connection(common.ApiClientFactory):
         return client
 
 
-class BomAnalyticsClient(common.ApiClient):
+class BomAnalyticsClient(ApiClient):
     """The class used to communicate with Granta MI. It is instantiated by the
     :class:`~ansys.grantami.bomanalytics.Connection` class defined above, and should not be instantiated directly.
     """
 
     def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
+        from . import __version__
+
         self._sl_url = servicelayer_url.strip("/")
         sl_url_with_service = self._sl_url + SERVICE_PATH
         logger.debug("Creating BomAnalyticsClient")
         logger.debug(f"Base Service Layer URL: {self._sl_url}")
         logger.debug(f"Service URL: {sl_url_with_service}")
         super().__init__(api_url=sl_url_with_service, **kwargs)
-
+        self.user_agent = generate_user_agent("ansys-grantami-bomanalytics", __version__)
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,

@@ -217,14 +217,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # used for documentation deployment
-      - name: Get Bot Application Token
-        id: get_workflow_token
-        uses: peter-murray/workflow-application-token-action@v1
-        with:
-          application_id: ${{ secrets.BOT_APPLICATION_ID }}
-          application_private_key: ${{ secrets.BOT_APPLICATION_PRIVATE_KEY }}
-
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
@@ -310,6 +302,14 @@ jobs:
           python-version: '3.10'
 
       - uses: actions/checkout@v2
+      
+      # used for documentation deployment
+      - name: Get Bot Application Token
+        id: get_workflow_token
+        uses: peter-murray/workflow-application-token-action@v1
+        with:
+          application_id: ${{ secrets.BOT_APPLICATION_ID }}
+          application_private_key: ${{ secrets.BOT_APPLICATION_PRIVATE_KEY }}
 
       - uses: actions/download-artifact@v2
         with:

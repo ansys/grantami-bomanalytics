@@ -138,13 +138,13 @@ passenv =
     TEST_USER
     TEST_PASS
 
-[testenv:lint]
+[testenv:style]
 deps =
     codespell==2.1.0
     flake8==3.9.2
     black
     mypy==0.910
-
+install_command = pip install --pre --find-links ./deps {opts} {packages}
 commands =
     codespell ./src ./tests ./examples ./doc/source
     flake8 ./src ./tests ./examples

@@ -13,10 +13,10 @@ DEFAULT_DBKEY : str
 """
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
-import logging
 
 from ansys.openapi import common  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
+from ._logger import logger
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
@@ -46,8 +46,6 @@ if TYPE_CHECKING:
         BomImpactedSubstancesQueryResult,
         BomComplianceQueryResult,
     )
-
-logger = logging.getLogger("ansys.grantami.bomanalytics")
 
 
 class Connection(common.ApiClientFactory):

@@ -213,8 +213,8 @@ jobs:
   docs:
     name: Build Documentation
     runs-on: ubuntu-latest
-    needs: integration_tests
-    if: github.actor == 'dependabot[bot]'
+    needs: [style, unit_tests, integration_tests]
+    if: (github.actor == 'dependabot[bot]' && needs.style.result == 'success' && needs.unit_tests.result == 'success') || needs.integration_tests.result == 'success'
 
     steps:
       - uses: actions/checkout@v2
@@ -267,7 +267,7 @@ jobs:
         run:
           make -C doc html SPHINXOPTS="-W"
         env:
-          BUILD_EXAMPLES: 1
+          BUILD_EXAMPLES: ${{ github.actor != "dependabot" }}
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
@@ -279,19 +279,7 @@ jobs:
           sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
           make -C doc latexpdf
         env:
-          BUILD_EXAMPLES: 1
-
-      - name: Build HTML Documentation (skip examples)
-        if: github.actor == 'dependabot[bot]'
-        run:
-          make -C doc html SPHINXOPTS="-W"
-
-      - name: Build PDF Documentation (skip examples)
-        if: github.actor == 'dependabot[bot]'
-        run: |
-          sudo apt update
-          sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
-          make -C doc latexpdf
+          BUILD_EXAMPLES: ${{ github.actor != "dependabot" }}
 
       - name: Upload HTML Documentation
         uses: actions/upload-artifact@v2

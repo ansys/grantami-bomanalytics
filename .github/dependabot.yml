@@ -7,9 +7,10 @@ version: 2
 updates:
   - package-ecosystem: "pip" # See documentation for possible values
     directory: "/" # Location of package manifests
-    open-pull-requests-limit: 0
     schedule:
-      interval: "weekly"
+      interval: "daily"
+    labels:
+      - "maintenance"
 
   - package-ecosystem: "github-actions"
     directory: "/"

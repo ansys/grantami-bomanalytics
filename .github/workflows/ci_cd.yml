@@ -122,6 +122,7 @@ jobs:
     name: Integration tests
     runs-on: ${{ matrix.os }}
     needs: [style, unit_tests]
+    if: github.actor != 'dependabot[bot]'
 
     strategy:
       max-parallel: 1

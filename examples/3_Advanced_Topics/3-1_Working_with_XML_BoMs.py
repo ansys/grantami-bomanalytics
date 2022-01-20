@@ -77,26 +77,10 @@ result
 # Now we have validated the XML, we can build our XML BoM-based query. First, connect to Granta MI.
 
 # + tags=[]
-user_name = "my_username"
-password = "my_password"
-server_url = "http://my_grantami_service/mi_servicelayer"
-# -
-
-# + nbsphinx="hidden"
-import os
-
-# This cell is included for package CI/CD purposes only, and is removed when generating the HTML documentation.
-# It will have no effect if the environment variables referenced below are unset.
-
-user_name = os.getenv("TEST_USER", user_name)
-password = os.getenv("TEST_PASS", password)
-server_url = os.getenv("TEST_SL_URL", server_url)
-# -
-
-# + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection(server_url).with_credentials(user_name, password).connect()
+server_url = "http://my_grantami_service/mi_servicelayer"
+cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
 # The Impacted Substances BoM query behaves similar to other Impacted Substances queries. However, a BoM query can only

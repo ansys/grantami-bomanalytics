@@ -26,32 +26,13 @@
 
 # ## Connecting to Granta MI
 
-# First define the username, password, and url we will use to connect to the Granta MI server.
-
-# + tags=[]
-user_name = "my_username"
-password = "my_password"
-server_url = "http://my_grantami_service/mi_servicelayer"
-# -
-
-# + nbsphinx="hidden"
-import os
-
-# This cell is included for package CI/CD purposes only, and is removed when generating the HTML documentation.
-# It will have no effect if the environment variables referenced below are unset.
-
-user_name = os.getenv("TEST_USER", user_name)
-password = os.getenv("TEST_PASS", password)
-server_url = os.getenv("TEST_SL_URL", server_url)
-# -
-
-# Now import the `ansys-grantami-bomanalytics` module and create the connection. See the example on creating connections
-# for more detail.
+# Import the `Connection` class and create the connection. See the Getting Started example for more detail.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-cxn = Connection(server_url).with_credentials(user_name, password).connect()
+server_url = "http://my_grantami_service/mi_servicelayer"
+cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
 # + [markdown] tags=[]
@@ -139,7 +120,7 @@ print(tabulate(rows, headers=["CAS Number", "Amount (wt. %)"]))
 part_substances_sin = part_result.impacted_substances_by_legislation[SIN_LIST]
 rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
         for substance in part_substances_sin]
-print('Substances impacted by "{SIN_LIST}" in all parts (10/{len(rows)})')
+print(f'Substances impacted by "{SIN_LIST}" in all parts (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 

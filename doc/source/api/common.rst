@@ -1,4 +1,4 @@
-.. _ref_grantami_bomanalytics_connection:
+.. _ref_grantami_bomanalytics_common_connection:
 
 Granta MI Connection
 ====================
@@ -16,8 +16,23 @@ Connection Builder
    .. automethod:: with_anonymous
 
 
-BoM Analyics Client
-~~~~~~~~~~~~~~~~~~~
+BoM Analytics Client
+~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._connection.BomAnalyticsClient
    :members:
+
+.. _ref_grantami_bomanalytics_common_messages:
+
+Log Messages
+============
+
+.. autoclass:: ansys.grantami.bomanalytics._query_results.LogMessage
+
+
+.. _ref_grantami_bomanalytics_common_exceptions:
+
+Exceptions
+==========
+
+.. autoclass:: ansys.grantami.bomanalytics.GrantaMIException

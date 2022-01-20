@@ -13,5 +13,13 @@ one_legislation_indicator = indicators.RoHSIndicator(
     default_threshold_percentage=0.01,
 )
 
-INDICATORS = {"Two legislations": two_legislation_indicator,
-              "One legislation": one_legislation_indicator}
+INDICATORS = {"Two legislations": two_legislation_indicator, "One legislation": one_legislation_indicator}
+
+CUSTOM_TABLES = [
+    ("material_universe_table_name", "My Material Universe"),
+    ("in_house_materials_table_name", "My Materials"),
+    ("specifications_table_name", "specs"),
+    ("products_and_parts_table_name", "Parts 'n' Products"),
+    ("substances_table_name", "Chemicals"),
+    ("coatings_table_name", "Coverings"),
+]

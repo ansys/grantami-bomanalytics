@@ -3,7 +3,7 @@
 Material Impacted Substances
 ============================
 
-Query definition
+Query Definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery
@@ -16,7 +16,7 @@ Query definition
    .. automethod:: with_batch_size
    .. automethod:: with_legislations
 
-Query result
+Query Result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult
@@ -26,8 +26,9 @@ Query result
    .. autoattribute:: impacted_substances_by_material
    .. autoattribute:: impacted_substances_by_legislation
    .. autoattribute:: impacted_substances
+   .. autoattribute:: messages
 
-Material result
+Material Result
 ~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult

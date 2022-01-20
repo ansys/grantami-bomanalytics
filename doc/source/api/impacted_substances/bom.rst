@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_api_impactedsubstances_bom:
 
-BoM Impacted Substances
-=======================
+BoM Impacted Substances Query
+=============================
 
-Query definition
+Query Definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery
@@ -12,7 +12,7 @@ Query definition
    .. automethod:: with_legislations
    .. automethod:: with_bom
 
-Query result
+Query Result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.BomImpactedSubstancesQueryResult
@@ -20,3 +20,4 @@ Query result
 
    .. autoattribute:: impacted_substances_by_legislation
    .. autoattribute:: impacted_substances
+   .. autoattribute:: messages

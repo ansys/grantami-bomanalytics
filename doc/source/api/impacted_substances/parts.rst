@@ -3,7 +3,7 @@
 Part Impacted Substances
 ========================
 
-Query definition
+Query Definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery
@@ -16,7 +16,7 @@ Query definition
    .. automethod:: with_record_history_ids
    .. automethod:: with_batch_size
 
-Query result
+Query Result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.PartImpactedSubstancesQueryResult
@@ -26,8 +26,9 @@ Query result
    .. autoattribute:: impacted_substances_by_part
    .. autoattribute:: impacted_substances_by_legislation
    .. autoattribute:: impacted_substances
+   .. autoattribute:: messages
 
-Part result
+Part Result
 ~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.PartWithImpactedSubstancesResult

@@ -13,14 +13,15 @@ DEFAULT_DBKEY : str
 """
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
-import logging
 
-from ansys.openapi import common  # type: ignore[import]
+from ansys.openapi.common import ApiClientFactory, ApiClient, generate_user_agent  # type: ignore[import]
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
+from ._logger import logger
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
 OIDC_HEADER_APPLICATION_NAME = "MI Scripting Toolkit"
+
 
 if TYPE_CHECKING:
     from .queries import (
@@ -47,24 +48,22 @@ if TYPE_CHECKING:
         BomComplianceQueryResult,
     )
 
-logger = logging.getLogger(__name__)
 
-
-class Connection(common.ApiClientFactory):
-    """[TECHDOCS] Build a connection to an instance of Granta MI.
+class Connection(ApiClientFactory):
+    """Connect to an instance of Granta MI.
 
     Notes
     -----
-    For advanced usage, including configuring any session-specific properties and timeouts, see the
+    For advanced usage, including configuring session-specific properties and timeouts, see the
     `ansys-openapi-common` package documentation.
 
     The connection to Granta MI is created in 3 stages:
 
     1. Create the connection builder object and specify the server to be connected to.
     2. Specify the authentication method to be used for the connection and provide credentials if required.
-    3. Connect to the server; the connection object is returned.
+    3. Connect to the server (the connection object is returned).
 
-    The examples below show examples of this process with different authentication methods.
+    The examples below show this process for different authentication methods.
 
     Examples
     --------
@@ -86,26 +85,28 @@ class Connection(common.ApiClientFactory):
         self._validate_builder()
         session_configuration = self._session_configuration
         session_configuration.headers["X-Granta-ApplicationName"] = OIDC_HEADER_APPLICATION_NAME
-        client = BomAnalyticsClient(session=self._session,
-                                    servicelayer_url=self._api_url,
-                                    configuration=session_configuration)
+        client = BomAnalyticsClient(
+            session=self._session, servicelayer_url=self._api_url, configuration=session_configuration
+        )
         client.setup_client(models)
         return client
 
 
-class BomAnalyticsClient(common.ApiClient):
-    """[TECHDOCS] The class used to communicate with Granta MI. It is instantiated by the
+class BomAnalyticsClient(ApiClient):
+    """The class used to communicate with Granta MI. It is instantiated by the
     :class:`~ansys.grantami.bomanalytics.Connection` class defined above, and should not be instantiated directly.
     """
 
     def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
+        from . import __version__
+
         self._sl_url = servicelayer_url.strip("/")
         sl_url_with_service = self._sl_url + SERVICE_PATH
-        logger.debug("[TECHDOCS]Creating BomAnalyticsClient")
-        logger.debug(f"[TECHDOCS]Base Servicelayer url: {self._sl_url}")
-        logger.debug(f"[TECHDOCS]Service url: {sl_url_with_service}")
+        logger.debug("Creating BomAnalyticsClient")
+        logger.debug(f"Base Service Layer URL: {self._sl_url}")
+        logger.debug(f"Service URL: {sl_url_with_service}")
         super().__init__(api_url=sl_url_with_service, **kwargs)
-
+        self.user_agent = generate_user_agent("ansys-grantami-bomanalytics", __version__)
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,
@@ -134,10 +135,10 @@ class BomAnalyticsClient(common.ApiClient):
         substances_table_name: Optional[str] = None,
         coatings_table_name: Optional[str] = None,
     ) -> None:
-        """[TECHDOCS] Configure the database key and table names if different from the defaults.
+        """Configure the database key and table names, if different from the defaults.
 
-        The database key is required if Granta MI is configured to use a value other than 'MI_Restricted_Substances'.
-        A table name is required if it has been modified from the defaults.
+        Database key is required if Granta MI is configured to use a value other than 'MI_Restricted_Substances'. A
+        table name is required if it has been modified from the defaults.
 
         Parameters
         ----------
@@ -231,7 +232,7 @@ class BomAnalyticsClient(common.ApiClient):
         ...
 
     def run(self, query):  # type: ignore[no-untyped-def]
-        """[TECHDOCS] Run a query against the Granta MI database.
+        """Run a query against the Granta MI database.
 
         Parameters
         ----------
@@ -243,9 +244,19 @@ class BomAnalyticsClient(common.ApiClient):
         Query Result
             The specific result object based on the provided query, which contains either the compliance or
             impacted substances results. In the case of a yaml query, returns a string.
+
+        Raises
+        ------
+        :class:`~ansys.grantami.bomanalytics.GrantaMIException`
+            [TECHDOCS] If a message is returned with a severity of "critical". Granta MI is running and the BoM
+            Analytics Service is available, but it was not able to run the query. Possible causes include a missing
+            database or table.
+        :class:`~ansys.openapi.common.ApiException`
+            [TECHDOCS] If the Granta MI server was not able to return a response. Possible causes include an internal
+            configuration error, or that the BoM Analytics Service is not installed.
         """
 
-        logger.info(f"[TECHDOCS] Running query {query} with connection {self}")
+        logger.info(f"Running query {query} with connection {self}")
         api_instance = query.api_class(self)
         return query._run_query(api_instance=api_instance, static_arguments=self._query_arguments)
 
@@ -273,17 +284,17 @@ class BomAnalyticsClient(common.ApiClient):
         if any(self._table_names.values()):
             config = models.CommonRequestConfig(**self._table_names)
             table_mapping = [f"{n}: {v}" for n, v in self._table_names.items() if v]
-            logger.info(f"[TECHDOCS] Using custom table config:")
+            logger.info(f"Using custom table config:")
             for line in table_mapping:
                 logger.info(line)
         else:
             config = None
-            logger.info(f"[TECHDOCS] Using default table config")
+            logger.info(f"Using default table config")
 
         if self._db_key != DEFAULT_DBKEY:
-            logger.info(f"[TECHDOCS] Using custom database key: {self._db_key}")
+            logger.info(f"Using custom database key: {self._db_key}")
         else:
-            logger.info(f"[TECHDOCS] Using default database key ({self._db_key})")
+            logger.info(f"Using default database key ({self._db_key})")
 
         arguments = {"config": config, "database_key": self._db_key}
         return arguments

@@ -128,13 +128,16 @@ htmlhelp_basename = "pybomanalyticsdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
-latex_elements = {}
+latex_elements = {
+  'extraclassoptions': 'openany,oneside'
+}
+latex_engine = 'xelatex'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "pyansys.tex", "ansys.grantami.bomanalytics Documentation", author, "manual"),
+    ("latexindex", "pyansys.tex", "ansys.grantami.bomanalytics Documentation", author, "manual"),
 ]
 
 
@@ -190,6 +193,7 @@ EXAMPLES_DIR_NAME = "examples"
 examples_output_dir = Path(EXAMPLES_DIR_NAME).absolute()
 examples_source_dir = Path("../../" + EXAMPLES_DIR_NAME).absolute()
 EXAMPLE_FLAG = os.getenv("BUILD_EXAMPLES")
+ipython_dir = Path("../../.ipython").absolute()
 
 
 def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
@@ -211,8 +215,10 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
 # If we already have an output directory then don't do anything.
 # Note: Call `make clean` to force a rebuild, which will delete the 'examples' output folder
 # Only include examples if the environment variable is set to True
+# If we are building examples, use the included ipython-profile
 if not examples_output_dir.is_dir() and EXAMPLE_FLAG:
     _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
+    os.environ["IPYTHONDIR"] = str(ipython_dir)
 
 # If we are skipping docs, create a placeholder index.rst file to avoid sphinx errors.
 if not EXAMPLE_FLAG:

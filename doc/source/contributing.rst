@@ -3,21 +3,21 @@
 ============
 Contributing
 ============
-We absolutely welcome any code contributions and we hope that this
-guide will facilitate an understanding of the Granta MI Bom
+We welcome any code contributions, and we hope that this
+guide will facilitate an understanding of the Granta MI BoM
 Analytics code repository. It is important to note that while the
-Bom Analytics software package is maintained by Ansys and any
+BoM Analytics software package is maintained by Ansys and any
 submissions will be reviewed thoroughly before merging, we still
 seek to foster a community that can support user questions and
 develop new features to make this software a useful tool for all
-users.  As such, we welcome and encourage any questions or
+users. As such, we welcome and encourage any questions or
 submissions to this repository.
 
 
 Cloning the Source Repository
 -----------------------------
 
-You can clone the source repository from `Bom Analytics
+You can clone the source repository from `BoM Analytics
 GitHub <https://github.com/pyansys/grantami-bomanalytics>`_
 and install the latest version in development mode by running:
 
@@ -32,7 +32,7 @@ Questions
 ---------
 For general or technical questions about the project, its
 applications, or about software usage, please create an issue at
-`Bom Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_
+`BoM Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_
 where the community or PyAnsys developers can collectively address your
 questions.  The project support team can be reached at
 `andrew.grigg@ansys.com <andrew.grigg@ansys.com>`_
@@ -44,9 +44,9 @@ will remain available on the issues page for other users.
 
 Reporting Bugs
 --------------
-If you encounter any bugs or crashes while using Granta MI Bom
+If you encounter any bugs or crashes while using Granta MI BoM
 Analytics, please report it at
-`Bom Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_
+`BoM Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_
 with an appropriate label so we can promptly address it.  When
 reporting an issue, please be overly descriptive so that we may
 reproduce it. Whenever possible, please provide tracebacks,
@@ -55,10 +55,10 @@ screenshots, and sample files to help us address the issue.
 
 Feature Requests
 ----------------
-We encourage users to submit ideas for improvements to Granta MI Bom Analytics!
-Please create an issue on the
-`Bom Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_
-with a **Feature Request** label to suggest an improvement.
+We encourage users to submit ideas for improvements to Granta MI BoM Analytics!
+To suggest an improvement, create an issue on the
+`BoM Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_
+page with a **Feature Request** label.
 Please use a descriptive title and provide ample background information to help
 the community implement that functionality. For example, if you would like a
 reader for a specific file format, please provide a link to documentation of
@@ -68,7 +68,7 @@ with. We will use the issue thread as a place to discuss and provide feedback.
 
 Contributing New Code
 ---------------------
-If you have an idea for how to improve Granta MI Bom Analytics,
+If you have an idea for how to improve Granta MI BoM Analytics,
 consider first creating an issue as a feature request which we can use as a
 discussion thread to work through how to implement the contribution.
 
@@ -89,7 +89,7 @@ the original author to relicense the code.
 Development Practices
 ---------------------
 This section provides a guide to how we conduct development in the
-Granta MI Bom Analytics repository. Please follow the practices
+Granta MI BoM Analytics repository. Please follow the practices
 outlined here when contributing directly to this repository.
 
 Guidelines
@@ -101,7 +101,7 @@ Consider the following general coding paradigms when contributing:
    silly as the core Python developers are sometimes, there's much to
    be gained by following the basic guidelines listed in PEP 20.
    Without repeating them here, focus on making your additions
-   intuitive, novel, and helpful for Granta MI Bom Analytics and its users.
+   intuitive, novel, and helpful for Granta MI BoM Analytics and its users.
 
    When in doubt, ``import this``
 
@@ -111,7 +111,7 @@ Consider the following general coding paradigms when contributing:
    guidelines, and always provide an example of simple use cases for
    the new features.
 
-3. **Test it**. Since Python is an interperted language, if it's not
+3. **Test it**. Since Python is an interpreted language, if it's not
    tested, it's probably broken.  At the minimum, include unit tests
    for each new feature within the ``tests`` directory.  Ensure that
    each new method, class, or function has reasonable (>90%) coverage.
@@ -120,10 +120,10 @@ Additionally, please do not include any data sets for which a license
 is not available or commercial use is prohibited.
 
 
-Contributing to Granta MI Bom Analytics through GitHub
+Contributing to Granta MI BoM Analytics through GitHub
 ------------------------------------------------------
-To submit new code to Granta MI Bom Analytics, first fork the
-`Granta MI Bom Analytics Repo
+To submit new code to Granta MI BoM Analytics, first fork the
+`Granta MI BoM Analytics repository
 <https://github.com/pyansys/grantami-bomanalytics>`_ and then clone
 the forked repository to your computer.  Next, create a new branch based on the
 `Branch Naming Conventions Section <#branch-naming-conventions>`__ in
@@ -178,7 +178,7 @@ keep track of what is being done and what needs to be done.
 Discussions
 ~~~~~~~~~~~
 
-General questions about Granta MI Bom Analytics should be raised in
+General questions about Granta MI BoM Analytics should be raised in
 `Discussions <https://github.com/pyansys/grantami-bomanalytics/discussions>`_
 in this repository rather than as issues themselves. Issues can be spun
 out of discussions depending on what is decided, but general Q&A content
@@ -192,12 +192,12 @@ should start as discussions where possible.
 Creating a New Pull Request
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Once you have tested your branch locally, create a pull request on
-`Granta MI Bom Analytics <https://github.com/pyansys/grantami-bomanalytics>`_
+`Granta MI BoM Analytics <https://github.com/pyansys/grantami-bomanalytics>`_
 and target your merge to `main`.  This will automatically run continuous
 integration (CI) testing and verify your changes will work across all
 supported platforms.
 
-For code verification, someone from the Granta MI Bom Analytics developers
+For code verification, someone from the Granta MI BoM Analytics development
 team will review your code to verify your code meets our standards.
 Once approved, if you have write permission you may merge the branch.
 If you don't have write permission, the reviewer or someone else with
@@ -228,12 +228,14 @@ code.
 -  ``testing/``: improvements or changes to testing
 -  ``release/``: releases (see below)
 
+
 Testing
 ~~~~~~~
 Periodically when making changes, be sure to test locally before
 creating a pull request. The following tests will be executed after
 any commit or pull request, so we ask that you perform the following
 sequence locally to track down any new issues from your changes.
+Tests can be performed using ``tox``.
 
 .. code::
 
@@ -241,26 +243,40 @@ sequence locally to track down any new issues from your changes.
     tox -e coverage .
 
 
-Spelling and Code Style
-~~~~~~~~~~~~~~~~~~~~~~~
-If you are using Linux or Mac OS, run check spelling and coding style
-with:
+Static Analysis
+~~~~~~~~~~~~~~~
+Spell checking, coding style, and type checking is validated with the
+``codespell``, ``flake8``, ``black``, and ``mypy`` tools. These tools
+can be executed manually, but are easily run together with standard
+settings using ``tox``.
 
 .. code::
 
-   make
+   tox -e lint
 
-Any misspelled words will be reported.  You can add words to be
-ignored to ``ignore_words.txt``
+``codespell`` is used to check spelling in the source code, tests, and
+documentation. Any misspelled words will be reported.  You can add words
+to be ignored to ``ignore_words.txt``.
 
-.. code::
+``flake8`` and ``black`` enforce compliance with the style guidelines
+defined in `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_, and will
+report any non-compliance.
 
-    codespell ./ "*.pyc,*.txt,*.gif,*.png,*.jpg,*.js,*.html,*.doctree,*.ttf,*.woff,*.woff2,*.eot,*.mp4,*.inv,*.pickle,*.ipynb,flycheck*,./.git/*,./.hypothesis/*,*.yml,./doc/build/*,./doc/images/*,./dist/*,*~,.hypothesis*,./doc/source/examples/*,*cover,*.dat,*.mac,\#*,build,./docker/mapdl/v211,./factory/*,./ansys/mapdl/core/mapdl_functions.py,PKG-INFO" -I "ignore_words.txt"
+The tox command above runs ``black`` in a 'check' mode, which ensures the
+specified files are formatted according to the ``black`` style. It is
+advised to run ``black`` before pushing git commits, which will ensure
+your changes are compliant with the ``black`` style.
+
+``mypy`` is used for static type checking. Python is a dynamically typed
+language, however including type hints allows those parts of the codebase
+to be analysed and validated statically. This package includes type hints
+throughout, which provides benefits both when developing this package and
+using it as a component in other projects.
 
 
 Documentation
 -------------
-Documentation for Granta MI Bom Analytics is generated from three sources:
+Documentation for Granta MI BoM Analytics is generated from three sources:
 
 - Docstrings from the classes, functions, and modules of ``ansys.grantami.bomanalytics`` using `sphinx.ext.autodoc <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`_.
 - Restructured text from `doc/`
@@ -276,7 +292,7 @@ documentation.
 Adding a New Example
 ~~~~~~~~~~~~~~~~~~~~
 
-[TECHDOCS] Examples are included to give more context around the core functionality
+Examples are included to give more context around the core functionality
 described in the API documentation. Additional examples are welcomed,
 especially if they cover a key use-case of the package which has not
 previously been covered.
@@ -304,12 +320,12 @@ integration performed on GitHub Actions.
 
 Building the Documentation Locally
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Documentation for Granta MI Bom Analytics is hosted at
+Documentation for Granta MI BoM Analytics is hosted at
 `<http://grantami-bomanalytics.pyansys.com>`_ and is automatically built
 and deployed using the GitHub Actions.  You can build and verify the
 html documentation locally by install ``sphinx`` and the other
 documentation build dependencies by running the following from the
-Granta MI Bom Analytics source directory:
+Granta MI BoM Analytics source directory:
 
 First, optionally install ``bomanalytics`` in development mode with:
 
@@ -344,7 +360,7 @@ your browser.
 
 Continuous Integration and Continuous Delivery
 ----------------------------------------------
-The Granta MI Bom Analytics project uses continuous integration
+The Granta MI BoM Analytics project uses continuous integration
 and delivery (CI/CD) to automate the building, testing, and
 deployment tasks.  The CI Pipeline is deployed on both GitHub
 Actions and Azure Pipelines and performs following tasks:
@@ -445,7 +461,7 @@ cached.
    to thank for a new feature.
 
 9. Place your release notes from step 8 in the description within
-   `Bom Analytics Releases <https://github.com/pyansys/grantami-bomanalytics/releases/new>`_
+   `BoM Analytics Releases <https://github.com/pyansys/grantami-bomanalytics/releases/new>`_
 
 
 Patch Release Steps

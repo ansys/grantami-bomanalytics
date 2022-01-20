@@ -29,13 +29,13 @@ if TYPE_CHECKING:
 LogMessage = namedtuple("LogMessage", ["severity", "message"])
 """ A message returned by Granta MI when running the query.
 
-Messages marked with the "error" severity are more likely to produce incorrect results and should be treated with
+Messages marked with the ``error`` severity are more likely to produce incorrect results and should be treated with
 increased caution.
 
 Attributes
 ----------
 severity : str
-    Either "error", "warning", or "information".
+    Either ``error``, ``warning``, or ``information``.
 message : str
     A description of the issue.
 """
@@ -123,8 +123,8 @@ class ResultBaseClass(ABC):
 
         Messages are sorted in order of decreasing severity, and are available in the Service Layer log file.
 
-        Messages are also logged using the Python `logging` module to the "ansys.grantami.bomanalytics" logger. By
-        default, messages with a severity of "warning" or higher are printed on stderr.
+        Messages are also logged using the Python `logging` module to the ``ansys.grantami.bomanalytics`` logger. By
+        default, messages with a severity of ``warning`` or higher are printed on stderr.
 
         Returns
         -------

@@ -130,7 +130,7 @@ class _BaseQueryDataManager(ABC):
         Raises
         ------
         GrantaMIException
-            A message with severity "critical" was returned by the server.
+            A message with severity ``critical`` was returned by the server.
         """
 
         exception_messages = []
@@ -149,7 +149,7 @@ class _BaseQueryDataManager(ABC):
 
     @property
     def messages(self) -> List[models.CommonLogEntry]:
-        """The messages returned by the server when processing all items in `_item_definitions`"""
+        """The messages returned by the server when processing all items in ``_item_definitions``"""
         return self._messages
 
 
@@ -159,7 +159,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
     Parameters
     ----------
     item_type_name
-        The name of the items as defined by the low-level API, e.g. "materials", "parts".
+        The name of the items as defined by the low-level API, e.g. ``materials``, ``parts``.
     batch_size
         The number of items to be included in a single request.
     """
@@ -170,7 +170,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
         self._item_results = []
 
         self.item_type_name = item_type_name
-        """ The name of the item collection as defined by the low-level API, e.g. 'materials', 'parts'. """
+        """ The name of the item collection as defined by the low-level API, e.g. ``materials``, ``parts``. """
 
         self.batch_size: Optional[int] = batch_size
 

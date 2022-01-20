@@ -19,13 +19,13 @@ Cloning the Source Repository
 
 You can clone the source repository from `BoM Analytics
 GitHub <https://github.com/pyansys/grantami-bomanalytics>`_
-and install the latest version in development mode by running:
+and install the latest version by running:
 
 .. code::
 
     git clone https://github.com/pyansys/grantami-bomanalytics
     cd grantami-bomanalytics
-    pip install -e .
+    pip install .
 
 
 Questions

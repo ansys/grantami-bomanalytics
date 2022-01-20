@@ -215,8 +215,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [style, unit_tests, integration_tests]
     if: >
-      (github.actor == 'dependabot[bot]' && needs.style.result == 'success' && needs.unit_tests.result == 'success')
-      || needs.integration_tests.result == 'success'
+      ${{ ((github.actor == 'dependabot[bot]') && (needs.style.result == 'success') && (needs.unit_tests.result == 'success'))
+      || (needs.integration_tests.result == 'success')) }}
 
     steps:
       - uses: actions/checkout@v2

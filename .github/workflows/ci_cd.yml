@@ -214,6 +214,7 @@ jobs:
     name: Build Documentation
     runs-on: ubuntu-latest
     needs: integration_tests
+    if: github.actor == 'dependabot[bot]'
 
     steps:
       - uses: actions/checkout@v2
@@ -261,7 +262,8 @@ jobs:
       - name: Install library
         run: pip install .[doc] --find-links ./deps --disable-pip-version-check
 
-      - name: Build HTML
+      - name: Build HTML Documentation (with examples)
+        if: github.actor != 'dependabot[bot]'
         run:
           make -C doc html SPHINXOPTS="-W"
         env:
@@ -270,13 +272,26 @@ jobs:
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-      - name: Build PDF Documentation
+      - name: Build PDF Documentation (with examples)
+        if: github.actor != 'dependabot[bot]'
         run: |
           sudo apt update
           sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
           make -C doc latexpdf
         env:
           BUILD_EXAMPLES: 1
+
+      - name: Build HTML Documentation (skip examples)
+        if: github.actor == 'dependabot[bot]'
+        run:
+          make -C doc html SPHINXOPTS="-W"
+
+      - name: Build PDF Documentation (skip examples)
+        if: github.actor == 'dependabot[bot]'
+        run: |
+          sudo apt update
+          sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
+          make -C doc latexpdf
 
       - name: Upload HTML Documentation
         uses: actions/upload-artifact@v2

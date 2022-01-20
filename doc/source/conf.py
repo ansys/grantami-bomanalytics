@@ -193,7 +193,11 @@ EXAMPLES_DIR_NAME = "examples"
 examples_output_dir = Path(EXAMPLES_DIR_NAME).absolute()
 examples_source_dir = Path("../../" + EXAMPLES_DIR_NAME).absolute()
 EXAMPLE_FLAG = os.getenv("BUILD_EXAMPLES")
-ipython_dir = Path("../../.ipython").absolute()
+
+# If we are building examples, use the included ipython-profile
+if EXAMPLE_FLAG:
+    ipython_dir = Path("../../.ipython").absolute()
+    os.environ["IPYTHONDIR"] = str(ipython_dir)
 
 
 def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
@@ -211,21 +215,21 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
                 jupytext.write(ntbk, file_output_path.with_suffix(".ipynb"))
 
 
-# If we don't have an examples folder, create it by copying notebooks and supporting files
-# If we already have an output directory then don't do anything.
-# Note: Call `make clean` to force a rebuild, which will delete the 'examples' output folder
-# Only include examples if the environment variable is set to True
-# If we are building examples, use the included ipython-profile
-if not examples_output_dir.is_dir() and EXAMPLE_FLAG:
-    _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
-    os.environ["IPYTHONDIR"] = str(ipython_dir)
+# If we already have a source/examples directory then don't do anything.
+# If we don't have an examples folder, we must first create it
+# We don't delete the examples after every build because this triggers nbsphinx to re-run them, which is very expensive
+# Run `make clean` to force a rebuild, which will delete the 'examples' output folder and reset this choice
+if not examples_output_dir.is_dir():
+    # Only include examples if the environment variable is set to something truthy
+    if EXAMPLE_FLAG:
+        _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
 
-# If we are skipping docs, create a placeholder index.rst file to avoid sphinx errors.
-if not EXAMPLE_FLAG:
-    examples_output_dir.mkdir(parents=False, exist_ok=False)
-    example_index = examples_output_dir / Path("index.rst")
-    with open(example_index, "w") as f:
-        f.write("Example Scripts\n===============\n\nExample build skipped")
+    # If we are skipping examples in the docs, create a placeholder index.rst file to avoid sphinx errors.
+    else:
+        examples_output_dir.mkdir(parents=False, exist_ok=False)
+        example_index = examples_output_dir / Path("index.rst")
+        with open(example_index, "w") as f:
+            f.write("Example Scripts\n===============\n\nExample build skipped")
 
 
 nbsphinx_prolog = """

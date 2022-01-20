@@ -45,7 +45,7 @@ SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
 REACH = "REACH - The Candidate List"
 # -
 
-# Next import the queries module and build the query with the references in the previous cell.
+# Next import the `queries` module and build the query with the references in the previous cell.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries

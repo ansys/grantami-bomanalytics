@@ -214,9 +214,15 @@ jobs:
     name: Build Documentation
     runs-on: ubuntu-latest
     if: >
-      ${{ always() && (
-      (contains( github.event.pull_request.labels.*.name, 'dependencies') && needs.style.result == 'success' && needs.unit_tests.result == 'success')
-      || needs.integration_tests.result == 'success') }}
+      always() &&
+      (
+        (
+          contains(github.event.pull_request.labels.*.name, 'dependencies')
+          && needs.style.result == 'success'
+          && needs.unit_tests.result == 'success'
+        )
+        || needs.integration_tests.result == 'success'
+      )
     needs: [style, unit_tests, integration_tests]
 
     steps:

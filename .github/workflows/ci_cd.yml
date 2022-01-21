@@ -216,7 +216,6 @@ jobs:
     if: ${{ always() }}
     needs: [style, unit_tests, integration_tests]
 
-
     steps:
       - uses: actions/checkout@v2
 
@@ -263,8 +262,10 @@ jobs:
       - name: Install library
         run: pip install .[doc] --find-links ./deps --disable-pip-version-check
 
-      - name: Build HTML Documentation (with examples)
-        if: github.actor != 'dependabot[bot]'
+      - name: Echo label state
+        run: echo "build_examples env ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}"
+
+      - name: Build HTML Documentation
         run:
           make -C doc html SPHINXOPTS="-W"
         env:
@@ -273,8 +274,7 @@ jobs:
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-      - name: Build PDF Documentation (with examples)
-        if: github.actor != 'dependabot[bot]'
+      - name: Build PDF Documentation
         run: |
           sudo apt update
           sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy

@@ -262,14 +262,14 @@ jobs:
       - name: Install library
         run: pip install .[doc] --find-links ./deps --disable-pip-version-check
 
-      - name: Echo label state
-        run: echo "build_examples env ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}"
+      - name: Set BUILD_EXAMPLES environment variable
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}
+        run: 1 >> $BUILD_EXAMPLES
 
       - name: Build HTML Documentation
         run:
           make -C doc html SPHINXOPTS="-W"
         env:
-          BUILD_EXAMPLES: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
@@ -279,8 +279,6 @@ jobs:
           sudo apt update
           sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
           make -C doc latexpdf
-        env:
-          BUILD_EXAMPLES: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}
 
       - name: Upload HTML Documentation
         uses: actions/upload-artifact@v2

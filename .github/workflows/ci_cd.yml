@@ -331,7 +331,7 @@ jobs:
           path: ~/html
           
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@4.1.4
+        uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
           repository-name: pyansys/grantami-bomanalytics-docs
           token: ${{ steps.get_workflow_token.outputs.token }}

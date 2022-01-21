@@ -273,7 +273,7 @@ jobs:
 
       - name: Set BUILD_EXAMPLES environment variable
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}
-        run: 1 >> $BUILD_EXAMPLES
+        run: export BUILD_EXAMPLES=1
 
       - name: Build HTML Documentation
         run:

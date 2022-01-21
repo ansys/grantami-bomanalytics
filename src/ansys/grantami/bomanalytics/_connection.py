@@ -248,12 +248,12 @@ class BomAnalyticsClient(ApiClient):
         Raises
         ------
         :class:`~ansys.grantami.bomanalytics.GrantaMIException`
-            [TECHDOCS] If a message is returned with a severity of "critical". Granta MI is running and the BoM
+            If a message is returned with a severity of "critical". Granta MI is running and the BoM
             Analytics Service is available, but it was not able to run the query. Possible causes include a missing
             database or table.
         :class:`~ansys.openapi.common.ApiException`
-            [TECHDOCS] If the Granta MI server was not able to return a response. Possible causes include an internal
-            configuration error, or that the BoM Analytics Service is not installed.
+            If the Granta MI server was not able to return a response. Possible causes include an internal
+            configuration error, or the BoM Analytics Service not being installed.
         """
 
         logger.info(f"Running query {query} with connection {self}")

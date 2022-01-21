@@ -2,6 +2,6 @@
 
 
 class GrantaMIException(RuntimeError):
-    """[TECHDOCS] A critical error occurred when processing a BoM Analytics query."""
+    """A critical error occurred when processing a BoM Analytics query."""
 
     pass

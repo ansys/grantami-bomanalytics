@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # [TECHDOCS]Performing a Part Compliance Query
+# # Performing a Part Compliance Query
 
 # A Part Compliance Query determines whether one or more parts are compliant with the specified indicators. This is
 # done by first finding all substances directly or indirectly associated with that part, determining compliance for
@@ -21,7 +21,7 @@
 
 # ## Connecting to Granta MI
 
-# Import the `Connection` class and create the connection. See the Getting Started example for more detail.
+# Import the `Connection` class and create the connection. See the Getting Started example for more details.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -32,17 +32,17 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 
 # ## Defining an Indicator
 
-# In contrast to an ImpactedSubstances query, a Compliance query determines compliance against 'Indicators' as opposed
-# to directly against legislations.
+# A Compliance query determines compliance against 'Indicators', as opposed to an Impacted Substances query which
+# determines compliance directly against legislations.
 #
-# There are two types of Indicator, the differences between the two are described elsewhere in the documentation. The
-# differences are in the internal implementation, and the interface presented here applies to both `WatchListIndicator`
-# objects and `RohsIndicator` objects. However, the generic behavior is such that if a substance is impacted by a
-# legislation that is associated with an indicator in a quantity above a threshold, the substance is non-compliant with
-# that indicator. This non-compliance then rolls up the BoM hierarchy to any other items that directly or indirectly
-# include that substance.
+# There are two types of Indicator object (`WatchListIndicator` and `RohsIndicator`), and the syntax presented below applies to both. 
+# The differences in the internal implementation of the two objects are described in the API documentation.
+#
+# Generally speaking, if a substance is impacted by a legislation associated with an indicator, and in a quantity
+# above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to
+# any other items in the BoM hierarchy that directly or indirectly include that substance.
 
-# The cell below creates two Indicators.
+# First, create two `WatchListIndicator` objects.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import indicators
@@ -62,7 +62,7 @@ sin = indicators.WatchListIndicator(
 # ## Building and Running the Query
 # -
 
-# Next define the query itself. Parts can be referenced by any typical Granta MI record reference or by Part Number. The
+# Next define the query itself. Parts can be referenced by Granta MI record reference or Part Number. The
 # table containing the Part records is not required, since this is enforced by the Restricted Substances database
 # schema.
 
@@ -91,21 +91,22 @@ part_result
 
 # + [markdown] tags=[]
 # `compliance_by_part_and_indicator` contains a list of `PartWithComplianceResult` objects that contain the
-# reference to the part record and the compliance status for each indicator. However, in Granta MI Parts can
-# link to the following record types:
+# reference to the part record and the compliance status for each indicator.
+#
+# In Granta MI, Parts can link to the following record types:
 #
 # - Parts
 # - Specifications (which can link to Specifications, Materials, Substances, and Coatings)
 # - Materials (which can link to Substances)
 # - Substances
 #
-# Since compliance is determined based on the compliance of the items the record is linked to, the corresponding
+# Since compliance of a Part is determined based on the compliance of the items the record is linked to, the corresponding
 # `ResultWithCompliance` objects are included in the parent `PartWithComplianceResult`, each with their own
 # compliance status.
 # -
 
-# Since we specified two part records, we have received two result objects back. For this example we are only interested
-# in the first one for the wing flap assembly.
+# Since we specified two part records, we have received two result objects back. In this example, we will only look in more detail
+# at results for the wing flap assembly.
 
 # + tags=[]
 wing = part_result.compliance_by_part_and_indicator[0]
@@ -200,8 +201,8 @@ def print_substances_with_svhcs(substances, depth=0):
 recursively_print_parts_with_svhcs(wing.parts)
 # -
 
-# We have now identified the coating that is causing non-compliance. There is only one coating in the assembly that is
-# non-compliant, that appears in the 4 non-compliant sub-components. Further, the coating only contains one
+# We have now identified a coating that is causing non-compliance. There is a single coating in the assembly that is
+# non-compliant, but it appears in 4 non-compliant sub-components. The coating also only contains one
 # non-compliant substance.
 
 # ## compliance_by_indicator

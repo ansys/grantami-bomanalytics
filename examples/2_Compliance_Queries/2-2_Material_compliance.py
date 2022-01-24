@@ -21,7 +21,8 @@
 
 # ## Connecting to Granta MI
 
-# Import the `Connection` class and create the connection. See the Getting Started example for more details.
+# Import the `Connection` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb) example
+# for more details.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -122,9 +123,9 @@ for sub in pa_66_svhcs:
     print(f"Substance record history identity: {sub.record_history_identity}")
 # -
 
-# Note that children of items passed into the compliance query are returned with record references based
-# on record history identities only. The Granta MI Scripting Toolkit for Python can be used to translate
-# record history identities into CAS Numbers if required.
+# Note that children of items passed into the compliance query are returned with record references based on record
+# history identities only. The Granta MI Scripting Toolkit for Python can be used to translate record history identities
+# into CAS Numbers if required.
 
 # Next, look at the state of the zinc alloy record.
 
@@ -156,8 +157,8 @@ ss_316h = mat_result.compliance_by_material_and_indicator[2]
 print(f"316H stainless steel: {ss_316h.indicators['SVHC'].flag.name}")
 # -
 
-# The stainless steel record has the status 'WatchListCompliant', which means there are no impacted substances in
-# the material.
+# The stainless steel record has the status 'WatchListCompliant', which means there are no impacted substances in the
+# material.
 
 # We can print these substances using the 'WatchListNotImpacted' flag as the threshold.
 

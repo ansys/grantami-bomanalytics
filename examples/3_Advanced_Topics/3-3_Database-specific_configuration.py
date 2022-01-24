@@ -21,7 +21,7 @@
 # - If the database key or table names have been modified from their default values, these must be set on the
 #   `Connection` object
 # - If the number of linked records is very large, the batch sizes should be changed for each query (see
-#   :ref:`ref_grantami_bomanalytics_batching` for more details)
+#   [Batching Requests](../../api/batching.rst) for more details)
 
 # ## Specifying a Custom Database Key or Table Name
 

@@ -19,7 +19,8 @@
 
 # This example describes how to connect to Granta MI and perform a basic Impacted Substances query. It also demonstrates
 # how to view logging messages returned by the Granta MI server. For more details about the results of the
-# queries, see the examples in sections 1 and 2.
+# queries, see the examples in the [Impacted Substances](1_Impacted_Substances_Queries/index.rst) and
+# [Compliance](2_Compliance_Queries/index.rst) sections.
 
 # ## Connect to Granta MI
 
@@ -53,7 +54,7 @@ cxn
 # -
 
 # OIDC and anonymous authentication methods are also available, but are beyond the scope of this example. See
-# the documentation for the `ansys-openapi-common` package for more details.
+# the [ansys-openapi-common](https://github.com/pyansys/openapi-common) package documentation for more details.
 
 # ## Construct a Query
 

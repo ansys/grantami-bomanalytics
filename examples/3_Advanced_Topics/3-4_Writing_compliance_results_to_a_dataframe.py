@@ -25,8 +25,8 @@
 # ## Perform a Compliance Query
 
 # The first step is to perform a compliance query on an assembly that will result in a deeply
-# nested structure. The code here is presented without explanation - see other examples for more
-# details.
+# nested structure. The code here is presented without explanation - see the
+# [Part Compliance Query](../2_Compliance_Queries/2-3_Part_compliance.ipynb) example for more details.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection, indicators, queries

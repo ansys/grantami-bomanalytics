@@ -26,7 +26,8 @@
 
 # ## Connecting to Granta MI
 
-# Import the `Connection` class and create the connection. See the Getting Started example for more details.
+# Import the `Connection` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb) example
+# for more details.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -82,7 +83,7 @@ part_result
 
 # ## impacted_substances_by_part
 
-# This property is structured first as a list of `partWithImpactedSubstancesResult` objects, each of which contains
+# This property is structured first as a list of `PartWithImpactedSubstancesResult` objects, each of which contains
 # a dictionary of lists of `ImpactedSubstance` objects keyed by legislation, or a single flat list of all
 # substances.
 

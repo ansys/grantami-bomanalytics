@@ -32,8 +32,8 @@
 
 # ## Load the External Data
 
-# First load the JSON file and use the `json` module
-# to convert the text into a hierarchical structure of `dict` and `list` objects.
+# First load the JSON file and use the `json` module to convert the text into a hierarchical structure of `dict` and
+# `list` objects.
 
 # + tags=[]
 import json
@@ -96,9 +96,9 @@ mat_results
 # The results above describe the compliance status for each material, but more work is needed to
 # provide the compliance status for all the components in the original JSON.
 
-# When a component contains only one material, the result can simply be copied over.
-# In the general case, moving from material compliance to component compliance means taking
-# the worst compliance result across all the constituent materials.
+# When a component contains only one material, the result can simply be copied over.  In the general case, moving from
+# material compliance to component compliance means taking the worst compliance result across all the constituent
+# materials.
 
 # To do this, first create a dictionary that maps a material ID to the indicator result returned by the query.
 

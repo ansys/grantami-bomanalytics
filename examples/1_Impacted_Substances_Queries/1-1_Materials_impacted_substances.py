@@ -22,8 +22,8 @@
 
 # ## Connecting to Granta MI
 
-# Import the `Connection` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb) example
-# for more detail.
+# Import the ``Connection`` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb)
+# example for more detail.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -46,7 +46,7 @@ SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
 REACH = "REACH - The Candidate List"
 # -
 
-# Next import the `queries` module and build the query with the references in the previous cell.
+# Next import the ``queries`` module and build the query with the references in the previous cell.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
@@ -58,22 +58,22 @@ mat_query = (
 )
 # -
 
-# Finally, run the query. Passing a `MaterialImpactedSubstancesQuery` object to the `Connection.run()` method returns a
-# `MaterialImpactedSubstancesQueryResult` object.
+# Finally, run the query. Passing a ````MaterialImpactedSubstancesQuery`` object to the ``Connection.run()`` method
+# returns a ``MaterialImpactedSubstancesQueryResult`` object.
 
 # + tags=[]
 results = cxn.run(mat_query)
 results
 # -
 
-# A `MaterialImpactedSubstancesQueryResult` object contains three properties:
-# `impacted_substances_by_material`, `impacted_substances_by_legislation`, and `impacted_substances`. They provide
+# A ``MaterialImpactedSubstancesQueryResult`` object contains three properties:
+# ``impacted_substances_by_material``, ``impacted_substances_by_legislation``, and ``impacted_substances``. They provide
 # different views of the impacted substances at different levels of granularity.
 
 # ## impacted_substances_by_material
 
-# This property is structured first as a list of `materialWithImpactedSubstancesResult` objects, each of which contains
-# a dictionary of lists of `ImpactedSubstance` objects keyed by legislation, or a single flat list of all
+# This property is structured first as a list of ``materialWithImpactedSubstancesResult`` objects, each of which
+# contains a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation, or a single flat list of all
 # substances.
 
 # First, we can simplify the structure somewhat because we are only using Material IDs. The cell below creates a
@@ -86,7 +86,7 @@ for material in results.impacted_substances_by_material:
     substances_by_material[material.material_id] = substances
 # -
 
-# Then use the `tabulate` package to print a table of the substances and their quantities for the polycarbonate
+# Then use the ``tabulate`` package to print a table of the substances and their quantities for the polycarbonate
 # material only.
 
 # + tags=[]
@@ -104,7 +104,7 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # This property merges the results across all materials, resulting in a single dictionary of legislations that contain
 # all impacted substances for all materials.
 
-# Again we use the `tabulate` package to print a table of substances, but this time we are including the substances in
+# Again we use the ``tabulate`` package to print a table of substances, but this time we are including the substances in
 # all materials, but again limited to the SIN List only.
 
 # + tags=[]
@@ -120,9 +120,9 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # This property reduces the granularity further to produce a single flattened list of substances across all legislations
 # for all materials.
 
-# The cell below uses the `tabulate` package to print a table of substances. Because we are using the
-# `impacted_substances` property, we only have one list of `ImpactedSubstance` objects which covers both legislations
-# and both materials.
+# The cell below uses the ``tabulate`` package to print a table of substances. Because we are using the
+# ``impacted_substances`` property, we only have one list of ``ImpactedSubstance`` objects which covers both
+# legislations and both materials.
 
 # + tags=[]
 material_substances_all = results.impacted_substances
@@ -130,3 +130,4 @@ rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
     for substance in material_substances_all]
 print(f"Impacted substances for all materials and legislations (10/{len(rows)})")
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
+# -

@@ -20,11 +20,11 @@
 # You may have to deal with Bills of Materials or other data structures stored in third-party systems. This
 # example shows a scenario where compliance needs to be determined for a BoM-type structure in a JSON file,
 # with the result added to the input file.
- 
-# Although it is unlikely that the data structures and processing presented here will be an exact match for your 
-# requirements, this example is intended to demonstrate the principles behind using the BoM Analytics API within 
-# your existing processes. It shows how a BoM-like data structure can be loaded from a neutral format and used as 
-# a starting point for compliance analysis. The approach is applicable to data in other formats, or data loaded from 
+
+# Although it is unlikely that the data structures and processing presented here will be an exact match for your
+# requirements, this example is intended to demonstrate the principles behind using the BoM Analytics API within
+# your existing processes. It shows how a BoM-like data structure can be loaded from a neutral format and used as
+# a starting point for compliance analysis. The approach is applicable to data in other formats, or data loaded from
 # other software platform APIs.
 
 # The external data source used in this example can be downloaded
@@ -56,9 +56,10 @@ components = data["components"]
 # simplify the compliance query by get the compliance for the unique set of materials in the JSON file, and perform some
 # data manipulation of the results.
 
-# Since material compliance is not dependent on which component it is used in, and part compliance depends only on the 
-# worst compliance status of its constituent materials, we can simplify the query by running it against the set of unique 
-# materials in the JSON file. We can then rebuild the data structure from these results to view the compliance by component.
+# Since material compliance is not dependent on which component it is used in, and part compliance depends only on the
+# worst compliance status of its constituent materials, we can simplify the query by running it against the set of
+# unique materials in the JSON file. We can then rebuild the data structure from these results to view the compliance by
+# component.
 
 # First, use a set comprehension to get the unique materials, which we can then cast into a list.
 
@@ -106,8 +107,9 @@ material_lookup = {mat.material_id: mat.indicators["SVHC"]
                    for mat in mat_results.compliance_by_material_and_indicator}
 # -
 
-# Next, define a function that takes a list of material IDs and returns the worst compliance status associated with the materials in the list.
-# 
+# Next, define a function that takes a list of material IDs and returns the worst compliance status associated with the
+# materials in the list.
+#
 # We can use the built-in `max()` function to do this, since `WatchListIndicator` objects can be compared with > and <
 # operators. The convention is that a worse result is 'greater than' a better result.
 
@@ -153,8 +155,8 @@ results
 
 # ## Write the Output
 
-# Once we have our final result, we can take our result `dict` and use it to extend the original JSON data structure, with
-# approval requirements added in.
+# Once we have our final result, we can take our result `dict` and use it to extend the original JSON data structure,
+# with approval requirements added in.
 
 # +
 components_with_result = []

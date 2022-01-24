@@ -20,14 +20,14 @@
 #
 # - If the database key or table names have been modified from their default values, these must be set on the
 #   `Connection` object
-# - If the number of linked records is very large, the batch sizes should be changed for each query (see the API documentation for more
-#   details)
+# - If the number of linked records is very large, the batch sizes should be changed for each query (see the API
+#   documentation for more details)
 
 # ## Specifying a Custom Database Key or Table Name
 
-# The default database key, `MI_Restricted_Substances`, is used if no database key is specified. To specify an alternative,
-# use the `Connection.set_database_details()` method. This database key will be used for all queries made with this
-# `Connection` object.
+# The default database key, `MI_Restricted_Substances`, is used if no database key is specified. To specify an
+# alternative, use the `Connection.set_database_details()` method. This database key will be used for all queries made
+# with this `Connection` object.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection

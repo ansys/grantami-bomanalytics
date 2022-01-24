@@ -35,8 +35,9 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # A Compliance query determines compliance against 'Indicators', as opposed to an Impacted Substances query which
 # determines compliance directly against legislations.
 #
-# There are two types of Indicator object (`WatchListIndicator` and `RohsIndicator`), and the syntax presented below applies to both. 
-# The differences in the internal implementation of the two objects are described in the API documentation.
+# There are two types of Indicator object (`WatchListIndicator` and `RohsIndicator`), and the syntax presented below
+# applies to both. The differences in the internal implementation of the two objects are described in the API
+# documentation.
 #
 # Generally speaking, if a substance is impacted by a legislation associated with an indicator, and in a quantity
 # above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to
@@ -90,9 +91,9 @@ mat_result
 
 # + [markdown] tags=[]
 # `compliance_by_material_and_indicator` contains a list of `MaterialWithComplianceResult` objects that contain the
-# reference to the material record and the compliance status for each indicator. `SubstanceWithComplianceResult` objects are
-# also included, since compliance was determined based on the substances associated with the material object. These are also
-# accompanied by their compliance status for each indicator.
+# reference to the material record and the compliance status for each indicator. `SubstanceWithComplianceResult` objects
+# are also included, since compliance was determined based on the substances associated with the material object. These
+# are also accompanied by their compliance status for each indicator.
 # -
 
 # Initially, we can print just the results for the reinforced PA66 record.
@@ -122,7 +123,7 @@ for sub in pa_66_svhcs:
 # -
 
 # Note that children of items passed into the compliance query are returned with record references based
-# on record history identities only. The Granta MI Scripting Toolkit for Python can be used to translate 
+# on record history identities only. The Granta MI Scripting Toolkit for Python can be used to translate
 # record history identities into CAS Numbers if required.
 
 # Next, look at the state of the zinc alloy record.

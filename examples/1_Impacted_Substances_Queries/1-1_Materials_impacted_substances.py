@@ -15,8 +15,8 @@
 
 # # Performing a Material Impacted Substances Query
 
-# A Material Impacted Substances Query is used to identify the substances associated with a material that are impacted by
-# one or more defined legislations.
+# A Material Impacted Substances Query is used to identify the substances associated with a material that are impacted
+# by one or more defined legislations.
 
 # This example shows how to perform an Impacted Substance query on material records, and how to process the results.
 

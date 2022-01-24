@@ -142,7 +142,7 @@ compliance_result
 # -
 
 # The `BomComplianceQueryResult` object returned after running the Compliance query contains a list of
-# `PartWithComplianceResult` objects, the behavior of which has been covered in a previous example. The cell below 
+# `PartWithComplianceResult` objects, the behavior of which has been covered in a previous example. The cell below
 # prints the compliance status of the BoM.
 
 # + tags=[]

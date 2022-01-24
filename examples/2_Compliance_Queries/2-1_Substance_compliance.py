@@ -16,7 +16,7 @@
 # # Performing a Substance Compliance Query
 
 # A Substance Compliance Query determines whether one or more substances are compliant with the specified indicators.
-# This example checks several materials for substances included on two watch lists ("REACH - The Candidate List", and 
+# This example checks several materials for substances included on two watch lists ("REACH - The Candidate List", and
 # "The SIN List 2.1"), specifying substance amounts and thresholds for compliance.
 
 # ## Connecting to Granta MI
@@ -35,8 +35,9 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # A Compliance query determines compliance against 'Indicators', as opposed to an Impacted Substances query which
 # determines compliance directly against legislations.
 #
-# There are two types of Indicator object (`WatchListIndicator` and `RohsIndicator`), and the syntax presented below applies to both. 
-# The differences in the internal implementation of the two objects are described in the API documentation.
+# There are two types of Indicator object (`WatchListIndicator` and `RohsIndicator`), and the syntax presented below
+# applies to both. The differences in the internal implementation of the two objects are described in the API
+# documentation.
 #
 # Generally speaking, if a substance is impacted by a legislation associated with an indicator, and in a quantity
 # above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to
@@ -138,6 +139,6 @@ else:
     print("No SVHCs, or SVHCs are present in a quantity < 0.1%")
 # -
 
-# Note that this property does not tell us which substance is responsible for the non-compliance. This would require performing a
-# more granular analysis as shown above, or importing the material into Granta MI and running a compliance query on that
-# material record.
+# Note that this property does not tell us which substance is responsible for the non-compliance. This would require
+# performing a more granular analysis as shown above, or importing the material into Granta MI and running a compliance
+# query on that material record.

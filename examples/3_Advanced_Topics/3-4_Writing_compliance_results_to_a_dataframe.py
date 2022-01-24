@@ -56,8 +56,8 @@ for part in part_result.compliance_by_part_and_indicator[0].parts:
         f"Compliance: {part.indicators['SVHC'].flag}"
     )
 
-# However, this structure makes it difficult to compare items at different levels. To do that, we want to flatten the data into a
-# tabular structure.
+# However, this structure makes it difficult to compare items at different levels. To do that, we want to flatten the
+# data into a tabular structure.
 
 # ## Flatten the Hierarchical Data Structure
 
@@ -87,7 +87,8 @@ def create_dict(item, item_type, level, parent_id):
 
 # -
 
-# To help with the flattening process, we will also define a schema, which describes which child item types each item type can contain.
+# To help with the flattening process, we will also define a schema, which describes which child item types each item
+# type can contain.
 
 
 schema = {

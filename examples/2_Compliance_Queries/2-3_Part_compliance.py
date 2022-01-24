@@ -35,8 +35,9 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # A Compliance query determines compliance against 'Indicators', as opposed to an Impacted Substances query which
 # determines compliance directly against legislations.
 #
-# There are two types of Indicator object (`WatchListIndicator` and `RohsIndicator`), and the syntax presented below applies to both. 
-# The differences in the internal implementation of the two objects are described in the API documentation.
+# There are two types of Indicator object (`WatchListIndicator` and `RohsIndicator`), and the syntax presented below
+# applies to both. The differences in the internal implementation of the two objects are described in the API
+# documentation.
 #
 # Generally speaking, if a substance is impacted by a legislation associated with an indicator, and in a quantity
 # above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to
@@ -100,13 +101,13 @@ part_result
 # - Materials (which can link to Substances)
 # - Substances
 #
-# Since compliance of a Part is determined based on the compliance of the items the record is linked to, the corresponding
-# `ResultWithCompliance` objects are included in the parent `PartWithComplianceResult`, each with their own
-# compliance status.
+# Since compliance of a Part is determined based on the compliance of the items the record is linked to, the
+# corresponding `ResultWithCompliance` objects are included in the parent `PartWithComplianceResult`, each with their
+# own compliance status.
 # -
 
-# Since we specified two part records, we have received two result objects back. In this example, we will only look in more detail
-# at results for the wing flap assembly.
+# Since we specified two part records, we have received two result objects back. In this example, we will only look in
+# more detail at results for the wing flap assembly.
 
 # + tags=[]
 wing = part_result.compliance_by_part_and_indicator[0]

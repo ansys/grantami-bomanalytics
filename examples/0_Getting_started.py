@@ -23,7 +23,7 @@
 
 # ## Connect to Granta MI
 
-# First, use the `ansys.grantami.bomanalytics.Connection` class to connect to the Granta MI server. The `Connection` 
+# First, use the `ansys.grantami.bomanalytics.Connection` class to connect to the Granta MI server. The `Connection`
 # class uses a fluent interface to build the connection, which is always invoked in the following sequence:
 #
 # 1. Specify your Granta MI Service Layer URL, as a parameter to the `Connection` class.
@@ -79,7 +79,7 @@ query
 # -
 
 # Note that because the `MaterialImpactedSubstancesQuery` object has a fluent interface, we receive the same object back
-# that we started with, but with the Material IDs added. 
+# that we started with, but with the Material IDs added.
 #
 # Finally, add the legislation to the query.
 
@@ -139,10 +139,11 @@ result.impacted_substances
 result.messages
 # -
 
-# These messages are also available via the standard `logging` module using the 'ansys.grantami.bomanalytics' logger. 
-# Alternatively, you can omit the logger name to get the root logger, which will include messages logged by all packages.
+# These messages are also available via the standard `logging` module using the 'ansys.grantami.bomanalytics' logger.
+# Alternatively, you can omit the logger name to get the root logger, which will include messages logged by all
+# packages.
 #
-# The code below creates a log handler that outputs all 'ansys.grantami.bomanalytics' logger messages with severity INFO 
+# The code below creates a log handler that outputs all 'ansys.grantami.bomanalytics' logger messages with severity INFO
 # and above to either the terminal or the notebook.
 
 # + tags=[]

@@ -3,7 +3,7 @@
 Advanced Examples
 =================
 
-[TECHDOCS] These scripts demonstrate various advanced functionalities of the BoM Analytics package.
+These scripts demonstrate various advanced functionalities of the BoM Analytics package.
 
 .. toctree::
    :maxdepth: 1

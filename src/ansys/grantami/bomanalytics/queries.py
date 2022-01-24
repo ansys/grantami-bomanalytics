@@ -1578,9 +1578,6 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     All BoM-based queries only operate on a single BoM. As a result, the `.with_batch_size()` method is not
     implemented for BoM-based queries.
 
-    All methods used to add the BoM and legislations to this query return the query itself, so they can be
-    chained together as required. Use the `.execute()` method once the query is fully constructed to return the result.
-
     Once the query is fully constructed, use the `cxn.`
     :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.BomImpactedSubstancesQueryResult`. See the example scripts for

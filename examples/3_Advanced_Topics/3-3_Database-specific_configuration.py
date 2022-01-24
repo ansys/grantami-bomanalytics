@@ -20,8 +20,8 @@
 #
 # - If the database key or table names have been modified from their default values, these must be set on the
 #   `Connection` object
-# - If the number of linked records is very large, the batch sizes should be changed for each query (see the API
-#   documentation for more details)
+# - If the number of linked records is very large, the batch sizes should be changed for each query (see
+#   :ref:`ref_grantami_bomanalytics_batching` for more details)
 
 # ## Specifying a Custom Database Key or Table Name
 
@@ -51,14 +51,15 @@ cxn
 # to perform the query. Default batch sizes have been chosen based on typical tabular attribute sizes, but
 # these may need to be changed in some situations (see the relevant page in the API documentation for examples).
 
-# To see the default batch size, use the `batch_size` property on the query.
+# The batch size is included in the query `__repr__`. The cell below shows a `SpecificationComplianceQuery` object
+# with the default batch size.
 
 from ansys.grantami.bomanalytics import queries
 
 spec_query = queries.SpecificationComplianceQuery()
 spec_query
 
-# You can also manually set the batch size by doing the following:
+# You can manually set the batch size by doing the following:
 
 # + tags=[]
 spec_query = spec_query.with_batch_size(5)

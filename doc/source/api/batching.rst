@@ -22,8 +22,8 @@ hierarchies you may need to reduce this number further.
 
 Very simple Part and Specification hierarchies
 ----------------------------------------------
-If Part and Specification structures are very simple, for example if they have a similar complexity to materials (i.e. they directly
-reference substances, or reference a small number of materials), then the batch size can be increased.
+If Part and Specification structures are very simple, for example if they have a similar complexity to materials (i.e.
+they directly reference substances, or reference a small number of materials), then the batch size can be increased.
 
 Large numbers of Indicators or Legislations
 -------------------------------------------

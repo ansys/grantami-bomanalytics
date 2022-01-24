@@ -101,7 +101,7 @@ schema = {
 
 
 # The function itself performs the flattening via a stack-based approach, where the children of the item currently
-# being processed are iteratively added to the `items_to_process` stack. Since this stack is being both moderated and
+# being processed are iteratively added to the `items_to_process` stack. Since this stack is being both modified and
 # iterated over, we must use a `while` loop and `.pop()` statement instead of a `for` loop.
 
 # The stack uses a special type of collection called a `deque`, which is similar to a `list` but is optimized for

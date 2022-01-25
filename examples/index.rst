@@ -3,7 +3,7 @@
 Example Scripts
 ===============
 
-The following example scripts demonstrate key aspects of the BoM Analytics package. The zeroth section shows 
+The following example scripts demonstrate key aspects of the BoM Analytics package. The Getting Started example shows 
 how to connect to Granta MI and view logging messages returned by the Granta MI server.
 The first and second sections cover the different types of queries. The third section covers more advanced functionality, 
 including how to make use of other Python structures such as Pandas DataFrames.

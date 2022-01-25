@@ -93,7 +93,7 @@ part_result
 # ## compliance_by_part_and_indicator
 
 # + [markdown] tags=[]
-# ``compliance_by_part_and_indicator`` contains a list of ``PartWithComplianceResult`` objects that contain the
+# ``compliance_by_part_and_indicator`` contains a list of ``PartWithComplianceResult`` objects with the
 # reference to the part record and the compliance status for each indicator.
 #
 # In Granta MI, Parts can link to the following record types:
@@ -103,7 +103,7 @@ part_result
 # - Materials (which can link to Substances)
 # - Substances
 #
-# Since compliance of a Part is determined based on the compliance of the items the record is linked to, the
+# Because compliance of a part is determined based on the compliance of the items that the record is linked to, the
 # corresponding ``ResultWithCompliance`` objects are included in the parent ``PartWithComplianceResult``, each with
 # their own compliance status.
 # -

@@ -93,8 +93,8 @@ mat_result
 
 # + [markdown] tags=[]
 # ``compliance_by_material_and_indicator`` contains a list of ``MaterialWithComplianceResult`` objects that contain the
-# reference to the material record and the compliance status for each indicator. ``SubstanceWithComplianceResult``
-# objects are also included, since compliance was determined based on the substances associated with the material
+# reference to the material record and the compliance status for each indicator. The ``SubstanceWithComplianceResult``
+# objects are also included because compliance was determined based on the substances associated with the material
 # object. These are also accompanied by their compliance status for each indicator.
 # -
 
@@ -109,7 +109,7 @@ print(f"PA66 (60% glass fiber): {pa_66.indicators['SVHC'].flag.name}")
 # compliant with the indicator, and therefore contains SVHCs above the 0.1% threshold.
 
 # To understand which substances have caused this status, we can print the substances that are not compliant with the
-# legislation. The possible states of the indicator are available on the ``Indicator.available_flags`` attribute, and
+# legislation. The possible states of the indicator are available on the ``Indicator.available_flags`` attribute and
 # can be compared using standard Python operators.
 #
 # For substances, the critical threshold is the state 'WatchListAboveThreshold'.

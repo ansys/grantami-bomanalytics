@@ -99,7 +99,7 @@ sub_result
 # example, we will only examine the SVHC indicator.
 # -
 
-# The possible states of the indicator are available on the ``Indicator.available_flags`` attribute, and can be compared
+# The possible states of the indicator are available on the ``Indicator.available_flags`` attribute and can be compared
 # using standard Python operators.
 
 # + tags=[]

@@ -110,7 +110,7 @@ material_lookup = {mat.material_id: mat.indicators["SVHC"]
 # Next, define a function that takes a list of material IDs and returns the worst compliance status associated with the
 # materials in the list.
 #
-# We can use the built-in ``max()`` function to do this, since ``WatchListIndicator`` objects can be compared with > and
+# We can use the built-in ``max()`` function to do this, because ``WatchListIndicator`` objects can be compared with > and
 # < operators. The convention is that a worse result is 'greater than' a better result.
 
 
@@ -122,7 +122,7 @@ def rollup_results(material_ids) -> str:
 # -
 
 
-# Now call this function for each component in a ``dict`` comprehension, giving us a mapping between part number
+# Now call this function for each component in a ``dict`` comprehension to obtain a mapping between part number
 # and compliance status.
 
 # + tags=[]

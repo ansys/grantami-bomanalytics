@@ -25,8 +25,8 @@
 # ## Perform a Compliance Query
 
 # The first step is to perform a compliance query on an assembly that will result in a deeply
-# nested structure. The code here is presented without explanation - see the
-# [Part Compliance Query](../2_Compliance_Queries/2-3_Part_compliance.ipynb) example for more details.
+# nested structure. The code here is presented without explanation. For more information, see the
+# the [Part Compliance Query](../2_Compliance_Queries/2-3_Part_compliance.ipynb) example.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection, indicators, queries
@@ -47,7 +47,7 @@ part_result = cxn.run(part_query)
 # -
 
 # The ``part_result`` object contains the compliance result for every sub-item. This is ideal for understanding
-# compliance at a certain 'level' of the structure, e.g. we can display the compliance for each item directly
+# compliance at a certain 'level' of the structure, For example, we can display the compliance for each item directly
 # under the root part.
 
 # + tags=[]
@@ -65,10 +65,10 @@ for part in part_result.compliance_by_part_and_indicator[0].parts:
 
 # We will flatten the data into a ``list`` of ``dict`` objects, where each ``dict`` represents an item in the
 # hierarchy, and each value in the ``dict`` represents a property of that item. This structure can then
-# be used either directly, or to construct a ``DataFrame``.
+# be used either directly or used to construct a ``DataFrame``.
 
 # First, define a helper function to transform a ``ComplianceQueryResult`` object into a ``dict``. In addition to
-# storing properties that are intrinsic to the item (e.g. the ID, the type, and the SVHC result), we also want to store
+# storing properties that are intrinsic to the item (such as the ID, type, and SVHC result), we want to store
 # structural information, such as the level of the item and the ID of its parent.
 
 
@@ -156,7 +156,7 @@ def flatten_bom(root_part):
 # -
 
 
-# Finally, call the function above against the results from the compliance query, and use the list to create a
+# Finally, call the function above against the results from the compliance query and use the list to create a
 # ``DataFrame``.
 
 # + tags=[]
@@ -170,7 +170,7 @@ df_full.head()
 
 # ## Post-processing the DataFrame
 
-# Now we have the data in a ``DataFrame``, we can perform operations across all levels of the structure more easily.
+# Now that we have the data in a ``DataFrame``, we can perform operations across all levels of the structure more easily.
 # For example, we can delete all rows that are less than the 'Above Threshold' state, retaining only rows that are
 # non-compliant. (Note that this reduces the number of rows significantly.)
 

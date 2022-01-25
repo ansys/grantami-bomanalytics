@@ -73,7 +73,7 @@ results
 # ## impacted_substances_by_material
 
 # This property is structured first as a list of ``materialWithImpactedSubstancesResult`` objects, each of which
-# contains a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation, or a single flat list of all
+# contains a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation or a single flat list of all
 # substances.
 
 # First, we can simplify the structure somewhat because we are only using Material IDs. The cell below creates a

@@ -131,7 +131,7 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # and for all parts.
 
 # Use the ``tabulate`` package to print a third table of substances. Because we are using the
-# ``impacted_substances`` property, we only have one list of ``ImpactedSubstance`` objects which covers both
+# ``impacted_substances`` property, we only have one list of ``ImpactedSubstance`` objects, which covers both
 # legislations and both the parts specified above.
 
 # + tags=[]

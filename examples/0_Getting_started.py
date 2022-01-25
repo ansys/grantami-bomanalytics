@@ -17,7 +17,7 @@
 
 # ## Introduction
 
-# This example describes how to connect to Granta MI and perform a basic Impacted Substances query. It also demonstrates
+# This example describes how to connect to Granta MI and perform a basic query for impacted substances. It also demonstrates
 # how to view logging messages returned by the Granta MI server. For more details about the results of the
 # queries, see the examples in the [Impacted Substances](1_Impacted_Substances_Queries/index.rst) and
 # [Compliance](2_Compliance_Queries/index.rst) sections.

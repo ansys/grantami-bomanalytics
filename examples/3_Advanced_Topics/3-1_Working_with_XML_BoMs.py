@@ -103,8 +103,8 @@ impacted_substances_result
 # -
 
 # The ``BomImpactedSubstancesQueryResult`` object returned after running the query for impacted substances now behaves
-# similarly to any other Impacted Substances result object. For example, we can print all substances impacted by the
-# legislation using an approach from a previous example.
+# similarly to the result object for any other query for impacted substances. For example, we can print all substances
+# impacted by the legislation using an approach from a previous example.
 
 # + tags=[]
 from tabulate import tabulate

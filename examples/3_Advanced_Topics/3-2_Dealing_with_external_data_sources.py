@@ -56,7 +56,7 @@ components = data["components"]
 # simplify the compliance query by get the compliance for the unique set of materials in the JSON file, and perform some
 # data manipulation of the results.
 
-# Since material compliance is not dependent on which component it is used in, and part compliance depends only on the
+# Since the compliance status of a material does not depend on which component it is used in, and part compliance depends only on the
 # worst compliance status of its constituent materials, we can simplify the query by running it against the set of
 # unique materials in the JSON file. We can then rebuild the data structure from these results to view the compliance by
 # component.

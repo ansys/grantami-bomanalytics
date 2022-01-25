@@ -17,8 +17,8 @@
 
 # ## Introduction
 
-# This example describes how to connect to Granta MI and perform a basic query for impacted substances. It also demonstrates
-# how to view logging messages returned by the Granta MI server. For more details about the results of the
+# This example describes how to connect to Granta MI and perform a basic query for impacted substances. It also
+# demonstrates how to view logging messages returned by the Granta MI server. For more details about the results of the
 # queries, see the examples in the [Impacted Substances](1_Impacted_Substances_Queries/index.rst) and
 # [Compliance](2_Compliance_Queries/index.rst) sections.
 
@@ -29,8 +29,8 @@
 #
 # 1. Specify your Granta MI Service Layer URL as a parameter to the ``Connection`` class.
 # 2. Specify the authentication method using a ``Connection.with_...()`` method.
-# 3. Use the ``Connection.connect()`` method to finalize the connection. This returns a connection object, which is called
-#    ``cxn`` in these examples.
+# 3. Use the ``Connection.connect()`` method to finalize the connection. This returns a connection object, which is
+#    called ``cxn`` in these examples.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -114,8 +114,8 @@ query
 
 # ## Run a Query
 
-# Now that we have our ``cxn`` and ``query`` objects, we can use the ``cxn.run()`` method to run the query. This returns an
-# object that contains the results of the query.
+# Now that we have our ``cxn`` and ``query`` objects, we can use the ``cxn.run()`` method to run the query. This returns
+# an object that contains the results of the query.
 
 # + tags=[]
 result = cxn.run(query)
@@ -140,8 +140,8 @@ result.impacted_substances
 result.messages
 # -
 
-# These messages are also available via the standard ``logging`` module using the ``ansys.grantami.bomanalytics`` logger.
-# Alternatively, you can omit the logger name to get the root logger, which will include messages logged by all
+# These messages are also available via the standard ``logging`` module using the ``ansys.grantami.bomanalytics``
+# logger. Alternatively, you can omit the logger name to get the root logger, which will include messages logged by all
 # packages.
 #
 # The code below creates a log handler that outputs all 'ansys.grantami.bomanalytics' logger messages with severity INFO

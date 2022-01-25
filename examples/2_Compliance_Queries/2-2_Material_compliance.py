@@ -92,10 +92,10 @@ mat_result
 # ## compliance_by_material_and_indicator
 
 # + [markdown] tags=[]
-# The ``compliance_by_material_and_indicator`` property contains a list of ``MaterialWithComplianceResult`` objects with the
-# reference to the material record and the compliance status for each indicator. The ``SubstanceWithComplianceResult``
-# objects are also included because compliance was determined based on the substances associated with the material
-# object. These are also accompanied by their compliance status for each indicator.
+# The ``compliance_by_material_and_indicator`` property contains a list of ``MaterialWithComplianceResult`` objects with
+# the reference to the material record and the compliance status for each indicator. The
+# ``SubstanceWithComplianceResult`` objects are also included because compliance was determined based on the substances
+# associated with the material object. These are also accompanied by their compliance status for each indicator.
 # -
 
 # Initially, we can print just the results for the reinforced PA66 record.

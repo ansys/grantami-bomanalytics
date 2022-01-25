@@ -170,9 +170,9 @@ df_full.head()
 
 # ## Post-processing the DataFrame
 
-# Now that we have the data in a ``DataFrame``, we can perform operations across all levels of the structure more easily.
-# For example, we can delete all rows that are less than the 'Above Threshold' state, retaining only rows that are
-# non-compliant. (Note that this reduces the number of rows significantly.)
+# Now that we have the data in a ``DataFrame``, we can perform operations across all levels of the structure more
+# easily. For example, we can delete all rows that are less than the 'Above Threshold' state, retaining only rows that
+# are non-compliant. (Note that this reduces the number of rows significantly.)
 
 # + tags=[]
 threshold = indicators.WatchListFlag.WatchListAboveThreshold

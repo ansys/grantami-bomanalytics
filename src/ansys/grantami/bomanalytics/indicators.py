@@ -1,7 +1,7 @@
 """BoM Analytics indicators.
 
 There are two indicators supported by the BoM Analytics API. Each is implemented as a separate class. They are their
-own result, i.e. all that is needed to convert a definition to a result is to add a result flag.
+own result. All that is needed to convert a definition to a result is to add a result flag.
 
 Notes
 -----
@@ -65,10 +65,10 @@ class _Flag(Enum):
 
 
 class RoHSFlag(_Flag):
-    """Permitted RoHS flag states. A larger value means the item is less compliant, i.e. the compliance result is
-    worse the further down the list the result appears.
+    """Provides permitted RoHS flag states. A larger value means that the item is less compliant. The further
+    down the list the compliance result appears, the worse it is.
 
-    See the Restricted Substances Reports User Guide for more details.
+    For more information, see the Restricted Substances Reports User Guide.
     """
 
     RohsNotImpacted = (
@@ -78,12 +78,12 @@ class RoHSFlag(_Flag):
     )
     RohsBelowThreshold = (
         2,
-        """ This substance is impacted by the specified legislations, but appears in the parent item
+        """ This substance is impacted by the specified legislations, but it appears in the parent item
     in a quantity below that specified by the indicator. *Substance is below threshold.*""",
     )
     RohsCompliant = (
         3,
-        """ This item either does not contain any substances impacted by the specified legislations, or
+        """ This item either does not contain any substances impacted by the specified legislations or
     contains no substances above the specified threshold. *Item is compliant.*""",
     )
     RohsCompliantWithExemptions = (
@@ -103,7 +103,7 @@ class RoHSFlag(_Flag):
     )
     RohsUnknown = (
         7,
-        """ One or more declarations are missing, and so there is not enough information to determine
+        """ One or more declarations are missing., and so there is not enough information to determine
     compliance. *Compliance is unknown.*""",
     )
 
@@ -142,10 +142,10 @@ class RoHSFlag(_Flag):
 
 
 class WatchListFlag(_Flag):
-    """Permitted Watch List flag states. Increasing value means less compliance, i.e. the compliance
-    result is worse the further down the list the result appears.
+    """Provides permitted watch list flag states. Increasing value means less compliance. The further
+    down the list the compliance result appears, the worse it is.
 
-    See the Restricted Substances Reports User Guide for more details.
+    For more information, see the Restricted Substances Reports User Guide.
     """
 
     WatchListNotImpacted = (
@@ -218,9 +218,9 @@ class WatchListFlag(_Flag):
 
 
 class _Indicator(ABC):
-    """Base class for all indicators.
+    """Provides all indicators.
 
-    Allows for comparison of same-typed indicators that both have results.
+    This base class allows for comparison of same-typed indicators that both have results.
     """
 
     available_flags: Type[_Flag]
@@ -257,12 +257,12 @@ class _Indicator(ABC):
 
     @property
     def flag(self) -> Optional[_Flag]:
-        """The state of this indicator. If the indicator is a definition only, this property is `None`.
+        """State of the indicator. If the indicator is a definition only, this property is set to ``None``.
 
         Raises
         ------
         KeyError
-            If the value being set is not valid for this Indicator.
+            If the value being set is not valid for this indicator.
         """
         return self._flag
 
@@ -306,17 +306,17 @@ class _Indicator(ABC):
         return self.flag < other_flag
 
     def _get_flag_from_object(self, other: object) -> _Flag:
-        """Get the flag from the other object, regardless of if it is an Indicator or a Flag.
+        """Get the flag from the other object, regardless of if it is an indicator or a flag.
 
         Returns
         -------
-        The flag object extracted from `other`
+        Flag object extracted from ``other``
 
         Raises
         ------
         RuntimeError
-            If an unhandled error occurs during the comparison. A descriptive TypeError or ValueError should always
-            be raised instead.
+            If an unhandled error occurs during the comparison. A descriptive ``TypeError`` or
+            ``ValueError`` should always be raised instead.
         """
         self._check_type_and_value_compatibility(other)
         if isinstance(other, _Indicator) and other.flag:
@@ -333,9 +333,9 @@ class _Indicator(ABC):
         Raises
         ------
         ValueError
-            If the other indicator has no flag, and therefore no basis for comparison.
+            If the other indicator has no flag, there is no basis for comparison.
         TypeError
-            If the other object is a different _Indicator subtype or an incompatible_Flag subtype.
+            If the other object is a different ``_Indicator`` subtype or an ``incompatible_Flag`` subtype.
         """
         if isinstance(other, _Indicator) and not isinstance(other, self.__class__):
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
@@ -359,41 +359,41 @@ class _Indicator(ABC):
 
 
 class RoHSIndicator(_Indicator):
-    """Indicator object that represents RoHS-type compliance of a BoM object against one or more
+    """Provides the indicator object that represents RoHS-type compliance of a BoM object against one or more
     legislations.
 
-    Other `RoHSIndicator` objects with results can be compared, with 'less compliant' indicators being greater than
+    Other ``RoHSIndicator`` objects with results can be compared, with 'less compliant' indicators being greater than
     'more compliant' indicators.
 
     Parameters
     ----------
     name : str
-        The name of the indicator. Used to identify the indicator in the query result.
+        Name of the indicator that is used to identify the indicator in the query result.
     legislation_names : list[str]
-        The legislations against which compliance will be determined.
-    default_threshold_percentage : Optional[float]
-        The concentration of substance that will be determined to be non-compliant. Is only used if the legislation
-        doesn't define a specific threshold for the substance.
-    ignore_exemptions : Optional[bool]
-        Whether exemptions added to parts will be considered when determining compliance against this indicator.
+        Legislations against which compliance will be determined.
+    default_threshold_percentage : float
+        Concentration of substance that will be determined to be non-compliant. The default is ``None``.
+        This parameter is only used if the legislation doesn't define a specific threshold for the substance.
+    ignore_exemptions : bool
+        Whether to consider exemptions added to parts when determining compliance against this indicator.
 
     Raises
     ------
     TypeError
-        If two differently-typed indicators are compared
+        If two differently-typed indicators are compared.
     ValueError
-        If two indicators are compared which both don't have a result flag
+        If two indicators are compared which both don't have a result flag.
 
     Attributes
     ----------
     available_flags : Type[:class:`~ansys.grantami.bomanalytics.indicators.RoHSFlag`]
-        The possible states of this indicator.
+        Possible states of this indicator.
 
     Notes
     -----
-    The RoHS indicator is designed to be used with RoHS-type legislations (e.g. RoHS, RoHS China) however this is not
-    enforced. Substances marked as 'Process Chemicals'[1]_ are always ignored, and exceptions are supported (unless
-    explicitly ignored by specifying `ignore_exemptions=True` when creating the Indicator). The possible result flags
+    The RoHS indicator is designed to be used with RoHS-type legislations such as RoHS and RoHS China. However,
+    usage is not enforced. Substances marked as 'Process Chemicals'[1]_ are always ignored, and exceptions are supported (unless
+    explicitly ignored by specifying ``ignore_exemptions=True`` when creating the indicator. The possible result flags
     for the indicator distinguish between an item being compliant, compliant with exemptions, or non-compliant.
 
     Examples
@@ -439,42 +439,43 @@ class RoHSIndicator(_Indicator):
 
 
 class WatchListIndicator(_Indicator):
-    """Indicator object that represents Watch List-type compliance of a BoM object against one or more
+    """Provides the indicator object that represents watch list-type compliance of a BoM object against one or more
     legislations.
 
-    Other `WatchListIndicator` objects with results can be compared, with 'less compliant' indicator flags being
+    Other ``WatchListIndicator`` objects with results can be compared, with 'less compliant' indicator flags being
     greater than 'more compliant' indicator flags.
 
     Parameters
     ----------
     name : str
-        The name of the indicator. Used to identify the indicator in the query result.
+        Name of the indicator that is ised to identify the indicator in the query result.
     legislation_names : list[str]
-        The legislations against which compliance will be determined.
+        Legislations against which compliance will be determined.
     default_threshold_percentage : Optional[float]
-        The concentration of substance that will be determined to be non-compliant. Only used if the legislation
-        doesn't define a specific threshold for the substance.
-    ignore_process_chemicals : Optional[bool]
+        Concentration of substance that will be determined to be non-compliant. The default is ``None``.
+        This parameter is only used if the legislation doesn't define a specific threshold for the substance.
+    ignore_process_chemicals : bool
         Whether to ignore substances flagged as process chemicals when determining compliance against this indicator.
+        The default is ``False``.
 
     Raises
     ------
     TypeError
-        If two differently-typed indicators are compared
+        If two differently-typed indicators are compared.
     ValueError
-        If two indicators are compared which both don't have a result flag
+        If two indicators are compared which both don't have a result flag.
 
     Attributes
     ----------
     available_flags : Type[:class:`~ansys.grantami.bomanalytics.indicators.WatchListFlag`]
-        The possible states of this indicator.
+        Possible states of this indicator.
 
     Notes
     -----
-    The Watch List indicator is designed to be used with REACH legislations or internal watch lists, however this is not
-    enforced. Substances marked as 'Process Chemicals'[1]_ are usually included, but can be ignored by specifying
-    `ignore_process_chemicals=True` when creating the Indicator. Exemptions are always ignored. The possible result
-    flags for the indicator distinguish between an item being compliant, compliant but with substances below the
+    The watch list indicator is designed to be used with REACH legislations or internal watch lists. However,
+    usage is not enforced. Substances marked as 'Process Chemicals'[1]_ are usually included, but they can be
+    ignored by specifying ``ignore_process_chemicals=True`` when creating the indicator. Exemptions are always ignored.
+    The possible result flags for the indicator distinguish between an item being compliant, compliant but with substances below the
     threshold, or non-compliant.
 
     Examples

@@ -1,15 +1,15 @@
 """ Connection to Granta MI Service layer.
 
-This module subclasses creates the connection object by subclassing the
+This module subclass creates the connection object by subclassing the
 abstract `ApiClientFactory` in the `auth_common` package.
 
 The connection object itself is also subclassed to include global configuration
-options that span all queries, and the method to execute the query.
+options that span all queries and the method to execute the query.
 
 Attributes
 ----------
 DEFAULT_DBKEY : str
-    The default database key for Restricted Substances. Used if a database key isn't specified.
+    The default database key for restricted substances is used if a database key isn't specified.
 """
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
@@ -50,20 +50,20 @@ if TYPE_CHECKING:
 
 
 class Connection(ApiClientFactory):
-    """Connect to an instance of Granta MI.
+    """Connects to an instance of Granta MI.
 
     Notes
     -----
     For advanced usage, including configuring session-specific properties and timeouts, see the
     `ansys-openapi-common` package documentation.
 
-    The connection to Granta MI is created in 3 stages:
+    To create the connection to Granta MI, you preform three steps:
 
-    1. Create the connection builder object and specify the server to be connected to.
-    2. Specify the authentication method to be used for the connection and provide credentials if required.
-    3. Connect to the server (the connection object is returned).
+    1. Create the connection builder object and specify the server to connect to.
+    2. Specify the authentication method to use for the connection and provide credentials if required.
+    3. Connect to the server, which returns the connection object.
 
-    The examples below show this process for different authentication methods.
+    The examples show this process for different authentication methods.
 
     Examples
     --------
@@ -93,8 +93,8 @@ class Connection(ApiClientFactory):
 
 
 class BomAnalyticsClient(ApiClient):
-    """The class used to communicate with Granta MI. It is instantiated by the
-    :class:`~ansys.grantami.bomanalytics.Connection` class defined above, and should not be instantiated directly.
+    """Communicates with Granta MI. This class is instantiated by the
+    :class:`~ansys.grantami.bomanalytics.Connection` class defined above and should not be instantiated directly.
     """
 
     def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
@@ -135,32 +135,39 @@ class BomAnalyticsClient(ApiClient):
         substances_table_name: Optional[str] = None,
         coatings_table_name: Optional[str] = None,
     ) -> None:
-        """Configure the database key and table names, if different from the defaults.
+        """Configure the database key and table names if different from the defaults.
 
-        Database key is required if Granta MI is configured to use a value other than 'MI_Restricted_Substances'. A
-        table name is required if it has been modified from the defaults.
+        A database key is required if Granta MI is configured to use a value other than ``MI_Restricted_Substances``.
+        A table name is required if it has been modified from the default table name.
 
         Parameters
         ----------
-        database_key : Optional[str]
-            The database key for the Restricted Substances database.
-        material_universe_table_name : Optional[str]
-            The name of the table that implements the 'MaterialUniverse' schema.
-        in_house_materials_table_name : Optional[str]
-            The name of the table that implements the 'Materials - in house' schema.
-        specifications_table_name : Optional[str]
-            The name of the table that implements the 'Specifications' schema.
-        products_and_parts_table_name : Optional[str]
-            The name of the table that implements the 'Products and parts' schema.
-        substances_table_name : Optional[str]
-            The name of the table that implements the 'Restricted Substances' schema.
-        coatings_table_name : Optional[str]
-            The name of the table that implements the 'Coatings' schema.
+        database_key : str
+            Database key for the Restricted Substances database. The default is ``None``,
+            in which case ``MI_Restricted_Substances`` is used.
+        material_universe_table_name : str
+            Name of the table that implements the ``MaterialUniverse`` schema. The
+            default is ``None``, in which case ``MaterialUniverse`` is used.
+        in_house_materials_table_name : str
+            Name of the table that implements the ``Materials - in house`` schema.
+            The default is ``None``, in which case ```Materials - in house`` is used.
+        specifications_table_name : str
+            Name of the table that implements the ``Specifications`` schema. The
+            default is ``None``, in which case ``Specifications`` is used.
+        products_and_parts_table_name : str
+            Name of the table that implements the ``Products and parts`` schema. The
+            default is ``None``, in which case ``Products and parts`` is used.
+        substances_table_name : str
+            Name of the table that implements the ``Restricted Substances`` schema.
+            The default is ``None``, in which case ``Restricted Substances`` is used.
+        coatings_table_name : str
+            Name of the table that implements the ``Coatings`` schema. The default
+            is ``None``, in which case  ``Coatings`` is used.
 
         Notes
         -----
-        The database key and table names are configurable, but only need to be specified if they have been modified
-        from the defaults. These are summarized below:
+        The database key and table names are configurable, but they only need to be specified if they have been modified
+        from the defaults. Here is a summary of the default names:
 
         * Database key: MI_Restricted_Substances
         * Table names:
@@ -243,17 +250,17 @@ class BomAnalyticsClient(ApiClient):
         -------
         Query Result
             The specific result object based on the provided query, which contains either the compliance or
-            impacted substances results. In the case of a yaml query, returns a string.
+            impacted substances results. In the case of a yaml query, a string is returned.
 
         Raises
         ------
         :class:`~ansys.grantami.bomanalytics.GrantaMIException`
-            If a message is returned with a severity of "critical". Granta MI is running and the BoM
-            Analytics Service is available, but it was not able to run the query. Possible causes include a missing
-            database or table.
+            If the exception is returned with a severity of "critical", Granta MI is running and the BoM
+            Analytics Service is available. However, the query could not be run, probobably because of a
+            missing database or table.
         :class:`~ansys.openapi.common.ApiException`
-            If the Granta MI server was not able to return a response. Possible causes include an internal
-            configuration error, or the BoM Analytics Service not being installed.
+            If this exception is raised, the Granta MI server was not able to return a response, probably
+            because of an internal configuration error or the BoM Analytics Service not being installed.
         """
 
         logger.info(f"Running query {query} with connection {self}")
@@ -264,9 +271,9 @@ class BomAnalyticsClient(ApiClient):
     def _query_arguments(
         self,
     ) -> Dict[str, Union[str, models.CommonRequestConfig, None]]:
-        """Generate the connection-level arguments for a query, i.e. the database key and table names.
+        """Generate the connection-level arguments for a query, such as the database key and table names.
 
-        Query-specific arguments (records, legislations, etc.) are added within the query object itself.
+        Query-specific arguments (such as records and legislations) are added within the query object itself.
 
         Returns
         -------
@@ -275,8 +282,8 @@ class BomAnalyticsClient(ApiClient):
 
         Notes
         -----
-        The table mapping config is only created if at least one table has a non-default name. The low-level API
-        understands `{"config": None}` to mean default table names are being used.
+        The table mapping configuration file is only created if at least one table has a non-default name.
+        The low-level API understands ``{"config": None}`` to mean that default table names are in use.
 
         The database key is always required. The default is only included here for convenience.
         """

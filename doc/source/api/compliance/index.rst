@@ -12,7 +12,7 @@ can be used to determine the compliance of records in a Granta MI database based
 :ref:`ref_grantami_bomanalytics_api_compliance_indicators`. An indicator is a collection of one or more legislations and
 a threshold. If a certain record directly or indirectly contains substances impacted by one of the specified
 legislations in an amount that exceeds the threshold, the record is not compliant with that indicator. For more
-infromation about possible results, see the definitions of the indicators.
+information about possible results, see the definitions of the indicators.
 
 The :ref:`ref_grantami_bomanalytics_api_compliance_bom` query accepts a Bill of Materials in Ansys Granta MI 1711 XML BoM format and
 returns the compliance status of the BoM based on the Granta MI records referenced by it.

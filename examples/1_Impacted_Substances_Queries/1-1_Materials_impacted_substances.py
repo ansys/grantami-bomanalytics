@@ -58,7 +58,7 @@ mat_query = (
 )
 # -
 
-# Finally, run the query. Passing a ````MaterialImpactedSubstancesQuery`` object to the ``Connection.run()`` method
+# Finally, run the query. Passing a ``MaterialImpactedSubstancesQuery`` object to the ``Connection.run()`` method
 # returns a ``MaterialImpactedSubstancesQueryResult`` object.
 
 # + tags=[]

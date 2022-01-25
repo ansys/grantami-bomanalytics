@@ -119,7 +119,7 @@ print(f"Wing compliance status: {wing.indicators['SVHC'].flag.name}")
 # This tells us that the wing flap assembly contains an SVHC above the 0.1% threshold.
 
 # We can print the parts below this part that also contain an SVHC above the threshold. The parts referenced by the
-# 'wing' part are available in the ``parts`` property.
+# ``wing`` part are available in the ``parts`` property.
 
 # + tags=[]
 above_threshold_flag = svhc.available_flags.WatchListAboveThreshold

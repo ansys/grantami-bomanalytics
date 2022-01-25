@@ -102,7 +102,7 @@ impacted_substances_result = cxn.run(impacted_substances_query)
 impacted_substances_result
 # -
 
-# The ``BomImpactedSubstancesQueryResult`` object returned after running the Impacted Substances query now behaves
+# The ``BomImpactedSubstancesQueryResult`` object returned after running the query for impacted substances now behaves
 # similarly to any other Impacted Substances result object. For example, we can print all substances impacted by the
 # legislation using an approach from a previous example.
 

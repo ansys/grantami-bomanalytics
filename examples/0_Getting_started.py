@@ -140,7 +140,7 @@ result.impacted_substances
 result.messages
 # -
 
-# These messages are also available via the standard ``logging`` module using the 'ansys.grantami.bomanalytics' logger.
+# These messages are also available via the standard ``logging`` module using the ``ansys.grantami.bomanalytics`` logger.
 # Alternatively, you can omit the logger name to get the root logger, which will include messages logged by all
 # packages.
 #

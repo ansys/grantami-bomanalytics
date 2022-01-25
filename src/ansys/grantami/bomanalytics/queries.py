@@ -13,7 +13,7 @@ Query_Builder
     ``SpecificationCompliance``.
 Query_Result
     Type of the result object, which can be any type that inherits from either ``ComplianceBaseClass`` or
-    ``ImpactedSubstancesBaseClass``. 
+    ``ImpactedSubstancesBaseClass``.
 """
 
 from abc import ABC, abstractmethod
@@ -58,11 +58,11 @@ EXCEPTION_MAP = {
 
 
 class _BaseQueryDataManager(ABC):
-    """Outlines an interface for managing 'items' to be provided to the query. For example, the record or BoM-based dimension
-    to a query.
+    """Outlines an interface for managing 'items' to be provided to the query. For example, the record
+    or BoM-based dimension to a query.
 
-    This class doesn't specify how the objects are added to the ``_item_definitions`` attribute or how they are converted to
-    attributes.
+    This class doesn't specify how the objects are added to the ``_item_definitions`` attribute or how
+    they are converted to attributes.
     """
 
     _item_definitions: list
@@ -104,7 +104,8 @@ class _BaseQueryDataManager(ABC):
     def append_response(self, response: models.Model) -> None:
         """Append a response from the low-level API to this object.
 
-        This method extracts the results and server messages from the response object and appends them to the respective lists.
+        This method extracts the results and server messages from the response object and appends
+        them to the respective lists.
 
         Parameters
         ----------
@@ -614,9 +615,9 @@ class _ComplianceMixin(_ApiMixin, ABC):
 
         Notes
         -----
-        This method gets the bound method for this particular query from ``api_instance`` and passes it to ``self._call_api()``,
-        which performs the actual call. It then psses the result to ``QueryResultFactory`` to build the corresponding result
-        object.
+        This method gets the bound method for this particular query from ``api_instance`` and passes
+        it to ``self._call_api()``, which performs the actual call. It then psses the result to ``QueryResultFactory``
+        to build the corresponding result object.
 
         The ``indicator_definitions`` are used to create the ``QueryResult`` object because the low-level API returns
         only the indicator names and results.
@@ -715,9 +716,9 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     def _run_query(self, api_instance: api.ImpactedSubstancesApi, static_arguments: Dict) -> Query_Result:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
-        Gets the bound method for this particular query from ``api_instance`` and passes it to ``self._call_api()``, which
-        performs the actual call. Passes the result to  ``QueryResultFactory`` to build the corresponding result
-        object.
+        Gets the bound method for this particular query from ``api_instance`` and passes it to
+        ``self._call_api()``, which performs the actual call. Passes the result to  ``QueryResultFactory``
+        to build the corresponding result object.
 
         Parameters
         ----------
@@ -1009,11 +1010,12 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
 class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder):
     """Evaluates compliance for Granta MI specification records against a number of indicators. If the
-    specifications are associated with specifications, materials, coatings, or substances, these are also evaluated and
-    returned.
+    specifications are associated with specifications, materials, coatings, or substances, these are
+    also evaluated and returned.
 
-    All methods used to add specifications and indicators to this query return the query itself so that they can be chained
-    together as required. Records can be added using a combination of any of the available methods.
+    All methods used to add specifications and indicators to this query return the query itself so that
+    they can be chained together as required. Records can be added using a combination of any of the
+    available methods.
 
     Once the query is fully constructed, use the cxn.
     :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type

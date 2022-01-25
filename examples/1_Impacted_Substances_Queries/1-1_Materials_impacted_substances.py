@@ -13,10 +13,10 @@
 #     name: python3
 # ---
 
-# # [TECHDOCS]Performing a Material Impacted Substances Query
+# # Performing a Material Impacted Substances Query
 
-# A Material Impacted Substances Query is used to extract the substances associated with a material that are impacted by
-# one or more defined legislations.
+# A Material Impacted Substances Query is used to identify the substances associated with a material that are impacted
+# by one or more defined legislations.
 
 # This example shows how to perform an Impacted Substance query on material records, and how to process the results.
 
@@ -45,7 +45,7 @@ SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
 REACH = "REACH - The Candidate List"
 # -
 
-# Next import the queries module and build the query with the references in the previous cell.
+# Next import the `queries` module and build the query with the references in the previous cell.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries

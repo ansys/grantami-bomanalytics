@@ -3,10 +3,10 @@
 Impacted Substances Examples
 ============================
 
-[TECHDOCS]These scripts demonstrate how to determine the substances impacted by one or more legislations for materials
-and parts in a Granta MI Restricted Substances database. An equivalent script can be written for Specifications, consult
-the :ref:`ref_grantami_bomanalytics_api_index` for details. To determine the substances impacted by an XML BoM, see
-:ref:`ref_grantami_bomanalytics_advanced`.
+These examples show how to perform an Impacted Substance query on material records or parts in a Granta MI Restricted
+Substances database, identifying any substances impacted by one or more legislations. You can write an equivalent script
+for Specifications; see the :ref:`ref_grantami_bomanalytics_api_index` for details. To determine the substances impacted
+by an XML BoM, see :ref:`ref_grantami_bomanalytics_advanced`.
 
 
 .. toctree::

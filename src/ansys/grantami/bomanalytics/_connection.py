@@ -57,7 +57,7 @@ class Connection(ApiClientFactory):
     For advanced usage, including configuring session-specific properties and timeouts, see the
     `ansys-openapi-common` package documentation.
 
-    To create the connection to Granta MI, you preform three steps:
+    To create the connection to Granta MI, you perform three steps:
 
     1. Create the connection builder object and specify the server to connect to.
     2. Specify the authentication method to use for the connection and provide credentials if required.

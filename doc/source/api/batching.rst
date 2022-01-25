@@ -23,7 +23,7 @@ for a very complex hierarchy, you might need to further decrease the batch size.
 Very Simple Part and Specification Hierarchies
 ----------------------------------------------
 Part and specification structures are very simple if they have a similar complexity to materials.
-For example, a very simple hierachy might directly reference substances or reference a small number
+For example, a very simple hierarchy might directly reference substances or reference a small number
 of materials. For a very simple hierarchy, you might need to increase the batch size.
 
 Large Numbers of Indicators or Legislations

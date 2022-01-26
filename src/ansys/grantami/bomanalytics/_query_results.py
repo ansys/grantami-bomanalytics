@@ -390,7 +390,7 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         Parameters
         ----------
         results
-            The low-level API objects returned by the REST API.
+            Low-level API objects that the REST API is to return.
         """
 
         super().__init__(messages)
@@ -485,7 +485,8 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForSpecificationsSpecification)
 class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery`
+    """Retrieves the result of running the
+     :class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery`
     class. This class describes the substances in the specified specifications impacted by one or more legislations.
 
     Notes
@@ -503,7 +504,7 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         Parameters
         ----------
         results
-            Low-level API objects returned by the REST API.
+            Low-level API objects that the rest API is to return.
         """
 
         super().__init__(messages)
@@ -520,10 +521,9 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     def impacted_substances_by_specification(
         self,
     ) -> List["SpecificationWithImpactedSubstancesResult"]:
-        """Impacted substances for each specification specified in the original query.
-
-        Because specifications do not have a single well-defined reference, the results are provided
-        as a flat list.
+        """Impacted substances for each specification specified in the original query. Because
+        specifications do not have a single well-defined reference, the results are provided as
+        a flat list.
 
         Returns
         -------
@@ -624,7 +624,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
         Parameters
         ----------
         results
-            Low-level API objects returned by the REST API.
+            Low-level API objects that the REST API is to return.
         indicator_definitions
             Indicator definitions supplied as part of the query. This parameter is used here as the base
             for the indicator result objects.

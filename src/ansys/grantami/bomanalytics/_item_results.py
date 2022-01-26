@@ -484,7 +484,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
 class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, MaterialDefinition):
     """Retrieves an individual material that is included as part of an impacted substances query result.
-    This object includes two categories of attribute:
+    This object includes two categories of attributes:
 
       - The reference to the material in Granta MI
       - The impacted substances associated with this material, both as a flat list and separated by legislation
@@ -512,7 +512,8 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
 
 @ItemResultFactory.register("PartWithImpactedSubstances")
 class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefinition):
-    """Retrieves an individual part included as part of an impacted substances query result. This object includes two categories of attribute:
+    """Retrieves an individual part included as part of an impacted substances query result. This object includes
+    two categories of attributes:
 
       - The reference to the part in Granta MI
       - The impacted substances associated with this part, both as a flat list and separated by legislation
@@ -977,7 +978,7 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 @ItemResultFactory.register("SubstanceWithCompliance")
 class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
     """Retrieves an individual substance included as part of a compliance query result.
-    This object includes two categories of attribute:
+    This object includes two categories of attributes:
 
       - The reference to the substance in Granta MI
       - The compliance status of this substance, stored in a dictionary of one or more indicator objects
@@ -1005,7 +1006,7 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReferenc
 @ItemResultFactory.register("MaterialWithCompliance")
 class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialDefinition):
     """Retrieves an individual material included as part of a compliance query result.
-    This object includes three categories of attribute:
+    This object includes three categories of attributes:
 
       - The reference to the material in Granta MI
       - The compliance status of this material, stored in a dictionary of one or more indicator objects
@@ -1043,7 +1044,7 @@ class PartWithComplianceResult(
     PartDefinition,
 ):
     """Retrieves an individual part included as part of a compliance query result.
-    This object includes three categories of attribute:
+    This object includes three categories of attributes:
 
       - The reference to the part in Granta MI (if the part references a record)
       - The compliance status of this part, stored in a dictionary of one or more indicator objects
@@ -1087,7 +1088,7 @@ class SpecificationWithComplianceResult(
     SpecificationDefinition,
 ):
     """Retrieves an individual specification included as part of a compliance query result.
-    This object includes threecategories of attributes:
+    This object includes three categories of attributes:
 
       - The reference to the specification in Granta MI
       - The compliance status of this specification, stored in a dictionary of one or more indicator objects

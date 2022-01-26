@@ -335,7 +335,7 @@ class _Indicator(ABC):
         ValueError
             If the other indicator has no flag, there is no basis for comparison.
         TypeError
-            If the other object is a different ``_Indicator`` subtype or an ``incompatible_Flag`` subtype.
+            If the other object is a different ``_Indicator`` subtype or an incompatible ``_Flag`` subtype.
         """
         if isinstance(other, _Indicator) and not isinstance(other, self.__class__):
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
@@ -376,6 +376,7 @@ class RoHSIndicator(_Indicator):
         This parameter is only used if the legislation doesn't define a specific threshold for the substance.
     ignore_exemptions : bool
         Whether to consider exemptions added to parts when determining compliance against this indicator.
+        The default is ``True``.
 
     Raises
     ------

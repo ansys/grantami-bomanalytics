@@ -1,6 +1,6 @@
 """ Connection to Granta MI Service layer.
 
-This module subclass creates the connection object by subclassing the
+This module creates the connection object by subclassing the
 abstract `ApiClientFactory` in the `auth_common` package.
 
 The connection object itself is also subclassed to include global configuration
@@ -9,7 +9,7 @@ options that span all queries and the method to execute the query.
 Attributes
 ----------
 DEFAULT_DBKEY : str
-    The default database key for restricted substances is used if a database key isn't specified.
+    The default database key for the Restricted Substances Database. This is used if an alternative database key isn't specified.
 """
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
@@ -138,7 +138,7 @@ class BomAnalyticsClient(ApiClient):
         """Configure the database key and table names if different from the defaults.
 
         A database key is required if Granta MI is configured to use a value other than ``MI_Restricted_Substances``.
-        A table name is required if it has been modified from the default table name.
+        A table name is required for each table in the Restricted Substances Database that has been renamed.
 
         Parameters
         ----------
@@ -255,7 +255,7 @@ class BomAnalyticsClient(ApiClient):
         Raises
         ------
         :class:`~ansys.grantami.bomanalytics.GrantaMIException`
-            If the exception is returned with a severity of "critical", Granta MI is running and the BoM
+            If the server encounters an error while processing the query with a severity of "critical". Granta MI is running and the BoM
             Analytics Service is available. However, the query could not be run, probobably because of a
             missing database or table.
         :class:`~ansys.openapi.common.ApiException`
@@ -282,7 +282,7 @@ class BomAnalyticsClient(ApiClient):
 
         Notes
         -----
-        The table mapping configuration file is only created if at least one table has a non-default name.
+        The table mapping configuration object is only created if at least one table has a non-default name.
         The low-level API understands ``{"config": None}`` to mean that default table names are in use.
 
         The database key is always required. The default is only included here for convenience.

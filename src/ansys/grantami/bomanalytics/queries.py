@@ -216,7 +216,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
 
     @property
     def batched_arguments(self) -> Generator[Dict[str, List[Union[models.Model, str]]], None, None]:
-        """A generator-producing item's request arguments as a list of instances of the appropriate model. Each list
+        """A generator that produces lists of instances of models to be supplied to a query request. Each list
         of dictionaries will have at most ``_batch_size`` long.
 
         Each individual dictionary can be passed to the request constructor as a kwarg.
@@ -253,7 +253,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
 
         Returns
         -------
-            Attribute containing the list of results identified by `1self.record_type_name`1.
+            Attribute containing the list of results identified by ``self.record_type_name``.
         """
 
         results: List[models.Model] = getattr(response, self.item_type_name)
@@ -488,7 +488,7 @@ class _ApiMixin:
     """Provides API-specific mixins.
 
     This base class describes generic properties of a call to an API. such as calling the API and processing results.
-    It aAlso defines abstract concepts related to the parameter dimension of a query, including validation.
+    It also defines abstract concepts related to the parameter dimension of a query, including validation.
     """
 
     def __init__(self) -> None:
@@ -616,7 +616,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         Notes
         -----
         This method gets the bound method for this particular query from ``api_instance`` and passes
-        it to ``self._call_api()``, which performs the actual call. It then psses the result to ``QueryResultFactory``
+        it to ``self._call_api()``, which performs the actual call. It then passes the result to ``QueryResultFactory``
         to build the corresponding result object.
 
         The ``indicator_definitions`` are used to create the ``QueryResult`` object because the low-level API returns

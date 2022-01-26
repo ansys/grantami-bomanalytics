@@ -188,7 +188,7 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
 
     @property
     def impacted_substances(self) -> List["ImpactedSubstance"]:
-        ""View of the results for a query for impacted substances, flattened into a single list.
+        """View of the results for a query for impacted substances, flattened into a single list.
 
         The substances from all items specified in the query are merged across item and legislation, providing a
         single flat list. Substances are duplicated where they appear in multiple items or legislations.

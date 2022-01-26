@@ -260,9 +260,8 @@ class ComplianceBaseClass(ResultBaseClass):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForMaterialsMaterial)
 class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery`.
-    
-    This class describes the substances in the specified materials impacted by one or more legislations.
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery`
+    class. This class describes the substances in the specified materials impacted by one or more legislations.
 
     Notes
     -----
@@ -313,9 +312,8 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 @QueryResultFactory.register(models.CommonMaterialWithCompliance)
 class MaterialComplianceQueryResult(ComplianceBaseClass):
-    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.MaterialComplianceQuery`.
-    
-    This class describes the compliance status of materials against one or more indicators.
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.MaterialComplianceQuery`
+    class. This class describes the compliance status of materials against one or more indicators.
 
     Notes
     -----
@@ -374,9 +372,8 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForPartsPart)
 class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery`.
-    
-    This class describes the substances in the specified parts impacted by one or more legislations.
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery`
+    class. This class describes the substances in the specified parts impacted by one or more legislations.
 
     Notes
     -----
@@ -428,9 +425,8 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 @QueryResultFactory.register(models.CommonPartWithCompliance)
 class PartComplianceQueryResult(ComplianceBaseClass):
-    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.PartComplianceQuery`.
-    
-    This class describes the compliance status of parts against one or more indicators.
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.PartComplianceQuery`
+    class. This class describes the compliance status of parts against one or more indicators.
 
     Notes
     -----
@@ -489,9 +485,8 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForSpecificationsSpecification)
 class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery`.
-    
-    This class describes the substances in the specified specifications impacted by one or more legislations.
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery`
+    class. This class describes the substances in the specified specifications impacted by one or more legislations.
 
     Notes
     -----
@@ -527,7 +522,8 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     ) -> List["SpecificationWithImpactedSubstancesResult"]:
         """Impacted substances for each specification specified in the original query.
 
-        Because specifications do not have a single well-defined reference, the results are provided as a flat list.
+        Because specifications do not have a single well-defined reference, the results are provided
+        as a flat list.
 
         Returns
         -------
@@ -546,10 +542,8 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 @QueryResultFactory.register(models.CommonSpecificationWithCompliance)
 class SpecificationComplianceQueryResult(ComplianceBaseClass):
-    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery`.
-    
-    
-    This class describes the compliance status of specifications against one or more indicators.
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery`
+    class. This class describes the compliance status of specifications against one or more indicators.
 
     Notes
     -----
@@ -611,9 +605,8 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.CommonSubstanceWithCompliance)
 class SubstanceComplianceQueryResult(ComplianceBaseClass):
-    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery`.
-    
-    This class describes the compliance status of substances against one or more indicators.
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery`
+    class. This class describes the compliance status of substances against one or more indicators.
 
     Notes
     -----
@@ -668,9 +661,8 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForBom1711Response)
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`.
-    
-    This class describes the substances in the specified BoM impacted by one or more legislations.
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`
+    class. This class describes the substances in the specified BoM impacted by one or more legislations.
 
     Notes
     -----
@@ -701,9 +693,8 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 @QueryResultFactory.register(models.GetComplianceForBom1711Response)
 class BomComplianceQueryResult(ComplianceBaseClass):
-    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`.
-    
-    This class summarizes the compliance status of a BoM against one or more indicators.
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`
+    class. This class summarizes the compliance status of a BoM against one or more indicators.
 
     Notes
     -----

@@ -486,7 +486,7 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 @QueryResultFactory.register(models.GetImpactedSubstancesForSpecificationsSpecification)
 class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the
-     :class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery`
+    :class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery`
     class. This class describes the substances in the specified specifications impacted by one or more legislations.
 
     Notes

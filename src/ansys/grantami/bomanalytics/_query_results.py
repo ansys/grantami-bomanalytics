@@ -333,7 +333,7 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
         results
             Low-level API objects that the REST API is to return.
         indicator_definitions
-            Indicator definitions supplied as part of the query. This parameter is used here as the base 
+            Indicator definitions supplied as part of the query. This parameter is used here as the base
             for the indicator result objects.
         """
 

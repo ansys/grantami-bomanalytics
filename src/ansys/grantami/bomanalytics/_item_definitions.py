@@ -205,7 +205,7 @@ class MaterialDefinition(RecordDefinition):
 
 
 class SpecificationDefinition(RecordDefinition):
-    """Represnts a specification record from the concrete :class:`RecordDefinition` subclass.
+    """Represents a specification record from the concrete :class:`RecordDefinition` subclass.
 
     This class extends the base constructor to also support specification IDs.
 

@@ -23,7 +23,7 @@ def validate_argument_type(*allowed_types: Any) -> Callable:
      - If a container of objects are provided, the types are validated recursively.
 
      Tuples and lists can be heterogeneous, where the ordering of the items in the containers is taken into account.
-     Dictonaries and sets must be homogeneous. If they are not exactly one item in length, a ``ValueError`` is raised.
+     Dictionaries and sets must be homogeneous. If they are not exactly one item in length, a ``ValueError`` is raised.
 
     Parameters
     ----------

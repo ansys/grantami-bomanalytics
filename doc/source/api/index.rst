@@ -11,7 +11,7 @@ The BoM Analytics API is split into these key sections:
   Granta MI server.
 - :ref:`ref_grantami_bomanalytics_common_exceptions` lists the possible custom exceptions that might be
   raised.
-- :ref:`grantami_bomanalytics_batching` explains how queries are batched if they exceed a certain size.  
+- :ref:`ref_grantami_bomanalytics_batching` explains how queries are batched if they exceed a certain size.  
 - :ref:`ref_grantami_bomanalytics_api_impactedsubstances_index` explains how to build queries for impacted
   substances and interpret results.
 - :ref:`ref_grantami_bomanalytics_api_compliance_index` explains how to build specific queries for compliance

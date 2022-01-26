@@ -260,7 +260,7 @@ class ComplianceBaseClass(ResultBaseClass):
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForMaterialsMaterial)
 class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """Retrievs the result of running :class:`~ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery`.
+    """Retrieves the result of running :class:`~ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery`.
     
     This class describes the substances in the specified materials impacted by one or more legislations.
 

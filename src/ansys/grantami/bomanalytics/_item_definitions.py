@@ -113,7 +113,7 @@ class PartDefinition(RecordDefinition):
     Parameters
     ----------
     reference_type
-        Type of the record reference value. 
+        Type of the record reference value.
     reference_value; str, int
         Value of the record reference. All values are strings except for record identities values, which are integers.
     """
@@ -212,7 +212,7 @@ class SpecificationDefinition(RecordDefinition):
     Parameters
     ----------
     reference_type
-        Type of the record reference value. 
+        Type of the record reference value.
     reference_value : str, int
         Value of the record reference. All are strings except for record history identities,
         which are integers.
@@ -266,7 +266,7 @@ class BaseSubstanceReference(RecordReference, ABC):
     Parameters
     ----------
     reference_type
-        Type of the record reference value. 
+        Type of the record reference value.
     reference_value
         Value of the record reference. All are strings except for record history identities,
         which are integers.

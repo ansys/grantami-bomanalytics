@@ -547,7 +547,7 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 
     Notes
     -----
-    Objects of this class are only returned as the result of a query, The class is not intended to be instantiated
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
 

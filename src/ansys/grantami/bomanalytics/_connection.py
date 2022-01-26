@@ -143,25 +143,25 @@ class BomAnalyticsClient(ApiClient):
 
         Parameters
         ----------
-        database_key : str
+        database_key : str, optional
             Database key for the Restricted Substances database. The default is ``None``,
             in which case ``MI_Restricted_Substances`` is used.
-        material_universe_table_name : str
+        material_universe_table_name : str, optional
             Name of the table that implements the ``MaterialUniverse`` schema. The
             default is ``None``, in which case ``MaterialUniverse`` is used.
-        in_house_materials_table_name : str
+        in_house_materials_table_name : str, optional
             Name of the table that implements the ``Materials - in house`` schema.
             The default is ``None``, in which case ```Materials - in house`` is used.
-        specifications_table_name : str
+        specifications_table_name : str, optional
             Name of the table that implements the ``Specifications`` schema. The
             default is ``None``, in which case ``Specifications`` is used.
-        products_and_parts_table_name : str
+        products_and_parts_table_name : str, optional
             Name of the table that implements the ``Products and parts`` schema. The
             default is ``None``, in which case ``Products and parts`` is used.
-        substances_table_name : str
+        substances_table_name : str, optional
             Name of the table that implements the ``Restricted Substances`` schema.
             The default is ``None``, in which case ``Restricted Substances`` is used.
-        coatings_table_name : str
+        coatings_table_name : str, optional
             Name of the table that implements the ``Coatings`` schema. The default
             is ``None``, in which case  ``Coatings`` is used.
 

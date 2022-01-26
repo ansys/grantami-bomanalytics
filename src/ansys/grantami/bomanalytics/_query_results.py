@@ -145,7 +145,7 @@ class ResultBaseClass(ABC):
 class ImpactedSubstancesBaseClass(ResultBaseClass):
     """Retrieves an impacted substances query result.
 
-    This is where generic '`pivots`' on the result are implemented, such as aggregating over all items to give a
+    This is where generic pivots on the result are implemented, such as aggregating over all items to give a
     view of impacted substances by legislation only or as a fully flattened list.
     """
 

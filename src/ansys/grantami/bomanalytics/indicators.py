@@ -371,10 +371,10 @@ class RoHSIndicator(_Indicator):
         Name of the indicator that is used to identify the indicator in the query result.
     legislation_names : list[str]
         Legislations against which compliance will be determined.
-    default_threshold_percentage : float
+    default_threshold_percentage : float, optional
         Concentration of substance that will be determined to be non-compliant. The default is ``None``.
         This parameter is only used if the legislation doesn't define a specific threshold for the substance.
-    ignore_exemptions : bool
+    ignore_exemptions : bool, optional
         Whether to consider exemptions added to parts when determining compliance against this indicator.
         The default is ``True``.
 
@@ -450,13 +450,13 @@ class WatchListIndicator(_Indicator):
     Parameters
     ----------
     name : str
-        Name of the indicator that is ised to identify the indicator in the query result.
+        Name of the indicator that is used to identify the indicator in the query result.
     legislation_names : list[str]
         Legislations against which compliance will be determined.
-    default_threshold_percentage : Optional[float]
+    default_threshold_percentage : float, optional
         Concentration of substance that will be determined to be non-compliant. The default is ``None``.
         This parameter is only used if the legislation doesn't define a specific threshold for the substance.
-    ignore_process_chemicals : bool
+    ignore_process_chemicals : bool, optional
         Whether to ignore substances flagged as process chemicals when determining compliance against this indicator.
         The default is ``False``.
 

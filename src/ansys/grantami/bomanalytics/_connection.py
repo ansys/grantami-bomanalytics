@@ -1,7 +1,7 @@
 """ Connection to Granta MI Service layer.
 
 This module creates the connection object by subclassing the
-abstract `ApiClientFactory` in the `auth_common` package.
+abstract ``ApiClientFactory`` in the ``auth_common`` package.
 
 The connection object itself is also subclassed to include global configuration
 options that span all queries and the method to execute the query.
@@ -9,7 +9,8 @@ options that span all queries and the method to execute the query.
 Attributes
 ----------
 DEFAULT_DBKEY : str
-    The default database key for the Restricted Substances Database. This is used if an alternative database key isn't specified.
+    Default database key for the Restricted Substances Database. This is used if an alternative database
+    key isn't specified.
 """
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
@@ -55,7 +56,7 @@ class Connection(ApiClientFactory):
     Notes
     -----
     For advanced usage, including configuring session-specific properties and timeouts, see the
-    `ansys-openapi-common` package documentation.
+    ``ansys-openapi-common`` package documentation.
 
     To create the connection to Granta MI, you perform three steps:
 
@@ -255,9 +256,9 @@ class BomAnalyticsClient(ApiClient):
         Raises
         ------
         :class:`~ansys.grantami.bomanalytics.GrantaMIException`
-            If the server encounters an error while processing the query with a severity of "critical". Granta MI is running and the BoM
-            Analytics Service is available. However, the query could not be run, probobably because of a
-            missing database or table.
+            If the server encounters an error while processing the query with a severity of "critical". Granta MI
+            is running and the BoM Analytics Service is available. However, the query could not be run, probobably
+            because of a missing database or table.
         :class:`~ansys.openapi.common.ApiException`
             If this exception is raised, the Granta MI server was not able to return a response, probably
             because of an internal configuration error or the BoM Analytics Service not being installed.
@@ -278,7 +279,7 @@ class BomAnalyticsClient(ApiClient):
         Returns
         -------
         arguments
-            A dictionary of `**kwargs` to be used to run a query.
+            A dictionary of `**kwargs` to use to run a query.
 
         Notes
         -----

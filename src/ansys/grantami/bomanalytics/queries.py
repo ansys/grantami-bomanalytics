@@ -607,7 +607,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         api_instance
             Instance of the low-level ``ComplianceApi`` class.
         static_arguments
-            Arguments set at the connection level, which includes the database key and any custom table names.
+            Arguments set at the connection level, including the database key and any custom table names.
 
         Returns
         -------
@@ -725,7 +725,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         api_instance
             Instance of the low-level ``ImpactedSubstancesApi`` class.
         static_arguments
-            Arguments set at the connection level, which includes the database key and any custom table names.
+            Arguments set at the connection level, including the database key and any custom table names.
 
         Returns
         -------

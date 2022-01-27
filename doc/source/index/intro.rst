@@ -12,11 +12,11 @@ determine compliance for complex specification hierarchies, assemblies,
 and even entire products.
 
 This package takes the functionality available interactively through
-the web browser, and exposes it as an API. The expected use cases
+the web browser and exposes it as an API. The expected use cases
 for this package are as follows:
 
 - Periodically rolling up compliance results and storing the results
   in Granta MI
 - Scripting compliance calculations as part of a release process
 - Allowing compliance to be determined for BoMs stored in third-party
-  systems, for example PLM or ERP systems
+  systems, such as PLM or ERP systems

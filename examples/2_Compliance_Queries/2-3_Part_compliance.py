@@ -218,13 +218,13 @@ recursively_print_parts_with_svhcs(wing.parts)
 
 # Alternatively, using the ``compliance_by_indicator`` property will give us a single indicator result that rolls up the
 # results across all parts in the query. This would be useful in a situation where we have a 'concept' assembly stored
-# outside of Granta MI, and we want to determine its compliance. We know it contains the sub-assemblies specified in the
+# outside of Granta MI, and we want to determine its compliance. We know it contains the subassemblies specified in the
 # query above, and so using ``compliance_by_indicator`` will tell us if that concept assembly is compliant based on the
-# worst result of the individual sub-assemblies.
+# worst result of the individual subassemblies.
 
 # + tags=[]
 if part_result.compliance_by_indicator["SVHC"] >= above_threshold_flag:
-    print("One or more sub-assemblies contains an SVHC in a quantity > 0.1%")
+    print("One or more subassemblies contains an SVHC in a quantity > 0.1%")
 else:
     print("No SVHCs, or SVHCs are present in a quantity < 0.1%")
 # -

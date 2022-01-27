@@ -134,7 +134,7 @@ result.impacted_substances
 # ## Logging
 
 # All query results also contain a list of messages returned by the server whilst running the query. These are
-# sorted in order of decreasing severity. The same messages are also available in the Service Layer log file.
+# sorted in order of decreasing severity. The same messages are also available in the MI Service Layer log file.
 
 # + tags=[]
 result.messages

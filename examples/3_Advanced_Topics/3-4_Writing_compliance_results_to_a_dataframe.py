@@ -46,7 +46,7 @@ part_query = (
 part_result = cxn.run(part_query)
 # -
 
-# The ``part_result`` object contains the compliance result for every sub-item. This is ideal for understanding
+# The ``part_result`` object contains the compliance result for every subitem. This is ideal for understanding
 # compliance at a certain 'level' of the structure, For example, we can display the compliance for each item directly
 # under the root part.
 

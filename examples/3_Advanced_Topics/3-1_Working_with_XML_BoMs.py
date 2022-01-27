@@ -153,8 +153,8 @@ print(f"BoM Compliance Status: {root_part.indicators['SVHC'].flag.name}")
 
 # ## Invalid BoM Exception
 
-# If we were to try the same query with the invalid BoM, we would see a stack trace informing us that MI Service Layer
-# responded with a 500 HTTP response code. Change the constant below to ``True`` to raise the exception.
+# If we were to try the same query with the invalid BoM, we would see a stack trace informing us that the MI Service
+# Layer responded with a 500 HTTP response code. Change the constant below to ``True`` to raise the exception.
 
 # + tags=[]
 broken_query = (

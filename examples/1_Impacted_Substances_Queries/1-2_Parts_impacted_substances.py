@@ -18,7 +18,7 @@
 # -
 
 # A Part Impacted Substances Query is used to determine the substances associated with a part that are impacted by one
-# or more defined legislations. The part record can represent either a single component, a sub-assembly, or a finished
+# or more defined legislations. The part record can represent either a single component, a subassembly, or a finished
 # product, and therefore the substances can be associated with either the part record itself, or any other record that
 # the part directly or indirectly references.
 

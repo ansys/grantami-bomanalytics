@@ -222,10 +222,12 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
 if not examples_output_dir.is_dir():
     # Only include examples if the environment variable is set to something truthy
     if EXAMPLE_FLAG:
+        print("'BUILD_EXAMPLES is set, including examples in docs build.")
         _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
 
     # If we are skipping examples in the docs, create a placeholder index.rst file to avoid sphinx errors.
     else:
+        print("'BUILD_EXAMPLES is not set, skipping examples.")
         examples_output_dir.mkdir(parents=False, exist_ok=False)
         example_index = examples_output_dir / Path("index.rst")
         with open(example_index, "w") as f:

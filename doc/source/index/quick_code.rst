@@ -26,8 +26,8 @@ The sequence of events is as follows:
 1. Connect to Granta MI.
 2. Create the appropriate query, choosing between:
 
-   - *Query type*: Compliance or Impacted Substances.
-   - *Reference type*: Materials, parts, specifications, substances, or an XML BoM.
+   - *Query type*: Compliance or impacted substances
+   - *Reference type*: Materials, parts, specifications, substances, or an XML BoM
 
 3. Specify the legislations and records of interest.
 4. Run the query.

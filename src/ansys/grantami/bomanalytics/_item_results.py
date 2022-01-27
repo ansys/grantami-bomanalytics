@@ -67,8 +67,8 @@ Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
 class ItemResultFactory:
-    """Creates item results for a given type of API query. The key to control which result type is created is the name
-    of the query class in `queries.py`.
+    """Creates item results for a given type of API query. The key to controlling which result type is created is the
+    name of the query class in ``queries.py``.
     """
 
     registry: Dict[str, Item_Result] = {}
@@ -76,17 +76,17 @@ class ItemResultFactory:
 
     @classmethod
     def register(cls, name: str) -> Callable:
-        """Decorator function to register a specific item result class with the name of a result type.
+        """Register a specific item result class with the name of a result type.
 
         Parameters
         ----------
         name
-            The name of the result type to be registered.
+            Name of the result type to register.
 
         Returns
         -------
         Callable
-            The function that's being decorated.
+            Function that's being decorated.
         """
 
         def inner(result_class: Item_Result) -> Item_Result:
@@ -127,14 +127,14 @@ class ItemResultFactory:
     def create_impacted_substances_result(
         cls, result_type_name: str, result_with_impacted_substances: Result_Model_Any
     ) -> "ImpactedSubstancesResultMixin":
-        """Factory method to return a specific impacted substances result.
+        """Return a specific impacted substances result.
 
         Parameters
         ----------
         result_type_name
-            The name of the result for which an object is needed.
+            Name of the result for which an object is needed.
         result_with_impacted_substances
-            The result from the REST API describing the impacted substances for this particular item.
+            Result from the REST API describing the impacted substances for this particular item.
 
         Returns
         -------
@@ -219,17 +219,17 @@ class ItemResultFactory:
         result_with_compliance: Result_Model_Any,
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
     ) -> "ComplianceResultMixin":
-        """Factory method to return a specific item result.
+        """Returns a specific item result.
 
         Parameters
         ----------
         result_type_name
-            The name of the result for which an object is needed.
+            Name of the result for which an object is needed.
         result_with_compliance
-            The result from the REST API describing the compliance for this particular item.
+            Result from the REST API describing the compliance for this particular item.
         indicator_definitions
-            The definitions of the indicators supplied to the original query. Required since the REST API does not
-            provide them in the response.
+            Definitions of the indicators supplied to the original query. This is required because
+            the REST API does not provide them in the response.
 
         Returns
         -------
@@ -256,22 +256,22 @@ class ItemResultFactory:
 
     @staticmethod
     def parse_reference_type(reference_type: str) -> ReferenceType:
-        """Parse the `reference_type` returned by the low-level API into a `ReferenceType`.
+        """Parse the ``reference_type`` returned by the low-level API into a ``ReferenceType``.
 
         Parameters
         ----------
         reference_type
-            The type of record reference returned from the API for a particular result.
+            Type of record reference returned from the API for a particular result.
 
         Returns
         -------
         ReferenceType
-            The specific enum value for the `reference_type` `str`.
+            Specific enum value for the ``reference_type`` string.
 
         Raises
         ------
         KeyError
-            If the `reference_type` returned by the low-level API doesn't appear in `ReferenceType`.
+            If the `reference_type` returned by the low-level API doesn't appear in ``ReferenceType``.
         """
 
         try:
@@ -282,7 +282,7 @@ class ItemResultFactory:
 
 class ImpactedSubstance(BaseSubstanceReference):
     """Represents a substance impacted by a legislation. This object includes two categories of
-    attribute:
+    attributes:
 
       - The reference to the substance in Granta MI. These attributes are all populated if data for them exists in
         Granta MI.
@@ -290,18 +290,18 @@ class ImpactedSubstance(BaseSubstanceReference):
 
     Attributes
     ----------
-    cas_number : Optional[str]
-    ec_number : Optional[str]
-    chemical_name : Optional[str]
-    record_history_identity : Optional[int]
-    record_history_guid : Optional[str]
-    record_guid : Optional[str]
-    max_percentage_amount_in_material : Optional[float]
-        The maximum amount this material can occur in the BoM item that it is declared against. Measured in wt. %. Only
-        populated if present in the declaration in Granta MI.
-    legislation_threshold : Optional[float]
-        The threshold above which the substance is impacted by the legislation. Measured in wt. %. Only populated if
-        defined on the substance in Granta MI.
+    cas_number : str, optional
+    ec_number : str, optional
+    chemical_name : str, optional
+    record_history_identity : int, optional
+    record_history_guid : str, optional
+    record_guid : str, optional
+    max_percentage_amount_in_material : float, optional
+        Maximum amount this material can occur in the BoM item that it is declared against. This value is measured in
+        wt. % and only populated if present in the declaration in Granta MI.
+    legislation_threshold : float, optional
+        Threshold above which the substance is impacted by the legislation. This value is measured in wt. % and is only
+        populated if defined on the substance in Granta MI.
 
     Examples
     --------
@@ -322,14 +322,14 @@ class ImpactedSubstance(BaseSubstanceReference):
         Parameters
         ----------
         reference_type
-            The type of the record reference value.
+            Type of the record reference value.
         reference_value
-            The value of the record reference. All are `str`, except for record history identities which are `int`.
+            Value of the record reference. All are strings except for record history identities, which are integers.
         max_percentage_amount_in_material
-            The amount of this substance that occurs in the parent material. In the case where a range is specified in
+            Amount of this substance that occurs in the parent material. In the case where a range is specified in
              the declaration, only the maximum is reported here.
         legislation_threshold
-            The substance concentration threshold over which the material is non-compliant with the legislation.
+            Substance concentration threshold over which the material is non-compliant with the legislation.
         """
 
         super().__init__(
@@ -337,13 +337,13 @@ class ImpactedSubstance(BaseSubstanceReference):
             reference_value=reference_value,
         )
         self.max_percentage_amount_in_material: Optional[float] = max_percentage_amount_in_material
-        """The amount of this substance that occurs in the parent material. In the case where a range is specified in
-        the declaration, only the maximum is reported here. `None` means the percentage amount has not been specified,
-        not that the amount is 0 %."""
+        """Amount of this substance that occurs in the parent material. In the case where a range is specified in
+        the declaration, only the maximum is reported here. ``None`` means that the percentage amount has not been
+        specified, not that the amount is 0 %."""
 
         self.legislation_threshold: Optional[float] = legislation_threshold
-        """The substance concentration threshold over which the material is non-compliant with the legislation. `None`
-        means the threshold has not been specified, not that the threshold is 0 %."""
+        """Substance concentration threshold over which the material is non-compliant with the legislation. ``None``
+        means that the threshold has not been specified, not that the threshold is 0 %."""
 
     def __repr__(self) -> str:
         return (
@@ -359,10 +359,10 @@ else:
 
 
 class ImpactedSubstancesResultMixin(mixin_base_class):
-    """Adds results from an impacted substances query to an `ItemDefinition` class, turning it into an
-    `ItemWithImpactedSubstancesResult` class.
+    """Adds results from an impacted substances query to an ``ItemDefinition`` class, turning it into an
+    ``ItemWithImpactedSubstancesResult`` class.
 
-    Extensions to the constructor only, doesn't implement any additional methods.
+    This class is an extension to the constructor only. It doesn't implement any additional methods.
     """
 
     def __init__(
@@ -374,10 +374,10 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         Parameters
         ----------
         legislations
-            The substances that are found in the `ItemDefinition` item for the specified legislations.
+            Substances that are found in the ``ItemDefinition`` item for the specified legislations.
         **kwargs
-            Contains the `reference_type` and `reference_value` for `RecordDefinition`-based objects. Is empty for
-            `BoM1711Definition`-based objects.
+            Contains the ``reference_type`` and ``reference_value`` for ``RecordDefinition``-based objects.
+            It is empty for ``BoM1711Definition``-based objects.
         """
 
         super().__init__(**kwargs)
@@ -395,19 +395,19 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         substance: models.CommonImpactedSubstance,
     ) -> ImpactedSubstance:
 
-        """Creates an ImpactedSubstance result object based on the corresponding object returned from the low-level
+        """Create an ``ImpactedSubstance`` result object based on the corresponding object returned from the low-level
         API.
 
         Parameters
         ----------
         substance
-            An impacted substance result object returned by the low-level API.
+            Impacted substance result object that the low-level API is to return.
 
         Returns
         -------
 
         impacted_substance
-            The corresponding object in this API.
+            Corresponding object in this API.
         """
 
         if substance.cas_number:
@@ -442,7 +442,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         Returns
         -------
         substances_by_legislation : dict[str, list[ImpactedSubstance]]
-            The substances impacted for a particular item, grouped by legislation name.
+            Substances impacted for a particular item, grouped by legislation name.
 
         Examples
         --------
@@ -460,7 +460,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
         Returns
         -------
         substances : list[ImpactedSubstance]
-            The substances impacted for a particular item as a flattened list.
+            Substances impacted for a particular item as a flattened list.
 
         Examples
         --------
@@ -483,87 +483,87 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
 class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, MaterialDefinition):
-    """An individual material included as part of an impacted substances query result. This object includes
-    two categories of attribute:
+    """Retrieves an individual material that is included as part of an impacted substances query result.
+    This object includes two categories of attributes:
 
       - The reference to the material in Granta MI
       - The impacted substances associated with this material, both as a flat list and separated by legislation
 
     Attributes
     ----------
-    record_history_identity : Optional[int]
-    material_id : Optional[str]
-    record_history_guid : Optional[str]
-    record_guid : Optional[str]
+    record_history_identity : int, optional
+    material_id : str, optional
+    record_history_guid : str, optional
+    record_guid : str, optional
     substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
-        The substances impacted for a particular material, grouped by legislation name.
+        Substances impacted for a particular material, grouped by legislation name.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
-        The substances impacted for a particular material as a flattened list.
+        Substances impacted for a particular material as a flattened list.
 
     Notes
     -----
     With the exception of the *record_history_identity*, the record reference attributes below are only populated if
     they were specified in the original query.
 
-    Objects of this class are only returned as the result of a query; the class is not intended to be instantiated
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
 
 
 @ItemResultFactory.register("PartWithImpactedSubstances")
 class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefinition):
-    """An individual part included as part of an impacted substances query result. This object includes two
-    categories of attribute:
+    """Retrieves an individual part included as part of an impacted substances query result. This object includes
+    two categories of attributes:
 
       - The reference to the part in Granta MI
       - The impacted substances associated with this part, both as a flat list and separated by legislation
 
     Attributes
     ----------
-    record_history_identity : Optional[int]
-    part_number : Optional[str]
-    record_history_guid : Optional[str]
-    record_guid : Optional[str]
+    record_history_identity : list, optional
+    part_number : str, optional
+    record_history_guid : str, optional
+    record_guid : str, optional
     substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
-        The substances impacted for a particular part, grouped by legislation name.
+        Substances impacted for a particular part, grouped by legislation name.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
-        The substances impacted for a particular part as a flattened list.
+        Substances impacted for a particular part as a flattened list.
 
     Notes
     -----
     With the exception of the *record_history_identity*, the record reference attributes below are only populated if
     they were specified in the original query.
 
-    Objects of this class are only returned as the result of a query; the class is not intended to be instantiated
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
 
 
 @ItemResultFactory.register("SpecificationWithImpactedSubstances")
 class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, SpecificationDefinition):
-    """An individual specification included as part of an impacted substances query result. This object
-    includes two categories of attributes:
+    """Retrieves an individual specification included as part of an impacted substances query result.
+    This object includes two categories of attributes:
 
       - The reference to the specification in Granta MI
       - The impacted substances associated with this specification, both as a flat list and separated by legislation
 
     Attributes
     ----------
-    record_history_identity : Optional[int]
-    specification_id : Optional[str]
-    record_history_guid : Optional[str]
-    record_guid : Optional[str]
+    record_history_identity : list, optional
+    specification_id : str, optional
+    record_history_guid : str, optional
+    record_guid : str, optional
     substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
-        The substances impacted for a particular specification, grouped by legislation name.
+        Substances impacted for a particular specification, grouped by legislation name.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
-        The substances impacted for a particular specification as a flattened list.
+        Substances impacted for a particular specification as a flattened list.
 
     Notes
     -----
     With the exception of the *record_history_identity*, the record reference attributes below are only populated if
     they were specified in the original query.
 
-    Objects of this class are only returned as the result of a query; the class is not intended to be instantiated
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
 
@@ -577,18 +577,18 @@ class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
 
     An individual BoM included as part of an impacted substances query result. This object includes only the impacted
     substances associated with the BoM, both as a flat list and separated by legislation. There is no item representing
-    this BoM in Granta MI, and so no records to reference.
+    this BoM in Granta MI, and so there are no records to reference.
 
     Attributes
     ----------
     substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
-        The substances impacted for a particular item, grouped by legislation name.
+        Substances impacted for a particular item, grouped by legislation name.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
-        The substances impacted for a particular item as a flattened list.
+        Substances impacted for a particular item as a flattened list.
 
     Notes
     -----
-    Objects of this class are only returned as the result of a query; the class is not intended to be instantiated
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
 
@@ -597,27 +597,27 @@ class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
 
 
 class ComplianceResultMixin(mixin_base_class):
-    """Adds results from a compliance query to a class deriving from `ItemDefinition`, turning it into an
-    `[ItemType]WithComplianceResult` class.
+    """Adds results from a compliance query to a class deriving from ``ItemDefinition``, turning it into an
+    ``[ItemType]WithComplianceResult`` class.
 
-    A compliance query returns a BoM-like result (see Notes for more background), with indicator results attached to
-    each level of the BoM. This mixin implements only the indicator results for a given item; separate mixins
-    instantiate and add the child items to the parent.
+    A compliance query returns a BoM-like results, with indicator results attached to each level of the BoM.
+    (For more information, see the notes.) This mixin implements only the indicator results for a given item.
+    Separate mixins instantiate and add the child items to the parent.
 
     Parameters
     ----------
     indicator_results
-        Compliance of the `ItemDefinition` item for the specified indicators. Does not include the full indicator
-        definition; only the indicator name
+        Compliance of the ``ItemDefinition`` item for the specified indicators. This parameter does not include
+        the full indicator definition, only the indicator name.
     indicator_definitions
         Used as a base to create the indicator results for both this item and the child substances.
     **kwargs
-        Contains the `reference_type` and `reference_value` for `RecordDefinition`-based objects. Is empty
-        for `BoM1711Definition`-based objects.
+        Contains the ``reference_type`` and ``reference_value`` for ``RecordDefinition``-based objects. It is
+        empty for ``BoM1711Definition``-based objects.
 
     Notes
     -----
-    Bills of Materials are recursively defined structures. The top-level item is always a 'Part'. 'Parts' can
+    BoMs are recursively defined structures. The top-level item is always a 'Part'. 'Parts' can
     contain zero or more of:
     * 'Parts'
     * 'Specifications'
@@ -635,11 +635,11 @@ class ComplianceResultMixin(mixin_base_class):
 
     'Substances' have no children and are always leaf nodes.
 
-    In addition to these items described above, a Compliance query result adds `Indicator` objects to all items at
+    In addition to these items described above, a compliance query result adds ``Indicator`` objects to all items at
     every level.
 
-    This mixin is applied to `ItemDefinition` objects to turn them into `ItemWithCompliance` objects, where 'item' is
-    one of 'Part', 'Specification', 'Material', 'Coating', and 'Substance'.
+    This mixin is applied to ``ItemDefinition`` objects to turn them into ``ItemWithCompliance`` objects, where
+    'item' is a 'Part', 'Specification', 'Material', 'Coating', or 'Substance'.
     """
 
     _definition = None  # Required for linter, is supplied by the main RecordDefinition-derived class
@@ -668,17 +668,17 @@ else:
 
 
 class ChildSubstanceWithComplianceMixin(child_base_class):
-    """Adds a 'substance' attribute to an `ItemWithComplianceResult` class and populates it with child substances.
+    """Adds a ``substance`` attribute to an ``ItemWithComplianceResult`` class and populates it with child substances.
 
-    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
+    See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
 
     Parameters
     ----------
     child_substances
-        The materials returned by the low-level API that are children of this item.
+        Materials returned by the low-level API that are children of this item.
     **kwargs
-        Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects.
+        Contains other result objects depending on the parent item. It contains record references for
+        ``RecordDefinition``-based objects.
     """
 
     def __init__(self, **kwargs: Any) -> None:
@@ -687,7 +687,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
 
     @property
     def substances(self) -> List["SubstanceWithComplianceResult"]:
-        """The substance compliance result objects that are direct children of this item in the BoM.
+        """Substance compliance result objects that are direct children of this item in the BoM.
 
         Returns
         -------
@@ -704,13 +704,13 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
         return self._substances
 
     def _add_child_substances(self, child_substances: List[models.CommonSubstanceWithCompliance]) -> None:
-        """Populate the `substances` attribute based on a provided list of low-level API substance with compliance
+        """Populate the ``substances`` attribute based on a provided list of low-level API substance with compliance
         results.
 
         Parameters
         ----------
         child_substances
-            A list of substances with compliance returned from the low-level API
+            List of substances with compliance returned from the low-level API.
         """
 
         for child_substance in child_substances:
@@ -723,17 +723,17 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
 
 
 class ChildMaterialWithComplianceMixin(child_base_class):
-    """Adds a 'material' attribute to an `ItemWithComplianceResult` class and populates it with child materials.
+    """Adds a ``material`` attribute to an ``ItemWithComplianceResult`` class and populates it with child materials.
 
-    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
+    See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
 
     Parameters
     ----------
     child_materials
-        The materials returned by the low-level API that are children of this item.
+        Materials returned by the low-level API that are children of this item.
     **kwargs
-        Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects.
+        Contains other result objects depending on the parent item. It contains record references for
+        ``RecordDefinition``-based objects.
     """
 
     def __init__(self, **kwargs: Any) -> None:
@@ -742,7 +742,7 @@ class ChildMaterialWithComplianceMixin(child_base_class):
 
     @property
     def materials(self) -> List["MaterialWithComplianceResult"]:
-        """The material compliance result objects that are direct children of this part or specification in the BoM.
+        """Material compliance result objects that are direct children of this part or specification in the BoM.
 
         Returns
         -------
@@ -762,15 +762,15 @@ class ChildMaterialWithComplianceMixin(child_base_class):
         self,
         child_materials: List[models.CommonMaterialWithCompliance],
     ) -> None:
-        """Populate the `materials` attribute based on a provided list of low-level API materials with compliance
+        """Populates the ``materials`` attribute based on a provided list of low-level API materials with compliance
         results.
 
-        Operates recursively, i.e. also adds any substances with compliance that are children of each material.
+        This method operates recursively, adding any substances with compliance that are children of each material.
 
         Parameters
         ----------
         child_materials
-            A list of materials with compliance returned from the low-level API
+            List of materials with compliance returned from the low-level API.
         """
 
         for child_material in child_materials:
@@ -784,18 +784,18 @@ class ChildMaterialWithComplianceMixin(child_base_class):
 
 
 class ChildSpecificationWithComplianceMixin(child_base_class):
-    """Adds a 'specification' attribute to an `ItemWithComplianceResult` class and populates it with child
+    """Adds a '`specification`' attribute to an ``ItemWithComplianceResult`` class and populates it with child
     specifications.
 
-    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
+    See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
 
     Parameters
     ----------
     child_specifications
-        The specifications returned by the low-level API that are children of this item.
+        Specifications returned by the low-level API that are children of this item.
     **kwargs
-        Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects.
+        Contains other result objects depending on the parent item. It contains record references for
+        ``RecordDefinition``-based objects.
     """
 
     def __init__(self, **kwargs: Any) -> None:
@@ -804,7 +804,7 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
 
     @property
     def specifications(self) -> List["SpecificationWithComplianceResult"]:
-        """The specification compliance result objects that are direct children of this item in the BoM.
+        """Specification compliance result objects that are direct children of this item in the BoM.
 
         Returns
         -------
@@ -824,16 +824,16 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
         self,
         child_specifications: List[models.CommonSpecificationWithCompliance],
     ) -> None:
-        """Populate the `specifications` attribute based on a provided list of low-level API specifications with
+        """Populate the ``specifications`` attribute based on a provided list of low-level API specifications with
         compliance results.
 
-        Operates recursively, i.e. also adds any specifications, materials, coatings, and substances with compliance
+        This method operates recursively, adding any specifications, materials, coatings, and substances with compliance
         that are children of each specification.
 
         Parameters
         ----------
         child_specifications
-            A list of specifications with compliance returned from the low-level API
+            List of specifications with compliance returned from the low-level API
         """
 
         for child_specification in child_specifications:
@@ -850,17 +850,17 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
 
 
 class ChildPartWithComplianceMixin(child_base_class):
-    """Adds a 'part' attribute to an `ItemWithComplianceResult` class and populates it with child parts.
+    """Adds a ``part`` attribute to an ``ItemWithComplianceResult`` class and populates it with child parts.
 
-    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
+    See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
 
     Parameters
     ----------
     child_parts
-        The parts returned by the low-level API that are children of this item.
+        Parts returned by the low-level API that are children of this item.
     **kwargs
-        Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects.
+        Contains other result objects depending on the parent item. It contains record references for
+        ``RecordDefinition``-based objects.
     """
 
     def __init__(self, **kwargs: Any) -> None:
@@ -869,7 +869,7 @@ class ChildPartWithComplianceMixin(child_base_class):
 
     @property
     def parts(self) -> List["PartWithComplianceResult"]:
-        """The part compliance result objects that are direct children of this part in the BoM.
+        """Part compliance result objects that are direct children of this part in the BoM.
 
         Returns
         -------
@@ -889,16 +889,16 @@ class ChildPartWithComplianceMixin(child_base_class):
         self,
         child_parts: List[models.CommonPartWithCompliance],
     ) -> None:
-        """Populate the `parts` attribute based on a provided list of low-level API parts with compliance
+        """Populate the ``parts`` attribute based on a provided list of low-level API parts with compliance
         results.
 
-        Operates recursively, i.e. also adds any parts, materials, coatings, and substances with compliance
+        Operates recursively, adding any parts, materials, coatings, and substances with compliance
         that are children of each part.
 
         Parameters
         ----------
         child_parts
-            A list of parts with compliance returned from the low-level API
+           List of parts with compliance returned from the low-level API
         """
 
         for child_part in child_parts:
@@ -915,17 +915,17 @@ class ChildPartWithComplianceMixin(child_base_class):
 
 
 class ChildCoatingWithComplianceMixin(child_base_class):
-    """Adds a 'coating' attribute to an `ItemWithComplianceResult` class and populates it with child coatings.
+    """Adds a ``coating`` attribute to an ``ItemWithComplianceResult`` class and populates it with child coatings.
 
-    See the `ComplianceResultMixin` notes for more background on Compliance query results and BoM structures.
+    See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
 
     Parameters
     ----------
     child_coatings
-         The coatings returned by the low-level API that are children of this item.
+         Coatings returned by the low-level API that are children of this item.
     **kwargs
-        Contains other result objects depending on the parent item. Contains record references for
-        `RecordDefinition`-based objects.
+        Contains other result objects depending on the parent item. It contains record references for
+        ``RecordDefinition``-based objects.
     """
 
     def __init__(self, **kwargs: Any) -> None:
@@ -934,7 +934,7 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 
     @property
     def coatings(self) -> List["CoatingWithComplianceResult"]:
-        """The coating result objects that are direct children of this specification in the BoM.
+        """Coating result objects that are direct children of this specification in the BoM.
 
         Returns
         -------
@@ -954,15 +954,15 @@ class ChildCoatingWithComplianceMixin(child_base_class):
         self,
         child_coatings: List[models.CommonCoatingWithCompliance],
     ) -> None:
-        """Populate the `coatings` attribute based on a provided list of low-level API coatings with compliance
+        """Populate the ``coatings`` attribute based on a provided list of low-level API coatings with compliance
         results.
 
-        Operates recursively, i.e. also adds any substances with compliance that are children of each coating.
+        Operates recursively, adding any substances with compliance that are children of each coating.
 
         Parameters
         ----------
         child_coatings
-            A list of coatings with compliance returned from the low-level API
+            List of coatings with compliance returned from the low-level API.
         """
 
         for child_coating in child_coatings:
@@ -977,36 +977,36 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 
 @ItemResultFactory.register("SubstanceWithCompliance")
 class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
-    """An individual substance included as part of a compliance query result. This object includes two
-    categories of attribute:
+    """Retrieves an individual substance included as part of a compliance query result.
+    This object includes two categories of attributes:
 
       - The reference to the substance in Granta MI
       - The compliance status of this substance, stored in a dictionary of one or more indicator objects
 
     Attributes
     ----------
-    record_history_identity : Optional[int]
-    cas_number : Optional[str]
-    ec_number : Optional[str]
-    chemical_name : Optional[str]
-    record_history_guid : Optional[str]
-    record_guid : Optional[str]
+    record_history_identity : int, optional
+    cas_number : str, optional
+    ec_number : str, optional
+    chemical_name : str, optional
+    record_history_guid : str, optional
+    record_guid : str, optional
     indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
-        The compliance status of this item for each indicator included in the original query.
+        Compliance status of this item for each indicator included in the original query.
 
     Notes
     -----
     The record reference attributes below are only populated if they were specified in the original query.
 
-    Objects of this class are only returned as the result of a query; the class is not intended to be instantiated
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
 
 
 @ItemResultFactory.register("MaterialWithCompliance")
 class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialDefinition):
-    """An individual material included as part of a compliance query result. This object includes three
-    categories of attribute:
+    """Retrieves an individual material included as part of a compliance query result.
+    This object includes three categories of attributes:
 
       - The reference to the material in Granta MI
       - The compliance status of this material, stored in a dictionary of one or more indicator objects
@@ -1014,14 +1014,14 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
 
     Attributes
     ----------
-    record_history_identity : Optional[int]
-    material_id : Optional[str]
-    record_history_guid : Optional[str]
-    record_guid : Optional[str]
+    record_history_identity : int, optional
+    material_id : str, optional
+    record_history_guid : str, optional
+    record_guid : str, optional
     indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
-        The compliance status of this item for each indicator included in the original query.
+        Compliance status of this item for each indicator included in the original query.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        The substance compliance result objects that are direct children of this material in the BoM.
+        Substance compliance result objects that are direct children of this material in the BoM.
 
     Notes
     -----
@@ -1029,7 +1029,7 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
     they were specified in the original query. As a result, if this object is included as the child of another
     compliance result object, only the *record_history_identity* will be populated.
 
-    Objects of this class are only returned as the result of a query; the class is not intended to be instantiated
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
 
@@ -1043,8 +1043,8 @@ class PartWithComplianceResult(
     ComplianceResultMixin,
     PartDefinition,
 ):
-    """An individual part included as part of a compliance query result. This object includes three
-    categories of attribute:
+    """Retrieves an individual part included as part of a compliance query result.
+    This object includes three categories of attributes:
 
       - The reference to the part in Granta MI (if the part references a record)
       - The compliance status of this part, stored in a dictionary of one or more indicator objects
@@ -1052,20 +1052,20 @@ class PartWithComplianceResult(
 
     Attributes
     ----------
-    record_history_identity : Optional[int]
-    part_number : Optional[str]
-    record_history_guid : Optional[str]
-    record_guid : Optional[str]
+    record_history_identity : int, optional
+    part_number : str, optional
+    record_history_guid : str, optional
+    record_guid : str, optional
     indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
-        The compliance status of this item for each indicator included in the original query.
+        Compliance status of this item for each indicator included in the original query.
     parts : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithComplianceResult`]
-        The part compliance result objects that are direct children of this part in the BoM.
+        Part compliance result objects that are direct children of this part in the BoM.
     specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult`]
-        The specification compliance result objects that are direct children of this part in the BoM.
+        Specification compliance result objects that are direct children of this part in the BoM.
     materials : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult`]
-        The material compliance result objects that are direct children of this part in the BoM.
+        Material compliance result objects that are direct children of this part in the BoM.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        The substance compliance result objects that are direct children of this part in the BoM.
+        Substance compliance result objects that are direct children of this part in the BoM.
 
     Notes
     -----
@@ -1073,7 +1073,7 @@ class PartWithComplianceResult(
     they were specified in the original query. As a result, if this object is included as the child of another
     compliance result object, only the *record_history_identity* will be populated.
 
-    Objects of this class are only returned as the result of a query; the class is not intended to be instantiated
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
 
@@ -1087,8 +1087,8 @@ class SpecificationWithComplianceResult(
     ComplianceResultMixin,
     SpecificationDefinition,
 ):
-    """An individual specification included as part of a compliance query result. This object includes three
-    categories of attributes:
+    """Retrieves an individual specification included as part of a compliance query result.
+    This object includes three categories of attributes:
 
       - The reference to the specification in Granta MI
       - The compliance status of this specification, stored in a dictionary of one or more indicator objects
@@ -1096,7 +1096,7 @@ class SpecificationWithComplianceResult(
 
     Attributes
     ----------
-    record_history_identity : Optional[int]
+    record_history_identity : int, optional
     specification_id : Optional[str]
     record_history_guid : Optional[str]
     record_guid : Optional[str]
@@ -1133,15 +1133,15 @@ class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceR
 
     Attributes
     ----------
-    record_history_identity : int
+    record_history_identity : int, optional
         Default reference type for compliance items returned as children of the queried item.
     indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
-        The compliance status of this item for each indicator included in the original query.
+        Compliance status of this item for each indicator included in the original query.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        The substance compliance result objects that are direct children of this coating in the BoM.
+        Substance compliance result objects that are direct children of this coating in the BoM.
 
     Notes
     -----
-    Objects of this class are only returned as the result of a query; the class is not intended to be instantiated
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """

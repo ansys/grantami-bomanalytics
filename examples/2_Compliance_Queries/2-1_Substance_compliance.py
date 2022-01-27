@@ -21,7 +21,8 @@
 
 # ## Connecting to Granta MI
 
-# Import the `Connection` class and create the connection. See the Getting Started example for more details.
+# Import the ``Connection`` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb)
+# example for more details.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -35,7 +36,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # A Compliance query determines compliance against 'Indicators', as opposed to an Impacted Substances query which
 # determines compliance directly against legislations.
 #
-# There are two types of Indicator object (`WatchListIndicator` and `RohsIndicator`), and the syntax presented below
+# There are two types of Indicator object (``WatchListIndicator`` and ``RohsIndicator``), and the syntax presented below
 # applies to both. The differences in the internal implementation of the two objects are described in the API
 # documentation.
 #
@@ -43,7 +44,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to
 # any other items in the BoM hierarchy that directly or indirectly include that substance.
 
-# First, create two `WatchListIndicator` objects.
+# First, create two ``WatchListIndicator`` objects.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import indicators
@@ -57,7 +58,7 @@ sin = indicators.WatchListIndicator(
     name="SIN",
     legislation_names=["The SIN List 2.1 (Substitute It Now!)"]
 )
-
+# -
 
 # + [markdown] tags=[]
 # ## Building and Running the Query
@@ -78,27 +79,27 @@ sub_query = sub_query.with_cas_numbers_and_amounts([("50-00-0", 10),
                                                     ("7440-23-5", 100)])
 # -
 
-# Finally, run the query. Passing a `SubstanceComplianceQuery` object to the `Connection.run()` method returns a
-# `SubstanceComplianceQueryResult` object.
+# Finally, run the query. Passing a ``SubstanceComplianceQuery`` object to the ``Connection.run()`` method returns a
+# ``SubstanceComplianceQueryResult`` object.
 
 # + tags=[]
 sub_result = cxn.run(sub_query)
 sub_result
 
 # + [markdown] tags=[]
-# The result object contains two properties: `compliance_by_substance_and_indicator` and `compliance_by_indicator`.
+# The result object contains two properties: ``compliance_by_substance_and_indicator`` and ``compliance_by_indicator``.
 # -
 
 # ## compliance_by_substance_and_indicator
 
 # + [markdown] tags=[]
-# `compliance_by_substance_and_indicator` contains a list of `SubstanceWithComplianceResult` objects that contain the
-# reference to the substance record and the compliance status in the list of indicators. To determine which substances
-# are compliant, we can loop over each one and compare the indicator to a certain threshold. For this example, we will
-# only examine the SVHC indicator.
+# ``compliance_by_substance_and_indicator`` contains a list of ``SubstanceWithComplianceResult`` objects that contain
+# the reference to the substance record and the compliance status in the list of indicators. To determine which
+# substances are compliant, we can loop over each one and compare the indicator to a certain threshold. For this
+# example, we will only examine the SVHC indicator.
 # -
 
-# The possible states of the indicator are available on the `Indicator.available_flags` attribute, and can be compared
+# The possible states of the indicator are available on the ``Indicator.available_flags`` attribute and can be compared
 # using standard Python operators.
 
 # + tags=[]
@@ -119,17 +120,16 @@ for substance in sub_result.compliance_by_substance_and_indicator:
 compliant_cas_numbers = [sub.cas_number for sub in compliant_substances]
 print(f'Non-SVHC substances: {", ".join(compliant_cas_numbers)}')
 
-# + tags=[]
 non_compliant_cas_numbers = [sub.cas_number for sub in non_compliant_substances]
 print(f'SVHCs: {", ".join(non_compliant_cas_numbers)}')
 # -
 
 # ## compliance_by_indicator
 
-# Alternatively, using the `compliance_by_indicator` property provides a single indicator result that summarizes the
+# Alternatively, using the ``compliance_by_indicator`` property provides a single indicator result that summarizes the
 # results across all substances in the query. This would be useful in a situation where we have a 'concept' material
 # stored outside of Granta MI, and we want to determine its compliance. We know it contains the substances specified in
-# the query above, and so using `compliance_by_indicator` will tell us if that concept material is compliant based on
+# the query above, and so using ``compliance_by_indicator`` will tell us if that concept material is compliant based on
 # the worst result of the individual substances.
 
 # + tags=[]

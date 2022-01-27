@@ -21,7 +21,8 @@
 
 # ## Connecting to Granta MI
 
-# Import the `Connection` class and create the connection. See the Getting Started example for more details.
+# Import the ``Connection`` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb)
+# example for more details.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -35,7 +36,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # A Compliance query determines compliance against 'Indicators', as opposed to an Impacted Substances query which
 # determines compliance directly against legislations.
 #
-# There are two types of Indicator object (`WatchListIndicator` and `RohsIndicator`), and the syntax presented below
+# There are two types of Indicator object (``WatchListIndicator`` and ``RohsIndicator``), and the syntax presented below
 # applies to both. The differences in the internal implementation of the two objects are described in the API
 # documentation.
 #
@@ -43,7 +44,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to
 # any other items in the BoM hierarchy that directly or indirectly include that substance.
 
-# First, create two `WatchListIndicator` objects.
+# First, create two ``WatchListIndicator`` objects.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import indicators
@@ -57,7 +58,7 @@ sin = indicators.WatchListIndicator(
     name="SIN",
     legislation_names=["The SIN List 2.1 (Substitute It Now!)"]
 )
-
+# -
 
 # + [markdown] tags=[]
 # ## Building and Running the Query
@@ -77,21 +78,22 @@ part_query = (
 )
 # -
 
-# Finally, run the query. Passing a `PartComplianceQuery` object to the `Connection.run()` method returns a
-# `PartComplianceQueryResult` object.
+# Finally, run the query. Passing a ``PartComplianceQuery`` object to the ``Connection.run()`` method returns a
+# ``PartComplianceQueryResult`` object.
 
 # + tags=[]
 part_result = cxn.run(part_query)
 part_result
+# -
 
 # + [markdown] tags=[]
-# The result object contains two properties, `compliance_by_part_and_indicator` and `compliance_by_indicator`.
+# The result object contains two properties, ``compliance_by_part_and_indicator`` and ``compliance_by_indicator``.
 # -
 
 # ## compliance_by_part_and_indicator
 
 # + [markdown] tags=[]
-# `compliance_by_part_and_indicator` contains a list of `PartWithComplianceResult` objects that contain the
+# ``compliance_by_part_and_indicator`` contains a list of ``PartWithComplianceResult`` objects with the
 # reference to the part record and the compliance status for each indicator.
 #
 # In Granta MI, Parts can link to the following record types:
@@ -101,9 +103,9 @@ part_result
 # - Materials (which can link to Substances)
 # - Substances
 #
-# Since compliance of a Part is determined based on the compliance of the items the record is linked to, the
-# corresponding `ResultWithCompliance` objects are included in the parent `PartWithComplianceResult`, each with their
-# own compliance status.
+# Because compliance of a part is determined based on the compliance of the items that the record is linked to, the
+# corresponding ``ResultWithCompliance`` objects are included in the parent ``PartWithComplianceResult``, each with
+# their own compliance status.
 # -
 
 # Since we specified two part records, we have received two result objects back. In this example, we will only look in
@@ -117,7 +119,7 @@ print(f"Wing compliance status: {wing.indicators['SVHC'].flag.name}")
 # This tells us that the wing flap assembly contains an SVHC above the 0.1% threshold.
 
 # We can print the parts below this part that also contain an SVHC above the threshold. The parts referenced by the
-# 'wing' part are available in the `parts` property.
+# ``wing`` part are available in the ``parts`` property.
 
 # + tags=[]
 above_threshold_flag = svhc.available_flags.WatchListAboveThreshold
@@ -140,6 +142,7 @@ def recursively_print_parts_with_svhcs(parts, depth=0):
     for part in parts_contain_svhcs:
         print(f"{'  '*depth}- Part: {part.record_history_identity}")
         recursively_print_parts_with_svhcs(part.parts, depth + 1)
+# -
 
 
 # + tags=[]
@@ -160,6 +163,7 @@ def recursively_print_parts_with_svhcs(parts, depth=0):
         print_materials_with_svhcs(part.materials, depth + 1)
         print_specifications_with_svhcs(part.specifications, depth + 1)
         print_substances_with_svhcs(part.substances, depth + 1)
+# -
 
 
 # + tags=[]
@@ -169,6 +173,7 @@ def print_materials_with_svhcs(materials, depth=0):
     for mat in mats_contain_svhcs:
         print(f"{'  '*depth}- Material: {mat.record_history_identity}")
         print_substances_with_svhcs(mat.substances, depth + 1)
+# -
 
 
 # + tags=[]
@@ -179,6 +184,7 @@ def print_specifications_with_svhcs(specifications, depth=0):
         print(f"{'  '*depth}- Specification: {spec.record_history_identity}")
         print_coatings_with_svhcs(spec.coatings, depth + 1)
         print_substances_with_svhcs(spec.substances, depth + 1)
+# -
 
 
 # + tags=[]
@@ -188,6 +194,7 @@ def print_coatings_with_svhcs(coatings, depth=0):
     for coating in coatings_contain_svhcs:
         print(f"{'  '*depth}- Coating: {coating.record_history_identity}")
         print_substances_with_svhcs(coating.substances, depth + 1)
+# -
 
 
 # + tags=[]
@@ -196,6 +203,7 @@ def print_substances_with_svhcs(substances, depth=0):
                           if sub.indicators["SVHC"] >= above_threshold_flag]
     for sub in subs_contain_svhcs:
         print(f"{'  '*depth}- Substance: {sub.record_history_identity}")
+# -
 
 
 # + tags=[]
@@ -208,14 +216,15 @@ recursively_print_parts_with_svhcs(wing.parts)
 
 # ## compliance_by_indicator
 
-# Alternatively, using the `compliance_by_indicator` property will give us a single indicator result that rolls up the
+# Alternatively, using the ``compliance_by_indicator`` property will give us a single indicator result that rolls up the
 # results across all parts in the query. This would be useful in a situation where we have a 'concept' assembly stored
-# outside of Granta MI, and we want to determine its compliance. We know it contains the sub-assemblies specified in the
-# query above, and so using `compliance_by_indicator` will tell us if that concept assembly is compliant based on the
-# worst result of the individual sub-assemblies.
+# outside of Granta MI, and we want to determine its compliance. We know it contains the subassemblies specified in the
+# query above, and so using ``compliance_by_indicator`` will tell us if that concept assembly is compliant based on the
+# worst result of the individual subassemblies.
 
 # + tags=[]
 if part_result.compliance_by_indicator["SVHC"] >= above_threshold_flag:
-    print("One or more sub-assemblies contains an SVHC in a quantity > 0.1%")
+    print("One or more subassemblies contains an SVHC in a quantity > 0.1%")
 else:
     print("No SVHCs, or SVHCs are present in a quantity < 0.1%")
+# -

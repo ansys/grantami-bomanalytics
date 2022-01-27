@@ -32,8 +32,8 @@
 
 # ## Load the External Data
 
-# First load the JSON file and use the `json` module
-# to convert the text into a hierarchical structure of `dict` and `list` objects.
+# First load the JSON file and use the ``json`` module to convert the text into a hierarchical structure of ``dict`` and
+# ``list`` objects.
 
 # + tags=[]
 import json
@@ -96,9 +96,9 @@ mat_results
 # The results above describe the compliance status for each material, but more work is needed to
 # provide the compliance status for all the components in the original JSON.
 
-# When a component contains only one material, the result can simply be copied over.
-# In the general case, moving from material compliance to component compliance means taking
-# the worst compliance result across all the constituent materials.
+# When a component contains only one material, the result can simply be copied over.  In the general case, moving from
+# material compliance to component compliance means taking the worst compliance result across all the constituent
+# materials.
 
 # To do this, first create a dictionary that maps a material ID to the indicator result returned by the query.
 
@@ -110,8 +110,8 @@ material_lookup = {mat.material_id: mat.indicators["SVHC"]
 # Next, define a function that takes a list of material IDs and returns the worst compliance status associated with the
 # materials in the list.
 #
-# We can use the built-in `max()` function to do this, since `WatchListIndicator` objects can be compared with > and <
-# operators. The convention is that a worse result is 'greater than' a better result.
+# We can use the built-in ``max()`` function to do this, because ``WatchListIndicator`` objects can be compared with >
+# and < operators. The convention is that a worse result is 'greater than' a better result.
 
 
 # + tags=[]
@@ -119,11 +119,10 @@ def rollup_results(material_ids) -> str:
     indicator_results = [material_lookup[mat_id] for mat_id in material_ids]
     worst_result = max(indicator_results)
     return worst_result.flag.name
-
-
 # -
 
-# Now call this function for each component in a `dict` comprehension, giving us a mapping between part number
+
+# Now call this function for each component in a ``dict`` comprehension to obtain a mapping between part number
 # and compliance status.
 
 # + tags=[]
@@ -155,7 +154,7 @@ results
 
 # ## Write the Output
 
-# Once we have our final result, we can take our result `dict` and use it to extend the original JSON data structure,
+# Once we have our final result, we can take our result ``dict`` and use it to extend the original JSON data structure,
 # with approval requirements added in.
 
 # +

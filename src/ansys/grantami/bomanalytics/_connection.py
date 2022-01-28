@@ -256,8 +256,8 @@ class BomAnalyticsClient(ApiClient):
         Raises
         ------
         :class:`~ansys.grantami.bomanalytics.GrantaMIException`
-            If the server encounters an error while processing the query with a severity of "critical". Granta MI
-            is running and the BoM Analytics Service is available. However, the query could not be run, probobably
+            If the server encounters an error while processing the query with a severity of "critical". This indicates that Granta MI
+            is running and the BoM Analytics Service is available, but the query could not be run; probably
             because of a missing database or table.
         :class:`~ansys.openapi.common.ApiException`
             If this exception is raised, the Granta MI server was not able to return a response, probably

@@ -34,7 +34,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 
 # ## Building and Running the Query
 
-# The query is assembled by providing a list of material references and legislations of interest. The query will return
+# The query is assembled by providing lists of material references and legislations of interest. The query will return
 # the substances that are present in the specified materials and are impacted by the specified legislations.
 
 # First specify some constants that contain the material and legislation references we will use.

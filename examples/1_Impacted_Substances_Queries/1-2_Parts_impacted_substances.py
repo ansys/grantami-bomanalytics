@@ -40,7 +40,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # ## Building and Running the Query
 # -
 
-# The query is assembled by providing a list of part references and legislations of interest. The query will return
+# The query is assembled by providing lists of part references and legislations of interest. The query will return
 # the substances that are present in the specified parts and are impacted by the specified legislations.
 #
 # In this example, the 'Drill' part will be used. In contrast to the Material version of this query shown in

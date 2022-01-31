@@ -269,7 +269,7 @@ jobs:
           search_artifacts: false
 
       - name: Install library
-        run: pip install .[doc] --find-links ./deps --disable-pip-version-check
+        run: pip install .[doc] --find-links ./deps --disable-pip-version-check --pre
 
       - name: Set BUILD_EXAMPLES environment variable
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}

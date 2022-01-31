@@ -92,7 +92,7 @@ class _BaseQueryDataManager(ABC):
         self._messages = []
 
     @property
-    def item_results(self) -> List[models.Model]:
+    def item_results(self) -> List[models.ModelBase]:
         """List of result items returned by the low-level API for the items in ``_item_definitions``.
 
         Returns
@@ -101,7 +101,7 @@ class _BaseQueryDataManager(ABC):
         """
         return self._item_results
 
-    def append_response(self, response: models.Model) -> None:
+    def append_response(self, response: models.ModelBase) -> None:
         """Append a response from the low-level API to this object.
 
         This method extracts the results and server messages from the response object and appends
@@ -145,7 +145,7 @@ class _BaseQueryDataManager(ABC):
             raise GrantaMIException(error_text)
 
     @abstractmethod
-    def _extract_results_from_response(self, response: models.Model) -> List[models.Model]:
+    def _extract_results_from_response(self, response: models.ModelBase) -> List[models.ModelBase]:
         pass
 
     @property
@@ -215,7 +215,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
         self._item_definitions.append(item)
 
     @property
-    def batched_arguments(self) -> Generator[Dict[str, List[Union[models.Model, str]]], None, None]:
+    def batched_arguments(self) -> Generator[Dict[str, List[Union[models.ModelBase, str]]], None, None]:
         """A generator that produces lists of instances of models to be supplied to a query request. Each list
         of dictionaries will have at most ``_batch_size`` long.
 
@@ -248,7 +248,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
             logger.debug(f"Batch {batch_number + 1}, Items: {batch_str}")
             yield {self.item_type_name: batch}
 
-    def _extract_results_from_response(self, response: models.Model) -> List[models.Model]:
+    def _extract_results_from_response(self, response: models.ModelBase) -> List[models.ModelBase]:
         """Extract the individual results from a response object.
 
         Returns
@@ -256,7 +256,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
             Attribute containing the list of results identified by ``self.record_type_name``.
         """
 
-        results: List[models.Model] = getattr(response, self.item_type_name)
+        results: List[models.ModelBase] = getattr(response, self.item_type_name)
         return results
 
 
@@ -493,11 +493,11 @@ class _ApiMixin:
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type: Type[models.Model]
+        self._request_type: Type[models.ModelBase]
         """Type of object to send to the Granta MI server. The actual value is set in the concrete class
          definition."""
 
-    def _call_api(self, api_method: Callable[[models.Model], models.Model], arguments: Dict) -> None:
+    def _call_api(self, api_method: Callable[[models.ModelBase], models.ModelBase], arguments: Dict) -> None:
         """Perform the actual call against the Granta MI database.
 
         This method finalizes the arguments by appending each batch of `'item'` arguments to the passed in
@@ -1483,7 +1483,7 @@ class _BomQueryDataManager(_BaseQueryDataManager):
 
         return [{self.item_type_name: self._item_definitions[0]}]
 
-    def _extract_results_from_response(self, response: models.Model) -> List[models.Model]:
+    def _extract_results_from_response(self, response: models.ModelBase) -> List[models.ModelBase]:
         """Extracts the individual results from a response object.
 
         For BoM queries, the result isn't contained within a larger response object. It is already the object we want.

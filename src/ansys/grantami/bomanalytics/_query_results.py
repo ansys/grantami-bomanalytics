@@ -50,7 +50,7 @@ class QueryResultFactory:
     "Mapping between a query result class and the API response it supports."
 
     @classmethod
-    def register(cls, response_type: Type[models.Model]) -> Callable:
+    def register(cls, response_type: Type[models.ModelBase]) -> Callable:
         """Registers a specific query result class with a response object type.
 
         Parameters
@@ -72,7 +72,10 @@ class QueryResultFactory:
 
     @classmethod
     def create_result(
-        cls, results: Union[List[models.Model], models.Model], messages: List[models.CommonLogEntry], **kwargs: Dict
+        cls,
+        results: Union[List[models.ModelBase], models.ModelBase],
+        messages: List[models.CommonLogEntry],
+        **kwargs: Dict,
     ) -> "Query_Result":
         """Returns a specific query result.
 

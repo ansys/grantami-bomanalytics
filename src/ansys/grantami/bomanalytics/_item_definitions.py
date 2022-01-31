@@ -101,7 +101,7 @@ class RecordDefinition(RecordReference):
 
     @property
     @abstractmethod
-    def _definition(self) -> models.Model:
+    def _definition(self) -> models.ModelBase:
         pass
 
 
@@ -431,11 +431,11 @@ class AbstractBomFactory:
     the request object in the low-level API.
     """
 
-    registry: Dict[Type[models.Model], Type["BomItemDefinitionFactory"]] = {}
+    registry: Dict[Type[models.ModelBase], Type["BomItemDefinitionFactory"]] = {}
     """Mapping between a factory class and the definition object it can create."""
 
     @classmethod
-    def register(cls, request_types: List[Type[models.Model]]) -> Callable:
+    def register(cls, request_types: List[Type[models.ModelBase]]) -> Callable:
         """Registers a specific factory class with a low-level API request type.
 
         Parameters
@@ -456,7 +456,7 @@ class AbstractBomFactory:
         return inner
 
     @classmethod
-    def create_factory_for_request_type(cls, request_type: Type[models.Model]) -> "BomItemDefinitionFactory":
+    def create_factory_for_request_type(cls, request_type: Type[models.ModelBase]) -> "BomItemDefinitionFactory":
         """Factory method to instantiate and return a specific item definition factory.
 
         Parameters

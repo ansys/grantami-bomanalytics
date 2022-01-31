@@ -72,7 +72,10 @@ class QueryResultFactory:
 
     @classmethod
     def create_result(
-        cls, results: Union[List[models.ModelBase], models.ModelBase], messages: List[models.CommonLogEntry], **kwargs: Dict
+        cls,
+        results: Union[List[models.ModelBase], models.ModelBase],
+        messages: List[models.CommonLogEntry],
+        **kwargs: Dict,
     ) -> "Query_Result":
         """Returns a specific query result.
 

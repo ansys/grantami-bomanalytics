@@ -41,7 +41,7 @@ python = "^3.7"
 # Packages for core library
 importlib_metadata = { version = "^1.0", python  = "<3.8" }
 ansys-openapi-common = "*"  # TODO: Change to the released version
-ansys-grantami-bomanalytics-openapi = "0.1.0.dev12"
+ansys-grantami-bomanalytics-openapi = "0.1.0.dev15"
 
 # Common packages for test, examples, and docs
 jupyterlab = { version = "3.2.8", optional = true }

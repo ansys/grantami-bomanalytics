@@ -75,7 +75,7 @@ material_ids
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection, indicators, queries
 
-server_url = "http://my_grantami_service/mi_servicelayer"
+server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 svhc = indicators.WatchListIndicator(
     name="SVHC",

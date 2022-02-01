@@ -577,6 +577,32 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
     pass
 
 
+@ItemResultFactory.register("BomWithImpactedSubstances")
+class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
+    """This class is instantiated, but since a BoM query can only return a single Impacted Substances result,
+    this type is hidden and never seen by the user. As a result it is not documented.
+
+    An individual BoM included as part of an impacted substances query result. This object includes only the impacted
+    substances associated with the BoM, both as a flat list and separated by legislation. There is no item representing
+    this BoM in Granta MI, and so there are no records to reference.
+
+    Attributes
+    ----------
+    substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
+        Substances impacted for a particular item, grouped by legislation name.
+    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
+        Substances impacted for a particular item as a flattened list.
+
+    Notes
+    -----
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}(), {len(self.substances_by_legislation)} legislations>"
+
+
 class ComplianceResultMixin(mixin_base_class):
     """Adds results from a compliance query to a class deriving from ``ItemDefinition``, turning it into an
     ``[ItemType]WithComplianceResult`` class.

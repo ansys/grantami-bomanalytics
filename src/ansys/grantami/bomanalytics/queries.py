@@ -33,7 +33,7 @@ from numbers import Number
 
 from ansys.grantami.bomanalytics_openapi import models, api  # type: ignore[import]
 
-from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition  # noqa: F401
+from ._item_definitions import AbstractBOMFactory, RecordDefinition, PartDefinition  # noqa: F401
 from ._allowed_types import validate_argument_type
 from ._query_results import (
     QueryResultFactory,
@@ -599,7 +599,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
     def _run_query(self, api_instance: api.ComplianceApi, static_arguments: Dict) -> Query_Result:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
-        This method should not be used by an end-user. The ``BomAnalyticsClient.run()`` method should
+        This method should not be used by an end-user. The ``BOMAnalyticsClient.run()`` method should
         be used instead.
 
         Parameters
@@ -810,7 +810,7 @@ class MaterialComplianceQuery(_ComplianceMixin, _MaterialQueryBuilder):
     together as required. Records can be added using a combination of any of the available methods.
 
     Once the query is fully constructed, use the cxn.
-    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :meth:`~ansys.grantami.bomanalytics._connection.BOMAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.MaterialComplianceQueryResult`.
 
     Examples
@@ -832,7 +832,7 @@ class MaterialComplianceQuery(_ComplianceMixin, _MaterialQueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetComplianceForMaterialsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
+        self._definition_factory = AbstractBOMFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_compliance_materials"
 
 
@@ -843,7 +843,7 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
     together as required. Records can be added using a combination of any of the available methods.
 
     Once the query is fully constructed, use the cxn.
-    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :meth:`~ansys.grantami.bomanalytics._connection.BOMAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult`.
 
     Examples
@@ -861,7 +861,7 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetImpactedSubstancesForMaterialsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
+        self._definition_factory = AbstractBOMFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_impactedsubstances_materials"
 
 
@@ -911,7 +911,7 @@ class PartComplianceQuery(_ComplianceMixin, _PartQueryBuilder):
     together as required. Records can be added using a combination of any of the available methods.
 
     Once the query is fully constructed, use the cxn.
-    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :meth:`~ansys.grantami.bomanalytics._connection.BOMAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.PartComplianceQueryResult`.
 
     Examples
@@ -934,7 +934,7 @@ class PartComplianceQuery(_ComplianceMixin, _PartQueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetComplianceForPartsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
+        self._definition_factory = AbstractBOMFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_compliance_parts"
 
 
@@ -945,7 +945,7 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
     together as required. Records can be added using a combination of any of the available methods.
 
     Once the query is fully constructed, use the cxn.
-    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :meth:`~ansys.grantami.bomanalytics._connection.BOMAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.PartImpactedSubstancesQueryResult`.
 
     Examples
@@ -963,7 +963,7 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetImpactedSubstancesForPartsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
+        self._definition_factory = AbstractBOMFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_impactedsubstances_parts"
 
 
@@ -1018,7 +1018,7 @@ class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder)
     available methods.
 
     Once the query is fully constructed, use the cxn.
-    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :meth:`~ansys.grantami.bomanalytics._connection.BOMAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.SpecificationComplianceQueryResult`.
 
     Examples
@@ -1040,7 +1040,7 @@ class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder)
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetComplianceForSpecificationsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
+        self._definition_factory = AbstractBOMFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_compliance_specifications"
 
 
@@ -1051,7 +1051,7 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
     chained together as required. Records can be added using a combination of any of the available methods.
 
     Once the query is fully constructed, use the cxn.
-    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :meth:`~ansys.grantami.bomanalytics._connection.BOMAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.SpecificationImpactedSubstancesQueryResult`.
 
     Examples
@@ -1070,7 +1070,7 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetImpactedSubstancesForSpecificationsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
+        self._definition_factory = AbstractBOMFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_impactedsubstances_specifications"
 
 
@@ -1396,7 +1396,7 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
     together as required. Records can be added using a combination of any of the available methods.
 
     Once the query is fully constructed, use the cxn.
-    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :meth:`~ansys.grantami.bomanalytics._connection.BOMAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.SubstanceComplianceQueryResult`.
 
     Notes
@@ -1429,7 +1429,7 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetComplianceForSubstancesRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
+        self._definition_factory = AbstractBOMFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_compliance_substances"
 
 
@@ -1532,14 +1532,14 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
         Examples
         --------
         >>> my_bom = "<PartsEco xmlns..."
-        >>> query = BomComplianceQuery().with_bom(my_bom)
+        >>> query = BOMComplianceQuery().with_bom(my_bom)
         """
 
         self._data.bom = bom
         return self
 
 
-class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
+class BOMComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
     """Evaluates compliance for a BoM in the Ansys Granta 1711 XML BoM format against a number of
     indicators.
 
@@ -1550,7 +1550,7 @@ class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
     chained together as required.
 
     Once the query is fully constructed, use the `cxn.`
-    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :meth:`~ansys.grantami.bomanalytics._connection.BOMAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.PartComplianceQueryResult`.
 
     Examples
@@ -1562,12 +1562,12 @@ class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
     ...     legislation_names=["California Proposition 65 List"]
     ... )
     >>> query = (
-    ...     BomComplianceQuery()
+    ...     BOMComplianceQuery()
     ...     .with_bom(bom)
     ...     .with_indicators([indicator])
     ... )
     >>> cxn.run(query)
-    <BomComplianceQueryResult: 1 PartWithCompliance results>
+    <BOMComplianceQueryResult: 1 PartWithCompliance results>
     """
 
     def __init__(self) -> None:
@@ -1576,7 +1576,7 @@ class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
         self._api_method = "post_compliance_bom1711"
 
 
-class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
+class BOMImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     """Gets the substances impacted by a list of legislations for a BoM in the Ansys Granta
     1711 XML BoM format.
 
@@ -1584,8 +1584,8 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     implemented for BoM-based queries.
 
     Once the query is fully constructed, use the `cxn.`
-    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
-    :class:`~ansys.grantami.bomanalytics._query_results.BomImpactedSubstancesQueryResult`. See the example scripts for
+    :meth:`~ansys.grantami.bomanalytics._connection.BOMAnalyticsClient.run` method to return a result of type
+    :class:`~ansys.grantami.bomanalytics._query_results.BOMImpactedSubstancesQueryResult`. See the example scripts for
     more details.
 
     Examples
@@ -1593,12 +1593,12 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
     >>> bom = "<PartsEco xmlns..."
     >>> query = (
-    ...     BomImpactedSubstancesQuery()
+    ...     BOMImpactedSubstancesQuery()
     ...     .with_bom("<PartsEco xmlns...")
     ...     .with_legislations(["REACH - The Candidate List"])
     ... )
     >>> cxn.run(query)
-    <BomImpactedSubstancesQueryResult: 1 Bom1711WithImpactedSubstances results>
+    <BOMImpactedSubstancesQueryResult: 1 Bom1711WithImpactedSubstances results>
     """
 
     def __init__(self) -> None:

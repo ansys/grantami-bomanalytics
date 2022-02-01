@@ -19,7 +19,7 @@ Connection Builder
 BoM Analytics Client
 ~~~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.grantami.bomanalytics._connection.BomAnalyticsClient
+.. autoclass:: ansys.grantami.bomanalytics._connection.BOMAnalyticsClient
    :members:
 
 .. _ref_grantami_bomanalytics_common_messages:

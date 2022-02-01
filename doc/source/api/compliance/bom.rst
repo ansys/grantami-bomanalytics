@@ -7,7 +7,7 @@ BoM Compliance
 Query Definition
 ~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.grantami.bomanalytics.queries.BomComplianceQuery
+.. autoclass:: ansys.grantami.bomanalytics.queries.BOMComplianceQuery
    :members:
 
    .. automethod:: with_indicators
@@ -16,7 +16,7 @@ Query Definition
 Query Result
 ~~~~~~~~~~~~
 
-.. autoclass:: ansys.grantami.bomanalytics._query_results.BomComplianceQueryResult
+.. autoclass:: ansys.grantami.bomanalytics._query_results.BOMComplianceQueryResult
    :members:
    :exclude-members: compliance_by_part_and_indicator
 

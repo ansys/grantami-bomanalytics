@@ -84,7 +84,7 @@ def test_impacted_substances_item_repr(result_type):
 
 def test_impacted_substances_bom_repr():
     query_result = BomSubstanceResultMock(legislations=legislation_results)
-    result = ItemResultFactory.create_impacted_substances_result("BomWithImpactedSubstances", query_result)
+    result = ItemResultFactory.create_impacted_substances_result("BOMWithImpactedSubstances", query_result)
     assert repr(result) == f"<BoM1711WithImpactedSubstancesResult(), {len(legislation_results)} legislations>"
     assert (
         repr(result.substances) == '[<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '

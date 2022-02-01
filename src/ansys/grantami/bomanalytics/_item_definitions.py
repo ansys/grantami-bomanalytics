@@ -399,7 +399,7 @@ class CoatingReference(RecordReference, ABC):
         )
 
 
-class BoM1711Definition:
+class BOM1711Definition:
     """Represents a BoM that is supplied as part of a BoM query.
 
     The XML contains record references within it, so there are no explicit references to records in this object.
@@ -426,12 +426,12 @@ class BoM1711Definition:
         return self._bom
 
 
-class AbstractBomFactory:
+class AbstractBOMFactory:
     """Creates factories for a given type of API query. The key to controlling which definition is created is
     the request object in the low-level API.
     """
 
-    registry: Dict[Type[models.ModelBase], Type["BomItemDefinitionFactory"]] = {}
+    registry: Dict[Type[models.ModelBase], Type["BOMItemDefinitionFactory"]] = {}
     """Mapping between a factory class and the definition object it can create."""
 
     @classmethod
@@ -448,7 +448,7 @@ class AbstractBomFactory:
             The function that's being decorated.
         """
 
-        def inner(item_factory: Type[BomItemDefinitionFactory]) -> Type[BomItemDefinitionFactory]:
+        def inner(item_factory: Type[BOMItemDefinitionFactory]) -> Type[BOMItemDefinitionFactory]:
             for request_type in request_types:
                 cls.registry[request_type] = item_factory
             return item_factory
@@ -456,7 +456,7 @@ class AbstractBomFactory:
         return inner
 
     @classmethod
-    def create_factory_for_request_type(cls, request_type: Type[models.ModelBase]) -> "BomItemDefinitionFactory":
+    def create_factory_for_request_type(cls, request_type: Type[models.ModelBase]) -> "BOMItemDefinitionFactory":
         """Factory method to instantiate and return a specific item definition factory.
 
         Parameters
@@ -483,7 +483,7 @@ class AbstractBomFactory:
         return item_factory
 
 
-class BomItemDefinitionFactory(ABC):
+class BOMItemDefinitionFactory(ABC):
     """Creates a specific definition object. This base factory class applies to definitions based on records only.
 
     These factories intentionally abstract away the concept of :class:`ReferenceType` and expose separate static methods
@@ -509,13 +509,13 @@ class BomItemDefinitionFactory(ABC):
         pass
 
 
-@AbstractBomFactory.register(
+@AbstractBOMFactory.register(
     [
         models.GetComplianceForMaterialsRequest,
         models.GetImpactedSubstancesForMaterialsRequest,
     ]
 )
-class MaterialDefinitionFactory(BomItemDefinitionFactory):
+class MaterialDefinitionFactory(BOMItemDefinitionFactory):
     """Creates material definition objects."""
 
     @staticmethod
@@ -584,13 +584,13 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
         return MaterialDefinition(reference_type=ReferenceType.MaterialId, reference_value=material_id)
 
 
-@AbstractBomFactory.register(
+@AbstractBOMFactory.register(
     [
         models.GetComplianceForPartsRequest,
         models.GetImpactedSubstancesForPartsRequest,
     ]
 )
-class PartDefinitionFactory(BomItemDefinitionFactory):
+class PartDefinitionFactory(BOMItemDefinitionFactory):
     """Creates part definition objects."""
 
     @staticmethod
@@ -659,13 +659,13 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
         return PartDefinition(reference_type=ReferenceType.PartNumber, reference_value=part_number)
 
 
-@AbstractBomFactory.register(
+@AbstractBOMFactory.register(
     [
         models.GetComplianceForSpecificationsRequest,
         models.GetImpactedSubstancesForSpecificationsRequest,
     ]
 )
-class SpecificationDefinitionFactory(BomItemDefinitionFactory):
+class SpecificationDefinitionFactory(BOMItemDefinitionFactory):
     """Creates specification definition objects."""
 
     @staticmethod
@@ -738,8 +738,8 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
         return SpecificationDefinition(reference_type=ReferenceType.SpecificationId, reference_value=specification_id)
 
 
-@AbstractBomFactory.register([models.GetComplianceForSubstancesRequest])
-class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
+@AbstractBOMFactory.register([models.GetComplianceForSubstancesRequest])
+class SubstanceComplianceDefinitionFactory(BOMItemDefinitionFactory):
     """Creates substance compliance definition objects."""
 
     @staticmethod
@@ -840,18 +840,18 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
         return SubstanceDefinition(reference_type=ReferenceType.EcNumber, reference_value=ec_number)
 
 
-@AbstractBomFactory.register(
+@AbstractBOMFactory.register(
     [
         models.GetComplianceForBom1711Request,
         models.GetImpactedSubstancesForBom1711Request,
     ]
 )
-class BomFactory:
-    """Creates bom definition objects."""
+class BOMFactory:
+    """Creates BoM definition objects."""
 
     @staticmethod
-    def create_definition(bom: str) -> BoM1711Definition:
-        """Instantiate and return a ``Bom1711Definition`` object based on the provided bom.
+    def create_definition(bom: str) -> BOM1711Definition:
+        """Instantiate and return a ``BoM1711Definition`` object based on the provided BoM.
 
         Parameters
         ----------
@@ -859,7 +859,7 @@ class BomFactory:
 
         Returns
         -------
-        Bom1711Definition
+        BOM1711Definition
         """
 
-        return BoM1711Definition(bom=bom)
+        return BOM1711Definition(bom=bom)

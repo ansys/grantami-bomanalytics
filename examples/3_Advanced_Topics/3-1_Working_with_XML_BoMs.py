@@ -91,7 +91,7 @@ from ansys.grantami.bomanalytics import queries
 
 SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
 impacted_substances_query = (
-    queries.BomImpactedSubstancesQuery()
+    queries.BOMImpactedSubstancesQuery()
     .with_bom(valid_xml)
     .with_legislations([SIN_LIST])
 )
@@ -102,7 +102,7 @@ impacted_substances_result = cxn.run(impacted_substances_query)
 impacted_substances_result
 # -
 
-# The ``BomImpactedSubstancesQueryResult`` object returned after running the query for impacted substances now behaves
+# The ``BOMImpactedSubstancesQueryResult`` object returned after running the query for impacted substances now behaves
 # similarly to the result object for any other query for impacted substances. For example, we can print all substances
 # impacted by the legislation using an approach from a previous example.
 
@@ -131,7 +131,7 @@ svhc = indicators.WatchListIndicator(
     default_threshold_percentage=0.1,
 )
 compliance_query = (
-    queries.BomComplianceQuery()
+    queries.BOMComplianceQuery()
     .with_bom(valid_xml)
     .with_indicators([svhc])
 )
@@ -142,7 +142,7 @@ compliance_result = cxn.run(compliance_query)
 compliance_result
 # -
 
-# The ``BomComplianceQueryResult`` object returned after running the Compliance query contains a list of
+# The ``BOMComplianceQueryResult`` object returned after running the Compliance query contains a list of
 # ``PartWithComplianceResult`` objects, the behavior of which has been covered in a previous example. The cell below
 # prints the compliance status of the BoM.
 
@@ -158,7 +158,7 @@ print(f"BoM Compliance Status: {root_part.indicators['SVHC'].flag.name}")
 
 # + tags=[]
 broken_query = (
-    queries.BomImpactedSubstancesQuery()
+    queries.BOMImpactedSubstancesQuery()
     .with_bom(invalid_xml)
     .with_legislations([SIN_LIST])
 )

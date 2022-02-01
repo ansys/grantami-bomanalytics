@@ -6,7 +6,7 @@ BoM Impacted Substances Query
 Query Definition
 ~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery
+.. autoclass:: ansys.grantami.bomanalytics.queries.BOMImpactedSubstancesQuery
    :members:
 
    .. automethod:: with_legislations
@@ -15,7 +15,7 @@ Query Definition
 Query Result
 ~~~~~~~~~~~~
 
-.. autoclass:: ansys.grantami.bomanalytics._query_results.BomImpactedSubstancesQueryResult
+.. autoclass:: ansys.grantami.bomanalytics._query_results.BOMImpactedSubstancesQueryResult
    :members:
 
    .. autoattribute:: impacted_substances_by_legislation

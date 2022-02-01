@@ -12,7 +12,7 @@ from .common import (
 
 
 class TestImpactedSubstances(BaseMockTester):
-    query = queries.BomImpactedSubstancesQuery()
+    query = queries.BOMImpactedSubstancesQuery()
     mock_key = GetImpactedSubstancesForBom1711Response.__name__
 
     def test_impacted_substances_by_legislation(self, mock_connection):
@@ -32,7 +32,7 @@ class TestImpactedSubstances(BaseMockTester):
 
     def test_query_result_repr(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
-        assert repr(response) == "<BomImpactedSubstancesQueryResult: 1 BomWithImpactedSubstances results>"
+        assert repr(response) == "<BOMImpactedSubstancesQueryResult: 1 BOMWithImpactedSubstances results>"
 
     def test_impacted_substances_repr(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
@@ -52,7 +52,7 @@ class TestCompliance(BaseMockTester):
     A mocked query is used, populated by the examples included in the API definition.
     """
 
-    query = queries.BomComplianceQuery().with_indicators(
+    query = queries.BOMComplianceQuery().with_indicators(
         [
             indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
             indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
@@ -149,7 +149,7 @@ class TestCompliance(BaseMockTester):
 
     def test_query_result_repr(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
-        assert repr(response) == "<BomComplianceQueryResult: 2 PartWithCompliance results>"
+        assert repr(response) == "<BOMComplianceQueryResult: 2 PartWithCompliance results>"
 
     def test_compliance_by_indicator_repr(self, mock_connection):
         response = self.get_mocked_response(mock_connection)

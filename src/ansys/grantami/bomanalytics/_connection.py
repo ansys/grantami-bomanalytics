@@ -33,8 +33,8 @@ if TYPE_CHECKING:
         SpecificationImpactedSubstancesQuery,
         SpecificationComplianceQuery,
         SubstanceComplianceQuery,
-        BomImpactedSubstancesQuery,
-        BomComplianceQuery,
+        BOMImpactedSubstancesQuery,
+        BOMComplianceQuery,
         Yaml,
     )
     from ._query_results import (
@@ -45,8 +45,8 @@ if TYPE_CHECKING:
         SpecificationImpactedSubstancesQueryResult,
         SpecificationComplianceQueryResult,
         SubstanceComplianceQueryResult,
-        BomImpactedSubstancesQueryResult,
-        BomComplianceQueryResult,
+        BOMImpactedSubstancesQueryResult,
+        BOMComplianceQueryResult,
     )
 
 
@@ -81,19 +81,19 @@ class Connection(ApiClientFactory):
     <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
     """
 
-    def connect(self) -> "BomAnalyticsClient":
+    def connect(self) -> "BOMAnalyticsClient":
         # Use the docstring on the method in the base class.
         self._validate_builder()
         session_configuration = self._session_configuration
         session_configuration.headers["X-Granta-ApplicationName"] = OIDC_HEADER_APPLICATION_NAME
-        client = BomAnalyticsClient(
+        client = BOMAnalyticsClient(
             session=self._session, servicelayer_url=self._api_url, configuration=session_configuration
         )
         client.setup_client(models)
         return client
 
 
-class BomAnalyticsClient(ApiClient):
+class BOMAnalyticsClient(ApiClient):
     """Communicates with Granta MI. This class is instantiated by the
     :class:`~ansys.grantami.bomanalytics.Connection` class defined above and should not be instantiated directly.
     """
@@ -103,7 +103,7 @@ class BomAnalyticsClient(ApiClient):
 
         self._sl_url = servicelayer_url.strip("/")
         sl_url_with_service = self._sl_url + SERVICE_PATH
-        logger.debug("Creating BomAnalyticsClient")
+        logger.debug("Creating BOMAnalyticsClient")
         logger.debug(f"Base Service Layer URL: {self._sl_url}")
         logger.debug(f"Service URL: {sl_url_with_service}")
         super().__init__(api_url=sl_url_with_service, **kwargs)
@@ -224,11 +224,11 @@ class BomAnalyticsClient(ApiClient):
         ...
 
     @overload
-    def run(self, query: "BomImpactedSubstancesQuery") -> "BomImpactedSubstancesQueryResult":
+    def run(self, query: "BOMImpactedSubstancesQuery") -> "BOMImpactedSubstancesQueryResult":
         ...
 
     @overload
-    def run(self, query: "BomComplianceQuery") -> "BomComplianceQueryResult":
+    def run(self, query: "BOMComplianceQuery") -> "BOMComplianceQueryResult":
         ...
 
     @overload

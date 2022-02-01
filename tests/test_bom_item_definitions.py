@@ -1,6 +1,6 @@
 import pytest
 from ansys.grantami.bomanalytics._item_definitions import (
-    BoM1711Definition,
+    BOM1711Definition,
     MaterialDefinition,
     SpecificationDefinition,
     PartDefinition,
@@ -16,7 +16,7 @@ from ansys.grantami.bomanalytics_openapi import (
 
 
 def test_bom_definition():
-    bom_item = BoM1711Definition("TEST_BOM")
+    bom_item = BOM1711Definition("TEST_BOM")
     assert bom_item._definition == "TEST_BOM"
 
 

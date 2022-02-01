@@ -377,7 +377,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
             Substances that are found in the ``ItemDefinition`` item for the specified legislations.
         **kwargs
             Contains the ``reference_type`` and ``reference_value`` for ``RecordDefinition``-based objects.
-            It is empty for ``BoM1711Definition``-based objects.
+            It is empty for ``BOM1711Definition``-based objects.
         """
 
         super().__init__(**kwargs)
@@ -570,7 +570,7 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
     pass
 
 
-@ItemResultFactory.register("BomWithImpactedSubstances")
+@ItemResultFactory.register("BOMWithImpactedSubstances")
 class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
     """This class is instantiated, but since a BoM query can only return a single Impacted Substances result,
     this type is hidden and never seen by the user. As a result it is not documented.
@@ -613,7 +613,7 @@ class ComplianceResultMixin(mixin_base_class):
         Used as a base to create the indicator results for both this item and the child substances.
     **kwargs
         Contains the ``reference_type`` and ``reference_value`` for ``RecordDefinition``-based objects. It is
-        empty for ``BoM1711Definition``-based objects.
+        empty for ``BOM1711Definition``-based objects.
 
     Notes
     -----

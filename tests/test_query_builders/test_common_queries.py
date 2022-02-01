@@ -146,7 +146,7 @@ class TestRecordQueries:
         queries.PartComplianceQuery,
         queries.SpecificationComplianceQuery,
         queries.SubstanceComplianceQuery,
-        queries.BomComplianceQuery,
+        queries.BOMComplianceQuery,
     ],
 )
 class TestComplianceQueries:
@@ -173,7 +173,7 @@ class TestComplianceQueries:
         queries.MaterialImpactedSubstancesQuery,
         queries.PartImpactedSubstancesQuery,
         queries.SpecificationImpactedSubstancesQuery,
-        queries.BomImpactedSubstancesQuery,
+        queries.BOMImpactedSubstancesQuery,
     ],
 )
 class TestSubstanceQueries:

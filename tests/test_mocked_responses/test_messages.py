@@ -10,7 +10,7 @@ from ansys.grantami.bomanalytics_openapi.models import GetImpactedSubstancesForM
 
 
 class TestMessages(BaseMockTester):
-    query = queries.BomImpactedSubstancesQuery()
+    query = queries.BOMImpactedSubstancesQuery()
 
     def test_critical_error_raises_exception(self, mock_connection, caplog):
         error_message = "This is a critical message"

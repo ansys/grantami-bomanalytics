@@ -17,13 +17,13 @@ COMPLIANCE_QUERY_TYPES: List = [
     queries.PartComplianceQuery,
     queries.SpecificationComplianceQuery,
     queries.SubstanceComplianceQuery,
-    queries.BomComplianceQuery,
+    queries.BOMComplianceQuery,
 ]
 SUBSTANCE_QUERY_TYPES: List = [
     queries.MaterialImpactedSubstancesQuery,
     queries.PartImpactedSubstancesQuery,
     queries.SpecificationImpactedSubstancesQuery,
-    queries.BomImpactedSubstancesQuery,
+    queries.BOMImpactedSubstancesQuery,
 ]
 ALL_QUERY_TYPES = COMPLIANCE_QUERY_TYPES + SUBSTANCE_QUERY_TYPES
 

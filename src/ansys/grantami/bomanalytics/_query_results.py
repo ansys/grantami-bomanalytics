@@ -663,8 +663,8 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForBom1711Response)
-class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
-    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`
+class BOMImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BOMImpactedSubstancesQuery`
     class. This class describes the substances in the specified BoM impacted by one or more legislations.
 
     Notes
@@ -686,7 +686,7 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         """
 
         super().__init__(messages)
-        self._result_type_name = "BomWithImpactedSubstances"
+        self._result_type_name = "BOMWithImpactedSubstances"
         bom_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
             result_type_name=self._result_type_name,
             result_with_impacted_substances=results[0],
@@ -695,8 +695,8 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 
 @QueryResultFactory.register(models.GetComplianceForBom1711Response)
-class BomComplianceQueryResult(ComplianceBaseClass):
-    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`
+class BOMComplianceQueryResult(ComplianceBaseClass):
+    """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BOMComplianceQuery`
     class. This class summarizes the compliance status of a BoM against one or more indicators.
 
     Notes
@@ -748,7 +748,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         Examples
         --------
-        >>> result: BomComplianceQueryResult
+        >>> result: BOMComplianceQueryResult
         >>> result.compliance_by_part_and_indicator
         [<PartWithComplianceResult, 1 indicators>]
         """

@@ -95,14 +95,14 @@ class TestSubstancesQueries:
 )
 class TestBomQueries:
     def test_impacted_substances(self, bom, configurable_connection):
-        query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislations(LEGISLATIONS)
+        query = queries.BOMImpactedSubstancesQuery().with_bom(bom).with_legislations(LEGISLATIONS)
         response = configurable_connection.run(query)
 
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
 
     def test_compliance(self, bom, configurable_connection):
-        query = queries.BomComplianceQuery().with_bom(bom).with_indicators(indicators)
+        query = queries.BOMComplianceQuery().with_bom(bom).with_indicators(indicators)
         response = configurable_connection.run(query)
 
         assert response.compliance_by_part_and_indicator
@@ -118,7 +118,7 @@ def test_missing_database_raises_grantami_exception(configurable_connection):
 
 
 def test_missing_table_raises_grantami_exception(default_connection):
-    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_custom_db).with_legislations(LEGISLATIONS)
+    query = queries.BOMImpactedSubstancesQuery().with_bom(sample_bom_custom_db).with_legislations(LEGISLATIONS)
     with pytest.raises(GrantaMIException) as e:
         default_connection.run(query)
     assert "Table name" in str(e.value) and "not found in database" in str(e.value)

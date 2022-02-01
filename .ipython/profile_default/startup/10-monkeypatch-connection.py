@@ -1,6 +1,6 @@
 import os
 from ansys.grantami.bomanalytics import Connection
-from ansys.grantami.bomanalytics._connection import BomAnalyticsClient
+from ansys.grantami.bomanalytics._connection import BOMAnalyticsClient
 
 # Monkey patch the Connection() class to use the environment variable-specified server URL.
 original_ctor = Connection.__init__
@@ -34,8 +34,8 @@ Connection.with_autologon = with_autologon
 server_url = "http://my_grantami_server/mi_servicelayer"
 
 
-def __repr__(self: BomAnalyticsClient) -> str:
+def __repr__(self: BOMAnalyticsClient) -> str:
     return f'<BomServicesClient: url="{server_url}", dbkey="{self._db_key}">'
 
 
-BomAnalyticsClient.__repr__ = __repr__
+BOMAnalyticsClient.__repr__ = __repr__

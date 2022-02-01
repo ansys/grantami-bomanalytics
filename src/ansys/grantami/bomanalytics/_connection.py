@@ -21,7 +21,7 @@ from ._logger import logger
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
-OIDC_HEADER_APPLICATION_NAME = "MI Scripting Toolkit"
+GRANTA_APPLICATION_NAME_HEADER = "MI BoM Analytic Services"
 
 
 if TYPE_CHECKING:
@@ -85,7 +85,7 @@ class Connection(ApiClientFactory):
         # Use the docstring on the method in the base class.
         self._validate_builder()
         session_configuration = self._session_configuration
-        session_configuration.headers["X-Granta-ApplicationName"] = OIDC_HEADER_APPLICATION_NAME
+        session_configuration.headers["X-Granta-ApplicationName"] = GRANTA_APPLICATION_NAME_HEADER
         client = BomAnalyticsClient(
             session=self._session, servicelayer_url=self._api_url, configuration=session_configuration
         )

@@ -15,6 +15,7 @@ from ansys.grantami.bomanalytics import __version__
 project = "ansys.grantami.bomanalytics"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS Inc."
+html_title = f"Granta MI BoM Analytics {__version__}"
 
 # The short X.Y version
 release = version = __version__
@@ -79,9 +80,7 @@ html_static_path = ["_static"]
 
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
-html_css_files = [
-    'css/example-block.css',
-]
+html_css_files = []
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -119,7 +118,11 @@ copybutton_prompt_is_regexp = True
 # -- Options for HTML output -------------------------------------------------
 html_theme = "pyansys_sphinx_theme"
 html_logo = pyansys_logo_black
-html_theme_options = {"github_url": "https://github.com/pyansys/granta-bomanalytics", "show_prev_next": False}
+html_theme_options = {
+    "github_url": "https://github.com/pyansys/granta-bomanalytics",
+    "additional_breadcrumbs": [("PyAnsys", "https://docs.pyansys.com/")],
+    "show_breadcrumbs": True,
+}
 
 # -- Options for HTMLHelp output ---------------------------------------------
 

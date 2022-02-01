@@ -1,5 +1,5 @@
-PyAnsys Granta MI BoM Analytics Documentation |version|
-=======================================================
+Granta MI BoM Analytics |version|
+=================================
 
 .. toctree::
    :hidden:

@@ -777,7 +777,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         Parameters
         ----------
-        material_ids : list[str] or set[set]
+        material_ids : list[str] | set[set]
 
         Returns
         -------

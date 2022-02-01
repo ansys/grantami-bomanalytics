@@ -409,9 +409,12 @@ class RoHSIndicator(_Indicator):
 
     >>> query = MaterialComplianceQuery.with_indicators([indicator])...
     >>> result: MaterialComplianceQueryResult  # Perform a compliance query
-    >>> indicator_result = result.compliance_by_material_and_indicator[0]['RoHS substances']
-    >>> indicator_result.flag >= indicator.available_flags['RohsCompliantWithExemptions']
-    True  # The material is not compliant with the legislations in the indicator
+    >>> indicator_result = result.compliance_by_indicator['Tracked substances']
+    >>> indicator_result
+    <RoHSIndicator, name: Tracked substances, flag: RoHSFlag.RohsNonCompliant>
+
+    >>> indicator_result <= indicator.available_flags['RohsCompliantWithExemptions']
+    False  # The material is not compliant with the legislations in the Indicator
     """
 
     available_flags = RoHSFlag
@@ -491,9 +494,13 @@ class WatchListIndicator(_Indicator):
 
     >>> query = MaterialComplianceQuery.with_indicators([indicator])...
     >>> result: MaterialComplianceQueryResult  # Perform a compliance query
-    >>> indicator_result = result.compliance_by_material_and_indicator[0]['Tracked substances']
-    >>> indicator_result.flag >= indicator.available_flags['WatchListAllSubstancesBelowThreshold']
-    True  # The material is not compliant with the legislations in the Indicator
+    >>> indicator_result = result.compliance_by_indicator['Tracked substances']
+    >>> indicator_result
+    <WatchListIndicator, name: Tracked substances,
+    flag: WatchListFlag.WatchListHasSubstanceAboveThreshold>
+
+    >>> indicator_result <= indicator.available_flags['WatchListAllSubstancesBelowThreshold']
+    False  # The material is not compliant with the legislations in the Indicator
     """
 
     available_flags = WatchListFlag

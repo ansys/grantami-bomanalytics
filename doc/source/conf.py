@@ -80,7 +80,12 @@ html_static_path = ["_static"]
 
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
-html_css_files = []
+html_css_files = [
+    "css/download_links.css",
+]
+html_js_files = [
+    "js/add_blank.js",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -238,8 +243,8 @@ if not examples_output_dir.is_dir():
 
 
 nbsphinx_prolog = """
-Right-click and save as to download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb>` or a
-:download:`python script </{{ env.docname }}.py>`.
+Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb>` or a 
+:download:`Python script </{{ env.docname }}.py>`.
 
 ----
 """

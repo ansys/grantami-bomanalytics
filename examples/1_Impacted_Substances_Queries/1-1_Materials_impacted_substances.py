@@ -70,7 +70,7 @@ results
 # ``impacted_substances_by_material``, ``impacted_substances_by_legislation``, and ``impacted_substances``. They provide
 # different views of the impacted substances at different levels of granularity.
 
-# ## impacted_substances_by_material
+# ## Results Grouped by Material
 
 # This property is structured first as a list of ``materialWithImpactedSubstancesResult`` objects, each of which
 # contains a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation or a single flat list of all
@@ -99,7 +99,7 @@ print(f'Substances impacted by "{SIN_LIST}" in "{PC_ID}" (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ## impacted_substances_by_legislation
+# ## Results Grouped by Legislation
 
 # This property merges the results across all materials, resulting in a single dictionary of legislations that contain
 # all impacted substances for all materials.
@@ -115,7 +115,7 @@ print(f'Substances impacted by "{SIN_LIST}" in all materials (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ## impacted_substances
+# ## Results as a Flat List
 
 # This property reduces the granularity further to produce a single flattened list of substances across all legislations
 # for all materials.

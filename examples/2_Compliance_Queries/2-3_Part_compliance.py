@@ -90,7 +90,7 @@ part_result
 # The result object contains two properties, ``compliance_by_part_and_indicator`` and ``compliance_by_indicator``.
 # -
 
-# ## compliance_by_part_and_indicator
+# ## Results Grouped by Part
 
 # + [markdown] tags=[]
 # ``compliance_by_part_and_indicator`` contains a list of ``PartWithComplianceResult`` objects with the
@@ -214,7 +214,7 @@ recursively_print_parts_with_svhcs(wing.parts)
 # non-compliant, but it appears in 4 non-compliant sub-components. The coating also only contains one
 # non-compliant substance.
 
-# ## compliance_by_indicator
+# ## Results Grouped by Indicator
 
 # Alternatively, using the ``compliance_by_indicator`` property will give us a single indicator result that rolls up the
 # results across all parts in the query. This would be useful in a situation where we have a 'concept' assembly stored

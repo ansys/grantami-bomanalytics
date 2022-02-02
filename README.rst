@@ -20,13 +20,13 @@ Install ansys-grantami-bomanalytics with:
 
    pip install ansys-grantami-bomanalytics
 
-Alternatively, clone and install in development mode with:
+Alternatively, clone and install with:
 
 .. code::
 
    git clone https://github.com/pyansys/grantami-bomanalytics
    cd grantami-bomanalytics
-   pip install -e .
+   pip install .
 
 
 Documentation

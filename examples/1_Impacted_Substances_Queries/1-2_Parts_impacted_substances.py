@@ -14,11 +14,11 @@
 # ---
 
 # + [markdown] tags=[]
-# # [TECHDOCS]Performing a Part Impacted Substances Query
+# # Performing a Part Impacted Substances Query
 # -
 
-# A Part Impacted Substances Query is used to extract the substances associated with a part that are impacted by one or
-# more defined legislations. The part record can represent either a single component, a sub-assembly, or a finished
+# A Part Impacted Substances Query is used to determine the substances associated with a part that are impacted by one
+# or more defined legislations. The part record can represent either a single component, a subassembly, or a finished
 # product, and therefore the substances can be associated with either the part record itself, or any other record that
 # the part directly or indirectly references.
 
@@ -26,12 +26,13 @@
 
 # ## Connecting to Granta MI
 
-# Import the `Connection` class and create the connection. See the Getting Started example for more detail.
+# Import the ``Connection`` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb)
+# example for more details.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-server_url = "http://my_grantami_service/mi_servicelayer"
+server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
@@ -39,7 +40,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # ## Building and Running the Query
 # -
 
-# The query is assembled by providing a list of part references and legislations of interest. The query will return
+# The query is assembled by providing lists of part references and legislations of interest. The query will return
 # the substances that are present in the specified parts and are impacted by the specified legislations.
 #
 # In this example, the 'Drill' part will be used. In contrast to the Material version of this query shown in
@@ -56,7 +57,7 @@ SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
 REACH = "REACH - The Candidate List"
 # -
 
-# Next import the queries module and build the query with the references in the previous cell.
+# Next, import the ``queries`` module and build the query with the references in the previous cell.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
@@ -68,25 +69,25 @@ part_query = (
 )
 # -
 
-# Finally, run the query. Passing a `PartImpactedSubstancesQuery` object to the `Connection.run()` method returns a
-# `PartImpactedSubstancesQueryResult` object.
+# Finally, run the query. Passing a ``PartImpactedSubstancesQuery`` object to the ``Connection.run()`` method returns a
+# ``PartImpactedSubstancesQueryResult`` object.
 
 # + tags=[]
 part_result = cxn.run(part_query)
 part_result
 # -
 
-# A `PartImpactedSubstancesQueryResult` object contains three properties:
-# `impacted_substances_by_part`, `impacted_substances_by_legislation`, and `impacted_substances`. They provide different
-# views of the impacted substances at different levels of granularity.
+# A ``PartImpactedSubstancesQueryResult`` object contains three properties:
+# ``impacted_substances_by_part``, ``impacted_substances_by_legislation`` and ``impacted_substances``. They provide
+# different views of the impacted substances at different levels of granularity.
 
-# ## impacted_substances_by_part
+# ## Results Grouped by Part
 
-# This property is structured first as a list of `partWithImpactedSubstancesResult` objects, each of which contains
-# a dictionary of lists of `ImpactedSubstance` objects keyed by legislation, or a single flat list of all
+# This property is structured first as a list of ``PartWithImpactedSubstancesResult`` objects, each of which contains
+# a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation, or a single flat list of all
 # substances.
 
-# First, we can simplify the structure somewhat because we are only using only Part Numbers. The cell below creates a
+# We can simplify the structure because we are only using Part Numbers. First, create a
 # dictionary that maps Part Numbers to lists of substances impacted by the 'SIN List'.
 
 # + tags=[]
@@ -96,7 +97,7 @@ for part in part_result.impacted_substances_by_part:
     substances_by_part[part.part_number] = part_substances
 # -
 
-# Then use the `tabulate` package to print a table of the substances and their quantities for the Wing assembly only.
+# Then use the ``tabulate`` package to print a table of the substances and their quantities for the wing assembly only.
 
 # + tags=[]
 from tabulate import tabulate
@@ -108,13 +109,13 @@ print(f'Substances impacted by "{SIN_LIST}" in "{WING}"')
 print(tabulate(rows, headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ## impacted_substances_by_legislation
+# ## Results Grouped by Legislation
 
-# This property merges the results across all parts, resulting in a single dictionary of legislations that contain
+# This property merges the results across all parts, returning a single dictionary of legislations that contain
 # all impacted substances for all parts.
 
-# Again we use the `tabulate` package to print a table of substances, but this time we are including the substances in
-# all parts, but again limited to the SIN List only.
+# As before, use the ``tabulate`` package to print a table of substances. This time we are including substances in
+# all parts, but only those on the SIN List.
 
 # + tags=[]
 part_substances_sin = part_result.impacted_substances_by_legislation[SIN_LIST]
@@ -124,14 +125,14 @@ print(f'Substances impacted by "{SIN_LIST}" in all parts (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ## impacted_substances
+# ## Results as a Flat List
 
-# This property reduces the granularity further to produce a single flattened list of substances across all legislations
-# for all parts.
+# This property reduces the granularity further, producing a single flattened list of substances across all legislations
+# and for all parts.
 
-# The cell below uses the `tabulate` package to print a table of substances. Because we are using the
-# `impacted_substances` property, we only have one list of `ImpactedSubstance` objects which covers both legislations
-# and both parts.
+# Use the ``tabulate`` package to print a third table of substances. Because we are using the
+# ``impacted_substances`` property, we only have one list of ``ImpactedSubstance`` objects, which covers both
+# legislations and both the parts specified above.
 
 # + tags=[]
 part_substances_all = part_result.impacted_substances
@@ -139,3 +140,4 @@ rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
         for substance in part_substances_all]
 print(f'Impacted substances across all legislations in "DRILL" (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
+# -

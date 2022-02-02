@@ -15,6 +15,7 @@ from ansys.grantami.bomanalytics import __version__
 project = "ansys.grantami.bomanalytics"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS Inc."
+html_title = f"Granta MI BoM Analytics {__version__}"
 
 # The short X.Y version
 release = version = __version__
@@ -80,7 +81,10 @@ html_static_path = ["_static"]
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
 html_css_files = [
-    'css/example-block.css',
+    "css/download_links.css",
+]
+html_js_files = [
+    "js/add_blank.js",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -119,7 +123,11 @@ copybutton_prompt_is_regexp = True
 # -- Options for HTML output -------------------------------------------------
 html_theme = "pyansys_sphinx_theme"
 html_logo = pyansys_logo_black
-html_theme_options = {"github_url": "https://github.com/pyansys/granta-bomanalytics", "show_prev_next": False}
+html_theme_options = {
+    "github_url": "https://github.com/pyansys/granta-bomanalytics",
+    "additional_breadcrumbs": [("PyAnsys", "https://docs.pyansys.com/")],
+    "show_breadcrumbs": True,
+}
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
@@ -193,7 +201,11 @@ EXAMPLES_DIR_NAME = "examples"
 examples_output_dir = Path(EXAMPLES_DIR_NAME).absolute()
 examples_source_dir = Path("../../" + EXAMPLES_DIR_NAME).absolute()
 EXAMPLE_FLAG = os.getenv("BUILD_EXAMPLES")
-ipython_dir = Path("../../.ipython").absolute()
+
+# If we are building examples, use the included ipython-profile
+if EXAMPLE_FLAG:
+    ipython_dir = Path("../../.ipython").absolute()
+    os.environ["IPYTHONDIR"] = str(ipython_dir)
 
 
 def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
@@ -211,26 +223,28 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
                 jupytext.write(ntbk, file_output_path.with_suffix(".ipynb"))
 
 
-# If we don't have an examples folder, create it by copying notebooks and supporting files
-# If we already have an output directory then don't do anything.
-# Note: Call `make clean` to force a rebuild, which will delete the 'examples' output folder
-# Only include examples if the environment variable is set to True
-# If we are building examples, use the included ipython-profile
-if not examples_output_dir.is_dir() and EXAMPLE_FLAG:
-    _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
-    os.environ["IPYTHONDIR"] = str(ipython_dir)
+# If we already have a source/examples directory then don't do anything.
+# If we don't have an examples folder, we must first create it
+# We don't delete the examples after every build because this triggers nbsphinx to re-run them, which is very expensive
+# Run `make clean` to force a rebuild, which will delete the 'examples' output folder and reset this choice
+if not examples_output_dir.is_dir():
+    # Only include examples if the environment variable is set to something truthy
+    if EXAMPLE_FLAG:
+        print("'BUILD_EXAMPLES' environment variable is set, including examples in docs build.")
+        _copy_examples_and_convert_to_notebooks(examples_source_dir, examples_output_dir)
 
-# If we are skipping docs, create a placeholder index.rst file to avoid sphinx errors.
-if not EXAMPLE_FLAG:
-    examples_output_dir.mkdir(parents=False, exist_ok=False)
-    example_index = examples_output_dir / Path("index.rst")
-    with open(example_index, "w") as f:
-        f.write("Example Scripts\n===============\n\nExample build skipped")
+    # If we are skipping examples in the docs, create a placeholder index.rst file to avoid sphinx errors.
+    else:
+        print("'BUILD_EXAMPLES' environment variable is not set, skipping examples.")
+        examples_output_dir.mkdir(parents=False, exist_ok=False)
+        example_index = examples_output_dir / Path("index.rst")
+        with open(example_index, "w") as f:
+            f.write("Example Scripts\n===============\n\nExample build skipped")
 
 
 nbsphinx_prolog = """
-Right-click and save as to download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb>` or a
-:download:`python script </{{ env.docname }}.py>`.
+Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb>` or a 
+:download:`Python script </{{ env.docname }}.py>`.
 
 ----
 """

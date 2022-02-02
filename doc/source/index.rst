@@ -1,5 +1,5 @@
-Ansys Granta MI BoM Analytics API Documentation
-===============================================
+Granta MI BoM Analytics |version|
+=================================
 
 .. toctree::
    :hidden:
@@ -18,7 +18,12 @@ Ansys Granta MI BoM Analytics API Documentation
 
 API Reference
 -------------
-For full details of the API available see the API reference: :ref:`ref_grantami_bomanalytics_api_index`.
+For comprehensive API documentation, see :ref:`ref_grantami_bomanalytics_api_index`.
+
+Contributing
+------------
+Contributions to this library are welcomed. For more information, see the
+:doc:`Contributor Guide<contributing>`.
 
 Project Index
 -------------

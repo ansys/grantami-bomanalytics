@@ -13,9 +13,9 @@ from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 
 class ReferenceType(Enum):
-    """The supported reference types by the low-level API.
+    """Provides the reference types supported by the low-level API.
 
-    This `Enum` is not sorted, so values and comparisons between members is not supported.
+    This ``Enum`` is not sorted, so values and comparisons between members are not supported.
     """
 
     MiRecordHistoryGuid = auto()
@@ -30,17 +30,18 @@ class ReferenceType(Enum):
 
 
 class RecordReference(ABC):
-    """Base class for all references to records in Granta MI.
+    """Provides all references to records in Granta MI.
 
-    Record references are always instantiated with two parameters; the type of the reference, and the value of the
-    reference. This follows the way the REST API is structured.
+    Record references are always instantiated with two parameters: the type of the reference and the value of the
+    reference. This follows the way that the REST API is structured.
 
     Parameters
     ----------
     reference_type
-        The type of the record reference value. This class only supports 'generic' record properties.
-    reference_value
-        The value of the record reference. All are `str`, except for record history identities which are `int`.
+        Type of the record reference value. This class only supports `generic' record properties.
+    reference_value : str, int
+        Value of the record reference. All are string values except for record history identities,
+        which are integers.
     """
 
     def __init__(
@@ -60,10 +61,10 @@ class RecordReference(ABC):
 
     @property
     def record_reference(self) -> Dict[str, Optional[str]]:
-        """Converts the separate reference attributes back into a single dict that describes the type and value.
+        """Converts the separate reference attributes back into a single dictionary that describes the type and value.
 
-        Is used both to create the low-level API model object that references this record, and is returned as-is as the
-        repr for this (and sub) objects.
+        This method is used to create the low-level API model object that references this record and is returned as-is
+        as the repr for this object and sub objects.
         """
 
         if self.record_guid:
@@ -94,24 +95,27 @@ class RecordReference(ABC):
 
 class RecordDefinition(RecordReference):
     """Adds the ability to generate a definition of the record reference that can be supplied to the low-level API
-    to run a query. As a result, is only implemented for record references that can server as inputs to a query.
+    to run a query. As a result, this class is only implemented for record references that can serve as inputs to
+    a query.
     """
 
     @property
     @abstractmethod
-    def _definition(self) -> models.Model:
+    def _definition(self) -> models.ModelBase:
         pass
 
 
 class PartDefinition(RecordDefinition):
-    """Concrete :class:`RecordDefinition` subclass which represents a part record.
+    """Represents a part record from the concrete :class:`RecordDefinition` subclass.
+
+    This class extends the base constructor to also support part numbers.
 
     Parameters
     ----------
     reference_type
-        The type of the record reference value. This class extends the base constructor to also support part numbers.
-    reference_value
-        The value of the record reference. All are `str`, except for record history identities which are `int`.
+        Type of the record reference value.
+    reference_value; str, int
+        Value of the record reference. All values are strings except for record identities values, which are integers.
     """
 
     def __init__(
@@ -139,7 +143,7 @@ class PartDefinition(RecordDefinition):
 
     @property
     def _definition(self) -> models.CommonPartReference:
-        """The low-level API material definition.
+        """Low-level API material definition.
 
         Returns
         -------
@@ -151,14 +155,17 @@ class PartDefinition(RecordDefinition):
 
 
 class MaterialDefinition(RecordDefinition):
-    """Concrete `RecordDefinition` subclass which represents a material record.
+    """Represents a material record from the concrete :class:`RecordDefinition` subclass.
+
+    This class extends the base constructor to also support material IDs.
 
     Parameters
     ----------
     reference_type
-        The type of the record reference value. This class extends the base constructor to also support material ids.
-    reference_value
-        The value of the record reference. All are `str`, except for record history identities which are `int`.
+        Type of the record reference value.
+    reference_value : str, int
+        Value of the record reference. All are strings except for record history identities,
+        which are integers.
     """
 
     def __init__(
@@ -186,7 +193,7 @@ class MaterialDefinition(RecordDefinition):
 
     @property
     def _definition(self) -> models.CommonMaterialReference:
-        """The low-level API material definition.
+        """Low-level API material definition.
 
         Returns
         -------
@@ -198,15 +205,17 @@ class MaterialDefinition(RecordDefinition):
 
 
 class SpecificationDefinition(RecordDefinition):
-    """Concrete `RecordDefinition` subclass which represents a specification record.
+    """Represents a specification record from the concrete :class:`RecordDefinition` subclass.
+
+    This class extends the base constructor to also support specification IDs.
 
     Parameters
     ----------
     reference_type
-        The type of the record reference value. This class extends the base constructor to also support specification
-         ids.
-    reference_value
-        The value of the record reference. All are `str`, except for record history identities which are `int`.
+        Type of the record reference value.
+    reference_value : str, int
+        Value of the record reference. All are strings except for record history identities,
+        which are integers.
     """
 
     def __init__(
@@ -234,7 +243,7 @@ class SpecificationDefinition(RecordDefinition):
 
     @property
     def _definition(self) -> models.CommonSpecificationReference:
-        """The low-level API specification definition.
+        """Low-level API specification definition.
 
         Returns
         -------
@@ -246,19 +255,21 @@ class SpecificationDefinition(RecordDefinition):
 
 
 class BaseSubstanceReference(RecordReference, ABC):
-    """Abstract `RecordReference` subclass which represents a reference to a substance record.
+    """Represents a reference to a substance record from the abstract ``RecordReference`` subclass.
 
-    Substance references come in multiple flavors; inputs, compliance results and impacted substance results quantify
-    substances in slightly different ways. This class implements the reference aspects of the substance record only;
-    the quantification are implemented in the sub-classes.
+    This class extends the base constructor to also support CAS numbers, EC numbers, and chemical names.
+
+    Substance references come in multiple flavors. Inputs, compliance results, and impacted substance results quantify
+    substances in slightly different ways. This class implements the reference aspects of the substance record only.
+    The quantification are implemented in the subclasses.
 
     Parameters
     ----------
     reference_type
-        The type of the record reference value. This class extends the base constructor to also support CAS numbers,
-        EC numbers, and chemical names.
+        Type of the record reference value.
     reference_value
-        The value of the record reference. All are `str`, except for record history identities which are `int`.
+        Value of the record reference. All are strings except for record history identities,
+        which are integers.
     """
 
     def __init__(
@@ -302,17 +313,19 @@ class BaseSubstanceReference(RecordReference, ABC):
 
 
 class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
-    """Concrete substance subclass which represents the definition of a substance as supplied to a compliance query.
+    """Represents the definition of a substance as supplied to a compliance query from the concrete
+    ``Substance`` subclass.
 
     Parameters
     ----------
     reference_type
-        The type of the record reference value.
+       Type of the record reference value.
     reference_value
-        The value of the record reference. All are `str`, except for record history identities which are `int`.
+        Value of the record reference. All are strings except for record history identities,
+        which are integers.
     percentage_amount
-        The amount of the substance that appears in the parent BoM item. Should be greater than 0 and less than or
-        equal to 100.
+        Amount of the substance that appears in the parent BoM item. This value should be greater than 0 and
+        less than or equal to 100. The default is ``100``, which is the worst case scenario.
     """
 
     _default_percentage_amount = 100  # Default to worst case scenario
@@ -333,12 +346,12 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
 
     @property
     def percentage_amount(self) -> float:
-        """The amount of this substance in the parent item.
+        """Amount of this substance in the parent item.
 
         Raises
         ------
         TypeError
-            If the specified type is not a float or float-like object
+            If the specified type is not a float or float-like object.
         ValueError
             If the specified value does not satisfy 0 < value <= 100.
 
@@ -361,7 +374,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
 
     @property
     def _definition(self) -> models.GetComplianceForSubstancesSubstanceWithAmount:
-        """The low-level API substance definition.
+        """Low-level API substance definition.
 
         Returns
         -------
@@ -394,7 +407,7 @@ class BoM1711Definition:
     Parameters
     ----------
     bom
-        The bill of materials in XML 1711 format.
+        BoM in XML 1711 format.
     """
 
     def __init__(self, bom: str):
@@ -403,7 +416,7 @@ class BoM1711Definition:
 
     @property
     def _definition(self) -> str:
-        """The low-level API BoM definition.
+        """Low-level API BoM definition.
 
         Returns
         -------
@@ -414,16 +427,16 @@ class BoM1711Definition:
 
 
 class AbstractBomFactory:
-    """Creates factories for a given type of API query. The key to control which definition is created is the
-    request object in the low-level API.
+    """Creates factories for a given type of API query. The key to controlling which definition is created is
+    the request object in the low-level API.
     """
 
-    registry: Dict[Type[models.Model], Type["BomItemDefinitionFactory"]] = {}
-    """Mapping between a factory class and the definition object it can create"""
+    registry: Dict[Type[models.ModelBase], Type["BomItemDefinitionFactory"]] = {}
+    """Mapping between a factory class and the definition object it can create."""
 
     @classmethod
-    def register(cls, request_types: List[Type[models.Model]]) -> Callable:
-        """Decorator function to register a specific factory class with a low-level API request type.
+    def register(cls, request_types: List[Type[models.ModelBase]]) -> Callable:
+        """Registers a specific factory class with a low-level API request type.
 
         Parameters
         ----------
@@ -443,18 +456,18 @@ class AbstractBomFactory:
         return inner
 
     @classmethod
-    def create_factory_for_request_type(cls, request_type: Type[models.Model]) -> "BomItemDefinitionFactory":
+    def create_factory_for_request_type(cls, request_type: Type[models.ModelBase]) -> "BomItemDefinitionFactory":
         """Factory method to instantiate and return a specific item definition factory.
 
         Parameters
         ----------
         request_type
-            The request type for which a definition is needed
+            Request type for which a definition is needed
 
         Returns
         -------
         Factory
-            An instance of a factory to create the appropriate definitions.
+            Instance of a factory to create the appropriate definitions.
 
         Raises
         ------
@@ -471,7 +484,7 @@ class AbstractBomFactory:
 
 
 class BomItemDefinitionFactory(ABC):
-    """Base factory to create a specific definition object. Applies to definitions based on records only.
+    """Creates a specific definition object. This base factory class applies to definitions based on records only.
 
     These factories intentionally abstract away the concept of :class:`ReferenceType` and expose separate static methods
     to create definitions based on a specific reference type, which more closely relates to the structure in the
@@ -509,7 +522,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
     def create_definition_by_record_history_identity(
         record_history_identity: int,
     ) -> MaterialDefinition:
-        """Instantiate and return a `MaterialDefinition` object based on the provided record history identity.
+        """Instantiate and return a ``MaterialDefinition`` object based on the provided record history identity.
 
         Parameters
         ----------
@@ -527,7 +540,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_record_history_guid(record_history_guid: str) -> MaterialDefinition:
-        """Instantiate and return a `MaterialDefinition` object based on the provided record history GUID.
+        """Instantiate and return a ``MaterialDefinition`` object based on the provided record history GUID.
 
         Parameters
         ----------
@@ -542,7 +555,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_record_guid(record_guid: str) -> MaterialDefinition:
-        """Instantiate and return a `MaterialDefinition` object based on the provided record GUID.
+        """Instantiate and return a ``MaterialDefinition`` object based on the provided record GUID.
 
         Parameters
         ----------
@@ -557,7 +570,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_material_id(material_id: str) -> MaterialDefinition:
-        """Instantiate and return a `MaterialDefinition` object based on the provided material ID.
+        """Instantiate and return a ``MaterialDefinition`` object based on the provided material ID.
 
         Parameters
         ----------
@@ -584,7 +597,7 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
     def create_definition_by_record_history_identity(
         record_history_identity: int,
     ) -> PartDefinition:
-        """Instantiate and return a `PartDefinition` object based on the provided record history identity.
+        """Instantiate and return a ``PartDefinition`` object based on the provided record history identity.
 
         Parameters
         ----------
@@ -602,7 +615,7 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_record_history_guid(record_history_guid: str) -> PartDefinition:
-        """Instantiate and return a `PartDefinition` object based on the provided record history GUID.
+        """Instantiate and return a ``PartDefinition`` object based on the provided record history GUID.
 
         Parameters
         ----------
@@ -617,7 +630,7 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_record_guid(record_guid: str) -> PartDefinition:
-        """Instantiate and return a `PartDefinition` object based on the provided record GUID.
+        """Instantiate and return a ``PartDefinition`` object based on the provided record GUID.
 
         Parameters
         ----------
@@ -632,7 +645,7 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_part_number(part_number: str) -> PartDefinition:
-        """Instantiate and return a `PartDefinition` object based on the provided part number.
+        """Instantiate and return a ``PartDefinition`` object based on the provided part number.
 
         Parameters
         ----------
@@ -659,7 +672,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
     def create_definition_by_record_history_identity(
         record_history_identity: int,
     ) -> SpecificationDefinition:
-        """Instantiate and return a `SpecificationDefinition` object based on the provided record history identity.
+        """Instantiate and return a ``SpecificationDefinition`` object based on the provided record history identity.
 
         Parameters
         ----------
@@ -679,7 +692,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
     def create_definition_by_record_history_guid(
         record_history_guid: str,
     ) -> SpecificationDefinition:
-        """Instantiate and return a `SpecificationDefinition` object based on the provided record history GUID.
+        """Instantiate and return a ``SpecificationDefinition`` object based on the provided record history GUID.
 
         Parameters
         ----------
@@ -696,7 +709,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_record_guid(record_guid: str) -> SpecificationDefinition:
-        """Instantiate and return a `SpecificationDefinition` object based on the provided record GUID.
+        """Instantiate and return a ``SpecificationDefinition`` object based on the provided record GUID.
 
         Parameters
         ----------
@@ -711,7 +724,7 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_specification_id(specification_id: str) -> SpecificationDefinition:
-        """Instantiate and return a `SpecificationDefinition` object based on the provided specification id.
+        """Instantiate and return a ``SpecificationDefinition`` object based on the provided specification id.
 
         Parameters
         ----------
@@ -733,7 +746,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
     def create_definition_by_record_history_identity(
         record_history_identity: int,
     ) -> SubstanceDefinition:
-        """Instantiate and return a `SubstanceDefinition` object based on the provided record history identity.
+        """Instantiate and return a ``SubstanceDefinition`` object based on the provided record history identity.
 
         Parameters
         ----------
@@ -751,7 +764,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_record_history_guid(record_history_guid: str) -> SubstanceDefinition:
-        """Instantiate and return a `SubstanceDefinition` object based on the provided record history GUID.
+        """Instantiate and return a ``SubstanceDefinition`` object based on the provided record history GUID.
 
         Parameters
         ----------
@@ -768,7 +781,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_record_guid(record_guid: str) -> SubstanceDefinition:
-        """Instantiate and return a `SubstanceDefinition` object based on the provided record GUID.
+        """Instantiate and return a ``SubstanceDefinition`` object based on the provided record GUID.
 
         Parameters
         ----------
@@ -783,7 +796,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_chemical_name(chemical_name: str) -> SubstanceDefinition:
-        """Instantiate and return a `SubstanceDefinition` object based on the provided chemical name.
+        """Instantiate and return a ``SubstanceDefinition`` object based on the provided chemical name.
 
         Parameters
         ----------
@@ -798,7 +811,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_cas_number(cas_number: str) -> SubstanceDefinition:
-        """Instantiate and return a `SubstanceDefinition` object based on the provided CAS number.
+        """Instantiate and return a ``SubstanceDefinition`` object based on the provided CAS number.
 
         Parameters
         ----------
@@ -813,7 +826,7 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
 
     @staticmethod
     def create_definition_by_ec_number(ec_number: str) -> SubstanceDefinition:
-        """Instantiate and return a `SubstanceDefinition` object based on the provided EC number.
+        """Instantiate and return a ``SubstanceDefinition`` object based on the provided EC number.
 
         Parameters
         ----------
@@ -838,7 +851,7 @@ class BomFactory:
 
     @staticmethod
     def create_definition(bom: str) -> BoM1711Definition:
-        """Instantiate and return a `Bom1711Definition` object based on the provided bom.
+        """Instantiate and return a ``Bom1711Definition`` object based on the provided bom.
 
         Parameters
         ----------

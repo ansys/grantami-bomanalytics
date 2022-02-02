@@ -5,28 +5,30 @@ Batching Requests
 
 Introduction
 ------------
-Queries performed with this package are batched if they exceed a certain size. This is achieved by
-splitting the list of parts, materials, etc. into smaller lists to reduce the overall time taken
-to perform the query.
+Queries performed with this package are batched if they exceed a certain size. When
+you perform a query, batching is achieved by splitting the list of parts and materials
+into smaller lists to reduce the overall time it takes to obtain results.
 
-The exact optimal size cannot be determined generally, since it depends on the data used to determine Impacted
-Substances and Compliance. Situations where the batch size may need to be changed are
-discussed below.
+The exact optimal size for batching cannot be determined generally because it depends
+on the data that is used to determine impacted substances and compliance. Given the
+following conditions, you might need to change the batch size.
 
-Very complex Part and Specification hierarchies
+Very Complex Part and Specification Hierarchies
 -----------------------------------------------
-Parts and Specifications in Granta MI can be defined recursively, i.e. it's possible to define Parts and
-Specifications in terms of other Parts and Specifications, and so on. Default batch sizes for Parts and
-Specifications are very small to take this into consideration, but for very complex
-hierarchies you may need to reduce this number further.
+Parts and specifications in Granta MI can be defined recursively. For example, it's possible
+to define parts and specifications in terms of other parts and specifications. To take this
+into consideration, the default batch size for parts and specifications is very small. However,
+for a very complex hierarchy, you might need to further decrease the batch size.
 
-Very simple Part and Specification hierarchies
+Very Simple Part and Specification Hierarchies
 ----------------------------------------------
-If Part and Specification structures are very simple, for example if they have a similar complexity to materials (i.e. they directly
-reference substances, or reference a small number of materials), then the batch size can be increased.
+Part and specification structures are very simple if they have a similar complexity to materials.
+For example, a very simple hierarchy might directly reference substances or reference a small number
+of materials. For a very simple hierarchy, you might need to increase the batch size.
 
-Large numbers of Indicators or Legislations
+Large Numbers of Indicators or Legislations
 -------------------------------------------
-Queries can only be batched in the 'item' dimension; there is no facility to split the query by the number of
-legislations or indicators. As a result, if Impacted Substances or Compliance queries are evaluated against a large
-number (typically > 10) of legislations or lists, you may need to reduce the batch size.
+Queries can only be batched in the `'item`` dimension. There is no facility to split the query
+by the number of legislations or indicators. As a result, if queries for impacted substances or
+compliance are evaluated against a large number (typically > 10) of legislations or lists, you
+might need to decrease the batch size.

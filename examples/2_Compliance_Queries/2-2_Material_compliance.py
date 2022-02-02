@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # [TECHDOCS]Performing a Material Compliance Query
+# # Performing a Material Compliance Query
 
 # A Material Compliance Query determines whether one or more materials are compliant with the specified indicators. This
 # is done by first determining compliance for the substances associated with the material, and then rolling up the
@@ -21,29 +21,30 @@
 
 # ## Connecting to Granta MI
 
-# Import the `Connection` class and create the connection. See the Getting Started example for more detail.
+# Import the ``Connection`` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb)
+# example for more details.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-server_url = "http://my_grantami_service/mi_servicelayer"
+server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
 # ## Defining an Indicator
 
-# In contrast to an ImpactedSubstances query, a Compliance query determines compliance against 'Indicators' as opposed
-# to directly against legislations.
+# A Compliance query determines compliance against 'Indicators', as opposed to an Impacted Substances query which
+# determines compliance directly against legislations.
 #
-# There are two types of Indicator, the differences between the two are described elsewhere in the documentation. The
-# differences are in the internal implementation, and the interface presented here applies to both `WatchListIndicator`
-# objects and `RohsIndicator` objects.
+# There are two types of Indicator object (``WatchListIndicator`` and ``RohsIndicator``), and the syntax presented below
+# applies to both. The differences in the internal implementation of the two objects are described in the API
+# documentation.
 #
-# Generally speaking, if a substance is impacted by a legislation that is associated with an indicator in a quantity
-# above a threshold, the substance is non-compliant with that indicator. This non-compliance then rolls up the BoM
-# hierarchy to any other items that directly or indirectly include that substance.
+# Generally speaking, if a substance is impacted by a legislation associated with an indicator, and in a quantity
+# above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to
+# any other items in the BoM hierarchy that directly or indirectly include that substance.
 
-# The cell below creates two Indicators.
+# First, create two ``WatchListIndicator`` objects.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import indicators
@@ -57,13 +58,13 @@ sin = indicators.WatchListIndicator(
     name="SIN",
     legislation_names=["The SIN List 2.1 (Substitute It Now!)"]
 )
-
+# -
 
 # + [markdown] tags=[]
 # ## Building and Running the Query
 # -
 
-# Next define the query itself. Materials can be referenced by any typical Granta MI record reference or by Material ID.
+# Next define the query itself. Materials can be referenced by Granta MI record reference or Material ID.
 # The table containing the Material records is not required, since this is enforced by the Restricted Substances
 # database schema.
 
@@ -76,39 +77,40 @@ mat_query = mat_query.with_material_ids(["plastic-pa66-60glassfiber",
                                          "stainless-316h"])
 # -
 
-# Finally, run the query. Passing a `MaterialComplianceQuery` object to the `Connection.run()` method returns a
-# `MaterialComplianceQueryResult` object.
+# Finally, run the query. Passing a ``MaterialComplianceQuery`` object to the ``Connection.run()`` method returns a
+# ``MaterialComplianceQueryResult`` object.
 
 # + tags=[]
 mat_result = cxn.run(mat_query)
 mat_result
-
-# + [markdown] tags=[]
-# The result object contains two properties, `compliance_by_material_and_indicator` and `compliance_by_indicator`.
 # -
 
-# ## compliance_by_material_and_indicator
-
 # + [markdown] tags=[]
-# `compliance_by_material_and_indicator` contains a list of `MaterialWithComplianceResult` objects that contain the
-# reference to the material record and the compliance status for each indicator. However, since compliance was
-# determined based on the substances associated with the material object, `SubstanceWithComplianceResult` objects are
-# also included, also with their compliance status for each indicator.
+# The result object contains two properties: ``compliance_by_material_and_indicator`` and ``compliance_by_indicator``.
 # -
 
-# Initially, we can just print the results for the reinforced PA66 record.
+# ## Results Grouped by Material
+
+# + [markdown] tags=[]
+# The ``compliance_by_material_and_indicator`` property contains a list of ``MaterialWithComplianceResult`` objects with
+# the reference to the material record and the compliance status for each indicator. The
+# ``SubstanceWithComplianceResult`` objects are also included because compliance was determined based on the substances
+# associated with the material object. These are also accompanied by their compliance status for each indicator.
+# -
+
+# Initially, we can print just the results for the reinforced PA66 record.
 
 # + tags=[]
 pa_66 = mat_result.compliance_by_material_and_indicator[0]
 print(f"PA66 (60% glass fiber): {pa_66.indicators['SVHC'].flag.name}")
 # -
 
-# The reinforced PA66 record has the status of 'WatchListHasSubstanceAboveThreshold', which tells us the material is not
+# The reinforced PA66 record has a status of 'WatchListHasSubstanceAboveThreshold', which tells us the material is not
 # compliant with the indicator, and therefore contains SVHCs above the 0.1% threshold.
 
 # To understand which substances have caused this status, we can print the substances that are not compliant with the
-# legislation. The possible states of the indicator are available on the `Indicator.available_flags` attribute, and can
-# be compared using standard Python operators.
+# legislation. The possible states of the indicator are available on the ``Indicator.available_flags`` attribute and
+# can be compared using standard Python operators.
 #
 # For substances, the critical threshold is the state 'WatchListAboveThreshold'.
 
@@ -122,9 +124,9 @@ for sub in pa_66_svhcs:
     print(f"Substance record history identity: {sub.record_history_identity}")
 # -
 
-# Note that children of the items passed into the compliance query are returned with record references based
-# on record history identities only. The Python STK can be used to translate these record history identities into CAS
-# Numbers if required.
+# Note that children of items passed into the compliance query are returned with record references based on record
+# history identities only. The Granta MI Scripting Toolkit for Python can be used to translate record history identities
+# into CAS Numbers if required.
 
 # Next, look at the state of the zinc alloy record.
 
@@ -156,8 +158,8 @@ ss_316h = mat_result.compliance_by_material_and_indicator[2]
 print(f"316H stainless steel: {ss_316h.indicators['SVHC'].flag.name}")
 # -
 
-# The stainless steel record has the status 'WatchListCompliant', which means there are no impacted substances at all in
-# the material.
+# The stainless steel record has the status 'WatchListCompliant', which means there are no impacted substances in the
+# material.
 
 # We can print these substances using the 'WatchListNotImpacted' flag as the threshold.
 
@@ -173,13 +175,13 @@ for sub in ss_not_impacted:
     print(f"Substance record history identity: {sub.record_history_identity}")
 # -
 
-# ## compliance_by_indicator
+# ## Results Grouped by Indicator
 
-# Alternatively, using the `compliance_by_indicator` property will give us a single indicator result that rolls up the
-# results across all materials in the query. This would be useful in a station where we have a 'concept' assembly
-# stored outside of Granta MI, and we want to determine its compliance. We know it contains the materials specified in
-# the query above, and so using `compliance_by_indicator` will tell us if that concept assembly is compliant based on
-# the worst result of the individual materials.
+# Alternatively, using the ``compliance_by_indicator`` property provides a single indicator result that summarizes the
+# results across all materials in the query. This would be useful in a situation where we have a 'concept' assembly
+# stored outside of Granta MI, and want to determine its compliance. We know it contains the materials specified in
+# the query above, and so using ``compliance_by_indicator`` will tell us if that concept assembly is compliant based on
+# the worst result from individual materials.
 
 # + tags=[]
 if mat_result.compliance_by_indicator["SVHC"] >= above_threshold_flag:

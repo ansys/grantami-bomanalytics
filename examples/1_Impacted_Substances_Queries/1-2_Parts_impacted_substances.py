@@ -32,7 +32,7 @@
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-server_url = "http://my_grantami_service/mi_servicelayer"
+server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
@@ -81,7 +81,7 @@ part_result
 # ``impacted_substances_by_part``, ``impacted_substances_by_legislation`` and ``impacted_substances``. They provide
 # different views of the impacted substances at different levels of granularity.
 
-# ## impacted_substances_by_part
+# ## Results Grouped by Part
 
 # This property is structured first as a list of ``PartWithImpactedSubstancesResult`` objects, each of which contains
 # a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation, or a single flat list of all
@@ -109,7 +109,7 @@ print(f'Substances impacted by "{SIN_LIST}" in "{WING}"')
 print(tabulate(rows, headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ## impacted_substances_by_legislation
+# ## Results Grouped by Legislation
 
 # This property merges the results across all parts, returning a single dictionary of legislations that contain
 # all impacted substances for all parts.
@@ -125,7 +125,7 @@ print(f'Substances impacted by "{SIN_LIST}" in all parts (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ## impacted_substances
+# ## Results as a Flat List
 
 # This property reduces the granularity further, producing a single flattened list of substances across all legislations
 # and for all parts.

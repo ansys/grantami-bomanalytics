@@ -405,7 +405,6 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
         Returns
         -------
-
         impacted_substance
             Corresponding object in this API.
         """
@@ -438,38 +437,10 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
     @property
     def substances_by_legislation(self) -> Dict[str, List[ImpactedSubstance]]:
-        """
-        Returns
-        -------
-        substances_by_legislation : dict[str, list[ImpactedSubstance]]
-            Substances impacted for a particular item, grouped by legislation name.
-
-        Examples
-        --------
-        >>> result: MaterialImpactedSubstancesQueryResult
-        >>> material_result = result.impacted_substances_by_material[0]
-        >>> material_result.substances_by_legislation
-        {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
-        """
-
         return self._substances_by_legislation
 
     @property
     def substances(self) -> List[ImpactedSubstance]:
-        """
-        Returns
-        -------
-        substances : list[ImpactedSubstance]
-            Substances impacted for a particular item as a flattened list.
-
-        Examples
-        --------
-        >>> result: MaterialImpactedSubstancesQueryResult
-        >>> material_result = result.impacted_substances_by_material[0]
-        >>> material_result.substances
-        [<ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
-        """
-
         results = []
         for legislation_result in self.substances_by_legislation.values():
             results.extend(legislation_result)
@@ -500,6 +471,18 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
         Substances impacted for a particular material as a flattened list.
 
+    Examples
+    --------
+    >>> result: MaterialImpactedSubstancesQueryResult
+    >>> material_result = result.impacted_substances_by_material[0]
+    >>> material_result.substances_by_legislation
+    {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
+
+    >>> result: MaterialImpactedSubstancesQueryResult
+    >>> material_result = result.impacted_substances_by_material[0]
+    >>> material_result.substances
+    [<ImpactedSubstance: {"cas_number": 90481-04-2}>]
+
     Notes
     -----
     With the exception of the *record_history_identity*, the record reference attributes below are only populated if
@@ -529,6 +512,18 @@ class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefini
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
         Substances impacted for a particular part as a flattened list.
 
+    Examples
+    --------
+    >>> result: PartImpactedSubstancesQueryResult
+    >>> part_result = result.impacted_substances_by_part[0]
+    >>> part_result.substances_by_legislation
+    {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
+
+    >>> result: PartImpactedSubstancesQueryResult
+    >>> part_result = result.impacted_substances_by_part[0]
+    >>> part_result.substances
+    [<ImpactedSubstance: {"cas_number": 90481-04-2}>]
+
     Notes
     -----
     With the exception of the *record_history_identity*, the record reference attributes below are only populated if
@@ -557,6 +552,18 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
         Substances impacted for a particular specification, grouped by legislation name.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
         Substances impacted for a particular specification as a flattened list.
+
+    Examples
+    --------
+    >>> result: SpecificationImpactedSubstancesQueryResult
+    >>> specification_result = result.impacted_substances_by_specification[0]
+    >>> specification_result.substances_by_legislation
+    {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
+
+    >>> result: SpecificationImpactedSubstancesQueryResult
+    >>> specification_result = result.impacted_substances_by_specification[0]
+    >>> specification_result.substances
+    [<ImpactedSubstance: {"cas_number": 90481-04-2}>]
 
     Notes
     -----
@@ -689,10 +696,6 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
     def substances(self) -> List["SubstanceWithComplianceResult"]:
         """Substance compliance result objects that are direct children of this item in the BoM.
 
-        Returns
-        -------
-        substances : list[SubstanceWithComplianceResult]
-
         Examples
         --------
         >>> material_result: MaterialWithComplianceResult
@@ -743,10 +746,6 @@ class ChildMaterialWithComplianceMixin(child_base_class):
     @property
     def materials(self) -> List["MaterialWithComplianceResult"]:
         """Material compliance result objects that are direct children of this part or specification in the BoM.
-
-        Returns
-        -------
-        materials : list[MaterialWithComplianceResult]
 
         Examples
         --------
@@ -805,10 +804,6 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
     @property
     def specifications(self) -> List["SpecificationWithComplianceResult"]:
         """Specification compliance result objects that are direct children of this item in the BoM.
-
-        Returns
-        -------
-        specifications : list[SpecificationWithComplianceResult]
 
         Examples
         --------
@@ -871,10 +866,6 @@ class ChildPartWithComplianceMixin(child_base_class):
     def parts(self) -> List["PartWithComplianceResult"]:
         """Part compliance result objects that are direct children of this part in the BoM.
 
-        Returns
-        -------
-        parts : list[PartWithComplianceResult]
-
         Examples
         --------
         >>> part_result: PartWithComplianceResult
@@ -935,10 +926,6 @@ class ChildCoatingWithComplianceMixin(child_base_class):
     @property
     def coatings(self) -> List["CoatingWithComplianceResult"]:
         """Coating result objects that are direct children of this specification in the BoM.
-
-        Returns
-        -------
-        coatings : list[CoatingWithComplianceResult]
 
         Examples
         --------
@@ -1021,7 +1008,6 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
     indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
         Compliance status of this item for each indicator included in the original query.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        Substance compliance result objects that are direct children of this material in the BoM.
 
     Notes
     -----
@@ -1059,13 +1045,9 @@ class PartWithComplianceResult(
     indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
         Compliance status of this item for each indicator included in the original query.
     parts : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithComplianceResult`]
-        Part compliance result objects that are direct children of this part in the BoM.
     specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult`]
-        Specification compliance result objects that are direct children of this part in the BoM.
     materials : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult`]
-        Material compliance result objects that are direct children of this part in the BoM.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        Substance compliance result objects that are direct children of this part in the BoM.
 
     Notes
     -----
@@ -1103,13 +1085,9 @@ class SpecificationWithComplianceResult(
     indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
         The compliance status of this item for each indicator included in the original query.
     specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult`]
-        The specification compliance result objects that are direct children of this specification in the BoM.
     materials : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult`]
-        The material compliance result objects that are direct children of this specification in the BoM.
     coatings : list[:class:`~ansys.grantami.bomanalytics._item_results.CoatingWithComplianceResult`]
-        The coating compliance result objects that are direct children of this specification in the BoM.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        The substance compliance result objects that are direct children of this specification in the BoM.
 
     Notes
     -----
@@ -1138,7 +1116,6 @@ class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceR
     indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
         Compliance status of this item for each indicator included in the original query.
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        Substance compliance result objects that are direct children of this coating in the BoM.
 
     Notes
     -----

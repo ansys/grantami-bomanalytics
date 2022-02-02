@@ -27,7 +27,7 @@
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
 
-server_url = "http://my_grantami_service/mi_servicelayer"
+server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
@@ -90,7 +90,7 @@ sub_result
 # The result object contains two properties: ``compliance_by_substance_and_indicator`` and ``compliance_by_indicator``.
 # -
 
-# ## compliance_by_substance_and_indicator
+# ## Results Grouped by Substance
 
 # + [markdown] tags=[]
 # ``compliance_by_substance_and_indicator`` contains a list of ``SubstanceWithComplianceResult`` objects that contain
@@ -124,7 +124,7 @@ non_compliant_cas_numbers = [sub.cas_number for sub in non_compliant_substances]
 print(f'SVHCs: {", ".join(non_compliant_cas_numbers)}')
 # -
 
-# ## compliance_by_indicator
+# ## Results Grouped by Indicator
 
 # Alternatively, using the ``compliance_by_indicator`` property provides a single indicator result that summarizes the
 # results across all substances in the query. This would be useful in a situation where we have a 'concept' material

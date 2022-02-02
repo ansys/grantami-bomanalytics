@@ -151,7 +151,7 @@ class BomAnalyticsClient(ApiClient):
             default is ``None``, in which case ``MaterialUniverse`` is used.
         in_house_materials_table_name : str, optional
             Name of the table that implements the ``Materials - in house`` schema.
-            The default is ``None``, in which case ```Materials - in house`` is used.
+            The default is ``None``, in which case ``Materials - in house`` is used.
         specifications_table_name : str, optional
             Name of the table that implements the ``Specifications`` schema. The
             default is ``None``, in which case ``Specifications`` is used.

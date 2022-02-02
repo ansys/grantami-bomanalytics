@@ -851,7 +851,7 @@ class BOMFactory:
 
     @staticmethod
     def create_definition(bom: str) -> BOM1711Definition:
-        """Instantiate and return a ``BoM1711Definition`` object based on the provided BoM.
+        """Instantiate and return a ``BOM1711Definition`` object based on the provided BoM.
 
         Parameters
         ----------

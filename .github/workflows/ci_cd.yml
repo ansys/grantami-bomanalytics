@@ -347,7 +347,7 @@ jobs:
             azcliversion: 2.32.0
             inlineScript: |
               az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-              az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
+              az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'

@@ -340,8 +340,6 @@ jobs:
       if: always() && needs.start_vm.result != 'skipped'
 
       steps:
-        - uses: actions/checkout@v2
-
         - name: Stop Azure VM
           uses: azure/CLI@v1
           with:

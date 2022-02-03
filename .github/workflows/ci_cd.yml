@@ -11,6 +11,38 @@ on:
   workflow_dispatch:
 
 jobs:
+  start_vm:
+    name: Start Azure VM
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+
+      - name: Start Azure VM
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.32.0
+          inlineScript: |
+            az account set --subscription ${{ secrets.AZURE_ACCOUNT_NAME }}
+            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
+
+      - name: Check server is ready
+        run: |
+          pip install requests
+          python cicd/check_server.py
+        env:
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+
   style:
     name: Style check
     runs-on: ubuntu-latest
@@ -121,6 +153,7 @@ jobs:
   integration_tests:
     name: Integration tests
     runs-on: ${{ matrix.os }}
+    needs: [style, unit_tests, start_vm]
     if: ${{ !contains( github.event.pull_request.labels.*.name, 'dependencies') }}
 
     strategy:
@@ -131,19 +164,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Log in with Azure
-        uses: azure/login@v1
-        with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
-
-      - name: Start Azure VM
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.32.0
-          inlineScript: |
-            az account set --subscription ${{ secrets.AZURE_ACCOUNT_NAME }}
-            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
-
       - name: Install kerberos headers (ubuntu only)
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt install libkrb5-dev
@@ -151,7 +171,7 @@ jobs:
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: "3.10"
 
       - name: Create local deps folder
         run: mkdir -p deps
@@ -185,15 +205,6 @@ jobs:
       - name: Install dependencies
         run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
 
-      - name: Check server is ready
-        run: |
-          pip install requests
-          python cicd/check_server.py
-        env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
-          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
-          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
-
       - name: Test with tox (integration tests only)
         run: tox -- -m "integration"
         env:
@@ -212,7 +223,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Create wheel
         run: |
@@ -252,7 +263,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
       - name: Install kerberos headers
         run: sudo apt install libkrb5-dev

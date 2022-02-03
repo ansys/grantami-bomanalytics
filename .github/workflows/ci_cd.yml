@@ -18,17 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Log in with Azure
-        uses: azure/login@v1
-        with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'
-
       - name: Start Azure VM
         uses: azure/CLI@v1
         with:
           azcliversion: 2.32.0
-          inlineScript: |
-            az account set --subscription ${{ secrets.AZURE_ACCOUNT_NAME }}
+          inlineScript:
+            az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
             az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
 
       - name: Set up Python 3.8
@@ -346,18 +341,13 @@ jobs:
       steps:
         - uses: actions/checkout@v2
 
-        - name: Log in with Azure
-          uses: azure/login@v1
-          with:
-            creds: '${{ secrets.AZURE_CREDENTIALS }}'
-
         - name: Stop Azure VM
           uses: azure/CLI@v1
           with:
             azcliversion: 2.32.0
             inlineScript: |
-              az account set --subscription ${{ secrets.AZURE_ACCOUNT_NAME }}
-              az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
+              az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+              az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'

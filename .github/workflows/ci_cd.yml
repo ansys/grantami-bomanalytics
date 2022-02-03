@@ -1,6 +1,6 @@
 name: Pre-merge checks
 
-# run only on main branch. This avoids duplicated actions on PRs
+# Run only on main branch. This avoids duplicated actions on PRs
 on:
   pull_request:
   push:

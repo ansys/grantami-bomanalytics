@@ -5,7 +5,7 @@ on:
   pull_request:
   push:
     tags:
-      - "*"
+      - '*'
     branches:
       - main
   workflow_dispatch:
@@ -28,10 +28,10 @@ jobs:
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
             az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
       - name: Check server is ready
         run: |
@@ -52,7 +52,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
       - name: Create local deps folder
         run: mkdir -p deps
@@ -166,10 +166,10 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt install libkrb5-dev
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
       - name: Create local deps folder
         run: mkdir -p deps
@@ -218,10 +218,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Python
+      - name: Setup Python 3.10
         uses: actions/setup-python@v2
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
       - name: Create wheel
         run: |
@@ -258,10 +258,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Python
+      - name: Setup Python 3.10
         uses: actions/setup-python@v2
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
       - name: Install kerberos headers
         run: sudo apt install libkrb5-dev
@@ -353,7 +353,7 @@ jobs:
     needs: [package, integration_tests, docs]
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Python
+      - name: Set up Python 3.10
         uses: actions/setup-python@v1
         with:
           python-version: '3.10'

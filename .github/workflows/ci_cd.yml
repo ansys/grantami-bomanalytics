@@ -15,17 +15,21 @@ jobs:
     name: Start Azure VM
     runs-on: ubuntu-latest
     if: ${{ !contains( github.event.pull_request.labels.*.name, 'dependencies') }}
+    outputs:
+      vm_started: ${{ steps.azure_cli.outputs.vm_started }}
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Start Azure VM
+      - name: Start VM with Azure CLI
+        id: azure_cli
         uses: azure/CLI@v1
         with:
           azcliversion: 2.32.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
             az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
+            echo "::set-output name=vm_started::true"
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
@@ -335,8 +339,8 @@ jobs:
   stop_vm:
       name: Stop Azure VM
       runs-on: ubuntu-latest
-      needs: docs
-      if: always()
+      needs: [docs, start_vm]
+      if: always() && ${{needs.start_vm.outputs.vm_started}}
 
       steps:
         - uses: actions/checkout@v2

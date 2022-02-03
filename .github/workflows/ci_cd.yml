@@ -139,7 +139,7 @@ jobs:
       - name: Start Azure VM
         uses: azure/CLI@v1
         with:
-          azcliversion: 2.0.72
+          azcliversion: 2.32.0
           inlineScript: |
             az account set --subscription ${{ secrets.AZURE_ACCOUNT_NAME }}
             az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}

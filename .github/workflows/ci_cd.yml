@@ -141,7 +141,9 @@ jobs:
         uses: azure/CLI@v1
         with:
           azcliversion: 2.0.72
-          inlineScript: az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
+          inlineScript: |
+            az account set --name ${{ secrets.AZURE_ACCOUNT_NAME }}
+            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
 
       - name: Install kerberos headers (ubuntu only)
         if: ${{ matrix.os == 'ubuntu-latest' }}

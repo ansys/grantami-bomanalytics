@@ -35,15 +35,22 @@ def block_until_server_is_ok(func):
 def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
     try:
         response = requests.get(url + "/Health/v2.svc/", auth=auth_header)
-        logger.info(f"Received {response.status_code} response")
     except requests.exceptions.RequestException:
+        # This generally won't happen in normal operation. But if a RequestException happens we want to make sure we
+        # handle it and try again.
+        # If MI isn't running we'll generally get a 5xx status from the gateway instead, which is handled below.
         return False
+    logger.info(f"Received {response.status_code} response.")
     if response.status_code != 200:
         return False
+
     content = json.loads(response.content)
     for check in content['HealthChecks']:
         if check['Name'] == 'Database Check' and check['Status'] == 'Ok':
+            logger.info(f"All databases loaded.")
             return True
+        else:
+            logger.info(f"All databases not loaded.")
     return False
 
 

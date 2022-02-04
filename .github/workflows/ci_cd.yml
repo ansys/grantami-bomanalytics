@@ -35,7 +35,7 @@ jobs:
 
       - name: Check server is ready
         run: |
-          pip install requests
+          pip install requests --disable-pip-version-check
           python cicd/check_server.py
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}

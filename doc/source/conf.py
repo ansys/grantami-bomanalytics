@@ -125,7 +125,7 @@ html_theme = "pyansys_sphinx_theme"
 html_logo = pyansys_logo_black
 html_theme_options = {
     "github_url": "https://github.com/pyansys/granta-bomanalytics",
-    "additional_breadcrumbs": [("PyAnsys", "https://docs.pyansys.com/")],
+    "additional_breadcrumbs": [("PyAnsys Documentation", "https://docs.pyansys.com/")],
     "show_breadcrumbs": True,
 }
 

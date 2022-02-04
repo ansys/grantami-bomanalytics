@@ -46,11 +46,12 @@ def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
 
     content = json.loads(response.content)
     for check in content['HealthChecks']:
-        if check['Name'] == 'Database Check' and check['Status'] == 'Ok':
-            logger.info(f"All databases loaded.")
-            return True
-        else:
-            logger.info(f"All databases not loaded.")
+        if check['Name'] == 'Database Check':
+            if check['Status'] == 'Ok':
+                logger.info(f"All databases loaded.")
+                return True
+            else:
+                logger.info(f"All databases not loaded.")
     return False
 
 

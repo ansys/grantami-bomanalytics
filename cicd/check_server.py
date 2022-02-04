@@ -35,6 +35,7 @@ def block_until_server_is_ok(func):
 def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
     try:
         response = requests.get(url + "/Health/v2.svc/", auth=auth_header)
+        logger.info(f"Received {response.status_code} response")
     except requests.exceptions.RequestException:
         return False
     if response.status_code != 200:

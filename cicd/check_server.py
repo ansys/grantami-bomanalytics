@@ -22,11 +22,11 @@ def block_until_server_is_ok(func):
             if func(*args, **kwargs):
                 logger.info(f"Server ready!")
                 break
-            check_count = check_count + 1
             if check_count == MAX_ATTEMPTS:
                 logger.info(f"Failed after 30 attempts. Quitting...")
                 raise ConnectionError
             logger.info(f"Check {check_count} failed. Waiting 5 seconds...")
+            check_count = check_count + 1
             time.sleep(WAIT_TIME)
     return wrapper
 

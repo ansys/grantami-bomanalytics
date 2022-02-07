@@ -22,8 +22,8 @@ For comprehensive API documentation, see :ref:`ref_grantami_bomanalytics_api_ind
 
 Contributing
 ------------
-Contributions to this library are welcomed. For more information, see the
-:doc:`Contributor Guide<contributing>`.
+Contributions to this library are welcomed. For more information, see
+:doc:`Contributing<contributing>`.
 
 Project Index
 -------------

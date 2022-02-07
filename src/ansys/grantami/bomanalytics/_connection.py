@@ -6,6 +6,13 @@ abstract ``ApiClientFactory`` in the ``auth_common`` package.
 The connection object itself is also subclassed to include global configuration
 options that span all queries and the method to execute the query.
 
+Parameters
+----------
+api_url : str
+    URL to Granta MI.
+session_configuration
+    Configuration settings for the session.
+
 Attributes
 ----------
 DEFAULT_DBKEY : str
@@ -256,8 +263,8 @@ class BomAnalyticsClient(ApiClient):
         Raises
         ------
         :class:`~ansys.grantami.bomanalytics.GrantaMIException`
-            If the server encounters an error while processing the query with a severity of "critical". This indicates
-            that Granta MI is running and the BoM Analytics Service is available, but the query could not be run;
+            If the server encounters an error while processing the query with a severity of 'critical'. This indicates
+            that Granta MI is running and the BoM Analytics Service is available, but the query could not be run,
             probably because of a missing database or table.
         :class:`~ansys.openapi.common.ApiException`
             If this exception is raised, the Granta MI server was not able to return a response, probably

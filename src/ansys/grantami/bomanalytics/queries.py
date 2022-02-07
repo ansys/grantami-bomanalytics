@@ -773,7 +773,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_material_ids(self: Query_Builder, material_ids: List[str]) -> Query_Builder:
         """Add a list or set of materials to a material query, referenced by the material ID attribute value.
 
-        Material IDs are valid for both *MaterialUniverse* and *Materials - in house* records.
+        Material IDs are valid for both ``MaterialUniverse`` and ``Materials - in house`` records.
 
         Parameters
         ----------
@@ -1251,7 +1251,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_record_guids_and_amounts(
         self: Query_Builder, record_guids_and_amounts: List[Tuple[str, float]]
     ) -> Query_Builder:
-        """Add a list or set of record GUID and amounts to a substance query. The GUID and quantity pairs are
+        """Add a list or set of record GUIDs and amounts to a substance query. The GUID and quantity pairs are
         expressed as a tuple, with the quantity in units of wt. %.
 
         Parameters
@@ -1288,7 +1288,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_cas_numbers_and_amounts(
         self: Query_Builder, cas_numbers_and_amounts: List[Tuple[str, float]]
     ) -> Query_Builder:
-        """Add a list or set of CAS Numbers and amounts to a substance query. The CAS Numbers and quantity
+        """Add a list or set of CAS numbers and amounts to a substance query. The CAS numbers and quantity
         pairs are expressed as a tuple, with the quantity in units of wt. %.
 
         Parameters
@@ -1322,7 +1322,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_ec_numbers_and_amounts(
         self: Query_Builder, ec_numbers_and_amounts: List[Tuple[str, float]]
     ) -> Query_Builder:
-        """Add a list or set of EC Numbers and amounts to a substance query. The EC Numbers and quantity
+        """Add a list or set of EC numbers and amounts to a substance query. The EC numbers and quantity
         pairs are expressed as a tuple, with the quantity in units of wt. %.
 
         Parameters
@@ -1403,7 +1403,7 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
     -----
     The amount of a substance is a critical factor when determining if it is compliant or non-compliant with a
     legislation. For the other compliance queries in this API, the amount of substance is determined by the value set
-    in the declaration stored in Granta MI. However, when performing a query for substance complianceQuery, there is no
+    in the declaration stored in Granta MI. However, when performing a query for substance compliance, there is no
     declaration because the substances are being examined directly.
 
     As a result, a set of extra methods are defined that allow the amount of each substance to be defined along with the
@@ -1437,7 +1437,7 @@ class _BomQueryDataManager(_BaseQueryDataManager):
     """Stores a BoM for use in queries and generates the kwarg to send to the server.
 
     Because of the base class, ``_item_definitions`` must be a list. However, this list only ever contains a
-    single string since only one BoM can be sent to the server in a single query.
+    single string because only one BoM can be sent to the server in a single query.
     """
 
     def __init__(self) -> None:
@@ -1585,8 +1585,7 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
 
     Once the query is fully constructed, use the `cxn.`
     :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
-    :class:`~ansys.grantami.bomanalytics._query_results.BomImpactedSubstancesQueryResult`. See the example scripts for
-    more details.
+    :class:`~ansys.grantami.bomanalytics._query_results.BomImpactedSubstancesQueryResult`.
 
     Examples
     --------

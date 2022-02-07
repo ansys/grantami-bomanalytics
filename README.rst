@@ -31,7 +31,7 @@ Alternatively, clone and install with:
 
 Documentation
 -------------
-`PyAnsys <https://docs.pyansys.com/ansys-grantami-bomanalytics>`_
+`PyAnsys <https://grantami.docs.pyansys.com>`_
 
 
 Usage
@@ -63,7 +63,7 @@ Here's a brief example of how the package works:
 
 Testing
 -------
-See `Contributing <https://docs.pyansys.com/ansys-grantami-bomanalytics/contributing>`_
+See `Contributing <https://grantami.docs.pyansys.com/contributing>`_
 for more details.
 
 

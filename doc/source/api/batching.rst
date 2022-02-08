@@ -28,7 +28,7 @@ of materials. For a very simple hierarchy, you might need to increase the batch 
 
 Large Numbers of Indicators or Legislations
 -------------------------------------------
-Queries can only be batched in the `'item`` dimension. There is no facility to split the query
+Queries can only be batched in the ``item`` dimension. There is no facility to split the query
 by the number of legislations or indicators. As a result, if queries for impacted substances or
-compliance are evaluated against a large number (typically > 10) of legislations or lists, you
+compliance are evaluated against a large number of legislations or lists (typically > 10), you
 might need to decrease the batch size.

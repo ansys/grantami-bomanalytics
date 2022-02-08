@@ -103,7 +103,7 @@ class RoHSFlag(_Flag):
     )
     RohsUnknown = (
         7,
-        """ One or more declarations are missing., and so there is not enough information to determine
+        """ One or more declarations are missing, so there is not enough information to determine
     compliance. *Compliance is unknown.*""",
     )
 
@@ -142,7 +142,7 @@ class RoHSFlag(_Flag):
 
 
 class WatchListFlag(_Flag):
-    """Provides permitted watch list flag states. Increasing value means less compliance. The further
+    """Provides permitted watch list flag states. An increasing value means less compliance. The further
     down the list the compliance result appears, the worse it is.
 
     For more information, see the Restricted Substances Reports User Guide.
@@ -368,7 +368,7 @@ class RoHSIndicator(_Indicator):
     Parameters
     ----------
     name : str
-        Name of the indicator that is used to identify the indicator in the query result.
+        Name of the indicator that is to identify the indicator in the query result.
     legislation_names : list[str]
         Legislations against which compliance will be determined.
     default_threshold_percentage : float, optional
@@ -381,9 +381,9 @@ class RoHSIndicator(_Indicator):
     Raises
     ------
     TypeError
-        If two differently-typed indicators are compared.
+        If two indicators of different types are compared.
     ValueError
-        If two indicators are compared which both don't have a result flag.
+        If two indicators are compared and both don't have a result flag.
 
     Attributes
     ----------
@@ -394,7 +394,7 @@ class RoHSIndicator(_Indicator):
     -----
     The RoHS indicator is designed to be used with RoHS-type legislations such as RoHS and RoHS China. However,
     usage is not enforced. Substances marked as 'Process Chemicals'[1]_ are always ignored, and exceptions
-    are supported (unless explicitly ignored by specifying ``ignore_exemptions=True`` when creating the indicator.
+    are supported (unless explicitly ignored by specifying ``ignore_exemptions=True`` when creating the indicator).
     The possible result flags for the indicator distinguish between an item being compliant, compliant with
     exemptions, or non-compliant.
 
@@ -466,9 +466,9 @@ class WatchListIndicator(_Indicator):
     Raises
     ------
     TypeError
-        If two differently-typed indicators are compared.
+        If two indicators of different types are compared.
     ValueError
-        If two indicators are compared which both don't have a result flag.
+        If two indicators are compared and both don't have a result flag.
 
     Attributes
     ----------

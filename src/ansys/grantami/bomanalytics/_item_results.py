@@ -1,7 +1,7 @@
 """BoM Analytics BoM item result definitions.
 
 Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
-queries. These are mostly extensions of the classes in _item_definitions.py.
+queries. These are mostly extensions of the classes in the ``_item_definitions.py`` file.
 """
 from typing import (
     List,
@@ -485,7 +485,7 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
 
     Notes
     -----
-    With the exception of the *record_history_identity*, the record reference attributes below are only populated if
+    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
     they were specified in the original query.
 
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
@@ -526,7 +526,7 @@ class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefini
 
     Notes
     -----
-    With the exception of the *record_history_identity*, the record reference attributes below are only populated if
+    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
     they were specified in the original query.
 
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
@@ -567,7 +567,7 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
 
     Notes
     -----
-    With the exception of the *record_history_identity*, the record reference attributes below are only populated if
+    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
     they were specified in the original query.
 
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
@@ -997,7 +997,7 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
 
       - The reference to the material in Granta MI
       - The compliance status of this material, stored in a dictionary of one or more indicator objects
-      - Any substance objects which are a child of this material object
+      - Any substance objects that are a child of this material object
 
     Attributes
     ----------
@@ -1011,9 +1011,9 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
 
     Notes
     -----
-    With the exception of the *record_history_identity*, the record reference attributes below are only populated if
+    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
     they were specified in the original query. As a result, if this object is included as the child of another
-    compliance result object, only the *record_history_identity* will be populated.
+    compliance result object, only ``record_history_identity`` will be populated.
 
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
@@ -1051,9 +1051,9 @@ class PartWithComplianceResult(
 
     Notes
     -----
-    With the exception of the *record_history_identity*, the record reference attributes below are only populated if
+    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
     they were specified in the original query. As a result, if this object is included as the child of another
-    compliance result object, only the *record_history_identity* will be populated.
+    compliance result object, only ``record_history_identity`` will be populated.
 
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
@@ -1091,9 +1091,9 @@ class SpecificationWithComplianceResult(
 
     Notes
     -----
-    With the exception of the *record_history_identity*, the record reference attributes below are only populated if
+    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
     they were specified in the original query. As a result, if this object is included as the child of another
-    compliance result object, only the *record_history_identity* will be populated.
+    compliance result object, only ``record_history_identity`` will be populated.
 
     Objects of this class are only returned as the result of a query; the class is not intended to be instantiated
     directly.

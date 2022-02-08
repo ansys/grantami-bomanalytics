@@ -29,7 +29,7 @@ Query Result
 BoM Result
 ~~~~~~~~~~
 
-The ``BoMWithImpactedSubstancesResult`` object does exist, but it is not documented since it is not exposed by any
+The ``BoMWithImpactedSubstancesResult`` object does exist, but it is not documented because it is not exposed by any
 public methods. The rationale is as follows:
 
 A single :ref:`ref_grantami_bomanalytics_api_impactedsubstances_bom_query` query can only operate on a single BoM.

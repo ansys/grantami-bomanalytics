@@ -23,9 +23,9 @@ def block_until_server_is_ok(func):
                 logger.info(f"Server ready!")
                 break
             if check_count == MAX_ATTEMPTS:
-                logger.info(f"Failed after 30 attempts. Quitting...")
+                logger.info(f"Failed after {MAX_ATTEMPTS} attempts. Quitting...")
                 raise ConnectionError
-            logger.info(f"Check {check_count} failed. Waiting 5 seconds...")
+            logger.info(f"Check {check_count} failed. Waiting {WAIT_TIME} seconds...")
             check_count = check_count + 1
             time.sleep(WAIT_TIME)
     return wrapper

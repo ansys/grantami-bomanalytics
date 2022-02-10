@@ -28,7 +28,7 @@ from ._logger import logger
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
-GRANTA_APPLICATION_NAME_HEADER = "MI BoM Analytics Services"
+GRANTA_APPLICATION_NAME_HEADER = "MI Scripting Toolkit"
 
 
 if TYPE_CHECKING:

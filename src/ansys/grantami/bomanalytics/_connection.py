@@ -75,8 +75,9 @@ class Connection(ApiClientFactory):
     Notes
     -----
     For advanced usage, including configuring session-specific properties and timeouts, see the
-    openapi-common_ package documentation. Specifically, the documentation on the base class
-    :class:`~ansys.openapi.common.ApiClientFactory`.
+    :external+openapi-common:doc:`ansys-openapi-common API Reference <api/index>`. Specifically, the documentation on
+    the base class :class:`~ansys.openapi.common.ApiClientFactory` and
+    :class:`~ansys.openapi.common.SessionConfiguration`.
 
     To create the connection to Granta MI, you perform three steps:
 
@@ -99,8 +100,6 @@ class Connection(ApiClientFactory):
     ... )
     >>> cxn
     <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
-
-    .. _openapi-common: https://openapi.docs.pyansys.com/
     """
 
     def connect(self) -> "BomAnalyticsClient":

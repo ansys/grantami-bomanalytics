@@ -60,10 +60,15 @@ if TYPE_CHECKING:
 class Connection(ApiClientFactory):
     """Connects to an instance of Granta MI.
 
+    This is a subclass of :class:`ansys.openapi.common.ApiClientFactory`. All methods within this class that are
+    documented as returning :class:`~ansys.openapi.common.ApiClientFactory` return instances of
+    :class:`ansys.grantami.bomanalytics.Connection` instead.
+
     Notes
     -----
     For advanced usage, including configuring session-specific properties and timeouts, see the
-    openapi-common_ package documentation.
+    openapi-common_ package documentation. Specifically, the documentation on the base class
+    :class:`~ansys.openapi.common.ApiClientFactory`.
 
     To create the connection to Granta MI, you perform three steps:
 
@@ -91,7 +96,21 @@ class Connection(ApiClientFactory):
     """
 
     def connect(self) -> "BomAnalyticsClient":
-        # Use the docstring on the method in the base class.
+        """Finalize the BoM Analytics client and return it for use.
+
+        Authentication must be configured for this method to succeed.
+
+        Returns
+        -------
+        :class:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient`
+            Client object that can be used to connect to Granta MI and perform BoM Analytics operations.
+
+        Raises
+        ------
+        ValueError
+            When the client is not fully configured.
+        """
+
         self._validate_builder()
         session_configuration = self._session_configuration
         session_configuration.headers["X-Granta-ApplicationName"] = GRANTA_APPLICATION_NAME_HEADER

@@ -64,6 +64,14 @@ class Connection(ApiClientFactory):
     documented as returning :class:`~ansys.openapi.common.ApiClientFactory` return instances of
     :class:`ansys.grantami.bomanalytics.Connection` instead.
 
+    Parameters
+    ----------
+    api_url : str
+       Base URL of the API server.
+    session_configuration : :class:`~ansys.openapi.common.SessionConfiguration`, optional
+       Additional configuration settings for the requests session. The default is ``None``, in which case a
+       :class:`~ansys.openapi.common.SessionConfiguration` with default parameters is used.
+
     Notes
     -----
     For advanced usage, including configuring session-specific properties and timeouts, see the

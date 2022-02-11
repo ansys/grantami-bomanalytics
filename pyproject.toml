@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "ansys-grantami-bomanalytics"
 description = "Perform compliance analysis on materials data stored in Granta MI."
-version = "1.0.0b1"
+version = "1.0.0b4"
 license = "MIT"
 authors = ["ANSYS, Inc."]
 maintainers = ["PyAnsys Maintainers <pyansys.maintainers@ansys.com>"]

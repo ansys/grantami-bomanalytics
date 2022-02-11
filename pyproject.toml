@@ -84,7 +84,7 @@ doc = [
   "sphinx",
   "sphinx-autodoc-typehints",
   "sphinx-notfound-page",
-  "sphinx-copybutton=",
+  "sphinx-copybutton",
   "enum_tools",
   "sphinx-toolbox",
   "jupyterlab",

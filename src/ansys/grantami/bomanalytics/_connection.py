@@ -110,7 +110,7 @@ class Connection(ApiClientFactory):
         client = BomAnalyticsClient(
             session=self._session,
             servicelayer_url=self._base_servicelayer_url,
-            configuration=self._session_configuration
+            configuration=self._session_configuration,
         )
         client.setup_client(models)
         return client

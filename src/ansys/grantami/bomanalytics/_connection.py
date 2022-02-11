@@ -75,14 +75,14 @@ class Connection(ApiClientFactory):
     api_url : str
        Base URL of the API server.
     session_configuration : :class:`~ansys.openapi.common.SessionConfiguration`, optional
-       Additional configuration settings for the requests session. The default is ``None``, in which case a
-       :class:`~ansys.openapi.common.SessionConfiguration` with default parameters is used.
+       Additional configuration settings for the requests session. The default is ``None``, in which case the
+       class :class:`~ansys.openapi.common.SessionConfiguration` with default parameters is used.
 
     Notes
     -----
-    For advanced usage, including configuring session-specific properties and timeouts, see the
+    For advanced usage, including configuring session-specific properties and timeouts, see
     :external+openapi-common:doc:`ansys-openapi-common API Reference <api/index>`. Specifically, the documentation on
-    the base class :class:`~ansys.openapi.common.ApiClientFactory` and
+    the base class :class:`~ansys.openapi.common.ApiClientFactory` and the class
     :class:`~ansys.openapi.common.SessionConfiguration`.
 
     To create the connection to Granta MI, you perform three steps:

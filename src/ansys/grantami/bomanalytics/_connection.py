@@ -22,13 +22,19 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
 
-from ansys.openapi.common import ApiClientFactory, ApiClient, generate_user_agent  # type: ignore[import]
+from ansys.openapi.common import (  # type: ignore[import]
+    ApiClientFactory,
+    ApiClient,
+    generate_user_agent,
+    SessionConfiguration,
+)
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 from ._logger import logger
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
-GRANTA_APPLICATION_NAME_HEADER = "MI BoM Analytics Services"
+MI_AUTH_PATH = "/Health/v2.svc"
+GRANTA_APPLICATION_NAME_HEADER = "MI Scripting Toolkit"
 
 
 if TYPE_CHECKING:
@@ -102,6 +108,16 @@ class Connection(ApiClientFactory):
     <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
     """
 
+    def __init__(self, api_url: str, session_configuration: Optional[SessionConfiguration] = None) -> None:
+        from . import __version__
+
+        auth_url = api_url.strip("/") + MI_AUTH_PATH
+        super().__init__(auth_url, session_configuration)
+        self._base_servicelayer_url = api_url
+        session_configuration = self._session_configuration
+        session_configuration.headers["X-Granta-ApplicationName"] = GRANTA_APPLICATION_NAME_HEADER
+        session_configuration.headers["User-Agent"] = generate_user_agent("ansys-grantami-bomanalytics", __version__)
+
     def connect(self) -> "BomAnalyticsClient":
         """Finalize the BoM Analytics client and return it for use.
 
@@ -119,10 +135,10 @@ class Connection(ApiClientFactory):
         """
 
         self._validate_builder()
-        session_configuration = self._session_configuration
-        session_configuration.headers["X-Granta-ApplicationName"] = GRANTA_APPLICATION_NAME_HEADER
         client = BomAnalyticsClient(
-            session=self._session, servicelayer_url=self._api_url, configuration=session_configuration
+            session=self._session,
+            servicelayer_url=self._base_servicelayer_url,
+            configuration=self._session_configuration,
         )
         client.setup_client(models)
         return client
@@ -134,15 +150,14 @@ class BomAnalyticsClient(ApiClient):
     """
 
     def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
-        from . import __version__
-
         self._sl_url = servicelayer_url.strip("/")
         sl_url_with_service = self._sl_url + SERVICE_PATH
         logger.debug("Creating BomAnalyticsClient")
         logger.debug(f"Base Service Layer URL: {self._sl_url}")
         logger.debug(f"Service URL: {sl_url_with_service}")
+
         super().__init__(api_url=sl_url_with_service, **kwargs)
-        self.user_agent = generate_user_agent("ansys-grantami-bomanalytics", __version__)
+
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,

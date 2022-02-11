@@ -22,12 +22,18 @@ DEFAULT_DBKEY : str
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
 
-from ansys.openapi.common import ApiClientFactory, ApiClient, generate_user_agent  # type: ignore[import]
+from ansys.openapi.common import (  # type: ignore[import]
+    ApiClientFactory,
+    ApiClient,
+    generate_user_agent,
+    SessionConfiguration,
+)
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 from ._logger import logger
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
+MI_AUTH_PATH = "/Health/v2.svc"
 GRANTA_APPLICATION_NAME_HEADER = "MI Scripting Toolkit"
 
 
@@ -88,13 +94,18 @@ class Connection(ApiClientFactory):
     <BomServicesClient: url=http://my_mi_server/mi_servicelayer>
     """
 
+    def __init__(self, api_url: str, session_configuration: Optional[SessionConfiguration] = None) -> None:
+        auth_url = api_url + MI_AUTH_PATH
+        super().__init__(auth_url, session_configuration)
+        self._base_servicelayer_url = api_url
+
     def connect(self) -> "BomAnalyticsClient":
         # Use the docstring on the method in the base class.
         self._validate_builder()
         session_configuration = self._session_configuration
         session_configuration.headers["X-Granta-ApplicationName"] = GRANTA_APPLICATION_NAME_HEADER
         client = BomAnalyticsClient(
-            session=self._session, servicelayer_url=self._api_url, configuration=session_configuration
+            session=self._session, servicelayer_url=self._base_servicelayer_url, configuration=session_configuration
         )
         client.setup_client(models)
         return client

@@ -114,7 +114,7 @@ def test_missing_database_raises_grantami_exception(configurable_connection):
     query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["mat_id"]).with_legislations(LEGISLATIONS)
     with pytest.raises(GrantaMIException) as e:
         configurable_connection.run(query)
-    assert "Analysis cannot be performed without a DB key." in str(e.value)
+    assert "None of the record references resolved to material records in 'MI_Missing_Database'." == str(e.value)
 
 
 def test_missing_table_raises_grantami_exception(default_connection):

@@ -50,6 +50,7 @@ Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBas
 
 EXCEPTION_MAP = {
     "critical": logger.critical,
+    "critical-error": logger.critical,
     "error": logger.error,
     "warning": logger.warning,
     "information": logger.info,

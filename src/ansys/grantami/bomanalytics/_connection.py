@@ -95,11 +95,14 @@ class Connection(ApiClientFactory):
     """
 
     def __init__(self, api_url: str, session_configuration: Optional[SessionConfiguration] = None) -> None:
+        from . import __version__
+
         auth_url = api_url.strip("/") + MI_AUTH_PATH
         super().__init__(auth_url, session_configuration)
         self._base_servicelayer_url = api_url
         session_configuration = self._session_configuration
         session_configuration.headers["X-Granta-ApplicationName"] = GRANTA_APPLICATION_NAME_HEADER
+        session_configuration.headers["User-Agent"] = generate_user_agent("ansys-grantami-bomanalytics", __version__)
 
     def connect(self) -> "BomAnalyticsClient":
         # Use the docstring on the method in the base class.
@@ -107,7 +110,7 @@ class Connection(ApiClientFactory):
         client = BomAnalyticsClient(
             session=self._session,
             servicelayer_url=self._base_servicelayer_url,
-            configuration=self._session_configuration,
+            configuration=self._session_configuration
         )
         client.setup_client(models)
         return client
@@ -119,15 +122,14 @@ class BomAnalyticsClient(ApiClient):
     """
 
     def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
-        from . import __version__
-
         self._sl_url = servicelayer_url.strip("/")
         sl_url_with_service = self._sl_url + SERVICE_PATH
         logger.debug("Creating BomAnalyticsClient")
         logger.debug(f"Base Service Layer URL: {self._sl_url}")
         logger.debug(f"Service URL: {sl_url_with_service}")
+
         super().__init__(api_url=sl_url_with_service, **kwargs)
-        self.user_agent = generate_user_agent("ansys-grantami-bomanalytics", __version__)
+
         self._db_key = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,

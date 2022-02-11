@@ -66,10 +66,24 @@ if TYPE_CHECKING:
 class Connection(ApiClientFactory):
     """Connects to an instance of Granta MI.
 
+    This is a subclass of :class:`ansys.openapi.common.ApiClientFactory`. All methods within this class that are
+    documented as returning :class:`~ansys.openapi.common.ApiClientFactory` return instances of
+    :class:`ansys.grantami.bomanalytics.Connection` instead.
+
+    Parameters
+    ----------
+    api_url : str
+       Base URL of the API server.
+    session_configuration : :class:`~ansys.openapi.common.SessionConfiguration`, optional
+       Additional configuration settings for the requests session. The default is ``None``, in which case the
+       class :class:`~ansys.openapi.common.SessionConfiguration` with default parameters is used.
+
     Notes
     -----
-    For advanced usage, including configuring session-specific properties and timeouts, see the
-    ``ansys-openapi-common`` package documentation.
+    For advanced usage, including configuring session-specific properties and timeouts, see
+    :external+openapi-common:doc:`ansys-openapi-common API Reference <api/index>`. Specifically, the documentation on
+    the base class :class:`~ansys.openapi.common.ApiClientFactory` and the class
+    :class:`~ansys.openapi.common.SessionConfiguration`.
 
     To create the connection to Granta MI, you perform three steps:
 
@@ -105,7 +119,21 @@ class Connection(ApiClientFactory):
         session_configuration.headers["User-Agent"] = generate_user_agent("ansys-grantami-bomanalytics", __version__)
 
     def connect(self) -> "BomAnalyticsClient":
-        # Use the docstring on the method in the base class.
+        """Finalize the BoM Analytics client and return it for use.
+
+        Authentication must be configured for this method to succeed.
+
+        Returns
+        -------
+        :class:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient`
+            Client object that can be used to connect to Granta MI and perform BoM Analytics operations.
+
+        Raises
+        ------
+        ValueError
+            When the client is not fully configured.
+        """
+
         self._validate_builder()
         client = BomAnalyticsClient(
             session=self._session,

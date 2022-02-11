@@ -43,6 +43,7 @@ typehints_document_rtype = False
 # Intersphinx mapping
 intersphinx_mapping = {
     "python": ("https://docs.python.org/dev", None),
+    "openapi-common": ("https://openapi.docs.pyansys.com", None),
 
     # kept here as an example
 

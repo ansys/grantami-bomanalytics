@@ -9,7 +9,6 @@ Connection Builder
 .. autoclass:: ansys.grantami.bomanalytics.Connection
    :members:
 
-   .. automethod:: __init__
    .. automethod:: with_autologon
    .. automethod:: with_credentials
    .. automethod:: with_oidc

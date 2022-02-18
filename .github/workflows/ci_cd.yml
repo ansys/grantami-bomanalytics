@@ -258,6 +258,7 @@ jobs:
       - uses: actions/download-artifact@v2
         with:
           name: ansys-grantami-bomanalytics-wheel
+          path: ~/dist
 
       - uses: actions/download-artifact@v2
         with:
@@ -290,6 +291,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./**/*.whl
+            ~/**/*.whl
             ./**/*.zip
             ./**/*.pdf

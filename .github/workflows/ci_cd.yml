@@ -58,35 +58,6 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Create local deps folder
-        run: mkdir -p deps
-
-      - name: Copy client common wheel
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: ci_cd.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-common-wheel
-          path: deps
-          repo: pyansys/openapi-common
-          check_artifacts: false
-          search_artifacts: false
-
-      - name: Copy client library
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: build_and_test_library.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-bomanalytics-openapi-wheel
-          path: deps
-          repo: pyansys/grantami-bomanalytics-openapi
-          check_artifacts: false
-          search_artifacts: false
-
       - name: Install style requirements
         run: pip install tox --disable-pip-version-check
 
@@ -110,36 +81,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Create local deps folder
-        run: |
-          mkdir -p deps
-
-      - name: Copy client common wheel
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: ci_cd.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-common-wheel
-          path: deps
-          repo: pyansys/openapi-common
-          check_artifacts: false
-          search_artifacts: false
-
-      - name: Copy client library
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: build_and_test_library.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-bomanalytics-openapi-wheel
-          path: deps
-          repo: pyansys/grantami-bomanalytics-openapi
-          check_artifacts: false
-          search_artifacts: false
 
       - name: Install dependencies
         run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
@@ -174,35 +115,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.10'
-
-      - name: Create local deps folder
-        run: mkdir -p deps
-
-      - name: Copy client common wheel
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: ci_cd.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-common-wheel
-          path: deps
-          repo: pyansys/openapi-common
-          check_artifacts: false
-          search_artifacts: false
-
-      - name: Copy client library
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: build_and_test_library.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-bomanalytics-openapi-wheel
-          path: deps
-          repo: pyansys/grantami-bomanalytics-openapi
-          check_artifacts: false
-          search_artifacts: false
 
       - name: Install dependencies
         run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
@@ -273,37 +185,8 @@ jobs:
       - name: Install pandoc
         run: sudo apt install pandoc
 
-      - name: Create local deps folder
-        run: mkdir -p deps
-
-      - name: Copy client common wheel
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: ci_cd.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-common-wheel
-          path: deps
-          repo: pyansys/openapi-common
-          check_artifacts: false
-          search_artifacts: false
-
-      - name: Copy client library
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{secrets.CLIENT_COMMON_REPO_TOKEN}}
-          workflow: build_and_test_library.yml
-          workflow_conclusion: success
-          branch: main
-          name: ansys-grantami-bomanalytics-openapi-wheel
-          path: deps
-          repo: pyansys/grantami-bomanalytics-openapi
-          check_artifacts: false
-          search_artifacts: false
-
       - name: Install library
-        run: pip install .[doc] --find-links ./deps --disable-pip-version-check --pre
+        run: pip install .[doc] --disable-pip-version-check
 
       - name: Set BUILD_EXAMPLES environment variable
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}
@@ -398,7 +281,7 @@ jobs:
       - name: Upload to Azure PyPi (disabled)
         run: |
           pip install twine
-          # twine upload --skip-existing ./**/*.whl
+          twine upload --non-interactive --skip-existing ~/**/*.whl
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: __token__

@@ -18,7 +18,7 @@ keywords = [
 ]
 classifiers = [
   "License :: OSI Approved :: MIT License",
-  "Development Status :: 4 - Beta",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
   "Topic :: Scientific/Engineering :: Information Analysis",
   "Operating System :: Microsoft :: Windows",
@@ -29,7 +29,6 @@ classifiers = [
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
-  "Private :: Do Not Upload"
 ]
 packages = [
   { include = "**/*.py", from = "src" }
@@ -40,8 +39,8 @@ python = "^3.7"
 
 # Packages for core library
 importlib_metadata = { version = ">=1.0", python  = "<3.8" }  # Granta MI STK requires 3.4.0
-ansys-openapi-common = "*"  # TODO: Change to the released version
-ansys-grantami-bomanalytics-openapi = "*"  # TODO: Change to the released version
+ansys-openapi-common = "< 2.0.0"
+ansys-grantami-bomanalytics-openapi = "1.0.0"
 
 # Common packages for test, examples, and docs
 jupyterlab = { version = "3.2.8", optional = true }
@@ -118,7 +117,6 @@ python =
 [testenv]
 deps =
   .[test]
-install_command = pip install --pre --find-links ./deps {opts} {packages}
 commands = pytest --cov=ansys.grantami.bomanalytics --cov-report=xml {posargs}
 passenv =
     TEST_SL_URL
@@ -131,7 +129,6 @@ deps =
     flake8==3.9.2
     black
     mypy==0.910
-install_command = pip install --pre --find-links ./deps {opts} {packages}
 commands =
     codespell ./src ./tests ./examples ./doc/source
     flake8 ./src ./tests ./examples

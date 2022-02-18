@@ -278,7 +278,7 @@ jobs:
           CLEAN: true
 
       # note how we use the PyPI tokens
-      - name: Upload to Azure PyPi (disabled)
+      - name: Upload to PyPi
         run: |
           pip install twine
           twine upload --non-interactive --skip-existing ~/**/*.whl

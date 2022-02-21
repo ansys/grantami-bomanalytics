@@ -166,7 +166,7 @@ jobs:
       always() &&
       (
         (
-          ${{ startsWith( github.ref_name, 'dependabot/') }}
+          ${{ startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
           && needs.style.result == 'success'
           && needs.unit_tests.result == 'success'
         )
@@ -192,7 +192,7 @@ jobs:
         run: pip install .[doc] --disable-pip-version-check
 
       - name: Set BUILD_EXAMPLES environment variable
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}
+        if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
         run: echo "BUILD_EXAMPLES=1" >> $GITHUB_ENV
 
       - name: Build HTML Documentation

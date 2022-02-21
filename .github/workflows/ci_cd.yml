@@ -18,13 +18,13 @@ jobs:
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
-    if: ${{ !startsWith( github.ref_name, 'dependabot/') }}
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
 
     steps:
       - uses: actions/checkout@v2
       
       - name: Print ref
-        run: echo "${{ github.ref_name }}"
+        run: echo "${{ github.event.pull_request.head.ref }}"
 
       - name: Start VM with Azure CLI
         id: azure_cli

@@ -18,7 +18,7 @@ jobs:
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
-    if: ${{ !contains( github.event.pull_request.labels.*.name, 'dependencies') }}
+    if: ${{ !startsWith( github.ref_name, 'dependabot/') }}
 
     steps:
       - uses: actions/checkout@v2
@@ -163,7 +163,7 @@ jobs:
       always() &&
       (
         (
-          contains(github.event.pull_request.labels.*.name, 'dependencies')
+          ${{ startsWith( github.ref_name, 'dependabot/') }}
           && needs.style.result == 'success'
           && needs.unit_tests.result == 'success'
         )

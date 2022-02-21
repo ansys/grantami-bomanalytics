@@ -1,4 +1,4 @@
-name: Integration tests
+name: Integration checks
 
 # Run only once static and local tests have finished. Don't run on dependabot branches.
 on:

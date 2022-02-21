@@ -9,7 +9,11 @@ on:
 
 jobs:
   Release:
-    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
+    if: >
+      contains(github.ref, 'refs/tags') &&
+      github.event_name == 'push' &&
+      github.event.workflow_run.conclusion == 'success'
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -22,19 +26,24 @@ jobs:
           application_id: ${{ secrets.BOT_APPLICATION_ID }}
           application_private_key: ${{ secrets.BOT_APPLICATION_PRIVATE_KEY }}
 
-      - uses: actions/download-artifact@v2
+      - name: Download wheel
+        uses: dawidd6/action-download-artifact@v2.17.0
         with:
           name: ansys-grantami-bomanalytics-wheel
           path: ~/dist
+          workflow: local_checks.yml
 
-      - uses: actions/download-artifact@v2
+      - name: Download PDF
+        uses: dawidd6/action-download-artifact@v2.17.0
         with:
           name: Documentation-pdf
+          workflow: integration_checks.yml
 
-      - uses: actions/download-artifact@v2
+      - name: Download HTML
+        uses: dawidd6/action-download-artifact@v2.17.0
         with:
           name: Documentation-html
           path: ~/html
+          workflow: integration_checks.yml
 
 # Deleted actual release steps while testing
-

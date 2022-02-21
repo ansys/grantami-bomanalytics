@@ -1,4 +1,4 @@
-name: Static and local checks
+name: Local checks
 
 # Run only on main branch. This avoids duplicated actions on PRs
 on:

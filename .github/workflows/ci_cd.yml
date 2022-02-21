@@ -165,11 +165,7 @@ jobs:
     if: >
       always() &&
       (
-        (
-          ${{ startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-          && needs.style.result == 'success'
-          && needs.unit_tests.result == 'success'
-        )
+        ${{ startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
         || needs.integration_tests.result == 'success'
       )
     needs: [style, unit_tests, integration_tests]

@@ -18,7 +18,7 @@ jobs:
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
-    if: ${{ !startsWith( github.ref_name, 'dependabot/') }}
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
 
     steps:
       - uses: actions/checkout@v2
@@ -162,11 +162,7 @@ jobs:
     if: >
       always() &&
       (
-        (
-          ${{ startsWith( github.ref_name, 'dependabot/') }}
-          && needs.style.result == 'success'
-          && needs.unit_tests.result == 'success'
-        )
+        startsWith( github.event.pull_request.head.ref, 'dependabot/')
         || needs.integration_tests.result == 'success'
       )
     needs: [style, unit_tests, integration_tests]
@@ -189,7 +185,7 @@ jobs:
         run: pip install .[doc] --disable-pip-version-check
 
       - name: Set BUILD_EXAMPLES environment variable
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dependencies') }}
+        if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
         run: echo "BUILD_EXAMPLES=1" >> $GITHUB_ENV
 
       - name: Build HTML Documentation

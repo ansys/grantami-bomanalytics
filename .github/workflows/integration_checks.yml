@@ -8,6 +8,7 @@ on:
       - completed
     branches-ignore:
       - 'dependabot/**'
+  workflow_dispatch:
 
 
 # We can only run one instance of this workflow at a time
@@ -19,7 +20,7 @@ jobs:
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
 
     steps:
       - uses: actions/checkout@v2
@@ -62,7 +63,7 @@ jobs:
       - name: Install dependencies
         run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
 
-      - name: Test with tox (integration tests only)
+      - name: Test with tox
         run: tox -- -m "integration"
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
@@ -70,7 +71,7 @@ jobs:
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
   docs:
-    name: Build documentation (with examples)
+    name: Build documentation
     runs-on: ubuntu-latest
     needs: integration_tests
 
@@ -85,7 +86,7 @@ jobs:
       - name: Install Python requirements
         run: pip install .[doc] --disable-pip-version-check
 
-      - name: Build HTML Documentation
+      - name: Build HTML documentation
         run:
           make -C doc html SPHINXOPTS="-W"
         env:
@@ -94,17 +95,17 @@ jobs:
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-      - name: Build PDF Documentation
+      - name: Build PDF documentation
         run: make -C doc latexpdf
 
-      - name: Upload HTML Documentation
+      - name: Upload HTML documentation
         uses: actions/upload-artifact@v2
         with:
           name: Documentation-html
           path: doc/build/html
           retention-days: 7
 
-      - name: Upload PDF Documentation
+      - name: Upload PDF documentation
         uses: actions/upload-artifact@v2
         with:
           name: Documentation-pdf

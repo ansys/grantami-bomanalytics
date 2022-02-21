@@ -22,9 +22,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Print ref
-        run: echo "${{ github.event.pull_request.head.ref }}"
 
       - name: Start VM with Azure CLI
         id: azure_cli
@@ -165,7 +162,7 @@ jobs:
     if: >
       always() &&
       (
-        ${{ startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+        startsWith( github.event.pull_request.head.ref, 'dependabot/')
         || needs.integration_tests.result == 'success'
       )
     needs: [style, unit_tests, integration_tests]

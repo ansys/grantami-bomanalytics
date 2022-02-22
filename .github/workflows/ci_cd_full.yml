@@ -3,6 +3,8 @@ name: Pre-merge checks
 # Run only on main branch. This avoids duplicated actions on PRs
 on:
   pull_request:
+    branches-ignore:
+      - dependabot/**
   push:
     tags:
       - '*'
@@ -18,7 +20,6 @@ jobs:
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
-    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
 
     steps:
       - uses: actions/checkout@v2
@@ -31,11 +32,6 @@ jobs:
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
             az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
 
       - name: Check server is ready
         run: |
@@ -52,11 +48,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
 
       - name: Install style requirements
         run: pip install tox --disable-pip-version-check
@@ -111,11 +102,6 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: sudo apt install libkrb5-dev
 
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
-
       - name: Install dependencies
         run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
 
@@ -126,81 +112,31 @@ jobs:
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-  package:
-    name: Build package
-    runs-on: ubuntu-latest
-    needs: integration_tests
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup Python 3.10
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
-
-      - name: Create wheel
-        run: |
-          pip install poetry --disable-pip-version-check
-          poetry build
-
-      - name: Validate wheel
-        run: |
-          pip install twine --disable-pip-version-check
-          twine check dist/*
-
-      - name: Upload wheel artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ansys-grantami-bomanalytics-wheel
-          path: dist/
-          retention-days: 7
-
   docs:
     name: Build Documentation
     runs-on: ubuntu-latest
-    if: >
-      always() &&
-      (
-        startsWith( github.event.pull_request.head.ref, 'dependabot/')
-        || needs.integration_tests.result == 'success'
-      )
     needs: [style, unit_tests, integration_tests]
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Python 3.10
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.10'
-
-      - name: Install kerberos headers
-        run: sudo apt install libkrb5-dev
-
-      - name: Install pandoc
-        run: sudo apt install pandoc
-
-      - name: Install library
-        run: pip install .[doc] --disable-pip-version-check
-
-      - name: Set BUILD_EXAMPLES environment variable
-        if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-        run: echo "BUILD_EXAMPLES=1" >> $GITHUB_ENV
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install libkrb5-dev
+          sudo apt install pandoc
+          sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
 
       - name: Build HTML Documentation
-        run:
-          make -C doc html SPHINXOPTS="-W"
+        run:  make -C doc html SPHINXOPTS="-W"
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+          BUILD_EXAMPLES: 1
 
       - name: Build PDF Documentation
-        run: |
-          sudo apt update
-          sudo apt-get install -y texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
-          make -C doc latexpdf
+        run: make -C doc latexpdf
 
       - name: Upload HTML Documentation
         uses: actions/upload-artifact@v2
@@ -236,11 +172,6 @@ jobs:
     needs: [package, integration_tests, docs]
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.10'
-
       - uses: actions/checkout@v2
       
       # used for documentation deployment

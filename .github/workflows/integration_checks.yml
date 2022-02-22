@@ -2,13 +2,15 @@ name: Integration checks
 
 # Run only once static and local tests have finished. Don't run on dependabot branches.
 on:
-  workflow_run:
-    workflows: ["Local checks"]
-    types:
-      - completed
+  pull_request:
     branches-ignore:
       - 'dependabot/**'
-  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+    branches:
+      - main
+      - '!dependabot/**'
 
 
 # We can only run one instance of this workflow at a time
@@ -17,10 +19,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  wait_for_local_checks:
+    name: Wait for local checks to complete
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Wait
+        uses: lewagon/wait-on-check-action@v1.1.1
+        with:
+          ref: ${{ github.ref }}
+          check-name: 'Build package and documentation'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
 
     steps:
       - uses: actions/checkout@v2

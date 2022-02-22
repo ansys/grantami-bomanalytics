@@ -3,7 +3,7 @@ name: Release
 # Run only once integration tests have passed
 on:
   workflow_run:
-    workflows: ["Integration tests"]
+    workflows: ["Integration checks"]
     types:
       - completed
 

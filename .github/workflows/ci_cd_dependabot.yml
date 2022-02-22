@@ -9,6 +9,7 @@ jobs:
   style:
     name: Style check
     runs-on: ubuntu-latest
+    if: startsWith( github.event.pull_request.head.ref, 'dependabot/')
 
     steps:
       - uses: actions/checkout@v2
@@ -22,6 +23,7 @@ jobs:
   unit_tests:
     name: Unit tests
     runs-on: ubuntu-latest
+    if: startsWith( github.event.pull_request.head.ref, 'dependabot/')
 
     strategy:
       matrix:
@@ -52,6 +54,7 @@ jobs:
   package:
     name: Build package
     runs-on: ubuntu-latest
+    if: startsWith( github.event.pull_request.head.ref, 'dependabot/')
 
     steps:
       - uses: actions/checkout@v2
@@ -76,6 +79,7 @@ jobs:
   docs:
     name: Build Documentation
     runs-on: ubuntu-latest
+    if: startsWith( github.event.pull_request.head.ref, 'dependabot/')
 
     steps:
       - uses: actions/checkout@v2

@@ -3,7 +3,7 @@ name: Integration checks
 # Run only once static and local tests have finished. Don't run on dependabot branches.
 on:
   workflow_run:
-    workflows: ["Static and local checks"]
+    workflows: ["Local checks"]
     types:
       - completed
     branches-ignore:

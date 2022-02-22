@@ -28,6 +28,15 @@ jobs:
     name: Integration checks
     needs: branch_test
     uses: ./.github/workflows/server_checks.yml
+    secrets:
+      AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
+      AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      AZURE_VM_NAME: ${{ secrets.AZURE_VM_NAME }}
+      TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
+      TEST_USER: ${{ secrets.TEST_USER }}
+      TEST_PASS: ${{ secrets.TEST_PASS }}
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'

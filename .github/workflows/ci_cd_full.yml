@@ -15,10 +15,14 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  branch_test:
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+    runs-on: ubuntu-latest
+
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
-    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+    needs: branch_test
 
     steps:
       - uses: actions/checkout@v2
@@ -41,14 +45,15 @@ jobs:
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-  call-reusable-workflow:
-    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+  call_local_checks:
+    name: Local checks
+    needs: branch_test
     uses: ./.github/workflows/ci_cd_reusable.yml
 
   integration_tests:
     name: Integration tests
     runs-on: ${{ matrix.os }}
-    needs: [start_vm, call-reusable-workflow]
+    needs: [start_vm, call_local_checks]
 
     strategy:
       max-parallel: 1

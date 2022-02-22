@@ -43,7 +43,7 @@ jobs:
 
   call-reusable-workflow:
     if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-    uses: ./ci_cd_reusable.yml
+    uses: ./.github/workflows/ci_cd_reusable.yml
 
   integration_tests:
     name: Integration tests

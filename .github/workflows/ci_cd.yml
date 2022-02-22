@@ -8,28 +8,23 @@ on:
       - '*'
     branches:
       - main
+    paths-ignore:
+      - '.github/**'
+      - 'pyproject.toml'
   workflow_dispatch:
 
 
 jobs:
-  branch_test:
-    name: Test branch
-    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Dummy job
-        run: ":"
-
   local_checks:
-    name: Local checks
-    needs: branch_test
+    name: Package checks
     uses: ./.github/workflows/local_checks.yml
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   integration_checks:
     name: Integration checks
-    needs: branch_test
+    needs: local_checks
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     uses: ./.github/workflows/server_checks.yml
     secrets:
       AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
@@ -43,7 +38,7 @@ jobs:
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
-    needs: [integration_checks, local_checks]
+    needs: integration_checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -70,3 +65,28 @@ jobs:
           name: Documentation-html
           path: ~/html
 
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.2.3
+        with:
+          repository-name: pyansys/grantami-bomanalytics-docs
+          token: ${{ steps.get_workflow_token.outputs.token }}
+          BRANCH: gh-pages
+          FOLDER: ~/html
+          CLEAN: true
+
+      # note how we use the PyPI tokens
+      - name: Upload to PyPI
+        run: |
+          pip install twine
+          twine upload --non-interactive --skip-existing ~/**/*.whl
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ~/**/*.whl
+            ./**/*.zip
+            ./**/*.pdf

@@ -90,6 +90,9 @@ jobs:
           sudo apt install pandoc
           sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
 
+      - name: Install library
+        run: pip install .[doc] --disable-pip-version-check
+
       - name: Build HTML Documentation
         run:  make -C doc html SPHINXOPTS="-W"
         env:

@@ -9,7 +9,6 @@ jobs:
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
-    needs: branch_test
 
     steps:
       - uses: actions/checkout@v2
@@ -35,7 +34,7 @@ jobs:
   integration_tests:
     name: Integration tests
     runs-on: ${{ matrix.os }}
-    needs: [start_vm, local_checks]
+    needs: start_vm
 
     strategy:
       max-parallel: 1
@@ -98,3 +97,18 @@ jobs:
           name: Documentation-pdf
           path: doc/build/latex/*.pdf
           retention-days: 7
+
+  stop_vm:
+    name: Stop Azure VM
+    runs-on: ubuntu-latest
+    needs: docs
+    if: always()
+
+    steps:
+      - name: Stop Azure VM
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.32.0
+          inlineScript: |
+            az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+            az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }} --no-wait

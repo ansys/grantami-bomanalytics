@@ -112,6 +112,31 @@ jobs:
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
+  package:
+    name: Build package
+    runs-on: ubuntu-latest
+    needs: integration_tests
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create wheel
+        run: |
+          pip install poetry --disable-pip-version-check
+          poetry build
+
+      - name: Validate wheel
+        run: |
+          pip install twine --disable-pip-version-check
+          twine check dist/*
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ansys-grantami-bomanalytics-wheel
+          path: dist/
+          retention-days: 7
+
   docs:
     name: Build Documentation
     runs-on: ubuntu-latest
@@ -169,7 +194,7 @@ jobs:
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
-    needs: [package, integration_tests, docs]
+    needs: [package, docs]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -195,4 +220,4 @@ jobs:
         with:
           name: Documentation-html
           path: ~/html
-          
+

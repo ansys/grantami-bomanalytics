@@ -10,15 +10,14 @@ on:
       - main
   workflow_dispatch:
 
-concurrency:
-  group: integration-server
-  cancel-in-progress: false
-
 jobs:
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
     if: ${{ !contains( github.event.pull_request.labels.*.name, 'dependencies') }}
+    concurrency:
+      group: integration-server
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v2
@@ -98,6 +97,9 @@ jobs:
     name: Integration tests
     runs-on: ${{ matrix.os }}
     needs: [style, unit_tests, start_vm]
+    concurrency:
+      group: integration-server
+      cancel-in-progress: false
 
     strategy:
       max-parallel: 1
@@ -221,19 +223,22 @@ jobs:
           retention-days: 7
 
   stop_vm:
-      name: Stop Azure VM
-      runs-on: ubuntu-latest
-      needs: [docs, start_vm]
-      if: always() && needs.start_vm.result != 'skipped'
+    name: Stop Azure VM
+    runs-on: ubuntu-latest
+    needs: [docs, start_vm]
+    if: always() && needs.start_vm.result != 'skipped'
+    concurrency:
+      group: integration-server
+      cancel-in-progress: false
 
-      steps:
-        - name: Stop Azure VM
-          uses: azure/CLI@v1
-          with:
-            azcliversion: 2.32.0
-            inlineScript: |
-              az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-              az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }} --no-wait
+    steps:
+      - name: Stop Azure VM
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.32.0
+          inlineScript: |
+            az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+            az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }} --no-wait
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'

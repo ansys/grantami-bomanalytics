@@ -7,7 +7,7 @@ on:
 
 jobs:
   local_checks:
-    name: Local checks
+    name: Package checks
     if: startsWith( github.event.pull_request.head.ref, 'dependabot/')
     uses: ./.github/workflows/local_checks.yml
     secrets:

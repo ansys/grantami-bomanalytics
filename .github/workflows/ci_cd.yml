@@ -21,7 +21,7 @@ jobs:
         run: ":"
 
   local_checks:
-    name: Local checks
+    name: Package checks
     needs: branch_test
     uses: ./.github/workflows/local_checks.yml
     secrets:
@@ -70,3 +70,28 @@ jobs:
           name: Documentation-html
           path: ~/html
 
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.2.3
+        with:
+          repository-name: pyansys/grantami-bomanalytics-docs
+          token: ${{ steps.get_workflow_token.outputs.token }}
+          BRANCH: gh-pages
+          FOLDER: ~/html
+          CLEAN: true
+
+      # note how we use the PyPI tokens
+      - name: Upload to PyPI
+        run: |
+          pip install twine
+          twine upload --non-interactive --skip-existing ~/**/*.whl
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ~/**/*.whl
+            ./**/*.zip
+            ./**/*.pdf

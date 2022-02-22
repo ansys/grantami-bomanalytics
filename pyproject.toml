@@ -43,7 +43,7 @@ ansys-openapi-common = "< 2.0.0"
 ansys-grantami-bomanalytics-openapi = "1.0.0"
 
 # Common packages for test, examples, and docs
-jupyterlab = { version = "3.2.8", optional = true }
+jupyterlab = { version = "3.2.9", optional = true }
 lxml = { version = "4.7.1", optional = true }
 pandas = { version = "1.3.5", optional = true }
 tabulate = { version = "0.8.9", optional = true }

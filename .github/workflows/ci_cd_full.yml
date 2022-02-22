@@ -21,6 +21,7 @@ jobs:
 
     steps:
       - name: Dummy job
+        run: ":"
 
   start_vm:
     name: Start Azure VM

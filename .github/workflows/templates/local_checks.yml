@@ -71,7 +71,7 @@ jobs:
           retention-days: 7
 
   docs-no-examples:
-    name: Build documentation (skip examples_
+    name: Build documentation (skip examples)
     runs-on: ubuntu-latest
 
     steps:

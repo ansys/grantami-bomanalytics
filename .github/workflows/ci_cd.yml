@@ -1,0 +1,60 @@
+name: Pre-merge checks
+
+# Run only on main branch. This avoids duplicated actions on PRs
+on:
+  pull_request:
+  push:
+    tags:
+      - '*'
+    branches:
+      - main
+  workflow_dispatch:
+
+
+jobs:
+  branch_test:
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dummy job
+        run: ":"
+
+  local_checks:
+    name: Local checks
+    needs: branch_test
+    uses: ./.github/workflows/templates/local_checks.yml
+
+  integration_checks:
+    name: Integration checks
+    needs: branch_test
+    uses: ./.github/workflows/templates/server_checks.yml
+
+  Release:
+    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
+    needs: [integration_checks, local_checks]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      # used for documentation deployment
+      - name: Get Bot Application Token
+        id: get_workflow_token
+        uses: peter-murray/workflow-application-token-action@v1
+        with:
+          application_id: ${{ secrets.BOT_APPLICATION_ID }}
+          application_private_key: ${{ secrets.BOT_APPLICATION_PRIVATE_KEY }}
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: ansys-grantami-bomanalytics-wheel
+          path: ~/dist
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: Documentation-pdf
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: Documentation-html
+          path: ~/html
+

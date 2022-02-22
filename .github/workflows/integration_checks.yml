@@ -28,13 +28,14 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.1.1
         with:
           ref: ${{ github.ref }}
-          check-name: 'Build package and documentation'
+          check-name: 'Local checks'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
 
   start_vm:
     name: Start Azure VM
     runs-on: ubuntu-latest
+    needs: wait_for_local_checks
 
     steps:
       - uses: actions/checkout@v2

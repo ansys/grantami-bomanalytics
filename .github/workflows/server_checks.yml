@@ -1,5 +1,22 @@
 on:
   workflow_call:
+    secrets:
+      AZURE_APP_ID:
+        required: true
+      AZURE_SECRET:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_RESOURCE_GROUP:
+        required: true
+      AZURE_VM_NAME:
+        required: true
+      TEST_SERVER_URL:
+        required: true
+      TEST_USER:
+        required: true
+      TEST_PASS:
+        required: true
 
 concurrency:
   group: integration-server

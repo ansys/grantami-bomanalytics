@@ -13,9 +13,9 @@ on:
         required: true
       TEST_SERVER_URL:
         required: true
-      TEST_USER:
+      TEST_SERVER_READ_USER:
         required: true
-      TEST_PASS:
+      TEST_SERVER_READ_PASS:
         required: true
 
 concurrency:

@@ -1,6 +1,8 @@
 on:
   workflow_call:
-
+    secrets:
+      CODECOV_TOKEN:
+        required: false
 
 jobs:
   style:
@@ -42,6 +44,7 @@ jobs:
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v2
+        if: secrets.CODECOV_TOKEN
         with:
           fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -71,7 +74,7 @@ jobs:
           retention-days: 7
 
   docs-no-examples:
-    name: Build documentation (skip examples)
+    name: Build HTML documentation without examples
     runs-on: ubuntu-latest
 
     steps:
@@ -82,31 +85,16 @@ jobs:
           sudo apt update
           sudo apt install libkrb5-dev
           sudo apt install pandoc
-          sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
 
       - name: Install library
         run: pip install .[doc] --disable-pip-version-check
 
       - name: Build HTML Documentation
         run: make -C doc html SPHINXOPTS="-W"
-        env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
-          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
-          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
-
-      - name: Build PDF Documentation
-        run: make -C doc latexpdf
 
       - name: Upload HTML Documentation
         uses: actions/upload-artifact@v2
         with:
           name: Documentation-html-no-examples
           path: doc/build/html
-          retention-days: 7
-
-      - name: Upload PDF Documentation
-        uses: actions/upload-artifact@v2
-        with:
-          name: Documentation-pdf-no-examples
-          path: doc/build/latex/*.pdf
           retention-days: 7

@@ -23,6 +23,8 @@ jobs:
     name: Local checks
     needs: branch_test
     uses: ./.github/workflows/local_checks.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   integration_checks:
     name: Integration checks
@@ -35,8 +37,8 @@ jobs:
       AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
       AZURE_VM_NAME: ${{ secrets.AZURE_VM_NAME }}
       TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
-      TEST_USER: ${{ secrets.TEST_USER }}
-      TEST_PASS: ${{ secrets.TEST_PASS }}
+      TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
+      TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'

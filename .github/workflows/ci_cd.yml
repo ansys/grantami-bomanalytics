@@ -22,12 +22,12 @@ jobs:
   local_checks:
     name: Local checks
     needs: branch_test
-    uses: ./.github/workflows/templates/local_checks.yml
+    uses: ./.github/workflows/local_checks.yml
 
   integration_checks:
     name: Integration checks
     needs: branch_test
-    uses: ./.github/workflows/templates/server_checks.yml
+    uses: ./.github/workflows/server_checks.yml
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'

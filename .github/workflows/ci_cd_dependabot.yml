@@ -9,4 +9,4 @@ jobs:
   local_checks:
     name: Local checks
     if: startsWith( github.event.pull_request.head.ref, 'dependabot/')
-    uses: ./.github/workflows/templates/local_checks.yml
+    uses: ./.github/workflows/local_checks.yml

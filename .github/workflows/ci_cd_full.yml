@@ -129,7 +129,7 @@ jobs:
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
-    needs: [package, docs]
+    needs: [docs, call-reusable-workflow]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

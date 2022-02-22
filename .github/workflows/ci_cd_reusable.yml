@@ -1,0 +1,112 @@
+on:
+  workflow_call:
+
+
+jobs:
+  style:
+    name: Style check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install style requirements
+        run: pip install tox --disable-pip-version-check
+
+      - name: Spell, Lint and Type Check
+        run: tox -e style
+
+  unit_tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [ '3.7', '3.8', '3.9', '3.10' ]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install kerberos headers
+        run: sudo apt install libkrb5-dev
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
+
+      - name: Test with tox (no integration tests)
+        run: tox -- -m "not integration"
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  package:
+    name: Build package
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Create wheel
+        run: |
+          pip install poetry --disable-pip-version-check
+          poetry build
+
+      - name: Validate wheel
+        run: |
+          pip install twine --disable-pip-version-check
+          twine check dist/*
+
+      - name: Upload wheel artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ansys-grantami-bomanalytics-wheel
+          path: dist/
+          retention-days: 7
+
+  docs-no-examples:
+    name: Build documentation (skip examples_
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install libkrb5-dev
+          sudo apt install pandoc
+          sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
+
+      - name: Install library
+        run: pip install .[doc] --disable-pip-version-check
+
+      - name: Build HTML Documentation
+        run: make -C doc html SPHINXOPTS="-W"
+        env:
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+
+      - name: Build PDF Documentation
+        run: make -C doc latexpdf
+
+      - name: Upload HTML Documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: Documentation-html-no-examples
+          path: doc/build/html
+          retention-days: 7
+
+      - name: Upload PDF Documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: Documentation-pdf-no-examples
+          path: doc/build/latex/*.pdf
+          retention-days: 7

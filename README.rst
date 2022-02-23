@@ -31,7 +31,8 @@ Alternatively, clone and install with:
 
 Documentation
 -------------
-`PyAnsys <https://grantami.docs.pyansys.com>`_
+See `Granta MI BoM Analytics Documentation <https://grantami.docs.pyansys.com>`_
+for more details.
 
 
 Usage
@@ -44,7 +45,7 @@ Here's a brief example of how the package works:
 
     >>> from pprint import pprint
     >>> from ansys.grantami.bomanalytics import Connection, queries
-    >>> cxn = Connection(servicelayer_url='http://localhost/mi_servicelayer').with_autologon().connect()
+    >>> cxn = Connection("http://my_grantami_server/mi_servicelayer").with_autologon().connect()
     >>> query = (
     ...     queries.MaterialImpactedSubstancesQuery()
     ...     .with_material_ids(['plastic-abs-pvc-flame'])

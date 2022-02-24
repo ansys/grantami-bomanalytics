@@ -374,17 +374,17 @@ class RoHSIndicator(_Indicator):
         Whether to consider exemptions added to parts when determining compliance against this indicator.
         The default is ``True``.
 
+    Attributes
+    ----------
+    available_flags : Type[:class:`~ansys.grantami.bomanalytics.indicators.RoHSFlag`]
+        Possible states of this indicator.
+
     Raises
     ------
     TypeError
         If two indicators of different types are compared.
     ValueError
         If two indicators are compared and both don't have a result flag.
-
-    Attributes
-    ----------
-    available_flags : Type[:class:`~ansys.grantami.bomanalytics.indicators.RoHSFlag`]
-        Possible states of this indicator.
 
     Notes
     -----
@@ -459,17 +459,17 @@ class WatchListIndicator(_Indicator):
         Whether to ignore substances flagged as process chemicals when determining compliance against this indicator.
         The default is ``False``.
 
+    Attributes
+    ----------
+    available_flags : Type[:class:`~ansys.grantami.bomanalytics.indicators.WatchListFlag`]
+        Possible states of this indicator.
+
     Raises
     ------
     TypeError
         If two indicators of different types are compared.
     ValueError
         If two indicators are compared and both don't have a result flag.
-
-    Attributes
-    ----------
-    available_flags : Type[:class:`~ansys.grantami.bomanalytics.indicators.WatchListFlag`]
-        Possible states of this indicator.
 
     Notes
     -----

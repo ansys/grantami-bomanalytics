@@ -471,6 +471,14 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
         Substances impacted for a particular material as a flattened list.
 
+    Notes
+    -----
+    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
+    they were specified in the original query.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+
     Examples
     --------
     >>> result: MaterialImpactedSubstancesQueryResult
@@ -482,14 +490,6 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
     >>> material_result = result.impacted_substances_by_material[0]
     >>> material_result.substances
     [<ImpactedSubstance: {"cas_number": 90481-04-2}>]
-
-    Notes
-    -----
-    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
-    they were specified in the original query.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
 
@@ -512,6 +512,14 @@ class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefini
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
         Substances impacted for a particular part as a flattened list.
 
+    Notes
+    -----
+    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
+    they were specified in the original query.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+
     Examples
     --------
     >>> result: PartImpactedSubstancesQueryResult
@@ -523,14 +531,6 @@ class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefini
     >>> part_result = result.impacted_substances_by_part[0]
     >>> part_result.substances
     [<ImpactedSubstance: {"cas_number": 90481-04-2}>]
-
-    Notes
-    -----
-    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
-    they were specified in the original query.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
 
@@ -553,6 +553,14 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
     substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
         Substances impacted for a particular specification as a flattened list.
 
+    Notes
+    -----
+    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
+    they were specified in the original query.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+
     Examples
     --------
     >>> result: SpecificationImpactedSubstancesQueryResult
@@ -564,14 +572,6 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
     >>> specification_result = result.impacted_substances_by_specification[0]
     >>> specification_result.substances
     [<ImpactedSubstance: {"cas_number": 90481-04-2}>]
-
-    Notes
-    -----
-    With the exception of ``record_history_identity``, the record reference attributes below are only populated if
-    they were specified in the original query.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     pass

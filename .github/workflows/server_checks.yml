@@ -17,6 +17,7 @@ on:
         required: true
       TEST_SERVER_READ_PASS:
         required: true
+  workflow_dispatch:
 
 concurrency:
   group: integration-server

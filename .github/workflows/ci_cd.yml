@@ -56,16 +56,16 @@ jobs:
           application_id: ${{ secrets.BOT_APPLICATION_ID }}
           application_private_key: ${{ secrets.BOT_APPLICATION_PRIVATE_KEY }}
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: ansys-grantami-bomanalytics-wheel
           path: ~/dist
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: Documentation-pdf
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: Documentation-html
           path: ~/html

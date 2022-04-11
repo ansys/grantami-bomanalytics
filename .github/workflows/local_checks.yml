@@ -76,7 +76,7 @@ jobs:
           twine check dist/*
 
       - name: Upload wheel artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ansys-grantami-bomanalytics-wheel
           path: dist/
@@ -107,7 +107,7 @@ jobs:
         run: make -C doc html SPHINXOPTS="-W"
 
       - name: Upload HTML Documentation
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Documentation-html-no-examples
           path: doc/build/html

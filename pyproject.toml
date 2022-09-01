@@ -52,7 +52,7 @@ tabulate = { version = "0.8.10", optional = true }
 # Test and examples packages
 pytest = { version = "7.1.2", optional = true }
 pytest-cov = { version = "3.0.0", optional = true }
-requests-mock = { version = "1.9.3", optional = true }
+requests-mock = { version = "1.10.0", optional = true }
 ipython = { version = "7.34.0", optional = true }
 
 # Doc packages

@@ -204,8 +204,11 @@ epub_exclude_files = ["search.html"]
 cwd = Path(os.getcwd())
 assert (cwd.name == "source")
 EXAMPLES_DIR_NAME = "examples"
+DUMMY_EXAMPLES_DIR_NAME = "examples-dummy"
+
 examples_output_dir = Path(EXAMPLES_DIR_NAME).absolute()
 examples_source_dir = Path("../../" + EXAMPLES_DIR_NAME).absolute()
+dummy_examples_source_dir = Path("../../" + DUMMY_EXAMPLES_DIR_NAME).absolute() / Path(EXAMPLES_DIR_NAME)
 EXAMPLE_FLAG = os.getenv("BUILD_EXAMPLES")
 
 # If we are building examples, use the included ipython-profile
@@ -241,11 +244,8 @@ if not examples_output_dir.is_dir():
 
     # If we are skipping examples in the docs, create a placeholder index.rst file to avoid sphinx errors.
     else:
-        print("'BUILD_EXAMPLES' environment variable is not set, skipping examples.")
-        examples_output_dir.mkdir(parents=False, exist_ok=False)
-        example_index = examples_output_dir / Path("index.rst")
-        with open(example_index, "w") as f:
-            f.write("Example Scripts\n===============\n\nExample build skipped")
+        print("'BUILD_EXAMPLES' environment variable is not set, using standalone examples.")
+        _copy_examples_and_convert_to_notebooks(dummy_examples_source_dir, examples_output_dir)
 
 
 nbsphinx_prolog = """

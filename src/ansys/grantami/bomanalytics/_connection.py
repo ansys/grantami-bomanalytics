@@ -56,7 +56,6 @@ if TYPE_CHECKING:
         SubstanceComplianceQuery,
         BomImpactedSubstancesQuery,
         BomComplianceQuery,
-        Yaml,
     )
     from ._query_results import (
         MaterialImpactedSubstancesQueryResult,
@@ -324,11 +323,11 @@ class BomAnalyticsClient(ApiClient):
         ...
 
     @overload
-    def run(self, query: "Yaml") -> str:
+    def run(self, query: Yaml) -> str:
         ...
 
     @overload
-    def run(self, query: Type["Yaml"]) -> str:
+    def run(self, query: Type[Yaml]) -> str:
         ...
 
     def run(self, query):  # type: ignore[no-untyped-def]

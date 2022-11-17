@@ -18,6 +18,12 @@ Attributes
 DEFAULT_DBKEY : str
     Default database key for the Restricted Substances Database. This is used if an alternative database
     key isn't specified.
+SERVICE_PATH : str
+    The location of the BoM Analytics service within the Service Layer web application
+MI_AUTH_PATH : str
+    The location of a service that will prompt for authorization
+GRANTA_APPLICATION_NAME_HEADER : str
+    An identifier used internally by Granta MI Server
 """
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
@@ -25,11 +31,13 @@ from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
 from ansys.openapi.common import (  # type: ignore[import]
     ApiClientFactory,
     ApiClient,
+    ApiException,
     generate_user_agent,
     SessionConfiguration,
 )
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 from ._logger import logger
+from .queries import Yaml
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
@@ -132,6 +140,8 @@ class Connection(ApiClientFactory):
         ------
         ValueError
             When the client is not fully configured.
+        ConnectionError
+            If the resulting client cannot connect to the BoM Analytics service.
         """
 
         self._validate_builder()
@@ -141,7 +151,39 @@ class Connection(ApiClientFactory):
             configuration=self._session_configuration,
         )
         client.setup_client(models)
+        self._test_connection(client)
         return client
+
+    @staticmethod
+    def _test_connection(client: "BomAnalyticsClient") -> None:
+        """Check if the created client can be used to perform a query.
+
+        Uses the Yaml query, since it is a GET query which does not require parameters. Specifically check for a 404
+        error, which most likely means the BoM Analytics service is not available.
+
+        Parameters
+        ----------
+        client : :class:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient`
+            Client object to be tested.
+
+        Raises
+        ------
+        ConnectionError
+            If the test query fails.
+        """
+        try:
+            client.run(Yaml)
+        except ApiException as e:
+            if e.status_code == 404:
+                raise ConnectionError(
+                    "Cannot find the BoM Analytics service in Granta MI Service Layer. Ensure a compatible version of"
+                    "the Restricted Substances Reports are available on the server and try again."
+                )
+            else:
+                raise ConnectionError(
+                    "An unexpected error occurred when trying to connect to BoM Analytics service in Granta MI Service "
+                    "Layer. Check the Service Layer logs for more information and try again."
+                )
 
 
 class BomAnalyticsClient(ApiClient):

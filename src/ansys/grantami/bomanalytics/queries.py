@@ -27,6 +27,7 @@ from typing import (
     Generator,
     Optional,
     Type,
+    TYPE_CHECKING,
 )
 import warnings
 from numbers import Number
@@ -41,9 +42,11 @@ from ._query_results import (
     ImpactedSubstancesBaseClass,
 )
 from .indicators import _Indicator, WatchListIndicator, RoHSIndicator
-from ._connection import Connection  # noqa: F401
 from ._exceptions import GrantaMIException
 from ._logger import logger
+
+if TYPE_CHECKING:
+    from ._connection import Connection  # noqa: F401
 
 Query_Builder = TypeVar("Query_Builder", covariant=True, bound=Union["_BaseQueryBuilder", "_ApiMixin"])
 Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])

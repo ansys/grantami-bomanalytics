@@ -1,3 +1,4 @@
+import re
 import pytest
 import requests_mock
 import os
@@ -63,6 +64,30 @@ class TestConnectToSL:
             connection = Connection(api_url=sl_url).with_anonymous().connect()
         sl_url_stripped = sl_url.strip("/")
         assert connection.api_url == sl_url_stripped + _connection.SERVICE_PATH
+
+    def test_missing_bomanalytics_service_raises_informative_error(self):
+        sl_url = "http://host/path"
+        with requests_mock.Mocker() as m:
+            m.get(sl_url)
+            m.get(sl_url + _connection.MI_AUTH_PATH)
+            service_matcher = re.compile(f"{sl_url}{_connection.SERVICE_PATH}.*")
+            m.get(service_matcher, status_code=404)
+            with pytest.raises(
+                ConnectionError, match="Cannot find the BoM Analytics service in Granta MI Service Layer"
+            ):
+                Connection(api_url=sl_url).with_anonymous().connect()
+
+    def test_unhandled_bomanalytics_service_response_raises_informative_error(self):
+        sl_url = "http://host/path"
+        with requests_mock.Mocker() as m:
+            m.get(sl_url)
+            m.get(sl_url + _connection.MI_AUTH_PATH)
+            service_matcher = re.compile(f"{sl_url}{_connection.SERVICE_PATH}.*")
+            m.get(service_matcher, status_code=500)
+            with pytest.raises(
+                ConnectionError, match="An unexpected error occurred when trying to connect to BoM Analytics service"
+            ):
+                Connection(api_url=sl_url).with_anonymous().connect()
 
     @pytest.mark.integration
     @pytest.mark.parametrize("trailing_slash", [True, False])

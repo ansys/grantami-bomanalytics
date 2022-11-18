@@ -79,7 +79,7 @@ test = [
 ]
 
 doc = [
-  "pyansys-sphinx-theme",
+  "ansys-sphinx-theme",
   "numpydoc",
   "sphinx",
   "sphinx-autodoc-typehints",

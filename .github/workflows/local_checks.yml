@@ -18,7 +18,7 @@ jobs:
           python-version: '3.9'
 
       - name: Install style requirements
-        run: pip install tox --disable-pip-version-check
+        run: pip install tox poetry --disable-pip-version-check
 
       - name: Spell, Lint and Type Check
         run: tox -e style
@@ -42,7 +42,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
+        run: pip install poetry tox --disable-pip-version-check
 
       - name: Test with tox (no integration tests)
         run: tox -- -m "not integration"
@@ -101,7 +101,9 @@ jobs:
           sudo apt install pandoc
 
       - name: Install library
-        run: pip install .[doc] --disable-pip-version-check
+        run: |
+          pip install poetry --disable-pip-version-check
+          poetry install --with doc
 
       - name: Build HTML Documentation
         run: make -C doc html SPHINXOPTS="-W"

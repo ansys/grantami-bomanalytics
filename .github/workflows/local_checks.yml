@@ -107,7 +107,7 @@ jobs:
 
       - name: Build HTML Documentation
         run: |
-          echo "$pythonLocation/bin" >> $GITHUB_PATH
+          poetry shell
           make -C doc html SPHINXOPTS="-W"
 
       - name: Upload HTML Documentation

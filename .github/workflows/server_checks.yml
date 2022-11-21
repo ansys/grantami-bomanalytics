@@ -108,7 +108,7 @@ jobs:
 
       - name: Build HTML Documentation
         run:  |
-          echo "$pythonLocation/bin" >> $GITHUB_PATH
+          poetry shell
           make -C doc html SPHINXOPTS="-W"
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
@@ -117,7 +117,9 @@ jobs:
           BUILD_EXAMPLES: 1
 
       - name: Build PDF Documentation
-        run: make -C doc latexpdf
+        run: |
+          poetry shell
+          make -C doc latexpdf
 
       - name: Upload HTML Documentation
         uses: actions/upload-artifact@v3

@@ -1,7 +1,7 @@
 import sys
 import os
 from datetime import datetime
-from pyansys_sphinx_theme import pyansys_logo_black
+from ansys_sphinx_theme import pyansys_logo_black
 import shutil
 from pathlib import Path
 import jupytext
@@ -82,7 +82,7 @@ html_static_path = ["_static"]
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
 html_css_files = [
-    "css/download_links.css",
+    "css/dataframe.css",
 ]
 html_js_files = [
     "js/add_blank.js",
@@ -127,7 +127,7 @@ copybutton_prompt_is_regexp = True
 
 
 # -- Options for HTML output -------------------------------------------------
-html_theme = "pyansys_sphinx_theme"
+html_theme = "ansys_sphinx_theme"
 html_logo = pyansys_logo_black
 html_theme_options = {
     "github_url": "https://github.com/pyansys/grantami-bomanalytics",

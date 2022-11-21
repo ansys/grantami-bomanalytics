@@ -65,7 +65,7 @@ optional = true
 
 [tool.poetry.group.doc.dependencies]
 # Doc packages
-pyansys-sphinx-theme = { version = "0.3.1" }
+ansys-sphinx-theme = { version = "0.7.1" }
 numpydoc = { version = "1.5.0" }
 sphinx = { version = "4.5.0" }
 sphinx_autodoc_typehints = { version = "1.19.1" }
@@ -77,6 +77,7 @@ jupytext = { version = "1.14.1" }
 nbsphinx = { version = "0.8.10" }
 
 [tool.poetry.extras]
+
 examples = [
   "lxml",
   "tabulate",

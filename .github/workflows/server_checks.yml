@@ -107,17 +107,16 @@ jobs:
           poetry install --with doc
 
       - name: Build HTML Documentation
-        run:  make -C doc html SPHINXOPTS="-W"
+        run:  |
+          echo "$pythonLocation/bin" >> $GITHUB_PATH
+          make -C doc html SPHINXOPTS="-W"
         env:
-          PATH: $PATH:$pythonLocation/bin
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
           BUILD_EXAMPLES: 1
 
       - name: Build PDF Documentation
-        env:
-          PATH: $PATH:$pythonLocation/bin
         run: make -C doc latexpdf
 
       - name: Upload HTML Documentation

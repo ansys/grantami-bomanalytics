@@ -102,7 +102,7 @@ jobs:
 
       - name: Install library
         run: |
-          pip install poetry --no-version-check
+          pip install poetry --disable-pip-version-check
           poetry install --with doc
 
       - name: Build HTML Documentation

@@ -17,13 +17,15 @@ readability.
 Cloning the Source Repository
 -----------------------------
 Run this code to clone and install the latest version of the ``grantami-bomanalytics``
-repository:
+repository. This will install the package in editable mode, ensuring changes to the code
+are visible in the environment immediately, it will also install the required development
+dependencies to run the tests.
 
 .. code::
 
     git clone https://github.com/pyansys/grantami-bomanalytics
     cd grantami-bomanalytics
-    pip install .
+    poetry install
 
 
 Posting Issues

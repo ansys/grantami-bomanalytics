@@ -6,6 +6,6 @@ try:
 
     __version__ = metadata.version("ansys-grantami-bomanalytics")
 except ImportError:
-    from importlib_metadata import metadata as metadata_backport  # type: ignore[import]
+    from importlib_metadata import metadata as metadata_backport
 
     __version__ = metadata_backport("ansys-grantami-bomanalytics")["version"]

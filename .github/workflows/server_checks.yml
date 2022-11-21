@@ -72,7 +72,7 @@ jobs:
         run: sudo apt install libkrb5-dev
 
       - name: Install dependencies
-        run: pip install tox tox-gh-actions==2.9.1 --disable-pip-version-check
+        run: pip install poetry tox --disable-pip-version-check
 
       - name: Test with tox (integration tests only)
         run: tox -- -m "integration"
@@ -102,7 +102,9 @@ jobs:
           sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
 
       - name: Install library
-        run: pip install .[doc] --disable-pip-version-check
+        run: |
+          pip install poetry --disable-pip-version-check
+          poetry install --with doc
 
       - name: Build HTML Documentation
         run:  make -C doc html SPHINXOPTS="-W"

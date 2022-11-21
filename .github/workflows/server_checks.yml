@@ -72,7 +72,7 @@ jobs:
         run: sudo apt install libkrb5-dev
 
       - name: Install dependencies
-        run: pip install tox --disable-pip-version-check
+        run: pip install poetry tox --disable-pip-version-check
 
       - name: Test with tox (integration tests only)
         run: tox -- -m "integration"

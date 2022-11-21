@@ -43,6 +43,12 @@ importlib_metadata = { version = ">=1.0", python  = "<3.8" }  # Granta MI STK re
 ansys-openapi-common = "< 2.0.0"
 ansys-grantami-bomanalytics-openapi = "1.0.0"
 
+# Packages for the examples extra
+jupyterlab = { version = "3.5.0", optional = true }
+lxml = { version = "4.9.1", optional = true }
+pandas = { version = "1.3.5", optional = true }
+tabulate = { version = "0.9.0", optional = true }
+
 [tool.poetry.group.dev.dependencies]
 # Common packages for test, examples, and docs
 jupyterlab = { version = "3.5.0" }
@@ -69,6 +75,14 @@ enum_tools = { version = "0.9.0.post1" }
 sphinx-toolbox = { version = "3.2.0" }
 jupytext = { version = "1.14.1" }
 nbsphinx = { version = "0.8.10" }
+
+[tool.poetry.extras]
+examples = [
+  "lxml",
+  "tabulate",
+  "pandas",
+  "jupyterlab",
+]
 
 [tool.tox]
 legacy_tox_ini = """

@@ -106,9 +106,7 @@ jobs:
           poetry install --with doc
 
       - name: Build HTML Documentation
-        run: |
-          poetry shell
-          make -C doc html SPHINXOPTS="-W"
+        run: make -C doc html SPHINXOPTS="-W"
 
       - name: Upload HTML Documentation
         uses: actions/upload-artifact@v3

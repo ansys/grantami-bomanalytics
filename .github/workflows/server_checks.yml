@@ -107,9 +107,7 @@ jobs:
           poetry install --with doc
 
       - name: Build HTML Documentation
-        run:  |
-          poetry shell
-          make -C doc html SPHINXOPTS="-W"
+        run:  make -C doc html SPHINXOPTS="-W"
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
@@ -117,9 +115,7 @@ jobs:
           BUILD_EXAMPLES: 1
 
       - name: Build PDF Documentation
-        run: |
-          poetry shell
-          make -C doc latexpdf
+        run: make -C doc latexpdf
 
       - name: Upload HTML Documentation
         uses: actions/upload-artifact@v3

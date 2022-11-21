@@ -42,7 +42,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install tox tox-poetry tox-gh-actions==2.9.1 --disable-pip-version-check
+        run: pip install tox --disable-pip-version-check
 
       - name: Test with tox (no integration tests)
         run: tox -- -m "not integration"

@@ -18,7 +18,7 @@ jobs:
           python-version: '3.9'
 
       - name: Install style requirements
-        run: pip install tox --disable-pip-version-check
+        run: pip install tox poetry --disable-pip-version-check
 
       - name: Spell, Lint and Type Check
         run: tox -e style

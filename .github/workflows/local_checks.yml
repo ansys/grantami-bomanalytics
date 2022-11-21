@@ -101,7 +101,9 @@ jobs:
           sudo apt install pandoc
 
       - name: Install library
-        run: pip install .[doc] --disable-pip-version-check
+        run: |
+          pip install poetry --no-version-check
+          poetry install --with doc
 
       - name: Build HTML Documentation
         run: make -C doc html SPHINXOPTS="-W"

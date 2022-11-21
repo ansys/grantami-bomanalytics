@@ -102,7 +102,9 @@ jobs:
           sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
 
       - name: Install library
-        run: pip install .[doc] --disable-pip-version-check
+        run: |
+          pip install poetry --no-version-check
+          poetry install --with doc
 
       - name: Build HTML Documentation
         run:  make -C doc html SPHINXOPTS="-W"

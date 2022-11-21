@@ -106,6 +106,8 @@ jobs:
           poetry install --with doc
 
       - name: Build HTML Documentation
+        env:
+          PATH: $PATH:$pythonLocation/bin
         run: make -C doc html SPHINXOPTS="-W"
 
       - name: Upload HTML Documentation

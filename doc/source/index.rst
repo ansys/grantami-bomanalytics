@@ -11,7 +11,7 @@ Granta MI BoM Analytics |version|
 
 
 .. include:: index/intro.rst
-.. include:: index/dependencies.rst
+.. include:: index/getting_started.rst
 .. include:: index/background.rst
 .. include:: index/quick_code.rst
 

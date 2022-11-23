@@ -9,7 +9,7 @@ Ansys Granta MI BoM Analytics API Documentation
 
    index/intro
    index/quick_code
-   index/dependencies
+   index/getting_started
    api/index
    examples/index
    contributing

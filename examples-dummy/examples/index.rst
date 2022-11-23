@@ -1,4 +1,4 @@
-.. _ref_grantami_bomanalytics_test_examples:
+.. _ref_grantami_bomanalytics_examples:
 
 Example Scripts
 ===============

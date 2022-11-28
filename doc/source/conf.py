@@ -23,7 +23,6 @@ release = version = __version__
 # -- General configuration ---------------------------------------------------
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx_autodoc_typehints',
     'numpydoc',
     'sphinx.ext.doctest',
     'sphinx.ext.autosummary',
@@ -36,9 +35,15 @@ extensions = [
     "nbsphinx",
 ]
 
+# sphinx
 add_module_names = False
-typehints_fully_qualified = True
-typehints_document_rtype = False
+
+# sphinx.ext.autodoc
+autodoc_typehints = "description"
+autodoc_typehints_description_target = "documented"
+autodoc_type_aliases = {
+    "Yaml": "Yaml"
+}
 
 # Intersphinx mapping
 intersphinx_mapping = {

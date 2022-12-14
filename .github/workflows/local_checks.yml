@@ -18,7 +18,7 @@ jobs:
           python-version: '3.9'
 
       - name: Install style requirements
-        run: pip install tox poetry --disable-pip-version-check
+        run: pip install 'tox<4' poetry --disable-pip-version-check
 
       - name: Spell, Lint and Type Check
         run: tox -e style
@@ -42,7 +42,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install poetry tox --disable-pip-version-check
+        run: pip install poetry 'tox<4' --disable-pip-version-check
 
       - name: Test with tox (no integration tests)
         run: tox -- -m "not integration"

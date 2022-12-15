@@ -548,7 +548,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
         ----------
         record_history_guid
             Record history GUID.
-        
+
         Returns
         -------
         MaterialDefinition

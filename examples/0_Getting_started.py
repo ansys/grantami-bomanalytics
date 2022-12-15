@@ -28,7 +28,7 @@
 # 1. Specify your Granta MI Service Layer URL as a parameter to the ``Connection`` class.
 # 2. Specify the authentication method using a ``Connection.with_...()`` method.
 # 3. Use the ``Connection.connect()`` method to finalize the connection.
-# 
+#
 # This returns a connection object, which is called ``cxn`` in these examples.
 
 # + tags=[]
@@ -97,8 +97,8 @@ query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-ab
 query
 # -
 
-# Because the Fluent interface can produce very long lines of code, it's necessary to break your query creation code into
-# multiple lines. The following multi-line format is used throughout the examples. It is functionally equivalent to
+# Because the Fluent interface can produce very long lines of code, it's necessary to break your query creation code
+# into multiple lines. The following multi-line format is used throughout the examples. It is functionally equivalent to
 # the preceding cell:
 
 # + tags=[]
@@ -114,8 +114,8 @@ query
 
 # ## Run a query
 
-# Now that you have your ``cxn`` and ``query`` objects, you can use the ``cxn.run()`` method to run the query. This returns
-# an object that contains the results of the query.
+# Now that you have your ``cxn`` and ``query`` objects, you can use the ``cxn.run()`` method to run the query. This
+# returns an object that contains the results of the query.
 
 # + tags=[]
 result = cxn.run(query)
@@ -140,12 +140,12 @@ result.impacted_substances
 result.messages
 # -
 
-# Additionally, these messages are available via the standard ``logging`` module using the ``ansys.grantami.bomanalytics``
-# logger. Alternatively, you can omit the logger name to get the root logger, which includes messages logged by all
-# packages.
+# Additionally, these messages are available via the standard ``logging`` module using the
+# ``ansys.grantami.bomanalytics`` logger. Alternatively, you can omit the logger name to get the root logger, which
+# includes messages logged by all packages.
 #
-# The following code creates a log handler that outputs all 'ansys.grantami.bomanalytics' logger messages with severity INFO
-# and above to either the terminal or the notebook.
+# The following code creates a log handler that outputs all 'ansys.grantami.bomanalytics' logger messages with severity
+# INFO and above to either the terminal or the notebook.
 
 # + tags=[]
 import logging

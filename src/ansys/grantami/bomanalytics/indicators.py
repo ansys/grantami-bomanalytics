@@ -66,7 +66,7 @@ class _Flag(Enum):
 
 class RoHSFlag(_Flag):
     """Provides permitted RoHS flag states.
-    
+
     A larger value means that the item is less compliant. The further down the list the compliance
     result appears, the worse it is.
 
@@ -144,7 +144,7 @@ class RoHSFlag(_Flag):
 
 class WatchListFlag(_Flag):
     """Provides permitted watch list flag states.
-    
+
     An increasing value means less compliance. The further down the list the compliance result
     appears, the worse it is.
 
@@ -335,7 +335,8 @@ class _Indicator(ABC):
         ValueError
             Error to raise if the other indicator has no flag, there is no basis for comparison.
         TypeError
-            Error to raise if the other object is a different ``_Indicator`` subtype or an incompatible ``_Flag`` subtype.
+            Error to raise if the other object is a different ``_Indicator`` subtype or an incompatible ``_Flag``
+            subtype.
         """
         if isinstance(other, _Indicator) and not isinstance(other, self.__class__):
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")

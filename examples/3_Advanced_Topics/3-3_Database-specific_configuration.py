@@ -53,8 +53,8 @@ cxn
 # to perform the query. Default batch sizes have been chosen based on typical tabular attribute sizes, but
 # these might need to be changed in some situations. For examples, see the relevant page in the API documentation.
 
-# The batch size is included in the query ``__repr__``. The following cell shows a ``SpecificationComplianceQuery`` object
-# with the default batch size.
+# The batch size is included in the query ``__repr__``. The following cell shows a ``SpecificationComplianceQuery``
+# object with the default batch size.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries

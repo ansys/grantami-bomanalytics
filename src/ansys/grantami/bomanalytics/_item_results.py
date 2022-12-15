@@ -68,7 +68,7 @@ Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 class ItemResultFactory:
     """Creates item results for a given type of API query.
-    
+
     The name of the query class in the ``queries.py``file is key to controlling
     which result type is created.
     """
@@ -285,7 +285,7 @@ class ItemResultFactory:
 
 class ImpactedSubstance(BaseSubstanceReference):
     """Represents a substance impacted by a legislation.
-    
+
     This object includes two categories of attributes:
 
       - The reference to the substance in Granta MI. These attributes are all populated if data for them exists in
@@ -295,7 +295,7 @@ class ImpactedSubstance(BaseSubstanceReference):
     Parameters
     ----------
     cas_number : str, optional
-        CAS number.     
+        CAS number.
     ec_number : str, optional
         EC number.
     chemical_name : str, optional
@@ -465,7 +465,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
 class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, MaterialDefinition):
     """Retrieves an individual material that is included as part of an impacted substances query result.
-    
+
     This object includes two categories of attributes:
 
       - The reference to the material in Granta MI
@@ -511,7 +511,7 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
 @ItemResultFactory.register("PartWithImpactedSubstances")
 class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefinition):
     """Retrieves an individual part included as part of an impacted substances query result.
-    
+
     This object includes two categories of attributes:
 
       - The reference to the part in Granta MI
@@ -557,7 +557,7 @@ class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefini
 @ItemResultFactory.register("SpecificationWithImpactedSubstances")
 class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, SpecificationDefinition):
     """Retrieves an individual specification included as part of an impacted substances query result.
-    
+
     This object includes two categories of attributes:
 
       - The reference to the specification in Granta MI
@@ -1156,7 +1156,7 @@ class SpecificationWithComplianceResult(
 @ItemResultFactory.register("CoatingWithCompliance")
 class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
     """Provides An individual coating included as part of a compliance query result.
-    
+
     This object includes three categories of attributes:
 
       - The reference to the coating in Granta MI

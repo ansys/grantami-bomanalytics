@@ -43,7 +43,7 @@ message : str
 
 class QueryResultFactory:
     """Creates query results for a given type of API query.
-    
+
     The type of the response from the low-level API is the key to controlling which result type is created.
     """
 
@@ -266,7 +266,7 @@ class ComplianceBaseClass(ResultBaseClass):
 class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery`
     class.
-    
+
     This class describes the substances in the specified materials impacted by one or more legislations.
 
     Notes
@@ -320,7 +320,7 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 class MaterialComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.MaterialComplianceQuery`
     class.
-    
+
     This class describes the compliance status of materials against one or more indicators.
 
     Notes
@@ -382,7 +382,7 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery`
     class.
-    
+
     This class describes the substances in the specified parts impacted by one or more legislations.
 
     Notes
@@ -437,7 +437,7 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 class PartComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.PartComplianceQuery`
     class.
-    
+
     This class describes the compliance status of parts against one or more indicators.
 
     Notes
@@ -500,7 +500,7 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the
     :class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery`
     class.
-    
+
     This class describes the substances in the specified specifications impacted by one or more legislations.
 
     Notes
@@ -558,7 +558,7 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 class SpecificationComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery`
     class.
-    
+
     This class describes the compliance status of specifications against one or more indicators.
 
     Notes
@@ -623,7 +623,7 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 class SubstanceComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery`
     class.
-    
+
     This class describes the compliance status of substances against one or more indicators.
 
     Notes
@@ -681,7 +681,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`
     class.
-    
+
     This class describes the substances in the specified BoM impacted by one or more legislations.
 
     Notes
@@ -715,7 +715,7 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 class BomComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`
     class.
-    
+
     This class summarizes the compliance status of a BoM against one or more indicators.
 
     Notes

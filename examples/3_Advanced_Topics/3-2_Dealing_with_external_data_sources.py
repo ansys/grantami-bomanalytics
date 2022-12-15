@@ -131,8 +131,8 @@ component_results
 # -
 
 # These results include text defined by the API for compliance status. However, you might want the compliance
-# status to determine the approvals required to release the part in a design review process. In this case, you can define
-# a mapping between compliance status and approval requirements.
+# status to determine the approvals required to release the part in a design review process. In this case, you can
+# define a mapping between compliance status and approval requirements.
 
 # + tags=[]
 flags = indicators.WatchListFlag
@@ -153,8 +153,8 @@ results
 
 # ## Write the output
 
-# Once you have your final result, you can take your result ``dict`` and use it to extend the original JSON data structure,
-# with approval requirements added in.
+# Once you have your final result, you can take your result ``dict`` and use it to extend the original JSON data
+# structure, with approval requirements added in.
 
 # +
 components_with_result = []

@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_api_compliance_materials:
 
-Material Compliance
+Material compliance
 ===================
 
-Query Definition
+Query definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.MaterialComplianceQuery
@@ -17,7 +17,7 @@ Query Definition
    .. automethod:: with_stk_records
    .. automethod:: with_batch_size
 
-Query Result
+Query result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.MaterialComplianceQueryResult
@@ -28,7 +28,7 @@ Query Result
    .. autoattribute:: compliance_by_material_and_indicator
    .. autoattribute:: messages
 
-Material Result
+Material result
 ~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult

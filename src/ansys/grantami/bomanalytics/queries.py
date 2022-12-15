@@ -1,19 +1,19 @@
 """BoM Analytics query builders.
 
-Describes and implements the main interface for the Bom Analytics API. The builder objects here define
+Describes and implements the main interface for the Bom Analytics API. The builder objects define
 the creation, validation, and execution of queries for impacted substances and compliance. One separate
-static class outside the main hierarchy implements the Yaml API endpoint.
+static class outside the main hierarchy implements the YAML API endpoint.
 
 Attributes
 ----------
 Query_Builder
-    Generic type for builder configuration methods. Ensures that the specific sub-class of the
+    Generic type for builder configuration methods. Ensures that the specific subclass of the
     object to which the method is bound is hinted as the return type. For example, if ``.with_record_guid()``
     is called on a ``SpecificationCompliance`` object, the return type is correctly identified as
     ``SpecificationCompliance``.
 Query_Result
-    Type of the result object, which can be any type that inherits from either ``ComplianceBaseClass`` or
-    ``ImpactedSubstancesBaseClass``.
+    Type of the result object, which can be any type that inherits from either the ``ComplianceBaseClass`` or
+    ``ImpactedSubstancesBaseClass`` class.
 """
 
 from abc import ABC, abstractmethod
@@ -61,8 +61,9 @@ EXCEPTION_MAP = {
 
 
 class _BaseQueryDataManager(ABC):
-    """Outlines an interface for managing 'items' to be provided to the query. For example, the record
-    or BoM-based dimension to a query.
+    """Outlines an interface for managing *items* to provide to the query.
+    
+    For example, the items to provide to the query might be the records or BoM-based dimensions.
 
     This class doesn't specify how the objects are added to the ``_item_definitions`` attribute or how
     they are converted to attributes.
@@ -79,7 +80,8 @@ class _BaseQueryDataManager(ABC):
 
     @property
     def populated_inputs(self) -> bool:
-        """Whether this ArgumentManager is populated. For example, can a query be performed on the items in this object.
+        """Whether the argument manager is populated. For example, this property
+        determinse whether a query be performed on the items in the object.
 
         Returns
         -------
@@ -105,7 +107,7 @@ class _BaseQueryDataManager(ABC):
         return self._item_results
 
     def append_response(self, response: models.ModelBase) -> None:
-        """Append a response from the low-level API to this object.
+        """Append a response from the low-level API to the object.
 
         This method extracts the results and server messages from the response object and appends
         them to the respective lists.
@@ -134,7 +136,7 @@ class _BaseQueryDataManager(ABC):
         Raises
         ------
         GrantaMIException
-            A message with severity ``critical`` was returned by the server.
+            Error to raise when a severity of ``"critical"`` is returned by the server.
         """
 
         exception_messages = []
@@ -196,12 +198,12 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
         return f"<{self.__class__.__name__} {{{item_text}, {batch_text}}}, length = {len(self._item_definitions)}>"
 
     def append_record_definition(self, item: RecordDefinition) -> None:
-        """Append a specific record definition to the argument manager.
+        """Append a record definition to the argument manager.
 
         Parameters
         ----------
         item
-            Definition to add to this list of record definitions.
+            Record definition to add to the list of record definitions.
 
         Examples
         --------
@@ -219,8 +221,8 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
 
     @property
     def batched_arguments(self) -> Generator[Dict[str, List[Union[models.ModelBase, str]]], None, None]:
-        """A generator that produces lists of instances of models to be supplied to a query request. Each list
-        of dictionaries will have at most ``_batch_size`` long.
+        """Generator that produces lists of instances of models to be supplied to a query request. Each list
+        of dictionaries is at most ``_batch_size`` long.
 
         Each individual dictionary can be passed to the request constructor as a kwarg.
 
@@ -231,7 +233,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
         Raises
         ------
         RuntimeError
-            If the ``item_type_name`` has not been set before the arguments are generated.
+            Error to raise if ``item_type_name`` has not been set before the arguments are generated.
 
         Examples
         --------
@@ -264,7 +266,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
 
 
 class _BaseQueryBuilder(ABC):
-    """Base class for all queries."""
+    """Provides the base class for all queries."""
 
     def _validate_items(self) -> None:
         """Perform pre-flight checks on the items that have been added to the query.
@@ -272,7 +274,7 @@ class _BaseQueryBuilder(ABC):
         Warns
         -----
         RuntimeWarning
-            If no items have been added to the query, warn that the response will be empty.
+            Error to raise if no items have been added to the query, warning that the response will be empty.
         """
 
         if not self._data.populated_inputs:  # type: ignore[attr-defined]
@@ -318,9 +320,9 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         Raises
         ------
         ValueError
-            If the batch size is set to a number less than 1.
+            Error to raise if the batch size is set to a number less than 1.
         TypeError
-            If a value of any type other than :class:`int` is specified.
+            Error to raise if a value of any type other than :class:`int` is specified.
 
         Notes
         -----
@@ -332,7 +334,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         The default batch sizes are set for each record type and represent appropriate numbers of those records to be
         included in the same request assuming typical numbers of associated records.
 
-        Even if the records are queried in multiple batches, the results will be assembled into a single result object.
+        Even if the records are queried in multiple batches, the results are assembled into a single result object.
 
         Examples
         --------
@@ -352,6 +354,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         Parameters
         ----------
         record_history_identities : list[int] | set[int]
+           List or set of record history identities.
 
         Returns
         -------
@@ -361,7 +364,8 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described
+            earlier.
 
         Examples
         --------
@@ -383,6 +387,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         Parameters
         ----------
         record_history_guids : list[str] | set[str]
+            List or set of record history GUIDs.
 
         Returns
         -------
@@ -392,7 +397,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -416,6 +421,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         Parameters
         ----------
         record_guids : list[str] | set[str]
+            List or set of record GUIDs.
 
         Returns
         -------
@@ -425,7 +431,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -444,16 +450,17 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
     def with_stk_records(self: Query_Builder, stk_records: List[Dict[str, str]]) -> Query_Builder:
         """Add a list of records generated by the Granta MI Scripting Toolkit for Python.
 
-        This should only be used with the corresponding method in the MI Scripting Toolkit that generates a
-        :class:`dict` of the appropriate shape. This method will be introduced in the next version of the MI Scripting
+        This method should only be used with the corresponding method in the MI Scripting Toolkit that generates a
+        :class:`dict` class of the appropriate shape. This method will be introduced in the next version of the MI Scripting
         Toolkit.
 
-        If the MI Scripting Toolkit method is not available, we recommend using the :meth:`with_record_history_ids`
+        If the MI Scripting Toolkit method is not available, you should use the :meth:`with_record_history_ids`
         method instead.
 
         Parameters
         ----------
         stk_records : list[dict[str, str]]
+            List of STK records.
 
         Returns
         -------
@@ -463,7 +470,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described above.
 
         Notes
         -----
@@ -490,7 +497,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
 class _ApiMixin:
     """Provides API-specific mixins.
 
-    This base class describes generic properties of a call to an API. such as calling the API and processing results.
+    This base class describes generic properties of a call to an API, such as calling the API and processing results.
     It also defines abstract concepts related to the parameter dimension of a query, including validation.
     """
 
@@ -503,7 +510,7 @@ class _ApiMixin:
     def _call_api(self, api_method: Callable[[models.ModelBase], models.ModelBase], arguments: Dict) -> None:
         """Perform the actual call against the Granta MI database.
 
-        This method finalizes the arguments by appending each batch of `'item'` arguments to the passed in
+        This method finalizes the arguments by appending each batch of ``'item'`` arguments to the passed-in
         dictionary and uses them to instantiate the request object. It passes the request object to the
         low-level API and returns the response as a list.
 
@@ -550,12 +557,12 @@ class _ComplianceMixin(_ApiMixin, ABC):
         """Indicators added to the query."""
 
         self._api_method: str = ""
-        """Name of the method in the `api` class. Specified in the concrete class. Retrieved dynamically because the
-        `api` instance doesn't exist until runtime."""
+        """Name of the method in the ``api`` class. The name is specified in the concrete class and
+        retrieved dynamically because the ``api`` instance doesn't exist until runtime."""
 
         self.api_class: Type[api.ComplianceApi] = api.ComplianceApi
-        """Class in the low-level API for this query type. Requires instantiation with the client object, and so
-        only the reference to the class is stored here, not the instance itself."""
+        """Class in the low-level API for this query type. This class requires instantiation with the client object,
+        and so only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
         result = (
@@ -574,6 +581,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         Parameters
         ----------
         indicators : list[|WatchListIndicator| | |RoHSIndicator|]
+            List of indicators.
 
         Returns
         -------
@@ -583,7 +591,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described above.
 
         Examples
         --------
@@ -602,7 +610,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
     def _run_query(self, api_instance: api.ComplianceApi, static_arguments: Dict) -> Query_Result:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
-        This method should not be used by an end-user. The ``BomAnalyticsClient.run()`` method should
+        This method should not be used by an end user. The ``BomAnalyticsClient.run()`` method should
         be used instead.
 
         Parameters
@@ -618,9 +626,9 @@ class _ComplianceMixin(_ApiMixin, ABC):
 
         Notes
         -----
-        This method gets the bound method for this particular query from ``api_instance`` and passes
-        it to ``self._call_api()``, which performs the actual call. It then passes the result to ``QueryResultFactory``
-        to build the corresponding result object.
+        This method gets the bound method for this particular query from the ``api_instance`` parameter and passes
+        it to the ``self._call_api()`` method, which performs the actual call. It then passes the result to
+        the ``QueryResultFactory`` class to build the corresponding result object.
 
         The ``indicator_definitions`` are used to create the ``QueryResult`` object because the low-level API returns
         only the indicator names and results.
@@ -649,7 +657,8 @@ class _ComplianceMixin(_ApiMixin, ABC):
         Warns
         -----
         RuntimeWarning
-            If no indicators have been added to the query, warn that the response will be empty.
+            Error to raise if no indicators have been added to the query. The error warns
+            that the response will be empty.
         """
 
         if not self._indicators:
@@ -672,12 +681,12 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         """Legislation names added to the query."""
 
         self._api_method: str = ""
-        """Name of the method in the ``api`` class. Specified in the concrete class. Retrieved dynamically because the
-        `api` instance doesn't exist until runtime."""
+        """Name of the method in the ``api`` class. The name is specified in the concrete class and
+        retrieved dynamically because the `api` instance doesn't exist until runtime."""
 
         self.api_class: Type[api.ImpactedSubstancesApi] = api.ImpactedSubstancesApi
-        """Class in the low-level API for this query type. Requires instantiation with the client object, and so
-        only the reference to the class is stored here, not the instance itself."""
+        """Class in the low-level API for this query type. This class requires instantiation with the client object,
+        and so only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
         result = (
@@ -688,12 +697,14 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
 
     @validate_argument_type([str], {str})
     def with_legislations(self: Query_Builder, legislation_names: List[str]) -> Query_Builder:
-        """Add a list or set of legislations to retrieve the impacted substances for. The legislation records are
-        referenced by legislation name.
+        """Add a list or set of legislations to retrieve the impacted substances for.
+        
+        The legislation records are referenced by legislation name.
 
         Parameters
         ----------
         legislation_names : list[str] | set[str]
+            List or set of legistlation names.
 
         Returns
         -------
@@ -703,7 +714,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -719,9 +730,9 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     def _run_query(self, api_instance: api.ImpactedSubstancesApi, static_arguments: Dict) -> Query_Result:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
-        Gets the bound method for this particular query from ``api_instance`` and passes it to
-        ``self._call_api()``, which performs the actual call. Passes the result to  ``QueryResultFactory``
-        to build the corresponding result object.
+        Gets the bound method for this particular query from the ``api_instance`` parameter and passes it to the
+        ``self._call_api()`` method, which performs the actual call. It then passes the result to the ``QueryResultFactory``
+        class to build the corresponding result object.
 
         Parameters
         ----------
@@ -754,7 +765,8 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         Warns
         -----
         RuntimeWarning
-            If no legislations have been added to the query, warn that the response will be empty.
+            Error to raise if no legislations have been added to the query. The error warns that
+            the response will be empty.
         """
 
         if not self._legislations:
@@ -765,7 +777,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
 
 
 class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
-    """Sub-class for all queries where the items added to the query are direct references to material records."""
+    """Provides the subclass for all queries where the items added to the query are direct references to material records."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -781,6 +793,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Parameters
         ----------
         material_ids : list[str] | set[set]
+            List or set of material IDs.
 
         Returns
         -------
@@ -790,7 +803,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -806,8 +819,9 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
 
 class MaterialComplianceQuery(_ComplianceMixin, _MaterialQueryBuilder):
-    """Evaluates compliance for Granta MI material records against a number of indicators. If the materials are
-    associated with substances, these are also evaluated and returned.
+    """Evaluates compliance for Granta MI material records against a number of indicators.
+    
+    If the materials are associated with substances, these are also evaluated and returned.
 
     All methods used to add materials and indicators to this query return the query itself so that they can be chained
     together as required. Records can be added using a combination of any of the available methods.
@@ -869,7 +883,7 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
 
 
 class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
-    """Sub-class for all queries where the items added to the query are direct references to part records."""
+    """Provides the subclass for all queries where the items added to the query are direct references to part records."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -883,6 +897,7 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Parameters
         ----------
         part_numbers : list[str] | set[str]
+            List or set of part numbers.
 
         Returns
         -------
@@ -892,7 +907,7 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -907,8 +922,10 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
 
 class PartComplianceQuery(_ComplianceMixin, _PartQueryBuilder):
-    """Evaluates compliance for Granta MI part records against a number of indicators. If the parts are
-    associated with materials, parts, specifications, or substances, these are also evaluated and returned.
+    """Evaluates compliance for Granta MI part records against a number of indicators.
+    
+    If the parts are associated with materials, parts, specifications, or substances, these are also
+    evaluated and returned.
 
     All methods used to add parts and indicators to this query return the query itself so that they can be chained
     together as required. Records can be added using a combination of any of the available methods.
@@ -971,7 +988,7 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
 
 
 class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
-    """Sub-class for all queries where the items added to the query are direct references to specification records."""
+    """Provides the subclass for all queries where the items added to the query are direct references to specification records."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -985,6 +1002,7 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Parameters
         ----------
         specification_ids : list[str] | set[str]
+            List or set of specification IDs.
 
         Returns
         -------
@@ -994,7 +1012,7 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -1012,8 +1030,9 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
 
 class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder):
-    """Evaluates compliance for Granta MI specification records against a number of indicators. If the
-    specifications are associated with specifications, materials, coatings, or substances, these are
+    """Evaluates compliance for Granta MI specification records against a number of indicators.
+    
+    If the specifications are associated with specifications, materials, coatings, or substances, these are
     also evaluated and returned.
 
     All methods used to add specifications and indicators to this query return the query itself so that
@@ -1078,7 +1097,7 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
 
 
 class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
-    """Sub-class for all queries where the items added to the query are direct references to substance records."""
+    """Provides the subclass for all queries where the items added to the query are direct references to substance records."""
 
     def __init__(self) -> None:
         super().__init__()
@@ -1087,12 +1106,14 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @validate_argument_type([str], {str})
     def with_cas_numbers(self: Query_Builder, cas_numbers: List[str]) -> Query_Builder:
-        """Add a list or set of CAS numbers to a substance query. The amount of substance in the material
-        will be set to 100%.
+        """Add a list or set of CAS numbers to a substance query.
+        
+        The amount of substance in the material is set to 100%.
 
         Parameters
         ----------
         cas_numbers : list[str] | set[str]
+            List or set of CAS numbers.
 
         Returns
         -------
@@ -1102,7 +1123,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -1117,12 +1138,14 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @validate_argument_type([str], {str})
     def with_ec_numbers(self: Query_Builder, ec_numbers: List[str]) -> Query_Builder:
-        """Add a list or set of EC numbers to a substance query. The amount of substance in the material will
-        be set to 100%.
+        """Add a list or set of EC numbers to a substance query.
+        
+        The amount of substance in the material is set to 100%.
 
         Parameters
         ----------
         ec_numbers : list[str] | set[str]
+            List or set of EC numbers.
 
         Returns
         -------
@@ -1132,7 +1155,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -1147,12 +1170,14 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @validate_argument_type([str], {str})
     def with_chemical_names(self: Query_Builder, chemical_names: List[str]) -> Query_Builder:
-        """Add a list or set of chemical names to a substance query. The amount of substance in the material
-        will be set to 100%.
+        """Add a list or set of chemical names to a substance query.
+        
+        The amount of substance in the material is set to 100%.
 
         Parameters
         ----------
         chemical_names : list[str] | set[str]
+            List or set of chemical names.
 
         Returns
         -------
@@ -1162,7 +1187,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -1179,12 +1204,14 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_record_history_ids_and_amounts(
         self: Query_Builder, record_history_identities_and_amounts: List[Tuple[int, float]]
     ) -> Query_Builder:
-        """Add a list or set of record history identities and amounts to a substance query. The identity and
-        quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
+        """Add a list or set of record history identities and amounts to a substance query.
+        
+        The identity and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
         Parameters
         ----------
         record_history_identities_and_amounts : list[tuple[int, float]] | set[tuple[int, float]]
+            List or set of record hirstory identities and ammounts expressed as a tuple.
 
         Returns
         -------
@@ -1194,7 +1221,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -1215,12 +1242,14 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_record_history_guids_and_amounts(
         self: Query_Builder, record_history_guids_and_amounts: List[Tuple[str, float]]
     ) -> Query_Builder:
-        """Add a list or set of record history GUID and amounts to a substance query. The GUID and quantity
-        pairs are expressed as a tuple, with the quantity in units of wt. %.
+        """Add a list or set of record history GUID and amounts to a substance query.
+        
+        The GUID and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
         Parameters
         ----------
         record_history_guids_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
+            List or set of record history GUIDs and ammounts expressed as a tuple.
 
         Returns
         -------
@@ -1230,7 +1259,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described above.
 
         Examples
         --------
@@ -1254,12 +1283,14 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_record_guids_and_amounts(
         self: Query_Builder, record_guids_and_amounts: List[Tuple[str, float]]
     ) -> Query_Builder:
-        """Add a list or set of record GUIDs and amounts to a substance query. The GUID and quantity pairs are
-        expressed as a tuple, with the quantity in units of wt. %.
+        """Add a list or set of record GUIDs and amounts to a substance query.
+        
+        The GUID and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
         Parameters
         ----------
         record_guids_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
+            List or set of record GUIDs and ammounts expressed as a tuple.
 
         Returns
         -------
@@ -1269,7 +1300,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -1291,12 +1322,14 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_cas_numbers_and_amounts(
         self: Query_Builder, cas_numbers_and_amounts: List[Tuple[str, float]]
     ) -> Query_Builder:
-        """Add a list or set of CAS numbers and amounts to a substance query. The CAS numbers and quantity
-        pairs are expressed as a tuple, with the quantity in units of wt. %.
+        """Add a list or set of CAS numbers and amounts to a substance query.
+        
+        The CAS numbers and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
         Parameters
         ----------
         cas_numbers_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
+            List or set of CAS numbers and ammounts expressed as a tuple.
 
         Returns
         -------
@@ -1306,7 +1339,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -1325,12 +1358,14 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_ec_numbers_and_amounts(
         self: Query_Builder, ec_numbers_and_amounts: List[Tuple[str, float]]
     ) -> Query_Builder:
-        """Add a list or set of EC numbers and amounts to a substance query. The EC numbers and quantity
-        pairs are expressed as a tuple, with the quantity in units of wt. %.
+        """Add a list or set of EC numbers and amounts to a substance query.
+        
+        The EC numbers and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
         Parameters
         ----------
         ec_numbers_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
+            Listor set of EC numbers and amounts expressed as a tuple.
 
         Returns
         -------
@@ -1340,7 +1375,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -1360,12 +1395,14 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_chemical_names_and_amounts(
         self: Query_Builder, chemical_names_and_amounts: List[Tuple[str, float]]
     ) -> Query_Builder:
-        """Add a list or set of chemical names and amounts to a substance query. The chemical names and
-        quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
+        """Add a list or set of chemical names and amounts to a substance query.
+        
+        The chemical names and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
         Parameters
         ----------
         chemical_names_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
+            List or set of chemical names and amounts expressed as a tuple.
 
         Returns
         -------
@@ -1375,7 +1412,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Examples
         --------
@@ -1455,7 +1492,7 @@ class _BomQueryDataManager(_BaseQueryDataManager):
     @property
     def bom(self) -> str:
         """BoM to use for the query. Because only one BoM is used per query, this property
-        enforces storing only one BoM per instance of ``_BomQueryDataManager``.
+        enforces storing only one BoM per ``_BomQueryDataManager`` instance.
 
         Returns
         -------
@@ -1489,7 +1526,8 @@ class _BomQueryDataManager(_BaseQueryDataManager):
     def _extract_results_from_response(self, response: models.ModelBase) -> List[models.ModelBase]:
         """Extracts the individual results from a response object.
 
-        For BoM queries, the result isn't contained within a larger response object. It is already the object we want.
+        For BoM queries, the result isn't contained within a larger response object. It is already the object
+        that is wanted.
 
         Returns
         -------
@@ -1523,7 +1561,7 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
         Raises
         ------
         TypeError
-            If the method is called with values that do not match the types described above.
+            Error to raise if the method is called with values that do not match the types described earlier.
 
         Notes
         -----
@@ -1610,7 +1648,7 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
 
 
 class Yaml:
-    """Gets the yaml description of the underlying REST API.
+    """Gets the YAML description of the underlying REST API.
 
     Because the API is fully implemented in this package, the description is unlikely to be
     useful to end users. It is provided for completeness only.
@@ -1631,7 +1669,7 @@ class Yaml:
 
     @staticmethod
     def _run_query(api_instance: api.DocumentationApi, **kwargs: Dict) -> str:
-        """Get the yaml representation of the API from Granta MI.
+        """Get the YAML representation of the API from Granta MI.
 
         Parameters
         ----------
@@ -1641,7 +1679,7 @@ class Yaml:
         Returns
         -------
         yaml : str
-            Yaml definition of the BoM Analytics API.
+            YAML definition of the BoM Analytics API.
         """
 
         result: str = api_instance.get_yaml()

@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_api_impactedsubstances_specifications:
 
-Specification Impacted Substances
+Specification impacted substances
 =================================
 
-Query Definition
+Query definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery
@@ -16,7 +16,7 @@ Query Definition
    .. automethod:: with_record_history_ids
    .. automethod:: with_batch_size
 
-Query Result
+Query result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.SpecificationImpactedSubstancesQueryResult
@@ -28,7 +28,7 @@ Query Result
    .. autoattribute:: impacted_substances
    .. autoattribute:: messages
 
-Specification Result
+Specification result
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithImpactedSubstancesResult

@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_common_connection:
 
-Granta MI Connection
+Granta MI connection
 ====================
 
-Connection Builder
+Connection builder
 ~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.Connection
@@ -15,7 +15,7 @@ Connection Builder
    .. automethod:: with_anonymous
 
 
-BoM Analytics Client
+BoM Analytics client
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._connection.BomAnalyticsClient
@@ -23,7 +23,7 @@ BoM Analytics Client
 
 .. _ref_grantami_bomanalytics_common_messages:
 
-Log Messages
+Log messages
 ============
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.LogMessage

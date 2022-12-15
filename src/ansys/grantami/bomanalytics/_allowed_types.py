@@ -85,15 +85,16 @@ def _check_type_wrapper(value_obj: Any, type_obj: Any) -> bool:
 def _check_type(value_obj: Any, type_obj: Any) -> None:
     """Recursively checks the type of an object against an allowed type.
 
-    Recursive checking is performed if ``allowed_type`` is a container. First the type of the container itself
-    is checked. The contents of ``obj`` are then checked against the contents of ``allowed_type``.
+    Recursive checking is performed if the ``allowed_type`` parameter is a container. First the type of the
+    container itself is checked. The contents of object are then checked against the contents of the
+    ``allowed_type`` parameter.
 
     Parameters
     ----------
     value_obj
-        Object to be checked.
+        Object to check.
     type_obj
-        Object to be checked against.
+        Object to checked against.
 
     Returns
     -------

@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_api_compliance_bom:
 
-BoM Compliance
+BoM compliance
 ==============
 
-Query Definition
+Query definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.BomComplianceQuery
@@ -12,7 +12,7 @@ Query Definition
    .. automethod:: with_indicators
    .. automethod:: with_bom
 
-Query Result
+Query result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.BomComplianceQueryResult

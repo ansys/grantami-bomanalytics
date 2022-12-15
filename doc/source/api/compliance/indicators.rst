@@ -2,12 +2,12 @@
 
 Indicators
 ==========
-The BoM Analytics API determines compliance against an indicator, which essentially represents a legislation
+The Granta MI BoM Analytics API determines compliance against an indicator, which essentially represents a legislation
 with a threshold. If a substance appears in a certain item, either directly or indirectly, in a quantity that exceeds that
 threshold, the item is non-compliant with that indicator. In cases where the
-legislation defines a per-substance threshold (for example, RoHS), then this per-substance threshold will be used instead.
+legislation defines a per-substance threshold (for example, RoHS), then this per-substance threshold is used instead.
 
-Indicators can include a list of legislations, in which case a substance will be impacted by the indicator if it is
+Indicators can include a list of legislations, in which case a substance is impacted by the indicator if it is
 impacted by one or more legislations included in that indicator.
 
 There are two different types of indicator, and they compute compliance in slightly different ways. It is therefore
@@ -15,7 +15,7 @@ important to understand the differences between them. For more information, see 
 Reports User Guide* supplied with Granta MI Restricted Substances Reports.
 
 
-RoHS Indicator
+RoHS indicator
 --------------
 
 .. autoclass:: ansys.grantami.bomanalytics.indicators.RoHSIndicator
@@ -23,7 +23,7 @@ RoHS Indicator
 .. autoenum:: ansys.grantami.bomanalytics.indicators.RoHSFlag
 
 
-Watch List Indicator
+Watch list indicator
 --------------------
 
 .. autoclass:: ansys.grantami.bomanalytics.indicators.WatchListIndicator

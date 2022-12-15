@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_api_index:
 
-API Reference
+API reference
 =============
 
-The BoM Analytics API is split into these key sections:
+The API for Granta MI BoM Analytics is split into these key sections:
 
 - :ref:`ref_grantami_bomanalytics_common_connection` describes how to connect to Granta MI and, if required,
   configure any schema customizations in the API client. It also explains how to run queries.
@@ -18,7 +18,7 @@ The BoM Analytics API is split into these key sections:
   and how to interpret results.
 
 .. note::
-   While some examples use a different class than the one being documented, both classes will always be
+   While some examples use a different class than the one being documented, both classes are always
    equivalent in terms of the functionality being demonstrated.
 
 .. toctree::

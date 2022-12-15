@@ -2,7 +2,7 @@
 
 Getting started
 ---------------
-To use the `ansys.grantami.bomanalytics``package, you must have access to a
+To use the ``ansys.grantami.bomanalytics`` package, you must have access to a
 Granta MI server that includes MI Restricted Substances Reports 2022 R1
 or later.
 

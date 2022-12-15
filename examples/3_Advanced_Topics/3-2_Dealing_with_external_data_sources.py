@@ -151,7 +151,7 @@ results = {part_number: result_map[result]
 results
 # -
 
-# ## Write the otput
+# ## Write the output
 
 # Once you have your final result, you can take your result ``dict`` and use it to extend the original JSON data structure,
 # with approval requirements added in.

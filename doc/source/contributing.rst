@@ -33,7 +33,7 @@ Post issues
 Use the `Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_ page for
 this repository to submit questions, report bugs, and request new features.
 
-To reach the projPyAnsys support team, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_.
+To reach the PyAnsys support team, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_.
 
 View Granta MI BoM Analytics documentation
 ------------------------------------------

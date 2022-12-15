@@ -23,7 +23,7 @@
 # ## Connect to Granta MI
 
 # First, use the ``ansys.grantami.bomanalytics.Connection`` class to connect to the Granta MI server. The ``Connection``
-# class uses a Fluent interface to build the connection, which is always invoked in the following sequence:
+# class uses a fluent interface to build the connection, which is always invoked in the following sequence:
 #
 # 1. Specify your Granta MI Service Layer URL as a parameter to the ``Connection`` class.
 # 2. Specify the authentication method using a ``Connection.with_...()`` method.
@@ -58,7 +58,7 @@ cxn
 
 # ## Construct a query
 
-# Queries are also constructed using a Fluent interface. However, the ``Query`` constructor takes no arguments. All
+# Queries are also constructed using a fluent interface. However, the ``Query`` constructor takes no arguments. All
 # query details are specified using ``Query`` methods. To demonstrate this, this example builds a query to
 # determine all substances present in an ABS material that are impacted by the REACH Candidate List legislation.
 
@@ -79,7 +79,7 @@ query = query.with_material_ids(["plastic-abs-high-impact"])
 query
 # -
 
-# Note that because the ``MaterialImpactedSubstancesQuery`` object has a Fluent interface, you receive the same object
+# Note that because the ``MaterialImpactedSubstancesQuery`` object has a fluent interface, you receive the same object
 # back that you started with, but with the material IDs added.
 #
 # Finally, add the legislation to the query.
@@ -97,7 +97,7 @@ query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-ab
 query
 # -
 
-# Because the Fluent interface can produce very long lines of code, it's necessary to break your query creation code
+# Because the fluent interface can produce very long lines of code, it's necessary to break your query creation code
 # into multiple lines. The following multi-line format is used throughout the examples. It is functionally equivalent to
 # the preceding cell:
 

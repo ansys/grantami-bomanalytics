@@ -92,7 +92,7 @@ mat_results
 
 # ## Postprocess the results
 
-# The prceding results describe the compliance status for each material, but more work is needed to
+# The preceding results describe the compliance status for each material, but more work is needed to
 # provide the compliance status for all the components in the original JSON file.
 
 # When a component contains only one material, the result can simply be copied over. In the general case, moving from
@@ -109,7 +109,7 @@ material_lookup = {mat.material_id: mat.indicators["SVHC"]
 # Next, define a function that takes a list of material IDs and returns the worst compliance status associated with the
 # materials in the list.
 #
-# YOu can use the built-in ``max()`` function to do this because you can compare ``WatchListIndicator`` with ``>``
+# You can use the built-in ``max()`` function to do this because you can compare ``WatchListIndicator`` with ``>``
 # and ``<`` operators. The convention is that a worse result is *greater than* a better result.
 
 

@@ -32,7 +32,7 @@ LogMessage = namedtuple("LogMessage", ["severity", "message"])
 Messages marked with the error ``severity`` are more likely to produce incorrect results and should be treated with
 increased caution.
 
-Parameters
+Attributes
 ----------
 severity : str
     Level of severity. Options are ``"error"``, ``"warning"``, and ``"information"``.

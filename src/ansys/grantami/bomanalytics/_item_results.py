@@ -292,7 +292,7 @@ class ImpactedSubstance(BaseSubstanceReference):
         Granta MI.
       - The amount of the substance in the parent item and the threshold above which it is impacted.
 
-    Parameters
+    Attributes
     ----------
     cas_number : str, optional
         CAS number.
@@ -471,7 +471,7 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
       - The reference to the material in Granta MI
       - The impacted substances associated with this material, both as a flat list and separated by legislation
 
-    Parameters
+    Attributes
     ----------
     record_history_identity : int, optional
         Record history identify.
@@ -517,7 +517,7 @@ class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefini
       - The reference to the part in Granta MI
       - The impacted substances associated with this part, both as a flat list and separated by legislation
 
-    Parameters
+    Attributes
     ----------
     record_history_identity : list, optional
         Record history identity.
@@ -563,7 +563,7 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
       - The reference to the specification in Granta MI
       - The impacted substances associated with this specification, both as a flat list and separated by legislation
 
-    Parameters
+    Attributes
     ----------
     record_history_identity : list, optional
         Record history identity.
@@ -611,7 +611,7 @@ class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
     substances associated with the BoM, both as a flat list and separated by legislation. There is no item representing
     this BoM in Granta MI, and so there are no records to reference.
 
-    Parameters
+    Attributes
     ----------
     substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
         Substances impacted for a particular item, grouped by legislation name.
@@ -995,7 +995,7 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReferenc
       - The reference to the substance in Granta MI
       - The compliance status of this substance, stored in a dictionary of one or more indicator objects
 
-    Parameters
+    Attributes
     ----------
     record_history_identity : int, optional
         Record history identify.
@@ -1030,7 +1030,7 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
       - The compliance status of this material, stored in a dictionary of one or more indicator objects
       - Any substance objects that are a child of this material object
 
-    Parameters
+    Attributes
     ----------
     record_history_identity : int, optional
         Record history identity.
@@ -1072,7 +1072,7 @@ class PartWithComplianceResult(
       - The compliance status of this part, stored in a dictionary of one or more indicator objects
       - Any part, specification, material, or substance objects which are a child of this part object
 
-    Parameters
+    Attributes
     ----------
     record_history_identity : int, optional
         Record history identity.
@@ -1120,7 +1120,7 @@ class SpecificationWithComplianceResult(
       - The compliance status of this specification, stored in a dictionary of one or more indicator objects
       - Any specification, material, coating, or substance objects which are a child of this specification object
 
-    Parameters
+    Attributes
     ----------
     record_history_identity : int, optional
         Record history identity.
@@ -1163,7 +1163,7 @@ class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceR
       - The compliance status of this coating, stored in one or more indicator objects
       - Any substance objects which are a child of this coating object
 
-    Parameters
+    Attributes
     ----------
     record_history_identity : int, optional
         Default reference type for compliance items returned as children of the queried item.

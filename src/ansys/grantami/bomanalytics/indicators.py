@@ -394,7 +394,7 @@ class RoHSIndicator(_Indicator):
     Notes
     -----
     The RoHS indicator is designed to be used with RoHS-type legislations such as RoHS and RoHS China. However,
-    usage is not enforced. Substances marked as ``'Process Chemicals'[1]_`` are always ignored, and exceptions
+    usage is not enforced. Substances marked as ``Process Chemicals``[1]_ are always ignored, and exceptions
     are supported (unless explicitly ignored by specifying ``ignore_exemptions=True`` when creating the indicator).
     The possible result flags for the indicator distinguish between an item being compliant, compliant with
     exemptions, or non-compliant.
@@ -479,7 +479,7 @@ class WatchListIndicator(_Indicator):
     Notes
     -----
     The watch list indicator is designed to be used with REACH legislations or internal watch lists. However,
-    usage is not enforced. Substances marked as ``'Process Chemicals'[1]_`` are usually included, but they can be
+    usage is not enforced. Substances marked as ``Process Chemicals``[1]_ are usually included, but they can be
     ignored by specifying ``ignore_process_chemicals=True`` when creating the indicator. Exemptions are always
     ignored. The possible result flags for the indicator distinguish between an item being compliant, compliant
     but with substances below the threshold, or non-compliant.

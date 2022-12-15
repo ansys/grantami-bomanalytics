@@ -13,14 +13,12 @@
 #     name: python3
 # ---
 
-# # Getting Started
+# # Basic usage example
 
-# ## Introduction
-
-# This example describes how to connect to Granta MI and perform a basic query for impacted substances. It also
-# demonstrates how to view logging messages returned by the Granta MI server. For more details about the results of the
-# queries, see the examples in the [Impacted Substances](1_Impacted_Substances_Queries/index.rst) and
-# [Compliance](2_Compliance_Queries/index.rst) sections.
+# This example shows how to connect to Granta MI and perform a basic query for impacted substances. It also
+# demonstrates how to view logging messages returned by the Granta MI server. For more information about the
+#  results of the queries, see the examples in [Impacted Substances](1_Impacted_Substances_Queries/index.rst) and
+# [Compliance](2_Compliance_Queries/index.rst).
 
 # ## Connect to Granta MI
 
@@ -29,8 +27,9 @@
 #
 # 1. Specify your Granta MI Service Layer URL as a parameter to the ``Connection`` class.
 # 2. Specify the authentication method using a ``Connection.with_...()`` method.
-# 3. Use the ``Connection.connect()`` method to finalize the connection. This returns a connection object, which is
-#    called ``cxn`` in these examples.
+# 3. Use the ``Connection.connect()`` method to finalize the connection.
+#
+# This returns a connection object, which is called ``cxn`` in these examples.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -45,7 +44,7 @@ cxn = Connection(server_url).with_autologon().connect()
 cxn
 # -
 
-# If the Python script is running on Linux without Kerberos enabled, or you wish to use an account other than your
+# If the Python script is running on Linux without Kerberos enabled, or you want to use an account other than your
 # logged-in account, you can specify credentials explicitly.
 
 # + tags=[]
@@ -53,13 +52,14 @@ cxn = Connection(server_url).with_credentials("my_username", "my_password").conn
 cxn
 # -
 
-# OIDC and anonymous authentication methods are also available, but are beyond the scope of this example. See
-# the [ansys-openapi-common](https://github.com/pyansys/openapi-common) package documentation for more details.
+# OIDC and anonymous authentication methods are also available, but they are beyond the scope of this example.
+# For more information, see the [ansys-openapi-common](https://github.com/pyansys/openapi-common) package
+# documentation.
 
-# ## Construct a Query
+# ## Construct a query
 
 # Queries are also constructed using a fluent interface. However, the ``Query`` constructor takes no arguments. All
-# query details are specified using ``Query`` methods. To demonstrate this, we will build a query to
+# query details are specified using ``Query`` methods. To demonstrate this, this example builds a query to
 # determine all substances present in an ABS material that are impacted by the REACH Candidate List legislation.
 
 # First import the ``queries`` module and create a ``MaterialImpactedSubstancesQuery`` object.
@@ -71,7 +71,7 @@ query = queries.MaterialImpactedSubstancesQuery()
 query
 # -
 
-# Now add the material you want to query, by specifying its Material ID. (Alternate methods of specifying records
+# Now add the material that you want to query by specifying its naterial ID. (Alternate methods of specifying records
 # are shown in other examples.)
 
 # + tags=[]
@@ -79,8 +79,8 @@ query = query.with_material_ids(["plastic-abs-high-impact"])
 query
 # -
 
-# Note that because the ``MaterialImpactedSubstancesQuery`` object has a fluent interface, we receive the same object
-# back that we started with, but with the Material IDs added.
+# Note that because the ``MaterialImpactedSubstancesQuery`` object has a fluent interface, you receive the same object
+# back that you started with, but with the material IDs added.
 #
 # Finally, add the legislation to the query.
 
@@ -89,7 +89,7 @@ query = query.with_legislations(["REACH - The Candidate List"])
 query
 # -
 
-# Fluent interfaces are designed to allow a complex object to be constructed in a single line of code. As such, we can
+# Fluent interfaces are designed to allow a complex object to be constructed in a single line of code. As such, you can
 # consolidate the cells above into a single step:
 
 # + tags=[]
@@ -97,9 +97,9 @@ query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-ab
 query
 # -
 
-# Since the fluent interface can produce very long lines of code, it's necessary to break your query creation code into
-# multiple lines. The following multi-line format is used throughout the examples, and is functionally equivalent to
-# the cell above:
+# Because the fluent interface can produce very long lines of code, it's necessary to break your query creation code
+# into multiple lines. The following multi-line format is used throughout the examples. It is functionally equivalent to
+# the preceding cell:
 
 # + tags=[]
 query = (
@@ -112,17 +112,17 @@ query
 
 # The multi-line format is the recommended way of creating queries using this API.
 
-# ## Run a Query
+# ## Run a query
 
-# Now that we have our ``cxn`` and ``query`` objects, we can use the ``cxn.run()`` method to run the query. This returns
-# an object that contains the results of the query.
+# Now that you have your ``cxn`` and ``query`` objects, you can use the ``cxn.run()`` method to run the query. This
+# returns an object that contains the results of the query.
 
 # + tags=[]
 result = cxn.run(query)
 result
 # -
 
-# ## Query Results
+# ## View query results
 
 # In the case of ``MaterialsImpactedSubstancesQuery``, the results object contains the list of substances present in
 # the material that are impacted by the specified legislations.
@@ -131,21 +131,21 @@ result
 result.impacted_substances
 # -
 
-# ## Logging
+# ## View logged messages
 
-# All query results also contain a list of messages returned by the server whilst running the query. These are
+# All query results also contain a list of messages returned by the server while running the query. These are
 # sorted in order of decreasing severity. The same messages are also available in the MI Service Layer log file.
 
 # + tags=[]
 result.messages
 # -
 
-# These messages are also available via the standard ``logging`` module using the ``ansys.grantami.bomanalytics``
-# logger. Alternatively, you can omit the logger name to get the root logger, which will include messages logged by all
-# packages.
+# Additionally, these messages are available via the standard ``logging`` module using the
+# ``ansys.grantami.bomanalytics`` logger. Alternatively, you can omit the logger name to get the root logger, which
+# includes messages logged by all packages.
 #
-# The code below creates a log handler that outputs all 'ansys.grantami.bomanalytics' logger messages with severity INFO
-# and above to either the terminal or the notebook.
+# The following code creates a log handler that outputs all 'ansys.grantami.bomanalytics' logger messages with severity
+# INFO and above to either the terminal or the notebook.
 
 # + tags=[]
 import logging

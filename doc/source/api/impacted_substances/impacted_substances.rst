@@ -1,6 +1,6 @@
 .. _ref_grantami_bomanalytics_api_impactedsubstances_substances:
 
-Impacted Substances
+Impacted substances
 ===================
 
 

@@ -3,7 +3,7 @@
 Compliance API
 ==============
 
-This section provides an overview of the Compliance API. The
+This section provides an overview of the API for compliance. The
 :ref:`ref_grantami_bomanalytics_api_compliance_substances`,
 :ref:`ref_grantami_bomanalytics_api_compliance_materials`,
 :ref:`ref_grantami_bomanalytics_api_compliance_specifications`, and
@@ -14,7 +14,7 @@ a threshold. If a certain record directly or indirectly contains substances impa
 legislations in an amount that exceeds the threshold, the record is not compliant with that indicator. For more
 information about possible results, see the definitions of the indicators.
 
-The :ref:`ref_grantami_bomanalytics_api_compliance_bom` query accepts a Bill of Materials in Ansys Granta MI 1711 XML BoM format and
+The :ref:`ref_grantami_bomanalytics_api_compliance_bom` query accepts a BoM (bill of materials) in Ansys Granta MI 1711 XML BoM format and
 returns the compliance status of the BoM based on the Granta MI records referenced by it.
 
 In general, the result of each query is a recursive BoM (or multi-level BoM) that shows the compliance status and impacted

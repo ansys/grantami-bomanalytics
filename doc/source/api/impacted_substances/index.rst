@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_api_impactedsubstances_index:
 
-Impacted Substances API
+Impacted substances API
 =======================
 
-This section gives an overview of the Impacted Substances API. The
+This section gives an overview of the API for impacted substances. The
 :ref:`ref_grantami_bomanalytics_api_impactedsubstances_materials`,
 :ref:`ref_grantami_bomanalytics_api_impactedsubstances_specifications`, and
 :ref:`ref_grantami_bomanalytics_api_impactedsubstances_parts` queries accept a list of references to records in a

@@ -29,21 +29,22 @@ if TYPE_CHECKING:
 LogMessage = namedtuple("LogMessage", ["severity", "message"])
 """ Message returned by Granta MI when running the query.
 
-Messages marked with the ``error`` severity are more likely to produce incorrect results and should be treated with
+Messages marked with the error ``severity`` are more likely to produce incorrect results and should be treated with
 increased caution.
 
 Attributes
 ----------
 severity : str
-    Either ``error``, ``warning``, or ``information``.
+    Level of severity. Options are ``"error"``, ``"warning"``, and ``"information"``.
 message : str
     Description of the issue.
 """
 
 
 class QueryResultFactory:
-    """Creates query results for a given type of API query. The key to controlling which result type is created is the type
-    of the response from the low-level API.
+    """Creates query results for a given type of API query.
+
+    The type of the response from the low-level API is the key to controlling which result type is created.
     """
 
     registry: Dict = {}
@@ -79,14 +80,14 @@ class QueryResultFactory:
     ) -> "Query_Result":
         """Returns a specific query result.
 
-        Uses the type of the ``results`` parameter to determine which specific ``Query_Result`` to return.
-        If ``results`` is a list, then use the type of the first item in the list (since the list will
+        Uses the type of the ``results`` parameter to determine which specific ``Query_Result`` object to return.
+        If the ``results`` parameter is a list, use the type of the first item in the list (because the list will
         always be homogeneous).
 
         Parameters
         ----------
         results
-            Result or results returned from the low-level API.
+            Result or results to return from the low-level API.
         messages
             Logs returned by Granta MI describing any problems encountered when running the query.
         **kwargs
@@ -100,7 +101,7 @@ class QueryResultFactory:
         Raises
         ------
         RuntimeError
-            If a query type is not registered to any factory.
+            Error raised if a query type is not registered to any factory.
         """
 
         try:
@@ -128,7 +129,7 @@ class ResultBaseClass(ABC):
         Messages are sorted in order of decreasing severity and are available in the Service Layer log file.
 
         Messages are also logged using the Python ``logging`` module to the ``ansys.grantami.bomanalytics`` logger. By
-        default, messages with a severity of ``warning`` or higher are printed on stderr.
+        default, messages with a severity of ``"warning"`` or higher are printed on stderr.
 
         Returns
         -------
@@ -264,7 +265,9 @@ class ComplianceBaseClass(ResultBaseClass):
 @QueryResultFactory.register(models.GetImpactedSubstancesForMaterialsMaterial)
 class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery`
-    class. This class describes the substances in the specified materials impacted by one or more legislations.
+    class.
+
+    This class describes the substances in the specified materials impacted by one or more legislations.
 
     Notes
     -----
@@ -296,7 +299,7 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
     @property
     def impacted_substances_by_material(self) -> List["MaterialWithImpactedSubstancesResult"]:
-        """The impacted substances for each material specified in the original query.
+        """Impacted substances for each material specified in the original query.
 
         Returns
         -------
@@ -316,7 +319,9 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 @QueryResultFactory.register(models.CommonMaterialWithCompliance)
 class MaterialComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.MaterialComplianceQuery`
-    class. This class describes the compliance status of materials against one or more indicators.
+    class.
+
+    This class describes the compliance status of materials against one or more indicators.
 
     Notes
     -----
@@ -376,7 +381,9 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 @QueryResultFactory.register(models.GetImpactedSubstancesForPartsPart)
 class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery`
-    class. This class describes the substances in the specified parts impacted by one or more legislations.
+    class.
+
+    This class describes the substances in the specified parts impacted by one or more legislations.
 
     Notes
     -----
@@ -429,7 +436,9 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 @QueryResultFactory.register(models.CommonPartWithCompliance)
 class PartComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.PartComplianceQuery`
-    class. This class describes the compliance status of parts against one or more indicators.
+    class.
+
+    This class describes the compliance status of parts against one or more indicators.
 
     Notes
     -----
@@ -490,7 +499,9 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the
     :class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery`
-    class. This class describes the substances in the specified specifications impacted by one or more legislations.
+    class.
+
+    This class describes the substances in the specified specifications impacted by one or more legislations.
 
     Notes
     -----
@@ -546,7 +557,9 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 @QueryResultFactory.register(models.CommonSpecificationWithCompliance)
 class SpecificationComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery`
-    class. This class describes the compliance status of specifications against one or more indicators.
+    class.
+
+    This class describes the compliance status of specifications against one or more indicators.
 
     Notes
     -----
@@ -609,7 +622,9 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 @QueryResultFactory.register(models.CommonSubstanceWithCompliance)
 class SubstanceComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery`
-    class. This class describes the compliance status of substances against one or more indicators.
+    class.
+
+    This class describes the compliance status of substances against one or more indicators.
 
     Notes
     -----
@@ -665,7 +680,9 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 @QueryResultFactory.register(models.GetImpactedSubstancesForBom1711Response)
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`
-    class. This class describes the substances in the specified BoM impacted by one or more legislations.
+    class.
+
+    This class describes the substances in the specified BoM impacted by one or more legislations.
 
     Notes
     -----
@@ -697,7 +714,9 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 @QueryResultFactory.register(models.GetComplianceForBom1711Response)
 class BomComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`
-    class. This class summarizes the compliance status of a BoM against one or more indicators.
+    class.
+
+    This class summarizes the compliance status of a BoM against one or more indicators.
 
     Notes
     -----

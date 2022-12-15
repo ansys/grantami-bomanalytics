@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_advanced:
 
-Advanced Examples
+Advanced examples
 =================
 
-These scripts demonstrate various advanced functionalities of the BoM Analytics package.
+These examples demonstrate various advanced functionalities of Granta MI BoM Analytics.
 
 .. toctree::
    :maxdepth: 1

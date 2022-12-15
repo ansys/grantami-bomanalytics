@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Performing a Material Impacted Substances Query
+# # Perform a material impacted substances query
 
 # A Material Impacted Substances Query is used to identify the substances associated with a material that are impacted
 # by one or more defined legislations.
@@ -32,7 +32,7 @@ server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
-# ## Building and Running the Query
+# ## Building and running the query
 
 # The query is assembled by providing lists of material references and legislations of interest. The query will return
 # the substances that are present in the specified materials and are impacted by the specified legislations.
@@ -70,7 +70,7 @@ results
 # ``impacted_substances_by_material``, ``impacted_substances_by_legislation``, and ``impacted_substances``. They provide
 # different views of the impacted substances at different levels of granularity.
 
-# ## Results Grouped by Material
+# ## View results grouped by material
 
 # This property is structured first as a list of ``materialWithImpactedSubstancesResult`` objects, each of which
 # contains a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation or a single flat list of all
@@ -99,7 +99,7 @@ print(f'Substances impacted by "{SIN_LIST}" in "{PC_ID}" (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ## Results Grouped by Legislation
+# ## View results grouped by legislation
 
 # This property merges the results across all materials, resulting in a single dictionary of legislations that contain
 # all impacted substances for all materials.
@@ -115,7 +115,7 @@ print(f'Substances impacted by "{SIN_LIST}" in all materials (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
-# ## Results as a Flat List
+# ## View results as a flat list
 
 # This property reduces the granularity further to produce a single flattened list of substances across all legislations
 # for all materials.

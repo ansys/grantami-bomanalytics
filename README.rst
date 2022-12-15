@@ -3,24 +3,24 @@ ansys-grantami-bomanalytics
 
 Project Overview
 ----------------
-This project is part of the larger PyAnsys effort to facilitate the use
-of Ansys technologies directly from within Python.
+Granta MI BoM Analytics is part of the larger `PyAnsys <https://github.com/pyansys>`_
+effort to facilitate the use of Ansys technologies directly from Python.
 
 The Granta MI Restricted Substances solution includes a REST API for
-evaluating compliance of products, assemblies, specifications and
+evaluating compliance of products, assemblies, specifications, and
 materials against legislations. This package abstracts automatically-
 generated code into an easy-to-use client library.
 
 
 Installation
 ------------
-Install ansys-grantami-bomanalytics with:
+Install the ``ansys-grantami-bomanalytics`` package with this code:
 
 .. code::
 
    pip install ansys-grantami-bomanalytics
 
-Alternatively, clone and install with:
+Alternatively, clone and install thie package with this code:
 
 .. code::
 
@@ -31,13 +31,13 @@ Alternatively, clone and install with:
 
 Documentation
 -------------
-See `Granta MI BoM Analytics Documentation <https://grantami.docs.pyansys.com>`_
-for more details.
+The `Granta MI BoM Analytics Documentation <https://grantami.docs.pyansys.com>`_
+provides comprehensive installation and usage information.
 
 
 Usage
 -----
-Here's a brief example of how the package works:
+Here's a brief example of how to use Granta MI BoM Analytics:
 
 .. code:: python
 
@@ -64,11 +64,10 @@ Here's a brief example of how the package works:
 
 Testing
 -------
-See `Contributing <https://grantami.docs.pyansys.com/contributing>`_
-for more details.
+For information on testing, see `Contributing <https://grantami.docs.pyansys.com/contributing>`_.
 
 
 License
 -------
-The library is provided under the terms of the MIT license, you can find
-the license text in the LICENSE file at the root of the repository.
+Granta MI BoM Analytics is provided under the terms of the MIT license. You can find
+this license in the LICENSE file at the root of the repository.

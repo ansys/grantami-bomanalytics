@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_api_compliance_specifications:
 
-Specification Compliance
+Specification compliance
 ========================
 
-Query Definition
+Query definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery
@@ -18,7 +18,7 @@ Query Definition
    .. automethod:: with_batch_size
 
 
-Query Result
+Query result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.SpecificationComplianceQueryResult
@@ -30,13 +30,13 @@ Query Result
    .. autoattribute:: messages
 
 
-Specification Result
+Specification result
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult
 
 
-Coating Result
+Coating result
 ~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.CoatingWithComplianceResult

@@ -24,8 +24,8 @@ if TYPE_CHECKING:
 class _Flag(Enum):
     """Base class for flags (result states) of indicators.
 
-    Implements `__le__` , but relies on specific flag classes to implement other overloads to allow direct comparisons
-    with the containing Indicator.
+    This class implements `__le__` , but it relies on specific flag classes to implement other
+    overloads to allow direct comparisons with the containing Indicator.
 
     Overrides `__new__` to populate the __doc__ on an enum member.
     """
@@ -43,9 +43,9 @@ class _Flag(Enum):
         Raises
         ------
         ValueError
-            If the other object is an indicator and has no value.
+            Error to raise if the other object is an indicator and has no value.
         TypeError
-            If the other object isn't this flag's type or this flag's indicator's type.
+            Error to raise if the other object isn't this flag's type or this flag's indicator's type.
         """
 
         pass
@@ -56,19 +56,21 @@ class _Flag(Enum):
         Raises
         ------
         ValueError
-            If the other object is an indicator and has no value.
+            Error to raise if the other object is an indicator and has no value.
         TypeError
-            If the other object isn't this flag's type or this flag's indicator's type.
+            Error to raise if the other object isn't this flag's type or this flag's indicator's type.
         """
 
         return self.__eq__(other) or self < other
 
 
 class RoHSFlag(_Flag):
-    """Provides permitted RoHS flag states. A larger value means that the item is less compliant. The further
-    down the list the compliance result appears, the worse it is.
+    """Provides permitted RoHS flag states.
 
-    For more information, see the Restricted Substances Reports User Guide.
+    A larger value means that the item is less compliant. The further down the list the compliance
+    result appears, the worse it is.
+
+    For more information, see the *Restricted Substances Reports User Guide*.
     """
 
     RohsNotImpacted = (
@@ -124,9 +126,9 @@ class RoHSFlag(_Flag):
         Raises
         ------
         ValueError
-            If the other object is an indicator and has no value.
+            Error to raise if the other object is an indicator and has no value.
         TypeError
-            If the other object isn't the same type as this flag or this flag's indicator.
+            Error to raise if the other object isn't the same type as this flag or this flag's indicator.
         """
 
         if isinstance(other, self.__class__):
@@ -141,10 +143,12 @@ class RoHSFlag(_Flag):
 
 
 class WatchListFlag(_Flag):
-    """Provides permitted watch list flag states. An increasing value means less compliance. The further
-    down the list the compliance result appears, the worse it is.
+    """Provides permitted watch list flag states.
 
-    For more information, see the Restricted Substances Reports User Guide.
+    An increasing value means less compliance. The further down the list the compliance result
+    appears, the worse it is.
+
+    For more information, see the *Restricted Substances Reports User Guide*.
     """
 
     WatchListNotImpacted = (
@@ -197,9 +201,9 @@ class WatchListFlag(_Flag):
         Raises
         ------
         ValueError
-            If the other object is an indicator and has no value.
+            Error to raise if the other object is an indicator and has no value.
         TypeError
-            If the other object isn't this flag's type or this flag's indicator's type.
+            Error to raise if the other object isn't this flag's type or this flag's indicator's type.
         """
 
         if isinstance(other, self.__class__):
@@ -258,7 +262,7 @@ class _Indicator(ABC):
         Raises
         ------
         KeyError
-            If the value being set is not valid for this indicator.
+            Error to raise if the value being set is not valid for this indicator.
         """
         return self._flag
 
@@ -275,9 +279,9 @@ class _Indicator(ABC):
         Raises
         ------
         ValueError
-            If either this indicator or the other indicator has no value.
+            Error to raise if either this indicator or the other indicator has no value.
         TypeError
-            If the other object isn't this indicator's type or this indicator's flag's type.
+            Error to raise if the other object isn't this indicator's type or this indicator's flag's type.
         """
 
         if not self.flag:
@@ -291,9 +295,9 @@ class _Indicator(ABC):
         Raises
         ------
         ValueError
-            If either this indicator or the other indicator has no value.
+            Error to raise if either this indicator or the other indicator has no value.
         TypeError
-            If the other object isn't this indicator's type or this indicator's flag's type.
+            Error to raise if the other object isn't this indicator's type or this indicator's flag's type.
         """
 
         if not self.flag:
@@ -306,12 +310,12 @@ class _Indicator(ABC):
 
         Returns
         -------
-        Flag object extracted from ``other``
+        Flag object extracted from ``other``.
 
         Raises
         ------
         RuntimeError
-            If an unhandled error occurs during the comparison. A descriptive ``TypeError`` or
+            Error to raise if an unhandled error occurs during the comparison. A descriptive ``TypeError`` or
             ``ValueError`` should always be raised instead.
         """
         self._check_type_and_value_compatibility(other)
@@ -329,9 +333,10 @@ class _Indicator(ABC):
         Raises
         ------
         ValueError
-            If the other indicator has no flag, there is no basis for comparison.
+            Error to raise if the other indicator has no flag, there is no basis for comparison.
         TypeError
-            If the other object is a different ``_Indicator`` subtype or an incompatible ``_Flag`` subtype.
+            Error to raise if the other object is a different ``_Indicator`` subtype or an incompatible ``_Flag``
+            subtype.
         """
         if isinstance(other, _Indicator) and not isinstance(other, self.__class__):
             raise TypeError(f"Cannot compare {type(self)} with {type(other)}")
@@ -346,9 +351,9 @@ class _Indicator(ABC):
         Raises
         ------
         ValueError
-            If either this indicator or the other indicator has no value.
+            Error to raise if either this indicator or the other indicator has no value.
         TypeError
-            If the other object isn't this indicator's type or this indicator's flag's type.
+            Error to raise if the other object isn't this indicator's type or this indicator's flag's type.
         """
 
         return self == other or self < other
@@ -368,7 +373,7 @@ class RoHSIndicator(_Indicator):
     legislation_names : list[str]
         Legislations against which compliance will be determined.
     default_threshold_percentage : float, optional
-        Concentration of substance that will be determined to be non-compliant. The default is ``None``.
+        Concentration of substance that is to be determined to be non-compliant. The default is ``None``.
         This parameter is only used if the legislation doesn't define a specific threshold for the substance.
     ignore_exemptions : bool, optional
         Whether to consider exemptions added to parts when determining compliance against this indicator.
@@ -382,14 +387,14 @@ class RoHSIndicator(_Indicator):
     Raises
     ------
     TypeError
-        If two indicators of different types are compared.
+        Error to raise if two indicators of different types are compared.
     ValueError
-        If two indicators are compared and both don't have a result flag.
+        Error to raise if two indicators are compared and both don't have a result flag.
 
     Notes
     -----
     The RoHS indicator is designed to be used with RoHS-type legislations such as RoHS and RoHS China. However,
-    usage is not enforced. Substances marked as 'Process Chemicals'[1]_ are always ignored, and exceptions
+    usage is not enforced. Substances marked as ``Process Chemicals`` [1]_ are always ignored, and exceptions
     are supported (unless explicitly ignored by specifying ``ignore_exemptions=True`` when creating the indicator).
     The possible result flags for the indicator distinguish between an item being compliant, compliant with
     exemptions, or non-compliant.
@@ -429,7 +434,7 @@ class RoHSIndicator(_Indicator):
 
     @property
     def _definition(self) -> models.CommonIndicatorDefinition:
-        """Generates the low-level API indicator object."""
+        """Generate the low-level API indicator object."""
         return models.CommonIndicatorDefinition(
             name=self.name,
             legislation_names=self.legislation_names,
@@ -451,9 +456,9 @@ class WatchListIndicator(_Indicator):
     name : str
         Name of the indicator that is used to identify the indicator in the query result.
     legislation_names : list[str]
-        Legislations against which compliance will be determined.
+        Legislations against which compliance is to be determined.
     default_threshold_percentage : float, optional
-        Concentration of substance that will be determined to be non-compliant. The default is ``None``.
+        Percentage of substance concentration that is to be determined to be non-compliant. The default is ``None``.
         This parameter is only used if the legislation doesn't define a specific threshold for the substance.
     ignore_process_chemicals : bool, optional
         Whether to ignore substances flagged as process chemicals when determining compliance against this indicator.
@@ -467,14 +472,14 @@ class WatchListIndicator(_Indicator):
     Raises
     ------
     TypeError
-        If two indicators of different types are compared.
+        Error to raise if two indicators of different types are compared.
     ValueError
-        If two indicators are compared and both don't have a result flag.
+        Error to raise if two indicators are compared and both don't have a result flag.
 
     Notes
     -----
     The watch list indicator is designed to be used with REACH legislations or internal watch lists. However,
-    usage is not enforced. Substances marked as 'Process Chemicals'[1]_ are usually included, but they can be
+    usage is not enforced. Substances marked as ``Process Chemicals`` [1]_ are usually included, but they can be
     ignored by specifying ``ignore_process_chemicals=True`` when creating the indicator. Exemptions are always
     ignored. The possible result flags for the indicator distinguish between an item being compliant, compliant
     but with substances below the threshold, or non-compliant.
@@ -496,7 +501,7 @@ class WatchListIndicator(_Indicator):
     flag: WatchListFlag.WatchListHasSubstanceAboveThreshold>
 
     >>> indicator_result <= indicator.available_flags['WatchListAllSubstancesBelowThreshold']
-    False  # The material is not compliant with the legislations in the Indicator
+    False  # The material is not compliant with the legislations in the indicator
     """
 
     available_flags = WatchListFlag
@@ -515,7 +520,7 @@ class WatchListIndicator(_Indicator):
 
     @property
     def _definition(self) -> models.CommonIndicatorDefinition:
-        """Generates the low-level API indicator object."""
+        """Generate the low-level API indicator object."""
         return models.CommonIndicatorDefinition(
             name=self.name,
             legislation_names=self.legislation_names,

@@ -1,7 +1,8 @@
-Quick Code
+Quick code
 ----------
-Here's a brief example of how the package works. This example finds the
-percentage content of all SVHCs in an ABS/PVC blend:
+To show how the ``grantami-bomanalytics`` package works, this brief example
+shows how to find the percentage content of all SVHCs (substances of very
+high concern) in an ABS/PVC blend:
 
 .. code:: python
 
@@ -21,14 +22,15 @@ percentage content of all SVHCs in an ABS/PVC blend:
      <ImpactedSubstance: {"cas_number": 115-96-8, "percent_amount": 15.0}>,
     ...
 
+
 The sequence of events is as follows:
 
-1. Connect to Granta MI.
-2. Create the appropriate query, choosing between:
+#. Connect to Granta MI.
+#. Create the appropriate query, choosing between:
 
-   - *Query type*: Compliance or impacted substances
-   - *Reference type*: Materials, parts, specifications, substances, or an XML BoM
+   - Query type: Compliance or impacted substances
+   - Reference type: Materials, parts, specifications, substances, or an XML BoM
 
-3. Specify the legislations and records of interest.
-4. Run the query.
-5. Process the results.
+#. Specify the legislations and records of interest.
+#. Run the query.
+#. Process the results.

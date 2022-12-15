@@ -13,24 +13,23 @@
 #     name: python3
 # ---
 
-# # Determining Compliance for BoMs in External Data Sources
+# # Determine compliance for BoMs in external data sources
 
-# ## Introduction
-
-# You may have to deal with Bills of Materials or other data structures stored in third-party systems. This
-# example shows a scenario where compliance needs to be determined for a BoM-type structure in a JSON file,
+# You might have to deal with BoMs or other data structures stored in third-party systems. This
+# example shows a scenario where compliance must be determined for a BoM-type structure in a JSON file,
 # with the result added to the input file.
 
-# Although it is unlikely that the data structures and processing presented here will be an exact match for your
-# requirements, this example is intended to demonstrate the principles behind using the BoM Analytics API within
-# your existing processes. It shows how a BoM-like data structure can be loaded from a neutral format and used as
-# a starting point for compliance analysis. The approach is applicable to data in other formats, or data loaded from
-# other software platform APIs.
+# Although it is unlikely that the data structures and processing presented here match your
+# requirements, this example is intended to demonstrate the principles behind using the Granta
+# MI BoM Analytics API within your existing processes. It shows how a BoM-like data structure
+# can be loaded from a neutral format and used as a starting point for compliance analysis.
+# The approach is applicable to data in other formats, or data loaded from other software
+# platform APIs.
 
-# The external data source used in this example can be downloaded
-# [here](supporting-files/source_data.json).
+# You can [download](supporting-files/source_data.json) the external data source used in this
+# example .
 
-# ## Load the External Data
+# ## Load the external data
 
 # First load the JSON file and use the ``json`` module to convert the text into a hierarchical structure of ``dict`` and
 # ``list`` objects.
@@ -44,7 +43,7 @@ with open("supporting-files/source_data.json") as f:
 pprint(data)
 # -
 
-# The list of components will be used frequently, so we store this in a variable for convenience.
+# The list of components is used frequently, so store it in a variable for convenience.
 
 # + tags=[]
 components = data["components"]
@@ -52,25 +51,25 @@ components = data["components"]
 
 # It is clear from viewing this data that some parts include multiple materials, and some materials appear in the JSON
 # file more than once. However, the material compliance is not dependent on the component it is used in, and the
-# compliance of a part only depends on the worst compliance status of the constituent materials. Therefore we can
-# simplify the compliance query by get the compliance for the unique set of materials in the JSON file, and perform some
-# data manipulation of the results.
+# compliance of a part only depends on the worst compliance status of the constituent materials. Therefore, you can
+# simplify the compliance query by get the compliance for the unique set of materials in the JSON file. You can then
+# perform some data manipulation of the results.
 
-# Since the compliance status of a material does not depend on which component it is used in, and part compliance
-# depends only on the worst compliance status of its constituent materials, we can simplify the query by running it
-# against the set of unique materials in the JSON file. We can then rebuild the data structure from these results to
+# Because the compliance status of a material does not depend on which component it is used in, and part compliance
+# depends only on the worst compliance status of its constituent materials, you can simplify the query by running it
+# against the set of unique materials in the JSON file. You can then rebuild the data structure from these results to
 # view the compliance by component.
 
-# First, use a set comprehension to get the unique materials, which we can then cast into a list.
+# First, use a set comprehension to get the unique materials, which you can then cast into a list.
 
 # + tags=[]
 material_ids = {m for comp in components for m in comp["materials"]}
 material_ids
 # -
 
-# ## Getting the Compliance Status
+# ## Get the compliance status
 
-# Next, create and run a compliance query using the list of material IDs, as shown in previous exercises.
+# Next, create and run a compliance query using the list of material IDs, as shown in previous examples.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection, indicators, queries
@@ -91,12 +90,12 @@ mat_results = cxn.run(mat_query)
 mat_results
 # -
 
-# ## Post-Processing the Results
+# ## Postprocess the results
 
-# The results above describe the compliance status for each material, but more work is needed to
-# provide the compliance status for all the components in the original JSON.
+# The preceding results describe the compliance status for each material, but more work is needed to
+# provide the compliance status for all the components in the original JSON file.
 
-# When a component contains only one material, the result can simply be copied over.  In the general case, moving from
+# When a component contains only one material, the result can simply be copied over. In the general case, moving from
 # material compliance to component compliance means taking the worst compliance result across all the constituent
 # materials.
 
@@ -110,8 +109,8 @@ material_lookup = {mat.material_id: mat.indicators["SVHC"]
 # Next, define a function that takes a list of material IDs and returns the worst compliance status associated with the
 # materials in the list.
 #
-# We can use the built-in ``max()`` function to do this, because ``WatchListIndicator`` objects can be compared with >
-# and < operators. The convention is that a worse result is 'greater than' a better result.
+# You can use the built-in ``max()`` function to do this because you can compare ``WatchListIndicator`` with ``>``
+# and ``<`` operators. The convention is that a worse result is *greater than* a better result.
 
 
 # + tags=[]
@@ -131,9 +130,9 @@ component_results = {comp["part_number"]: rollup_results(comp["materials"])
 component_results
 # -
 
-# These results include text defined by the API for compliance status. However, we may want the compliance
-# status to determine the approvals required to release the part in a design review process. In that case, we can define
-# a mapping between compliance status and approval requirements.
+# These results include text defined by the API for compliance status. However, you might want the compliance
+# status to determine the approvals required to release the part in a design review process. In this case, you can
+# define a mapping between compliance status and approval requirements.
 
 # + tags=[]
 flags = indicators.WatchListFlag
@@ -144,7 +143,7 @@ result_map = {
 }
 # -
 
-# We can now use this dictionary to map from the Granta MI result to the approval requirements.
+# You can now use this dictionary to map from the Granta MI result to the approval requirements.
 
 # + tags=[]
 results = {part_number: result_map[result]
@@ -152,10 +151,10 @@ results = {part_number: result_map[result]
 results
 # -
 
-# ## Write the Output
+# ## Write the output
 
-# Once we have our final result, we can take our result ``dict`` and use it to extend the original JSON data structure,
-# with approval requirements added in.
+# Once you have your final result, you can take your result ``dict`` and use it to extend the original JSON data
+# structure, with approval requirements added in.
 
 # +
 components_with_result = []
@@ -169,7 +168,7 @@ data_results = {}
 data_results["components"] = components_with_result
 # -
 
-# Printing the results shows the new data structure with the results included.
+# Print the results to see that the new data structure includes the results.
 
 # + tags=[]
 pprint(data_results)

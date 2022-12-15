@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_api_compliance_parts:
 
-Part Compliance
+Part compliance
 ===============
 
-Query Definition
+Query definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.PartComplianceQuery
@@ -18,7 +18,7 @@ Query Definition
    .. automethod:: with_batch_size
 
 
-Query Result
+Query result
 ~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.PartComplianceQueryResult
@@ -30,7 +30,7 @@ Query Result
    .. autoattribute:: messages
 
 
-Part Result
+Part result
 ~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.PartWithComplianceResult

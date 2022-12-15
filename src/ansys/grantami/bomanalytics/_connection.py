@@ -1,7 +1,7 @@
-""" Connection to Granta MI Service layer.
+""" Connection to the Granta MI Service Layer.
 
 This module creates the connection object by subclassing the
-abstract ``ApiClientFactory`` in the ``auth_common`` package.
+abstract ``ApiClientFactory`` class in the ``auth_common`` package.
 
 The connection object itself is also subclassed to include global configuration
 options that span all queries and the method to execute the query.
@@ -16,14 +16,14 @@ session_configuration
 Attributes
 ----------
 DEFAULT_DBKEY : str
-    Default database key for the Restricted Substances Database. This is used if an alternative database
+    Default database key for the Restricted Substances database. This is used if an alternative database
     key isn't specified.
 SERVICE_PATH : str
-    The location of the BoM Analytics service within the Service Layer web application
+    Location of the BoM Analytics service within the Service Layer web application.
 MI_AUTH_PATH : str
-    The location of a service that will prompt for authorization
+    Location of a service that prompts for authorization.
 GRANTA_APPLICATION_NAME_HEADER : str
-    An identifier used internally by Granta MI Server
+    Identifier used internally by the Granta MI Server.
 """
 
 from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
@@ -73,9 +73,9 @@ if TYPE_CHECKING:
 class Connection(ApiClientFactory):
     """Connects to an instance of Granta MI.
 
-    This is a subclass of :class:`ansys.openapi.common.ApiClientFactory`. All methods within this class that are
-    documented as returning :class:`~ansys.openapi.common.ApiClientFactory` return instances of
-    :class:`ansys.grantami.bomanalytics.Connection` instead.
+    This is a subclass of the :class:`ansys.openapi.common.ApiClientFactory` class.
+    All methods in this class are documented as returning :class:`~ansys.openapi.common.ApiClientFactory`
+    class instances of the :class:`ansys.grantami.bomanalytics.Connection` class instead.
 
     Parameters
     ----------
@@ -83,14 +83,14 @@ class Connection(ApiClientFactory):
        Base URL of the API server.
     session_configuration : :class:`~ansys.openapi.common.SessionConfiguration`, optional
        Additional configuration settings for the requests session. The default is ``None``, in which case the
-       class :class:`~ansys.openapi.common.SessionConfiguration` with default parameters is used.
+       :class:`~ansys.openapi.common.SessionConfiguration` class with default parameters is used.
 
     Notes
     -----
-    For advanced usage, including configuring session-specific properties and timeouts, see
-    :external+openapi-common:doc:`ansys-openapi-common API Reference <api/index>`. Specifically, the documentation on
-    the base class :class:`~ansys.openapi.common.ApiClientFactory` and the class
-    :class:`~ansys.openapi.common.SessionConfiguration`.
+    For advanced usage, including configuring session-specific properties and timeouts, see the
+    :external+openapi-common:doc:`ansys-openapi-common API reference <api/index>`. Specifically, see the
+    documentation for the :class:`~ansys.openapi.common.ApiClientFactory` base class and the
+    :class:`~ansys.openapi.common.SessionConfiguration` class.
 
     To create the connection to Granta MI, you perform three steps:
 
@@ -157,18 +157,19 @@ class Connection(ApiClientFactory):
     def _test_connection(client: "BomAnalyticsClient") -> None:
         """Check if the created client can be used to perform a query.
 
-        Uses the Yaml query, since it is a GET query which does not require parameters. Specifically check for a 404
-        error, which most likely means the BoM Analytics service is not available.
+        This method uses a YAML query because it is a GET query that does not require parameters.
+        IT specifically check for a 404 error, which most likely means that the BoM Analytics
+        service is not available.
 
         Parameters
         ----------
         client : :class:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient`
-            Client object to be tested.
+            Client object to test.
 
         Raises
         ------
         ConnectionError
-            If the test query fails.
+            Error raised if the test query fails.
         """
         try:
             client.run(Yaml)
@@ -187,7 +188,7 @@ class Connection(ApiClientFactory):
 
 class BomAnalyticsClient(ApiClient):
     """Communicates with Granta MI. This class is instantiated by the
-    :class:`~ansys.grantami.bomanalytics.Connection` class defined above and should not be instantiated directly.
+    :class:`~ansys.grantami.bomanalytics.Connection` class described earlier and should not be instantiated directly.
     """
 
     def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
@@ -230,7 +231,7 @@ class BomAnalyticsClient(ApiClient):
         """Configure the database key and table names if different from the defaults.
 
         A database key is required if Granta MI is configured to use a value other than ``MI_Restricted_Substances``.
-        A table name is required for each table in the Restricted Substances Database that has been renamed.
+        A table name is required for each table in the Restricted Substances database that has been renamed.
 
         Parameters
         ----------
@@ -259,7 +260,7 @@ class BomAnalyticsClient(ApiClient):
         Notes
         -----
         The database key and table names are configurable, but they only need to be specified if they have been modified
-        from the defaults. Here is a summary of the default names:
+        from the defaults. Here are the default key and table names:
 
         * Database key: MI_Restricted_Substances
         * Table names:
@@ -336,23 +337,23 @@ class BomAnalyticsClient(ApiClient):
         Parameters
         ----------
         query
-            A compliance, impacted substance, or yaml query object.
+            A compliance, impacted substance, or YAML query object.
 
         Returns
         -------
         Query Result
-            The specific result object based on the provided query, which contains either the compliance or
-            impacted substances results. In the case of a yaml query, a string is returned.
+            Specific result object based on the provided query, which contains either the compliance or
+            impacted substances results. In the case of a YAML query, a string is returned.
 
         Raises
         ------
         :class:`~ansys.grantami.bomanalytics.GrantaMIException`
-            If the server encounters an error while processing the query with a severity of 'critical'. This indicates
-            that Granta MI is running and the BoM Analytics Service is available, but the query could not be run,
-            probably because of a missing database or table.
+            Error raised if the server encounters an error while processing the query with a severity
+            of ``critical``. This indicates that Granta MI is running and the BoM Analytics service
+            is available, but the query could not be run, probably because of a missing database or table.
         :class:`~ansys.openapi.common.ApiException`
-            If this exception is raised, the Granta MI server was not able to return a response, probably
-            because of an internal configuration error or the BoM Analytics Service not being installed.
+            Error raised if the Granta MI server is not able to return a response, probably
+            because of an internal configuration error or the BoM Analytics service not being installed.
         """
 
         logger.info(f"Running query {query} with connection {self}")
@@ -370,7 +371,7 @@ class BomAnalyticsClient(ApiClient):
         Returns
         -------
         arguments
-            A dictionary of `**kwargs` to use to run a query.
+            Dictionary of `**kwargs` to use to run a query.
 
         Notes
         -----

@@ -13,20 +13,18 @@
 #     name: python3
 # ---
 
-# # Writing Compliance Results to a DataFrame
+# # Write compliance results to a ``pandas.DataFrame`` object
 
-# ## Introduction
-
-# The BoM Analytics package presents compliance results in a hierarchical data structure. Alternatively, you can
+# Granta MI BoM Analytics presents compliance results in a hierarchical data structure. Alternatively, you can
 # represent the data in a tabular data structure, where each row contains a reference to the parent row.
-# This example shows how compliance data could be translated from one format to another, making use
+# This example shows how compliance data can be translated from one format to another, making use
 # of a ``pandas.DataFrame`` object to store the tabulated data.
 
-# ## Perform a Compliance Query
+# ## Perform a compliance query
 
-# The first step is to perform a compliance query on an assembly that will result in a deeply
-# nested structure. The code here is presented without explanation. For more information, see the
-# the [Part Compliance Query](../2_Compliance_Queries/2-3_Part_compliance.ipynb) example.
+# The first step is to perform a compliance query on an assembly that results in a deeply
+# nested structure. The following code is presented without explanation. For more information, see the
+# [Perform a Part Compliance Query](../2_Compliance_Queries/2-3_Part_compliance.ipynb) example.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection, indicators, queries
@@ -47,7 +45,7 @@ part_result = cxn.run(part_query)
 # -
 
 # The ``part_result`` object contains the compliance result for every subitem. This is ideal for understanding
-# compliance at a certain 'level' of the structure, For example, we can display the compliance for each item directly
+# compliance at a certain *level* of the structure, For example, you can display the compliance for each item directly
 # under the root part.
 
 # + tags=[]
@@ -58,17 +56,17 @@ for part in part_result.compliance_by_part_and_indicator[0].parts:
     )
 # -
 
-# However, this structure makes it difficult to compare items at different levels. To do that, we want to flatten the
+# However, this structure makes it difficult to compare items at different levels. To do that, you want to flatten the
 # data into a tabular structure.
 
-# ## Flatten the Hierarchical Data Structure
+# ## Flatten the hierarchical data structure
 
-# We will flatten the data into a ``list`` of ``dict`` objects, where each ``dict`` represents an item in the
-# hierarchy, and each value in the ``dict`` represents a property of that item. This structure can then
-# be used either directly or used to construct a ``DataFrame``.
+# You want to flatten the data into a ``list`` of ``dict`` objects, where each ``dict`` object represents an item in the
+# hierarchy and each value in the ``dict`` object represents a property of this item. You can this use this structure
+# can then directly or use it to construct a ``pandas.DataFrame`` object.
 
-# First, define a helper function to transform a ``ComplianceQueryResult`` object into a ``dict``. In addition to
-# storing properties that are intrinsic to the item (such as the ID, type, and SVHC result), we want to store
+# First, define a helper function to transform a ``ComplianceQueryResult`` object into a ``dict`` object. In addition to
+# storing properties that are intrinsic to the item (such as the ID, type, and SVHC result), you want to store
 # structural information, such as the level of the item and the ID of its parent.
 
 
@@ -87,7 +85,7 @@ def create_dict(item, item_type, level, parent_id):
     return row
 # -
 
-# To help with the flattening process, we will also define a schema, which describes which child item types each item
+# To help with the flattening process, you also define a schema, which describes which child item types each item
 # type can contain.
 
 
@@ -103,11 +101,11 @@ schema = {
 
 
 # The function itself performs the flattening via a stack-based approach, where the children of the item currently
-# being processed are iteratively added to the ``items_to_process`` stack. Since this stack is being both modified and
-# iterated over, we must use a ``while`` loop and ``.pop()`` statement instead of a ``for`` loop.
+# being processed are iteratively added to the ``items_to_process`` stack. Because this stack is being both modified and
+# iterated over, you must use a ``while`` loop and ``.pop()`` statement instead of a ``for`` loop.
 
 # The stack uses a special type of collection called a ``deque``, which is similar to a ``list`` but is optimized for
-# these sorts of stack-type use cases involving repeated calls to ``.pop()`` and ``.extend()``.
+# these sorts of stack-type use cases involving repeated calls to ``.pop()`` and ``.extend()`` statements.
 
 
 # + tags=[]
@@ -115,7 +113,7 @@ from collections import deque
 
 
 def flatten_bom(root_part):
-    result = []  # List that will contain all dicts
+    result = []  # List to contain all dicts
 
     # The stack contains a deque of tuples: (item_object, item_type, level, parent_id)
     # First seed the stack with the root part
@@ -156,8 +154,8 @@ def flatten_bom(root_part):
 # -
 
 
-# Finally, call the function above against the results from the compliance query and use the list to create a
-# ``DataFrame``.
+# Finally, call the preceding function against the results from the compliance query and use the list to create a
+# ``pandas.DataFrame`` object.
 
 # + tags=[]
 import pandas as pd
@@ -168,11 +166,11 @@ print(f"{len(df_full)} rows")
 df_full.head()
 # -
 
-# ## Post-processing the DataFrame
+# ## Postprocess the ``pandas.DataFrame`` object
 
-# Now that we have the data in a ``DataFrame``, we can perform operations across all levels of the structure more
-# easily. For example, we can delete all rows that are less than the 'Above Threshold' state, retaining only rows that
-# are non-compliant. (Note that this reduces the number of rows significantly.)
+# Now that you have the data in a ``pandas.DataFrame`` object, you can perform operations across all levels of the
+# structure more easily. For example, you can delete all rows that are less than the 'Above Threshold' state, retaining
+# only rows that are non-compliant. (Note that this reduces the number of rows significantly.)
 
 # + tags=[]
 threshold = indicators.WatchListFlag.WatchListAboveThreshold

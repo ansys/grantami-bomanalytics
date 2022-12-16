@@ -46,6 +46,8 @@ def xml_validator(xml: str, schema_file: str) -> bool:
     schema = etree.XMLSchema(file=schema_file)
     doc = etree.fromstring(xml)
     return schema.validate(doc)
+
+
 # -
 
 
@@ -65,9 +67,7 @@ result
 invalid_xml_file = "supporting-files/invalid-bom.xml"
 with open(invalid_xml_file) as f:
     invalid_xml = f.read()
-result = xml_validator(
-    invalid_xml, "supporting-files/BillOfMaterialsEco.xsd"
-)
+result = xml_validator(invalid_xml, "supporting-files/BillOfMaterialsEco.xsd")
 result
 # -
 
@@ -91,11 +91,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 from ansys.grantami.bomanalytics import queries
 
 SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
-impacted_substances_query = (
-    queries.BomImpactedSubstancesQuery()
-    .with_bom(valid_xml)
-    .with_legislations([SIN_LIST])
-)
+impacted_substances_query = queries.BomImpactedSubstancesQuery().with_bom(valid_xml).with_legislations([SIN_LIST])
 # -
 
 # + tags=[]
@@ -131,11 +127,7 @@ svhc = indicators.WatchListIndicator(
     legislation_names=["REACH - The Candidate List"],
     default_threshold_percentage=0.1,
 )
-compliance_query = (
-    queries.BomComplianceQuery()
-    .with_bom(valid_xml)
-    .with_indicators([svhc])
-)
+compliance_query = queries.BomComplianceQuery().with_bom(valid_xml).with_indicators([svhc])
 # -
 
 # + tags=[]
@@ -159,11 +151,7 @@ print(f"BoM Compliance Status: {root_part.indicators['SVHC'].flag.name}")
 # ``True``.
 
 # + tags=[]
-broken_query = (
-    queries.BomImpactedSubstancesQuery()
-    .with_bom(invalid_xml)
-    .with_legislations([SIN_LIST])
-)
+broken_query = queries.BomImpactedSubstancesQuery().with_bom(invalid_xml).with_legislations([SIN_LIST])
 
 RUN_QUERY = False
 

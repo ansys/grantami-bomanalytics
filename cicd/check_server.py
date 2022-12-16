@@ -28,6 +28,7 @@ def block_until_server_is_ok(func):
             logger.info(f"Check {check_count} failed. Waiting {WAIT_TIME} seconds...")
             check_count = check_count + 1
             time.sleep(WAIT_TIME)
+
     return wrapper
 
 
@@ -45,8 +46,8 @@ def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
         return False
 
     content = json.loads(response.content)
-    for check in content['HealthChecks']:
-        if check['Name'] == 'Database Check' and check['Status'] == 'Ok':
+    for check in content["HealthChecks"]:
+        if check["Name"] == "Database Check" and check["Status"] == "Ok":
             logger.info(f"All databases loaded.")
             return True
     logger.info(f"All databases not loaded.")

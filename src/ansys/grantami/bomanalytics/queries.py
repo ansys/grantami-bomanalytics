@@ -81,7 +81,7 @@ class _BaseQueryDataManager(ABC):
     @property
     def populated_inputs(self) -> bool:
         """Whether the argument manager is populated. For example, this property
-        determinse whether a query be performed on the items in the object.
+        determines whether a query be performed on the items in the object.
 
         Returns
         -------
@@ -220,7 +220,9 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
         self._item_definitions.append(item)
 
     @property
-    def batched_arguments(self) -> Generator[Dict[str, List[Union[models.ModelBase, str]]], None, None]:
+    def batched_arguments(
+        self,
+    ) -> Generator[Dict[str, List[Union[models.ModelBase, str]]], None, None]:
         """Generator that produces lists of instances of models to be supplied to a query request. Each list
         of dictionaries is at most ``_batch_size`` long.
 

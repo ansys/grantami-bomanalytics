@@ -54,10 +54,7 @@ svhc = indicators.WatchListIndicator(
     legislation_names=["REACH - The Candidate List"],
     default_threshold_percentage=0.1,
 )
-sin = indicators.WatchListIndicator(
-    name="SIN",
-    legislation_names=["The SIN List 2.1 (Substitute It Now!)"]
-)
+sin = indicators.WatchListIndicator(name="SIN", legislation_names=["The SIN List 2.1 (Substitute It Now!)"])
 # -
 
 # + [markdown] tags=[]
@@ -71,11 +68,7 @@ sin = indicators.WatchListIndicator(
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
 
-part_query = (
-    queries.PartComplianceQuery()
-    .with_part_numbers(["asm_flap_mating", "DRILL"])
-    .with_indicators([svhc])
-)
+part_query = queries.PartComplianceQuery().with_part_numbers(["asm_flap_mating", "DRILL"]).with_indicators([svhc])
 # -
 
 # Finally, run the query. Passing a ``PartComplianceQuery`` object to the ``Connection.run()`` method returns a
@@ -123,8 +116,7 @@ print(f"Wing compliance status: {wing.indicators['SVHC'].flag.name}")
 
 # + tags=[]
 above_threshold_flag = svhc.available_flags.WatchListAboveThreshold
-parts_contain_svhcs = [part for part in wing.parts
-                       if part.indicators["SVHC"] >= above_threshold_flag]
+parts_contain_svhcs = [part for part in wing.parts if part.indicators["SVHC"] >= above_threshold_flag]
 print(f"{len(parts_contain_svhcs)} parts that contain SVHCs")
 for part in parts_contain_svhcs:
     print(f"Part: {part.record_history_identity}")
@@ -137,11 +129,12 @@ for part in parts_contain_svhcs:
 
 # + tags=[]
 def recursively_print_parts_with_svhcs(parts, depth=0):
-    parts_contain_svhcs = [part for part in parts
-                           if part.indicators["SVHC"] >= above_threshold_flag]
+    parts_contain_svhcs = [part for part in parts if part.indicators["SVHC"] >= above_threshold_flag]
     for part in parts_contain_svhcs:
         print(f"{'  '*depth}- Part: {part.record_history_identity}")
         recursively_print_parts_with_svhcs(part.parts, depth + 1)
+
+
 # -
 
 
@@ -155,54 +148,59 @@ recursively_print_parts_with_svhcs(wing.parts)
 
 # + tags=[]
 def recursively_print_parts_with_svhcs(parts, depth=0):
-    parts_contain_svhcs = [part for part in parts
-                           if part.indicators["SVHC"] >= above_threshold_flag]
+    parts_contain_svhcs = [part for part in parts if part.indicators["SVHC"] >= above_threshold_flag]
     for part in parts_contain_svhcs:
         print(f"{'  '*depth}- Part: {part.record_history_identity}")
         recursively_print_parts_with_svhcs(part.parts, depth + 1)
         print_materials_with_svhcs(part.materials, depth + 1)
         print_specifications_with_svhcs(part.specifications, depth + 1)
         print_substances_with_svhcs(part.substances, depth + 1)
+
+
 # -
 
 
 # + tags=[]
 def print_materials_with_svhcs(materials, depth=0):
-    mats_contain_svhcs = [m for m in materials
-                          if m.indicators["SVHC"] >= above_threshold_flag]
+    mats_contain_svhcs = [m for m in materials if m.indicators["SVHC"] >= above_threshold_flag]
     for mat in mats_contain_svhcs:
         print(f"{'  '*depth}- Material: {mat.record_history_identity}")
         print_substances_with_svhcs(mat.substances, depth + 1)
+
+
 # -
 
 
 # + tags=[]
 def print_specifications_with_svhcs(specifications, depth=0):
-    specs_contain_svhcs = [s for s in specifications
-                           if s.indicators["SVHC"] >= above_threshold_flag]
+    specs_contain_svhcs = [s for s in specifications if s.indicators["SVHC"] >= above_threshold_flag]
     for spec in specs_contain_svhcs:
         print(f"{'  '*depth}- Specification: {spec.record_history_identity}")
         print_coatings_with_svhcs(spec.coatings, depth + 1)
         print_substances_with_svhcs(spec.substances, depth + 1)
+
+
 # -
 
 
 # + tags=[]
 def print_coatings_with_svhcs(coatings, depth=0):
-    coatings_contain_svhcs = [c for c in coatings
-                             if c.indicators["SVHC"] >= above_threshold_flag]
+    coatings_contain_svhcs = [c for c in coatings if c.indicators["SVHC"] >= above_threshold_flag]
     for coating in coatings_contain_svhcs:
         print(f"{'  '*depth}- Coating: {coating.record_history_identity}")
         print_substances_with_svhcs(coating.substances, depth + 1)
+
+
 # -
 
 
 # + tags=[]
 def print_substances_with_svhcs(substances, depth=0):
-    subs_contain_svhcs = [sub for sub in substances
-                          if sub.indicators["SVHC"] >= above_threshold_flag]
+    subs_contain_svhcs = [sub for sub in substances if sub.indicators["SVHC"] >= above_threshold_flag]
     for sub in subs_contain_svhcs:
         print(f"{'  '*depth}- Substance: {sub.record_history_identity}")
+
+
 # -
 
 

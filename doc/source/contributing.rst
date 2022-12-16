@@ -43,7 +43,7 @@ is hosted at `Granta MI BoM Analytics Documentation <https://grantami.docs.pyans
 View examples
 -------------
 Examples are included in the documentation to give you more context around
-the core functionality described in :ref:`ref_grantami_bomanalytics_api_index`.
+the core capabilities described in :ref:`ref_grantami_bomanalytics_api_index`.
 Additional examples are welcomed, especially if they cover a key use case of the
 package that has not yet been covered.
 

@@ -238,10 +238,7 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
                 notebook = jupytext.read(file_source_path)
 
                 # Filter out cells to remove
-                notebook.cells = [
-                    c for c in notebook.cells
-                    if "remove_cell" not in c.metadata.get("tags", [])
-                ]
+                notebook.cells = [c for c in notebook.cells if "remove_cell" not in c.metadata.get("tags", [])]
 
                 jupytext.write(notebook, file_output_path.with_suffix(".ipynb"))
 

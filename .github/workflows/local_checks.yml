@@ -4,24 +4,27 @@ on:
       CODECOV_TOKEN:
         required: true
 
+env:
+  MAIN_PYTHON_VERSION: '3.9'
+
 jobs:
   style:
-    name: Style check
+    name: Code style
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v4
+      - name: PyAnsys code style checks
+        uses: pyansys/actions/code-style@v2
         with:
-          python-version: '3.9'
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
-      - name: Install style requirements
-        run: pip install 'tox<4' poetry --disable-pip-version-check
-
-      - name: Spell, Lint and Type Check
-        run: tox -e style
+  docs-style:
+    name: Documentation Style Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyAnsys documentation style checks
+        uses: pyansys/actions/doc-style@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   unit_tests:
     name: Unit tests
@@ -60,10 +63,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python 3.9
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Create wheel
         run: |
@@ -89,10 +92,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python 3.9
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Install system dependencies
         run: |

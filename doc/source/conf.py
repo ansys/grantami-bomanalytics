@@ -22,11 +22,11 @@ release = version = __version__
 
 # -- General configuration ---------------------------------------------------
 extensions = [
-    'sphinx.ext.autodoc',
-    'numpydoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.autosummary',
-    'notfound.extension',
+    "sphinx.ext.autodoc",
+    "numpydoc",
+    "sphinx.ext.doctest",
+    "sphinx.ext.autosummary",
+    "notfound.extension",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "sphinx.ext.extlinks",
@@ -41,17 +41,13 @@ add_module_names = False
 # sphinx.ext.autodoc
 autodoc_typehints = "description"
 autodoc_typehints_description_target = "documented"
-autodoc_type_aliases = {
-    "Yaml": "Yaml"
-}
+autodoc_type_aliases = {"Yaml": "Yaml"}
 
 # Intersphinx mapping
 intersphinx_mapping = {
     "python": ("https://docs.python.org/dev", None),
     "openapi-common": ("https://openapi.docs.pyansys.com", None),
-
     # kept here as an example
-
     # "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     # "numpy": ("https://numpy.org/devdocs", None),
     # "matplotlib": ("https://matplotlib.org/stable", None),
@@ -117,7 +113,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "_templates", "Thumbs.db", ".DS_Store"]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "sphinx"
@@ -147,10 +143,8 @@ htmlhelp_basename = "pybomanalyticsdoc"
 
 
 # -- Options for LaTeX output ------------------------------------------------
-latex_elements = {
-  'extraclassoptions': 'openany,oneside'
-}
-latex_engine = 'xelatex'
+latex_elements = {"extraclassoptions": "openany,oneside"}
+latex_engine = "xelatex"
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
@@ -164,7 +158,15 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "ansys.grantami.bomanalytics", "ansys.grantami.bomanalytics Documentation", [author], 1)]
+man_pages = [
+    (
+        master_doc,
+        "ansys.grantami.bomanalytics",
+        "ansys.grantami.bomanalytics Documentation",
+        [author],
+        1,
+    )
+]
 
 
 # -- Options for Texinfo output ----------------------------------------------
@@ -207,7 +209,7 @@ epub_exclude_files = ["search.html"]
 
 # Define some important paths and check were are where we expect to be
 cwd = Path(os.getcwd())
-assert (cwd.name == "source")
+assert cwd.name == "source"
 EXAMPLES_DIR_NAME = "examples"
 DUMMY_EXAMPLES_DIR_NAME = "examples-dummy"
 
@@ -254,7 +256,7 @@ if not examples_output_dir.is_dir():
 
 
 nbsphinx_prolog = """
-Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb>` or a 
+Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb>` or a
 :download:`Python script </{{ env.docname }}.py>`.
 
 ----

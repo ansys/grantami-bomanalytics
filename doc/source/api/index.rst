@@ -19,7 +19,7 @@ The API for Granta MI BoM Analytics is split into these key sections:
 
 .. note::
    While some examples use a different class than the one being documented, both classes are always
-   equivalent in terms of the functionality being demonstrated.
+   equivalent in terms of the capability being demonstrated.
 
 .. toctree::
    :maxdepth: 2

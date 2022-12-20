@@ -1,7 +1,7 @@
 :orphan:
 
-Ansys Granta MI BoM Analytics API Documentation
-===============================================
+Granta MI BoM Analytics API documentation
+=========================================
 
 .. toctree::
    :hidden:

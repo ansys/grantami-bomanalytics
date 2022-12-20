@@ -1,0 +1,52 @@
+repos:
+
+- repo: https://github.com/psf/black
+  rev: 22.10.0
+  hooks:
+  - id: black
+
+# ISORT should be activated at some point
+#
+# - repo: https://github.com/pycqa/isort
+#   rev: 5.10.1
+#   hooks:
+#   - id: isort
+
+- repo: https://github.com/PyCQA/flake8
+  rev: 6.0.0
+  hooks:
+  - id: flake8
+
+- repo: https://github.com/codespell-project/codespell
+  rev: v2.2.2
+  hooks:
+  - id: codespell
+
+# MYPY also not really working...
+# 
+# - repo: https://github.com/pre-commit/mirrors-mypy
+#   rev: v0.991  # Use the sha / tag you want to point at
+#   hooks:
+#   - id: mypy
+#     args: ["--config-file", "pyproject.toml", ./src/ ]
+
+# To be activated after quick dev cycles
+#
+# - repo: https://github.com/pycqa/pydocstyle
+#   rev: 6.1.1
+#   hooks:
+#   - id: pydocstyle
+#     additional_dependencies: [toml]
+#     exclude: "tests/"
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: check-merge-conflict
+  - id: debug-statements
+
+# this validates our github workflow files
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.19.2
+  hooks:
+    - id: check-github-workflows

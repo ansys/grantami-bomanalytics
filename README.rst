@@ -20,7 +20,7 @@ Install the ``ansys-grantami-bomanalytics`` package with this code:
 
    pip install ansys-grantami-bomanalytics
 
-Alternatively, clone and install thie package with this code:
+Alternatively, clone and install this package with this code:
 
 .. code::
 

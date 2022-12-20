@@ -93,7 +93,7 @@ query
 # consolidate the cells above into a single step:
 
 # + tags=[]
-query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislations(["REACH - The Candidate List"]))  # noqa: E501
+query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislations(["REACH - The Candidate List"])  # noqa: E501
 query
 # -
 

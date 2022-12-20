@@ -81,7 +81,7 @@ class _BaseQueryDataManager(ABC):
     @property
     def populated_inputs(self) -> bool:
         """Whether the argument manager is populated. For example, this property
-        determines whether a query be performed on the items in the object.
+        determines whether to perform a query on the items in the object.
 
         Returns
         -------

@@ -81,7 +81,11 @@ svhc = indicators.WatchListIndicator(
     legislation_names=["REACH - The Candidate List"],
     default_threshold_percentage=0.1,
 )
-mat_query = queries.MaterialComplianceQuery().with_indicators([svhc]).with_material_ids(material_ids)
+mat_query = (
+    queries.MaterialComplianceQuery()
+    .with_indicators([svhc])
+    .with_material_ids(material_ids)
+)
 mat_results = cxn.run(mat_query)
 mat_results
 # -
@@ -98,7 +102,8 @@ mat_results
 # To do this, first create a dictionary that maps a material ID to the indicator result returned by the query.
 
 # + tags=[]
-material_lookup = {mat.material_id: mat.indicators["SVHC"] for mat in mat_results.compliance_by_material_and_indicator}
+material_lookup = {mat.material_id: mat.indicators["SVHC"]
+                   for mat in mat_results.compliance_by_material_and_indicator}
 # -
 
 # Next, define a function that takes a list of material IDs and returns the worst compliance status associated with the
@@ -113,8 +118,6 @@ def rollup_results(material_ids) -> str:
     indicator_results = [material_lookup[mat_id] for mat_id in material_ids]
     worst_result = max(indicator_results)
     return worst_result.flag.name
-
-
 # -
 
 
@@ -122,7 +125,8 @@ def rollup_results(material_ids) -> str:
 # and compliance status.
 
 # + tags=[]
-component_results = {comp["part_number"]: rollup_results(comp["materials"]) for comp in components}
+component_results = {comp["part_number"]: rollup_results(comp["materials"])
+                     for comp in components}
 component_results
 # -
 
@@ -142,7 +146,8 @@ result_map = {
 # You can now use this dictionary to map from the Granta MI result to the approval requirements.
 
 # + tags=[]
-results = {part_number: result_map[result] for part_number, result in component_results.items()}
+results = {part_number: result_map[result]
+           for part_number, result in component_results.items()}
 results
 # -
 

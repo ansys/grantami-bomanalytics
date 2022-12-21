@@ -9,13 +9,23 @@ env:
 
 jobs:
   style:
-    name: Code style
+    name: Code Style Check
     runs-on: ubuntu-latest
+
     steps:
-      - name: PyAnsys code style checks
-        uses: pyansys/actions/code-style@v2
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install style requirements
+        run: pip install 'tox<4' poetry --disable-pip-version-check
+
+      - name: Spell, Lint and Type Check
+        run: tox -e style
+
 
   docs-style:
     name: Documentation Style Check

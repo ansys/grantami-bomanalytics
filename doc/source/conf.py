@@ -235,12 +235,8 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir):
             file_output_path = root_output_path / Path(file)
             shutil.copy(file_source_path, file_output_path)  # Copy everything
             if file_source_path.suffix == ".py":  # Also convert python scripts to jupyter notebooks
-                notebook = jupytext.read(file_source_path)
-
-                # Filter out cells to remove
-                notebook.cells = [c for c in notebook.cells if "remove_cell" not in c.metadata.get("tags", [])]
-
-                jupytext.write(notebook, file_output_path.with_suffix(".ipynb"))
+                ntbk = jupytext.read(file_source_path)
+                jupytext.write(ntbk, file_output_path.with_suffix(".ipynb"))
 
 
 # If we already have a source/examples directory then don't do anything.

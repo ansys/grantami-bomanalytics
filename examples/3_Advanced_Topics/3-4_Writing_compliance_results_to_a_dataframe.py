@@ -36,7 +36,11 @@ svhc = indicators.WatchListIndicator(
     legislation_names=["REACH - The Candidate List"],
     default_threshold_percentage=0.1,
 )
-part_query = queries.PartComplianceQuery().with_record_history_ids([565060]).with_indicators([svhc])
+part_query = (
+    queries.PartComplianceQuery()
+    .with_record_history_ids([565060])
+    .with_indicators([svhc])
+)
 part_result = cxn.run(part_query)
 # -
 
@@ -46,7 +50,10 @@ part_result = cxn.run(part_query)
 
 # + tags=[]
 for part in part_result.compliance_by_part_and_indicator[0].parts:
-    print(f"Part ID: {part.record_history_identity}, " f"Compliance: {part.indicators['SVHC'].flag}")
+    print(
+        f"Part ID: {part.record_history_identity}, "
+        f"Compliance: {part.indicators['SVHC'].flag}"
+    )
 # -
 
 # However, this structure makes it difficult to compare items at different levels. To do that, you want to flatten the
@@ -76,8 +83,6 @@ def create_dict(item, item_type, level, parent_id):
         "Level": level,
     }
     return row
-
-
 # -
 
 # To help with the flattening process, you also define a schema, which describes which child item types each item
@@ -129,20 +134,23 @@ def flatten_bom(root_part):
 
         # Add the child items to the stack
         if "Part" in child_items:
-            items_to_process.extend([(p, "Part", child_level, item_id) for p in item_object.parts])
+            items_to_process.extend([(p, "Part", child_level, item_id)
+                                     for p in item_object.parts])
         if "Specification" in child_items:
-            items_to_process.extend([(s, "Specification", child_level, item_id) for s in item_object.specifications])
+            items_to_process.extend([(s, "Specification", child_level, item_id)
+                                     for s in item_object.specifications])
         if "Material" in child_items:
-            items_to_process.extend([(m, "Material", child_level, item_id) for m in item_object.materials])
+            items_to_process.extend([(m, "Material", child_level, item_id)
+                                     for m in item_object.materials])
         if "Coating" in child_items:
-            items_to_process.extend([(c, "Coating", child_level, item_id) for c in item_object.coatings])
+            items_to_process.extend([(c, "Coating", child_level, item_id)
+                                     for c in item_object.coatings])
         if "Substance" in child_items:
-            items_to_process.extend([(s, "Substance", child_level, item_id) for s in item_object.substances])
+            items_to_process.extend([(s, "Substance", child_level, item_id)
+                                     for s in item_object.substances])
 
     # When the stack is empty, the while loop exists. Return the result list.
     return result
-
-
 # -
 
 

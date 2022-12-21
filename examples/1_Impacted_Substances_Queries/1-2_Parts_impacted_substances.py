@@ -62,7 +62,11 @@ REACH = "REACH - The Candidate List"
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
 
-part_query = queries.PartImpactedSubstancesQuery().with_part_numbers([DRILL, WING]).with_legislations([SIN_LIST, REACH])
+part_query = (
+    queries.PartImpactedSubstancesQuery()
+    .with_part_numbers([DRILL, WING])
+    .with_legislations([SIN_LIST, REACH])
+)
 # -
 
 # Finally, run the query. Passing a ``PartImpactedSubstancesQuery`` object to the ``Connection.run()`` method returns a
@@ -98,7 +102,8 @@ for part in part_result.impacted_substances_by_part:
 # + tags=[]
 from tabulate import tabulate
 
-rows = [(substance.cas_number, substance.max_percentage_amount_in_material) for substance in substances_by_part[WING]]
+rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
+        for substance in substances_by_part[WING]]
 
 print(f'Substances impacted by "{SIN_LIST}" in "{WING}"')
 print(tabulate(rows, headers=["CAS Number", "Amount (wt. %)"]))
@@ -114,7 +119,8 @@ print(tabulate(rows, headers=["CAS Number", "Amount (wt. %)"]))
 
 # + tags=[]
 part_substances_sin = part_result.impacted_substances_by_legislation[SIN_LIST]
-rows = [(substance.cas_number, substance.max_percentage_amount_in_material) for substance in part_substances_sin]
+rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
+        for substance in part_substances_sin]
 print(f'Substances impacted by "{SIN_LIST}" in all parts (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
@@ -130,7 +136,8 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 
 # + tags=[]
 part_substances_all = part_result.impacted_substances
-rows = [(substance.cas_number, substance.max_percentage_amount_in_material) for substance in part_substances_all]
+rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
+        for substance in part_substances_all]
 print(f'Impacted substances across all legislations in "DRILL" (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -

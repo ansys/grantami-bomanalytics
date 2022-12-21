@@ -92,19 +92,9 @@ query
 # Fluent interfaces are designed to allow a complex object to be constructed in a single line of code. As such, you can
 # consolidate the cells above into a single step:
 
-# + tags=["remove_cell"]
-# Turn off black formatting
-# fmt: off
-# -
-
 # + tags=[]
 query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislations(["REACH - The Candidate List"])  # noqa: E501
 query
-# -
-
-# + tags=["remove_cell"]
-# Turn on black formatting
-# fmt: on
 # -
 
 # Because the fluent interface can produce very long lines of code, it's necessary to break your query creation code

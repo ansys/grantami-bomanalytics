@@ -24,7 +24,7 @@ test = ["pytest (==7.0.0)", "requests-mock (==1.9.3)"]
 
 [[package]]
 name = "ansys-openapi-common"
-version = "1.1.1"
+version = "1.2.0"
 description = "Provides a helper to create sessions for use with Ansys OpenAPI clients."
 category = "main"
 optional = false
@@ -40,10 +40,8 @@ requests-ntlm = ">=1.1.0,<2.0.0"
 typing-extensions = {version = ">=4.1,<5.0", markers = "python_version < \"3.8\""}
 
 [package.extras]
-doc = ["numpydoc (==1.2.1)", "pyansys-sphinx-theme (==0.2.3)", "sphinx (==4.5.0)", "sphinx-copybutton (==0.5.0)", "sphinx-notfound-page (==0.8)", "sphinx_autodoc_typehints (==1.17.0)"]
 linux-kerberos = ["requests-kerberos (>=0.13,<0.14)"]
-oidc = ["keyring (>=22.0,<23.0)", "requests_oauthlib (>=1.3,<2.0)"]
-test = ["asgi_gssapi", "covertable", "fastapi", "psutil", "pydantic", "pytest", "pytest-cov", "pytest-mock", "requests-mock", "uvicorn"]
+oidc = ["keyring (>=22,<24)", "requests_auth (>=6.0,<7.0)"]
 
 [[package]]
 name = "ansys-sphinx-theme"
@@ -1944,7 +1942,7 @@ ansys-grantami-bomanalytics-openapi = [
     {file = "ansys_grantami_bomanalytics_openapi-1.0.0-py3-none-any.whl", hash = "sha256:3a7b5902566f59e8d7ebadb0626ce41cdd00f199636457bf7ff5559879076109"},
 ]
 ansys-openapi-common = [
-    {file = "ansys_openapi_common-1.1.1-py3-none-any.whl", hash = "sha256:826cf5f0bacc686655e2fcc786b0043d47e72b5fd3653f4e0e51344e1bfb34a2"},
+    {file = "ansys_openapi_common-1.2.0-py3-none-any.whl", hash = "sha256:3c6e01a553956314366a9d9c6468eaf4e66ed4a43b7461425a8c0396cfb22e8a"},
 ]
 ansys-sphinx-theme = [
     {file = "ansys-sphinx-theme-0.7.1.tar.gz", hash = "sha256:c5604c446d8ae9d16fbc9c598a83359df6caf150feb2e3a5e86c0ea19fa0201c"},

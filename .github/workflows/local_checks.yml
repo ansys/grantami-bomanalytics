@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: pyansys/actions/doc-style@v2
+        uses: pyansys/actions/doc-style@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 

@@ -13,6 +13,8 @@ on:
       - 'pyproject.toml'
   workflow_dispatch:
 
+env:
+  DOCUMENTATION_CNAME: 'bomanalytics.grantami.docs.pyansys.com'
 
 jobs:
   local_checks:
@@ -36,9 +38,21 @@ jobs:
       TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
       TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
 
+  doc-deploy-dev:
+    name: "Deploy development documentation"
+    runs-on: ubuntu-latest
+    needs: [ integration_checks ]
+    if: github.event_name == 'push'
+    steps:
+      - uses: pyansys/actions/doc-deploy-dev@v4
+        with:
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          doc-artifact-name: Documentation-html
+
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
-    needs: integration_checks
+    needs: doc-deploy-dev
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -47,14 +61,6 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
-      # used for documentation deployment
-      - name: Get Bot Application Token
-        id: get_workflow_token
-        uses: peter-murray/workflow-application-token-action@v2
-        with:
-          application_id: ${{ secrets.BOT_APPLICATION_ID }}
-          application_private_key: ${{ secrets.BOT_APPLICATION_PRIVATE_KEY }}
 
       - uses: actions/download-artifact@v3
         with:
@@ -65,19 +71,12 @@ jobs:
         with:
           name: Documentation-pdf
 
-      - uses: actions/download-artifact@v3
+      - name: "Deploy stable documentation"
+        uses: pyansys/actions/doc-deploy-stable@v4
         with:
-          name: Documentation-html
-          path: ~/html
-
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.4.1
-        with:
-          repository-name: pyansys/grantami-bomanalytics-docs
-          token: ${{ steps.get_workflow_token.outputs.token }}
-          BRANCH: gh-pages
-          FOLDER: ~/html
-          CLEAN: true
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          doc-artifact-name: Documentation-html
 
       # note how we use the PyPI tokens
       - name: Upload to PyPI

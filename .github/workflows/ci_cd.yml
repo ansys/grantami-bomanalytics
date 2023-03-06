@@ -13,6 +13,8 @@ on:
       - 'pyproject.toml'
   workflow_dispatch:
 
+env:
+  DOCUMENTATION_CNAME: 'pyansys.github.io/grantami-bomanalytics/'
 
 jobs:
   local_checks:
@@ -35,6 +37,18 @@ jobs:
       TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
       TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
       TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
+
+  doc-deploy-dev:
+    name: "Deploy development documentation"
+    runs-on: ubuntu-latest
+    needs: [ integration_checks ]
+    #if: github.event_name == 'push'
+    steps:
+      - uses: pyansys/actions/doc-deploy-dev@v4
+        with:
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          doc-artifact-name: Documentation-html
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
@@ -78,6 +92,7 @@ jobs:
           BRANCH: gh-pages
           FOLDER: ~/html
           CLEAN: true
+
 
       # note how we use the PyPI tokens
       - name: Upload to PyPI

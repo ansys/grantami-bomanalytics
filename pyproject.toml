@@ -65,7 +65,7 @@ optional = true
 
 [tool.poetry.group.doc.dependencies]
 # Doc packages
-ansys-sphinx-theme = { version = "0.7.1" }
+ansys-sphinx-theme = { version = "0.9.5" }
 numpydoc = { version = "1.5.0" }
 sphinx = { version = "4.5.0" }
 sphinx-notfound-page = { version = "0.8.3" }

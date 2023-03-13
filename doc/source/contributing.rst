@@ -38,7 +38,7 @@ To reach the PyAnsys support team, email `pyansys.support@ansys.com <pyansys.sup
 View Granta MI BoM Analytics documentation
 ------------------------------------------
 Documentation for the latest stable release of Granta MI BoM Analytics
-is hosted at `Granta MI BoM Analytics Documentation <https://grantami.docs.pyansys.com>`_.
+is hosted at `Granta MI BoM Analytics Documentation <https://bomanalytics.grantami.docs.pyansys.com>`_.
 
 View examples
 -------------

@@ -1,7 +1,7 @@
 import sys
 import os
 from datetime import datetime
-from ansys_sphinx_theme import get_version_match, pyansys_logo_black
+from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import shutil
 from pathlib import Path
 import jupytext
@@ -128,9 +128,10 @@ copybutton_prompt_is_regexp = True
 
 
 # -- Options for HTML output -------------------------------------------------
-cname = os.getenv("DOCUMENTATION_CNAME", "<DEFAULT_CNAME>")
+cname = os.getenv("DOCUMENTATION_CNAME", "bomanalytics.grantami.docs.pyansys.com")
 """The canonical name of the webpage hosting the documentation."""
 html_theme = "ansys_sphinx_theme"
+html_favicon = ansys_favicon
 html_logo = pyansys_logo_black
 html_theme_options = {
     "github_url": "https://github.com/pyansys/grantami-bomanalytics",

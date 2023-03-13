@@ -128,7 +128,7 @@ copybutton_prompt_is_regexp = True
 
 
 # -- Options for HTML output -------------------------------------------------
-cname = os.getenv("DOCUMENTATION_CNAME", "<DEFAULT_CNAME>")
+cname = os.getenv("DOCUMENTATION_CNAME", "bomanalytics.grantami.docs.pyansys.com")
 """The canonical name of the webpage hosting the documentation."""
 html_theme = "ansys_sphinx_theme"
 html_favicon = ansys_favicon

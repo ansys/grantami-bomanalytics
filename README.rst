@@ -31,7 +31,7 @@ Alternatively, clone and install this package with this code:
 
 Documentation
 -------------
-The `Granta MI BoM Analytics Documentation <https://grantami.docs.pyansys.com>`_
+The `Granta MI BoM Analytics Documentation <https://bomanalytics.grantami.docs.pyansys.com>`_
 provides comprehensive installation and usage information.
 
 
@@ -64,7 +64,7 @@ Here's a brief example of how to use Granta MI BoM Analytics:
 
 Testing
 -------
-For information on testing, see `Contributing <https://grantami.docs.pyansys.com/contributing>`_.
+For information on testing, see the ``Contributing`` section of the documentation.
 
 
 License

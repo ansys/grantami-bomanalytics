@@ -53,7 +53,7 @@ jobs:
 
   Release:
     if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
-    needs: doc-deploy-dev
+    needs: integration_checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

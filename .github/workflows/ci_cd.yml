@@ -12,6 +12,7 @@ on:
       - '.github/**'
       - 'pyproject.toml'
   workflow_dispatch:
+  merge_group:
 
 env:
   DOCUMENTATION_CNAME: 'bomanalytics.grantami.docs.pyansys.com'

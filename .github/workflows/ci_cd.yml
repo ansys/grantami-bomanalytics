@@ -103,9 +103,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          prerelease: true
-          tag_name: v1.1.3b0
-          draft: true
           generate_release_notes: true
           files: |
             dist/*.whl

@@ -404,7 +404,6 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
     def _create_impacted_substance(
         substance: models.CommonImpactedSubstance,
     ) -> ImpactedSubstance:
-
         """Create an ``ImpactedSubstance`` result object based on the corresponding object returned from the low-level
         API.
 

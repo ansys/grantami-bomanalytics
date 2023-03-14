@@ -52,7 +52,7 @@ jobs:
           doc-artifact-name: Documentation-html
 
   Release:
-#    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
+    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
     needs: integration_checks
     runs-on: ubuntu-latest
     steps:
@@ -84,21 +84,21 @@ jobs:
           files: dist/documentation-html/
           dest: dist/documentation-html.zip
 
-#      - name: "Deploy stable documentation"
-#        uses: pyansys/actions/doc-deploy-stable@v4
-#        with:
-#          cname: ${{ env.DOCUMENTATION_CNAME }}
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          doc-artifact-name: Documentation-html
+      - name: "Deploy stable documentation"
+        uses: pyansys/actions/doc-deploy-stable@v4
+        with:
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          doc-artifact-name: Documentation-html
 
-#      # note how we use the PyPI tokens
-#      - name: Upload to PyPI
-#        run: |
-#          pip install twine
-#          twine upload --non-interactive --skip-existing ~/**/*.whl
-#        env:
-#          TWINE_USERNAME: __token__
-#          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+      # note how we use the PyPI tokens
+      - name: Upload to PyPI
+        run: |
+          pip install twine
+          twine upload --non-interactive --skip-existing ~/**/*.whl
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
       - name: Release
         uses: softprops/action-gh-release@v1

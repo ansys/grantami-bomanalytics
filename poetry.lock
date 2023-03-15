@@ -1774,14 +1774,14 @@ test = ["check-manifest", "pep440", "pre-commit", "pytest", "testpath"]
 
 [[package]]
 name = "nbsphinx"
-version = "0.8.10"
+version = "0.9.1"
 description = "Jupyter Notebook Tools for Sphinx"
 category = "dev"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "nbsphinx-0.8.10-py3-none-any.whl", hash = "sha256:6076fba58020420927899362579f12779a43091eb238f414519ec25b4a8cfc96"},
-    {file = "nbsphinx-0.8.10.tar.gz", hash = "sha256:a8d68046f8aab916e2940b9b3819bd3ef9ddce868aa38845ea366645cabb6254"},
+    {file = "nbsphinx-0.9.1-py3-none-any.whl", hash = "sha256:c2991a2c497715f52f6c727f8a633e309f097fe9bb794538011ca1ddb6b698fa"},
+    {file = "nbsphinx-0.9.1.tar.gz", hash = "sha256:59bbfb7bc676a6647805fb3ca83490338ae7f96c1674a9e5e707f055c272c59d"},
 ]
 
 [package.dependencies]
@@ -3465,4 +3465,4 @@ examples = ["lxml", "tabulate", "pandas", "jupyterlab"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7.1"
-content-hash = "cd22c48d91a7d76e929d1dd57b1bd51d1bb04af910dc9de2a28ed896b2041ecc"
+content-hash = "033899336ced2abe4bb91d151205b9a8b32c823b7fb1680dc433f265d1fa8c83"

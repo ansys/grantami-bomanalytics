@@ -126,7 +126,6 @@ class Connection(ApiClientFactory):
         session_configuration.headers["User-Agent"] = generate_user_agent("ansys-grantami-bomanalytics", __version__)
         session_configuration.headers["X-Granta-ActAsReadUser"] = "true"
 
-
     def connect(self) -> "BomAnalyticsClient":
         """Finalize the BoM Analytics client and return it for use.
 

@@ -7,19 +7,21 @@ from ansys.grantami.bomanalytics import Connection
 from .common import CUSTOM_TABLES
 
 sl_url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
-username = os.getenv("TEST_USER")
-password = os.getenv("TEST_PASS")
+read_username = os.getenv("TEST_USER")
+read_password = os.getenv("TEST_PASS")
+
+write_username = os.getenv("TEST_WRITE_USER")
+write_password = os.getenv("TEST_WRITE_PASS")
 
 
 @pytest.fixture(scope="session")
 def default_connection():
-    connection = Connection(api_url=sl_url).with_credentials(username, password).connect()
+    connection = Connection(api_url=sl_url).with_credentials(read_username, read_password).connect()
     return connection
 
 
-@pytest.fixture
-def configurable_connection(request):
-    connection = Connection(api_url=sl_url).with_credentials(username, password).connect()
+def _get_connection(request, url, username, password):
+    connection = Connection(api_url=url).with_credentials(username, password).connect()
     if request.param:
         if isinstance(request.param, str):
             db_key = request.param
@@ -29,6 +31,16 @@ def configurable_connection(request):
     else:
         connection.set_database_details()
     return connection
+
+
+@pytest.fixture
+def configurable_connection(request):
+    return _get_connection(request, sl_url, read_username, read_password)
+
+
+@pytest.fixture
+def configurable_connection_write(request):
+    return _get_connection(request, sl_url, write_username, write_password)
 
 
 @pytest.fixture

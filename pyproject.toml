@@ -109,6 +109,8 @@ passenv =
     TEST_SL_URL
     TEST_USER
     TEST_PASS
+    TEST_WRITE_USER
+    TEST_WRITE_PASS
 
 [testenv:style]
 deps =

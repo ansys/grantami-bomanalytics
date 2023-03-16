@@ -37,6 +37,8 @@ jobs:
       TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
       TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
       TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
+      TEST_SERVER_WRITE_USER: ${{ secrets.TEST_SERVER_WRITE_USER }}
+      TEST_SERVER_WRITE_PASS: ${{ secrets.TEST_SERVER_WRITE_PASS }}
 
   doc-deploy-dev:
     name: "Deploy development documentation"

@@ -17,6 +17,10 @@ on:
         required: true
       TEST_SERVER_READ_PASS:
         required: true
+      TEST_SERVER_WRITE_USER:
+        required: true
+      TEST_SERVER_WRITE_PASS:
+        required: true
   workflow_dispatch:
 
 concurrency:
@@ -80,6 +84,8 @@ jobs:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+          TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
+          TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
 
   docs:
     name: Build documentation

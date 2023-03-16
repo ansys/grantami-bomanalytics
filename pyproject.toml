@@ -5,12 +5,12 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "ansys-grantami-bomanalytics"
 description = "Perform compliance analysis on materials data stored in Granta MI."
-version = "1.1.2"
+version = "1.1.3"
 license = "MIT"
 authors = ["ANSYS, Inc."]
 maintainers = ["PyAnsys Maintainers <pyansys.maintainers@ansys.com>"]
 repository = "https://github.com/pyansys/grantami-bomanalytics"
-documentation = "https://grantami.docs.pyansys.com"
+documentation = "https://bomanalytics.grantami.docs.pyansys.com"
 readme = "README.rst"
 keywords = [
   "Ansys",
@@ -109,6 +109,8 @@ passenv =
     TEST_SL_URL
     TEST_USER
     TEST_PASS
+    TEST_WRITE_USER
+    TEST_WRITE_PASS
 
 [testenv:style]
 deps =

@@ -37,6 +37,8 @@ jobs:
       TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
       TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
       TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
+      TEST_SERVER_WRITE_USER: ${{ secrets.TEST_SERVER_WRITE_USER }}
+      TEST_SERVER_WRITE_PASS: ${{ secrets.TEST_SERVER_WRITE_PASS }}
 
   doc-deploy-dev:
     name: "Deploy development documentation"
@@ -65,11 +67,23 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ansys-grantami-bomanalytics-wheel
-          path: ~/dist
+          path: dist
 
       - uses: actions/download-artifact@v3
         with:
           name: Documentation-pdf
+          path: dist
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: Documentation-html
+          path: dist/documentation-html/
+
+      - name: "Compressing HTML documentation"
+        uses: vimtor/action-zip@v1.1
+        with:
+          files: dist/documentation-html/
+          dest: dist/documentation-html.zip
 
       - name: "Deploy stable documentation"
         uses: pyansys/actions/doc-deploy-stable@v4
@@ -92,6 +106,6 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            ~/**/*.whl
-            ./**/*.zip
-            ./**/*.pdf
+            dist/*.whl
+            dist/documentation-html.zip
+            dist/*.pdf

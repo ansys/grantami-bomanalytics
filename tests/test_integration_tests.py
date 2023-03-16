@@ -127,3 +127,31 @@ def test_missing_table_raises_grantami_exception(default_connection):
 @pytest.mark.parametrize("configurable_connection", [True, False], indirect=True)
 def test_yaml(configurable_connection):
     assert configurable_connection.run(queries.Yaml)
+
+
+class TestActAsReadUser:
+    def _run_query(self, connection):
+        MATERIAL_ID = "plastic-abs-pc-flame"
+        LEGISLATION_ID = "The SIN List 2.1 (Substitute It Now!)"
+        mat_query = (
+            queries.MaterialImpactedSubstancesQuery()
+            .with_material_ids([MATERIAL_ID])
+            .with_legislations([LEGISLATION_ID])
+        )
+        results = connection.run(mat_query)
+        return results
+
+    @pytest.mark.parametrize("configurable_connection_write", [True], indirect=True)
+    def test_withdrawn_records_are_not_included(self, configurable_connection_write):
+        results = self._run_query(configurable_connection_write)
+
+        assert not results.messages
+
+    @pytest.mark.parametrize("configurable_connection_write", [True], indirect=True)
+    def test_withdrawn_records_return_warning_messages_if_not_acting_as_read(self, configurable_connection_write):
+        del configurable_connection_write.rest_client.headers["X-Granta-ActAsReadUser"]
+        results = self._run_query(configurable_connection_write)
+
+        assert any(
+            "has 1 substance row(s) having more than one linked substance. " in msg.message for msg in results.messages
+        )

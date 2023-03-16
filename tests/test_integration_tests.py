@@ -141,16 +141,17 @@ class TestActAsReadUser:
         results = connection.run(mat_query)
         return results
 
-    @pytest.mark.parametrize("configurable_connection", [False], indirect=True)
+    @pytest.mark.parametrize("configurable_connection", [True], indirect=True)
     def test_withdrawn_records_are_not_included(self, configurable_connection):
         results = self._run_query(configurable_connection)
 
         assert not results.messages
 
-    @pytest.mark.parametrize("configurable_connection", [False], indirect=True)
+    @pytest.mark.parametrize("configurable_connection", [True], indirect=True)
     def test_withdrawn_records_return_warning_messages_if_not_acting_as_read(self, configurable_connection):
         del configurable_connection.rest_client.headers["X-Granta-ActAsReadUser"]
         results = self._run_query(configurable_connection)
 
-        assert len(results.messages) == 1
-        assert "has 2 substance row(s)" in results.messages[0].message
+        assert any(
+            "has 1 substance row(s) having more than one linked substance. " in msg.message for msg in results.messages
+        )

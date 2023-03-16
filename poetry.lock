@@ -1309,14 +1309,14 @@ test = ["codecov", "ipykernel", "jupyterlab-server[openapi]", "openapi-spec-vali
 
 [[package]]
 name = "jupytext"
-version = "1.14.1"
+version = "1.14.5"
 description = "Jupyter notebooks as Markdown documents, Julia, Python or R scripts"
 category = "dev"
 optional = false
 python-versions = "~=3.6"
 files = [
-    {file = "jupytext-1.14.1-py3-none-any.whl", hash = "sha256:216bddba8bbb9355831ba17fd8d45cfe5d1355e7152bc8980f39175fc2584875"},
-    {file = "jupytext-1.14.1.tar.gz", hash = "sha256:314fa0e732b1d14764271843b676938ef8a7b9d53c3575ade636b45d13f341c8"},
+    {file = "jupytext-1.14.5-py3-none-any.whl", hash = "sha256:a5dbe60d0ea158bbf82c2bce74aba8d0c220ad7edcda09e017c5eba229b34dc8"},
+    {file = "jupytext-1.14.5.tar.gz", hash = "sha256:976e66be8056459a2067e0ec3ff68cc31e00c31895faf9eb893022d319e8f5b4"},
 ]
 
 [package.dependencies]
@@ -3472,4 +3472,4 @@ examples = ["lxml", "tabulate", "pandas", "jupyterlab"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7.1"
-content-hash = "ad699833e26498b68420f30c06de92960100b97db57441cf48af35172e67cff2"
+content-hash = "255e88bdc326f04424fed2be2d956a02a8e4ee275c2eb873394ab40e91b20a70"

@@ -57,6 +57,13 @@ jobs:
     needs: [ integration_checks ]
     runs-on: ubuntu-latest
     steps:
+      - name: "Deploy stable documentation"
+        uses: pyansys/actions/doc-deploy-stable@v4
+        with:
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          doc-artifact-name: Documentation-html
+
       - uses: actions/checkout@v3
 
       - name: Set up Python 3.9
@@ -84,13 +91,6 @@ jobs:
         with:
           files: dist/documentation-html/
           dest: dist/documentation-html.zip
-
-      - name: "Deploy stable documentation"
-        uses: pyansys/actions/doc-deploy-stable@v4
-        with:
-          cname: ${{ env.DOCUMENTATION_CNAME }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          doc-artifact-name: Documentation-html
 
       # note how we use the PyPI tokens
       - name: Upload to PyPI

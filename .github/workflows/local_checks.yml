@@ -116,6 +116,7 @@ jobs:
       - name: Install library
         run: |
           pip install poetry --disable-pip-version-check
+          poetry config installer.modern-installation false
           poetry install --with doc
 
       - name: Build HTML Documentation

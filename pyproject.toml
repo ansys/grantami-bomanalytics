@@ -67,7 +67,7 @@ optional = true
 # Doc packages
 ansys-sphinx-theme = "^0.9.5"
 numpydoc = { version = "1.5.0" }
-sphinx = { version = "4.5.0" }
+sphinx = { version = "5.3.0" }
 sphinx-notfound-page = { version = "0.8.3" }
 sphinx-copybutton = { version = "0.5.1" }
 enum_tools = { version = "0.9.0.post1" }

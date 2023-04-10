@@ -1216,14 +1216,14 @@ test = ["jupyter-server[test] (>=1.15,<3)", "pytest", "pytest-cov"]
 
 [[package]]
 name = "jupyter-server-ydoc"
-version = "0.6.1"
+version = "0.8.0"
 description = "A Jupyter Server Extension Providing Y Documents."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "jupyter_server_ydoc-0.6.1-py3-none-any.whl", hash = "sha256:18275ff1ce7e93bbda2301ca066273b3951fc50b0d9c8fc33788374134ad7920"},
-    {file = "jupyter_server_ydoc-0.6.1.tar.gz", hash = "sha256:ab10864708c81fa41ab9f2ed3626b54ff6926eaf14545d1d439714978dad6e9f"},
+    {file = "jupyter_server_ydoc-0.8.0-py3-none-any.whl", hash = "sha256:969a3a1a77ed4e99487d60a74048dc9fa7d3b0dcd32e60885d835bbf7ba7be11"},
+    {file = "jupyter_server_ydoc-0.8.0.tar.gz", hash = "sha256:a6fe125091792d16c962cc3720c950c2b87fcc8c3ecf0c54c84e9a20b814526c"},
 ]
 
 [package.dependencies]
@@ -1256,14 +1256,14 @@ test = ["pre-commit", "pytest", "pytest-asyncio", "websockets (>=10.0)", "ypy-we
 
 [[package]]
 name = "jupyterlab"
-version = "3.6.1"
+version = "3.6.3"
 description = "JupyterLab computational environment"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "jupyterlab-3.6.1-py3-none-any.whl", hash = "sha256:ad6707dd0149b629d0ed5b56916cfcdb816b376c6af3190337faba09e27ea29e"},
-    {file = "jupyterlab-3.6.1.tar.gz", hash = "sha256:aee98c174180e98a30470297d10b959e8e64f2288970c0de65f0a6d2b4807034"},
+    {file = "jupyterlab-3.6.3-py3-none-any.whl", hash = "sha256:6aba0caa771697d02fbf409f9767b2fdb4ee32ce935940e3b9a0d5d48d994d0f"},
+    {file = "jupyterlab-3.6.3.tar.gz", hash = "sha256:373e9cfb8a72edd294be14f16662563a220cecf0fb26de7aab1af9a29b689b82"},
 ]
 
 [package.dependencies]
@@ -1271,8 +1271,8 @@ ipython = "*"
 jinja2 = ">=2.1"
 jupyter-core = "*"
 jupyter-server = ">=1.16.0,<3"
-jupyter-server-ydoc = ">=0.6.0,<0.7.0"
-jupyter-ydoc = ">=0.2.2,<0.3.0"
+jupyter-server-ydoc = ">=0.8.0,<0.9.0"
+jupyter-ydoc = ">=0.2.3,<0.3.0"
 jupyterlab-server = ">=2.19,<3.0"
 nbclassic = "*"
 notebook = "<7"
@@ -2205,8 +2205,6 @@ files = [
     {file = "psutil-5.9.4-cp36-abi3-macosx_10_9_x86_64.whl", hash = "sha256:54d5b184728298f2ca8567bf83c422b706200bcbbfafdc06718264f9393cfeb7"},
     {file = "psutil-5.9.4-cp36-abi3-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:16653106f3b59386ffe10e0bad3bb6299e169d5327d3f187614b1cb8f24cf2e1"},
     {file = "psutil-5.9.4-cp36-abi3-manylinux_2_12_x86_64.manylinux2010_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:54c0d3d8e0078b7666984e11b12b88af2db11d11249a8ac8920dd5ef68a66e08"},
-    {file = "psutil-5.9.4-cp36-abi3-win32.whl", hash = "sha256:149555f59a69b33f056ba1c4eb22bb7bf24332ce631c44a319cec09f876aaeff"},
-    {file = "psutil-5.9.4-cp36-abi3-win_amd64.whl", hash = "sha256:fd8522436a6ada7b4aad6638662966de0d61d241cb821239b2ae7013d41a43d4"},
     {file = "psutil-5.9.4-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:6001c809253a29599bc0dfd5179d9f8a5779f9dffea1da0f13c53ee568115e1e"},
     {file = "psutil-5.9.4.tar.gz", hash = "sha256:3d7f9739eb435d4b1338944abe23f49584bde5395f27487d2ee25ad9a8774a62"},
 ]
@@ -2754,9 +2752,6 @@ files = [
     {file = "ruamel.yaml.clib-0.2.7-cp310-cp310-win_amd64.whl", hash = "sha256:d000f258cf42fec2b1bbf2863c61d7b8918d31ffee905da62dede869254d3b8a"},
     {file = "ruamel.yaml.clib-0.2.7-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:045e0626baf1c52e5527bd5db361bc83180faaba2ff586e763d3d5982a876a9e"},
     {file = "ruamel.yaml.clib-0.2.7-cp311-cp311-macosx_12_6_arm64.whl", hash = "sha256:721bc4ba4525f53f6a611ec0967bdcee61b31df5a56801281027a3a6d1c2daf5"},
-    {file = "ruamel.yaml.clib-0.2.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:41d0f1fa4c6830176eef5b276af04c89320ea616655d01327d5ce65e50575c94"},
-    {file = "ruamel.yaml.clib-0.2.7-cp311-cp311-win32.whl", hash = "sha256:f6d3d39611ac2e4f62c3128a9eed45f19a6608670c5a2f4f07f24e8de3441d38"},
-    {file = "ruamel.yaml.clib-0.2.7-cp311-cp311-win_amd64.whl", hash = "sha256:da538167284de58a52109a9b89b8f6a53ff8437dd6dc26d33b57bf6699153122"},
     {file = "ruamel.yaml.clib-0.2.7-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:4b3a93bb9bc662fc1f99c5c3ea8e623d8b23ad22f861eb6fce9377ac07ad6072"},
     {file = "ruamel.yaml.clib-0.2.7-cp36-cp36m-macosx_12_0_arm64.whl", hash = "sha256:a234a20ae07e8469da311e182e70ef6b199d0fbeb6c6cc2901204dd87fb867e8"},
     {file = "ruamel.yaml.clib-0.2.7-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:15910ef4f3e537eea7fe45f8a5d19997479940d9196f357152a09031c5be59f3"},
@@ -3489,4 +3484,4 @@ examples = ["lxml", "tabulate", "pandas", "jupyterlab"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7.1"
-content-hash = "21c2b0d8881ddbfceb87345a1ba3f293aa29c899d494c3c775c2fb1e1e4c927f"
+content-hash = "198118c3e5e5af8842d2c4d3fbd987ec794e95bc56b6f9a88192982f5bea12b8"

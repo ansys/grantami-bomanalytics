@@ -17,7 +17,7 @@
 
 # This example shows how to connect to Granta MI and perform a basic query for impacted substances. It also
 # demonstrates how to view logging messages returned by the Granta MI server. For more information about the
-#  results of the queries, see the examples in [Impacted Substances](1_Impacted_Substances_Queries/index.rst) and
+# results of the queries, see the examples in [Impacted Substances](1_Impacted_Substances_Queries/index.rst) and
 # [Compliance](2_Compliance_Queries/index.rst).
 
 # ## Connect to Granta MI
@@ -71,7 +71,7 @@ query = queries.MaterialImpactedSubstancesQuery()
 query
 # -
 
-# Now add the material that you want to query by specifying its naterial ID. (Alternate methods of specifying records
+# Now add the material that you want to query by specifying its material ID. (Alternate methods of specifying records
 # are shown in other examples.)
 
 # + tags=[]
@@ -124,7 +124,7 @@ result
 
 # ## View query results
 
-# In the case of ``MaterialsImpactedSubstancesQuery``, the results object contains the list of substances present in
+# In the case of ``MaterialImpactedSubstancesQuery``, the results object contains the list of substances present in
 # the material that are impacted by the specified legislations.
 
 # + tags=[]

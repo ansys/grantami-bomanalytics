@@ -72,7 +72,7 @@ results
 
 # ## View results grouped by material
 
-# This property is structured first as a list of ``materialWithImpactedSubstancesResult`` objects, each of which
+# This property is structured first as a list of ``MaterialWithImpactedSubstancesResult`` objects, each of which
 # contains a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation or a single flat list of all
 # substances.
 

@@ -158,7 +158,7 @@ class Connection(ApiClientFactory):
         """Check if the created client can be used to perform a query.
 
         This method uses a YAML query because it is a GET query that does not require parameters.
-        IT specifically checks for a 404 error, which most likely means that the BoM Analytics
+        It specifically checks for a 404 error, which most likely means that the BoM Analytics
         service is not available.
 
         Parameters

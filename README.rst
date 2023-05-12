@@ -3,7 +3,7 @@ ansys-grantami-bomanalytics
 
 Project Overview
 ----------------
-Granta MI BoM Analytics is part of the larger `PyAnsys <https://github.com/pyansys>`_
+PyGranta BoM Analytics is part of the larger `PyAnsys <https://github.com/pyansys>`_
 effort to facilitate the use of Ansys technologies directly from Python.
 
 The Granta MI Restricted Substances solution includes a REST API for
@@ -31,13 +31,13 @@ Alternatively, clone and install this package with this code:
 
 Documentation
 -------------
-The `Granta MI BoM Analytics Documentation <https://bomanalytics.grantami.docs.pyansys.com>`_
+The `PyGranta BoM Analytics Documentation <https://bomanalytics.grantami.docs.pyansys.com>`_
 provides comprehensive installation and usage information.
 
 
 Usage
 -----
-Here's a brief example of how to use Granta MI BoM Analytics:
+Here's a brief example of how to use PyGranta BoM Analytics:
 
 .. code:: python
 
@@ -69,5 +69,5 @@ For information on testing, see the ``Contributing`` section of the documentatio
 
 License
 -------
-Granta MI BoM Analytics is provided under the terms of the MIT license. You can find
+PyGranta BoM Analytics is provided under the terms of the MIT license. You can find
 this license in the LICENSE file at the root of the repository.

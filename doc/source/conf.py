@@ -15,7 +15,7 @@ from ansys.grantami.bomanalytics import __version__
 project = "ansys.grantami.bomanalytics"
 copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS Inc."
-html_title = f"Granta MI BoM Analytics {__version__}"
+html_title = f"PyGranta BoM Analytics {__version__}"
 
 # The short X.Y version
 release = version = __version__
@@ -45,7 +45,7 @@ autodoc_type_aliases = {"Yaml": "Yaml"}
 
 # Intersphinx mapping
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/dev", None),
+    "python": ("https://docs.python.org/3", None),
     "openapi-common": ("https://openapi.docs.pyansys.com", None),
     # kept here as an example
     # "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
@@ -137,7 +137,7 @@ html_theme_options = {
     "github_url": "https://github.com/pyansys/grantami-bomanalytics",
     "additional_breadcrumbs": [
         ("PyAnsys Documentation", "https://docs.pyansys.com/"),
-        ("Granta MI", "https://grantami.docs.pyansys.com/"),
+        ("PyGranta", "https://grantami.docs.pyansys.com/"),
     ],
     "show_breadcrumbs": True,
     "switcher": {

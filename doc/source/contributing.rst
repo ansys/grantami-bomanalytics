@@ -10,7 +10,7 @@ with this guide before attempting to contribute to the ``grantami-bomanalytics``
 repository.
 
 The following contribution information is specific to the ``grantami-bomanalytics``
-repository, which is for the Granta MI BoM Analytics library. This PyAnsys library name
+repository, which is for the PyGranta BoM Analytics library. This PyAnsys library name
 is often used in place of the repository name to provide clarity and improve
 readability.
 
@@ -35,10 +35,10 @@ this repository to submit questions, report bugs, and request new features.
 
 To reach the PyAnsys support team, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_.
 
-View Granta MI BoM Analytics documentation
+View PyGranta BoM Analytics documentation
 ------------------------------------------
-Documentation for the latest stable release of Granta MI BoM Analytics
-is hosted at `Granta MI BoM Analytics Documentation <https://bomanalytics.grantami.docs.pyansys.com>`_.
+Documentation for the latest stable release of PyGranta BoM Analytics
+is hosted at `PyGranta BoM Analytics Documentation <https://bomanalytics.grantami.docs.pyansys.com>`_.
 
 View examples
 -------------

@@ -1,6 +1,6 @@
 :orphan:
 
-Granta MI BoM Analytics API documentation
+PyGranta BoM Analytics API documentation
 =========================================
 
 .. toctree::

@@ -3,7 +3,7 @@
 API reference
 =============
 
-The API for Granta MI BoM Analytics is split into these key sections:
+The API for PyGranta BoM Analytics is split into these key sections:
 
 - :ref:`ref_grantami_bomanalytics_common_connection` describes how to connect to Granta MI and, if required,
   configure any schema customizations in the API client. It also explains how to run queries.

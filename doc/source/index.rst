@@ -1,4 +1,4 @@
-Granta MI BoM Analytics |version|
+PyGranta BoM Analytics |version|
 =================================
 
 .. toctree::
@@ -20,7 +20,7 @@ For comprehensive API documentation, see :ref:`ref_grantami_bomanalytics_api_ind
 
 Contributing
 ------------
-Contributions to Granta MI BoM Analytics are welcomed. For more information, see
+Contributions to PyGranta BoM Analytics are welcomed. For more information, see
 :doc:`Contributing<contributing>`.
 
 Project index

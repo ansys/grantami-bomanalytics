@@ -2,7 +2,7 @@
 
 Indicators
 ==========
-The Granta MI BoM Analytics API determines compliance against an indicator, which essentially represents a legislation
+The PyGranta BoM Analytics API determines compliance against an indicator, which essentially represents a legislation
 with a threshold. If a substance appears in a certain item, either directly or indirectly, in a quantity that exceeds that
 threshold, the item is non-compliant with that indicator. In cases where the
 legislation defines a per-substance threshold (for example, RoHS), then this per-substance threshold is used instead.

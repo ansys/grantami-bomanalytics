@@ -56,7 +56,7 @@ lxml = { version = "4.9.2" }
 pandas = { version = "1.3.5" }
 tabulate = { version = "0.9.0" }
 pytest = { version = "7.3.1" }
-pytest-cov = { version = "4.0.0" }
+pytest-cov = { version = "4.1.0" }
 requests-mock = { version = "1.10.0" }
 ipython = { version = "7.34.0" }
 

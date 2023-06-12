@@ -1172,13 +1172,13 @@ test = ["coverage", "jupyter-server[test] (>=2.0.0a0)", "pytest (>=7.0)", "pytes
 
 [[package]]
 name = "jupyter-ydoc"
-version = "0.2.3"
+version = "0.2.4"
 description = "Document structures for collaborative editing using Ypy"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "jupyter_ydoc-0.2.3-py3-none-any.whl", hash = "sha256:3ac51abfe378c6aeb62a449e8f0241bede1205f0199b0d27429140cbba950f79"},
-    {file = "jupyter_ydoc-0.2.3.tar.gz", hash = "sha256:98db7785215873c64d7dfcb1b741f41df11994c4b3d7e2957e004b392d6f11ea"},
+    {file = "jupyter_ydoc-0.2.4-py3-none-any.whl", hash = "sha256:d1a51c73ead6f6417bec0450f53c577a66abe8d43e9c2d8a1acaf7a17259f843"},
+    {file = "jupyter_ydoc-0.2.4.tar.gz", hash = "sha256:a3f670a69135e90493ffb91d6788efe2632bf42c6cc42a25f25c2e6eddd55a0e"},
 ]
 
 [package.dependencies]
@@ -1191,13 +1191,13 @@ test = ["pre-commit", "pytest", "pytest-asyncio", "websockets (>=10.0)", "ypy-we
 
 [[package]]
 name = "jupyterlab"
-version = "3.6.3"
+version = "3.6.4"
 description = "JupyterLab computational environment"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "jupyterlab-3.6.3-py3-none-any.whl", hash = "sha256:6aba0caa771697d02fbf409f9767b2fdb4ee32ce935940e3b9a0d5d48d994d0f"},
-    {file = "jupyterlab-3.6.3.tar.gz", hash = "sha256:373e9cfb8a72edd294be14f16662563a220cecf0fb26de7aab1af9a29b689b82"},
+    {file = "jupyterlab-3.6.4-py3-none-any.whl", hash = "sha256:8a4e495a096ae2315af2b07acaac9d38917b6927ebd891834ddf83b28f53e881"},
+    {file = "jupyterlab-3.6.4.tar.gz", hash = "sha256:862fb4a06c759a9b0a12de6bf434a8681a42e52fff0593c120e3fbad6847889f"},
 ]
 
 [package.dependencies]
@@ -1206,7 +1206,7 @@ jinja2 = ">=2.1"
 jupyter-core = "*"
 jupyter-server = ">=1.16.0,<3"
 jupyter-server-ydoc = ">=0.8.0,<0.9.0"
-jupyter-ydoc = ">=0.2.3,<0.3.0"
+jupyter-ydoc = ">=0.2.4,<0.3.0"
 jupyterlab-server = ">=2.19,<3.0"
 nbclassic = "*"
 notebook = "<7"
@@ -3322,4 +3322,4 @@ examples = ["jupyterlab", "lxml", "pandas", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7.1"
-content-hash = "1db8bc0d4f240a4c94fd2a2da6e9c88cfba490d9efd917e8262e1b89650ef7dd"
+content-hash = "04cf495402bc59135d1f3d130a857b3ba8f56bbe6c6aac1d36a55f646bae5617"

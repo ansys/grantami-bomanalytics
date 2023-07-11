@@ -72,7 +72,7 @@ sphinx-notfound-page = { version = "0.8.3" }
 sphinx-copybutton = { version = "0.5.2" }
 enum_tools = { version = "0.10.0" }
 sphinx-toolbox = { version = "3.4.0" }
-jupytext = { version = "1.14.6" }
+jupytext = { version = "1.14.7" }
 nbsphinx = { version = "0.9.2" }
 
 [tool.poetry.extras]

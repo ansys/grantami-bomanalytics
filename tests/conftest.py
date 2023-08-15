@@ -16,12 +16,18 @@ write_password = os.getenv("TEST_WRITE_PASS")
 
 @pytest.fixture(scope="session")
 def default_connection():
-    connection = Connection(api_url=sl_url).with_credentials(read_username, read_password).connect()
+    if read_username is not None:
+        connection = Connection(api_url=sl_url).with_credentials(read_username, read_password).connect()
+    else:
+        connection = Connection(api_url=sl_url).with_autologon().connect()
     return connection
 
 
 def _get_connection(request, url, username, password):
-    connection = Connection(api_url=url).with_credentials(username, password).connect()
+    if username is not None:
+        connection = Connection(api_url=url).with_credentials(username, password).connect()
+    else:
+        connection = Connection(api_url=url).with_autologon().connect()
     if request.param:
         if isinstance(request.param, str):
             db_key = request.param

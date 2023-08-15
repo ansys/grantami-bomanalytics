@@ -202,6 +202,7 @@ class BomAnalyticsClient(ApiClient):
         super().__init__(api_url=sl_url_with_service, **kwargs)
 
         self._db_key = DEFAULT_DBKEY
+        self._max_spec_depth = None
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,
             "inhouse_materials_table_name": None,
@@ -218,6 +219,24 @@ class BomAnalyticsClient(ApiClient):
             return base_repr + f", {custom_tables}>"
         else:
             return base_repr + ">"
+
+    @property
+    def maximum_spec_link_depth(self) -> Optional[int]:
+        """
+        Limits the maximum depth of specification to specification links that will be followed. If None then no limit
+        will be applied, this may lead to performance issues on databases with large numbers of these links.
+
+        Returns
+        -------
+        Optional[int]
+            Maximum depth of specification to specification links that will be followed.
+
+        """
+        return self._max_spec_depth
+
+    @maximum_spec_link_depth.setter
+    def maximum_spec_link_depth(self, value: Optional[int]) -> None:
+        self._max_spec_depth = value
 
     def set_database_details(
         self,
@@ -382,14 +401,20 @@ class BomAnalyticsClient(ApiClient):
         The database key is always required. The default is only included here for convenience.
         """
 
+        config = models.CommonRequestConfig()
+        if self._max_spec_depth is not None:
+            logger.info(f"Using maximum spec to spec link depth: {self._max_spec_depth}")
+            config.maximum_spec_to_spec_link_depth = self._max_spec_depth + 1
+        else:
+            logger.info(f"Using no spec to spec link depth limit, all links will be followed")
         if any(self._table_names.values()):
-            config = models.CommonRequestConfig(**self._table_names)
+            for table_type, name in self._table_names.items():
+                setattr(config, table_type, name)
             table_mapping = [f"{n}: {v}" for n, v in self._table_names.items() if v]
             logger.info(f"Using custom table config:")
             for line in table_mapping:
                 logger.info(line)
         else:
-            config = None
             logger.info(f"Using default table config")
 
         if self._db_key != DEFAULT_DBKEY:

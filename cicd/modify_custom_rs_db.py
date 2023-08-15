@@ -1,3 +1,25 @@
+"""
+modify_custom_rs_db.py
+-------------------------
+
+This script is the last step in creating new test databases. It modifies a cut down database, changing the name,
+renaming tables, and adding any extra records required for specific tests.
+
+Set the URL as appropriate for your database server.
+
+The first operation is to rename the database, this has no practical purpose, but it makes it easier to see which which
+database is which in log files.
+
+Secondly the tables are renamed, this is required to test that the custom table name feature of the API works as
+expected. If you change the names of the tables in the test setup you will need to change the names here as well.
+
+The script then adds a copy of the styrene record as a child of Sulphuric Acid and withdraws it, this allows us to test
+that the API returns a warning for us if more than one record matches a specific CAS number.
+
+Finally, we create a new record in the specifications table which is linked to another, this allows us to test that the
+specification depth parameter works as expected.
+"""
+
 import logging
 
 import GRANTA_MIScriptingToolkit as gdl

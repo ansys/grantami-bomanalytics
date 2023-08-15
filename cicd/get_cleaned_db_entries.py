@@ -1,3 +1,31 @@
+"""
+get_cleaned_db_entries.py
+-------------------------
+
+This script is the first step in the process for updating the test databases. It extracts the attributes and records
+from a current version into a format that can be used to generate an updated version.
+
+Set the value of MI_URL and DB_KEY as appropriate for your setup, the values of table_information, extra_attributes,
+and renamed_attributes should be OK for the current release.
+
+table_information
+=================
+
+table_information contains the name of the subset and the layout to be used. Attributes in the layout specified, and
+records in the subset specified, will be exported into the json data file
+
+extra_attributes
+================
+
+extra_attributes contains any attributes that should be copied across if they do not exist within the specified layout.
+
+renamed_attributes
+==================
+
+renamed_attributes contains a map of old name to new name for any attributes that have changed name between the current
+version of the database and the new version.
+"""
+
 import json
 import logging
 from pathlib import Path

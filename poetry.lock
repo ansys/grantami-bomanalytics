@@ -70,12 +70,12 @@ test = ["pytest (==7.0.0)", "requests-mock (==1.9.3)"]
 
 [[package]]
 name = "ansys-openapi-common"
-version = "1.2.1"
+version = "1.2.2"
 description = "Provides a helper to create sessions for use with Ansys OpenAPI clients."
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "ansys_openapi_common-1.2.1-py3-none-any.whl", hash = "sha256:295b3f7cbc53867c2c625cc3b0505556ebbcd8a57eab4bc890c7ab8d2498a014"},
+    {file = "ansys_openapi_common-1.2.2-py3-none-any.whl", hash = "sha256:496a04ef3be954279d73badf1c856e10decf828d93aae98baccfb54e4001f58a"},
 ]
 
 [package.dependencies]

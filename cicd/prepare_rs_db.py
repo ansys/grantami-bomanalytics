@@ -332,7 +332,7 @@ def process_database(
 
 if __name__ == "__main__":
     # Update URL and connection method for your system
-    URL = "http://localhost/dev_servicelayer"
+    URL = "http://localhost/mi_servicelayer"
     api_client = Connection(api_url=URL).with_autologon().connect()
     gdl_session = gdl.GRANTA_MISession(url=URL, autoLogon=True)
 

@@ -272,6 +272,7 @@ class SubsetPopulater:
                 existingRecord=gdl.RecordReference(DBKey=db_key, historyGUID=history_guid, recordGUID=record_guid),
                 subsetReferences=new_subsets,
                 releaseRecord=True,
+                importRecordMode="Update",
             )
             import_records.append(import_record)
         self._logger.info("Adding specified records to the new subset")

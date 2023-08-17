@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     logger.info("Duplicating styrene record then withdrawing it. (TestActAsReadUser)")
     data_import_service = gdl_session.dataImportService
-    substances_guid = custom_table_name_map["Chemicals"]
+    substances_guid = custom_table_name_map["Restricted Substances"]
     copy_import_record = gdl.ImportRecord(
         existingRecord=gdl.RecordReference(
             DBKey=CUSTOM_DB_KEY,

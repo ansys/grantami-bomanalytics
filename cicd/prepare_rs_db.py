@@ -269,7 +269,7 @@ class SubsetPopulater:
                 )
             )
             import_record = gdl.ImportRecord(
-                existingRecord=gdl.RecordReference(DBKey=db_key, historyGUID=history_guid, recordGUID=record_guid),
+                existingRecord=gdl.RecordReference(DBKey=db_key, historyGUID=history_guid),
                 subsetReferences=new_subsets,
                 releaseRecord=True,
                 importRecordMode="Update",

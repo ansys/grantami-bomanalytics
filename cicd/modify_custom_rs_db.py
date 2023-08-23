@@ -99,6 +99,13 @@ if __name__ == "__main__":
                 attributeValue="7664-93-9",
             ),
         ),
+        subsetReferences=[
+            gdl.SubsetReference(
+                DBKey=CUSTOM_DB_KEY,
+                name="All Substances",
+                partialTableReference=gdl.PartialTableReference(tableGUID=substances_guid),
+            )
+        ],
         recordName="Styrene Copy",
         releaseRecord=True,
         importRecordMode="Copy",

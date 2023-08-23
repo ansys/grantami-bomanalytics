@@ -69,3 +69,17 @@ spec_query
 spec_query = spec_query.with_batch_size(5)
 spec_query
 # -
+
+# ## Specification to Specification links
+
+# This package supports traversing specification to specification links, by default all such links will be followed.
+# For typical databases this is the correct and desired behaviour, however in some circumstances this may cause query
+# times and response sizes to become very large. In such cases you can control the number of nested links that will be
+# followed using the ``maximum_spec_link_depth`` parameter on the ``BomAnalyticsClient`` object.
+
+# The default value is None, setting it to a positive integer will limit the depth to at most that many nested links.
+
+# + tags=[]
+cxn.maximum_spec_link_depth = 2
+cxn
+# -

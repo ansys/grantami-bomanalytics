@@ -211,20 +211,32 @@ class BomAnalyticsClient(ApiClient):
             "substances_table_name": None,
             "coatings_table_name": None,
         }
+        self._max_spec_depth = None
 
     def __repr__(self) -> str:
-        base_repr = f'<BomServicesClient: url="{self._sl_url}", dbkey="{self._db_key}"'
-        custom_tables = ", ".join([f'{k}="{v}"' for k, v in self._table_names.items() if v])
-        if custom_tables:
-            return base_repr + f", {custom_tables}>"
-        else:
-            return base_repr + ">"
+        max_link_value = "unlimited" if self.maximum_spec_link_depth is None else self.maximum_spec_link_depth
+        repr_entries = [
+            ("url", self._sl_url),
+            ("maximum_spec_link_depth", max_link_value),
+            ("dbkey", self._db_key),
+        ]
+        for k, v in self._table_names.items():
+            if v:
+                repr_entries.append((k, v))
+        rendered_entries = []
+        for n, v in repr_entries:
+            value = v
+            if isinstance(value, str):
+                value = f'"{value}"'
+            rendered_entries.append(f"{n}={value}")
+        return f'<BomServicesClient: {", ".join(rendered_entries)}>'
 
     @property
     def maximum_spec_link_depth(self) -> Optional[int]:
-        """
-        Limits the maximum depth of specification to specification links that will be followed. If None then no limit
-        will be applied, this may lead to performance issues on databases with large numbers of these links.
+        """Limits the maximum depth of specification to specification links that will be followed when determining
+        impacted substances or compliance.
+        If None then no limit will be applied, this may lead to performance issues on databases with large numbers of
+        these links.
 
         Returns
         -------
@@ -236,6 +248,8 @@ class BomAnalyticsClient(ApiClient):
 
     @maximum_spec_link_depth.setter
     def maximum_spec_link_depth(self, value: Optional[int]) -> None:
+        if value < 0:
+            raise ValueError("maximum_spec_link_depth must be a non-negative integer or None")
         self._max_spec_depth = value
 
     def set_database_details(

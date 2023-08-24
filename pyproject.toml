@@ -26,20 +26,19 @@ classifiers = [
   "Operating System :: POSIX",
   "Operating System :: MacOS",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
 ]
 packages = [
   { include = "**/*.py", from = "src" }
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7.1"
+python = "^3.8.0"
 
 # Packages for core library
-importlib_metadata = { version = ">=1.0", python  = "<3.8" }  # Granta MI STK requires 3.4.0
 ansys-openapi-common = "< 2.0.0"
 ansys-grantami-bomanalytics-openapi = "1.0.0"
 
@@ -87,14 +86,13 @@ examples = [
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py37,py38,py39,py310,py311
+envlist = py38,py39,py310,py311
 isolated_build = True
 requires =
   tox-gh-actions==2.9.1
 
 [gh-actions]
 python =
-    3.7: py37
     3.8: py38
     3.9: py39
     3.10: py310

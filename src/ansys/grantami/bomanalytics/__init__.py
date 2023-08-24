@@ -1,11 +1,6 @@
 from ._connection import Connection
 from ._exceptions import GrantaMIException
 
-try:
-    from importlib import metadata as metadata
+from importlib import metadata as metadata
 
-    __version__ = metadata.version("ansys-grantami-bomanalytics")
-except ImportError:
-    from importlib_metadata import metadata as metadata_backport
-
-    __version__ = metadata_backport("ansys-grantami-bomanalytics")["version"]
+__version__ = metadata.version("ansys-grantami-bomanalytics")

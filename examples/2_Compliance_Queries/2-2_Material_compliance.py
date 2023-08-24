@@ -51,7 +51,7 @@ from ansys.grantami.bomanalytics import indicators
 
 svhc = indicators.WatchListIndicator(
     name="SVHC",
-    legislation_names=["REACH - The Candidate List"],
+    legislation_names=["EU REACH - The Candidate List"],
     default_threshold_percentage=0.1,
 )
 sin = indicators.WatchListIndicator(

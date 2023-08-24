@@ -54,7 +54,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 DRILL = "DRILL"
 WING = "asm_flap_mating"
 SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
-REACH = "REACH - The Candidate List"
+REACH = "EU REACH - The Candidate List"
 # -
 
 # Next, import the ``queries`` module and build the query with the references in the previous cell.

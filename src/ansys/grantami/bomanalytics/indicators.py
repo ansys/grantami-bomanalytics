@@ -371,7 +371,8 @@ class RoHSIndicator(_Indicator):
     name : str
         Name of the indicator that is to identify the indicator in the query result.
     legislation_names : list[str]
-        Legislations against which compliance will be determined.
+        Legislations against which compliance will be determined. Legislations are identified based
+        on their ``Short title`` attribute value.
     default_threshold_percentage : float, optional
         Concentration of substance that is to be determined to be non-compliant. The default is ``None``.
         This parameter is only used if the legislation doesn't define a specific threshold for the substance.
@@ -456,7 +457,8 @@ class WatchListIndicator(_Indicator):
     name : str
         Name of the indicator that is used to identify the indicator in the query result.
     legislation_names : list[str]
-        Legislations against which compliance is to be determined.
+        Legislations against which compliance is to be determined. Legislations are identified based
+        on their ``Short title`` attribute value.
     default_threshold_percentage : float, optional
         Percentage of substance concentration that is to be determined to be non-compliant. The default is ``None``.
         This parameter is only used if the legislation doesn't define a specific threshold for the substance.

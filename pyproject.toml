@@ -40,7 +40,7 @@ python = "^3.8.0"
 
 # Packages for core library
 ansys-openapi-common = "< 2.0.0"
-ansys-grantami-bomanalytics-openapi = "1.0.0"
+ansys-grantami-bomanalytics-openapi = "1.1.0"
 
 # Packages for the examples extra
 jupyterlab = { version = "3.6.5", optional = true }

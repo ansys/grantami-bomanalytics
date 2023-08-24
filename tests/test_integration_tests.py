@@ -1,7 +1,7 @@
 import pytest
 from .inputs import sample_bom_complex, sample_bom_custom_db
 from ansys.grantami.bomanalytics import queries, GrantaMIException
-from .common import LEGISLATIONS, INDICATORS
+from .common import LEGISLATIONS, INDICATORS, CUSTOM_TABLES
 
 pytestmark = pytest.mark.integration
 
@@ -155,3 +155,51 @@ class TestActAsReadUser:
         assert any(
             "has 1 substance row(s) having more than one linked substance. " in msg.message for msg in results.messages
         )
+
+
+class TestSpecLinkDepth:
+    spec_ids = ["MIL-DTL-53039,TypeII"]
+    legislation_ids = ["EU REACH - The Candidate List"]
+
+    @pytest.fixture(scope="class")
+    def connection_with_custom_tables(self, default_connection):
+        db_key = "MI_Restricted_Substances_Custom_Tables"
+        base_db_key = default_connection._db_key
+        default_connection.set_database_details(database_key=db_key, **{pn: tn for pn, tn in CUSTOM_TABLES})
+        yield default_connection
+        default_connection.set_database_details(database_key=base_db_key, **{pn: None for pn, _ in CUSTOM_TABLES})
+
+    @pytest.fixture(scope="function")
+    def connection(self, connection_with_custom_tables):
+        old_depth = connection_with_custom_tables.maximum_spec_link_depth
+        yield connection_with_custom_tables
+        connection_with_custom_tables.maximum_spec_link_depth = old_depth
+
+    def test_legislation_is_affected_with_link_depth_one(self, connection):
+        connection.maximum_spec_link_depth = 1
+
+        query = (
+            queries.SpecificationImpactedSubstancesQuery()
+            .with_specification_ids(self.spec_ids)
+            .with_legislations(self.legislation_ids)
+        )
+        response = connection.run(query)
+        assert len(response.impacted_substances) == 1
+        assert response.impacted_substances[0].cas_number == "872-50-4"
+        assert len(response.impacted_substances_by_legislation) == 1
+        legislation_name = self.legislation_ids[0]
+        assert legislation_name in response.impacted_substances_by_legislation
+        impacted_by_reach = response.impacted_substances_by_legislation[legislation_name]
+        assert len(impacted_by_reach) == 1
+        assert impacted_by_reach[0].cas_number == "872-50-4"
+
+    def test_legislation_is_not_affected_with_no_links(self, connection):
+        connection.maximum_spec_link_depth = 0
+
+        query = (
+            queries.SpecificationImpactedSubstancesQuery()
+            .with_specification_ids(self.spec_ids)
+            .with_legislations(self.legislation_ids)
+        )
+        response = connection.run(query)
+        assert len(response.impacted_substances) == 0

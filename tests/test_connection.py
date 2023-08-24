@@ -30,18 +30,24 @@ def test_default_dbkey(mock_connection):
 
 
 def test_repr_default_dbkey(mock_connection):
-    assert repr(mock_connection) == f'<BomServicesClient: url="{SL_URL}", ' 'dbkey="MI_Restricted_Substances">'
+    assert (
+        repr(mock_connection)
+        == f'<BomServicesClient: url="{SL_URL}", maximum_spec_link_depth="unlimited", dbkey="MI_Restricted_Substances">'
+    )
 
 
 def test_repr_custom_dbkey(mock_connection):
     mock_connection.set_database_details(database_key="RS_DB")
-    assert repr(mock_connection) == f'<BomServicesClient: url="{SL_URL}", dbkey="RS_DB">'
+    assert (
+        repr(mock_connection)
+        == f'<BomServicesClient: url="{SL_URL}", maximum_spec_link_depth="unlimited", dbkey="RS_DB">'
+    )
 
 
 def test_repr_default_dbkey_custom_table(mock_connection):
     mock_connection.set_database_details(specifications_table_name="My Specs")
     assert (
-        repr(mock_connection) == f'<BomServicesClient: url="{SL_URL}", '
+        repr(mock_connection) == f'<BomServicesClient: url="{SL_URL}", maximum_spec_link_depth="unlimited", '
         'dbkey="MI_Restricted_Substances", specifications_table_name="My Specs">'
     )
 
@@ -49,9 +55,20 @@ def test_repr_default_dbkey_custom_table(mock_connection):
 def test_repr_custom_dbkey_custom_table(mock_connection):
     mock_connection.set_database_details(database_key="RS_DB", specifications_table_name="My Specs")
     assert (
-        repr(mock_connection) == f'<BomServicesClient: url="{SL_URL}", '
+        repr(mock_connection) == f'<BomServicesClient: url="{SL_URL}", maximum_spec_link_depth="unlimited", '
         'dbkey="RS_DB", specifications_table_name="My Specs">'
     )
+
+
+@pytest.mark.parametrize("value", [None, 0, 1, 3000])
+def test_set_max_spec_link_depth_with_valid_inputs(mock_connection, value):
+    mock_connection.maximum_spec_link_depth = value
+    assert mock_connection.maximum_spec_link_depth == value
+
+
+def test_set_max_spec_link_depth_with_invalid_input(mock_connection):
+    with pytest.raises(ValueError, match="maximum_spec_link_depth must be a non-negative integer or None"):
+        mock_connection.maximum_spec_link_depth = -1
 
 
 class TestConnectToSL:

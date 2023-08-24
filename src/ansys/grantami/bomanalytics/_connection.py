@@ -26,7 +26,7 @@ GRANTA_APPLICATION_NAME_HEADER : str
     Identifier used internally by the Granta MI Server.
 """
 
-from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
+from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any, Tuple, List
 
 from ansys.openapi.common import (  # type: ignore[import]
     ApiClientFactory,
@@ -193,7 +193,7 @@ class BomAnalyticsClient(ApiClient):
     """
 
     def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
-        self._sl_url = servicelayer_url.strip("/")
+        self._sl_url: str = servicelayer_url.strip("/")
         sl_url_with_service = self._sl_url + SERVICE_PATH
         logger.debug("Creating BomAnalyticsClient")
         logger.debug(f"Base Service Layer URL: {self._sl_url}")
@@ -201,7 +201,7 @@ class BomAnalyticsClient(ApiClient):
 
         super().__init__(api_url=sl_url_with_service, **kwargs)
 
-        self._db_key = DEFAULT_DBKEY
+        self._db_key: str = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,
             "inhouse_materials_table_name": None,
@@ -210,14 +210,58 @@ class BomAnalyticsClient(ApiClient):
             "substances_table_name": None,
             "coatings_table_name": None,
         }
+        self._max_spec_depth: Optional[int] = None
 
     def __repr__(self) -> str:
-        base_repr = f'<BomServicesClient: url="{self._sl_url}", dbkey="{self._db_key}"'
-        custom_tables = ", ".join([f'{k}="{v}"' for k, v in self._table_names.items() if v])
-        if custom_tables:
-            return base_repr + f", {custom_tables}>"
-        else:
-            return base_repr + ">"
+        max_link_value: Union[str, int] = (
+            "unlimited" if self.maximum_spec_link_depth is None else self.maximum_spec_link_depth
+        )
+        repr_entries: List[Tuple[str, Union[str, int, None]]] = [
+            ("url", self._sl_url),
+            ("maximum_spec_link_depth", max_link_value),
+            ("dbkey", self._db_key),
+        ]
+        for k, v in self._table_names.items():
+            if v:
+                repr_entries.append((k, v))
+        rendered_entries = []
+        for name, value in repr_entries:
+            if isinstance(value, str):
+                value = f'"{value}"'
+            rendered_entries.append(f"{name}={value}")
+        return f'<BomServicesClient: {", ".join(rendered_entries)}>'
+
+    @property
+    def maximum_spec_link_depth(self) -> Optional[int]:
+        """Limits the maximum number of specification-to-specification links that will be followed when processing
+        a query. If specified, specification-to-specification links will be truncated at the specified depth, and only
+        coatings and substances identified up to and including that point will be included in the analysis.
+
+        Defaults to None, which applies no limit to the number of specification-to-specification links. This may lead
+        to performance issues if there are large numbers of specification-to-specification links present in the
+        database.
+
+        Supported with Restricted Substances Reports 2023 R2 and newer, with older reports this parameter has
+        no effect, all specification-to-specification links will be followed.
+
+        .. note::
+            This limit applies to each branch of the BoM individually. This is not a global limit on the number of
+            specification-to-specification links that will be traversed across the entire BoM, instead it is a limit on
+            the maximum depth of specifications below any individual specification node.
+
+        Returns
+        -------
+        Optional[int]
+            Maximum depth of specification-to-specification links that will be followed.
+
+        """
+        return self._max_spec_depth
+
+    @maximum_spec_link_depth.setter
+    def maximum_spec_link_depth(self, value: Optional[int]) -> None:
+        if value is not None and value < 0:
+            raise ValueError("maximum_spec_link_depth must be a non-negative integer or None")
+        self._max_spec_depth = value
 
     def set_database_details(
         self,
@@ -382,14 +426,20 @@ class BomAnalyticsClient(ApiClient):
         The database key is always required. The default is only included here for convenience.
         """
 
+        config = models.CommonRequestConfig()
+        if self._max_spec_depth is not None:
+            logger.info(f"Using maximum specification-to-specification link depth: {self._max_spec_depth}")
+            config.maximum_spec_to_spec_link_depth = self._max_spec_depth + 1
+        else:
+            logger.info(f"No specification-to-specification link depth limit specified. All links will be followed")
         if any(self._table_names.values()):
-            config = models.CommonRequestConfig(**self._table_names)
+            for table_type, name in self._table_names.items():
+                setattr(config, table_type, name)
             table_mapping = [f"{n}: {v}" for n, v in self._table_names.items() if v]
             logger.info(f"Using custom table config:")
             for line in table_mapping:
                 logger.info(line)
         else:
-            config = None
             logger.info(f"Using default table config")
 
         if self._db_key != DEFAULT_DBKEY:

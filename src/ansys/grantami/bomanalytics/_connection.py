@@ -26,7 +26,7 @@ GRANTA_APPLICATION_NAME_HEADER : str
     Identifier used internally by the Granta MI Server.
 """
 
-from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any
+from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any, Tuple, List
 
 from ansys.openapi.common import (  # type: ignore[import]
     ApiClientFactory,
@@ -193,7 +193,7 @@ class BomAnalyticsClient(ApiClient):
     """
 
     def __init__(self, servicelayer_url: str, **kwargs: Any) -> None:
-        self._sl_url = servicelayer_url.strip("/")
+        self._sl_url: str = servicelayer_url.strip("/")
         sl_url_with_service = self._sl_url + SERVICE_PATH
         logger.debug("Creating BomAnalyticsClient")
         logger.debug(f"Base Service Layer URL: {self._sl_url}")
@@ -201,8 +201,7 @@ class BomAnalyticsClient(ApiClient):
 
         super().__init__(api_url=sl_url_with_service, **kwargs)
 
-        self._db_key = DEFAULT_DBKEY
-        self._max_spec_depth = None
+        self._db_key: str = DEFAULT_DBKEY
         self._table_names: Dict[str, Optional[str]] = {
             "material_universe_table_name": None,
             "inhouse_materials_table_name": None,
@@ -211,11 +210,13 @@ class BomAnalyticsClient(ApiClient):
             "substances_table_name": None,
             "coatings_table_name": None,
         }
-        self._max_spec_depth = None
+        self._max_spec_depth: Optional[int] = None
 
     def __repr__(self) -> str:
-        max_link_value = "unlimited" if self.maximum_spec_link_depth is None else self.maximum_spec_link_depth
-        repr_entries = [
+        max_link_value: Union[str, int] = (
+            "unlimited" if self.maximum_spec_link_depth is None else self.maximum_spec_link_depth
+        )
+        repr_entries: List[Tuple[str, Union[str, int, None]]] = [
             ("url", self._sl_url),
             ("maximum_spec_link_depth", max_link_value),
             ("dbkey", self._db_key),
@@ -224,11 +225,10 @@ class BomAnalyticsClient(ApiClient):
             if v:
                 repr_entries.append((k, v))
         rendered_entries = []
-        for n, v in repr_entries:
-            value = v
+        for name, value in repr_entries:
             if isinstance(value, str):
                 value = f'"{value}"'
-            rendered_entries.append(f"{n}={value}")
+            rendered_entries.append(f"{name}={value}")
         return f'<BomServicesClient: {", ".join(rendered_entries)}>'
 
     @property

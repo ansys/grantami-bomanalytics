@@ -6,7 +6,7 @@ from typing import List
 from ansys.grantami.bomanalytics import Connection
 from .common import CUSTOM_TABLES
 
-sl_url = os.getenv("TEST_SL_URL", "http://my_mi_server/mi_servicelayer")
+sl_url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
 read_username = os.getenv("TEST_USER")
 read_password = os.getenv("TEST_PASS")
 

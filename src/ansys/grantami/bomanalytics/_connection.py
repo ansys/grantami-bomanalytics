@@ -233,10 +233,21 @@ class BomAnalyticsClient(ApiClient):
 
     @property
     def maximum_spec_link_depth(self) -> Optional[int]:
-        """Limits the maximum depth of specification to specification links that will be followed when determining
-        impacted substances or compliance.
-        If None then no limit will be applied, this may lead to performance issues on databases with large numbers of
-        these links.
+        """Limits the maximum number of specification-to-specification links that will be followed when processing
+        a query. If specified, specification-to-specification links will be truncated at the specified depth, and only
+        coatings and substances identified up to and including that point will be included in the analysis.
+
+        Defaults to None, which applies no limit to the number of specification-to-specification links. This may lead
+        to performance issues if there are large numbers of specification-to-specification links present in the
+        database.
+
+        Supported with the Restricted Substances Reports Bundle 2023 R2 and newer, with older reports this parameter has
+        no effect, all specification-to-specification links will be followed.
+
+        .. note::
+            This limit applies to each branch of the BoM individually. This is not a global limit on the number of
+            specification-to-specification links that will be traversed across the entire BoM, instead it is a limit on
+            the maximum depth of specifications below any individual specification node.
 
         Returns
         -------

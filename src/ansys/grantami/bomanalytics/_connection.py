@@ -241,7 +241,7 @@ class BomAnalyticsClient(ApiClient):
         to performance issues if there are large numbers of specification-to-specification links present in the
         database.
 
-        Supported with the Restricted Substances Reports Bundle 2023 R2 and newer, with older reports this parameter has
+        Supported with Restricted Substances Reports 2023 R2 and newer, with older reports this parameter has
         no effect, all specification-to-specification links will be followed.
 
         .. note::

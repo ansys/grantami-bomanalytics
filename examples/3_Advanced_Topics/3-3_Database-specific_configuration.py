@@ -72,7 +72,7 @@ spec_query
 
 # ## Specification to Specification links
 
-# > Supported with Restricted Substances Reports Bundle 2023 R2 and newer
+# > Supported with Restricted Substances Reports 2023 R2 and newer
 
 # The Restricted Substances database allows Specification records to be defined in terms of other Specification records.
 # Since this is a recursive relationship, there is in principle no limit to the complexity of these

@@ -8,7 +8,7 @@ high concern) in an ABS/PVC blend:
 
     >>> from pprint import pprint
     >>> from ansys.grantami.bomanalytics import Connection, queries
-    >>> cxn = Connection(servicelayer_url="http://localhost/mi_servicelayer") \
+    >>> cxn = Connection(servicelayer_url="http://my_mi_server/mi_servicelayer") \
     ...     .with_autologon().connect()
     >>> query = (
     ...     queries.MaterialImpactedSubstancesQuery()

@@ -835,7 +835,7 @@ class MaterialComplianceQuery(_ComplianceMixin, _MaterialQueryBuilder):
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
     ...     legislation_names=["California Proposition 65 List"]
@@ -868,7 +868,7 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> query = (
     ...     MaterialImpactedSubstancesQuery()
     ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
@@ -940,7 +940,7 @@ class PartComplianceQuery(_ComplianceMixin, _PartQueryBuilder):
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
     ...     legislation_names=["California Proposition 65 List"]
@@ -974,7 +974,7 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> query = (
     ...     PartImpactedSubstancesQuery()
     ...     .with_part_numbers(['DRILL', 'FLRY34'])
@@ -1050,7 +1050,7 @@ class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder)
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
     ...     legislation_names=["California Proposition 65 List"]
@@ -1083,7 +1083,7 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> query = (
     ...     SpecificationImpactedSubstancesQuery()
     ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
@@ -1458,7 +1458,7 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
     ...     legislation_names=["California Proposition 65 List"]
@@ -1602,7 +1602,7 @@ class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> bom = "<PartsEco xmlns..."
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
@@ -1636,7 +1636,7 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> bom = "<PartsEco xmlns..."
     >>> query = (
     ...     BomImpactedSubstancesQuery()
@@ -1663,7 +1663,7 @@ class Yaml:
 
     Examples
     --------
-    >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> cxn.run(Yaml)
     openapi: 3.0.1
     info:

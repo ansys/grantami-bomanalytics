@@ -72,12 +72,12 @@ spec_query
 
 # ## Specification to Specification links
 
-# This package supports traversing specification to specification links, by default all such links will be followed.
-# For typical databases this is the correct and desired behaviour, however in some circumstances this may cause query
-# times and response sizes to become very large. In such cases you can control the number of nested links that will be
+# The Restricted Substances database allows Specification records to be defined in terms of other Specification records. Since this is a recursive relationship, there is in principle no limit to the complexity of these Specification-to-Specification (spec-to-spec) hierarchies. By default, this package will consider every spec-to-spec hierarchy completely, with no truncation imposed.
+# For typical databases this is the correct and desired behavior, however in some circumstances this may cause query
+# times and response sizes to become very large. In such cases you should control the maximum spec-to-spec hierarchy depth
 # followed using the ``maximum_spec_link_depth`` parameter on the ``BomAnalyticsClient`` object.
 
-# The default value is None, setting it to a positive integer will limit the depth to at most that many nested links.
+# The default value is None, setting it to a positive integer will limit the depth to at most that many spec-to-spec links.
 
 # + tags=[]
 cxn.maximum_spec_link_depth = 2

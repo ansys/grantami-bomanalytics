@@ -241,7 +241,7 @@ class BomAnalyticsClient(ApiClient):
         Returns
         -------
         Optional[int]
-            Maximum depth of specification to specification links that will be followed.
+            Maximum depth of specification-to-specification links that will be followed.
 
         """
         return self._max_spec_depth
@@ -417,10 +417,10 @@ class BomAnalyticsClient(ApiClient):
 
         config = models.CommonRequestConfig()
         if self._max_spec_depth is not None:
-            logger.info(f"Using maximum spec to spec link depth: {self._max_spec_depth}")
+            logger.info(f"Using maximum specification-to-specification link depth: {self._max_spec_depth}")
             config.maximum_spec_to_spec_link_depth = self._max_spec_depth + 1
         else:
-            logger.info(f"Using no spec to spec link depth limit, all links will be followed")
+            logger.info(f"No specification-to-specification link depth limit specified. All links will be followed")
         if any(self._table_names.values()):
             for table_type, name in self._table_names.items():
                 setattr(config, table_type, name)

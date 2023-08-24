@@ -60,6 +60,17 @@ def test_repr_custom_dbkey_custom_table(mock_connection):
     )
 
 
+@pytest.mark.parametrize("value", [None, 0, 1, 3000])
+def test_set_max_spec_link_depth_with_valid_inputs(mock_connection, value):
+    mock_connection.maximum_spec_link_depth = value
+    assert mock_connection.maximum_spec_link_depth == value
+
+
+def test_set_max_spec_link_depth_with_invalid_input(mock_connection):
+    with pytest.raises(ValueError, match="maximum_spec_link_depth must be a non-negative integer or None"):
+        mock_connection.maximum_spec_link_depth = -1
+
+
 class TestConnectToSL:
     @pytest.mark.parametrize(
         "sl_url", ["http://host/path/", "http://host/path", "https://host/path/", "https://host/path"]

@@ -248,7 +248,7 @@ class BomAnalyticsClient(ApiClient):
 
     @maximum_spec_link_depth.setter
     def maximum_spec_link_depth(self, value: Optional[int]) -> None:
-        if value < 0:
+        if value is not None and value < 0:
             raise ValueError("maximum_spec_link_depth must be a non-negative integer or None")
         self._max_spec_depth = value
 

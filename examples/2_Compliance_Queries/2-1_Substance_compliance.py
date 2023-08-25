@@ -54,7 +54,10 @@ svhc = indicators.WatchListIndicator(
     legislation_names=["EU REACH - The Candidate List"],
     default_threshold_percentage=0.1,
 )
-sin = indicators.WatchListIndicator(name="SIN", legislation_names=["The SIN List 2.1 (Substitute It Now!)"])
+sin = indicators.WatchListIndicator(
+    name="SIN",
+    legislation_names=["The SIN List 2.1 (Substitute It Now!)"]
+)
 # -
 
 # + [markdown] tags=[]
@@ -70,9 +73,10 @@ sin = indicators.WatchListIndicator(name="SIN", legislation_names=["The SIN List
 from ansys.grantami.bomanalytics import queries
 
 sub_query = queries.SubstanceComplianceQuery().with_indicators([svhc, sin])
-sub_query = sub_query.with_cas_numbers_and_amounts(
-    [("50-00-0", 10), ("110-00-9", 25), ("302-17-0", 100), ("7440-23-5", 100)]
-)
+sub_query = sub_query.with_cas_numbers_and_amounts([("50-00-0", 10),
+                                                    ("110-00-9", 25),
+                                                    ("302-17-0", 100),
+                                                    ("7440-23-5", 100)])
 # -
 
 # Finally, run the query. Passing a ``SubstanceComplianceQuery`` object to the ``Connection.run()`` method returns a
@@ -104,7 +108,7 @@ non_compliant_substances = []
 threshold = svhc.available_flags.WatchListAboveThreshold
 
 for substance in sub_result.compliance_by_substance_and_indicator:
-    if substance.indicators["SVHC"] >= threshold:
+    if (substance.indicators["SVHC"] >= threshold):
         non_compliant_substances.append(substance)
     else:
         compliant_substances.append(substance)

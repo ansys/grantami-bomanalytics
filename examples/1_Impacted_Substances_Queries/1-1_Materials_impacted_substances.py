@@ -52,7 +52,9 @@ REACH = "EU REACH - The Candidate List"
 from ansys.grantami.bomanalytics import queries
 
 mat_query = (
-    queries.MaterialImpactedSubstancesQuery().with_material_ids([PPS_ID, PC_ID]).with_legislations([REACH, SIN_LIST])
+    queries.MaterialImpactedSubstancesQuery()
+    .with_material_ids([PPS_ID, PC_ID])
+    .with_legislations([REACH, SIN_LIST])
 )
 # -
 
@@ -90,9 +92,8 @@ for material in results.impacted_substances_by_material:
 # + tags=[]
 from tabulate import tabulate
 
-rows = [
-    (substance.cas_number, substance.max_percentage_amount_in_material) for substance in substances_by_material[PC_ID]
-]
+rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
+    for substance in substances_by_material[PC_ID]]
 
 print(f'Substances impacted by "{SIN_LIST}" in "{PC_ID}" (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
@@ -108,7 +109,8 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 
 # + tags=[]
 material_substances_sin = results.impacted_substances_by_legislation[SIN_LIST]
-rows = [(substance.cas_number, substance.max_percentage_amount_in_material) for substance in material_substances_sin]
+rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
+    for substance in material_substances_sin]
 print(f'Substances impacted by "{SIN_LIST}" in all materials (10/{len(rows)})')
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -
@@ -124,7 +126,8 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 
 # + tags=[]
 material_substances_all = results.impacted_substances
-rows = [(substance.cas_number, substance.max_percentage_amount_in_material) for substance in material_substances_all]
+rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
+    for substance in material_substances_all]
 print(f"Impacted substances for all materials and legislations (10/{len(rows)})")
 print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 # -

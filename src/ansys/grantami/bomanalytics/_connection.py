@@ -177,7 +177,7 @@ class Connection(ApiClientFactory):
         except ApiException as e:
             if e.status_code == 404:
                 raise ConnectionError(
-                    "Cannot find the BoM Analytics service in Granta MI Service Layer. Ensure a compatible version of"
+                    "Cannot find the BoM Analytics service in Granta MI Service Layer. Ensure a compatible version of "
                     "the Restricted Substances Reports are available on the server and try again."
                 )
             else:
@@ -319,7 +319,7 @@ class BomAnalyticsClient(ApiClient):
 
         Examples
         --------
-        >>> cxn = Connection("http://localhost/mi_servicelayer").with_autologon().connect()
+        >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
         >>> cxn.set_database_details(database_key = "MY_RS_DB",
         ...                          in_house_materials_table_name = "My Materials")
         """

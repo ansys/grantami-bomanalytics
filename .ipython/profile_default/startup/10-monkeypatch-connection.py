@@ -35,13 +35,15 @@ Connection.with_autologon = with_autologon
 server_url = "http://my_grantami_server/mi_servicelayer"
 
 BomAnalyticsClient._original_repr = BomAnalyticsClient.__repr__
-regex = re.compile(r'url="(.)+"')
+# \S is character class for 'not whitespace'
+regex = re.compile(r'url="(\S)+"')
 
 def __repr__(self: BomAnalyticsClient) -> str:
     result = self._original_repr()
-    sanitized_result, matach_count = regex.subn(f'url="{server_url}"', result)
-    if not matach_count:
-        raise ValueError("No match found for url in BomAnalyticsClient repr")
+    sanitized_result, match_count = regex.subn(f'url="{server_url}"', result)
+    if match_count != 1:
+        raise ValueError(f"Expected exactly one match for url in BomAnalyticsClient __repr__ output."
+                         f"Found {match_count} matches.")
     return sanitized_result
 
 

@@ -82,10 +82,10 @@ query
 # Note that because the ``MaterialImpactedSubstancesQuery`` object has a fluent interface, you receive the same object
 # back that you started with, but with the material IDs added.
 #
-# Finally, add the legislation to the query.
+# Finally, add the legislation to the query. Legislations are identified by their ``Short title`` attribute.
 
 # + tags=[]
-query = query.with_legislations(["REACH - The Candidate List"])
+query = query.with_legislations(["EU REACH - The Candidate List"])
 query
 # -
 
@@ -93,7 +93,7 @@ query
 # consolidate the cells above into a single step:
 
 # + tags=[]
-query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislations(["REACH - The Candidate List"])  # noqa: E501
+query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislations(["EU REACH - The Candidate List"])  # noqa: E501
 query
 # -
 
@@ -105,7 +105,7 @@ query
 query = (
     queries.MaterialImpactedSubstancesQuery()
     .with_material_ids(["plastic-abs-high-impact"])
-    .with_legislations(["REACH - The Candidate List"])
+    .with_legislations(["EU REACH - The Candidate List"])
 )
 query
 # -

@@ -16,7 +16,7 @@
 # # Performing a Substance Compliance Query
 
 # A Substance Compliance Query determines whether one or more substances are compliant with the specified indicators.
-# This example checks several materials for substances included on two watch lists ("REACH - The Candidate List", and
+# This example checks several materials for substances included on two watch lists ("EU REACH - The Candidate List", and
 # "The SIN List 2.1"), specifying substance amounts and thresholds for compliance.
 
 # ## Connecting to Granta MI
@@ -51,7 +51,7 @@ from ansys.grantami.bomanalytics import indicators
 
 svhc = indicators.WatchListIndicator(
     name="SVHC",
-    legislation_names=["REACH - The Candidate List"],
+    legislation_names=["EU REACH - The Candidate List"],
     default_threshold_percentage=0.1,
 )
 sin = indicators.WatchListIndicator(

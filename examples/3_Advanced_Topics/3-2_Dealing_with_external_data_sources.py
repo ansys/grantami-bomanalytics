@@ -78,7 +78,7 @@ server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 svhc = indicators.WatchListIndicator(
     name="SVHC",
-    legislation_names=["REACH - The Candidate List"],
+    legislation_names=["EU REACH - The Candidate List"],
     default_threshold_percentage=0.1,
 )
 mat_query = (

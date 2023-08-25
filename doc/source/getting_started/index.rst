@@ -6,8 +6,8 @@ To use the ``ansys.grantami.bomanalytics`` package, you must have access to a
 Granta MI server that includes MI Restricted Substances Reports 2022 R1
 or later.
 
-The ``ansys.grantami.bomanalytics`` package currently supports Python 3.7
-through 3.10 on Windows and Linux.
+The ``ansys.grantami.bomanalytics`` package currently supports Python 3.8
+through 3.11 on Windows and Linux.
 
 Installation
 ~~~~~~~~~~~~

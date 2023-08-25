@@ -1,7 +1,7 @@
 """ Connection to the Granta MI Service Layer.
 
 This module creates the connection object by subclassing the
-abstract ``ApiClientFactory`` class in the ``auth_common`` package.
+abstract ``ApiClientFactory`` class in the ``ansys-openapi-common`` package.
 
 The connection object itself is also subclassed to include global configuration
 options that span all queries and the method to execute the query.

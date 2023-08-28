@@ -1,4 +1,5 @@
 import os
+import re
 from ansys.grantami.bomanalytics import Connection
 from ansys.grantami.bomanalytics._connection import BomAnalyticsClient
 
@@ -30,12 +31,20 @@ Connection.with_credentials = with_credentials
 Connection.with_autologon = with_autologon
 
 
-# Monkey patch the Client object to report the url specified in the code, or the one below if not overridden
+# Monkey patch the Client object to report the url specified below
 server_url = "http://my_grantami_server/mi_servicelayer"
 
+BomAnalyticsClient._original_repr = BomAnalyticsClient.__repr__
+# \S is character class for 'not whitespace'
+regex = re.compile(r'url="(\S)+"')
 
 def __repr__(self: BomAnalyticsClient) -> str:
-    return f'<BomServicesClient: url="{server_url}", dbkey="{self._db_key}">'
+    result = self._original_repr()
+    sanitized_result, match_count = regex.subn(f'url="{server_url}"', result)
+    if match_count != 1:
+        raise ValueError(f"Expected exactly one match for url in BomAnalyticsClient __repr__ output."
+                         f"Found {match_count} matches.")
+    return sanitized_result
 
 
 BomAnalyticsClient.__repr__ = __repr__

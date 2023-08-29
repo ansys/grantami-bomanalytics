@@ -8,3 +8,12 @@ table-layout: fixed is included by nbsphinx,
 which includes css in the html below the
 css imports
 */
+
+div.rendered_html table.dataframe td {
+  color: var(--pst-color-text-base);
+}
+
+div.nboutput
+  div.output_area.rendered_html.docutils.container:has(table.dataframe) {
+  background-color: transparent;
+}

@@ -45,7 +45,7 @@ autodoc_type_aliases = {"Yaml": "Yaml"}
 
 # Intersphinx mapping
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/dev", None),
+    "python": ("https://docs.python.org/3", None),
     "openapi-common": ("https://openapi.docs.pyansys.com", None),
     # kept here as an example
     # "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),

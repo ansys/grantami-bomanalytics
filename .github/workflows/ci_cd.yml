@@ -15,7 +15,7 @@ on:
   merge_group:
 
 env:
-  DOCUMENTATION_CNAME: 'bomanalytics.grantami.docs.pyansys.com'
+  DOCUMENTATION_CNAME: 'animated-broccoli-k6emqn7.pages.github.io'
 
 jobs:
   local_checks:

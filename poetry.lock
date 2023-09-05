@@ -3021,20 +3021,20 @@ markupsafe = ">=1"
 
 [[package]]
 name = "sphinx-notfound-page"
-version = "0.8.3"
+version = "1.0.0"
 description = "Sphinx extension to build a 404 page with absolute URLs"
 optional = false
-python-versions = "*"
+python-versions = ">=3.8"
 files = [
-    {file = "sphinx-notfound-page-0.8.3.tar.gz", hash = "sha256:f728403280026b84c234540bebbed7f710b9ea582e7348a35a5becefe4024332"},
-    {file = "sphinx_notfound_page-0.8.3-py2.py3-none-any.whl", hash = "sha256:c4867b345afccef72de71fb410c412540dfbb5c2de0dc06bde70b331b8f30469"},
+    {file = "sphinx_notfound_page-1.0.0-py3-none-any.whl", hash = "sha256:40a5741a6b07245a08fe55dbbd603ad6719e191b1419ab2e5337c706ebd16554"},
+    {file = "sphinx_notfound_page-1.0.0.tar.gz", hash = "sha256:14cd388956de5cdf8710ab4ff31776ef8d85759c4f46014ee30f368e83bd3a3b"},
 ]
 
 [package.dependencies]
-sphinx = ">=1.8"
+sphinx = ">=5"
 
 [package.extras]
-doc = ["sphinx", "sphinx-autoapi", "sphinx-notfound-page", "sphinx-prompt", "sphinx-rtd-theme", "sphinx-tabs", "sphinxemoji"]
+doc = ["sphinx-autoapi", "sphinx-rtd-theme", "sphinx-tabs", "sphinxemoji"]
 test = ["tox"]
 
 [[package]]
@@ -3449,4 +3449,4 @@ examples = ["jupyterlab", "lxml", "pandas", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.0"
-content-hash = "4d530012311f826dd7e192ace9c592db5a8a3f38bda7b4b2496bd9862a771a3b"
+content-hash = "5b91efe5c536999497fd693a7f53d2ea48298deeba5d349ffa8421b99de8d011"

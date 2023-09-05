@@ -94,13 +94,13 @@ jobs:
           dest: dist/documentation-html.zip
 
       # note how we use the PyPI tokens
-      - name: Upload to PyPI
-        run: |
-          pip install twine
-          twine upload --non-interactive --skip-existing dist/*.whl
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+#      - name: Upload to PyPI
+#        run: |
+#          pip install twine
+#          twine upload --non-interactive --skip-existing dist/*.whl
+#        env:
+#          TWINE_USERNAME: __token__
+#          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
       - name: Release
         uses: softprops/action-gh-release@v1

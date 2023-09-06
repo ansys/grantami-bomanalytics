@@ -23,6 +23,7 @@ jobs:
     uses: ./.github/workflows/local_checks.yml
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      BOM_OPENAPI_TOKEN: ${{ secrets.BOM_OPENAPI_TOKEN }}
 
   integration_checks:
     name: Integration checks
@@ -40,6 +41,7 @@ jobs:
       TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
       TEST_SERVER_WRITE_USER: ${{ secrets.TEST_SERVER_WRITE_USER }}
       TEST_SERVER_WRITE_PASS: ${{ secrets.TEST_SERVER_WRITE_PASS }}
+      BOM_OPENAPI_TOKEN: ${{ secrets.BOM_OPENAPI_TOKEN }}
 
   doc-deploy-dev:
     name: "Deploy development documentation"

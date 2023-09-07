@@ -42,7 +42,7 @@ from .queries import Yaml
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
 MI_AUTH_PATH = "/Health/v2.svc"
-GRANTA_APPLICATION_NAME_HEADER = "MI Scripting Toolkit"
+GRANTA_APPLICATION_NAME_HEADER = "PyGranta BoM Analytics"
 
 
 if TYPE_CHECKING:

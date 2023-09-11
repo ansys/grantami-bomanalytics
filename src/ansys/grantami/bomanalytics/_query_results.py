@@ -779,6 +779,13 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetSustainabilityForBom2301Response)
 class BomSustainabilityQueryResult(ResultBaseClass):
+    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`.
+
+    Notes
+    -----
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
     def __init__(
             self,
             results: List[models.GetSustainabilityForBom2301Response],
@@ -797,10 +804,36 @@ class BomSustainabilityQueryResult(ResultBaseClass):
 
     @property
     def parts(self) -> List[PartWithSustainabilityResult]:
+        """Sustainability information for each root part included in the BoM specified in the original
+        query.
+
+        Returns
+        -------
+        list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithSustainabilityResult`]
+
+        Examples
+        --------
+        >>> result: BomSustainabilityQueryResult
+        >>> result.parts
+        [<PartWithSustainabilityResult>]
+        """
         return self._parts
 
     @property
     def transport_stages(self) -> List[TransportWithSustainabilityResult]:
+        """Sustainability information for each transport stage included in the BoM specified in the original
+        query.
+
+        Returns
+        -------
+        list[:class:`~ansys.grantami.bomanalytics._item_results.TransportWithSustainabilityResult`]
+
+        Examples
+        --------
+        >>> result: BomSustainabilityQueryResult
+        >>> result.transport_stages
+        [<TransportWithSustainabilityResult>]
+        """
         return self._transports
 
 

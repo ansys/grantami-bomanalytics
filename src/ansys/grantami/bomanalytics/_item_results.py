@@ -465,9 +465,9 @@ class ItemResultFactory:
 
         Returns
         -------
-        UnittedValue
+        ValueWithUnit
         """
-        return UnittedValue(value=result.value, unit=result.unit)
+        return ValueWithUnit(value=result.value, unit=result.unit)
 
     @staticmethod
     def parse_reference_type(reference_type: str) -> ReferenceType:
@@ -1390,15 +1390,29 @@ class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceR
     """
 
 
-# TODO name
-class UnittedValue:
+class ValueWithUnit:
+    """Describes a value obtained from the API """
     def __init__(
         self,
         value: float,
         unit: str,
     ) -> None:
-        self.value = value
-        self.unit = unit
+        self._value = value
+        self._unit = unit
+
+    @property
+    def value(self) -> float:
+        """
+        Real number.
+        """
+        return self._value
+
+    @property
+    def unit(self) -> str:
+        """
+        Unit of the value.
+        """
+        return self._unit
 
 
 class SustainabilityResultMixin:
@@ -1421,8 +1435,8 @@ class SustainabilityResultMixin:
     """
     def __init__(
         self,
-        embodied_energy: UnittedValue,
-        climate_change: UnittedValue,
+        embodied_energy: ValueWithUnit,
+        climate_change: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -1440,18 +1454,17 @@ class MassResultMixin:
     Parameters
     ----------
     reported_mass:
-        Indicates a mass value that is calculated by the analysis and displayed in the analyzed BoM and Product
-        Compliance report, that represents the total mass for the quantity of the item specified in the BoM, taking
-        into account the quantities of parent assemblies. For example, for a part in the BoM, the Reported mass is for
-        the number of parts specified in the Quantity column, multiplied by the Quantity of its parent assembly, and
-        similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
+        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
+        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
+        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
     **kwargs
         Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
         for ``RecordDefinition``-based objects.
     """
     def __init__(
         self,
-        reported_mass: UnittedValue,
+        reported_mass: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -1759,9 +1772,9 @@ class MaterialWithSustainabilityResult(
     record_guid : str, optional
         Record GUID.
 
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Estimates global warming potential considering emissions of different gases reported as carbon dioxide
         equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
     recyclable : bool
@@ -1772,12 +1785,11 @@ class MaterialWithSustainabilityResult(
     downcycle : bool
         Indicates whether a material can be recycled into material of an equivalent quality, that can be used for the
         same (or similar) applications.
-    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
-        Indicates a mass value that is calculated by the analysis and displayed in the analyzed BoM and Product
-        Compliance report, that represents the total mass for the quantity of the item specified in the BoM, taking
-        into account the quantities of parent assemblies. For example, for a part in the BoM, the Reported mass is for
-        the number of parts specified in the Quantity column, multiplied by the Quantity of its parent assembly, and
-        similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
+        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
+        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
+        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
+        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
 
     processes : list[:class:`~ansys.grantami.bomanalytics._item_results.ProcessWithSustainabilityResult`]
        List of processes.
@@ -1823,17 +1835,16 @@ class PartWithSustainabilityResult(
     record_guid : str, optional
         Record GUID.
 
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Estimates global warming potential considering emissions of different gases reported as carbon dioxide
         equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
-    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
-        Indicates a mass value that is calculated by the analysis and displayed in the analyzed BoM and Product
-        Compliance report, that represents the total mass for the quantity of the item specified in the BoM, taking
-        into account the quantities of parent assemblies. For example, for a part in the BoM, the Reported mass is for
-        the number of parts specified in the Quantity column, multiplied by the Quantity of its parent assembly, and
-        similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
+        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
+        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
+        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
+        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
 
     parts : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithSustainabilityResult`]
         List of parts.
@@ -1884,17 +1895,16 @@ class SpecificationWithSustainabilityResult(
     record_guid : str, optional
         Record GUID.
 
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Estimates global warming potential considering emissions of different gases reported as carbon dioxide
         equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
-    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
-        Indicates a mass value that is calculated by the analysis and displayed in the analyzed BoM and Product
-        Compliance report, that represents the total mass for the quantity of the item specified in the BoM, taking
-        into account the quantities of parent assemblies. For example, for a part in the BoM, the Reported mass is for
-        the number of parts specified in the Quantity column, multiplied by the Quantity of its parent assembly, and
-        similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
+        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
+        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
+        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
+        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
 
     specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithSustainabilityResult`]
         List of specifications.
@@ -1978,9 +1988,9 @@ class ProcessWithSustainabilityResult(
     record_history_identity : int, optional
         Default reference type for items returned as children of the queried item.
 
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Estimates global warming potential considering emissions of different gases reported as carbon dioxide
         equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
 
@@ -2009,9 +2019,9 @@ class TransportWithSustainabilityResult(
     record_history_identity : int, optional
         Default reference type for items returned as children of the queried item.
 
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
         Estimates global warming potential considering emissions of different gases reported as carbon dioxide
         equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
 

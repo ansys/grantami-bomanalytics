@@ -56,6 +56,7 @@ if TYPE_CHECKING:
         SubstanceComplianceQuery,
         BomImpactedSubstancesQuery,
         BomComplianceQuery,
+        BomSustainabilityQuery,
     )
     from ._query_results import (
         MaterialImpactedSubstancesQueryResult,
@@ -67,6 +68,7 @@ if TYPE_CHECKING:
         SubstanceComplianceQueryResult,
         BomImpactedSubstancesQueryResult,
         BomComplianceQueryResult,
+        BomSustainabilityQueryResult,
     )
 
 
@@ -374,6 +376,10 @@ class BomAnalyticsClient(ApiClient):
 
     @overload
     def run(self, query: Type["Yaml"]) -> str:
+        ...
+
+    @overload
+    def run(self, query: "BomSustainabilityQuery") -> "BomSustainabilityQueryResult":
         ...
 
     def run(self, query):  # type: ignore[no-untyped-def]

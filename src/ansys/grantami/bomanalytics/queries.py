@@ -20,6 +20,7 @@ from abc import ABC, abstractmethod
 from typing import (
     Union,
     List,
+    Literal,
     Dict,
     Tuple,
     TypeVar,
@@ -536,7 +537,7 @@ class _ApiMixin:
     @abstractmethod
     def _run_query(
         self,
-        api_instance: Union[api.ComplianceApi, api.ImpactedSubstancesApi],
+        api_instance: Union[api.ComplianceApi, api.ImpactedSubstancesApi, api.SustainabilityApi],
         static_arguments: Dict,
     ) -> Query_Result:
         pass
@@ -1486,9 +1487,9 @@ class _BomQueryDataManager(_BaseQueryDataManager):
     single string because only one BoM can be sent to the server in a single query.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, item_type_name: Union[Literal["bom_xml1711"], Literal["bom_xml2301"]]) -> None:
         super().__init__()
-        self.item_type_name = "bom_xml1711"
+        self.item_type_name = item_type_name
         self._item_definitions = [""]
         self._item_results = []
 
@@ -1522,7 +1523,7 @@ class _BomQueryDataManager(_BaseQueryDataManager):
 
         Examples
         --------
-        >>> bom_item = _BomQueryDataManager(bom = "<PartsEco xmlns...")
+        >>> bom_item = _BomQueryDataManager(bom = "<PartsEco xmlns...") # TODO incorrect signature?
         >>> bom_item.batched_arguments
         {"bom_xml1711": "<PartsEco xmlns..."}
         """
@@ -1542,11 +1543,13 @@ class _BomQueryDataManager(_BaseQueryDataManager):
         return [response]
 
 
-class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
+class _BomQueryBuilder(_BaseQueryBuilder, ABC):
     """Sub-class for all queries where the items added to the query are Boms."""
 
+    bom_version: Union[Literal["bom_xml1711"], Literal["bom_xml2301"]]
+
     def __init__(self) -> None:
-        self._data = _BomQueryDataManager()
+        self._data = _BomQueryDataManager(self.bom_version)
 
     @validate_argument_type(str)
     def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
@@ -1584,6 +1587,14 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
 
         self._data.bom = bom
         return self
+
+
+class _Bom1711QueryBuilder(_BomQueryBuilder):
+    bom_version = "bom_xml1711"
+
+
+class _Bom2301QueryBuilder(_BomQueryBuilder, ):
+    bom_version = "bom_xml2301"
 
 
 class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
@@ -1690,3 +1701,60 @@ class Yaml:
 
         result: str = api_instance.get_yaml()
         return result
+
+
+class _SustainabilityMixin(_ApiMixin):
+    api_class = api.SustainabilityApi
+
+    def __init_subclass__(cls, api_method: str, request_type: Type, **kwargs):
+        cls._api_method: str = api_method
+        cls._request_type = request_type
+        super().__init_subclass__(**kwargs)
+
+    def with_units(self, some_unit_object):
+        # TODO
+        pass
+
+    def _run_query(
+        self,
+        api_instance: api.SustainabilityApi,
+        static_arguments: Dict
+    ) -> Query_Result:
+        """Something"""
+        api_method = getattr(api_instance, self._api_method)
+        arguments = {
+            **static_arguments,
+        }
+
+        # indicators_text = ", ".join(self._indicators)
+        # logger.debug(f"Indicators: {indicators_text}")
+
+        self._call_api(api_method, arguments)
+        result: Query_Result = QueryResultFactory.create_result(
+            results=self._data.item_results,  # type: ignore[attr-defined]
+            messages=self._data.messages,  # type: ignore[attr-defined]
+            # indicator_definitions=self._indicators,
+        )
+        return result
+
+    def _validate_parameters(self) -> None:
+        # TODO Check units?
+        pass
+
+
+class BomSustainabilityQuery(
+    _SustainabilityMixin,
+    _Bom2301QueryBuilder,
+    api_method="post_sustainability_bom2301",
+    request_type=models.GetSustainabilityForBom2301Request,
+):
+    pass
+
+
+class BomSustainabilitySummaryQuery(
+    _SustainabilityMixin,
+    _Bom2301QueryBuilder,
+    api_method="post_sustainabilitysummary_bom2301",
+    request_type=models.GetSustainabilitySummaryForBom2301Request,
+):
+    pass

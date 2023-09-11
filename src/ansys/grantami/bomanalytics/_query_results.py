@@ -19,6 +19,7 @@ from ._item_results import (
     SpecificationWithComplianceResult,
     SubstanceWithComplianceResult,
     ImpactedSubstance,
+    PartWithSustainabilityResult,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
@@ -773,3 +774,27 @@ class BomComplianceQueryResult(ComplianceBaseClass):
         """
 
         return self._results
+
+
+@QueryResultFactory.register(models.GetSustainabilityForBom2301Response)
+class BomSustainabilityQueryResult(ResultBaseClass):
+    def __init__(
+            self,
+            results: List[models.GetSustainabilityForBom2301Response],
+            messages: List[LogMessage],
+    ) -> None:
+        super().__init__(messages)
+        self._response = results[0]
+        self._parts = self._process_response(self._response)
+
+
+@QueryResultFactory.register(models.GetSustainabilitySummaryForBom2301Response)
+class BomSustainabilitySummaryQueryResult(ResultBaseClass):
+    def __init__(
+        self,
+        results: List[models.GetSustainabilitySummaryForBom2301Response],
+        messages: List[LogMessage],
+    ) -> None:
+        super().__init__(messages)
+        self._response = results[0]
+        # TODO

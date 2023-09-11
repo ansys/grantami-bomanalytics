@@ -214,4 +214,5 @@ class TestSustainabilityBomQueries:
     def test_sustainability_query(self, default_connection):
         query = queries.BomSustainabilityQuery()
         query.with_bom(sample_bom_2301)
+        query.with_units(mass="lb")
         response = default_connection.run(query)

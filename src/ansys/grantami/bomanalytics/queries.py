@@ -1757,9 +1757,30 @@ class _SustainabilityMixin(_ApiMixin):
         cls._request_type = request_type
         super().__init_subclass__(**kwargs)
 
-    def with_units(self, some_unit_object):
-        # TODO
-        pass
+    def __init__(self):
+        super().__init__()
+        self._preferred_units = models.CommonPreferredUnits()
+
+    def with_units(self, distance: str = None, energy: str = None, mass: str = None):
+        """
+        Specifies units to use in the response.
+
+        Provided unit symbols must exist in the target database.
+
+        Parameters
+        ----------
+        distance : str
+            Unit symbol for distance.
+        energy : str
+            Unit symbol for energy.
+        mass : str
+            Unit symbol for mass.
+
+        """
+        self._preferred_units.distance_unit = distance
+        self._preferred_units.energy_unit = energy
+        self._preferred_units.mass_unit = mass
+        return self
 
     def _run_query(
         self,
@@ -1770,21 +1791,17 @@ class _SustainabilityMixin(_ApiMixin):
         api_method = getattr(api_instance, self._api_method)
         arguments = {
             **static_arguments,
+            "preferred_units": self._preferred_units,
         }
-
-        # indicators_text = ", ".join(self._indicators)
-        # logger.debug(f"Indicators: {indicators_text}")
 
         self._call_api(api_method, arguments)
         result: Query_Result = QueryResultFactory.create_result(
             results=self._data.item_results,  # type: ignore[attr-defined]
             messages=self._data.messages,  # type: ignore[attr-defined]
-            # indicator_definitions=self._indicators,
         )
         return result
 
     def _validate_parameters(self) -> None:
-        # TODO Check units?
         pass
 
 

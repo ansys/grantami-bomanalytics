@@ -11,6 +11,7 @@ Query definition
    :members:
 
    .. automethod:: with_bom
+   .. automethod:: with_units
 
 Query result
 ~~~~~~~~~~~~

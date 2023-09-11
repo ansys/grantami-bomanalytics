@@ -10,6 +10,7 @@ Query definition
    :members:
 
    .. automethod:: with_bom
+   .. automethod:: with_units
 
 Query result
 ~~~~~~~~~~~~
@@ -17,4 +18,3 @@ Query result
 .. autoclass:: ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult
    :members:
 
-   .. automethod:: with_bom

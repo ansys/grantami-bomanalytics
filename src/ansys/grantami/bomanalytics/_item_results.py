@@ -24,6 +24,8 @@ from ._item_definitions import (
     BaseSubstanceReference,
     ReferenceType,
     CoatingReference,
+    ProcessReference,
+    TransportReference,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
@@ -256,6 +258,216 @@ class ItemResultFactory:
             indicator_definitions=indicator_definitions,
         )
         return item_result
+
+    @classmethod
+    def create_part_with_sustainability(
+            cls,
+            result_with_sustainability: models.CommonSustainabilityPartWithSustainability,
+    ) -> "PartWithSustainabilityResult":
+        """Returns a Part with sustainability metrics and child items.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilityPartWithSustainability
+            Result from the REST API describing the sustainability for this particular part.
+
+        Returns
+        -------
+        PartWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        part_with_sustainability = PartWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+        )
+        part_with_sustainability._add_child_parts(result_with_sustainability.parts)
+        part_with_sustainability._add_child_materials(result_with_sustainability.materials)
+        part_with_sustainability._add_child_processes(result_with_sustainability.processes)
+        part_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
+        part_with_sustainability._add_child_substances(result_with_sustainability.substances)
+        return part_with_sustainability
+
+    @classmethod
+    def create_process_with_sustainability(
+            cls,
+            result_with_sustainability: models.CommonSustainabilityProcessWithSustainability,
+    ) -> "ProcessWithSustainabilityResult":
+        """Returns a Process with sustainability metrics.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilityProcessWithSustainability
+            Result from the REST API describing the sustainability for this particular process.
+
+        Returns
+        -------
+        ProcessWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        process_with_sustainability = ProcessWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+        )
+        return process_with_sustainability
+
+    @classmethod
+    def create_material_with_sustainability(
+            cls,
+            result_with_sustainability: models.CommonSustainabilityMaterialWithSustainability,
+    ) -> "MaterialWithSustainabilityResult":
+        """Returns a Material with sustainability metrics and child items.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilityMaterialWithSustainability
+            Result from the REST API describing the sustainability for this particular material.
+
+        Returns
+        -------
+        MaterialWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        material_with_sustainability = MaterialWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+            recyclable=result_with_sustainability.recyclable,
+            biodegradable=result_with_sustainability.biodegradable,
+            downcycle=result_with_sustainability.downcycle,
+        )
+        material_with_sustainability._add_child_processes(result_with_sustainability.processes)
+        material_with_sustainability._add_child_substances(result_with_sustainability.substances)
+        return material_with_sustainability
+
+    @classmethod
+    def create_specification_with_sustainability(
+            cls,
+            result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability,
+    ) -> "SpecificationWithSustainabilityResult":
+        """Returns a Specification with sustainability metrics and child items.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability
+            Result from the REST API describing the sustainability for this particular specification.
+
+        Returns
+        -------
+        SpecificationWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        specification_with_sustainability = SpecificationWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+        )
+        specification_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
+        specification_with_sustainability._add_child_materials(result_with_sustainability.materials)
+        specification_with_sustainability._add_child_substances(result_with_sustainability.substances)
+        specification_with_sustainability._add_child_coatings(result_with_sustainability.coatings)
+        return specification_with_sustainability
+
+    @classmethod
+    def create_substance_result(
+            cls,
+            result: models.CommonSubstanceReference,
+    ) -> "SubstanceResult":
+        """Returns a Substance.
+
+        Parameters
+        ----------
+        result: models.CommonSubstanceReference
+            Result from the REST API describing this particular substance.
+
+        Returns
+        -------
+        SubstanceResult
+        """
+
+        reference_type = cls.parse_reference_type(result.reference_type)
+        substance = SubstanceResult(
+            reference_type=reference_type,
+            reference_value=result.reference_value,
+        )
+        return substance
+
+    @classmethod
+    def create_coating_result(
+            cls,
+            result: models.CommonCoatingReference,
+    ) -> "CoatingResult":
+        """Returns a Coating.
+
+        Parameters
+        ----------
+        result: models.CommonCoatingReference
+            Result from the REST API describing this particular coating.
+
+        Returns
+        -------
+        CoatingResult
+        """
+
+        reference_type = cls.parse_reference_type(result.reference_type)
+        coating = CoatingResult(
+            reference_type=reference_type,
+            reference_value=result.reference_value,
+        )
+        return coating
+
+    @classmethod
+    def create_transport_with_sustainability(
+            cls,
+            result_with_sustainability: models.CommonSustainabilityTransportWithSustainability,
+    ) -> "TransportWithSustainabilityResult":
+        """Returns a Transport with sustainability metrics.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilityTransportWithSustainability
+            Result from the REST API describing the sustainability for this particular transport stage.
+
+        Returns
+        -------
+        TransportWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        transport_with_sustainability = TransportWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+        )
+        return transport_with_sustainability
+
+    @classmethod
+    def create_unitted_value(cls, result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit):
+        """Returns a value with unit.
+
+        Parameters
+        ----------
+        result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit
+            Result from the REST API describing the value and unit.
+
+        Returns
+        -------
+        UnittedValue
+        """
+        return UnittedValue(value=result.value, unit=result.unit)
 
     @staticmethod
     def parse_reference_type(reference_type: str) -> ReferenceType:
@@ -706,7 +918,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
     Parameters
     ----------
     child_substances
-        Materials returned by the low-level API that are children of this item.
+        Substances returned by the low-level API that are children of this item.
     **kwargs
         Contains other result objects depending on the parent item. It contains record references for
         ``RecordDefinition``-based objects.
@@ -750,7 +962,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
 
 
 class ChildMaterialWithComplianceMixin(child_base_class):
-    """Adds a ``material`` attribute to an ``ItemWithComplianceResult`` class and populates it with child materials.
+    """Adds a ``materials`` attribute to an ``ItemWithComplianceResult`` class and populates it with child materials.
 
     See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
 
@@ -1154,7 +1366,7 @@ class SpecificationWithComplianceResult(
 
 @ItemResultFactory.register("CoatingWithCompliance")
 class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
-    """Provides An individual coating included as part of a compliance query result.
+    """Provides an individual coating included as part of a compliance query result.
 
     This object includes three categories of attributes:
 
@@ -1173,6 +1385,640 @@ class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceR
 
     Notes
     -----
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+# TODO name
+class UnittedValue:
+    def __init__(
+        self,
+        value: float,
+        unit: str,
+    ) -> None:
+        self.value = value
+        self.unit = unit
+
+
+class SustainabilityResultMixin:
+    """Adds results from a sustainability query to a class.
+
+    A Bom-sustainability query returns a BoM-like results, with additional sustainability information attached to each
+    level of the BoM.
+    This mixin implements only the sustainability metrics and applies to most items in the BoM.
+
+    Parameters
+    ----------
+    embodied_energy:
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+    climate_change:
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+    def __init__(
+        self,
+        embodied_energy: UnittedValue,
+        climate_change: UnittedValue,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self.embodied_energy = embodied_energy
+        self.climate_change = climate_change
+
+
+class MassResultMixin:
+    """Adds results from a sustainability query to a class.
+
+    A Bom-sustainability query returns a BoM-like results, with additional sustainability information attached to each
+    level of the BoM.
+    This mixin implements only mass calculation results.
+
+    Parameters
+    ----------
+    reported_mass:
+        Indicates a mass value that is calculated by the analysis and displayed in the analyzed BoM and Product
+        Compliance report, that represents the total mass for the quantity of the item specified in the BoM, taking
+        into account the quantities of parent assemblies. For example, for a part in the BoM, the Reported mass is for
+        the number of parts specified in the Quantity column, multiplied by the Quantity of its parent assembly, and
+        similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+    def __init__(
+        self,
+        reported_mass: UnittedValue,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self.reported_mass = reported_mass
+
+
+class ReusabilityResultMixin:
+    """Adds results from a sustainability query to a class.
+
+    A Bom-sustainability query returns a BoM-like results, with additional sustainability information attached to each
+    level of the BoM.
+    This mixin implements only re-usability results, and are only relevant for Materials.
+
+    Parameters
+    ----------
+    recyclable:
+        Indicates whether a material can be recycled, regardless of the recyclates quality.
+    biodegradable
+        Indicates whether a material is biodegradable. Includes any waste that is capable of undergoing anaerobic or
+        aerobic decomposition.
+    downcycle:
+        Indicates whether a material can be recycled into material of an equivalent quality, that can be used for the
+        same (or similar) applications.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+    def __init__(
+        self,
+        recyclable: bool,
+        biodegradable: bool,
+        downcycle: bool,  # TODO will change, see CR-1341 -> "Functional recycle"
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self.recyclable: bool = recyclable
+        self.biodegradable: bool = biodegradable
+        self.downcycle: bool = downcycle
+
+
+class ChildMaterialWithSustainabilityMixin:
+    """Provides the implementation for managing children materials, by adding a ``materials`` property to the class.
+
+    Parameters
+    ----------
+    child_materials
+        Materials returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._materials: List[MaterialWithSustainabilityResult] = []
+
+    @property
+    def materials(self) -> List["MaterialWithSustainabilityResult"]:
+        """Material with sustainability result objects that are direct children of this item in the BoM.
+        """
+
+        return self._materials
+
+    def _add_child_materials(
+        self,
+        child_materials: List[models.CommonSustainabilityMaterialWithSustainability],
+    ) -> None:
+        """Populates the ``materials`` attribute based on a list of low-level API materials with sustainability
+        results.
+
+        Parameters
+        ----------
+        child_materials
+            List of materials with sustainability returned from the low-level API.
+        """
+
+        for child_material in child_materials:
+            child_material_with_sustainability = ItemResultFactory.create_material_with_sustainability(
+                result_with_sustainability=child_material,
+            )
+            self._materials.append(child_material_with_sustainability)
+
+
+class ChildPartWithSustainabilityMixin:
+    """Provides the implementation for managing children parts, by adding a ``parts`` property to the class.
+
+    Parameters
+    ----------
+    child_parts
+        Parts returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._parts: List[PartWithSustainabilityResult] = []
+
+    @property
+    def parts(self) -> List["PartWithSustainabilityResult"]:
+        """Part with sustainability result objects that are direct children of this item in the BoM.
+        """
+
+        return self._parts
+
+    def _add_child_parts(
+        self,
+        child_parts: List[models.CommonSustainabilityPartWithSustainability],
+    ) -> None:
+        """Populate the ``parts`` attribute based on a list of low-level API parts with sustainability
+        results.
+
+        Parameters
+        ----------
+        child_parts
+           List of parts with sustainability returned from the low-level API
+        """
+
+        for child_part in child_parts:
+            child_part_with_sustainability = ItemResultFactory.create_part_with_sustainability(
+                result_with_sustainability=child_part,
+            )
+            self._parts.append(child_part_with_sustainability)
+
+
+class ChildSpecificationWithSustainabilityMixin:
+    """Provides the implementation for managing children specifications, by adding a ``specifications`` property to the
+    class.
+
+    Parameters
+    ----------
+    child_specifications
+        Specifications returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._specifications: List[SpecificationWithSustainabilityResult] = []
+
+    @property
+    def specifications(self) -> List["SpecificationWithSustainabilityResult"]:
+        """Specification with sustainability result objects that are direct children of this item in the BoM.
+        """
+
+        return self._specifications
+
+    def _add_child_specifications(
+        self,
+        child_specifications: List[models.CommonSustainabilitySpecificationWithSustainability],
+    ) -> None:
+        """Populate the ``specifications`` attribute based on a list of low-level API specifications with
+        compliance results.
+
+        Parameters
+        ----------
+        child_specifications
+            List of specifications with sustainability returned from the low-level API
+        """
+
+        for child_specification in child_specifications:
+            child_specification_with_sustainability = ItemResultFactory.create_specification_with_sustainability(
+                result_with_sustainability=child_specification,
+            )
+            self._specifications.append(child_specification_with_sustainability)
+
+
+class ChildSubstanceMixin:
+    """Provides the implementation for managing children substances, by adding a ``substances`` property to the
+    class.
+
+    Parameters
+    ----------
+    child_substances
+        Substances returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._substances: List[SubstanceResult] = []
+
+    @property
+    def substances(self) -> List["SubstanceResult"]:
+        """Substance objects that are direct children of this item in the BoM.
+        """
+
+        return self._substances
+
+    def _add_child_substances(self, child_substances: List[models.CommonSubstanceReference]) -> None:
+        """Populate the ``substances`` attribute based on a list of low-level API substances results.
+
+        Parameters
+        ----------
+        child_substances
+            List of substances returned from the low-level API.
+        """
+
+        for child_substance in child_substances:
+            child_substance_result = ItemResultFactory.create_substance_result(
+                result=child_substance,
+            )
+            self._substances.append(child_substance_result)
+
+
+class ChildCoatingMixin:
+    """Provides the implementation for managing children coatings, by adding a ``coatings`` property to the class.
+
+    Parameters
+    ----------
+    child_coatings
+        Coatings returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._coatings: List[CoatingResult] = []
+
+    @property
+    def coatings(self) -> List["CoatingResult"]:
+        """Coating objects that are direct children of this item in the BoM."""
+
+        return self._coatings
+
+    def _add_child_coatings(self, child_coatings: List[models.CommonCoatingReference]) -> None:
+        """Populate the ``coatings`` attribute based on a list of low-level API coatings results.
+
+        Parameters
+        ----------
+        child_coatings
+            List of coatings returned from the low-level API.
+        """
+
+        for child_coating in child_coatings:
+            child_coating_result = ItemResultFactory.create_coating_result(
+                result=child_coating,
+            )
+            self._coatings.append(child_coating_result)
+
+
+class ChildProcessWithSustainabilityMixin:
+    """Provides the implementation for managing children processes, by adding a ``processes`` property to the class.
+
+    Parameters
+    ----------
+    child_processes
+        Materials returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._processes: List[ProcessWithSustainabilityResult] = []
+
+    @property
+    def processes(self) -> List["ProcessWithSustainabilityResult"]:
+        """Process with sustainability result objects that are direct children of this item in the BoM."""
+
+        return self._processes
+
+    def _add_child_processes(self, child_processes: List[models.CommonSustainabilityProcessWithSustainability]) -> None:
+        """Populate the ``processes`` attribute based on a list of low-level API processes with sustainability
+        results.
+
+        Parameters
+        ----------
+        child_processes
+            List of processes with sustainability returned from the low-level API.
+        """
+
+        for child_process in child_processes:
+            child_process_result = ItemResultFactory.create_process_with_sustainability(
+                result_with_sustainability=child_process,
+            )
+            self._processes.append(child_process_result)
+
+
+class MaterialWithSustainabilityResult(
+    ChildProcessWithSustainabilityMixin,
+    ChildSubstanceMixin,
+    SustainabilityResultMixin,
+    ReusabilityResultMixin,
+    MassResultMixin,
+    MaterialDefinition
+):
+    """Describes an individual material included as part of a sustainability query result.
+    This object includes three categories of attributes:
+
+      - The reference to the material in Granta MI
+      - The sustainability information for this material
+      - Any process or substance objects that are a child of this material object
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Record history identity.
+    material_id : str, optional
+        Material ID.
+    record_history_guid : str, optional
+        Record history GUID.
+    record_guid : str, optional
+        Record GUID.
+
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+    recyclable : bool
+        Indicates whether a material can be recycled, regardless of the recyclates quality.
+    biodegradable : bool
+        Indicates whether a material is biodegradable. Includes any waste that is capable of undergoing anaerobic or
+        aerobic decomposition.
+    downcycle : bool
+        Indicates whether a material can be recycled into material of an equivalent quality, that can be used for the
+        same (or similar) applications.
+    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Indicates a mass value that is calculated by the analysis and displayed in the analyzed BoM and Product
+        Compliance report, that represents the total mass for the quantity of the item specified in the BoM, taking
+        into account the quantities of parent assemblies. For example, for a part in the BoM, the Reported mass is for
+        the number of parts specified in the Quantity column, multiplied by the Quantity of its parent assembly, and
+        similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+
+    processes : list[:class:`~ansys.grantami.bomanalytics._item_results.ProcessWithSustainabilityResult`]
+       List of processes.
+    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceResult`]
+       List of substances.
+
+    Notes
+    -----
+    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
+    they are specified in the original query. As a result, if this object is included as the child of another result
+    object, only the ``record_history_identity`` parameter is populated.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class PartWithSustainabilityResult(
+    ChildPartWithSustainabilityMixin,
+    ChildMaterialWithSustainabilityMixin,
+    ChildProcessWithSustainabilityMixin,
+    ChildSubstanceMixin,
+    ChildSpecificationWithSustainabilityMixin,
+    SustainabilityResultMixin,
+    MassResultMixin,
+    PartDefinition,
+):
+    """Describes an individual part included as part of a sustainability query result.
+    This object includes three categories of attributes:
+
+      - The reference to the part in Granta MI (if the part references a record)
+      - The sustainability information for this part
+      - Any part, material, process, substance, or specification objects which are a child of this part object
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Record history identity.
+    part_number : str, optional
+        Part number.
+    record_history_guid : str, optional
+        Record history GUID.
+    record_guid : str, optional
+        Record GUID.
+
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Indicates a mass value that is calculated by the analysis and displayed in the analyzed BoM and Product
+        Compliance report, that represents the total mass for the quantity of the item specified in the BoM, taking
+        into account the quantities of parent assemblies. For example, for a part in the BoM, the Reported mass is for
+        the number of parts specified in the Quantity column, multiplied by the Quantity of its parent assembly, and
+        similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+
+    parts : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithSustainabilityResult`]
+        List of parts.
+    materials : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithSustainabilityResult`]
+        List of materials.
+    processes : list[:class:`~ansys.grantami.bomanalytics._item_results.ProcessWithSustainabilityResult`]
+       List of processes.
+    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceResult`]
+       List of substances.
+    specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithSustainabilityResult`]
+        List of specifications.
+
+    Notes
+    -----
+    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
+    they are specified in the original query. As a result, if this object is included as the child of another result
+    object, only the ``record_history_identity`` parameter is populated.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class SpecificationWithSustainabilityResult(
+    ChildSpecificationWithSustainabilityMixin,
+    ChildMaterialWithSustainabilityMixin,
+    ChildSubstanceMixin,
+    ChildCoatingWithComplianceMixin,
+    SustainabilityResultMixin,
+    MassResultMixin,
+    SpecificationDefinition,
+):
+    """Describes an individual specification included as part of a sustainability query result.
+    This object includes three categories of attributes:
+
+      - The reference to the part in Granta MI (if the part references a record)
+      - The sustainability information for this specification
+      - Any specification, material, substance, or coating objects which are a child of this part object
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Record history identity.
+    specification_id : str, optional
+        Specification ID.
+    record_history_guid : str, optional
+        Record history GUID.
+    record_guid : str, optional
+        Record GUID.
+
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Indicates a mass value that is calculated by the analysis and displayed in the analyzed BoM and Product
+        Compliance report, that represents the total mass for the quantity of the item specified in the BoM, taking
+        into account the quantities of parent assemblies. For example, for a part in the BoM, the Reported mass is for
+        the number of parts specified in the Quantity column, multiplied by the Quantity of its parent assembly, and
+        similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+
+    specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithSustainabilityResult`]
+        List of specifications.
+    materials : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithSustainabilityResult`]
+        List of materials.
+    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceResult`]
+       List of substances.
+    coatings : list[:class:`~ansys.grantami.bomanalytics._item_results.CoatingResult`]
+       List of coatings.
+
+    Notes
+    -----
+    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
+    they are specified in the original query. As a result, if this object is included as the child of another result
+    object, only the ``record_history_identity`` parameter is populated.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class SubstanceResult(BaseSubstanceReference):
+    """Describes an individual specification included as part of a sustainability query result.
+    This object includes only includes the reference to the part in Granta MI (if the substance references a record)
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Record history identify.
+    cas_number : str, optional
+        CAS number.
+    ec_number : str, optional
+        EC number.
+    chemical_name : str, optional
+        Chemical name.
+    record_history_guid : str, optional
+        Record history GUID.
+    record_guid : str, optional
+        Record GUID.
+
+    Notes
+    -----
+    Record reference parameters are only populated if they are specified in the original query.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class CoatingResult(CoatingReference):
+    """Provides an individual coating included as part of a sustainability query result.
+
+    This object includes only includes the reference to the coating in Granta MI
+
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Default reference type for items returned as children of the queried item.
+
+    Notes
+    -----
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class ProcessWithSustainabilityResult(
+    SustainabilityResultMixin,
+    ProcessReference,
+):
+    """Describes a process included as part of a sustainability query result.
+    This object includes two categories of attributes:
+
+      - The reference to the part in Granta MI (if the process references a record)
+      - The sustainability information for this process
+
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Default reference type for items returned as children of the queried item.
+
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+
+    Notes
+    -----
+    Record reference parameters are only populated if they are specified in the original query.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class TransportWithSustainabilityResult(
+    SustainabilityResultMixin,
+    TransportReference,
+):
+    """Describes a transport stage included as part of a sustainability query result.
+    This object includes two categories of attributes:
+
+      - The reference to the transport in Granta MI (if the part references a record)
+      - The sustainability information for this transport stage
+
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Default reference type for items returned as children of the queried item.
+
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.UnittedValue`
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+
+    Notes
+    -----
+    Record reference parameters are only populated if they are specified in the original query.
+
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """

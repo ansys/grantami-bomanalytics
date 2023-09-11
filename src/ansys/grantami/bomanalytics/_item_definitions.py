@@ -399,6 +399,30 @@ class CoatingReference(RecordReference, ABC):
         )
 
 
+class ProcessReference(RecordReference, ABC):
+    def __init__(
+        self,
+        reference_type: ReferenceType,
+        reference_value: Union[int, str, None],
+    ):
+        super().__init__(
+            reference_type=reference_type,
+            reference_value=reference_value,
+        )
+
+
+class TransportReference(RecordReference, ABC):
+    def __init__(
+        self,
+        reference_type: ReferenceType,
+        reference_value: Union[int, str, None],
+    ):
+        super().__init__(
+            reference_type=reference_type,
+            reference_value=reference_value,
+        )
+
+
 class BoM1711Definition:
     """Represents a BoM that is supplied as part of a BoM query.
 

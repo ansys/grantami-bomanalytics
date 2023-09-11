@@ -20,6 +20,7 @@ from ._item_results import (
     SubstanceWithComplianceResult,
     ImpactedSubstance,
     PartWithSustainabilityResult,
+    TransportWithSustainabilityResult,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
@@ -785,7 +786,22 @@ class BomSustainabilityQueryResult(ResultBaseClass):
     ) -> None:
         super().__init__(messages)
         self._response = results[0]
-        self._parts = self._process_response(self._response)
+        self._parts: List[PartWithSustainabilityResult] = [
+            ItemResultFactory.create_part_with_sustainability(result_with_sustainability=part)
+            for part in self._response.parts
+        ]
+        self._transports: List[TransportWithSustainabilityResult] = [
+            ItemResultFactory.create_transport_with_sustainability(result_with_sustainability=transport)
+            for transport in self._response.transport_stages
+        ]
+
+    @property
+    def parts(self) -> List[PartWithSustainabilityResult]:
+        return self._parts
+
+    @property
+    def transport_stages(self) -> List[TransportWithSustainabilityResult]:
+        return self._transports
 
 
 @QueryResultFactory.register(models.GetSustainabilitySummaryForBom2301Response)

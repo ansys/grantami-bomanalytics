@@ -30,6 +30,6 @@ cxn
 # + tags=[]
 from ansys.grantami.bomanalytics.indicators import RoHSIndicator
 
-indicator = RoHSIndicator(name="Indicator", legislation_names=["Legislation"])
+indicator = RoHSIndicator(name="Indicator", legislation_ids=["Legislation"])
 indicator
 # -

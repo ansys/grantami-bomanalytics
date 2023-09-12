@@ -56,7 +56,7 @@ class ObjValidator:
 
         if name not in ["Indicator 1", "Indicator 2"]:
             return False
-        if indicator.legislation_names != ["Mock"]:
+        if indicator.legislation_ids != ["Mock"]:
             return False
         return indicator.flag == result
 

@@ -128,7 +128,7 @@ from ansys.grantami.bomanalytics import indicators
 
 svhc = indicators.WatchListIndicator(
     name="SVHC",
-    legislation_names=["EU REACH - The Candidate List"],
+    legislation_ids=["Candidate_AnnexXV"],
     default_threshold_percentage=0.1,
 )
 compliance_query = (

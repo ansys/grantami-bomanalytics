@@ -509,7 +509,7 @@ class _ApiMixin:
         """Type of object to send to the Granta MI server. The actual value is set in the concrete class
          definition."""
 
-    def _call_api(self, api_method: Callable[[models.ModelBase], models.ModelBase], arguments: Dict) -> None:
+    def _call_api(self, api_method: Callable[..., models.ModelBase], arguments: Dict) -> None:
         """Perform the actual call against the Granta MI database.
 
         This method finalizes the arguments by appending each batch of ``'item'`` arguments to the passed-in
@@ -530,7 +530,7 @@ class _ApiMixin:
         for batch in self._data.batched_arguments:  # type: ignore[attr-defined]
             args = {**arguments, **batch}
             request = self._request_type(**args)
-            response = api_method(request)
+            response = api_method(body=request)
             self._data.append_response(response)  # type: ignore[attr-defined]
 
     @abstractmethod
@@ -599,7 +599,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         --------
         >>> indicator = WatchListIndicator(
         ...     name="Prop 65",
-        ...     legislation_names=["California Proposition 65 List"]
+        ...     legislation_ids=["Prop65"]
         ... )
         >>> MaterialComplianceQuery().with_indicators([indicator])
         <MaterialCompliance: 0 materials, batch size = 100, 1 indicators>
@@ -838,7 +838,7 @@ class MaterialComplianceQuery(_ComplianceMixin, _MaterialQueryBuilder):
     >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
-    ...     legislation_names=["California Proposition 65 List"]
+    ...     legislation_ids=["Prop65"]
     ... )
     >>> query = (
     ...     MaterialComplianceQuery()
@@ -943,7 +943,7 @@ class PartComplianceQuery(_ComplianceMixin, _PartQueryBuilder):
     >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
-    ...     legislation_names=["California Proposition 65 List"]
+    ...     legislation_ids=["Prop65"]
     ... )
     >>> query = (
     ...     PartComplianceQuery()
@@ -1053,7 +1053,7 @@ class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder)
     >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
-    ...     legislation_names=["California Proposition 65 List"]
+    ...     legislation_ids=["Prop65"]
     ... )
     >>> query = (
     ...     SpecificationComplianceQuery()
@@ -1461,7 +1461,7 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
     >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
-    ...     legislation_names=["California Proposition 65 List"]
+    ...     legislation_ids=["Prop65"]
     ... )
     >>> query = (
     ...     SubstanceComplianceQuery()
@@ -1606,7 +1606,7 @@ class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
     >>> bom = "<PartsEco xmlns..."
     >>> indicator = WatchListIndicator(
     ...     name="Prop 65",
-    ...     legislation_names=["California Proposition 65 List"]
+    ...     legislation_ids=["Prop65"]
     ... )
     >>> query = (
     ...     BomComplianceQuery()

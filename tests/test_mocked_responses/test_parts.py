@@ -107,8 +107,8 @@ class TestCompliance(BaseMockTester):
         queries.PartComplianceQuery()
         .with_indicators(
             [
-                indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
-                indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
+                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
+                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
             ]
         )
         .with_part_numbers(["Fake part number"])

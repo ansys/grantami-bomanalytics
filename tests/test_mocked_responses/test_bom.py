@@ -54,8 +54,8 @@ class TestCompliance(BaseMockTester):
 
     query = queries.BomComplianceQuery().with_indicators(
         [
-            indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
-            indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
+            indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
+            indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
         ]
     )
     mock_key = GetComplianceForBom1711Response.__name__

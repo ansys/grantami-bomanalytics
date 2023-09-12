@@ -264,7 +264,7 @@ class ItemResultFactory:
             cls,
             result_with_sustainability: models.CommonSustainabilityPartWithSustainability,
     ) -> "PartWithSustainabilityResult":
-        """Returns a Part with sustainability metrics and child items.
+        """Returns a Part object with sustainability metrics and child items.
 
         Parameters
         ----------
@@ -296,7 +296,7 @@ class ItemResultFactory:
             cls,
             result_with_sustainability: models.CommonSustainabilityProcessWithSustainability,
     ) -> "ProcessWithSustainabilityResult":
-        """Returns a Process with sustainability metrics.
+        """Returns a Process object with sustainability metrics.
 
         Parameters
         ----------
@@ -322,7 +322,7 @@ class ItemResultFactory:
             cls,
             result_with_sustainability: models.CommonSustainabilityMaterialWithSustainability,
     ) -> "MaterialWithSustainabilityResult":
-        """Returns a Material with sustainability metrics and child items.
+        """Returns a Material object with sustainability metrics and child items.
 
         Parameters
         ----------
@@ -354,7 +354,7 @@ class ItemResultFactory:
             cls,
             result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability,
     ) -> "SpecificationWithSustainabilityResult":
-        """Returns a Specification with sustainability metrics and child items.
+        """Returns a Specification object with sustainability metrics and child items.
 
         Parameters
         ----------
@@ -385,7 +385,7 @@ class ItemResultFactory:
             cls,
             result: models.CommonSubstanceReference,
     ) -> "SubstanceResult":
-        """Returns a Substance.
+        """Returns a Substance object.
 
         Parameters
         ----------
@@ -409,7 +409,7 @@ class ItemResultFactory:
             cls,
             result: models.CommonCoatingReference,
     ) -> "CoatingResult":
-        """Returns a Coating.
+        """Returns a Coating object.
 
         Parameters
         ----------
@@ -433,7 +433,7 @@ class ItemResultFactory:
             cls,
             result_with_sustainability: models.CommonSustainabilityTransportWithSustainability,
     ) -> "TransportWithSustainabilityResult":
-        """Returns a Transport with sustainability metrics.
+        """Returns a Transport object with sustainability metrics.
 
         Parameters
         ----------
@@ -1418,8 +1418,8 @@ class ValueWithUnit:
 class SustainabilityResultMixin:
     """Adds results from a sustainability query to a class.
 
-    A Bom-sustainability query returns a BoM-like results, with additional sustainability information attached to each
-    level of the BoM.
+    A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
+    to each level of the BoM.
     This mixin implements only the sustainability metrics and applies to most items in the BoM.
 
     Parameters
@@ -1447,8 +1447,8 @@ class SustainabilityResultMixin:
 class MassResultMixin:
     """Adds results from a sustainability query to a class.
 
-    A Bom-sustainability query returns a BoM-like results, with additional sustainability information attached to each
-    level of the BoM.
+    A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
+    to each level of the BoM.
     This mixin implements only mass calculation results.
 
     Parameters
@@ -1474,8 +1474,8 @@ class MassResultMixin:
 class ReusabilityResultMixin:
     """Adds results from a sustainability query to a class.
 
-    A Bom-sustainability query returns a BoM-like results, with additional sustainability information attached to each
-    level of the BoM.
+    A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
+    to each level of the BoM.
     This mixin implements only re-usability results, and are only relevant for Materials.
 
     Parameters

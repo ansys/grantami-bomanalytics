@@ -1,7 +1,7 @@
 import pytest
 from dataclasses import dataclass
 from ansys.grantami.bomanalytics import queries
-from .inputs import sample_bom
+from .inputs import sample_bom, sample_bom_2301
 
 
 class MockRecordDefinition:
@@ -83,16 +83,25 @@ class TestRecordArgManager:
 
 
 class TestBomArgManager:
-    def test_uninitialized_configuration(self):
-        am = queries._BomQueryDataManager()
+
+    @pytest.mark.parametrize("bom_version", ["bom_xml1711", "bom_xml2301"])
+    def test_uninitialized_configuration(self, bom_version):
+        am = queries._BomQueryDataManager(bom_version)
         assert isinstance(am._item_definitions[0], str)
         assert am._item_definitions[0] == ""
         assert am.__repr__() == '<_BomQueryDataManager {bom: ""}>'
 
-    @pytest.mark.parametrize("bom", ["Test bom less than 100 chars", sample_bom])
-    def test_add_bom(self, bom):
-        am = queries._BomQueryDataManager()
+    @pytest.mark.parametrize(
+        ["bom", "bom_version"],
+        [
+            ("Test bom less than 100 chars", "bom_xml1711"),
+            (sample_bom, "bom_xml1711"),
+            (sample_bom_2301, "bom_xml2301")
+        ]
+    )
+    def test_add_bom(self, bom, bom_version):
+        am = queries._BomQueryDataManager(bom_version)
         am._item_definitions = [bom]
         assert am._item_definitions[0] == bom
-        assert am.batched_arguments == [{"bom_xml1711": bom}]
+        assert am.batched_arguments == [{bom_version: bom}]
         assert am.__repr__() == f'<_BomQueryDataManager {{bom: "{bom[:100]}"}}>'

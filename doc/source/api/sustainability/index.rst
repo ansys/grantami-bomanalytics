@@ -10,4 +10,5 @@ Sustainability API
 
    bom
    bom_summary
+   common
 

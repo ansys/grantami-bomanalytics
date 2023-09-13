@@ -18,7 +18,7 @@ Query result
 
 .. autoclass:: ansys.grantami.bomanalytics._query_results.BomSustainabilityQueryResult
    :members:
-
+   :inherited-members:
 
 Part
 ~~~~
@@ -53,11 +53,3 @@ Substance
 ~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SubstanceResult
-
-
-Value with unit
-~~~~~~~~~~~~~~~
-
-.. autoclass:: ansys.grantami.bomanalytics._item_results.ValueWithUnit
-   :members:
-

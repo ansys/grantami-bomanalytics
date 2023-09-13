@@ -57,6 +57,7 @@ if TYPE_CHECKING:
         BomImpactedSubstancesQuery,
         BomComplianceQuery,
         BomSustainabilityQuery,
+        BomSustainabilitySummaryQuery,
     )
     from ._query_results import (
         MaterialImpactedSubstancesQueryResult,
@@ -69,6 +70,7 @@ if TYPE_CHECKING:
         BomImpactedSubstancesQueryResult,
         BomComplianceQueryResult,
         BomSustainabilityQueryResult,
+        BomSustainabilitySummaryQueryResult,
     )
 
 
@@ -380,6 +382,10 @@ class BomAnalyticsClient(ApiClient):
 
     @overload
     def run(self, query: "BomSustainabilityQuery") -> "BomSustainabilityQueryResult":
+        ...
+
+    @overload
+    def run(self, query: "BomSustainabilitySummaryQuery") -> "BomSustainabilitySummaryQueryResult":
         ...
 
     def run(self, query):  # type: ignore[no-untyped-def]

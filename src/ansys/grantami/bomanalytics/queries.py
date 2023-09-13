@@ -1813,9 +1813,6 @@ class BomSustainabilityQuery(
 ):
     """Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format.
 
-    All BoM-based queries only operate on a single BoM. As a result, the ``.with_batch_size()`` method is not
-    implemented for BoM-based queries.
-
     The methods used to configure units and add the BoM to this query return the query itself so that they can be
     chained together as required.
 
@@ -1842,4 +1839,24 @@ class BomSustainabilitySummaryQuery(
     api_method="post_sustainabilitysummary_bom2301",
     request_type=models.GetSustainabilitySummaryForBom2301Request,
 ):
-    pass
+    """
+    Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format and returns aggregated metrics.
+
+    The methods used to configure units and add the BoM to this query return the query itself so that they can be
+    chained together as required.
+
+    Once the query is fully constructed, use the `cxn.`
+    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :class:`~ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult`.
+
+    Examples
+    --------
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
+    >>> bom = "<PartsEco xmlns..."
+    >>> query = (
+    ...     BomSustainabilitySummaryQuery()
+    ...     .with_bom(bom)
+    ... )
+    >>> cxn.run(query)
+
+    """

@@ -26,6 +26,7 @@ from ._item_definitions import (
     CoatingReference,
     ProcessReference,
     TransportReference,
+    RecordReference,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
@@ -261,8 +262,8 @@ class ItemResultFactory:
 
     @classmethod
     def create_part_with_sustainability(
-            cls,
-            result_with_sustainability: models.CommonSustainabilityPartWithSustainability,
+        cls,
+        result_with_sustainability: models.CommonSustainabilityPartWithSustainability,
     ) -> "PartWithSustainabilityResult":
         """Returns a Part object with sustainability metrics and child items.
 
@@ -293,8 +294,8 @@ class ItemResultFactory:
 
     @classmethod
     def create_process_with_sustainability(
-            cls,
-            result_with_sustainability: models.CommonSustainabilityProcessWithSustainability,
+        cls,
+        result_with_sustainability: models.CommonSustainabilityProcessWithSustainability,
     ) -> "ProcessWithSustainabilityResult":
         """Returns a Process object with sustainability metrics.
 
@@ -319,8 +320,8 @@ class ItemResultFactory:
 
     @classmethod
     def create_material_with_sustainability(
-            cls,
-            result_with_sustainability: models.CommonSustainabilityMaterialWithSustainability,
+        cls,
+        result_with_sustainability: models.CommonSustainabilityMaterialWithSustainability,
     ) -> "MaterialWithSustainabilityResult":
         """Returns a Material object with sustainability metrics and child items.
 
@@ -351,8 +352,8 @@ class ItemResultFactory:
 
     @classmethod
     def create_specification_with_sustainability(
-            cls,
-            result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability,
+        cls,
+        result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability,
     ) -> "SpecificationWithSustainabilityResult":
         """Returns a Specification object with sustainability metrics and child items.
 
@@ -382,8 +383,8 @@ class ItemResultFactory:
 
     @classmethod
     def create_substance_result(
-            cls,
-            result: models.CommonSubstanceReference,
+        cls,
+        result: models.CommonSubstanceReference,
     ) -> "SubstanceResult":
         """Returns a Substance object.
 
@@ -406,8 +407,8 @@ class ItemResultFactory:
 
     @classmethod
     def create_coating_result(
-            cls,
-            result: models.CommonCoatingReference,
+        cls,
+        result: models.CommonCoatingReference,
     ) -> "CoatingResult":
         """Returns a Coating object.
 
@@ -430,8 +431,8 @@ class ItemResultFactory:
 
     @classmethod
     def create_transport_with_sustainability(
-            cls,
-            result_with_sustainability: models.CommonSustainabilityTransportWithSustainability,
+        cls,
+        result_with_sustainability: models.CommonSustainabilityTransportWithSustainability,
     ) -> "TransportWithSustainabilityResult":
         """Returns a Transport object with sustainability metrics.
 
@@ -455,7 +456,10 @@ class ItemResultFactory:
         return transport_with_sustainability
 
     @classmethod
-    def create_unitted_value(cls, result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit):
+    def create_unitted_value(
+        cls,
+        result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit
+    ) -> "ValueWithUnit":
         """Returns a value with unit.
 
         Parameters
@@ -468,6 +472,92 @@ class ItemResultFactory:
         ValueWithUnit
         """
         return ValueWithUnit(value=result.value, unit=result.unit)
+
+    @classmethod
+    def create_phase_summary(cls, result: models.CommonSustainabilityPhaseSummary) -> "SustainabilityPhaseSummaryResult":
+        return SustainabilityPhaseSummaryResult(
+            name=result.phase,
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=result.embodied_energy_percentage,
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=result.climate_change_percentage,
+        )
+
+    @classmethod
+    def create_transport_summary(
+        cls,
+        result: models.CommonSustainabilityTransportSummaryEntry
+    ) -> "TransportSummaryResult":
+        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
+        return TransportSummaryResult(
+            reference_type=reference_type,
+            reference_value=result.record_reference.reference_value,
+            name=result.stage_name,
+            distance=cls.create_unitted_value(result.distance),
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=result.embodied_energy_percentage,
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=result.climate_change_percentage,
+        )
+
+    @classmethod
+    def create_material_summary(
+        cls,
+        result: models.CommonSustainabilityMaterialSummaryEntry
+    ) -> "MaterialSummaryResult":
+        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
+        """#TODO docs"""
+        # TODO one of these is a bucket for all other materials that do not contribute >2% EE. Worth separating it?
+        #  It does not have a valid record reference or contributors.
+        return MaterialSummaryResult(
+            reference_type=reference_type,
+            reference_value=result.record_reference.reference_value,
+            name=result.name,
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=result.embodied_energy_percentage,
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=result.climate_change_percentage,
+            mass_after_processing=cls.create_unitted_value(result.mass_after_processing),
+            mass_before_processing=cls.create_unitted_value(result.mass_before_processing),
+            contributors=[
+                cls.create_contributing_component(component)
+                for component in result.largest_contributors
+            ] if result.largest_contributors else []
+        )
+
+    @classmethod
+    def create_contributing_component(
+        cls,
+        result: models.CommonSustainabilityMaterialContributingComponent
+    ) -> "ContributingComponentResult":
+        """#TODO docs"""
+        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
+        return ContributingComponentResult(
+            reference_type=reference_type,
+            reference_value=result.record_reference.reference_value,
+            material_mass_before_processing=cls.create_unitted_value(result.material_mass_before_processing),
+            name=result.component_name,
+        )
+
+    @classmethod
+    def create_process_summary(cls, result: models.CommonSustainabilityProcessSummaryEntry) -> "ProcessSummaryResult":
+        """#TODO docs"""
+        return ProcessSummaryResult(
+            material_name=result.material_name,
+            material_reference=MaterialDefinition(
+                reference_type=cls.parse_reference_type(result.material_record_reference.reference_type),
+                reference_value=result.material_record_reference.reference_value,
+            ),
+            process_name=result.process_name,
+            process_reference=ProcessReference(
+                reference_type=cls.parse_reference_type(result.process_record_reference.reference_type),
+                reference_value=result.process_record_reference.reference_value,
+            ),
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=result.embodied_energy_percentage,
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=result.climate_change_percentage,
+        )
 
     @staticmethod
     def parse_reference_type(reference_type: str) -> ReferenceType:
@@ -2003,16 +2093,17 @@ class ProcessWithSustainabilityResult(
     """
 
 
+# TODO: Response will include transport stage name (TransportReference -> TransportDefinition)
 class TransportWithSustainabilityResult(
     SustainabilityResultMixin,
     TransportReference,
 ):
+    # TODO Check Reference documentation. Should probably include guids
     """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:
 
       - The reference to the transport in Granta MI (if the part references a record)
       - The sustainability information for this transport stage
-
 
     Attributes
     ----------
@@ -2032,3 +2123,283 @@ class TransportWithSustainabilityResult(
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
+
+class SustainabilitySummaryMixin:
+    # TODO reuse existing SusResultMixin?
+    """Adds sustainability summary results to a class.
+
+    Parameters
+    ----------
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+    embodied_energy_percentage : float
+        Represents the percentage contribution of the item to total embodied energy of the parent collection.
+    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+    climate_change_percentage : float
+        Represents the percentage contribution of the item to total climate change of the parent collection.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+    def __init__(
+        self,
+        embodied_energy: ValueWithUnit,
+        embodied_energy_percentage: float,
+        climate_change: ValueWithUnit,
+        climate_change_percentage: float,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._embodied_energy = embodied_energy
+        self._embodied_energy_percentage = embodied_energy_percentage
+        self._climate_change = climate_change
+        self._climate_change_percentage = climate_change_percentage
+
+    @property
+    def embodied_energy(self) -> ValueWithUnit:
+        """
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+        """
+        return self._embodied_energy
+
+    @property
+    def embodied_energy_percentage(self) -> float:
+        """
+        Represents the percentage contribution of the item to total embodied energy of the parent collection.
+        """
+        return self._embodied_energy_percentage
+
+    @property
+    def climate_change(self) -> ValueWithUnit:
+        """
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+        """
+        return self._climate_change
+
+    @property
+    def climate_change_percentage(self) -> float:
+        """
+        Represents the percentage contribution of the item to total climate change of the parent collection.
+        """
+        return self._climate_change_percentage
+
+
+# TODO: Consider alternatives for name. Ideally we'd prefer the docs for the property to be specific to the parent, e.g.
+#  "The name of the part."
+class NamedItemMixin:
+    """Adds a name to a class.
+
+    Parameters
+    ----------
+    name : str
+        Name of the item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+    def __init__(
+        self,
+        name: str,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        """
+        Item name.
+        """
+        return self._name
+
+
+class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixin):
+    """
+    High-level sustainability summary for a phase.
+
+    Phases currently include:
+
+     - ``Material``
+     - ``Processes``
+     - ``Transport``
+
+    """
+
+
+class TransportDefinition(TransportReference):
+    def __init__(
+        self,
+        reference_type: ReferenceType,
+        reference_value: Union[int, str, None],
+        name: str,
+        distance: ValueWithUnit
+    ):
+        super().__init__(
+            reference_type=reference_type,
+            reference_value=reference_value,
+        )
+        self._name = name
+        self._distance = distance
+
+    @property
+    def name(self) -> str:
+        """Name of the transport stage."""
+        return self._name
+
+    @property
+    def distance(self) -> ValueWithUnit:
+        """Distance travelled in the transport stage."""
+        return self._distance
+
+
+# TODO: Standardize documentation approach. For PR, used inherited properties to avoid reviewing the same string N times.
+#  Still documenting guids/identities as attributes, but they could also be defined as inherited properties
+class TransportSummaryResult(SustainabilitySummaryMixin, TransportDefinition):
+    """
+    Sustainability summary for a transport stage.
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Record history identity.
+    record_history_guid : str, optional
+        Record history GUID.
+    record_guid : str, optional
+        Record GUID.
+    """
+
+
+class ContributingComponentResult(NamedItemMixin, PartDefinition):
+    """
+    Identifies a Part as one the largest contributors to the environmental footprint of a material.
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Record history identity.
+    part_number : str, optional
+        Part number.
+    record_history_guid : str, optional
+        Record history GUID.
+    record_guid : str, optional
+        Record GUID.
+    """
+    def __init__(
+        self,
+        material_mass_before_processing: ValueWithUnit,
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self._material_mass_before_processing = material_mass_before_processing
+
+    @property
+    def material_mass_before_processing(self) -> ValueWithUnit:
+        """
+        Original mass of parent material prior to any subtractive processing (i.e. removal of material).
+        """
+        return self._material_mass_before_processing
+
+
+class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, RecordReference):
+    """
+    Aggregated sustainability summary for a material.
+
+    Describes the environmental footprint of a unique material, accounting for all occurrences of the material in BoM.
+
+    Attributes
+    ----------
+    record_history_identity : int, optional
+        Record history identity.
+    record_history_guid : str, optional
+        Record history GUID.
+    record_guid : str, optional
+        Record GUID.
+    """
+    # TODO what makes a part be listed as a contributor? mass percentage threshold?
+    def __init__(
+        self,
+        mass_before_processing: ValueWithUnit,
+        mass_after_processing: ValueWithUnit,
+        contributors: List[ContributingComponentResult],
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self._mass_before_processing = mass_before_processing
+        self._mass_after_processing = mass_after_processing
+        self._contributors = contributors
+
+    @property
+    def mass_before_processing(self) -> ValueWithUnit:
+        """
+        Original mass of material prior to any subtractive processing (i.e. removal of material). Environmental
+        footprint for primary production of material and/or primary processing is calculated based on this mass.
+        """
+        return self._mass_before_processing
+
+    @property
+    def mass_after_processing(self) -> ValueWithUnit:
+        """Mass of material after any subtractive processing."""
+        return self._mass_after_processing
+
+    @property
+    def contributors(self) -> List[ContributingComponentResult]:
+        """Components containing the most of this material."""
+        # TODO document aggregation method?
+        # TODO translate docstring to actual English
+        return self._contributors
+
+
+# TODO has two names: breaks the NamedItemMixin approach
+# TODO has two refs (process + material): breaks the Mixin approach for refs
+class ProcessSummaryResult(SustainabilitySummaryMixin):
+    """
+    Aggregated sustainability summary for a process, applied to a unique material.
+
+    Describes the environmental footprint of a process, accounting for all occurrences of the process-material pair
+    found in the BoM.
+    """
+    def __init__(
+            self,
+            material_name: str,
+            material_reference: MaterialDefinition,
+            process_name: str,
+            process_reference: ProcessReference,
+            **kwargs,
+    ):
+        super().__init__(**kwargs)
+        self._material_name = material_name
+        self._material_reference = material_reference
+        self._process_name = process_name
+        self._process_reference = process_reference
+
+    @property
+    def material_name(self) -> str:
+        """
+        Material name.
+        """
+        return self._material_name
+
+    @property
+    def material_reference(self) -> MaterialDefinition:
+        """
+        Material record reference.
+        """
+        return self._material_reference
+
+    @property
+    def process_name(self) -> str:
+        """
+        Process name.
+        """
+        return self._process_name
+
+    @property
+    def process_reference(self) -> ProcessReference:
+        """
+        Process record reference.
+        """
+        return self._process_reference

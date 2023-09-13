@@ -1503,7 +1503,7 @@ class ValueWithUnit:
         return self._unit
 
 
-class SustainabilityResultMixin:
+class SustainabilityResultMixin(mixin_base_class):
     """Adds results from a sustainability query to a class.
 
     A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
@@ -1533,7 +1533,7 @@ class SustainabilityResultMixin:
         self.climate_change = climate_change
 
 
-class MassResultMixin:
+class MassResultMixin(mixin_base_class):
     """Adds results from a sustainability query to a class.
 
     A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
@@ -1561,7 +1561,7 @@ class MassResultMixin:
         self.reported_mass = reported_mass
 
 
-class ReusabilityResultMixin:
+class ReusabilityResultMixin(mixin_base_class):
     """Adds results from a sustainability query to a class.
 
     A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
@@ -1596,7 +1596,7 @@ class ReusabilityResultMixin:
         self.downcycle: bool = downcycle
 
 
-class ChildMaterialWithSustainabilityMixin:
+class ChildMaterialWithSustainabilityMixin(mixin_base_class):
     """Provides the implementation for managing children materials, by adding a ``materials`` property to the class.
 
     Parameters
@@ -1637,7 +1637,7 @@ class ChildMaterialWithSustainabilityMixin:
             self._materials.append(child_material_with_sustainability)
 
 
-class ChildPartWithSustainabilityMixin:
+class ChildPartWithSustainabilityMixin(mixin_base_class):
     """Provides the implementation for managing children parts, by adding a ``parts`` property to the class.
 
     Parameters
@@ -1678,7 +1678,7 @@ class ChildPartWithSustainabilityMixin:
             self._parts.append(child_part_with_sustainability)
 
 
-class ChildSpecificationWithSustainabilityMixin:
+class ChildSpecificationWithSustainabilityMixin(mixin_base_class):
     """Provides the implementation for managing children specifications, by adding a ``specifications`` property to the
     class.
 
@@ -1720,7 +1720,7 @@ class ChildSpecificationWithSustainabilityMixin:
             self._specifications.append(child_specification_with_sustainability)
 
 
-class ChildSubstanceMixin:
+class ChildSubstanceMixin(mixin_base_class):
     """Provides the implementation for managing children substances, by adding a ``substances`` property to the
     class.
 
@@ -1758,7 +1758,7 @@ class ChildSubstanceMixin:
             self._substances.append(child_substance_result)
 
 
-class ChildCoatingMixin:
+class ChildCoatingMixin(mixin_base_class):
     """Provides the implementation for managing children coatings, by adding a ``coatings`` property to the class.
 
     Parameters
@@ -1795,7 +1795,7 @@ class ChildCoatingMixin:
             self._coatings.append(child_coating_result)
 
 
-class ChildProcessWithSustainabilityMixin:
+class ChildProcessWithSustainabilityMixin(mixin_base_class):
     """Provides the implementation for managing children processes, by adding a ``processes`` property to the class.
 
     Parameters
@@ -2122,7 +2122,7 @@ class TransportWithSustainabilityResult(
     """
 
 
-class SustainabilitySummaryMixin:
+class SustainabilitySummaryMixin(mixin_base_class):
     # TODO reuse existing SusResultMixin?
     """Adds sustainability summary results to a class.
 
@@ -2188,7 +2188,7 @@ class SustainabilitySummaryMixin:
 
 # TODO: Consider alternatives for name. Ideally we'd prefer the docs for the property to be specific to the parent, e.g.
 #  "The name of the part."
-class NamedItemMixin:
+class NamedItemMixin(mixin_base_class):
     """Adds a name to a class.
 
     Parameters
@@ -2203,8 +2203,8 @@ class NamedItemMixin:
     def __init__(
         self,
         name: str,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__(**kwargs)
         self._name = name
 
@@ -2287,8 +2287,8 @@ class ContributingComponentResult(NamedItemMixin, PartDefinition):
     def __init__(
         self,
         material_mass_before_processing: ValueWithUnit,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__(**kwargs)
         self._material_mass_before_processing = material_mass_before_processing
 
@@ -2322,8 +2322,8 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, RecordRe
         mass_before_processing: ValueWithUnit,
         mass_after_processing: ValueWithUnit,
         contributors: List[ContributingComponentResult],
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__(**kwargs)
         self._mass_before_processing = mass_before_processing
         self._mass_after_processing = mass_after_processing
@@ -2366,8 +2366,8 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
         material_reference: MaterialDefinition,
         process_name: str,
         process_reference: ProcessReference,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         super().__init__(**kwargs)
         self._material_name = material_name
         self._material_reference = material_reference

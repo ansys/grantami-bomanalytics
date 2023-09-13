@@ -18,6 +18,7 @@ Query_Result
 
 from abc import ABC, abstractmethod
 from typing import (
+    Any,
     Union,
     List,
     Literal,
@@ -1572,7 +1573,7 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
 
 
 class _Bom1711QueryBuilder(_BomQueryBuilder):
-    bom_version = "bom_xml1711"
+    bom_version: Literal["bom_xml1711"] = "bom_xml1711"
 
     @validate_argument_type(str)
     def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
@@ -1608,10 +1609,8 @@ class _Bom1711QueryBuilder(_BomQueryBuilder):
         return self
 
 
-class _Bom2301QueryBuilder(
-    _BomQueryBuilder,
-):
-    bom_version = "bom_xml2301"
+class _Bom2301QueryBuilder(_BomQueryBuilder):
+    bom_version: Literal["bom_xml2301"] = "bom_xml2301"
 
     @validate_argument_type(str)
     def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
@@ -1754,18 +1753,21 @@ class Yaml:
 
 
 class _SustainabilityMixin(_ApiMixin):
+    _api_method: str
     api_class = api.SustainabilityApi
 
-    def __init_subclass__(cls, api_method: str, request_type: Type, **kwargs):
-        cls._api_method: str = api_method
+    def __init_subclass__(cls, api_method: str, request_type: Type, **kwargs: Any):
+        super().__init_subclass__(**kwargs)  # type: ignore
+        cls._api_method = api_method
         cls._request_type = request_type
-        super().__init_subclass__(**kwargs)
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._preferred_units = models.CommonPreferredUnits()
 
-    def with_units(self, distance: str = None, energy: str = None, mass: str = None):
+    def with_units(
+        self: Query_Builder, distance: Optional[str] = None, energy: Optional[str] = None, mass: Optional[str] = None
+    ) -> Query_Builder:
         """
         Specifies units to use in the response.
 
@@ -1773,11 +1775,11 @@ class _SustainabilityMixin(_ApiMixin):
 
         Parameters
         ----------
-        distance : str
+        distance : Optional[str]
             Unit symbol for distance.
-        energy : str
+        energy : Optional[str]
             Unit symbol for energy.
-        mass : str
+        mass : Optional[str]
             Unit symbol for mass.
 
         """

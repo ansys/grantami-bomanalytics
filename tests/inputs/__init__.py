@@ -18,4 +18,3 @@ with open(_bom_2301_path, "r") as f:
 _complex_bom_2301_path = pathlib.Path(__file__).parent / "bom-2301-complex.xml"
 with open(_complex_bom_2301_path, "r") as f:
     sample_bom_2301_complex = f.read()
-

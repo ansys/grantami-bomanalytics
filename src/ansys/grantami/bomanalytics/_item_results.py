@@ -457,8 +457,7 @@ class ItemResultFactory:
 
     @classmethod
     def create_unitted_value(
-        cls,
-        result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit
+        cls, result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit
     ) -> "ValueWithUnit":
         """Returns a value with unit.
 
@@ -474,7 +473,9 @@ class ItemResultFactory:
         return ValueWithUnit(value=result.value, unit=result.unit)
 
     @classmethod
-    def create_phase_summary(cls, result: models.CommonSustainabilityPhaseSummary) -> "SustainabilityPhaseSummaryResult":
+    def create_phase_summary(
+        cls, result: models.CommonSustainabilityPhaseSummary
+    ) -> "SustainabilityPhaseSummaryResult":
         return SustainabilityPhaseSummaryResult(
             name=result.phase,
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
@@ -485,8 +486,7 @@ class ItemResultFactory:
 
     @classmethod
     def create_transport_summary(
-        cls,
-        result: models.CommonSustainabilityTransportSummaryEntry
+        cls, result: models.CommonSustainabilityTransportSummaryEntry
     ) -> "TransportSummaryResult":
         reference_type = cls.parse_reference_type(result.record_reference.reference_type)
         return TransportSummaryResult(
@@ -502,8 +502,7 @@ class ItemResultFactory:
 
     @classmethod
     def create_material_summary(
-        cls,
-        result: models.CommonSustainabilityMaterialSummaryEntry
+        cls, result: models.CommonSustainabilityMaterialSummaryEntry
     ) -> "MaterialSummaryResult":
         reference_type = cls.parse_reference_type(result.record_reference.reference_type)
         """#TODO docs"""
@@ -519,16 +518,14 @@ class ItemResultFactory:
             climate_change_percentage=result.climate_change_percentage,
             mass_after_processing=cls.create_unitted_value(result.mass_after_processing),
             mass_before_processing=cls.create_unitted_value(result.mass_before_processing),
-            contributors=[
-                cls.create_contributing_component(component)
-                for component in result.largest_contributors
-            ] if result.largest_contributors else []
+            contributors=[cls.create_contributing_component(component) for component in result.largest_contributors]
+            if result.largest_contributors
+            else [],
         )
 
     @classmethod
     def create_contributing_component(
-        cls,
-        result: models.CommonSustainabilityMaterialContributingComponent
+        cls, result: models.CommonSustainabilityMaterialContributingComponent
     ) -> "ContributingComponentResult":
         """#TODO docs"""
         reference_type = cls.parse_reference_type(result.record_reference.reference_type)
@@ -1481,7 +1478,8 @@ class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceR
 
 
 class ValueWithUnit:
-    """Describes a value obtained from the API """
+    """Describes a value obtained from the API"""
+
     def __init__(
         self,
         value: float,
@@ -1523,6 +1521,7 @@ class SustainabilityResultMixin:
         Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
         for ``RecordDefinition``-based objects.
     """
+
     def __init__(
         self,
         embodied_energy: ValueWithUnit,
@@ -1552,6 +1551,7 @@ class MassResultMixin:
         Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
         for ``RecordDefinition``-based objects.
     """
+
     def __init__(
         self,
         reported_mass: ValueWithUnit,
@@ -1582,6 +1582,7 @@ class ReusabilityResultMixin:
         Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
         for ``RecordDefinition``-based objects.
     """
+
     def __init__(
         self,
         recyclable: bool,
@@ -1612,8 +1613,7 @@ class ChildMaterialWithSustainabilityMixin:
 
     @property
     def materials(self) -> List["MaterialWithSustainabilityResult"]:
-        """Material with sustainability result objects that are direct children of this item in the BoM.
-        """
+        """Material with sustainability result objects that are direct children of this item in the BoM."""
 
         return self._materials
 
@@ -1654,8 +1654,7 @@ class ChildPartWithSustainabilityMixin:
 
     @property
     def parts(self) -> List["PartWithSustainabilityResult"]:
-        """Part with sustainability result objects that are direct children of this item in the BoM.
-        """
+        """Part with sustainability result objects that are direct children of this item in the BoM."""
 
         return self._parts
 
@@ -1697,8 +1696,7 @@ class ChildSpecificationWithSustainabilityMixin:
 
     @property
     def specifications(self) -> List["SpecificationWithSustainabilityResult"]:
-        """Specification with sustainability result objects that are direct children of this item in the BoM.
-        """
+        """Specification with sustainability result objects that are direct children of this item in the BoM."""
 
         return self._specifications
 
@@ -1740,8 +1738,7 @@ class ChildSubstanceMixin:
 
     @property
     def substances(self) -> List["SubstanceResult"]:
-        """Substance objects that are direct children of this item in the BoM.
-        """
+        """Substance objects that are direct children of this item in the BoM."""
 
         return self._substances
 
@@ -1842,7 +1839,7 @@ class MaterialWithSustainabilityResult(
     SustainabilityResultMixin,
     ReusabilityResultMixin,
     MassResultMixin,
-    MaterialDefinition
+    MaterialDefinition,
 ):
     """Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -2144,6 +2141,7 @@ class SustainabilitySummaryMixin:
         Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
         for ``RecordDefinition``-based objects.
     """
+
     def __init__(
         self,
         embodied_energy: ValueWithUnit,
@@ -2201,6 +2199,7 @@ class NamedItemMixin:
         Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
         for ``RecordDefinition``-based objects.
     """
+
     def __init__(
         self,
         name: str,
@@ -2232,11 +2231,7 @@ class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixi
 
 class TransportDefinition(TransportReference):
     def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-        name: str,
-        distance: ValueWithUnit
+        self, reference_type: ReferenceType, reference_value: Union[int, str, None], name: str, distance: ValueWithUnit
     ):
         super().__init__(
             reference_type=reference_type,
@@ -2256,8 +2251,8 @@ class TransportDefinition(TransportReference):
         return self._distance
 
 
-# TODO: Standardize documentation approach. For PR, used inherited properties to avoid reviewing the same string N times.
-#  Still documenting guids/identities as attributes, but they could also be defined as inherited properties
+# TODO: Standardize documentation approach. For PR, used inherited properties to avoid reviewing the same string N
+#  times. Still documenting guids/identities as attributes, but they could also be defined as inherited properties
 class TransportSummaryResult(SustainabilitySummaryMixin, TransportDefinition):
     """
     Sustainability summary for a transport stage.
@@ -2288,6 +2283,7 @@ class ContributingComponentResult(NamedItemMixin, PartDefinition):
     record_guid : str, optional
         Record GUID.
     """
+
     def __init__(
         self,
         material_mass_before_processing: ValueWithUnit,
@@ -2319,6 +2315,7 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, RecordRe
     record_guid : str, optional
         Record GUID.
     """
+
     # TODO what makes a part be listed as a contributor? mass percentage threshold?
     def __init__(
         self,
@@ -2362,13 +2359,14 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
     Describes the environmental footprint of a process, accounting for all occurrences of the process-material pair
     found in the BoM.
     """
+
     def __init__(
-            self,
-            material_name: str,
-            material_reference: MaterialDefinition,
-            process_name: str,
-            process_reference: ProcessReference,
-            **kwargs,
+        self,
+        material_name: str,
+        material_reference: MaterialDefinition,
+        process_name: str,
+        process_reference: ProcessReference,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self._material_name = material_name

@@ -790,10 +790,11 @@ class BomSustainabilityQueryResult(ResultBaseClass):
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
     def __init__(
-            self,
-            results: List[models.GetSustainabilityForBom2301Response],
-            messages: List[LogMessage],
+        self,
+        results: List[models.GetSustainabilityForBom2301Response],
+        messages: List[LogMessage],
     ) -> None:
         super().__init__(messages)
         self._response = results[0]
@@ -842,6 +843,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
     def __init__(
         self,
         results: List[models.GetSustainabilitySummaryForBom2301Response],
@@ -859,8 +861,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
             for transport in self._response.transport_summary.summary
         ]
         self._material_details: List[MaterialSummaryResult] = [
-            ItemResultFactory.create_material_summary(material)
-            for material in self._response.material_summary.summary
+            ItemResultFactory.create_material_summary(material) for material in self._response.material_summary.summary
         ]
 
         self._primary_processes_details: List[ProcessSummaryResult] = [
@@ -875,6 +876,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
             ItemResultFactory.create_process_summary(process)
             for process in self._response.process_summary.joining_and_finishing_processes
         ]
+
     # High level summaries:
     # - provide list of all phases -> allow generic plotting/reporting of all phases indistinctively
     # - provide individual phase summaries -> allow direct access without iterating through all phases

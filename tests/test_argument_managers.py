@@ -83,7 +83,6 @@ class TestRecordArgManager:
 
 
 class TestBomArgManager:
-
     @pytest.mark.parametrize("bom_version", ["bom_xml1711", "bom_xml2301"])
     def test_uninitialized_configuration(self, bom_version):
         am = queries._BomQueryDataManager(bom_version)
@@ -96,8 +95,8 @@ class TestBomArgManager:
         [
             ("Test bom less than 100 chars", "bom_xml1711"),
             (sample_bom, "bom_xml1711"),
-            (sample_bom_2301, "bom_xml2301")
-        ]
+            (sample_bom_2301, "bom_xml2301"),
+        ],
     )
     def test_add_bom(self, bom, bom_version):
         am = queries._BomQueryDataManager(bom_version)

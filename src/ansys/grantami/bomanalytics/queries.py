@@ -1598,16 +1598,19 @@ class _Bom1711QueryBuilder(_BomQueryBuilder):
         Notes
         -----
         The XML schema is defined by the schema document
-        :download:`BillOfMaterialsEco1711.xsd </_static/xml_schemas/BillOfMaterialsEco1711.xsd>`, which in turn references
-        :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD files can be
-        used to validate that the BoM is both valid XML and adheres to the Ansys Granta 1711 XML BoM schema.
+        :download:`BillOfMaterialsEco1711.xsd </_static/xml_schemas/BillOfMaterialsEco1711.xsd>`, which in turn
+        references :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD
+        files can be used to validate that the BoM is both valid XML and adheres to the Ansys Granta 1711 XML BoM
+        schema.
         """
 
         self._data.bom = bom
         return self
 
 
-class _Bom2301QueryBuilder(_BomQueryBuilder, ):
+class _Bom2301QueryBuilder(
+    _BomQueryBuilder,
+):
     bom_version = "bom_xml2301"
 
     @validate_argument_type(str)
@@ -1634,9 +1637,10 @@ class _Bom2301QueryBuilder(_BomQueryBuilder, ):
         Notes
         -----
         The XML schema is defined by the schema document
-        :download:`BillOfMaterialsEco2301.xsd </_static/xml_schemas/BillOfMaterialsEco2301.xsd>`, which in turn references
-        :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD files can be
-        used to validate that the BoM is both valid XML and adheres to the Ansys Granta 2301 XML BoM schema.
+        :download:`BillOfMaterialsEco2301.xsd </_static/xml_schemas/BillOfMaterialsEco2301.xsd>`, which in turn
+        references :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD
+        files can be used to validate that the BoM is both valid XML and adheres to the Ansys Granta 2301 XML BoM
+        schema.
         """
 
         self._data.bom = bom
@@ -1782,11 +1786,7 @@ class _SustainabilityMixin(_ApiMixin):
         self._preferred_units.mass_unit = mass
         return self
 
-    def _run_query(
-        self,
-        api_instance: api.SustainabilityApi,
-        static_arguments: Dict
-    ) -> Query_Result:
+    def _run_query(self, api_instance: api.SustainabilityApi, static_arguments: Dict) -> Query_Result:
         """Something"""
         api_method = getattr(api_instance, self._api_method)
         arguments = {

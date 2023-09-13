@@ -1,5 +1,5 @@
 import pytest
-from .inputs import sample_bom_complex, sample_bom_custom_db, sample_bom_2301, sample_bom_2301_complex
+from .inputs import sample_bom_complex, sample_bom_custom_db, sample_bom_2301_complex
 from ansys.grantami.bomanalytics import queries, GrantaMIException
 from .common import LEGISLATIONS, INDICATORS, CUSTOM_TABLES
 

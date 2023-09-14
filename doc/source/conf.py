@@ -25,7 +25,6 @@ extensions = [
     "sphinx.ext.autodoc",
     "numpydoc",
     "sphinx.ext.doctest",
-    "sphinx.ext.autosummary",
     "notfound.extension",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",

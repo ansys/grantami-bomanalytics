@@ -476,6 +476,17 @@ class ItemResultFactory:
     def create_phase_summary(
         cls, result: models.CommonSustainabilityPhaseSummary
     ) -> "SustainabilityPhaseSummaryResult":
+        """Returns a SustainabilityPhaseSummaryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityPhaseSummary
+            Result from the REST API describing the sustainability metrics for a particular phase.
+
+        Returns
+        -------
+        SustainabilityPhaseSummaryResult
+        """
         return SustainabilityPhaseSummaryResult(
             name=result.phase,
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
@@ -488,6 +499,17 @@ class ItemResultFactory:
     def create_transport_summary(
         cls, result: models.CommonSustainabilityTransportSummaryEntry
     ) -> "TransportSummaryResult":
+        """Returns a TransportSummaryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityTransportSummaryEntry
+            Result from the REST API describing the sustainability metrics for a transport stage.
+
+        Returns
+        -------
+        TransportSummaryResult
+        """
         reference_type = cls.parse_reference_type(result.record_reference.reference_type)
         return TransportSummaryResult(
             reference_type=reference_type,
@@ -505,7 +527,18 @@ class ItemResultFactory:
         cls, result: models.CommonSustainabilityMaterialSummaryEntry
     ) -> "MaterialSummaryResult":
         reference_type = cls.parse_reference_type(result.record_reference.reference_type)
-        """#TODO docs"""
+        """Returns a MaterialSummaryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityMaterialSummaryEntry
+            Result from the REST API describing the sustainability metrics for a unique material aggregated for the 
+            whole BoM.
+
+        Returns
+        -------
+        MaterialSummaryResult
+        """
         # TODO one of these is a bucket for all other materials that do not contribute >2% EE. Worth separating it?
         #  It does not have a valid record reference or contributors.
         return MaterialSummaryResult(
@@ -527,7 +560,17 @@ class ItemResultFactory:
     def create_contributing_component(
         cls, result: models.CommonSustainabilityMaterialContributingComponent
     ) -> "ContributingComponentResult":
-        """#TODO docs"""
+        """Returns a ContributingComponentResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityMaterialContributingComponent
+            Result from the REST API describing parts contributing the most to a material's environmental footprint.
+
+        Returns
+        -------
+        ContributingComponentResult
+        """
         reference_type = cls.parse_reference_type(result.record_reference.reference_type)
         return ContributingComponentResult(
             reference_type=reference_type,
@@ -538,7 +581,18 @@ class ItemResultFactory:
 
     @classmethod
     def create_process_summary(cls, result: models.CommonSustainabilityProcessSummaryEntry) -> "ProcessSummaryResult":
-        """#TODO docs"""
+        """Returns a ProcessSummaryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityProcessSummaryEntry
+            Result from the REST API describing the sustainability metrics for a unique process-material pair,
+            aggregated for the whole BoM.
+
+        Returns
+        -------
+        ProcessSummaryResult
+        """
         return ProcessSummaryResult(
             material_name=result.material_name,
             material_reference=MaterialDefinition(
@@ -1587,7 +1641,7 @@ class ReusabilityResultMixin(mixin_base_class):
         self,
         recyclable: bool,
         biodegradable: bool,
-        downcycle: bool,  # TODO will change, see CR-1341 -> "Functional recycle"
+        downcycle: bool,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -2316,7 +2370,6 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, RecordRe
         Record GUID.
     """
 
-    # TODO what makes a part be listed as a contributor? mass percentage threshold?
     def __init__(
         self,
         mass_before_processing: ValueWithUnit,

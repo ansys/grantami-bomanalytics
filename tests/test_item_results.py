@@ -117,3 +117,163 @@ def test_compliance_item_repr(result_type):
         repr(result) == f"<{result_type}Result({{'reference_type': 'MiRecordGuid', "
         f"'reference_value': 'TEST_GUID'}}), {len(indicator_results)} indicators>"
     )
+
+
+class TestSustainabilitySummaryResultsRepr:
+    _rec_ref_kwargs = {"reference_type": "MiRecordGuid", "reference_value": "TEST_GUID"}
+    _eco_metrics = {
+        "embodied_energy": models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(
+            value=1.0,
+            unit="KJ",
+        ),
+        "climate_change": models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(
+            value=1.0,
+            unit="KJ",
+        ),
+        "embodied_energy_percentage": 60.0,
+        "climate_change_percentage": 40.0,
+    }
+
+    def test_phase_summary_repr(self):
+        phase_summary = models.CommonSustainabilityPhaseSummary(
+            phase="Material",
+            **self._eco_metrics,
+        )
+        phase_summary_result = ItemResultFactory.create_phase_summary(phase_summary)
+        assert repr(phase_summary_result) == "<SustainabilityPhaseSummaryResult('Material', EE%=60.0, CC%=40.0)>"
+
+    def test_transport_phase_summary_repr(self):
+        model = models.CommonSustainabilityTransportSummaryEntry(
+            **self._eco_metrics,
+            stage_name="Train A->B",
+            distance=models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(value=45, unit="km"),
+            record_reference=models.CommonTransportReference(**self._rec_ref_kwargs),
+        )
+        transport_result = ItemResultFactory.create_transport_summary(model)
+        expected = "<TransportSummaryResult('Train A->B', EE%=60.0, CC%=40.0)>"
+        assert repr(transport_result) == expected
+
+    def test_material_phase_summary_repr(self):
+        model = models.CommonSustainabilityMaterialSummaryEntry(
+            **self._eco_metrics,
+            name="Steel",
+            record_reference=models.CommonMaterialReference(**self._rec_ref_kwargs),
+            largest_contributors=[],
+            mass_after_processing=models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(
+                value=50, unit="kg"
+            ),
+            mass_before_processing=models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(
+                value=45, unit="kg"
+            ),
+        )
+        result = ItemResultFactory.create_material_summary(model)
+        expected = "<MaterialSummaryResult('Steel', EE%=60.0, CC%=40.0)>"
+        assert repr(result) == expected
+
+    def test_process_phase_summary_repr(self):
+        model = models.CommonSustainabilityProcessSummaryEntry(
+            **self._eco_metrics,
+            material_name="Steel",
+            material_record_reference=models.CommonMaterialReference(**self._rec_ref_kwargs),
+            process_name="Forging",
+            process_record_reference=models.CommonProcessReference(**self._rec_ref_kwargs),
+        )
+        result = ItemResultFactory.create_process_summary(model)
+        expected = "<ProcessSummaryResult(process='Forging', material='Steel', EE%=60.0, CC%=40.0)>"
+        assert repr(result) == expected
+
+    def test_contributing_part_repr(self):
+        model = models.CommonSustainabilityMaterialContributingComponent(
+            component_name="Engine",
+            material_mass_before_processing=models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(
+                value=50, unit="kg"
+            ),
+            record_reference=models.CommonPartReference(**self._rec_ref_kwargs),
+        )
+        result = ItemResultFactory.create_contributing_component(model)
+        expected = "<ContributingComponentResult('Engine', mass=50kg)>"
+        assert repr(result) == expected
+
+
+class TestSustainabilityResultsRepr:
+    _rec_ref_kwargs = {"reference_type": "MiRecordGuid", "reference_value": "TEST_GUID"}
+    _eco_metrics = {
+        "embodied_energy": models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(
+            value=2.3,
+            unit="KJ",
+        ),
+        "climate_change": models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(
+            value=5.1,
+            unit="KJ",
+        ),
+    }
+
+    def test_transport_result_repr(self):
+        model = models.CommonSustainabilityTransportWithSustainability(
+            **self._eco_metrics,
+            **self._rec_ref_kwargs,
+        )
+        result = ItemResultFactory.create_transport_with_sustainability(model)
+        expected = (
+            "<TransportWithSustainabilityResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
+        )
+        assert repr(result) == expected
+
+    def test_part_result_repr(self):
+        model = models.CommonSustainabilityPartWithSustainability(
+            **self._eco_metrics,
+            **self._rec_ref_kwargs,
+            materials=[],
+            substances=[],
+            specifications=[],
+            processes=[],
+            parts=[],
+            reported_mass=models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(value=45, unit="kg"),
+        )
+        result = ItemResultFactory.create_part_with_sustainability(model)
+        expected = "<PartWithSustainabilityResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
+        assert repr(result) == expected
+
+    def test_material_result_repr(self):
+        model = models.CommonSustainabilityMaterialWithSustainability(
+            **self._eco_metrics,
+            **self._rec_ref_kwargs,
+            biodegradable=True,
+            downcycle=True,
+            recyclable=True,
+            processes=[],
+            substances=[],
+            reported_mass=models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(value=45, unit="kg"),
+        )
+        result = ItemResultFactory.create_material_with_sustainability(model)
+        expected = (
+            "<MaterialWithSustainabilityResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
+        )
+        assert repr(result) == expected
+
+    def test_process_result_repr(self):
+        model = models.CommonSustainabilityProcessWithSustainability(
+            **self._eco_metrics,
+            **self._rec_ref_kwargs,
+        )
+        result = ItemResultFactory.create_process_with_sustainability(model)
+        expected = (
+            "<ProcessWithSustainabilityResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
+        )
+        assert repr(result) == expected
+
+    def test_coating_result_repr(self):
+        model = models.CommonCoatingReference(
+            **self._rec_ref_kwargs,
+        )
+        result = ItemResultFactory.create_coating_result(model)
+        expected = "<CoatingResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
+        assert repr(result) == expected
+
+    def test_substance_result_repr(self):
+        model = models.CommonSubstanceReference(
+            **self._rec_ref_kwargs,
+        )
+        result = ItemResultFactory.create_substance_result(model)
+        expected = "<SubstanceResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
+        assert repr(result) == expected

@@ -2284,6 +2284,12 @@ class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixi
     name: str
     """Name of the phase. Supported values are ``Material``, ``Processes``, and ``Transport``."""
 
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}('{self.name}',"
+            f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
+        )
+
 
 # TODO: Standardize documentation approach. For PR, used inherited properties to avoid reviewing the same string N
 #  times. Still documenting guids/identities as attributes, but they could also be defined as inherited properties
@@ -2312,6 +2318,12 @@ class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin, Transpo
     def distance(self) -> ValueWithUnit:
         """Distance travelled in the transport stage."""
         return self._distance
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}('{self.name}',"
+            f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
+        )
 
 
 class ContributingComponentResult(NamedItemMixin, PartDefinition):
@@ -2348,6 +2360,10 @@ class ContributingComponentResult(NamedItemMixin, PartDefinition):
         Original mass of parent material prior to any subtractive processing (i.e. removal of material).
         """
         return self._material_mass_before_processing
+
+    def __repr__(self) -> str:
+        _mass = f"{self._material_mass_before_processing.value}{self._material_mass_before_processing.unit}"
+        return f"<{self.__class__.__name__}('{self.name}', mass={_mass})>"
 
 
 class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, RecordReference):
@@ -2402,6 +2418,12 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, RecordRe
         # TODO translate docstring to actual English
         return self._contributors
 
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}('{self.name}',"
+            f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
+        )
+
 
 # TODO has two names: breaks the NamedItemMixin approach
 # TODO has two refs (process + material): breaks the Mixin approach for refs
@@ -2454,3 +2476,9 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
         Process record reference.
         """
         return self._process_reference
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}(process='{self.process_name}', material='{self.material_name}', "
+            f"EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
+        )

@@ -1771,6 +1771,7 @@ class _SustainabilityMixin(_ApiMixin):
         """
         Specifies units to use in the response.
 
+        Sets all units, overriding any previous configuration. Units not set will default to the API default unit.
         Provided unit symbols must exist in the target database.
 
         Parameters

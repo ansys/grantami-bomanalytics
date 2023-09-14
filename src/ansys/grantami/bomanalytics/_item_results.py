@@ -2285,31 +2285,9 @@ class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixi
     """Name of the phase. Supported values are ``Material``, ``Processes``, and ``Transport``."""
 
 
-class TransportDefinition(TransportReference):
-    def __init__(
-        self, reference_type: ReferenceType, reference_value: Union[int, str, None], name: str, distance: ValueWithUnit
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self._name = name
-        self._distance = distance
-
-    @property
-    def name(self) -> str:
-        """Name of the transport stage."""
-        return self._name
-
-    @property
-    def distance(self) -> ValueWithUnit:
-        """Distance travelled in the transport stage."""
-        return self._distance
-
-
 # TODO: Standardize documentation approach. For PR, used inherited properties to avoid reviewing the same string N
 #  times. Still documenting guids/identities as attributes, but they could also be defined as inherited properties
-class TransportSummaryResult(SustainabilitySummaryMixin, TransportDefinition):
+class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin, TransportReference):
     """
     Sustainability summary for a transport stage.
 
@@ -2322,6 +2300,18 @@ class TransportSummaryResult(SustainabilitySummaryMixin, TransportDefinition):
     record_guid : str, optional
         Record GUID.
     """
+
+    name: str
+    """Name of the transport stage."""
+
+    def __init__(self, distance: ValueWithUnit, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._distance = distance
+
+    @property
+    def distance(self) -> ValueWithUnit:
+        """Distance travelled in the transport stage."""
+        return self._distance
 
 
 class ContributingComponentResult(NamedItemMixin, PartDefinition):

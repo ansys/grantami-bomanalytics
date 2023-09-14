@@ -388,66 +388,15 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
 
 
 class CoatingReference(RecordReference, ABC):
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
+    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
 
 
 class ProcessReference(RecordReference, ABC):
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
+    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
 
 
 class TransportReference(RecordReference, ABC):
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-
-
-class BoM1711Definition:
-    """Represents a BoM that is supplied as part of a BoM query.
-
-    The XML contains record references within it, so there are no explicit references to records in this object.
-
-    Parameters
-    ----------
-    bom
-        BoM in XML 1711 format.
-    """
-
-    def __init__(self, bom: str):
-        super().__init__()
-        self._bom = bom
-
-    @property
-    def _definition(self) -> str:
-        """Low-level API BoM definition.
-
-        Returns
-        -------
-        Definition
-        """
-
-        return self._bom
+    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
 
 
 class AbstractBomFactory:
@@ -881,29 +830,3 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
         """
 
         return SubstanceDefinition(reference_type=ReferenceType.EcNumber, reference_value=ec_number)
-
-
-@AbstractBomFactory.register(
-    [
-        models.GetComplianceForBom1711Request,
-        models.GetImpactedSubstancesForBom1711Request,
-    ]
-)
-class BomFactory:
-    """Creates bom definition objects."""
-
-    @staticmethod
-    def create_definition(bom: str) -> BoM1711Definition:
-        """Instantiate and return a ``Bom1711Definition`` object based on a BoM.
-
-        Parameters
-        ----------
-        bom
-           BoM.
-
-        Returns
-        -------
-        Bom1711Definition
-        """
-
-        return BoM1711Definition(bom=bom)

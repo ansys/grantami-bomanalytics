@@ -8,7 +8,7 @@ all_bom_queries = pytest.mark.parametrize(
         queries.BomImpactedSubstancesQuery,
         queries.BomSustainabilityQuery,
         queries.BomSustainabilitySummaryQuery,
-    ]
+    ],
 )
 
 

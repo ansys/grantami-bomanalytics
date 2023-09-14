@@ -532,7 +532,7 @@ class ItemResultFactory:
         Parameters
         ----------
         result: models.CommonSustainabilityMaterialSummaryEntry
-            Result from the REST API describing the sustainability metrics for a unique material aggregated for the 
+            Result from the REST API describing the sustainability metrics for a unique material aggregated for the
             whole BoM.
 
         Returns
@@ -2240,8 +2240,6 @@ class SustainabilitySummaryMixin(mixin_base_class):
         return self._climate_change_percentage
 
 
-# TODO: Consider alternatives for name. Ideally we'd prefer the docs for the property to be specific to the parent, e.g.
-#  "The name of the part."
 class NamedItemMixin(mixin_base_class):
     """Adds a name to a class.
 
@@ -2281,6 +2279,10 @@ class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixi
      - ``Transport``
 
     """
+
+    # Overriding docstring for property `name` inherited from mixin
+    name: str
+    """Name of the phase. Supported values are ``Material``, ``Processes``, and ``Transport``."""
 
 
 class TransportDefinition(TransportReference):
@@ -2338,6 +2340,10 @@ class ContributingComponentResult(NamedItemMixin, PartDefinition):
         Record GUID.
     """
 
+    # Overriding docstring for property `name` inherited from mixin
+    name: str
+    """Name of the part."""
+
     def __init__(
         self,
         material_mass_before_processing: ValueWithUnit,
@@ -2369,6 +2375,10 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, RecordRe
     record_guid : str, optional
         Record GUID.
     """
+
+    # Overriding docstring for property `name` inherited from mixin
+    name: str
+    """Name of the material."""
 
     def __init__(
         self,

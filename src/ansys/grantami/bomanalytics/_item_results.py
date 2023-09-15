@@ -794,9 +794,6 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        impacted_substance.ec_number = substance.ec_number
-        impacted_substance.cas_number = substance.cas_number
-        impacted_substance.chemical_name = substance.substance_name
         return impacted_substance
 
     @property
@@ -2030,8 +2027,9 @@ class SubstanceResult(BaseSubstanceReference):
     """
 
 
-# TODO: Consider documenting CoatingReference/SubstanceReference directly, since Material and PartRef need to be added anyway.
-#  Although having the result class means it can be extended in the future without qualifying as breaking changes.
+# TODO: Consider documenting CoatingReference/SubstanceReference directly, since Material and PartRef need to be added
+#  anyway. Although having the result class means it can be extended in the future without qualifying as breaking
+#  changes.
 class CoatingResult(CoatingReference):
     """Provides an individual coating included as part of a sustainability query result.
 
@@ -2081,6 +2079,7 @@ class TransportWithSustainabilityResult(
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
     # TODO is the record reference note relevant?
 
 

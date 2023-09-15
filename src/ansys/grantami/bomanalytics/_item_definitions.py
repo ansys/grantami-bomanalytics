@@ -81,9 +81,10 @@ class RecordReference(ABC):
         as the repr for this object and subobjects.
         """
 
+        _reference_value = str(self._reference_value) if self._reference_value is not None else None
         result = {
             "reference_type": self._reference_type.name,
-            "reference_value": self._reference_value,
+            "reference_value": _reference_value,
         }
         return result
 

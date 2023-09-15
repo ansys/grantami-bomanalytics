@@ -26,7 +26,9 @@ from ._item_definitions import (
     CoatingReference,
     ProcessReference,
     TransportReference,
-    RecordReference,
+    PartReference,
+    MaterialReference,
+    SpecificationReference,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
@@ -1893,7 +1895,7 @@ class MaterialWithSustainabilityResult(
     SustainabilityResultMixin,
     ReusabilityResultMixin,
     MassResultMixin,
-    MaterialDefinition,
+    MaterialReference,
 ):
     """Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -1956,7 +1958,7 @@ class PartWithSustainabilityResult(
     ChildSpecificationWithSustainabilityMixin,
     SustainabilityResultMixin,
     MassResultMixin,
-    PartDefinition,
+    PartReference,
 ):
     """Describes an individual part included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -2016,7 +2018,7 @@ class SpecificationWithSustainabilityResult(
     ChildCoatingWithComplianceMixin,
     SustainabilityResultMixin,
     MassResultMixin,
-    SpecificationDefinition,
+    SpecificationReference,
 ):
     """Describes an individual specification included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -2326,7 +2328,7 @@ class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin, Transpo
         )
 
 
-class ContributingComponentResult(NamedItemMixin, PartDefinition):
+class ContributingComponentResult(NamedItemMixin, PartReference):
     """
     Identifies a Part as one the largest contributors to the environmental footprint of a material.
 
@@ -2366,7 +2368,7 @@ class ContributingComponentResult(NamedItemMixin, PartDefinition):
         return f"<{self.__class__.__name__}('{self.name}', mass={_mass})>"
 
 
-class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, RecordReference):
+class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, MaterialReference):
     """
     Aggregated sustainability summary for a material.
 
@@ -2438,7 +2440,7 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
     def __init__(
         self,
         material_name: str,
-        material_reference: MaterialDefinition,
+        material_reference: MaterialReference,
         process_name: str,
         process_reference: ProcessReference,
         **kwargs: Any,
@@ -2448,20 +2450,6 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
         self._material_reference = material_reference
         self._process_name = process_name
         self._process_reference = process_reference
-
-    @property
-    def material_name(self) -> str:
-        """
-        Material name.
-        """
-        return self._material_name
-
-    @property
-    def material_reference(self) -> MaterialDefinition:
-        """
-        Material record reference.
-        """
-        return self._material_reference
 
     @property
     def process_name(self) -> str:
@@ -2476,6 +2464,20 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
         Process record reference.
         """
         return self._process_reference
+
+    @property
+    def material_name(self) -> str:
+        """
+        Material name.
+        """
+        return self._material_name
+
+    @property
+    def material_reference(self) -> MaterialReference:
+        """
+        Material record reference.
+        """
+        return self._material_reference
 
     def __repr__(self) -> str:
         return (

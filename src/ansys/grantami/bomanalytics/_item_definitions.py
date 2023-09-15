@@ -103,8 +103,8 @@ class RecordDefinition(RecordReference):
         pass
 
 
-class PartDefinition(RecordDefinition):
-    """Represents a part record from the concrete :class:`RecordDefinition` subclass.
+class PartReference(RecordReference):
+    """Represents a reference to a part record from the concrete :class:`RecordReference` subclass.
 
     This class extends the base class to also support part numbers.
     """
@@ -115,6 +115,10 @@ class PartDefinition(RecordDefinition):
         if self._reference_type == ReferenceType.PartNumber:
             return cast(str, self._reference_value)
         return None
+
+
+class PartDefinition(RecordDefinition, PartReference):
+    """Represents a part record from the concrete :class:`RecordDefinition` subclass."""
 
     @property
     def _definition(self) -> models.CommonPartReference:
@@ -129,8 +133,8 @@ class PartDefinition(RecordDefinition):
         return result
 
 
-class MaterialDefinition(RecordDefinition):
-    """Represents a material record from the concrete :class:`RecordDefinition` subclass.
+class MaterialReference(RecordReference):
+    """Represents a reference to a material record from the abstract ``RecordReference`` subclass.
 
     This class extends the base class to also support material IDs.
     """
@@ -141,6 +145,10 @@ class MaterialDefinition(RecordDefinition):
         if self._reference_type == ReferenceType.MaterialId:
             return cast(str, self._reference_value)
         return None
+
+
+class MaterialDefinition(RecordDefinition, MaterialReference):
+    """Represents a material record from the concrete :class:`RecordDefinition` subclass."""
 
     @property
     def _definition(self) -> models.CommonMaterialReference:
@@ -155,8 +163,8 @@ class MaterialDefinition(RecordDefinition):
         return result
 
 
-class SpecificationDefinition(RecordDefinition):
-    """Represents a specification record from the concrete :class:`RecordDefinition` subclass.
+class SpecificationReference(RecordReference):
+    """Represents a reference to a specification record from the concrete :class:`RecordReference` subclass.
 
     This class extends the base class to also support specification IDs.
     """
@@ -167,6 +175,10 @@ class SpecificationDefinition(RecordDefinition):
         if self._reference_type == ReferenceType.SpecificationId:
             return cast(str, self._reference_value)
         return None
+
+
+class SpecificationDefinition(RecordDefinition, SpecificationReference):
+    """Represents a specification record from the concrete :class:`RecordDefinition` subclass."""
 
     @property
     def _definition(self) -> models.CommonSpecificationReference:
@@ -189,34 +201,28 @@ class BaseSubstanceReference(RecordReference, ABC):
     Substance references come in multiple flavors. Inputs, compliance results, and impacted substance results quantify
     substances in slightly different ways. This class implements the reference aspects of the substance record only.
     The quantifications are implemented in the subclasses.
-
-    Parameters
-    ----------
-    reference_type
-        Type of the record reference value.
-    reference_value
-        Value of the record reference. All are strings except for record history identities,
-        which are integers.
     """
 
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self.chemical_name = None
-        self.cas_number = None
-        self.ec_number = None
-        if reference_type == ReferenceType.ChemicalName:
-            self.chemical_name = cast(str, reference_value)
-        elif reference_type == ReferenceType.CasNumber:
-            self.cas_number = cast(str, reference_value)
-        elif reference_type == ReferenceType.EcNumber:
-            self.ec_number = cast(str, reference_value)
+    @property
+    def cas_number(self) -> Optional[str]:
+        """CAS number."""
+        if self._reference_type == ReferenceType.CasNumber:
+            return cast(str, self._reference_value)
+        return None
+
+    @property
+    def ec_number(self) -> Optional[str]:
+        """EC number."""
+        if self._reference_type == ReferenceType.EcNumber:
+            return cast(str, self._reference_value)
+        return None
+
+    @property
+    def chemical_name(self) -> Optional[str]:
+        """Chemical name."""
+        if self._reference_type == ReferenceType.ChemicalName:
+            return cast(str, self._reference_value)
+        return None
 
 
 class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):

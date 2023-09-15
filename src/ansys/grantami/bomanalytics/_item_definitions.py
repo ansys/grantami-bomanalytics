@@ -60,16 +60,16 @@ class RecordReference(ABC):
         return None
 
     @property
-    def record_guid(self) -> Optional[str]:
-        """Record GUID."""
-        if self._reference_type == ReferenceType.MiRecordGuid:
+    def record_history_guid(self) -> Optional[str]:
+        """Record history GUID."""
+        if self._reference_type == ReferenceType.MiRecordHistoryGuid:
             return cast(str, self._reference_value)
         return None
 
     @property
-    def record_history_guid(self) -> Optional[str]:
-        """Record history GUID."""
-        if self._reference_type == ReferenceType.MiRecordHistoryGuid:
+    def record_guid(self) -> Optional[str]:
+        """Record GUID."""
+        if self._reference_type == ReferenceType.MiRecordGuid:
             return cast(str, self._reference_value)
         return None
 

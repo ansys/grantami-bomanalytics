@@ -2293,20 +2293,9 @@ class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixi
         )
 
 
-# TODO: Standardize documentation approach. For PR, used inherited properties to avoid reviewing the same string N
-#  times. Still documenting guids/identities as attributes, but they could also be defined as inherited properties
 class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin, TransportReference):
     """
     Sustainability summary for a transport stage.
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identity.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
     """
 
     name: str
@@ -2331,17 +2320,6 @@ class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin, Transpo
 class ContributingComponentResult(NamedItemMixin, PartReference):
     """
     Identifies a Part as one the largest contributors to the environmental footprint of a material.
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identity.
-    part_number : str, optional
-        Part number.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
     """
 
     # Overriding docstring for property `name` inherited from mixin
@@ -2373,15 +2351,6 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, Material
     Aggregated sustainability summary for a material.
 
     Describes the environmental footprint of a unique material, accounting for all occurrences of the material in BoM.
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identity.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
     """
 
     # Overriding docstring for property `name` inherited from mixin

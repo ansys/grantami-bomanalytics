@@ -134,7 +134,8 @@ class PartDefinition(RecordDefinition, PartReference):
 
 
 class MaterialReference(RecordReference):
-    """Represents a reference to a material record from the abstract ``RecordReference`` subclass.
+    # Because of ProcessSummaryResult, this is publicly documented.
+    """Represents a reference to a Material record.
 
     This class extends the base class to also support material IDs.
     """
@@ -305,7 +306,9 @@ class CoatingReference(RecordReference, ABC):
 
 
 class ProcessReference(RecordReference, ABC):
-    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
+    # Because of ProcessSummaryResult, this is publicly documented.
+    # Extends RecordReference without changes, to re-define the class name, because it appears in the repr.
+    """Represents a reference to a Process record."""
 
 
 class TransportReference(RecordReference, ABC):

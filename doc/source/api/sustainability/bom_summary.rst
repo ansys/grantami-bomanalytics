@@ -8,9 +8,9 @@ Query definition
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery
    :members:
-
-   .. automethod:: with_bom
-   .. automethod:: with_units
+   :inherited-members:
+   :exclude-members: api_class
+   :member-order: by_mro_by_source
 
 Query result
 ~~~~~~~~~~~~
@@ -18,6 +18,7 @@ Query result
 .. autoclass:: ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult
    :members:
    :inherited-members:
+   :member-order: by_mro_by_source
 
 
 Phase summary
@@ -26,7 +27,7 @@ Phase summary
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult
    :members:
    :inherited-members:
-
+   :member-order: by_mro_by_source
 
 Transport
 ~~~~~~~~~
@@ -35,6 +36,7 @@ Transport
    :members:
    :inherited-members:
    :exclude-members: record_reference
+   :member-order: by_mro_by_source
 
 Material
 ~~~~~~~~
@@ -43,11 +45,13 @@ Material
    :members:
    :inherited-members:
    :exclude-members: record_reference
+   :member-order: by_mro_by_source
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.ContributingComponentResult
    :members:
    :inherited-members:
    :exclude-members: record_reference
+   :member-order: by_mro_by_source
 
 Process
 ~~~~~~~
@@ -56,4 +60,4 @@ Process
    :members:
    :inherited-members:
    :exclude-members: record_reference
-
+   :member-order: by_mro_by_source

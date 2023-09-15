@@ -1754,7 +1754,7 @@ class Yaml:
 
 class _SustainabilityMixin(_ApiMixin):
     _api_method: str
-    api_class = api.SustainabilityApi
+    api_class = api.SustainabilityApi  # TODO consider making private. Manually excluded from docs for now.
 
     def __init_subclass__(cls, api_method: str, request_type: Type, **kwargs: Any):
         super().__init_subclass__(**kwargs)  # type: ignore
@@ -1776,11 +1776,11 @@ class _SustainabilityMixin(_ApiMixin):
 
         Parameters
         ----------
-        distance : Optional[str]
+        distance : str | None
             Unit symbol for distance.
-        energy : Optional[str]
+        energy : str | None
             Unit symbol for energy.
-        mass : Optional[str]
+        mass : str | None
             Unit symbol for mass.
 
         """

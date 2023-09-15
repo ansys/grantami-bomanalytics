@@ -863,7 +863,6 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         self._material_details: List[MaterialSummaryResult] = [
             ItemResultFactory.create_material_summary(material) for material in self._response.material_summary.summary
         ]
-
         self._primary_processes_details: List[ProcessSummaryResult] = [
             ItemResultFactory.create_process_summary(process)
             for process in self._response.process_summary.primary_processes
@@ -915,14 +914,14 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         return self._process_summary
 
+    # TODO confirm it is ALL and not some above threshold + Aggregated Other
     @property
     def transport_details(self) -> List[TransportSummaryResult]:
-        # TODO confirm it is ALL and not some above threshold + Aggregated Other
         """
         Summary information for all transport stages.
 
         Values in percentages express the contribution of the specific transport stage, relative to contributions of all
-         transport stages.
+        transport stages.
         """
         return self._transport_details
 

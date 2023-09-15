@@ -1,7 +1,9 @@
 import os
 import shutil
 import sys
+import warnings
 from datetime import datetime
+from inspect import getmodule
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +16,7 @@ from sphinx.ext.autodoc import (
     PropertyDocumenter, MethodDocumenter,
     Documenter,
     member_order_option,
+    ModuleAnalyzer,
 )
 
 sys.path.insert(0, os.path.abspath("../../src"))
@@ -294,10 +297,15 @@ class ClassDocumenter(DefaultClassDocumenter):
 
         # Get ordered list of parent classes. In reverse, so that the resulting documentation includes members inherited
         # from the furthest ancestors first.
-        mro = reversed([c.__qualname__ for c in self.object.__mro__])
+        mro = reversed([
+            {"name": c.__qualname__, "class": c}
+            for c in self.object.__mro__])
 
         sorted_documenters = []
-        for parent_kls_name in mro:
+        for parent_kls in mro:
+            parent_kls_name = parent_kls["name"]
+            parent_kls_module = getmodule(parent_kls["class"])
+
             documenters_for_this_parent_kls = []
             for documenter, isattr in documenters:
                 if isinstance(documenter, MethodDocumenter):
@@ -309,7 +317,10 @@ class ClassDocumenter(DefaultClassDocumenter):
                     documenter.import_object(True)
                     member_name = documenter.object.fget.__qualname__
                 else:
-                    raise Exception(f"Item type {type(documenter)} is not supported.")
+                    raise Exception(
+                        f"Error when processing {self.name}. Member {documenter.name} is of type {type(documenter)}, "
+                        f"which is not supported. Supported member types are property and method."
+                    )
 
                 member_kls_name, member_fn_name = member_name.split(".")
                 if member_kls_name == parent_kls_name:
@@ -320,13 +331,23 @@ class ClassDocumenter(DefaultClassDocumenter):
 
                 # Block copied from Documenter.sort_members
                 # sort by source order, by virtue of the module analyzer
-                tagorder = self.analyzer.tagorder
+                if getmodule(self.object).__name__ == parent_kls_module.__name__:
+                    tagorder = self.analyzer.tagorder
+                else:
+                    # parent class not defined in current module, instantiate analyzer for parent class module
+                    analyzer = ModuleAnalyzer.for_module(parent_kls_module.__name__)
+                    analyzer.analyze()
+                    tagorder = analyzer.tagorder
 
                 def keyfunc(entry: tuple[Documenter, bool]) -> int:
                     fullname = entry[0].name.split('::')[1]
                     # Substitute the parent name with the base class name
                     fullname_in_mro = fullname.replace(self.object_name, parent_kls_name)
-                    return tagorder.get(fullname_in_mro, len(tagorder))
+                    order = tagorder.get(fullname_in_mro, None)
+                    if order is None:
+                        warnings.warn(message=f"Unable to evaluate source order for {fullname_in_mro}")
+                        order = len(tagorder)
+                    return order
 
                 sorted_by_parent_source = sorted(documenters_for_this_parent_kls, key=keyfunc)
                 sorted_documenters.extend(sorted_by_parent_source)

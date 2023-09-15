@@ -1,13 +1,22 @@
-import sys
 import os
-from datetime import datetime
-from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import shutil
+import sys
+from datetime import datetime
 from pathlib import Path
+from typing import Any
+
 import jupytext
+from ansys.grantami.bomanalytics import __version__
+from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
+from sphinx.application import Sphinx
+from sphinx.ext.autodoc import (
+    ClassDocumenter as DefaultClassDocumenter,
+    PropertyDocumenter, MethodDocumenter,
+    Documenter,
+    member_order_option,
+)
 
 sys.path.insert(0, os.path.abspath("../../src"))
-from ansys.grantami.bomanalytics import __version__
 
 
 # -- Project information -----------------------------------------------------
@@ -271,3 +280,72 @@ Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb
 
 ----
 """
+
+
+class ClassDocumenter(DefaultClassDocumenter):
+    # The only customization is to intercept the sort_members method and, only if the class being documented is
+    # configured to use the custom member-order, to sort the member documenters by following the MRO.
+
+    def sort_members(self, documenters: list[tuple[Documenter, bool]],
+                     order: str) -> list[tuple[Documenter, bool]]:
+        # Intercept sorting only for classes configured with the custom member-order value
+        if order != "by_mro_by_source":
+            return super().sort_members(documenters, order)
+
+        # Get ordered list of parent classes. In reverse, so that the resulting documentation includes members inherited
+        # from the furthest ancestors first.
+        mro = reversed([c.__qualname__ for c in self.object.__mro__])
+
+        sorted_documenters = []
+        for parent_kls_name in mro:
+            documenters_for_this_parent_kls = []
+            for documenter, isattr in documenters:
+                if isinstance(documenter, MethodDocumenter):
+                    documenter.parse_name()
+                    documenter.import_object(True)
+                    member_name = documenter.object.__qualname__
+                elif isinstance(documenter, PropertyDocumenter):
+                    documenter.parse_name()
+                    documenter.import_object(True)
+                    member_name = documenter.object.fget.__qualname__
+                else:
+                    raise Exception(f"Item type {type(documenter)} is not supported.")
+
+                member_kls_name, member_fn_name = member_name.split(".")
+                if member_kls_name == parent_kls_name:
+                    documenters_for_this_parent_kls.append((documenter, isattr))
+            if documenters_for_this_parent_kls:
+                # Cannot delegate to super().sort_members to sort by source, because self.analyzer.tagorder identifies
+                # object by `BaseClass.method`, whereas the documenters identify objects by `ConcreteClass.method`
+
+                # Block copied from Documenter.sort_members
+                # sort by source order, by virtue of the module analyzer
+                tagorder = self.analyzer.tagorder
+
+                def keyfunc(entry: tuple[Documenter, bool]) -> int:
+                    fullname = entry[0].name.split('::')[1]
+                    # Substitute the parent name with the base class name
+                    fullname_in_mro = fullname.replace(self.object_name, parent_kls_name)
+                    return tagorder.get(fullname_in_mro, len(tagorder))
+
+                sorted_by_parent_source = sorted(documenters_for_this_parent_kls, key=keyfunc)
+                sorted_documenters.extend(sorted_by_parent_source)
+        return sorted_documenters
+
+
+def wrapped_member_order_option(arg: Any) -> str | None:
+    """Used to convert the :member-order: option to auto directives."""
+    # Allow extra configuration value for member order.
+    if arg == "by_mro_by_source":
+        return arg
+    else:
+        return member_order_option(arg)
+
+
+# Allow custom member-order setting
+ClassDocumenter.option_spec['member-order'] = wrapped_member_order_option
+
+
+def setup(app: Sphinx):
+    # Register custom documenter as the default documenter for classes.
+    app.add_autodocumenter(ClassDocumenter, override=True)

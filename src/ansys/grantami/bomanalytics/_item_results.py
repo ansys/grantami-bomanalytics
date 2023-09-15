@@ -1564,7 +1564,7 @@ class SustainabilityResultMixin(mixin_base_class):
 
     A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
     to each level of the BoM.
-    This mixin implements only the sustainability metrics and applies to most items in the BoM.
+    This mixin implements only the sustainability metrics.
 
     Parameters
     ----------
@@ -1585,8 +1585,20 @@ class SustainabilityResultMixin(mixin_base_class):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self.embodied_energy = embodied_energy
-        self.climate_change = climate_change
+        self._embodied_energy = embodied_energy
+        self._climate_change = climate_change
+
+    @property
+    def embodied_energy(self) -> ValueWithUnit:
+        """Represents the direct and indirect energy use. Based on cumulative energy demand method developed by
+        ecoinvent."""
+        return self._embodied_energy
+
+    @property
+    def climate_change(self) -> ValueWithUnit:
+        """Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method."""
+        return self._climate_change
 
 
 class MassResultMixin(mixin_base_class):
@@ -1614,7 +1626,17 @@ class MassResultMixin(mixin_base_class):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self.reported_mass = reported_mass
+        self._reported_mass = reported_mass
+
+    @property
+    def reported_mass(self) -> ValueWithUnit:
+        """
+        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
+        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
+        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
+        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+        """
+        return self._reported_mass
 
 
 class ReusabilityResultMixin(mixin_base_class):
@@ -1647,9 +1669,32 @@ class ReusabilityResultMixin(mixin_base_class):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self.recyclable: bool = recyclable
-        self.biodegradable: bool = biodegradable
-        self.downcycle: bool = downcycle
+        self._recyclable: bool = recyclable
+        self._biodegradable: bool = biodegradable
+        self._downcycle: bool = downcycle
+
+    @property
+    def recyclable(self) -> bool:
+        """
+        Indicates whether the material can be recycled, regardless of the recyclates quality.
+        """
+        return self._recyclable
+
+    @property
+    def biodegradable(self) -> bool:
+        """
+        Indicates whether the material is biodegradable. Includes any waste that is capable of undergoing anaerobic or
+        aerobic decomposition.
+        """
+        return self._biodegradable
+
+    @property
+    def downcycle(self) -> bool:
+        """
+        Indicates whether the material can be recycled into material of an equivalent quality, that can be used for the
+        same (or similar) applications.
+        """
+        return self._downcycle
 
 
 class ChildMaterialWithSustainabilityMixin(mixin_base_class):
@@ -1890,8 +1935,8 @@ class ChildProcessWithSustainabilityMixin(mixin_base_class):
 
 
 class MaterialWithSustainabilityResult(
-    ChildProcessWithSustainabilityMixin,
     ChildSubstanceMixin,
+    ChildProcessWithSustainabilityMixin,
     SustainabilityResultMixin,
     ReusabilityResultMixin,
     MassResultMixin,
@@ -1904,41 +1949,6 @@ class MaterialWithSustainabilityResult(
       - The sustainability information for this material
       - Any process or substance objects that are a child of this material object
 
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identity.
-    material_id : str, optional
-        Material ID.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change: :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
-        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
-    recyclable : bool
-        Indicates whether a material can be recycled, regardless of the recyclates quality.
-    biodegradable : bool
-        Indicates whether a material is biodegradable. Includes any waste that is capable of undergoing anaerobic or
-        aerobic decomposition.
-    downcycle : bool
-        Indicates whether a material can be recycled into material of an equivalent quality, that can be used for the
-        same (or similar) applications.
-    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
-        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
-        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
-        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
-
-    processes : list[:class:`~ansys.grantami.bomanalytics._item_results.ProcessWithSustainabilityResult`]
-       List of processes.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceResult`]
-       List of substances.
-
     Notes
     -----
     With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
@@ -1950,6 +1960,8 @@ class MaterialWithSustainabilityResult(
     """
 
 
+# TODO: Optionally, review mixins order, so that docs list properties in a logical order: parts, materials, process, etc
+#  i.e the opposite of what's here.
 class PartWithSustainabilityResult(
     ChildPartWithSustainabilityMixin,
     ChildMaterialWithSustainabilityMixin,
@@ -1966,39 +1978,6 @@ class PartWithSustainabilityResult(
       - The reference to the part in Granta MI (if the part references a record)
       - The sustainability information for this part
       - Any part, material, process, substance, or specification objects which are a child of this part object
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identity.
-    part_number : str, optional
-        Part number.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
-        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
-    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
-        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
-        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
-        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
-
-    parts : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithSustainabilityResult`]
-        List of parts.
-    materials : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithSustainabilityResult`]
-        List of materials.
-    processes : list[:class:`~ansys.grantami.bomanalytics._item_results.ProcessWithSustainabilityResult`]
-       List of processes.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceResult`]
-       List of substances.
-    specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithSustainabilityResult`]
-        List of specifications.
 
     Notes
     -----
@@ -2027,37 +2006,6 @@ class SpecificationWithSustainabilityResult(
       - The sustainability information for this specification
       - Any specification, material, substance, or coating objects which are a child of this part object
 
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identity.
-    specification_id : str, optional
-        Specification ID.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
-        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
-    reported_mass : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
-        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
-        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
-        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
-
-    specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithSustainabilityResult`]
-        List of specifications.
-    materials : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithSustainabilityResult`]
-        List of materials.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceResult`]
-       List of substances.
-    coatings : list[:class:`~ansys.grantami.bomanalytics._item_results.CoatingResult`]
-       List of coatings.
-
     Notes
     -----
     With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
@@ -2073,21 +2021,6 @@ class SubstanceResult(BaseSubstanceReference):
     """Describes an individual specification included as part of a sustainability query result.
     This object includes only includes the reference to the part in Granta MI (if the substance references a record)
 
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identify.
-    cas_number : str, optional
-        CAS number.
-    ec_number : str, optional
-        EC number.
-    chemical_name : str, optional
-        Chemical name.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-
     Notes
     -----
     Record reference parameters are only populated if they are specified in the original query.
@@ -2097,16 +2030,12 @@ class SubstanceResult(BaseSubstanceReference):
     """
 
 
+# TODO: Consider documenting CoatingReference/SubstanceReference directly, since Material and PartRef need to be added anyway.
+#  Although having the result class means it can be extended in the future without qualifying as breaking changes.
 class CoatingResult(CoatingReference):
     """Provides an individual coating included as part of a sustainability query result.
 
     This object includes only includes the reference to the coating in Granta MI
-
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Default reference type for items returned as children of the queried item.
 
     Notes
     -----
@@ -2125,18 +2054,6 @@ class ProcessWithSustainabilityResult(
       - The reference to the part in Granta MI (if the process references a record)
       - The sustainability information for this process
 
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Default reference type for items returned as children of the queried item.
-
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
-        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
-
     Notes
     -----
     Record reference parameters are only populated if they are specified in the original query.
@@ -2151,23 +2068,11 @@ class TransportWithSustainabilityResult(
     SustainabilityResultMixin,
     TransportReference,
 ):
-    # TODO Check Reference documentation. Should probably include guids
     """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:
 
       - The reference to the transport in Granta MI (if the part references a record)
       - The sustainability information for this transport stage
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Default reference type for items returned as children of the queried item.
-
-    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
-    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
-        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
-        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
 
     Notes
     -----
@@ -2176,6 +2081,7 @@ class TransportWithSustainabilityResult(
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+    # TODO is the record reference note relevant?
 
 
 class SustainabilitySummaryMixin(mixin_base_class):

@@ -8,10 +8,9 @@ Query definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.BomSustainabilityQuery
-   :members:
-
-   .. automethod:: with_bom
-   .. automethod:: with_units
+   :inherited-members:
+   :exclude-members: api_class
+   :member-order: by_mro_by_source
 
 Query result
 ~~~~~~~~~~~~
@@ -19,37 +18,60 @@ Query result
 .. autoclass:: ansys.grantami.bomanalytics._query_results.BomSustainabilityQueryResult
    :members:
    :inherited-members:
-
-Part
-~~~~
-.. autoclass:: ansys.grantami.bomanalytics._item_results.PartWithSustainabilityResult
+   :member-order: by_mro_by_source
 
 Transport
 ~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.TransportWithSustainabilityResult
+   :inherited-members:
+   :exclude-members: record_reference
+   :member-order: by_mro_by_source
+
+Part
+~~~~
+
+.. autoclass:: ansys.grantami.bomanalytics._item_results.PartWithSustainabilityResult
+   :inherited-members:
+   :exclude-members: record_reference
+   :member-order: by_mro_by_source
 
 Material
 ~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.MaterialWithSustainabilityResult
+   :inherited-members:
+   :exclude-members: record_reference
+   :member-order: by_mro_by_source
 
 Process
 ~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.ProcessWithSustainabilityResult
+   :inherited-members:
+   :exclude-members: record_reference
+   :member-order: by_mro_by_source
 
 Specification
 ~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithSustainabilityResult
+   :inherited-members:
+   :exclude-members: record_reference
+   :member-order: by_mro_by_source
 
 Coating
 ~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.CoatingResult
+   :inherited-members:
+   :exclude-members: record_reference
+   :member-order: by_mro_by_source
 
 Substance
 ~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SubstanceResult
+   :inherited-members:
+   :exclude-members: record_reference
+   :member-order: by_mro_by_source

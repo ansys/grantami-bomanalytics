@@ -811,12 +811,6 @@ class BomSustainabilityQueryResult(ResultBaseClass):
     def parts(self) -> List[PartWithSustainabilityResult]:
         """Sustainability information for each root part included in the BoM specified in the original
         query.
-
-        Examples
-        --------
-        >>> result: BomSustainabilityQueryResult
-        >>> result.parts
-        [<PartWithSustainabilityResult>]
         """
         return self._parts
 
@@ -824,12 +818,6 @@ class BomSustainabilityQueryResult(ResultBaseClass):
     def transport_stages(self) -> List[TransportWithSustainabilityResult]:
         """Sustainability information for each transport stage included in the BoM specified in the original
         query.
-
-        Examples
-        --------
-        >>> result: BomSustainabilityQueryResult
-        >>> result.transport_stages
-        [<TransportWithSustainabilityResult>]
         """
         return self._transports
 

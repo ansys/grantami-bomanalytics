@@ -1,5 +1,5 @@
 from inspect import getmodule
-from typing import Any
+from typing import Any, Optional
 from sphinx.ext.autodoc import (
     ClassDocumenter as DefaultClassDocumenter,
     PropertyDocumenter, MethodDocumenter,
@@ -84,7 +84,7 @@ class ClassDocumenter(DefaultClassDocumenter):
             )
 
 
-def wrapped_member_order_option(arg: Any) -> str | None:
+def wrapped_member_order_option(arg: Any) -> Optional[str]:
     """Used to convert the :member-order: option to auto directives."""
     # Allow extra configuration value for member order.
     if arg == CUSTOM_ORDER_KEY:

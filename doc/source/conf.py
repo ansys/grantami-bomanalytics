@@ -9,7 +9,9 @@ from ansys.grantami.bomanalytics import __version__
 from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 from sphinx.application import Sphinx
 
-from doc.class_documenter import ClassDocumenter
+sys.path.insert(0, os.path.abspath("../"))
+from class_documenter import ClassDocumenter
+
 
 sys.path.insert(0, os.path.abspath("../../src"))
 

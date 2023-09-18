@@ -2016,7 +2016,7 @@ class SpecificationWithSustainabilityResult(
 
 class SubstanceResult(BaseSubstanceReference):
     """Describes an individual specification included as part of a sustainability query result.
-    This object includes only includes the reference to the part in Granta MI (if the substance references a record)
+    This object includes only includes the reference to the part in Granta MI (if the substance references a record).
 
     Notes
     -----
@@ -2033,7 +2033,7 @@ class SubstanceResult(BaseSubstanceReference):
 class CoatingResult(CoatingReference):
     """Provides an individual coating included as part of a sustainability query result.
 
-    This object includes only includes the reference to the coating in Granta MI
+    This object includes only includes the reference to the coating in Granta MI.
 
     Notes
     -----

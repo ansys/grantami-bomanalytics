@@ -2061,7 +2061,6 @@ class ProcessWithSustainabilityResult(
     """
 
 
-# TODO: Response will include transport stage name (TransportReference -> TransportDefinition)
 class TransportWithSustainabilityResult(
     SustainabilityResultMixin,
     TransportReference,
@@ -2301,8 +2300,6 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, Material
         )
 
 
-# TODO has two names: breaks the NamedItemMixin approach
-# TODO has two refs (process + material): breaks the Mixin approach for refs
 class ProcessSummaryResult(SustainabilitySummaryMixin):
     """
     Aggregated sustainability summary for a process, applied to a unique material.

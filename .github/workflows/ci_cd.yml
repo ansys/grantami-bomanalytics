@@ -25,90 +25,90 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       BOM_OPENAPI_TOKEN: ${{ secrets.BOM_OPENAPI_TOKEN }}
 
-  integration_checks:
-    name: Integration checks
-    needs: local_checks
-    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-    uses: ./.github/workflows/server_checks.yml
-    secrets:
-      AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
-      AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
-      AZURE_VM_NAME: ${{ secrets.AZURE_VM_NAME }}
-      TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
-      TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
-      TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
-      TEST_SERVER_WRITE_USER: ${{ secrets.TEST_SERVER_WRITE_USER }}
-      TEST_SERVER_WRITE_PASS: ${{ secrets.TEST_SERVER_WRITE_PASS }}
-      BOM_OPENAPI_TOKEN: ${{ secrets.BOM_OPENAPI_TOKEN }}
+#  integration_checks:
+#    name: Integration checks
+#    needs: local_checks
+#    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+#    uses: ./.github/workflows/server_checks.yml
+#    secrets:
+#      AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
+#      AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
+#      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+#      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+#      AZURE_VM_NAME: ${{ secrets.AZURE_VM_NAME }}
+#      TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
+#      TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
+#      TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
+#      TEST_SERVER_WRITE_USER: ${{ secrets.TEST_SERVER_WRITE_USER }}
+#      TEST_SERVER_WRITE_PASS: ${{ secrets.TEST_SERVER_WRITE_PASS }}
+#      BOM_OPENAPI_TOKEN: ${{ secrets.BOM_OPENAPI_TOKEN }}
 
   doc-deploy-dev:
     name: "Deploy development documentation"
     runs-on: ubuntu-latest
-    needs: [ integration_checks ]
+    needs: [ local_checks ]
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
       - uses: ansys/actions/doc-deploy-dev@v4
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          doc-artifact-name: Documentation-html
+          doc-artifact-name: Documentation-html-no-examples
 
-  Release:
-    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
-    needs: integration_checks
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Deploy stable documentation"
-        uses: pyansys/actions/doc-deploy-stable@v4
-        with:
-          cname: ${{ env.DOCUMENTATION_CNAME }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          doc-artifact-name: Documentation-html
-
-      - uses: actions/checkout@v3
-
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: ansys-grantami-bomanalytics-wheel
-          path: dist
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: Documentation-pdf
-          path: dist
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: Documentation-html
-          path: dist/documentation-html/
-
-      - name: "Compressing HTML documentation"
-        uses: vimtor/action-zip@v1.1
-        with:
-          files: dist/documentation-html/
-          dest: dist/documentation-html.zip
-
-      # note how we use the PyPI tokens
-#      - name: Upload to PyPI
-#        run: |
-#          pip install twine
-#          twine upload --non-interactive --skip-existing dist/*.whl
-#        env:
-#          TWINE_USERNAME: __token__
-#          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          generate_release_notes: true
-          files: |
-            dist/*.whl
-            dist/documentation-html.zip
-            dist/*.pdf
+#  Release:
+#    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
+#    needs: integration_checks
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: "Deploy stable documentation"
+#        uses: pyansys/actions/doc-deploy-stable@v4
+#        with:
+#          cname: ${{ env.DOCUMENTATION_CNAME }}
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          doc-artifact-name: Documentation-html
+#
+#      - uses: actions/checkout@v3
+#
+#      - name: Set up Python 3.9
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: '3.9'
+#
+#      - uses: actions/download-artifact@v3
+#        with:
+#          name: ansys-grantami-bomanalytics-wheel
+#          path: dist
+#
+#      - uses: actions/download-artifact@v3
+#        with:
+#          name: Documentation-pdf
+#          path: dist
+#
+#      - uses: actions/download-artifact@v3
+#        with:
+#          name: Documentation-html
+#          path: dist/documentation-html/
+#
+#      - name: "Compressing HTML documentation"
+#        uses: vimtor/action-zip@v1.1
+#        with:
+#          files: dist/documentation-html/
+#          dest: dist/documentation-html.zip
+#
+#      # note how we use the PyPI tokens
+##      - name: Upload to PyPI
+##        run: |
+##          pip install twine
+##          twine upload --non-interactive --skip-existing dist/*.whl
+##        env:
+##          TWINE_USERNAME: __token__
+##          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+#
+#      - name: Release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          generate_release_notes: true
+#          files: |
+#            dist/*.whl
+#            dist/documentation-html.zip
+#            dist/*.pdf

@@ -541,6 +541,30 @@ class _ApiMixin:
         api_instance: Union[api.ComplianceApi, api.ImpactedSubstancesApi, api.SustainabilityApi],
         static_arguments: Dict,
     ) -> Query_Result:
+        """
+        Abstract method. Inherited classes must pass the current state of the query as arguments to _call_api and
+        handle the response.
+
+        This method should not be used by an end user. The ``BomAnalyticsClient.run()`` method should
+        be used instead.
+
+        Parameters
+        ----------
+        api_instance
+            Instance of the low-level ``ComplianceApi`` class.
+        static_arguments
+            Arguments set at the connection level, including the database key and any custom table names.
+
+        Returns
+        -------
+            Result, with the type depending on the query.
+
+        Notes
+        -----
+        This method gets the bound method for this particular query from the ``api_instance`` parameter and passes
+        it to the ``self._call_api()`` method, which performs the actual call. It then passes the result to
+        the ``QueryResultFactory`` class to build the corresponding result object.
+        """
         pass
 
     @abstractmethod
@@ -1524,7 +1548,8 @@ class _BomQueryDataManager(_BaseQueryDataManager):
 
         Examples
         --------
-        >>> bom_item = _BomQueryDataManager(bom = "<PartsEco xmlns...") # TODO incorrect signature?
+        >>> bom_item = _BomQueryDataManager("bom_xml1711")
+        >>> bom_item.bom = "<PartsEco xmlns..."
         >>> bom_item.batched_arguments
         {"bom_xml1711": "<PartsEco xmlns..."}
         """
@@ -1790,7 +1815,10 @@ class _SustainabilityMixin(_ApiMixin):
         return self
 
     def _run_query(self, api_instance: api.SustainabilityApi, static_arguments: Dict) -> Query_Result:
-        """Something"""
+        """Implementation of abstract method _run_query for sustainability endpoints.
+
+         Sets the arguments ``preferred_units`` from user inputs.
+         """
         api_method = getattr(api_instance, self._api_method)
         arguments = {
             **static_arguments,

@@ -1817,8 +1817,8 @@ class _SustainabilityMixin(_ApiMixin):
     def _run_query(self, api_instance: api.SustainabilityApi, static_arguments: Dict) -> Query_Result:
         """Implementation of abstract method _run_query for sustainability endpoints.
 
-         Sets the arguments ``preferred_units`` from user inputs.
-         """
+        Sets the arguments ``preferred_units`` from user inputs.
+        """
         api_method = getattr(api_instance, self._api_method)
         arguments = {
             **static_arguments,

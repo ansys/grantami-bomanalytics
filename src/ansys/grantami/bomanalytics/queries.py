@@ -18,8 +18,10 @@ Query_Result
 
 from abc import ABC, abstractmethod
 from typing import (
+    Any,
     Union,
     List,
+    Literal,
     Dict,
     Tuple,
     TypeVar,
@@ -536,9 +538,33 @@ class _ApiMixin:
     @abstractmethod
     def _run_query(
         self,
-        api_instance: Union[api.ComplianceApi, api.ImpactedSubstancesApi],
+        api_instance: Union[api.ComplianceApi, api.ImpactedSubstancesApi, api.SustainabilityApi],
         static_arguments: Dict,
     ) -> Query_Result:
+        """
+        Abstract method. Inherited classes must pass the current state of the query as arguments to _call_api and
+        handle the response.
+
+        This method should not be used by an end user. The ``BomAnalyticsClient.run()`` method should
+        be used instead.
+
+        Parameters
+        ----------
+        api_instance
+            Instance of the low-level ``ComplianceApi`` class.
+        static_arguments
+            Arguments set at the connection level, including the database key and any custom table names.
+
+        Returns
+        -------
+            Result, with the type depending on the query.
+
+        Notes
+        -----
+        This method gets the bound method for this particular query from the ``api_instance`` parameter and passes
+        it to the ``self._call_api()`` method, which performs the actual call. It then passes the result to
+        the ``QueryResultFactory`` class to build the corresponding result object.
+        """
         pass
 
     @abstractmethod
@@ -1486,9 +1512,9 @@ class _BomQueryDataManager(_BaseQueryDataManager):
     single string because only one BoM can be sent to the server in a single query.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, item_type_name: Union[Literal["bom_xml1711"], Literal["bom_xml2301"]]) -> None:
         super().__init__()
-        self.item_type_name = "bom_xml1711"
+        self.item_type_name = item_type_name
         self._item_definitions = [""]
         self._item_results = []
 
@@ -1522,7 +1548,8 @@ class _BomQueryDataManager(_BaseQueryDataManager):
 
         Examples
         --------
-        >>> bom_item = _BomQueryDataManager(bom = "<PartsEco xmlns...")
+        >>> bom_item = _BomQueryDataManager("bom_xml1711")
+        >>> bom_item.bom = "<PartsEco xmlns..."
         >>> bom_item.batched_arguments
         {"bom_xml1711": "<PartsEco xmlns..."}
         """
@@ -1542,11 +1569,36 @@ class _BomQueryDataManager(_BaseQueryDataManager):
         return [response]
 
 
-class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
+class _BomQueryBuilder(_BaseQueryBuilder, ABC):
     """Sub-class for all queries where the items added to the query are Boms."""
 
+    bom_version: Union[Literal["bom_xml1711"], Literal["bom_xml2301"]]
+
     def __init__(self) -> None:
-        self._data = _BomQueryDataManager()
+        self._data = _BomQueryDataManager(self.bom_version)
+
+    @abstractmethod
+    def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
+        """Set the BoM to use for the query.
+
+        Abstract method must be implemented in sub-classes.
+
+        Parameters
+        ----------
+        bom : str
+            BoM to use for the query.
+
+        Returns
+        -------
+        Query
+            Current query object.
+        """
+
+        raise NotImplementedError
+
+
+class _Bom1711QueryBuilder(_BomQueryBuilder):
+    bom_version: Literal["bom_xml1711"] = "bom_xml1711"
 
     @validate_argument_type(str)
     def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
@@ -1572,14 +1624,47 @@ class _Bom1711QueryBuilder(_BaseQueryBuilder, ABC):
         Notes
         -----
         The XML schema is defined by the schema document
-        :download:`BillOfMaterialsEco.xsd </_static/xml_schemas/BillOfMaterialsEco.xsd>`, which in turn references
-        :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD files can be
-        used to validate that the BoM is both valid XML and adheres to the Ansys Granta 1711 XML BoM schema.
+        :download:`BillOfMaterialsEco1711.xsd </_static/xml_schemas/BillOfMaterialsEco1711.xsd>`, which in turn
+        references :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD
+        files can be used to validate that the BoM is both valid XML and adheres to the Ansys Granta 1711 XML BoM
+        schema.
+        """
 
-        Examples
-        --------
-        >>> my_bom = "<PartsEco xmlns..."
-        >>> query = BomComplianceQuery().with_bom(my_bom)
+        self._data.bom = bom
+        return self
+
+
+class _Bom2301QueryBuilder(_BomQueryBuilder):
+    bom_version: Literal["bom_xml2301"] = "bom_xml2301"
+
+    @validate_argument_type(str)
+    def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
+        """Set the BoM to use for the query.
+
+        The BoM must be in the Ansys Granta 2301 XML BoM format.
+
+        Parameters
+        ----------
+        bom : str
+            BoM to use for the query.
+
+        Returns
+        -------
+        Query
+            Current query object.
+
+        Raises
+        ------
+        TypeError
+            Error to raise if the method is called with values that do not match the types described earlier.
+
+        Notes
+        -----
+        The XML schema is defined by the schema document
+        :download:`BillOfMaterialsEco2301.xsd </_static/xml_schemas/BillOfMaterialsEco2301.xsd>`, which in turn
+        references :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD
+        files can be used to validate that the BoM is both valid XML and adheres to the Ansys Granta 2301 XML BoM
+        schema.
         """
 
         self._data.bom = bom
@@ -1690,3 +1775,119 @@ class Yaml:
 
         result: str = api_instance.get_yaml()
         return result
+
+
+class _SustainabilityMixin(_ApiMixin):
+    _api_method: str
+    api_class = api.SustainabilityApi  # TODO consider making private. Manually excluded from docs for now.
+
+    def __init_subclass__(cls, api_method: str, request_type: Type, **kwargs: Any):
+        super().__init_subclass__(**kwargs)  # type: ignore
+        cls._api_method = api_method
+        cls._request_type = request_type
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._preferred_units = models.CommonPreferredUnits()
+
+    def with_units(
+        self: Query_Builder, distance: Optional[str] = None, energy: Optional[str] = None, mass: Optional[str] = None
+    ) -> Query_Builder:
+        """
+        Specifies units to use in the response.
+
+        Sets all units, overriding any previous configuration. Units not set will default to the API default unit.
+        Provided unit symbols must exist in the target database.
+
+        Parameters
+        ----------
+        distance : str | None
+            Unit symbol for distance.
+        energy : str | None
+            Unit symbol for energy.
+        mass : str | None
+            Unit symbol for mass.
+
+        """
+        self._preferred_units.distance_unit = distance
+        self._preferred_units.energy_unit = energy
+        self._preferred_units.mass_unit = mass
+        return self
+
+    def _run_query(self, api_instance: api.SustainabilityApi, static_arguments: Dict) -> Query_Result:
+        """Implementation of abstract method _run_query for sustainability endpoints.
+
+        Sets the arguments ``preferred_units`` from user inputs.
+        """
+        api_method = getattr(api_instance, self._api_method)
+        arguments = {
+            **static_arguments,
+            "preferred_units": self._preferred_units,
+        }
+
+        self._call_api(api_method, arguments)
+        result: Query_Result = QueryResultFactory.create_result(
+            results=self._data.item_results,  # type: ignore[attr-defined]
+            messages=self._data.messages,  # type: ignore[attr-defined]
+        )
+        return result
+
+    def _validate_parameters(self) -> None:
+        pass
+
+
+class BomSustainabilityQuery(
+    _SustainabilityMixin,
+    _Bom2301QueryBuilder,
+    api_method="post_sustainability_bom2301",
+    request_type=models.GetSustainabilityForBom2301Request,
+):
+    """Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format.
+
+    The methods used to configure units and add the BoM to this query return the query itself so that they can be
+    chained together as required.
+
+    Once the query is fully constructed, use the `cxn.`
+    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :class:`~ansys.grantami.bomanalytics._query_results.BomSustainabilityQueryResult`.
+
+    Examples
+    --------
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
+    >>> bom = "<PartsEco xmlns..."
+    >>> query = (
+    ...     BomSustainabilityQuery()
+    ...     .with_bom(bom)
+    ... )
+    >>> cxn.run(query)
+
+    """
+
+
+class BomSustainabilitySummaryQuery(
+    _SustainabilityMixin,
+    _Bom2301QueryBuilder,
+    api_method="post_sustainabilitysummary_bom2301",
+    request_type=models.GetSustainabilitySummaryForBom2301Request,
+):
+    """
+    Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format and returns aggregated metrics.
+
+    The methods used to configure units and add the BoM to this query return the query itself so that they can be
+    chained together as required.
+
+    Once the query is fully constructed, use the `cxn.`
+    :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
+    :class:`~ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult`.
+
+    Examples
+    --------
+    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
+    >>> bom = "<PartsEco xmlns..."
+    >>> query = (
+    ...     BomSustainabilitySummaryQuery()
+    ...     .with_bom(bom)
+    ... )
+    >>> cxn.run(query)
+
+    """

@@ -1,13 +1,19 @@
-import sys
 import os
-from datetime import datetime
-from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import shutil
+import sys
+from datetime import datetime
 from pathlib import Path
+
 import jupytext
+from ansys.grantami.bomanalytics import __version__
+from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
+from sphinx.application import Sphinx
+
+sys.path.insert(0, os.path.abspath("../"))
+from class_documenter import ClassDocumenter
+
 
 sys.path.insert(0, os.path.abspath("../../src"))
-from ansys.grantami.bomanalytics import __version__
 
 
 # -- Project information -----------------------------------------------------
@@ -25,7 +31,6 @@ extensions = [
     "sphinx.ext.autodoc",
     "numpydoc",
     "sphinx.ext.doctest",
-    "sphinx.ext.autosummary",
     "notfound.extension",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
@@ -272,3 +277,8 @@ Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb
 
 ----
 """
+
+
+def setup(app: Sphinx):
+    # Register custom documenter as the default documenter for classes.
+    app.add_autodocumenter(ClassDocumenter, override=True)

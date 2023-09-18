@@ -146,7 +146,7 @@ class TestCompliance(BaseMockTester):
         # Part 1
         part_1 = response.compliance_by_part_and_indicator[1]
         pv_1 = PartValidator(part_1)
-        assert pv_1.check_reference(record_guid="3df206df-9fc8-4859-90d4-3519764f8b55")
+        assert pv_1.check_reference(record_guid="f622cc99-158d-43eb-881e-209a08af1108")
         part_1_result = [
             indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
             indicators.RoHSFlag.RohsNonCompliant,

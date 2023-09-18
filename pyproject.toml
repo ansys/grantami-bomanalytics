@@ -117,7 +117,7 @@ deps =
     black
     mypy==0.910
 commands =
-    codespell ./src ./tests ./examples ./doc/source
+    codespell ./src ./tests ./examples ./doc/source --skip="./doc/source/_static/xml_schemas"
     flake8 ./src ./tests ./examples
     black ./src ./tests --check
     mypy ./src

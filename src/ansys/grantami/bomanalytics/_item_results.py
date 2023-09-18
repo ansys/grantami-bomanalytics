@@ -24,6 +24,11 @@ from ._item_definitions import (
     BaseSubstanceReference,
     ReferenceType,
     CoatingReference,
+    ProcessReference,
+    TransportReference,
+    PartReference,
+    MaterialReference,
+    SpecificationReference,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
@@ -257,6 +262,356 @@ class ItemResultFactory:
         )
         return item_result
 
+    @classmethod
+    def create_part_with_sustainability(
+        cls,
+        result_with_sustainability: models.CommonSustainabilityPartWithSustainability,
+    ) -> "PartWithSustainabilityResult":
+        """Returns a Part object with sustainability metrics and child items.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilityPartWithSustainability
+            Result from the REST API describing the sustainability for this particular part.
+
+        Returns
+        -------
+        PartWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        part_with_sustainability = PartWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+        )
+        part_with_sustainability._add_child_parts(result_with_sustainability.parts)
+        part_with_sustainability._add_child_materials(result_with_sustainability.materials)
+        part_with_sustainability._add_child_processes(result_with_sustainability.processes)
+        part_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
+        part_with_sustainability._add_child_substances(result_with_sustainability.substances)
+        return part_with_sustainability
+
+    @classmethod
+    def create_process_with_sustainability(
+        cls,
+        result_with_sustainability: models.CommonSustainabilityProcessWithSustainability,
+    ) -> "ProcessWithSustainabilityResult":
+        """Returns a Process object with sustainability metrics.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilityProcessWithSustainability
+            Result from the REST API describing the sustainability for this particular process.
+
+        Returns
+        -------
+        ProcessWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        process_with_sustainability = ProcessWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+        )
+        return process_with_sustainability
+
+    @classmethod
+    def create_material_with_sustainability(
+        cls,
+        result_with_sustainability: models.CommonSustainabilityMaterialWithSustainability,
+    ) -> "MaterialWithSustainabilityResult":
+        """Returns a Material object with sustainability metrics and child items.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilityMaterialWithSustainability
+            Result from the REST API describing the sustainability for this particular material.
+
+        Returns
+        -------
+        MaterialWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        material_with_sustainability = MaterialWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+            recyclable=result_with_sustainability.recyclable,
+            biodegradable=result_with_sustainability.biodegradable,
+            downcycle=result_with_sustainability.downcycle,
+        )
+        material_with_sustainability._add_child_processes(result_with_sustainability.processes)
+        material_with_sustainability._add_child_substances(result_with_sustainability.substances)
+        return material_with_sustainability
+
+    @classmethod
+    def create_specification_with_sustainability(
+        cls,
+        result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability,
+    ) -> "SpecificationWithSustainabilityResult":
+        """Returns a Specification object with sustainability metrics and child items.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability
+            Result from the REST API describing the sustainability for this particular specification.
+
+        Returns
+        -------
+        SpecificationWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        specification_with_sustainability = SpecificationWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+        )
+        specification_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
+        specification_with_sustainability._add_child_materials(result_with_sustainability.materials)
+        specification_with_sustainability._add_child_substances(result_with_sustainability.substances)
+        specification_with_sustainability._add_child_coatings(result_with_sustainability.coatings)
+        return specification_with_sustainability
+
+    @classmethod
+    def create_substance_result(
+        cls,
+        result: models.CommonSubstanceReference,
+    ) -> "SubstanceResult":
+        """Returns a Substance object.
+
+        Parameters
+        ----------
+        result: models.CommonSubstanceReference
+            Result from the REST API describing this particular substance.
+
+        Returns
+        -------
+        SubstanceResult
+        """
+
+        reference_type = cls.parse_reference_type(result.reference_type)
+        substance = SubstanceResult(
+            reference_type=reference_type,
+            reference_value=result.reference_value,
+        )
+        return substance
+
+    @classmethod
+    def create_coating_result(
+        cls,
+        result: models.CommonCoatingReference,
+    ) -> "CoatingResult":
+        """Returns a Coating object.
+
+        Parameters
+        ----------
+        result: models.CommonCoatingReference
+            Result from the REST API describing this particular coating.
+
+        Returns
+        -------
+        CoatingResult
+        """
+
+        reference_type = cls.parse_reference_type(result.reference_type)
+        coating = CoatingResult(
+            reference_type=reference_type,
+            reference_value=result.reference_value,
+        )
+        return coating
+
+    @classmethod
+    def create_transport_with_sustainability(
+        cls,
+        result_with_sustainability: models.CommonSustainabilityTransportWithSustainability,
+    ) -> "TransportWithSustainabilityResult":
+        """Returns a Transport object with sustainability metrics.
+
+        Parameters
+        ----------
+        result_with_sustainability: models.CommonSustainabilityTransportWithSustainability
+            Result from the REST API describing the sustainability for this particular transport stage.
+
+        Returns
+        -------
+        TransportWithSustainabilityResult
+        """
+
+        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        transport_with_sustainability = TransportWithSustainabilityResult(
+            reference_type=reference_type,
+            reference_value=result_with_sustainability.reference_value,
+            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
+            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+        )
+        return transport_with_sustainability
+
+    @classmethod
+    def create_unitted_value(
+        cls, result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit
+    ) -> "ValueWithUnit":
+        """Returns a value with unit.
+
+        Parameters
+        ----------
+        result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit
+            Result from the REST API describing the value and unit.
+
+        Returns
+        -------
+        ValueWithUnit
+        """
+        return ValueWithUnit(value=result.value, unit=result.unit)
+
+    @classmethod
+    def create_phase_summary(
+        cls, result: models.CommonSustainabilityPhaseSummary
+    ) -> "SustainabilityPhaseSummaryResult":
+        """Returns a SustainabilityPhaseSummaryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityPhaseSummary
+            Result from the REST API describing the sustainability metrics for a particular phase.
+
+        Returns
+        -------
+        SustainabilityPhaseSummaryResult
+        """
+        return SustainabilityPhaseSummaryResult(
+            name=result.phase,
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=result.embodied_energy_percentage,
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=result.climate_change_percentage,
+        )
+
+    @classmethod
+    def create_transport_summary(
+        cls, result: models.CommonSustainabilityTransportSummaryEntry
+    ) -> "TransportSummaryResult":
+        """Returns a TransportSummaryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityTransportSummaryEntry
+            Result from the REST API describing the sustainability metrics for a transport stage.
+
+        Returns
+        -------
+        TransportSummaryResult
+        """
+        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
+        return TransportSummaryResult(
+            reference_type=reference_type,
+            reference_value=result.record_reference.reference_value,
+            name=result.stage_name,
+            distance=cls.create_unitted_value(result.distance),
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=result.embodied_energy_percentage,
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=result.climate_change_percentage,
+        )
+
+    @classmethod
+    def create_material_summary(
+        cls, result: models.CommonSustainabilityMaterialSummaryEntry
+    ) -> "MaterialSummaryResult":
+        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
+        """Returns a MaterialSummaryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityMaterialSummaryEntry
+            Result from the REST API describing the sustainability metrics for a unique material aggregated for the
+            whole BoM.
+
+        Returns
+        -------
+        MaterialSummaryResult
+        """
+        # TODO one of these is a bucket for all other materials that do not contribute >2% EE. Worth separating it?
+        #  It does not have a valid record reference or contributors.
+        return MaterialSummaryResult(
+            reference_type=reference_type,
+            reference_value=result.record_reference.reference_value,
+            name=result.name,
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=result.embodied_energy_percentage,
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=result.climate_change_percentage,
+            mass_after_processing=cls.create_unitted_value(result.mass_after_processing),
+            mass_before_processing=cls.create_unitted_value(result.mass_before_processing),
+            contributors=[cls.create_contributing_component(component) for component in result.largest_contributors]
+            if result.largest_contributors
+            else [],
+        )
+
+    @classmethod
+    def create_contributing_component(
+        cls, result: models.CommonSustainabilityMaterialContributingComponent
+    ) -> "ContributingComponentResult":
+        """Returns a ContributingComponentResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityMaterialContributingComponent
+            Result from the REST API describing parts contributing the most to a material's environmental footprint.
+
+        Returns
+        -------
+        ContributingComponentResult
+        """
+        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
+        return ContributingComponentResult(
+            reference_type=reference_type,
+            reference_value=result.record_reference.reference_value,
+            material_mass_before_processing=cls.create_unitted_value(result.material_mass_before_processing),
+            name=result.component_name,
+        )
+
+    @classmethod
+    def create_process_summary(cls, result: models.CommonSustainabilityProcessSummaryEntry) -> "ProcessSummaryResult":
+        """Returns a ProcessSummaryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityProcessSummaryEntry
+            Result from the REST API describing the sustainability metrics for a unique process-material pair,
+            aggregated for the whole BoM.
+
+        Returns
+        -------
+        ProcessSummaryResult
+        """
+        return ProcessSummaryResult(
+            material_name=result.material_name,
+            material_reference=MaterialDefinition(
+                reference_type=cls.parse_reference_type(result.material_record_reference.reference_type),
+                reference_value=result.material_record_reference.reference_value,
+            ),
+            process_name=result.process_name,
+            process_reference=ProcessReference(
+                reference_type=cls.parse_reference_type(result.process_record_reference.reference_type),
+                reference_value=result.process_record_reference.reference_value,
+            ),
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=result.embodied_energy_percentage,
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=result.climate_change_percentage,
+        )
+
     @staticmethod
     def parse_reference_type(reference_type: str) -> ReferenceType:
         """Parse the ``reference_type`` returned by the low-level API into a ``ReferenceType``.
@@ -439,9 +794,6 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        impacted_substance.ec_number = substance.ec_number
-        impacted_substance.cas_number = substance.cas_number
-        impacted_substance.chemical_name = substance.substance_name
         return impacted_substance
 
     @property
@@ -706,7 +1058,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
     Parameters
     ----------
     child_substances
-        Materials returned by the low-level API that are children of this item.
+        Substances returned by the low-level API that are children of this item.
     **kwargs
         Contains other result objects depending on the parent item. It contains record references for
         ``RecordDefinition``-based objects.
@@ -750,7 +1102,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
 
 
 class ChildMaterialWithComplianceMixin(child_base_class):
-    """Adds a ``material`` attribute to an ``ItemWithComplianceResult`` class and populates it with child materials.
+    """Adds a ``materials`` attribute to an ``ItemWithComplianceResult`` class and populates it with child materials.
 
     See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
 
@@ -1154,7 +1506,7 @@ class SpecificationWithComplianceResult(
 
 @ItemResultFactory.register("CoatingWithCompliance")
 class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
-    """Provides An individual coating included as part of a compliance query result.
+    """Provides an individual coating included as part of a compliance query result.
 
     This object includes three categories of attributes:
 
@@ -1176,3 +1528,830 @@ class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceR
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
+
+class ValueWithUnit:
+    """Describes a value obtained from the API"""
+
+    def __init__(
+        self,
+        value: float,
+        unit: str,
+    ) -> None:
+        self._value = value
+        self._unit = unit
+
+    @property
+    def value(self) -> float:
+        """
+        Real number.
+        """
+        return self._value
+
+    @property
+    def unit(self) -> str:
+        """
+        Unit of the value.
+        """
+        return self._unit
+
+
+class SustainabilityResultMixin(mixin_base_class):
+    """Adds results from a sustainability query to a class.
+
+    A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
+    to each level of the BoM.
+    This mixin implements only the sustainability metrics.
+
+    Parameters
+    ----------
+    embodied_energy:
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+    climate_change:
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+
+    def __init__(
+        self,
+        embodied_energy: ValueWithUnit,
+        climate_change: ValueWithUnit,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._embodied_energy = embodied_energy
+        self._climate_change = climate_change
+
+    @property
+    def embodied_energy(self) -> ValueWithUnit:
+        """Represents the direct and indirect energy use. Based on cumulative energy demand method developed by
+        ecoinvent."""
+        return self._embodied_energy
+
+    @property
+    def climate_change(self) -> ValueWithUnit:
+        """Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method."""
+        return self._climate_change
+
+
+class MassResultMixin(mixin_base_class):
+    """Adds results from a sustainability query to a class.
+
+    A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
+    to each level of the BoM.
+    This mixin implements only mass calculation results.
+
+    Parameters
+    ----------
+    reported_mass:
+        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
+        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
+        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
+        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+
+    def __init__(
+        self,
+        reported_mass: ValueWithUnit,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._reported_mass = reported_mass
+
+    @property
+    def reported_mass(self) -> ValueWithUnit:
+        """
+        Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
+        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
+        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
+        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+        """
+        return self._reported_mass
+
+
+class ReusabilityResultMixin(mixin_base_class):
+    """Adds results from a sustainability query to a class.
+
+    A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
+    to each level of the BoM.
+    This mixin implements only re-usability results, and are only relevant for Materials.
+
+    Parameters
+    ----------
+    recyclable:
+        Indicates whether a material can be recycled, regardless of the recyclates quality.
+    biodegradable
+        Indicates whether a material is biodegradable. Includes any waste that is capable of undergoing anaerobic or
+        aerobic decomposition.
+    downcycle:
+        Indicates whether a material can be recycled into material of an equivalent quality, that can be used for the
+        same (or similar) applications.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+
+    def __init__(
+        self,
+        recyclable: bool,
+        biodegradable: bool,
+        downcycle: bool,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._recyclable: bool = recyclable
+        self._biodegradable: bool = biodegradable
+        self._downcycle: bool = downcycle
+
+    @property
+    def recyclable(self) -> bool:
+        """
+        Indicates whether the material can be recycled, regardless of the recyclates quality.
+        """
+        return self._recyclable
+
+    @property
+    def biodegradable(self) -> bool:
+        """
+        Indicates whether the material is biodegradable. Includes any waste that is capable of undergoing anaerobic or
+        aerobic decomposition.
+        """
+        return self._biodegradable
+
+    @property
+    def downcycle(self) -> bool:
+        """
+        Indicates whether the material can be recycled into material of an equivalent quality, that can be used for the
+        same (or similar) applications.
+        """
+        return self._downcycle
+
+
+class ChildMaterialWithSustainabilityMixin(mixin_base_class):
+    """Provides the implementation for managing children materials, by adding a ``materials`` property to the class.
+
+    Parameters
+    ----------
+    child_materials
+        Materials returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._materials: List[MaterialWithSustainabilityResult] = []
+
+    @property
+    def materials(self) -> List["MaterialWithSustainabilityResult"]:
+        """Material with sustainability result objects that are direct children of this item in the BoM."""
+
+        return self._materials
+
+    def _add_child_materials(
+        self,
+        child_materials: List[models.CommonSustainabilityMaterialWithSustainability],
+    ) -> None:
+        """Populates the ``materials`` attribute based on a list of low-level API materials with sustainability
+        results.
+
+        Parameters
+        ----------
+        child_materials
+            List of materials with sustainability returned from the low-level API.
+        """
+
+        for child_material in child_materials:
+            child_material_with_sustainability = ItemResultFactory.create_material_with_sustainability(
+                result_with_sustainability=child_material,
+            )
+            self._materials.append(child_material_with_sustainability)
+
+
+class ChildPartWithSustainabilityMixin(mixin_base_class):
+    """Provides the implementation for managing children parts, by adding a ``parts`` property to the class.
+
+    Parameters
+    ----------
+    child_parts
+        Parts returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._parts: List[PartWithSustainabilityResult] = []
+
+    @property
+    def parts(self) -> List["PartWithSustainabilityResult"]:
+        """Part with sustainability result objects that are direct children of this item in the BoM."""
+
+        return self._parts
+
+    def _add_child_parts(
+        self,
+        child_parts: List[models.CommonSustainabilityPartWithSustainability],
+    ) -> None:
+        """Populate the ``parts`` attribute based on a list of low-level API parts with sustainability
+        results.
+
+        Parameters
+        ----------
+        child_parts
+           List of parts with sustainability returned from the low-level API
+        """
+
+        for child_part in child_parts:
+            child_part_with_sustainability = ItemResultFactory.create_part_with_sustainability(
+                result_with_sustainability=child_part,
+            )
+            self._parts.append(child_part_with_sustainability)
+
+
+class ChildSpecificationWithSustainabilityMixin(mixin_base_class):
+    """Provides the implementation for managing children specifications, by adding a ``specifications`` property to the
+    class.
+
+    Parameters
+    ----------
+    child_specifications
+        Specifications returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._specifications: List[SpecificationWithSustainabilityResult] = []
+
+    @property
+    def specifications(self) -> List["SpecificationWithSustainabilityResult"]:
+        """Specification with sustainability result objects that are direct children of this item in the BoM."""
+
+        return self._specifications
+
+    def _add_child_specifications(
+        self,
+        child_specifications: List[models.CommonSustainabilitySpecificationWithSustainability],
+    ) -> None:
+        """Populate the ``specifications`` attribute based on a list of low-level API specifications with
+        compliance results.
+
+        Parameters
+        ----------
+        child_specifications
+            List of specifications with sustainability returned from the low-level API
+        """
+
+        for child_specification in child_specifications:
+            child_specification_with_sustainability = ItemResultFactory.create_specification_with_sustainability(
+                result_with_sustainability=child_specification,
+            )
+            self._specifications.append(child_specification_with_sustainability)
+
+
+class ChildSubstanceMixin(mixin_base_class):
+    """Provides the implementation for managing children substances, by adding a ``substances`` property to the
+    class.
+
+    Parameters
+    ----------
+    child_substances
+        Substances returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._substances: List[SubstanceResult] = []
+
+    @property
+    def substances(self) -> List["SubstanceResult"]:
+        """Substance objects that are direct children of this item in the BoM."""
+
+        return self._substances
+
+    def _add_child_substances(self, child_substances: List[models.CommonSubstanceReference]) -> None:
+        """Populate the ``substances`` attribute based on a list of low-level API substances results.
+
+        Parameters
+        ----------
+        child_substances
+            List of substances returned from the low-level API.
+        """
+
+        for child_substance in child_substances:
+            child_substance_result = ItemResultFactory.create_substance_result(
+                result=child_substance,
+            )
+            self._substances.append(child_substance_result)
+
+
+class ChildCoatingMixin(mixin_base_class):
+    """Provides the implementation for managing children coatings, by adding a ``coatings`` property to the class.
+
+    Parameters
+    ----------
+    child_coatings
+        Coatings returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._coatings: List[CoatingResult] = []
+
+    @property
+    def coatings(self) -> List["CoatingResult"]:
+        """Coating objects that are direct children of this item in the BoM."""
+
+        return self._coatings
+
+    def _add_child_coatings(self, child_coatings: List[models.CommonCoatingReference]) -> None:
+        """Populate the ``coatings`` attribute based on a list of low-level API coatings results.
+
+        Parameters
+        ----------
+        child_coatings
+            List of coatings returned from the low-level API.
+        """
+
+        for child_coating in child_coatings:
+            child_coating_result = ItemResultFactory.create_coating_result(
+                result=child_coating,
+            )
+            self._coatings.append(child_coating_result)
+
+
+class ChildProcessWithSustainabilityMixin(mixin_base_class):
+    """Provides the implementation for managing children processes, by adding a ``processes`` property to the class.
+
+    Parameters
+    ----------
+    child_processes
+        Materials returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._processes: List[ProcessWithSustainabilityResult] = []
+
+    @property
+    def processes(self) -> List["ProcessWithSustainabilityResult"]:
+        """Process with sustainability result objects that are direct children of this item in the BoM."""
+
+        return self._processes
+
+    def _add_child_processes(self, child_processes: List[models.CommonSustainabilityProcessWithSustainability]) -> None:
+        """Populate the ``processes`` attribute based on a list of low-level API processes with sustainability
+        results.
+
+        Parameters
+        ----------
+        child_processes
+            List of processes with sustainability returned from the low-level API.
+        """
+
+        for child_process in child_processes:
+            child_process_result = ItemResultFactory.create_process_with_sustainability(
+                result_with_sustainability=child_process,
+            )
+            self._processes.append(child_process_result)
+
+
+class MaterialWithSustainabilityResult(
+    ChildSubstanceMixin,
+    ChildProcessWithSustainabilityMixin,
+    SustainabilityResultMixin,
+    ReusabilityResultMixin,
+    MassResultMixin,
+    MaterialReference,
+):
+    """Describes an individual material included as part of a sustainability query result.
+    This object includes three categories of attributes:
+
+      - The reference to the material in Granta MI
+      - The sustainability information for this material
+      - Any process or substance objects that are a child of this material object
+
+    Notes
+    -----
+    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
+    they are specified in the original query. As a result, if this object is included as the child of another result
+    object, only the ``record_history_identity`` parameter is populated.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+# TODO: Optionally, review mixins order, so that docs list properties in a logical order: parts, materials, process, etc
+#  i.e the opposite of what's here.
+class PartWithSustainabilityResult(
+    ChildPartWithSustainabilityMixin,
+    ChildMaterialWithSustainabilityMixin,
+    ChildProcessWithSustainabilityMixin,
+    ChildSubstanceMixin,
+    ChildSpecificationWithSustainabilityMixin,
+    SustainabilityResultMixin,
+    MassResultMixin,
+    PartReference,
+):
+    """Describes an individual part included as part of a sustainability query result.
+    This object includes three categories of attributes:
+
+      - The reference to the part in Granta MI (if the part references a record)
+      - The sustainability information for this part
+      - Any part, material, process, substance, or specification objects which are a child of this part object
+
+    Notes
+    -----
+    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
+    they are specified in the original query. As a result, if this object is included as the child of another result
+    object, only the ``record_history_identity`` parameter is populated.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class SpecificationWithSustainabilityResult(
+    ChildSpecificationWithSustainabilityMixin,
+    ChildMaterialWithSustainabilityMixin,
+    ChildSubstanceMixin,
+    ChildCoatingWithComplianceMixin,
+    SustainabilityResultMixin,
+    MassResultMixin,
+    SpecificationReference,
+):
+    """Describes an individual specification included as part of a sustainability query result.
+    This object includes three categories of attributes:
+
+      - The reference to the part in Granta MI (if the part references a record)
+      - The sustainability information for this specification
+      - Any specification, material, substance, or coating objects which are a child of this part object
+
+    Notes
+    -----
+    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
+    they are specified in the original query. As a result, if this object is included as the child of another result
+    object, only the ``record_history_identity`` parameter is populated.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class SubstanceResult(BaseSubstanceReference):
+    """Describes an individual specification included as part of a sustainability query result.
+    This object includes only includes the reference to the part in Granta MI (if the substance references a record).
+
+    Notes
+    -----
+    Record reference parameters are only populated if they are specified in the original query.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+# TODO: Consider documenting CoatingReference/SubstanceReference directly, since Material and PartRef need to be added
+#  anyway. Although having the result class means it can be extended in the future without qualifying as breaking
+#  changes.
+class CoatingResult(CoatingReference):
+    """Provides an individual coating included as part of a sustainability query result.
+
+    This object includes only includes the reference to the coating in Granta MI.
+
+    Notes
+    -----
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class ProcessWithSustainabilityResult(
+    SustainabilityResultMixin,
+    ProcessReference,
+):
+    """Describes a process included as part of a sustainability query result.
+    This object includes two categories of attributes:
+
+      - The reference to the part in Granta MI (if the process references a record)
+      - The sustainability information for this process
+
+    Notes
+    -----
+    Record reference parameters are only populated if they are specified in the original query.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+
+class TransportWithSustainabilityResult(
+    SustainabilityResultMixin,
+    TransportReference,
+):
+    """Describes a transport stage included as part of a sustainability query result.
+    This object includes two categories of attributes:
+
+      - The reference to the transport in Granta MI (if the part references a record)
+      - The sustainability information for this transport stage
+
+    Notes
+    -----
+    Record reference parameters are only populated if they are specified in the original query.
+
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+    # TODO is the record reference note relevant?
+
+
+class SustainabilitySummaryMixin(mixin_base_class):
+    # TODO reuse existing SusResultMixin?
+    """Adds sustainability summary results to a class.
+
+    Parameters
+    ----------
+    embodied_energy : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+    embodied_energy_percentage : float
+        Represents the percentage contribution of the item to total embodied energy of the parent collection.
+    climate_change : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+    climate_change_percentage : float
+        Represents the percentage contribution of the item to total climate change of the parent collection.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+
+    def __init__(
+        self,
+        embodied_energy: ValueWithUnit,
+        embodied_energy_percentage: float,
+        climate_change: ValueWithUnit,
+        climate_change_percentage: float,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._embodied_energy = embodied_energy
+        self._embodied_energy_percentage = embodied_energy_percentage
+        self._climate_change = climate_change
+        self._climate_change_percentage = climate_change_percentage
+
+    @property
+    def embodied_energy(self) -> ValueWithUnit:
+        """
+        Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.
+        """
+        return self._embodied_energy
+
+    @property
+    def embodied_energy_percentage(self) -> float:
+        """
+        Represents the percentage contribution of the item to total embodied energy of the parent collection.
+        """
+        return self._embodied_energy_percentage
+
+    @property
+    def climate_change(self) -> ValueWithUnit:
+        """
+        Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+        equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
+        """
+        return self._climate_change
+
+    @property
+    def climate_change_percentage(self) -> float:
+        """
+        Represents the percentage contribution of the item to total climate change of the parent collection.
+        """
+        return self._climate_change_percentage
+
+
+class NamedItemMixin(mixin_base_class):
+    """Adds a name to a class.
+
+    Parameters
+    ----------
+    name : str
+        Name of the item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
+        for ``RecordDefinition``-based objects.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        """
+        Item name.
+        """
+        return self._name
+
+
+class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixin):
+    """
+    High-level sustainability summary for a phase.
+
+    Phases currently include:
+
+     - ``Material``
+     - ``Processes``
+     - ``Transport``
+
+    """
+
+    # Overriding docstring for property `name` inherited from mixin
+    name: str
+    """Name of the phase. Supported values are ``Material``, ``Processes``, and ``Transport``."""
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}('{self.name}',"
+            f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
+        )
+
+
+class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin, TransportReference):
+    """
+    Sustainability summary for a transport stage.
+    """
+
+    name: str
+    """Name of the transport stage."""
+
+    def __init__(self, distance: ValueWithUnit, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._distance = distance
+
+    @property
+    def distance(self) -> ValueWithUnit:
+        """Distance travelled in the transport stage."""
+        return self._distance
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}('{self.name}',"
+            f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
+        )
+
+
+class ContributingComponentResult(NamedItemMixin, PartReference):
+    """
+    Identifies a Part as one the largest contributors to the environmental footprint of a material.
+    """
+
+    # Overriding docstring for property `name` inherited from mixin
+    name: str
+    """Name of the part."""
+
+    def __init__(
+        self,
+        material_mass_before_processing: ValueWithUnit,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._material_mass_before_processing = material_mass_before_processing
+
+    @property
+    def material_mass_before_processing(self) -> ValueWithUnit:
+        """
+        Original mass of parent material prior to any subtractive processing (i.e. removal of material).
+        """
+        return self._material_mass_before_processing
+
+    def __repr__(self) -> str:
+        _mass = f"{self._material_mass_before_processing.value}{self._material_mass_before_processing.unit}"
+        return f"<{self.__class__.__name__}('{self.name}', mass={_mass})>"
+
+
+class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, MaterialReference):
+    """
+    Aggregated sustainability summary for a material.
+
+    Describes the environmental footprint of a unique material, accounting for all occurrences of the material in BoM.
+    """
+
+    # Overriding docstring for property `name` inherited from mixin
+    name: str
+    """Name of the material."""
+
+    def __init__(
+        self,
+        mass_before_processing: ValueWithUnit,
+        mass_after_processing: ValueWithUnit,
+        contributors: List[ContributingComponentResult],
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._mass_before_processing = mass_before_processing
+        self._mass_after_processing = mass_after_processing
+        self._contributors = contributors
+
+    @property
+    def mass_before_processing(self) -> ValueWithUnit:
+        """
+        Original mass of material prior to any subtractive processing (i.e. removal of material). Environmental
+        footprint for primary production of material and/or primary processing is calculated based on this mass.
+        """
+        return self._mass_before_processing
+
+    @property
+    def mass_after_processing(self) -> ValueWithUnit:
+        """Mass of material after any subtractive processing."""
+        return self._mass_after_processing
+
+    @property
+    def contributors(self) -> List[ContributingComponentResult]:
+        """Components containing the most of this material."""
+        # TODO document aggregation method?
+        # TODO translate docstring to actual English
+        return self._contributors
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}('{self.name}',"
+            f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
+        )
+
+
+class ProcessSummaryResult(SustainabilitySummaryMixin):
+    """
+    Aggregated sustainability summary for a process, applied to a unique material.
+
+    Describes the environmental footprint of a process, accounting for all occurrences of the process-material pair
+    found in the BoM.
+    """
+
+    def __init__(
+        self,
+        material_name: str,
+        material_reference: MaterialReference,
+        process_name: str,
+        process_reference: ProcessReference,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._material_name = material_name
+        self._material_reference = material_reference
+        self._process_name = process_name
+        self._process_reference = process_reference
+
+    @property
+    def process_name(self) -> str:
+        """
+        Process name.
+        """
+        return self._process_name
+
+    @property
+    def process_reference(self) -> ProcessReference:
+        """
+        Process record reference.
+        """
+        return self._process_reference
+
+    @property
+    def material_name(self) -> str:
+        """
+        Material name.
+        """
+        return self._material_name
+
+    @property
+    def material_reference(self) -> MaterialReference:
+        """
+        Material record reference.
+        """
+        return self._material_reference
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}(process='{self.process_name}', material='{self.material_name}', "
+            f"EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
+        )

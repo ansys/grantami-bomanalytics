@@ -1,5 +1,5 @@
 import pytest
-from .inputs import sample_bom_complex, sample_bom_custom_db
+from .inputs import sample_bom_complex, sample_bom_custom_db, sample_bom_2301_complex
 from ansys.grantami.bomanalytics import queries, GrantaMIException
 from .common import LEGISLATIONS, INDICATORS, CUSTOM_TABLES
 
@@ -203,3 +203,23 @@ class TestSpecLinkDepth:
         )
         response = connection.run(query)
         assert len(response.impacted_substances) == 0
+
+
+class TestSustainabilityBomQueries:
+    def test_sustainability_summary_query(self, default_connection):
+        query = queries.BomSustainabilitySummaryQuery()
+        query.with_bom(sample_bom_2301_complex)
+        response = default_connection.run(query)
+
+        assert response.process.name == "Processes"
+        assert response.material.name == "Material"
+        assert response.transport.name == "Transport"
+        assert len(response.phases_summary) == 3
+
+        assert len(response.material_details) == 3
+        all_others = next(mat for mat in response.material_details if mat.name == "Other")
+
+    def test_sustainability_query(self, default_connection):
+        query = queries.BomSustainabilityQuery()
+        query.with_bom(sample_bom_2301_complex)
+        response = default_connection.run(query)

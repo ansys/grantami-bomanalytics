@@ -16,6 +16,8 @@ The API for PyGranta BoM Analytics is split into these key sections:
   substances and interpret results.
 - :ref:`ref_grantami_bomanalytics_api_compliance_index` explains how to build specific queries for compliance
   and how to interpret results.
+- :ref:`ref_grantami_bomanalytics_api_sustainability_index` explains how to build specific queries for sustainability
+  and how to interpret results.
 
 .. note::
    While some examples use a different class than the one being documented, both classes are always
@@ -28,3 +30,4 @@ The API for PyGranta BoM Analytics is split into these key sections:
    batching
    impacted_substances/index
    compliance/index
+   sustainability/index

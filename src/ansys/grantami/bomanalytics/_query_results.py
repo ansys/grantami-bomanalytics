@@ -19,6 +19,12 @@ from ._item_results import (
     SpecificationWithComplianceResult,
     SubstanceWithComplianceResult,
     ImpactedSubstance,
+    PartWithSustainabilityResult,
+    TransportWithSustainabilityResult,
+    SustainabilityPhaseSummaryResult,
+    TransportSummaryResult,
+    MaterialSummaryResult,
+    ProcessSummaryResult,
 )
 from .indicators import WatchListIndicator, RoHSIndicator
 
@@ -773,3 +779,199 @@ class BomComplianceQueryResult(ComplianceBaseClass):
         """
 
         return self._results
+
+
+@QueryResultFactory.register(models.GetSustainabilityForBom2301Response)
+class BomSustainabilityQueryResult(ResultBaseClass):
+    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`.
+
+    Notes
+    -----
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+    def __init__(
+        self,
+        results: List[models.GetSustainabilityForBom2301Response],
+        messages: List[LogMessage],
+    ) -> None:
+        super().__init__(messages)
+        self._response = results[0]
+        self._parts: List[PartWithSustainabilityResult] = [
+            ItemResultFactory.create_part_with_sustainability(result_with_sustainability=part)
+            for part in self._response.parts
+        ]
+        self._transports: List[TransportWithSustainabilityResult] = [
+            ItemResultFactory.create_transport_with_sustainability(result_with_sustainability=transport)
+            for transport in self._response.transport_stages
+        ]
+
+    @property
+    def parts(self) -> List[PartWithSustainabilityResult]:
+        """Sustainability information for each root part included in the BoM specified in the original
+        query.
+        """
+        return self._parts
+
+    @property
+    def transport_stages(self) -> List[TransportWithSustainabilityResult]:
+        """Sustainability information for each transport stage included in the BoM specified in the original
+        query.
+        """
+        return self._transports
+
+
+@QueryResultFactory.register(models.GetSustainabilitySummaryForBom2301Response)
+class BomSustainabilitySummaryQueryResult(ResultBaseClass):
+    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery`.
+
+    Notes
+    -----
+    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+    directly.
+    """
+
+    def __init__(
+        self,
+        results: List[models.GetSustainabilitySummaryForBom2301Response],
+        messages: List[LogMessage],
+    ) -> None:
+        super().__init__(messages)
+        self._response = results[0]
+
+        self._transport_summary = ItemResultFactory.create_phase_summary(self._response.transport_summary.phase_summary)
+        self._material_summary = ItemResultFactory.create_phase_summary(self._response.material_summary.phase_summary)
+        self._process_summary = ItemResultFactory.create_phase_summary(self._response.process_summary.phase_summary)
+
+        self._transport_details: List[TransportSummaryResult] = [
+            ItemResultFactory.create_transport_summary(transport)
+            for transport in self._response.transport_summary.summary
+        ]
+        self._material_details: List[MaterialSummaryResult] = [
+            ItemResultFactory.create_material_summary(material) for material in self._response.material_summary.summary
+        ]
+        self._primary_processes_details: List[ProcessSummaryResult] = [
+            ItemResultFactory.create_process_summary(process)
+            for process in self._response.process_summary.primary_processes
+        ]
+        self._secondary_processes_details: List[ProcessSummaryResult] = [
+            ItemResultFactory.create_process_summary(process)
+            for process in self._response.process_summary.secondary_processes
+        ]
+        self._joining_and_finishing_processes_details: List[ProcessSummaryResult] = [
+            ItemResultFactory.create_process_summary(process)
+            for process in self._response.process_summary.joining_and_finishing_processes
+        ]
+
+    # High level summaries:
+    # - provide list of all phases -> allow generic plotting/reporting of all phases indistinctively
+    # - provide individual phase summaries -> allow direct access without iterating through all phases
+
+    @property
+    def phases_summary(self) -> List[SustainabilityPhaseSummaryResult]:
+        """
+        Sustainability summary for all phases.
+        """
+        return [self._material_summary, self._process_summary, self._transport_summary]
+
+    @property
+    def transport(self) -> SustainabilityPhaseSummaryResult:
+        """
+        Sustainability summary for the transport phase.
+
+        Values in percentages express the contribution of this phase, relative to contributions of all phases.
+        """
+        return self._transport_summary
+
+    @property
+    def material(self) -> SustainabilityPhaseSummaryResult:
+        """
+        Sustainability summary for the material phase.
+
+        Values in percentages express the contribution of this phase, relative to contributions of all phases.
+        """
+        return self._material_summary
+
+    @property
+    def process(self) -> SustainabilityPhaseSummaryResult:
+        """
+        Sustainability summary for the process phase.
+
+        Values in percentages express the contribution of this phase, relative to contributions of all phases.
+        """
+        return self._process_summary
+
+    # TODO confirm it is ALL and not some above threshold + Aggregated Other
+    @property
+    def transport_details(self) -> List[TransportSummaryResult]:
+        """
+        Summary information for all transport stages.
+
+        Values in percentages express the contribution of the specific transport stage, relative to contributions of all
+        transport stages.
+        """
+        return self._transport_details
+
+    @property
+    def material_details(self) -> List[MaterialSummaryResult]:
+        """
+        Summary information for aggregated materials.
+
+        Relative and absolute contributions for materials whose relative contributions exceed 2% of the total energy
+        for materials.
+        All materials found in the BoM, which do not exceed the threshold, are aggregated under a virtual
+        :class:`~ansys.grantami.bomanalytics._item_results.MaterialSummaryResult`, whose ``name`` property is equal to
+        ``Other``.
+
+        Values in percentages express the contribution of the specific material, relative to contributions of all
+        materials.
+        """
+        # TODO: Feature request: it would be nice if threshold could be a request arg
+        return self._material_details
+
+    @property
+    def primary_processes_details(self) -> List[ProcessSummaryResult]:
+        """
+        Summary information for primary processes, aggregated by process and the material it is applied to.
+
+        The returned list includes all primary processes whose relative contributions exceed 5% of the total energy of
+        all primary processes. Processes not exceeding the threshold are aggregated under a virtual
+        :class:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult`, whose
+        :attr:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name` is equal to ``Other``.
+
+        Values in percentages express the contribution of the specific process, relative to contributions of all
+        primary processes.
+        """
+        return self._primary_processes_details
+
+    @property
+    def secondary_processes_details(self) -> List[ProcessSummaryResult]:
+        """
+        Summary information for secondary processes, aggregated by process and the material it is applied to.
+
+        The returned list includes all secondary processes whose relative contributions exceed 5% of the total energy of
+        all secondary processes. Processes not exceeding the threshold are aggregated under a virtual
+        :class:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult`, whose
+        :attr:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name` is equal to ``Other``.
+
+        Values in percentages express the contribution of the specific process, relative to contributions of all
+        secondary processes.
+        """
+        return self._secondary_processes_details
+
+    @property
+    def joining_and_finishing_processes_details(self) -> List[ProcessSummaryResult]:
+        """
+        Summary information for joining and finishing processes, aggregated by process and the material it is applied
+        to.
+
+        The returned list includes all joining and finishing processes whose relative contributions exceed 5% of the
+        total energy of all joining and finishing processes. Processes not exceeding the threshold are aggregated under
+        a virtual :class:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult`, whose
+        :attr:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name` is equal to ``Other``.
+
+        Values in percentages express the contribution of the specific process, relative to contributions of all
+        joining and finishing processes.
+        """
+        return self._joining_and_finishing_processes_details

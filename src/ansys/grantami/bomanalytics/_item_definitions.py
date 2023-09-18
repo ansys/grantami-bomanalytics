@@ -49,15 +49,29 @@ class RecordReference(ABC):
         reference_type: ReferenceType,
         reference_value: Union[int, str, None],
     ):
-        self.record_history_identity = None
-        self.record_guid = None
-        self.record_history_guid = None
-        if reference_type == ReferenceType.MiRecordHistoryIdentity:
-            self.record_history_identity = cast(int, reference_value)
-        elif reference_type == ReferenceType.MiRecordGuid:
-            self.record_guid = cast(str, reference_value)
-        elif reference_type == ReferenceType.MiRecordHistoryGuid:
-            self.record_history_guid = cast(str, reference_value)
+        self._reference_type = reference_type
+        self._reference_value = reference_value
+
+    @property
+    def record_history_identity(self) -> Optional[int]:
+        """Record history identity."""
+        if self._reference_type == ReferenceType.MiRecordHistoryIdentity:
+            return cast(int, self._reference_value)
+        return None
+
+    @property
+    def record_history_guid(self) -> Optional[str]:
+        """Record history GUID."""
+        if self._reference_type == ReferenceType.MiRecordHistoryGuid:
+            return cast(str, self._reference_value)
+        return None
+
+    @property
+    def record_guid(self) -> Optional[str]:
+        """Record GUID."""
+        if self._reference_type == ReferenceType.MiRecordGuid:
+            return cast(str, self._reference_value)
+        return None
 
     @property
     def record_reference(self) -> Dict[str, Optional[str]]:
@@ -67,26 +81,11 @@ class RecordReference(ABC):
         as the repr for this object and subobjects.
         """
 
-        if self.record_guid:
-            result: Dict[str, Optional[str]] = {
-                "reference_type": ReferenceType.MiRecordGuid.name,
-                "reference_value": self.record_guid,
-            }
-        elif self.record_history_guid:
-            result = {
-                "reference_type": ReferenceType.MiRecordHistoryGuid.name,
-                "reference_value": self.record_history_guid,
-            }
-        elif self.record_history_identity:
-            result = {
-                "reference_type": ReferenceType.MiRecordHistoryIdentity.name,
-                "reference_value": str(self.record_history_identity),
-            }
-        else:
-            result = {
-                "reference_type": None,
-                "reference_value": None,
-            }
+        _reference_value = str(self._reference_value) if self._reference_value is not None else None
+        result = {
+            "reference_type": self._reference_type.name,
+            "reference_value": _reference_value,
+        }
         return result
 
     def __repr__(self) -> str:
@@ -105,45 +104,26 @@ class RecordDefinition(RecordReference):
         pass
 
 
-class PartDefinition(RecordDefinition):
-    """Represents a part record from the concrete :class:`RecordDefinition` subclass.
+class PartReference(RecordReference):
+    """Represents a reference to a part record from the concrete :class:`RecordReference` subclass.
 
-    This class extends the base constructor to also support part numbers.
-
-    Parameters
-    ----------
-    reference_type
-        Type of the record reference value.
-    reference_value; str, int
-        Value of the record reference. All values are strings except for record identities values, which are integers.
+    This class extends the base class to also support part numbers.
     """
 
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self.part_number = None
-        if reference_type == ReferenceType.PartNumber:
-            self.part_number = cast(str, reference_value)
-
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
-        if self.part_number:
-            return {
-                "reference_type": ReferenceType.PartNumber.name,
-                "reference_value": self.part_number,
-            }
-        else:
-            return super().record_reference
+    def part_number(self) -> Optional[str]:
+        """Part number."""
+        if self._reference_type == ReferenceType.PartNumber:
+            return cast(str, self._reference_value)
+        return None
+
+
+class PartDefinition(RecordDefinition, PartReference):
+    """Represents a part record from the concrete :class:`RecordDefinition` subclass."""
 
     @property
     def _definition(self) -> models.CommonPartReference:
-        """Low-level API material definition.
+        """Low-level API part definition.
 
         Returns
         -------
@@ -154,42 +134,23 @@ class PartDefinition(RecordDefinition):
         return result
 
 
-class MaterialDefinition(RecordDefinition):
-    """Represents a material record from the concrete :class:`RecordDefinition` subclass.
+class MaterialReference(RecordReference):
+    # Because of ProcessSummaryResult, this is publicly documented.
+    """Represents a reference to a Material record.
 
-    This class extends the base constructor to also support material IDs.
-
-    Parameters
-    ----------
-    reference_type
-        Type of the record reference value.
-    reference_value : str, int
-        Value of the record reference. All are strings except for record history identities,
-        which are integers.
+    This class extends the base class to also support material IDs.
     """
 
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self.material_id = None
-        if reference_type == ReferenceType.MaterialId:
-            self.material_id = cast(str, reference_value)
-
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
-        if self.material_id:
-            return {
-                "reference_type": ReferenceType.MaterialId.name,
-                "reference_value": self.material_id,
-            }
-        else:
-            return super().record_reference
+    def material_id(self) -> Optional[str]:
+        """Material ID."""
+        if self._reference_type == ReferenceType.MaterialId:
+            return cast(str, self._reference_value)
+        return None
+
+
+class MaterialDefinition(RecordDefinition, MaterialReference):
+    """Represents a material record from the concrete :class:`RecordDefinition` subclass."""
 
     @property
     def _definition(self) -> models.CommonMaterialReference:
@@ -204,42 +165,22 @@ class MaterialDefinition(RecordDefinition):
         return result
 
 
-class SpecificationDefinition(RecordDefinition):
-    """Represents a specification record from the concrete :class:`RecordDefinition` subclass.
+class SpecificationReference(RecordReference):
+    """Represents a reference to a specification record from the concrete :class:`RecordReference` subclass.
 
-    This class extends the base constructor to also support specification IDs.
-
-    Parameters
-    ----------
-    reference_type
-        Type of the record reference value.
-    reference_value : str, int
-        Value of the record reference. All are strings except for record history identities,
-        which are integers.
+    This class extends the base class to also support specification IDs.
     """
 
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self.specification_id = None
-        if reference_type == ReferenceType.SpecificationId:
-            self.specification_id = cast(str, reference_value)
-
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
-        if self.specification_id:
-            return {
-                "reference_type": ReferenceType.SpecificationId.name,
-                "reference_value": self.specification_id,
-            }
-        else:
-            return super().record_reference
+    def specification_id(self) -> Optional[str]:
+        """Specification ID."""
+        if self._reference_type == ReferenceType.SpecificationId:
+            return cast(str, self._reference_value)
+        return None
+
+
+class SpecificationDefinition(RecordDefinition, SpecificationReference):
+    """Represents a specification record from the concrete :class:`RecordDefinition` subclass."""
 
     @property
     def _definition(self) -> models.CommonSpecificationReference:
@@ -262,54 +203,28 @@ class BaseSubstanceReference(RecordReference, ABC):
     Substance references come in multiple flavors. Inputs, compliance results, and impacted substance results quantify
     substances in slightly different ways. This class implements the reference aspects of the substance record only.
     The quantifications are implemented in the subclasses.
-
-    Parameters
-    ----------
-    reference_type
-        Type of the record reference value.
-    reference_value
-        Value of the record reference. All are strings except for record history identities,
-        which are integers.
     """
 
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self.chemical_name = None
-        self.cas_number = None
-        self.ec_number = None
-        if reference_type == ReferenceType.ChemicalName:
-            self.chemical_name = cast(str, reference_value)
-        elif reference_type == ReferenceType.CasNumber:
-            self.cas_number = cast(str, reference_value)
-        elif reference_type == ReferenceType.EcNumber:
-            self.ec_number = cast(str, reference_value)
+    @property
+    def cas_number(self) -> Optional[str]:
+        """CAS number."""
+        if self._reference_type == ReferenceType.CasNumber:
+            return cast(str, self._reference_value)
+        return None
 
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
-        if self.chemical_name:
-            return {
-                "reference_type": ReferenceType.ChemicalName.name,
-                "reference_value": self.chemical_name,
-            }
-        elif self.cas_number:
-            return {
-                "reference_type": ReferenceType.CasNumber.name,
-                "reference_value": self.cas_number,
-            }
-        elif self.ec_number:
-            return {
-                "reference_type": ReferenceType.EcNumber.name,
-                "reference_value": self.ec_number,
-            }
-        else:
-            return super().record_reference
+    def ec_number(self) -> Optional[str]:
+        """EC number."""
+        if self._reference_type == ReferenceType.EcNumber:
+            return cast(str, self._reference_value)
+        return None
+
+    @property
+    def chemical_name(self) -> Optional[str]:
+        """Chemical name."""
+        if self._reference_type == ReferenceType.ChemicalName:
+            return cast(str, self._reference_value)
+        return None
 
 
 class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
@@ -388,42 +303,17 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
 
 
 class CoatingReference(RecordReference, ABC):
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
+    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
 
 
-class BoM1711Definition:
-    """Represents a BoM that is supplied as part of a BoM query.
+class ProcessReference(RecordReference, ABC):
+    # Because of ProcessSummaryResult, this is publicly documented.
+    # Extends RecordReference without changes, to re-define the class name, because it appears in the repr.
+    """Represents a reference to a Process record."""
 
-    The XML contains record references within it, so there are no explicit references to records in this object.
 
-    Parameters
-    ----------
-    bom
-        BoM in XML 1711 format.
-    """
-
-    def __init__(self, bom: str):
-        super().__init__()
-        self._bom = bom
-
-    @property
-    def _definition(self) -> str:
-        """Low-level API BoM definition.
-
-        Returns
-        -------
-        Definition
-        """
-
-        return self._bom
+class TransportReference(RecordReference, ABC):
+    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
 
 
 class AbstractBomFactory:
@@ -857,29 +747,3 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
         """
 
         return SubstanceDefinition(reference_type=ReferenceType.EcNumber, reference_value=ec_number)
-
-
-@AbstractBomFactory.register(
-    [
-        models.GetComplianceForBom1711Request,
-        models.GetImpactedSubstancesForBom1711Request,
-    ]
-)
-class BomFactory:
-    """Creates bom definition objects."""
-
-    @staticmethod
-    def create_definition(bom: str) -> BoM1711Definition:
-        """Instantiate and return a ``Bom1711Definition`` object based on a BoM.
-
-        Parameters
-        ----------
-        bom
-           BoM.
-
-        Returns
-        -------
-        Bom1711Definition
-        """
-
-        return BoM1711Definition(bom=bom)

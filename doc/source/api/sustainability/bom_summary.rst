@@ -35,7 +35,6 @@ Transport
 .. autoclass:: ansys.grantami.bomanalytics._item_results.TransportSummaryResult
    :members:
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source
 
 Material
@@ -44,13 +43,11 @@ Material
 .. autoclass:: ansys.grantami.bomanalytics._item_results.MaterialSummaryResult
    :members:
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.ContributingComponentResult
    :members:
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source
 
 Process
@@ -59,5 +56,4 @@ Process
 .. autoclass:: ansys.grantami.bomanalytics._item_results.ProcessSummaryResult
    :members:
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source

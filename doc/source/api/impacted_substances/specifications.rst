@@ -32,3 +32,5 @@ Specification result
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithImpactedSubstancesResult
+   :inherited-members:
+   :member-order: by_mro_by_source

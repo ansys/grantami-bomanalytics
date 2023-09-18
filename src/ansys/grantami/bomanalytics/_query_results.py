@@ -136,17 +136,6 @@ class ResultBaseClass(ABC):
 
         Messages are also logged using the Python ``logging`` module to the ``ansys.grantami.bomanalytics`` logger. By
         default, messages with a severity of ``"warning"`` or higher are printed on stderr.
-
-        Returns
-        -------
-        list[:class:`~ansys.grantami.bomanalytics._query_results.LogMessage`]
-
-        Examples
-        --------
-        >>> result: MaterialImpactedSubstancesQueryResult
-        >>> result.messages
-        [LogMessage(severity='warning', message='Material "ABS+PVC (flame retarded)" has
-            2 substance row(s) with missing substance links.')]
         """
 
         return self._messages
@@ -279,6 +268,13 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     -----
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
+
+    Examples
+    --------
+    >>> result: MaterialImpactedSubstancesQueryResult
+    >>> result.messages
+    [LogMessage(severity='warning', message='Material "ABS+PVC (flame retarded)" has
+        2 substance row(s) with missing substance links.')]
     """
 
     def __init__(

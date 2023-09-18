@@ -14,7 +14,7 @@ class MockRecordDefinition:
         self._definition = self.Definition(reference_type, reference_value)
 
     @property
-    def record_reference(self) -> str:
+    def _record_reference(self) -> str:
         return {"reference_type": self._definition.reference_type, "reference_value": self._definition.reference_value}
 
 

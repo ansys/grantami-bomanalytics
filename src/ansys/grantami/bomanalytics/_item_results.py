@@ -647,27 +647,6 @@ class ImpactedSubstance(BaseSubstanceReference):
         Granta MI.
       - The amount of the substance in the parent item and the threshold above which it is impacted.
 
-    Attributes
-    ----------
-    cas_number : str, optional
-        CAS number.
-    ec_number : str, optional
-        EC number.
-    chemical_name : str, optional
-        Chemical name.
-    record_history_identity : int, optional
-        Record history identify.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-    max_percentage_amount_in_material : float, optional
-        Maximum percentage that this material can occur in the BoM item that it is declared against. This value
-        is measured in wt. % and only populated if present in the declaration in Granta MI.
-    legislation_threshold : float, optional
-        Threshold above which the substance is impacted by the legislation. This value is measured in wt. % and is only
-        populated if defined on the substance in Granta MI.
-
     Examples
     --------
     >>> result: MaterialImpactedSubstancesQueryResult
@@ -701,14 +680,21 @@ class ImpactedSubstance(BaseSubstanceReference):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self.max_percentage_amount_in_material: Optional[float] = max_percentage_amount_in_material
+        self._max_percentage_amount_in_material: Optional[float] = max_percentage_amount_in_material
+        self._legislation_threshold: Optional[float] = legislation_threshold
+
+    @property
+    def max_percentage_amount_in_material(self) -> Optional[float]:
         """Maximum percentage of this substance that occurs in the parent material. In the case where a range is
         specified in the declaration, only the maximum is reported here. ``None`` means that the percentage amount
         has not been specified, not that the amount is 0 %."""
+        return self._max_percentage_amount_in_material
 
-        self.legislation_threshold: Optional[float] = legislation_threshold
+    @property
+    def legislation_threshold(self) -> Optional[float]:
         """Substance concentration threshold over which the material is non-compliant with the legislation. ``None``
         means that the threshold has not been specified, not that the threshold is 0 %."""
+        return self._legislation_threshold
 
     def __repr__(self) -> str:
         return (
@@ -773,6 +759,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
             Corresponding object in this API.
         """
 
+        # TODO: check if this is necessary
         if substance.cas_number:
             reference_type = ReferenceType.CasNumber
             reference_value = substance.cas_number
@@ -798,10 +785,13 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
     @property
     def substances_by_legislation(self) -> Dict[str, List[ImpactedSubstance]]:
+        """Substances impacted for this item, grouped by legislation name."""
+        # TODO: will change to legislation id, presumably
         return self._substances_by_legislation
 
     @property
     def substances(self) -> List[ImpactedSubstance]:
+        """Substances impacted for this item as a flattened list."""
         results = []
         for legislation_result in self.substances_by_legislation.values():
             results.extend(legislation_result)
@@ -809,7 +799,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
     def __repr__(self) -> str:
         return (
-            f"<{self.__class__.__name__}({self.record_reference}), {len(self.substances_by_legislation)} legislations>"
+            f"<{self.__class__.__name__}({self._record_reference}), {len(self.substances_by_legislation)} legislations>"
         )
 
 
@@ -821,21 +811,6 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
 
       - The reference to the material in Granta MI
       - The impacted substances associated with this material, both as a flat list and separated by legislation
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identify.
-    material_id : str, optional
-        Material ID.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-    substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
-        Substances impacted for a particular material, grouped by legislation name.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
-        Substances impacted for a particular material as a flattened list.
 
     Notes
     -----
@@ -868,21 +843,6 @@ class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefini
       - The reference to the part in Granta MI
       - The impacted substances associated with this part, both as a flat list and separated by legislation
 
-    Attributes
-    ----------
-    record_history_identity : list, optional
-        Record history identity.
-    part_number : str, optional
-        Part number.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-    substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
-        Substances impacted for a particular part, grouped by legislation name.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
-        Substances impacted for a particular part as a flattened list.
-
     Notes
     -----
     With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
@@ -913,21 +873,6 @@ class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, S
 
       - The reference to the specification in Granta MI
       - The impacted substances associated with this specification, both as a flat list and separated by legislation
-
-    Attributes
-    ----------
-    record_history_identity : list, optional
-        Record history identity.
-    specification_id : str, optional
-        Specification ID.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-    substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
-        Substances impacted for a particular specification, grouped by legislation name.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
-        Substances impacted for a particular specification as a flattened list.
 
     Notes
     -----
@@ -1035,13 +980,18 @@ class ComplianceResultMixin(mixin_base_class):
     ) -> None:
         super().__init__(**kwargs)
         self._indicator_definitions = indicator_definitions
-        self.indicators: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]] = deepcopy(indicator_definitions)
+        self._indicators: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]] = deepcopy(indicator_definitions)
 
         for indicator_result in indicator_results:
-            self.indicators[indicator_result.name].flag = indicator_result.flag
+            self._indicators[indicator_result.name].flag = indicator_result.flag
+
+    @property
+    def indicators(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:
+        """Compliance status of this item for each indicator included in the original query."""
+        return self._indicators
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}({self.record_reference}), {len(self.indicators)} indicators>"
+        return f"<{self.__class__.__name__}({self._record_reference}), {len(self.indicators)} indicators>"
 
 
 if TYPE_CHECKING:
@@ -1070,15 +1020,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
 
     @property
     def substances(self) -> List["SubstanceWithComplianceResult"]:
-        """Substance compliance result objects that are direct children of this item in the BoM.
-
-        Examples
-        --------
-        >>> material_result: MaterialWithComplianceResult
-        >>> material_result.substances
-        [SubstanceWithComplianceResult({"MiRecordHistoryIdentity": 77107}),
-                1 indicators>, ...]
-        """
+        """Substance compliance result objects that are direct children of this item in the BoM."""
 
         return self._substances
 
@@ -1121,15 +1063,7 @@ class ChildMaterialWithComplianceMixin(child_base_class):
 
     @property
     def materials(self) -> List["MaterialWithComplianceResult"]:
-        """Material compliance result objects that are direct children of this part or specification in the BoM.
-
-        Examples
-        --------
-        >>> part_result: PartWithComplianceResult
-        >>> part_result.materials
-        [<MaterialWithComplianceResult({"MiRecordHistoryIdentity": "11774"}),
-                1 indicators>, ...]
-        """
+        """Material compliance result objects that are direct children of this part or specification in the BoM."""
 
         return self._materials
 
@@ -1179,15 +1113,7 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
 
     @property
     def specifications(self) -> List["SpecificationWithComplianceResult"]:
-        """Specification compliance result objects that are direct children of this item in the BoM.
-
-        Examples
-        --------
-        >>> part_result: PartWithComplianceResult
-        >>> part_result.specifications
-        [<SpecificationWithComplianceResult({"MiRecordHistoryIdentity": "123456"}),
-                1 indicators>, ...]
-        """
+        """Specification compliance result objects that are direct children of this item in the BoM."""
 
         return self._specifications
 
@@ -1240,15 +1166,7 @@ class ChildPartWithComplianceMixin(child_base_class):
 
     @property
     def parts(self) -> List["PartWithComplianceResult"]:
-        """Part compliance result objects that are direct children of this part in the BoM.
-
-        Examples
-        --------
-        >>> part_result: PartWithComplianceResult
-        >>> part_result.parts
-        [<PartWithComplianceResult({"MiRecordHistoryIdentity": "564777"}),
-                1 indicators>, ...]
-        """
+        """Part compliance result objects that are direct children of this part in the BoM."""
 
         return self._parts
 
@@ -1301,15 +1219,7 @@ class ChildCoatingWithComplianceMixin(child_base_class):
 
     @property
     def coatings(self) -> List["CoatingWithComplianceResult"]:
-        """Coating result objects that are direct children of this specification in the BoM.
-
-        Examples
-        --------
-        >>> specification_results: SpecificationWithComplianceResult
-        >>> specification_results.coatings
-        [<CoatingWithComplianceResult({"MiRecordHistoryIdentity": 83291}),
-                1 indicators>, ...]
-        """
+        """Coating result objects that are direct children of this specification in the BoM."""
 
         return self._coatings
 
@@ -1346,23 +1256,6 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReferenc
       - The reference to the substance in Granta MI
       - The compliance status of this substance, stored in a dictionary of one or more indicator objects
 
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identify.
-    cas_number : str, optional
-        CAS number.
-    ec_number : str, optional
-        EC number.
-    chemical_name : str, optional
-        Chemical name.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
-        Compliance status of this item for each indicator included in the original query.
-
     Notes
     -----
     Record reference parameters are only populated if they are specified in the original query.
@@ -1381,21 +1274,6 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
       - The compliance status of this material, stored in a dictionary of one or more indicator objects
       - Any substance objects that are a child of this material object
 
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identity.
-    material_id : str, optional
-        Material ID.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
-        Compliance status of this item for each indicator included in the original query.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-       List of substances.
-
     Notes
     -----
     With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
@@ -1409,10 +1287,10 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
 
 @ItemResultFactory.register("PartWithCompliance")
 class PartWithComplianceResult(
-    ChildPartWithComplianceMixin,
-    ChildSpecificationWithComplianceMixin,
-    ChildMaterialWithComplianceMixin,
     ChildSubstanceWithComplianceMixin,
+    ChildMaterialWithComplianceMixin,
+    ChildSpecificationWithComplianceMixin,
+    ChildPartWithComplianceMixin,
     ComplianceResultMixin,
     PartDefinition,
 ):
@@ -1422,27 +1300,6 @@ class PartWithComplianceResult(
       - The reference to the part in Granta MI (if the part references a record)
       - The compliance status of this part, stored in a dictionary of one or more indicator objects
       - Any part, specification, material, or substance objects which are a child of this part object
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identity.
-    part_number : str, optional
-        Part number.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
-        Compliance status of this item for each indicator included in the original query.
-    parts : list[:class:`~ansys.grantami.bomanalytics._item_results.PartWithComplianceResult`]
-        List of parts.
-    specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult`]
-        List of specifications.
-    materials : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult`]
-        List of materials.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        List of substances.
 
     Notes
     -----
@@ -1457,10 +1314,10 @@ class PartWithComplianceResult(
 
 @ItemResultFactory.register("SpecificationWithCompliance")
 class SpecificationWithComplianceResult(
-    ChildCoatingWithComplianceMixin,
-    ChildSpecificationWithComplianceMixin,
-    ChildMaterialWithComplianceMixin,
     ChildSubstanceWithComplianceMixin,
+    ChildCoatingWithComplianceMixin,
+    ChildMaterialWithComplianceMixin,
+    ChildSpecificationWithComplianceMixin,
     ComplianceResultMixin,
     SpecificationDefinition,
 ):
@@ -1470,28 +1327,6 @@ class SpecificationWithComplianceResult(
       - The reference to the specification in Granta MI
       - The compliance status of this specification, stored in a dictionary of one or more indicator objects
       - Any specification, material, coating, or substance objects which are a child of this specification object
-
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Record history identity.
-    specification_id : str, optional
-        Specification ID.
-    record_history_guid : str, optional
-        Record history GUID.
-    record_guid : str, optional
-        Record GUID.
-
-    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
-        Compliance status of this item for each indicator included in the original query.
-    specifications : list[:class:`~ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult`]
-        List of specifications.
-    materials : list[:class:`~ansys.grantami.bomanalytics._item_results.MaterialWithComplianceResult`]
-        List of materials.
-    coatings : list[:class:`~ansys.grantami.bomanalytics._item_results.CoatingWithComplianceResult`]
-        List of coatings.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        List of substances.
 
     Notes
     -----
@@ -1514,20 +1349,14 @@ class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceR
       - The compliance status of this coating, stored in one or more indicator objects
       - Any substance objects which are a child of this coating object
 
-    Attributes
-    ----------
-    record_history_identity : int, optional
-        Default reference type for compliance items returned as children of the queried item.
-    indicators : dict[str, |WatchListIndicator| | |RoHSIndicator|]
-        Compliance status of this item for each indicator included in the original query.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.SubstanceWithComplianceResult`]
-        List of substances.
-
     Notes
     -----
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
+    record_history_identity: Optional[int]
+    """Default reference type for compliance items returned as children of the queried item."""
 
 
 class ValueWithUnit:
@@ -1957,14 +1786,12 @@ class MaterialWithSustainabilityResult(
     """
 
 
-# TODO: Optionally, review mixins order, so that docs list properties in a logical order: parts, materials, process, etc
-#  i.e the opposite of what's here.
 class PartWithSustainabilityResult(
-    ChildPartWithSustainabilityMixin,
-    ChildMaterialWithSustainabilityMixin,
-    ChildProcessWithSustainabilityMixin,
-    ChildSubstanceMixin,
     ChildSpecificationWithSustainabilityMixin,
+    ChildSubstanceMixin,
+    ChildProcessWithSustainabilityMixin,
+    ChildMaterialWithSustainabilityMixin,
+    ChildPartWithSustainabilityMixin,
     SustainabilityResultMixin,
     MassResultMixin,
     PartReference,
@@ -1988,10 +1815,10 @@ class PartWithSustainabilityResult(
 
 
 class SpecificationWithSustainabilityResult(
-    ChildSpecificationWithSustainabilityMixin,
-    ChildMaterialWithSustainabilityMixin,
+    ChildCoatingMixin,
     ChildSubstanceMixin,
-    ChildCoatingWithComplianceMixin,
+    ChildMaterialWithSustainabilityMixin,
+    ChildSpecificationWithSustainabilityMixin,
     SustainabilityResultMixin,
     MassResultMixin,
     SpecificationReference,

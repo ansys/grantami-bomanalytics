@@ -213,7 +213,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
         >>> items = _RecordQueryDataManager(item_type_name = "parts", batch_size = 100)
         >>> items.append_record_definition(part_definition)
         """
-        if not all(item.record_reference.values()):
+        if not all(item._record_reference.values()):
             raise TypeError(
                 "Attempted to add a RecordDefinition-derived object with a null record reference to a"
                 " query. This is not supported; RecordDefinition-derived objects without record references"
@@ -743,13 +743,6 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         ------
         TypeError
             Error to raise if the method is called with values that do not match the types described earlier.
-
-        Examples
-        --------
-        >>> query = MaterialImpactedSubstancesQuery()
-        >>> query = query.with_legislations(["California Proposition 65 List",
-        >>>                                  "EU REACH - The Candidate List"])
-        <MaterialImpactedSubstances: 0 materials, batch size = 100, 2 legislations>
         """
 
         self._legislations.extend(legislation_names)

@@ -34,9 +34,13 @@ Specification result
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithComplianceResult
-
+   :inherited-members:
+   :member-order: by_mro_by_source
 
 Coating result
 ~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.CoatingWithComplianceResult
+   :inherited-members:
+   :exclude-members: record_history_guid, record_guid
+   :member-order: by_mro_by_source

@@ -32,3 +32,5 @@ Material result
 ~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult
+   :inherited-members:
+   :member-order: by_mro_by_source

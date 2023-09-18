@@ -25,7 +25,6 @@ Transport
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.TransportWithSustainabilityResult
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source
 
 Part
@@ -33,7 +32,6 @@ Part
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.PartWithSustainabilityResult
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source
 
 Material
@@ -41,7 +39,6 @@ Material
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.MaterialWithSustainabilityResult
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source
 
 Process
@@ -49,7 +46,6 @@ Process
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.ProcessWithSustainabilityResult
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source
 
 Specification
@@ -57,7 +53,6 @@ Specification
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithSustainabilityResult
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source
 
 Coating
@@ -65,7 +60,6 @@ Coating
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.CoatingResult
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source
 
 Substance
@@ -73,5 +67,4 @@ Substance
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SubstanceResult
    :inherited-members:
-   :exclude-members: record_reference
    :member-order: by_mro_by_source

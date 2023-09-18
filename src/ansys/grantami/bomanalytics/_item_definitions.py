@@ -74,7 +74,7 @@ class RecordReference(ABC):
         return None
 
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
+    def _record_reference(self) -> Dict[str, Optional[str]]:
         """Converts the separate reference attributes back into a single dictionary that describes the type and value.
 
         This method is used to create the low-level API model object that references this record and is returned as-is
@@ -89,7 +89,7 @@ class RecordReference(ABC):
         return result
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}({self.record_reference})>"
+        return f"<{self.__class__.__name__}({self._record_reference})>"
 
 
 class RecordDefinition(RecordReference):
@@ -130,7 +130,7 @@ class PartDefinition(RecordDefinition, PartReference):
         Definition
         """
 
-        result = models.CommonPartReference(**self.record_reference)
+        result = models.CommonPartReference(**self._record_reference)
         return result
 
 
@@ -161,7 +161,7 @@ class MaterialDefinition(RecordDefinition, MaterialReference):
         Definition
         """
 
-        result = models.CommonMaterialReference(**self.record_reference)
+        result = models.CommonMaterialReference(**self._record_reference)
         return result
 
 
@@ -191,7 +191,7 @@ class SpecificationDefinition(RecordDefinition, SpecificationReference):
         Definition
         """
 
-        result = models.CommonSpecificationReference(**self.record_reference)
+        result = models.CommonSpecificationReference(**self._record_reference)
         return result
 
 
@@ -297,7 +297,7 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         """
 
         definition = models.GetComplianceForSubstancesSubstanceWithAmount(
-            **self.record_reference, percentage_amount=self.percentage_amount
+            **self._record_reference, percentage_amount=self.percentage_amount
         )
         return definition
 

@@ -7,6 +7,7 @@ from ansys.grantami.bomanalytics.bom_types import BoMReader, BoMWriter
 if TYPE_CHECKING:
     from ansys.grantami.bomanalytics.bom_types._bom_types import BillOfMaterials
 
+
 class BoMHandler:
     _schema_path: Path = Path(__file__).parent / "schemas" / "BillOfMaterialsEco2301.xsd"
     _schema: XMLSchema

@@ -39,6 +39,7 @@ class TestableBoMHandler(BoMHandler):
             raw = raw.replace(f":{prefix}", f":{new_prefix}")
         return raw
 
+
 class TestRoundTripBoM:
     _bom_location = Path(__file__).parent / "inputs"
     _namespace_map = {"gbt": "http://www.grantadesign.com/12/05/GrantaBaseTypes"}
@@ -57,19 +58,25 @@ class TestRoundTripBoM:
             output_lines.append(diff_item)
         return output_lines
 
-    @pytest.mark.parametrize("bom_filename", ["bom.xml", "bom-complex.xml", "drill.xml", "medium-test-bom.xml"])
+    @pytest.mark.parametrize(
+        "bom_filename",
+        ["bom.xml", "bom-complex.xml", "drill.xml", "medium-test-bom.xml", "bom-2301.xml", "bom-2301-complex.xml"],
+    )
     def test_roundtrip(self, bom_filename: str):
         bom_path = self._bom_location / bom_filename
         with open(bom_path, "r", encoding="utf8") as fp:
             input_bom = fp.read()
 
-        bom_handler = TestableBoMHandler(default_namespace=self._default_namespace, namespace_mapping=self._namespace_map)
+        bom_handler = TestableBoMHandler(
+            default_namespace=self._default_namespace, namespace_mapping=self._namespace_map
+        )
         deserialized_bom = bom_handler.load_bom_from_text(input_bom)
         output_bom = bom_handler.dump_bom(deserialized_bom)
 
         diff = self._compare_boms(source_bom=input_bom, result_bom=output_bom)
 
         assert len(diff) == 0, "\n".join(diff)
+
 
 class TestBoMDeserialization:
     _bom_location = Path(__file__).parent / "inputs"
@@ -105,38 +112,43 @@ class TestBoMDeserialization:
             except IndexError:
                 return obj
 
-    @pytest.mark.parametrize(("query", "value"), [
-        ("internal_id", "B0"),
-        ("notes/notes", "Part with substance"),
-        ("notes/product_name", "Part with substance"),
-        ("components[0]/quantity/unit", "Each"),
-        ("components[0]/quantity/value", pytest.approx(2.0)),
-        ("components[0]/part_number", "123456789"),
-        ("components[0]/part_name", "Part One"),
-        ("components[0]/components[0]/quantity/unit", "Each"),
-        ("components[0]/components[0]/quantity/value", pytest.approx(1.0)),
-        ("components[0]/components[0]/mass_per_unit_of_measure/unit", "kg/Part"),
-        ("components[0]/components[0]/mass_per_unit_of_measure/value", pytest.approx(2.0)),
-        ("components[0]/components[0]/part_number", "987654321"),
-        ("components[0]/components[0]/part_name", "New Part One"),
-        ("components[0]/components[0]/substances[0]/percentage", pytest.approx(66.0)),
-        ("components[0]/components[0]/substances[0]/mi_substance_reference/db_key", "MI_Restricted_Substances"),
-        ("components[0]/components[0]/substances[0]/mi_substance_reference/record_history_guid", "af1cb650-6db5-49d6-b4a2-0eee9a090207"),
-        ("components[0]/components[0]/substances[0]/name", "Lead oxide"),
-        ("components[0]/components[1]/quantity/unit", "Each"),
-        ("components[0]/components[1]/quantity/value", pytest.approx(1.0)),
-        ("components[0]/components[1]/mass_per_unit_of_measure/unit", "kg/Part"),
-        ("components[0]/components[1]/mass_per_unit_of_measure/value", pytest.approx(2.0)),
-        ("components[0]/components[1]/part_number", "3333"),
-        ("components[0]/components[1]/part_name", "Part Two"),
-        ("components[0]/components[1]/materials[0]/percentage", pytest.approx(80.0)),
-        ("components[0]/components[1]/materials[0]/mi_material_reference/db_key", "MI_Restricted_Substances"),
-        ("components[0]/components[1]/materials[0]/mi_material_reference/record_history_guid", "ab4147f6-0e97-47f0-be53-cb5d17dfa82b"),
-
-    ])
+    @pytest.mark.parametrize(
+        ("query", "value"),
+        [
+            ("internal_id", "B0"),
+            ("notes/notes", "Part with substance"),
+            ("notes/product_name", "Part with substance"),
+            ("components[0]/quantity/unit", "Each"),
+            ("components[0]/quantity/value", pytest.approx(2.0)),
+            ("components[0]/part_number", "123456789"),
+            ("components[0]/part_name", "Part One"),
+            ("components[0]/components[0]/quantity/unit", "Each"),
+            ("components[0]/components[0]/quantity/value", pytest.approx(1.0)),
+            ("components[0]/components[0]/mass_per_unit_of_measure/unit", "kg/Part"),
+            ("components[0]/components[0]/mass_per_unit_of_measure/value", pytest.approx(2.0)),
+            ("components[0]/components[0]/part_number", "987654321"),
+            ("components[0]/components[0]/part_name", "New Part One"),
+            ("components[0]/components[0]/substances[0]/percentage", pytest.approx(66.0)),
+            ("components[0]/components[0]/substances[0]/mi_substance_reference/db_key", "MI_Restricted_Substances"),
+            (
+                "components[0]/components[0]/substances[0]/mi_substance_reference/record_history_guid",
+                "af1cb650-6db5-49d6-b4a2-0eee9a090207",
+            ),
+            ("components[0]/components[0]/substances[0]/name", "Lead oxide"),
+            ("components[0]/components[1]/quantity/unit", "Each"),
+            ("components[0]/components[1]/quantity/value", pytest.approx(1.0)),
+            ("components[0]/components[1]/mass_per_unit_of_measure/unit", "kg/Part"),
+            ("components[0]/components[1]/mass_per_unit_of_measure/value", pytest.approx(2.0)),
+            ("components[0]/components[1]/part_number", "3333"),
+            ("components[0]/components[1]/part_name", "Part Two"),
+            ("components[0]/components[1]/materials[0]/percentage", pytest.approx(80.0)),
+            ("components[0]/components[1]/materials[0]/mi_material_reference/db_key", "MI_Restricted_Substances"),
+            (
+                "components[0]/components[1]/materials[0]/mi_material_reference/record_history_guid",
+                "ab4147f6-0e97-47f0-be53-cb5d17dfa82b",
+            ),
+        ],
+    )
     def test_simple_bom(self, simple_bom: BillOfMaterials, query: str, value: Any) -> None:
         deserialized_field = self.get_field(simple_bom, query)
         assert deserialized_field == value
-
-
-

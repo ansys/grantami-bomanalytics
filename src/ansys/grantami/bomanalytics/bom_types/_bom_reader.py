@@ -9,6 +9,7 @@ import ansys.grantami.bomanalytics.bom_types._bom_types as bom_types
 if TYPE_CHECKING:
     from ansys.grantami.bomanalytics.bom_types import BillOfMaterials, BaseType
 
+
 class BoMReader:
     _schema: XMLSchema
     _namespaces = {}
@@ -60,9 +61,11 @@ class BoMReader:
         for target_type, target_property_name, field_name in type_._props:
             kwargs.update(self._deserialize_single_type(type_, obj, target_type, target_property_name, field_name))
         for target_type, target_property_name, container_name, container_namespace, field_name in type_._list_props:
-            kwargs.update(self._deserialize_list_type(
-                type_, obj, target_type, target_property_name, container_name, container_namespace, field_name
-            ))
+            kwargs.update(
+                self._deserialize_list_type(
+                    type_, obj, target_type, target_property_name, container_name, container_namespace, field_name
+                )
+            )
         for target, source in type_._simple_values:
             field_obj = self._field_reader.get_field(type_, obj, source)
             kwargs[target] = field_obj
@@ -71,7 +74,14 @@ class BoMReader:
         return instance
 
     def _deserialize_list_type(
-        self, instance: "BaseType", obj: Dict, target_type: str, target_property_name: str, container_name: str, container_namespace: str, item_name: str
+        self,
+        instance: "BaseType",
+        obj: Dict,
+        target_type: str,
+        target_property_name: str,
+        container_name: str,
+        container_namespace: str,
+        item_name: str,
     ) -> Dict[str, Iterable]:
         container_obj = self._field_reader.get_field(instance, obj, container_name)
         if container_obj is not None:
@@ -80,11 +90,14 @@ class BoMReader:
                 return {target_property_name: [self._create_type(target_type, item_dict) for item_dict in items_obj]}
         return {}
 
-    def _deserialize_single_type(self, instance: "BaseType", obj: Dict, target_type: str, target_property_name: str, field_name: str) -> Dict[str, Any]:
+    def _deserialize_single_type(
+        self, instance: "BaseType", obj: Dict, target_type: str, target_property_name: str, field_name: str
+    ) -> Dict[str, Any]:
         field_obj = self._field_reader.get_field(instance, obj, field_name)
         if field_obj is not None:
             return {target_property_name: self._create_type(target_type, field_obj)}
         return {}
+
 
 class NamespaceFieldReader:
     def __init__(self, namespaces: Dict[str, str]):

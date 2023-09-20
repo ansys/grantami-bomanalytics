@@ -72,17 +72,17 @@ class BaseType:
 
 
 class DimensionType(Enum):
-    Mass = 0            # If the process affects the bulk of the material or part (e.g. it is a shaping process) then
-                        # the amount of material affected by the process should be specified. The amount may be
-                        # specified as a percentage by weight or an absolute value.
-    MassRemoved = 1     # Specifying the mass in this way allows one to specify processes that may have removed material
-                        # (e.g. milling or turning).
+    Mass = 0  # If the process affects the bulk of the material or part (e.g. it is a shaping process) then
+    # the amount of material affected by the process should be specified. The amount may be
+    # specified as a percentage by weight or an absolute value.
+    MassRemoved = 1  # Specifying the mass in this way allows one to specify processes that may have removed material
+    # (e.g. milling or turning).
     Volume = 2
-    Area = 3            # Some joining processes can have an associated area.
-    Length = 4          # If the process is an edge joining process (e.g. welding) then the BOM must specify the length
-                        # of material affected by the process.
-    Count = 5           # Certain fastening processes are quantified by the number of fasteners (e.g. the number of hot
-                        # rivets holding two plates together).
+    Area = 3  # Some joining processes can have an associated area.
+    Length = 4  # If the process is an edge joining process (e.g. welding) then the BOM must specify the length
+    # of material affected by the process.
+    Count = 5  # Certain fastening processes are quantified by the number of fasteners (e.g. the number of hot
+    # rivets holding two plates together).
     Time = 6
 
     @classmethod
@@ -160,7 +160,14 @@ class PartialTableReference(BaseType):
 
     _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
 
-    def __init__(self, *, table_identity: Optional[int] = None, table_guid: Optional[str] = None,  table_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        table_identity: Optional[int] = None,
+        table_guid: Optional[str] = None,
+        table_name: Optional[str] = None,
+        **kwargs,
+    ):
         """
         A type that partially identifies a Table, but does not specify the MI Database. Usually, just one of the several
         optional fields should be provided; where more than one is provided, the highest priority one is used, where the
@@ -240,8 +247,17 @@ class MIAttributeReference(BaseType):
 
     _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
 
-    def __init__(self, *, db_key: str, attribute_identity: Optional[int] = None, table_reference: Optional[PartialTableReference] = None, attribute_name: Optional[str] = None,
-                 pseudo: Optional[PseudoAttribute] = None, is_standard: Optional[bool] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        db_key: str,
+        attribute_identity: Optional[int] = None,
+        table_reference: Optional[PartialTableReference] = None,
+        attribute_name: Optional[str] = None,
+        pseudo: Optional[PseudoAttribute] = None,
+        is_standard: Optional[bool] = None,
+        **kwargs,
+    ):
         """A type that allows identification of a particular Attribute in an MI Database. This may be done directly by
         specifying the Identity of the Attribute, or indirectly by specifying a lookup that will match (only) the
         Attribute.
@@ -279,7 +295,9 @@ class MIAttributeReference(BaseType):
         props = super()._process_custom_fields(obj, field_reader)
         name_obj = field_reader.get_field(MIAttributeReference, obj, "name")
         if name_obj is not None:
-            props["table_reference"] = cast(PartialTableReference, field_reader.create_type("PartialTableReference", name_obj))
+            props["table_reference"] = cast(
+                PartialTableReference, field_reader.create_type("PartialTableReference", name_obj)
+            )
             attribute_name_obj = field_reader.get_field(MIAttributeReference, name_obj, "attributeName")
             if attribute_name_obj is not None:
                 props["attribute_name"] = attribute_name_obj
@@ -402,9 +420,19 @@ class MIRecordReference(BaseType):
 
     _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
 
-    def __init__(self, *, db_key: str, record_history_identity: Optional[int] = None,  record_version_number: Optional[int] = None,
-        record_guid: Optional[str] = None, record_history_guid: Optional[str] = None, lookup_attribute_reference: "Optional[MIAttributeReference]" = None,
-        lookup_value: Optional[str] = None, record_uid: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        db_key: str,
+        record_history_identity: Optional[int] = None,
+        record_version_number: Optional[int] = None,
+        record_guid: Optional[str] = None,
+        record_history_guid: Optional[str] = None,
+        lookup_attribute_reference: "Optional[MIAttributeReference]" = None,
+        lookup_value: Optional[str] = None,
+        record_uid: Optional[str] = None,
+        **kwargs,
+    ):
         """A type that allows identification of a particular Record in an
         MI Database. This may be done directly by specifying the Identity or GUID of the Record, or
         indirectly by specifying a lookup that will match (only) the Record.
@@ -455,13 +483,17 @@ class MIRecordReference(BaseType):
         props = super()._process_custom_fields(obj, field_reader)
         identity_obj = field_reader.get_field(MIRecordReference, obj, "identity")
         if identity_obj is not None:
-            props["record_history_identity"] = field_reader.get_field(MIRecordReference, identity_obj, "recordHistoryIdentity")
+            props["record_history_identity"] = field_reader.get_field(
+                MIRecordReference, identity_obj, "recordHistoryIdentity"
+            )
             version_obj = field_reader.get_field(MIRecordReference, identity_obj, "version")
             if version_obj is not None:
                 props["record_version_number"] = version_obj
         lookup_obj = field_reader.get_field(MIRecordReference, obj, "lookupValue")
         if lookup_obj is not None:
-            props["lookup_attribute_reference"] = field_reader.get_field(MIRecordReference, lookup_obj, "attributeReference")
+            props["lookup_attribute_reference"] = field_reader.get_field(
+                MIRecordReference, lookup_obj, "attributeReference"
+            )
             props["lookup_value"] = field_reader.get_field(MIRecordReference, lookup_obj, "attributeValue")
         return props
 
@@ -641,7 +673,14 @@ class CommonIdentifiersMixin:
     _name: Optional[str] = None
     _external_identity: Optional[str] = None
 
-    def __init__(self, *, identity: Optional[str] = None, name: Optional[str] = None, external_identity: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        identity: Optional[str] = None,
+        name: Optional[str] = None,
+        external_identity: Optional[str] = None,
+        **kwargs,
+    ):
         """
         A set of identifiers used by external applications to reference and display parts of the BoM.
 
@@ -739,7 +778,7 @@ class EndOfLifeFate(BaseType):
 
     _props = [("MIRecordReference", "mi_end_of_life_reference", "MIEndOfLifeReference")]
 
-    def __init__(self, * mi_end_of_life_reference: "MIRecordReference", fraction: float, **kwargs) -> None:
+    def __init__(self, *mi_end_of_life_reference: "MIRecordReference", fraction: float, **kwargs) -> None:
         super().__init__(**kwargs)
         self.mi_end_of_life_reference = mi_end_of_life_reference
         self.fraction = fraction
@@ -861,7 +900,13 @@ class ElectricityMix(BaseType):
     _props = [("MIRecordReference", "mi_region_reference", "MIRegionReference")]
     _simple_values = [("percentage_fossil_fuels", "PercentageFossilFuels")]
 
-    def __init__(self, *, mi_region_reference: "Optional[MIRecordReference]" = None, percentage_fossil_fuels: Optional[float] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        mi_region_reference: "Optional[MIRecordReference]" = None,
+        percentage_fossil_fuels: Optional[float] = None,
+        **kwargs,
+    ) -> None:
         """
         If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of
         fossil fuel burning power stations in the region of use.  This type lets you specify the electrical generation
@@ -921,7 +966,14 @@ class MobileMode(BaseType):
     ]
     _simple_values = [("days_user_per_year", "DaysUsedPerYear")]
 
-    def __init__(self, *, mi_transport_reference: "MIRecordReference", days_used_per_year: float, distance_travelled_per_day: "UnittedValue", **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        mi_transport_reference: "MIRecordReference",
+        days_used_per_year: float,
+        distance_travelled_per_day: "UnittedValue",
+        **kwargs,
+    ) -> None:
         """
         If the product is transported as part of its use then this type contains details about the way in which it is
         transported.
@@ -998,7 +1050,15 @@ class StaticMode(BaseType):
     ]
     _simple_values = [("days_used_per_year", "DaysUsedPerYear"), ("hours_used_per_day", "HoursUsedPerDay")]
 
-    def __init__(self, *, mi_energy_conversion_reference: "MIRecordReference", power_rating: "UnittedValue", days_used_per_year: float, hours_used_per_day: float, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        mi_energy_conversion_reference: "MIRecordReference",
+        power_rating: "UnittedValue",
+        days_used_per_year: float,
+        hours_used_per_day: float,
+        **kwargs,
+    ) -> None:
         """
         Specifies the primary energy conversion that occurs during the product's use.
 
@@ -1093,7 +1153,14 @@ class UtilitySpecification(BaseType):
         ("utility", "Utility"),
     ]
 
-    def __init__(self, *, industry_average_duration_years: Optional[float] = None, industry_average_number_of_functional_units: Optional[float] = None, utility: Optional[float] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        industry_average_duration_years: Optional[float] = None,
+        industry_average_number_of_functional_units: Optional[float] = None,
+        utility: Optional[float] = None,
+        **kwargs,
+    ) -> None:
         """
         Specifies how much use can be obtained from the product represented by this BoM in comparison to a
         representative industry average.
@@ -1173,8 +1240,15 @@ class ProductLifeSpan(BaseType):
         ("functional_unit_description", "FunctionalUnitDescription"),
     ]
 
-    def __init__(self, *, duration_years: float, number_of_functional_units: Optional[float] = None,
-        functional_unit_description: Optional[str] = None, utility: Optional[UtilitySpecification] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        duration_years: float,
+        number_of_functional_units: Optional[float] = None,
+        functional_unit_description: Optional[str] = None,
+        utility: Optional[UtilitySpecification] = None,
+        **kwargs,
+    ) -> None:
         """
         Specifies the average life span for the product represented by the BoM.
 
@@ -1271,8 +1345,15 @@ class UsePhase(BaseType):
         ("MobileMode", "mobile_mode", "MobileMode"),
     ]
 
-    def __init__(self, *, product_life_span: "ProductLifeSpan", electricity_mix: "Optional[ElectricityMix]" = None,
-                 static_mode: "Optional[StaticMode]" = None, mobile_mode: "Optional[MobileMode]" = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        product_life_span: "ProductLifeSpan",
+        electricity_mix: "Optional[ElectricityMix]" = None,
+        static_mode: "Optional[StaticMode]" = None,
+        mobile_mode: "Optional[MobileMode]" = None,
+        **kwargs,
+    ) -> None:
         """
         Provides information about the sustainability of the product whilst in use, including electricity use, emissions
         due to transport, emissions due to electricity consumption, and the expected life span of the product.
@@ -1362,7 +1443,14 @@ class BoMDetails(BaseType):
 
     _simple_values = [("notes", "Notes"), ("picture_url", "PictureUrl"), ("product_name", "ProductName")]
 
-    def __init__(self, *, notes: Optional[str] = None, picture_url: Optional[str] = None, product_name: Optional[str] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        notes: Optional[str] = None,
+        picture_url: Optional[str] = None,
+        product_name: Optional[str] = None,
+        **kwargs,
+    ) -> None:
         """
         Explanatory information about a BoM.
 
@@ -1439,7 +1527,9 @@ class TransportStage(InternalIdentifierMixin, BaseType):
     ]
     _simple_values = [("name", "Name")]
 
-    def __init__(self, *, name: str, mi_transport_reference: "MIRecordReference", distance: "UnittedValue", **kwargs) -> None:
+    def __init__(
+        self, *, name: str, mi_transport_reference: "MIRecordReference", distance: "UnittedValue", **kwargs
+    ) -> None:
         """
         Defines the transportation applied to an object, in terms of the generic transportation type (stored in the
         Database) and the amount of that transport used in this instance.
@@ -1514,7 +1604,9 @@ class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         ("UnittedValue", "quantity", "Quantity"),
     ]
 
-    def __init__(self, *, mi_specification_reference: "MIRecordReference", quantity: "Optional[UnittedValue]" = None, **kwargs) -> None:
+    def __init__(
+        self, *, mi_specification_reference: "MIRecordReference", quantity: "Optional[UnittedValue]" = None, **kwargs
+    ) -> None:
         """
         A specification for a part, process, or material. Refers to a record with the MI Database storing the details
         of the specification and its impact.
@@ -1570,7 +1662,14 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
     _props = [("MIRecordReference", "mi_substance_reference", "MISubstanceReference")]
 
-    def __init__(self, *, mi_substance_reference: "MIRecordReference", percentage: Optional[float] = None, category: Optional[str] = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        mi_substance_reference: "MIRecordReference",
+        percentage: Optional[float] = None,
+        category: Optional[str] = None,
+        **kwargs,
+    ) -> None:
         """
         A substance within a part, semi-finished part, material or specification. The substance is stored in the
         Database.
@@ -1649,8 +1748,15 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         ("UnittedValue", "quantity_affected", "Quantity"),
     ]
 
-    def __init__(self, *, mi_process_reference: "MIRecordReference", dimension_type: "DimensionType",
-                 percentage_of_part_affected: Optional[float] = None, quantity_affected: "Optional[UnittedValue]" = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        mi_process_reference: "MIRecordReference",
+        dimension_type: "DimensionType",
+        percentage_of_part_affected: Optional[float] = None,
+        quantity_affected: "Optional[UnittedValue]" = None,
+        **kwargs,
+    ) -> None:
         """
         A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the
         Database.
@@ -1677,7 +1783,7 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, field_reader: NamespaceFieldReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, field_reader)
-        
+
         dimension_type_obj = field_reader.get_field(Process, obj, "DimensionType")
         props["dimension_type"] = DimensionType.from_string(dimension_type_obj)
         return props
@@ -1767,12 +1873,27 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
     _list_props = [
         ("Process", "processes", "Processes", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Process"),
-        ("EndOfLifeFate", "end_of_life_fates", "EndOfLifeFates", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "EndOfLifeFate"),
+        (
+            "EndOfLifeFate",
+            "end_of_life_fates",
+            "EndOfLifeFates",
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+            "EndOfLifeFate",
+        ),
     ]
 
-    def __init__(self, *, mi_material_reference: "MIRecordReference", percentage: Optional[float] = None,
-                 mass: "Optional[UnittedValue]" = None, recycle_content_is_typical: Optional[bool] = None, recycle_content_percentage: Optional[float] = None,
-                 processes: "List[Process]" = None, end_of_life_fates: "List[EndOfLifeFate]" = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        mi_material_reference: "MIRecordReference",
+        percentage: Optional[float] = None,
+        mass: "Optional[UnittedValue]" = None,
+        recycle_content_is_typical: Optional[bool] = None,
+        recycle_content_percentage: Optional[float] = None,
+        processes: "List[Process]" = None,
+        end_of_life_fates: "List[EndOfLifeFate]" = None,
+        **kwargs,
+    ) -> None:
         """
         A Material within a part or semi-finished part. The material is stored in the Database.
 
@@ -1978,18 +2099,45 @@ class Part(InternalIdentifierMixin, BaseType):
 
     _list_props = [
         ("Part", "components", "Components", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Part"),
-        ("Specification", "specifications", "Specifications", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Specification"),
+        (
+            "Specification",
+            "specifications",
+            "Specifications",
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+            "Specification",
+        ),
         ("Material", "materials", "Materials", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Material"),
         ("Substance", "substances", "Substances", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Substance"),
         ("Process", "processes", "Processes", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Process"),
-        ("EndOfLifeFate", "end_of_life_fates", "EndOfLifeFates", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "EndOfLifeFate"),
+        (
+            "EndOfLifeFate",
+            "end_of_life_fates",
+            "EndOfLifeFates",
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+            "EndOfLifeFate",
+        ),
     ]
 
-    def __init__(self, *, part_number: str, quantity: "Optional[UnittedValue]" = None, mass_per_unit_of_measure: "Optional[UnittedValue]" = None,
-                 volume_per_unit_of_measure: "Optional[UnittedValue]" = None, mi_part_reference: "Optional[MIRecordReference]" = None,
-                 non_mi_part_reference: "Optional[Union[str, int]]" = None, part_name: Optional[str] = None, external_id: Optional[str] = None,
-                 components: "List[Part]" = None, specifications: "List[Specification]" = None, materials: "List[Material]" = None, substances: "List[Substance]" = None,
-                 processes: "List[Process]" = None, rohs_exemptions: List[str] = None, end_of_life_fates: "List[EndOfLifeFate]" = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        part_number: str,
+        quantity: "Optional[UnittedValue]" = None,
+        mass_per_unit_of_measure: "Optional[UnittedValue]" = None,
+        volume_per_unit_of_measure: "Optional[UnittedValue]" = None,
+        mi_part_reference: "Optional[MIRecordReference]" = None,
+        non_mi_part_reference: "Optional[Union[str, int]]" = None,
+        part_name: Optional[str] = None,
+        external_id: Optional[str] = None,
+        components: "List[Part]" = None,
+        specifications: "List[Specification]" = None,
+        materials: "List[Material]" = None,
+        substances: "List[Substance]" = None,
+        processes: "List[Process]" = None,
+        rohs_exemptions: List[str] = None,
+        end_of_life_fates: "List[EndOfLifeFate]" = None,
+        **kwargs,
+    ):
         """
         A single part which may or may not be stored in the MI Database.
 
@@ -2079,7 +2227,9 @@ class Part(InternalIdentifierMixin, BaseType):
             props["non_mi_part_reference"] = non_mi_part_ref_obj
         rohs_exemptions_obj = field_reader.get_field(Part, obj, "RohsExemptions")
         if rohs_exemptions_obj is not None:
-            rohs_exemption_obj = field_reader.get_field(Part, rohs_exemptions_obj, "RohsExemption", "http://www.grantadesign.com/23/01/BillOfMaterialsEco")
+            rohs_exemption_obj = field_reader.get_field(
+                Part, rohs_exemptions_obj, "RohsExemption", "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
+            )
             if rohs_exemption_obj is not None:
                 props["rohs_exemptions"] = rohs_exemption_obj
         return props
@@ -2365,7 +2515,7 @@ class AnnotationSource(InternalIdentifierMixin, BaseType):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, field_reader: NamespaceFieldReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(cls, obj, field_reader)
-        
+
         data_obj = field_reader.get_field(AnnotationSource, obj, "Data")
         if data_obj is not None:
             props["data"] = data_obj
@@ -2431,8 +2581,16 @@ class Annotation(BaseType):
     _props = [("UnittedValue", "value", "Value")]
 
     _simple_values = [("type", "type"), ("target_id", "targetId"), ("source_id", "sourceId")]
-    
-    def __init__(self, *, target_id: str, source_id: Optional[str] = None, type_: str, value: "Union[str, UnittedValue]", **kwargs) -> None:
+
+    def __init__(
+        self,
+        *,
+        target_id: str,
+        source_id: Optional[str] = None,
+        type_: str,
+        value: "Union[str, UnittedValue]",
+        **kwargs,
+    ) -> None:
         """
         An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
         between the producer and consumer(s) of the BoM.  The producer and consumer(s) must also agree whether a
@@ -2462,7 +2620,7 @@ class Annotation(BaseType):
         self.source_id = source_id
         self.type_ = type_
         self.value = value
-        
+
     @property
     def target_id(self) -> str:
         """
@@ -2473,7 +2631,7 @@ class Annotation(BaseType):
         str
         """
         return self._target_id
-    
+
     @target_id.setter
     def target_id(self, value):
         self._target_id = value
@@ -2489,7 +2647,7 @@ class Annotation(BaseType):
         str
         """
         return self.source_id
-    
+
     @source_id.setter
     def source_id(self, value):
         self._source_id = value
@@ -2505,7 +2663,7 @@ class Annotation(BaseType):
         str
         """
         return self._type
-    
+
     @type_.setter
     def type_(self, value):
         self._type_ = value
@@ -2544,12 +2702,27 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
     ]
     _list_props = [
         ("Part", "components", "Components", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Part"),
-        ("TransportStage", "transport_phase", "TransportPhase", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "TransportStage"),
+        (
+            "TransportStage",
+            "transport_phase",
+            "TransportPhase",
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+            "TransportStage",
+        ),
     ]
 
-    def __init__(self, *, components: "List[Part]", transport_phase: "List[TransportStage]" = None, use_phase: "Optional[UsePhase]" = None,
-                 location: "Optional[Location]" = None, notes: "Optional[BoMDetails]" = None, annotations: "List[Annotation]" = None,
-                 annotation_sources: "List[AnnotationSource]" = None, **kwargs) -> None:
+    def __init__(
+        self,
+        *,
+        components: "List[Part]",
+        transport_phase: "List[TransportStage]" = None,
+        use_phase: "Optional[UsePhase]" = None,
+        location: "Optional[Location]" = None,
+        notes: "Optional[BoMDetails]" = None,
+        annotations: "List[Annotation]" = None,
+        annotation_sources: "List[AnnotationSource]" = None,
+        **kwargs,
+    ) -> None:
         """
         Type representing the root Bill of Materials object.
 

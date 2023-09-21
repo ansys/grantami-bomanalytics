@@ -12,7 +12,7 @@ class BoMHandler:
     _schema_path: Path = Path(__file__).parent / "schemas" / "BillOfMaterialsEco2301.xsd"
     _schema: XMLSchema
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Handler for XML formatted BoMs, supports reading from files and strings, and serializing to string format.
         """
@@ -40,7 +40,8 @@ class BoMHandler:
         if len(errors) > 0:
             newline = "\n"
             raise ValueError(f"Invalid BoM:\n{newline.join([error.msg for error in errors])}")
-        print(obj)
+
+        assert isinstance(obj, dict)
 
         return self._reader.read_bom(obj)
 
@@ -62,6 +63,8 @@ class BoMHandler:
         if len(errors) > 0:
             newline = "\n"
             raise ValueError(f"Invalid BoM:\n{newline.join([error.msg for error in errors])}")
+
+        assert isinstance(obj, dict)
 
         return self._reader.read_bom(obj)
 
@@ -85,4 +88,6 @@ class BoMHandler:
             newline = "\n"
             raise ValueError(f"Invalid BoM object:\n{newline.join([error.msg for error in errors])}")
 
-        return xmlschema.etree_tostring(obj)
+        output = xmlschema.etree_tostring(obj)
+        assert isinstance(output, str)
+        return output

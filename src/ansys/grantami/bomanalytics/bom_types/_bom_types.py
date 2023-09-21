@@ -21,17 +21,21 @@ class BaseType:
     _simple_values : List[Tuple[str, str]]
         Properties that map to simple types in XML. The entries are the python property name and the item XML element
         name.
+    _namespaces : Dict[str, str]
+        Mapping from XML namespace prefix to namespace URI.
+    _namespace : str
+        XML Namespace URI for the object, should exist as a value in the ``_namespaces`` map.
     """
 
-    _props: "List[Tuple[str, str, str]]" = []
-    _list_props: "List[Tuple[str, str, str, str, str]]" = []
-    _simple_values: "List[Tuple[str, str]]" = []
+    _props: List[Tuple[str, str, str]] = []
+    _list_props: List[Tuple[str, str, str, str, str]] = []
+    _simple_values: List[Tuple[str, str]] = []
 
-    _namespaces = {}
+    _namespaces: Dict[str, str] = {}
 
     _namespace = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: str, **kwargs: str) -> None:
         pass
 
     @classmethod
@@ -128,7 +132,7 @@ class PseudoAttribute(Enum):
     TableFilters = 15
 
     @classmethod
-    def from_string(cls, value: str):
+    def from_string(cls, value: str) -> "PseudoAttribute":
         """
         Convert string representation of this object into an instance of this object.
 
@@ -139,7 +143,7 @@ class PseudoAttribute(Enum):
         """
         return PseudoAttribute[f"{value[0].upper()}{value[1:]}"]
 
-    def to_string(self):
+    def to_string(self) -> str:
         """
         Convert this Enum object to its string representation.
 
@@ -200,7 +204,7 @@ class PartialTableReference(BaseType):
         return self._table_identity
 
     @table_identity.setter
-    def table_identity(self, value):
+    def table_identity(self, value: Optional[int]) -> None:
         self._table_identity = value
 
     @property
@@ -215,7 +219,7 @@ class PartialTableReference(BaseType):
         return self._table_guid
 
     @table_guid.setter
-    def table_guid(self, value):
+    def table_guid(self, value: Optional[str]) -> None:
         self._table_guid = value
 
     @property
@@ -231,7 +235,7 @@ class PartialTableReference(BaseType):
         return self._table_name
 
     @table_name.setter
-    def table_name(self, value):
+    def table_name(self, value: Optional[str]) -> None:
         self._table_name = value
 
 
@@ -321,7 +325,7 @@ class MIAttributeReference(BaseType):
         return self._db_key
 
     @db_key.setter
-    def db_key(self, value):
+    def db_key(self, value: str) -> None:
         self._db_key = value
 
     @property
@@ -336,7 +340,7 @@ class MIAttributeReference(BaseType):
         return self._attribute_identity
 
     @attribute_identity.setter
-    def attribute_identity(self, value):
+    def attribute_identity(self, value: Optional[int]) -> None:
         self._attribute_identity = value
 
     @property
@@ -352,7 +356,7 @@ class MIAttributeReference(BaseType):
         return self._table_reference
 
     @table_reference.setter
-    def table_reference(self, value):
+    def table_reference(self, value: Optional[PartialTableReference]) -> None:
         self._table_reference = value
 
     @property
@@ -367,7 +371,7 @@ class MIAttributeReference(BaseType):
         return self._attribute_name
 
     @attribute_name.setter
-    def attribute_name(self, value):
+    def attribute_name(self, value: Optional[str]) -> None:
         self._attribute_name = value
 
     @property
@@ -382,7 +386,7 @@ class MIAttributeReference(BaseType):
         return self._pseudo
 
     @pseudo.setter
-    def pseudo(self, value):
+    def pseudo(self, value: Optional[PseudoAttribute]) -> None:
         self._pseudo = value
 
     @property
@@ -397,7 +401,7 @@ class MIAttributeReference(BaseType):
         return self._is_standard
 
     @is_standard.setter
-    def is_standard(self, value):
+    def is_standard(self, value: Optional[bool]) -> None:
         self._is_standard = value
 
 
@@ -509,7 +513,7 @@ class MIRecordReference(BaseType):
         return self._db_key
 
     @db_key.setter
-    def db_key(self, value):
+    def db_key(self, value: str) -> None:
         self._db_key = value
 
     @property
@@ -524,7 +528,7 @@ class MIRecordReference(BaseType):
         return self._record_history_identity
 
     @record_history_identity.setter
-    def record_history_identity(self, value):
+    def record_history_identity(self, value: Optional[int]) -> None:
         self._record_history_identity = value
 
     @property
@@ -539,7 +543,7 @@ class MIRecordReference(BaseType):
         return self._record_version_number
 
     @record_version_number.setter
-    def record_version_number(self, value):
+    def record_version_number(self, value: Optional[int]) -> None:
         self._record_version_number = value
 
     @property
@@ -554,7 +558,7 @@ class MIRecordReference(BaseType):
         return self._record_guid
 
     @record_guid.setter
-    def record_guid(self, value):
+    def record_guid(self, value: Optional[str]) -> None:
         self._record_guid = value
 
     @property
@@ -569,7 +573,7 @@ class MIRecordReference(BaseType):
         return self._record_history_guid
 
     @record_history_guid.setter
-    def record_history_guid(self, value):
+    def record_history_guid(self, value: Optional[str]) -> None:
         self._record_history_guid = value
 
     @property
@@ -585,7 +589,7 @@ class MIRecordReference(BaseType):
         return self._lookup_attribute_reference
 
     @lookup_attribute_reference.setter
-    def lookup_attribute_reference(self, value):
+    def lookup_attribute_reference(self, value: Optional[MIAttributeReference]) -> None:
         self._lookup_attribute_reference = value
 
     @property
@@ -601,7 +605,7 @@ class MIRecordReference(BaseType):
         return self._lookup_value
 
     @lookup_value.setter
-    def lookup_value(self, value):
+    def lookup_value(self, value: Optional[str]) -> None:
         self._lookup_value = value
 
     @property
@@ -617,7 +621,7 @@ class MIRecordReference(BaseType):
         return self._record_uid
 
     @record_uid.setter
-    def record_uid(self, value):
+    def record_uid(self, value: Optional[str]) -> None:
         self._record_uid = value
 
 
@@ -889,7 +893,7 @@ class Location(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._mi_location_reference
 
     @mi_location_reference.setter
-    def mi_location_reference(self, value):
+    def mi_location_reference(self, value: Optional[MIRecordReference]) -> None:
         self._mi_location_reference = value
 
 
@@ -936,7 +940,7 @@ class ElectricityMix(BaseType):
         return self._mi_region_reference
 
     @mi_region_reference.setter
-    def mi_region_reference(self, value):
+    def mi_region_reference(self, value: Optional[MIRecordReference]) -> None:
         self._mi_region_reference = value
 
     @property
@@ -951,7 +955,7 @@ class ElectricityMix(BaseType):
         return self._percentage_fossil_fuels
 
     @percentage_fossil_fuels.setter
-    def percentage_fossil_fuels(self, value):
+    def percentage_fossil_fuels(self, value: Optional[float]) -> None:
         self._percentage_fossil_fuels = value
 
 
@@ -1004,7 +1008,7 @@ class MobileMode(BaseType):
         return self._mi_transport_reference
 
     @mi_transport_reference.setter
-    def mi_transport_reference(self, value):
+    def mi_transport_reference(self, value: MIRecordReference) -> None:
         self._mi_transport_reference = value
 
     @property
@@ -1019,7 +1023,7 @@ class MobileMode(BaseType):
         return self._days_used_per_year
 
     @days_used_per_year.setter
-    def days_used_per_year(self, value):
+    def days_used_per_year(self, value: float) -> None:
         self._days_used_per_year = value
 
     @property
@@ -1034,7 +1038,7 @@ class MobileMode(BaseType):
         return self._distance_travelled_per_day
 
     @distance_travelled_per_day.setter
-    def distance_travelled_per_day(self, value):
+    def distance_travelled_per_day(self, value: UnittedValue) -> None:
         self._distance_travelled_per_day = value
 
 
@@ -1093,7 +1097,7 @@ class StaticMode(BaseType):
         return self._mi_energy_conversion_reference
 
     @mi_energy_conversion_reference.setter
-    def mi_energy_conversion_reference(self, value):
+    def mi_energy_conversion_reference(self, value: MIRecordReference) -> None:
         self._mi_energy_conversion_reference = value
 
     @property
@@ -1108,7 +1112,7 @@ class StaticMode(BaseType):
         return self._power_rating
 
     @power_rating.setter
-    def power_rating(self, value):
+    def power_rating(self, value: UnittedValue) -> None:
         self._power_rating = value
 
     @property
@@ -1123,7 +1127,7 @@ class StaticMode(BaseType):
         return self._days_used_per_year
 
     @days_used_per_year.setter
-    def days_used_per_year(self, value):
+    def days_used_per_year(self, value: float) -> None:
         self._days_used_per_year = value
 
     @property
@@ -1138,7 +1142,7 @@ class StaticMode(BaseType):
         return self._hours_used_per_day
 
     @hours_used_per_day.setter
-    def hours_used_per_day(self, value):
+    def hours_used_per_day(self, value: float) -> None:
         self._hours_used_per_day = value
 
 
@@ -1192,7 +1196,7 @@ class UtilitySpecification(BaseType):
         return self._industry_average_duration_years
 
     @industry_average_duration_years.setter
-    def industry_average_duration_years(self, value):
+    def industry_average_duration_years(self, value: Optional[float]) -> None:
         self._industry_average_duration_years = value
 
     @property
@@ -1208,7 +1212,7 @@ class UtilitySpecification(BaseType):
         return self._industry_average_number_of_functional_units
 
     @industry_average_number_of_functional_units.setter
-    def industry_average_number_of_functional_units(self, value):
+    def industry_average_number_of_functional_units(self, value: Optional[float]) -> None:
         self._industry_average_number_of_functional_units = value
 
     @property
@@ -1223,7 +1227,7 @@ class UtilitySpecification(BaseType):
         return self._utility
 
     @utility.setter
-    def utility(self, value):
+    def utility(self, value: Optional[float]) -> None:
         self._utility = value
 
 
@@ -1282,7 +1286,7 @@ class ProductLifeSpan(BaseType):
         return self._duration_years
 
     @duration_years.setter
-    def duration_years(self, value):
+    def duration_years(self, value: float) -> None:
         self._duration_years = value
 
     @property
@@ -1297,7 +1301,7 @@ class ProductLifeSpan(BaseType):
         return self._number_of_functional_units
 
     @number_of_functional_units.setter
-    def number_of_functional_units(self, value):
+    def number_of_functional_units(self, value: Optional[float]) -> None:
         self._number_of_functional_units = value
 
     @property
@@ -1312,7 +1316,7 @@ class ProductLifeSpan(BaseType):
         return self._functional_unit_description
 
     @functional_unit_description.setter
-    def functional_unit_description(self, value):
+    def functional_unit_description(self, value: Optional[str]) -> None:
         self._functional_unit_description = value
 
     @property
@@ -1328,7 +1332,7 @@ class ProductLifeSpan(BaseType):
         return self._utility
 
     @utility.setter
-    def utility(self, value):
+    def utility(self, value: Optional[UtilitySpecification]) -> None:
         self._utility = value
 
 
@@ -1387,7 +1391,7 @@ class UsePhase(BaseType):
         return self._product_life_span
 
     @product_life_span.setter
-    def product_life_span(self, value):
+    def product_life_span(self, value: ProductLifeSpan) -> None:
         self._product_life_span = value
 
     @property
@@ -1402,7 +1406,7 @@ class UsePhase(BaseType):
         return self._electricity_mix
 
     @electricity_mix.setter
-    def electricity_mix(self, value):
+    def electricity_mix(self, value: Optional[ElectricityMix]) -> None:
         self._electricity_mix = value
 
     @property
@@ -1417,7 +1421,7 @@ class UsePhase(BaseType):
         return self._static_mode
 
     @static_mode.setter
-    def static_mode(self, value):
+    def static_mode(self, value: Optional[StaticMode]) -> None:
         self._static_mode = value
 
     @property
@@ -1432,7 +1436,7 @@ class UsePhase(BaseType):
         return self._mobile_mode
 
     @mobile_mode.setter
-    def mobile_mode(self, value):
+    def mobile_mode(self, value: Optional[MobileMode]) -> None:
         self._mobile_mode = value
 
 
@@ -1481,7 +1485,7 @@ class BoMDetails(BaseType):
         return self._notes
 
     @notes.setter
-    def notes(self, value):
+    def notes(self, value: Optional[str]) -> None:
         self._notes = value
 
     @property
@@ -1497,7 +1501,7 @@ class BoMDetails(BaseType):
         return self._picture_url
 
     @picture_url.setter
-    def picture_url(self, value):
+    def picture_url(self, value: Optional[str]) -> None:
         self._picture_url = value
 
     @property
@@ -1512,7 +1516,7 @@ class BoMDetails(BaseType):
         return self._product_name
 
     @product_name.setter
-    def product_name(self, value):
+    def product_name(self, value: Optional[str]) -> None:
         self._product_name = value
 
 
@@ -1561,7 +1565,7 @@ class TransportStage(InternalIdentifierMixin, BaseType):
         return self._name
 
     @name.setter
-    def name(self, value):
+    def name(self, value: str) -> None:
         self._name = value
 
     @property
@@ -1576,7 +1580,7 @@ class TransportStage(InternalIdentifierMixin, BaseType):
         return self._mi_transport_reference
 
     @mi_transport_reference.setter
-    def mi_transport_reference(self, value):
+    def mi_transport_reference(self, value: MIRecordReference) -> None:
         self._mi_transport_reference = value
 
     @property
@@ -1591,7 +1595,7 @@ class TransportStage(InternalIdentifierMixin, BaseType):
         return self._distance
 
     @distance.setter
-    def distance(self, value):
+    def distance(self, value: UnittedValue) -> None:
         self._distance = value
 
 
@@ -1634,7 +1638,7 @@ class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._mi_specification_reference
 
     @mi_specification_reference.setter
-    def mi_specification_reference(self, value):
+    def mi_specification_reference(self, value: MIRecordReference) -> None:
         self._mi_specification_reference = value
 
     @property
@@ -1649,7 +1653,7 @@ class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._quantity
 
     @quantity.setter
-    def quantity(self, value):
+    def quantity(self, value: Optional[UnittedValue]) -> None:
         self._quantity = value
 
 
@@ -1701,7 +1705,7 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._mi_substance_reference
 
     @mi_substance_reference.setter
-    def mi_substance_reference(self, value: "MIRecordReference"):
+    def mi_substance_reference(self, value: "MIRecordReference") -> None:
         self._mi_substance_reference = value
 
     @property
@@ -1716,7 +1720,7 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._percentage
 
     @percentage.setter
-    def percentage(self, value: Optional[float]):
+    def percentage(self, value: Optional[float]) -> None:
         self._percentage = value
 
     @property
@@ -1731,7 +1735,7 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._category
 
     @category.setter
-    def category(self, value: Optional[str]):
+    def category(self, value: Optional[str]) -> None:
         self._category = value
 
 
@@ -1806,7 +1810,7 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._mi_process_reference
 
     @mi_process_reference.setter
-    def mi_process_reference(self, value):
+    def mi_process_reference(self, value: MIRecordReference) -> None:
         self._mi_process_reference = value
 
     @property
@@ -1822,7 +1826,7 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._dimension_type
 
     @dimension_type.setter
-    def dimension_type(self, value):
+    def dimension_type(self, value: DimensionType) -> None:
         self._dimension_type = value
 
     @property
@@ -1837,7 +1841,7 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._percentage_of_part_affected
 
     @percentage_of_part_affected.setter
-    def percentage_of_part_affected(self, value):
+    def percentage_of_part_affected(self, value: Optional[float]) -> None:
         self._percentage_of_part_affected = value
 
     @property
@@ -1852,7 +1856,7 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._quantity_affected
 
     @quantity_affected.setter
-    def quantity_affected(self, value):
+    def quantity_affected(self, value: "Optional[UnittedValue]") -> None:
         self._quantity_affected = value
 
 
@@ -1972,7 +1976,7 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._mi_material_reference
 
     @mi_material_reference.setter
-    def mi_material_reference(self, value):
+    def mi_material_reference(self, value: MIRecordReference) -> None:
         self._mi_material_reference = value
 
     @property
@@ -1987,7 +1991,7 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._percentage
 
     @percentage.setter
-    def percentage(self, value):
+    def percentage(self, value: Optional[float]) -> None:
         self._percentage = value
 
     @property
@@ -2002,7 +2006,7 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._mass
 
     @mass.setter
-    def mass(self, value):
+    def mass(self, value: "Optional[UnittedValue]") -> None:
         self._mass = value
 
     @property
@@ -2019,7 +2023,7 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._recycle_content_is_typical
 
     @recycle_content_is_typical.setter
-    def recycle_content_is_typical(self, value):
+    def recycle_content_is_typical(self, value: Optional[bool]) -> None:
         self._recycle_content_is_typical = value
 
     @property
@@ -2035,7 +2039,7 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._recycle_content_percentage
 
     @recycle_content_percentage.setter
-    def recycle_content_percentage(self, value):
+    def recycle_content_percentage(self, value: Optional[float]) -> None:
         self._recycle_content_percentage = value
 
     @property
@@ -2050,11 +2054,11 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._processes
 
     @processes.setter
-    def processes(self, value):
+    def processes(self, value: "List[Process]") -> None:
         self._processes = value
 
     @property
-    def end_of_life_fates(self) -> List[EndOfLifeFate]:
+    def end_of_life_fates(self) -> "List[EndOfLifeFate]":
         """
         The fates of this material once the product is disposed of.
 
@@ -2065,7 +2069,7 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         return self._end_of_life_fates
 
     @end_of_life_fates.setter
-    def end_of_life_fates(self, value):
+    def end_of_life_fates(self, value: "List[EndOfLifeFate]") -> None:
         self._end_of_life_fates = value
 
 
@@ -2259,7 +2263,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._quantity
 
     @quantity.setter
-    def quantity(self, value):
+    def quantity(self, value: "Optional[UnittedValue]") -> None:
         self._quantity = value
 
     @property
@@ -2276,7 +2280,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._mass_per_unit_of_measure
 
     @mass_per_unit_of_measure.setter
-    def mass_per_unit_of_measure(self, value):
+    def mass_per_unit_of_measure(self, value: "Optional[UnittedValue]") -> None:
         self._mass_per_unit_of_measure = value
 
     @property
@@ -2293,7 +2297,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._volume_per_unit_of_measure
 
     @volume_per_unit_of_measure.setter
-    def volume_per_unit_of_measure(self, value):
+    def volume_per_unit_of_measure(self, value: "Optional[UnittedValue]") -> None:
         self._volume_per_unit_of_measure = value
 
     @property
@@ -2308,7 +2312,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._mi_part_reference
 
     @mi_part_reference.setter
-    def mi_part_reference(self, value):
+    def mi_part_reference(self, value: "Optional[MIRecordReference]") -> None:
         self._mi_part_reference = value
 
     @property
@@ -2323,7 +2327,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._non_mi_part_reference
 
     @non_mi_part_reference.setter
-    def non_mi_part_reference(self, value):
+    def non_mi_part_reference(self, value: Optional[Union[str, int]]) -> None:
         self._non_mi_part_reference = value
 
     @property
@@ -2338,7 +2342,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._part_number
 
     @part_number.setter
-    def part_number(self, value):
+    def part_number(self, value: str) -> None:
         self._part_number = value
 
     @property
@@ -2353,7 +2357,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._name
 
     @part_name.setter
-    def part_name(self, value):
+    def part_name(self, value: Optional[str]) -> None:
         self._name = value
 
     @property
@@ -2368,7 +2372,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._external_id
 
     @external_id.setter
-    def external_id(self, value):
+    def external_id(self, value: Optional[str]) -> None:
         self._external_id = value
 
     @property
@@ -2383,7 +2387,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._components
 
     @components.setter
-    def components(self, value):
+    def components(self, value: "List[Part]") -> None:
         self._components = value
 
     @property
@@ -2399,7 +2403,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._specifications
 
     @specifications.setter
-    def specifications(self, value):
+    def specifications(self, value: "List[Specification]") -> None:
         self._specifications = value
 
     @property
@@ -2414,7 +2418,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._materials
 
     @materials.setter
-    def materials(self, value):
+    def materials(self, value: "List[Material]") -> None:
         self._materials = value
 
     @property
@@ -2429,7 +2433,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._substances
 
     @substances.setter
-    def substances(self, value):
+    def substances(self, value: "List[Substance]") -> None:
         self._substances = value
 
     @property
@@ -2444,7 +2448,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._processes
 
     @processes.setter
-    def processes(self, value):
+    def processes(self, value: "List[Process]") -> None:
         self._processes = value
 
     @property
@@ -2460,7 +2464,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._rohs_exemptions
 
     @rohs_exemptions.setter
-    def rohs_exemptions(self, value):
+    def rohs_exemptions(self, value: List[str]) -> None:
         self._rohs_exemptions = value
 
     @property
@@ -2475,7 +2479,7 @@ class Part(InternalIdentifierMixin, BaseType):
         return self._end_of_life_fates
 
     @end_of_life_fates.setter
-    def end_of_life_fates(self, value):
+    def end_of_life_fates(self, value: "List[EndOfLifeFate]") -> None:
         self._end_of_life_fates = value
 
 
@@ -2538,7 +2542,7 @@ class AnnotationSource(InternalIdentifierMixin, BaseType):
         return self._name
 
     @name.setter
-    def name(self, value):
+    def name(self, value: str) -> None:
         self._name = value
 
     @property
@@ -2553,7 +2557,7 @@ class AnnotationSource(InternalIdentifierMixin, BaseType):
         return self._method
 
     @method.setter
-    def method(self, value):
+    def method(self, value: Optional[str]) -> None:
         self._method = value
 
     @property
@@ -2568,7 +2572,7 @@ class AnnotationSource(InternalIdentifierMixin, BaseType):
         return self._data
 
     @data.setter
-    def data(self, value):
+    def data(self, value: List[Any]) -> None:
         self._data = value
 
 
@@ -2633,7 +2637,7 @@ class Annotation(BaseType):
         return self._target_id
 
     @target_id.setter
-    def target_id(self, value):
+    def target_id(self, value: str) -> None:
         self._target_id = value
 
     @property
@@ -2649,7 +2653,7 @@ class Annotation(BaseType):
         return self.source_id
 
     @source_id.setter
-    def source_id(self, value):
+    def source_id(self, value: str) -> None:
         self._source_id = value
 
     @property
@@ -2665,7 +2669,7 @@ class Annotation(BaseType):
         return self._type
 
     @type_.setter
-    def type_(self, value):
+    def type_(self, value: str) -> None:
         self._type_ = value
 
     @property
@@ -2680,7 +2684,7 @@ class Annotation(BaseType):
         return self._value
 
     @value.setter
-    def value(self, value):
+    def value(self, value: "Union[str, UnittedValue]") -> None:
         self._value = value
 
 
@@ -2773,7 +2777,7 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         return self._components
 
     @components.setter
-    def components(self, value):
+    def components(self, value: "List[Part]") -> None:
         self._components = value
 
     @property
@@ -2788,7 +2792,7 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         return self._transport_phase
 
     @transport_phase.setter
-    def transport_phase(self, value):
+    def transport_phase(self, value: "List[TransportStage]") -> None:
         self._transport_phase = value
 
     @property
@@ -2803,7 +2807,7 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         return self._use_phase
 
     @use_phase.setter
-    def use_phase(self, value):
+    def use_phase(self, value: "Optional[UsePhase]") -> None:
         self._use_phase = value
 
     @property
@@ -2818,7 +2822,7 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         return self._location
 
     @location.setter
-    def location(self, value):
+    def location(self, value: "Optional[Location]") -> None:
         self._location = value
 
     @property
@@ -2833,7 +2837,7 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         return self._notes
 
     @notes.setter
-    def notes(self, value):
+    def notes(self, value: "Optional[BoMDetails]") -> None:
         self._notes = value
 
     @property
@@ -2848,7 +2852,7 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         return self._annotations
 
     @annotations.setter
-    def annotations(self, value):
+    def annotations(self, value: "List[Annotation]") -> None:
         self._annotations = value
 
     @property
@@ -2863,5 +2867,5 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         return self._annotation_sources
 
     @annotation_sources.setter
-    def annotation_sources(self, value):
+    def annotation_sources(self, value: "List[AnnotationSource]") -> None:
         self._annotation_sources = value

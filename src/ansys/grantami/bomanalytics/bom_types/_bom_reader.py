@@ -1,5 +1,5 @@
 import inspect
-from typing import Dict, Optional, Any, TYPE_CHECKING, cast, Iterable
+from typing import Dict, Optional, Any, TYPE_CHECKING, cast, Iterable, Type
 
 from xmlschema import XMLSchema
 
@@ -12,9 +12,9 @@ if TYPE_CHECKING:
 
 class BoMReader:
     _schema: XMLSchema
-    _namespaces = {}
-    _class_members = {}
-    _field_reader = None
+    _namespaces: Dict[str, str] = {}
+    _class_members: Dict[str, Type] = {}
+    _field_reader: "Optional[NamespaceFieldReader]" = None
 
     def __init__(self, schema: XMLSchema):
         """
@@ -26,6 +26,7 @@ class BoMReader:
             Parsed XMLSchema representing the 2301 Eco BoM format
         """
         self._schema = schema
+        self._class_members = {k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)}
 
     def read_bom(self, obj: Dict) -> "BillOfMaterials":
         """
@@ -48,9 +49,7 @@ class BoMReader:
                 _, prefix = k.split(":")
                 namespaces[prefix] = v
 
-        class_members = {k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)}
         self._namespaces = namespaces
-        self._class_members = class_members
         self._field_reader = NamespaceFieldReader(self._namespaces)
 
         return cast("BillOfMaterials", self._create_type("BillOfMaterials", obj))

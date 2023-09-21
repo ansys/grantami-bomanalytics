@@ -8,7 +8,6 @@ if TYPE_CHECKING:
 
 class BoMWriter:
     _schema: XMLSchema
-    _class_members = {}
 
     def __init__(self, schema: XMLSchema):
         """
@@ -22,15 +21,15 @@ class BoMWriter:
         self._schema = schema
 
     def _get_qualified_name(self, obj: "BaseType", field_name: str) -> str:
-        namespace_prefix = [k for k, v in self._schema.namespaces.items() if v == obj._namespace]
-        if len(namespace_prefix) == 1:
-            namespace_prefix = namespace_prefix[0]
-        elif len(namespace_prefix) == 0:
+        namespace_prefixes = [k for k, v in self._schema.namespaces.items() if v == obj._namespace]
+        if len(namespace_prefixes) == 1:
+            namespace_prefix = namespace_prefixes[0]
+        elif len(namespace_prefixes) == 0:
             raise KeyError(f"Namespace {obj._namespace} does not exist in schema for object {type(obj)}")
-        elif "" in namespace_prefix:
+        elif "" in namespace_prefixes:
             return field_name
         else:
-            namespace_prefix = namespace_prefix[0]
+            namespace_prefix = namespace_prefixes[0]
         if field_name[0] == "@":
             return f"@{namespace_prefix}:{field_name[1:]}"
         return f"{namespace_prefix}:{field_name}"

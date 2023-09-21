@@ -3,30 +3,30 @@
 Defines the representations of the query results themselves, which allows them to implement pivots and summaries over
 the entire query result instead of being constrained to individual parts and materials.
 """
-from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
-from collections import defaultdict, namedtuple
 from abc import ABC
+from collections import defaultdict, namedtuple
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Type, Union
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 from ._item_results import (
-    ItemResultFactory,
-    MaterialWithImpactedSubstancesResult,
-    MaterialWithComplianceResult,
-    PartWithImpactedSubstancesResult,
-    PartWithComplianceResult,
-    SpecificationWithImpactedSubstancesResult,
-    SpecificationWithComplianceResult,
-    SubstanceWithComplianceResult,
     ImpactedSubstance,
+    ItemResultFactory,
+    MaterialSummaryResult,
+    MaterialWithComplianceResult,
+    MaterialWithImpactedSubstancesResult,
+    PartWithComplianceResult,
+    PartWithImpactedSubstancesResult,
     PartWithSustainabilityResult,
-    TransportWithSustainabilityResult,
+    ProcessSummaryResult,
+    SpecificationWithComplianceResult,
+    SpecificationWithImpactedSubstancesResult,
+    SubstanceWithComplianceResult,
     SustainabilityPhaseSummaryResult,
     TransportSummaryResult,
-    MaterialSummaryResult,
-    ProcessSummaryResult,
+    TransportWithSustainabilityResult,
 )
-from .indicators import WatchListIndicator, RoHSIndicator
+from .indicators import RoHSIndicator, WatchListIndicator
 
 if TYPE_CHECKING:
     from .queries import Query_Result

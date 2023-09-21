@@ -8,8 +8,8 @@ T
     Generic type to ensure static-type checking works as expected.
 """
 
-from typing import TypeVar, Type, Any, Callable
 import functools
+from typing import Any, Callable, Type, TypeVar
 
 T = TypeVar("T")
 

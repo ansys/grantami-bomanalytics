@@ -1,9 +1,12 @@
-import pytest
 import os
-import requests_mock
 import pathlib
 from typing import List
+
+import pytest
+import requests_mock
+
 from ansys.grantami.bomanalytics import Connection
+
 from .common import CUSTOM_TABLES
 
 sl_url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")

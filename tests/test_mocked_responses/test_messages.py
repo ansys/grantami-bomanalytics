@@ -1,12 +1,14 @@
 import json
 import logging
 
-import pytest
-from ansys.grantami.bomanalytics import queries, GrantaMIException
-from ansys.grantami.bomanalytics._query_results import LogMessage
-from .common import BaseMockTester
-from ..inputs import examples_as_dicts
 from ansys.grantami.bomanalytics_openapi.models import GetImpactedSubstancesForMaterialsResponse
+import pytest
+
+from ansys.grantami.bomanalytics import GrantaMIException, queries
+from ansys.grantami.bomanalytics._query_results import LogMessage
+
+from ..inputs import examples_as_dicts
+from .common import BaseMockTester
 
 
 class TestMessages(BaseMockTester):

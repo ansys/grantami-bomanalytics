@@ -1,6 +1,9 @@
-import pytest
 from dataclasses import dataclass
+
+import pytest
+
 from ansys.grantami.bomanalytics import queries
+
 from .inputs import sample_bom, sample_bom_2301
 
 

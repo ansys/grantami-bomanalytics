@@ -1,8 +1,11 @@
-import pytest
 from dataclasses import dataclass
+
 from ansys.grantami.bomanalytics_openapi import models
+import pytest
+
 from ansys.grantami.bomanalytics._item_definitions import ReferenceType
 from ansys.grantami.bomanalytics._item_results import ImpactedSubstance, ItemResultFactory
+
 from .common import INDICATORS
 
 

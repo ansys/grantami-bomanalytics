@@ -17,35 +17,31 @@ Query_Result
 """
 
 from abc import ABC, abstractmethod
+from numbers import Number
 from typing import (
+    TYPE_CHECKING,
     Any,
-    Union,
+    Callable,
+    Dict,
+    Generator,
     List,
     Literal,
-    Dict,
-    Tuple,
-    TypeVar,
-    Callable,
-    Generator,
     Optional,
+    Tuple,
     Type,
-    TYPE_CHECKING,
+    TypeVar,
+    Union,
 )
 import warnings
-from numbers import Number
 
-from ansys.grantami.bomanalytics_openapi import models, api  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import api, models  # type: ignore[import]
 
-from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition  # noqa: F401
 from ._allowed_types import validate_argument_type
-from ._query_results import (
-    QueryResultFactory,
-    ComplianceBaseClass,
-    ImpactedSubstancesBaseClass,
-)
-from .indicators import _Indicator, WatchListIndicator, RoHSIndicator
 from ._exceptions import GrantaMIException
+from ._item_definitions import AbstractBomFactory, PartDefinition, RecordDefinition  # noqa: F401
 from ._logger import logger
+from ._query_results import ComplianceBaseClass, ImpactedSubstancesBaseClass, QueryResultFactory
+from .indicators import RoHSIndicator, WatchListIndicator, _Indicator
 
 if TYPE_CHECKING:
     from ._connection import Connection  # noqa: F401

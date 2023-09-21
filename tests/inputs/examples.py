@@ -1,5 +1,5 @@
-import json
 import html
+import json
 
 # TODO: Modify the codegen script to generate this as a package
 

@@ -109,18 +109,6 @@ passenv =
     TEST_PASS
     TEST_WRITE_USER
     TEST_WRITE_PASS
-
-[testenv:style]
-deps =
-    codespell==2.1.0
-    flake8==3.9.2
-    black
-    mypy==0.910
-commands =
-    codespell ./src ./tests ./examples ./doc/source --skip="./doc/source/_static/xml_schemas"
-    flake8 ./src ./tests ./examples
-    black ./src ./tests --check
-    mypy ./src
 """
 
 [tool.mypy]
@@ -141,3 +129,15 @@ markers = [
 
 [tool.black]
 line-length = 120
+
+[tool.pydocstyle]
+convention = "numpy"
+
+[tool.isort]
+profile = "black"
+force_sort_within_sections = true
+line_length = 100
+default_section = "THIRDPARTY"
+skip_gitignore = true
+skip = [".ipython", "cicd", "examples", "examples-dummy"]
+src_paths = ["src", "tests"]

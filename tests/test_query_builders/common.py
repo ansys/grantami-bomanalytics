@@ -1,6 +1,6 @@
 from typing import List
-from ansys.grantami.bomanalytics import queries
 
+from ansys.grantami.bomanalytics import queries
 
 RECORD_QUERY_TYPES: List = [
     queries.MaterialImpactedSubstancesQuery,

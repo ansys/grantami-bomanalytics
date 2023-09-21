@@ -1,5 +1,7 @@
-from ansys.grantami.bomanalytics import queries, indicators
 from ansys.grantami.bomanalytics_openapi.models import GetComplianceForSubstancesResponse
+
+from ansys.grantami.bomanalytics import indicators, queries
+
 from .common import BaseMockTester, SubstanceValidator
 
 

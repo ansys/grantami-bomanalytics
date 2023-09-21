@@ -3,34 +3,36 @@
 Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
 queries. These are mostly extensions of the classes in the ``_item_definitions.py`` file.
 """
-from typing import (
-    List,
-    Dict,
-    Union,
-    Callable,
-    TYPE_CHECKING,
-    Optional,
-    overload,
-    TypeVar,
-    Type,
-    Any,
-)
 from copy import deepcopy
-from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
-from ._item_definitions import (
-    MaterialDefinition,
-    PartDefinition,
-    SpecificationDefinition,
-    BaseSubstanceReference,
-    ReferenceType,
-    CoatingReference,
-    ProcessReference,
-    TransportReference,
-    PartReference,
-    MaterialReference,
-    SpecificationReference,
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Optional,
+    Type,
+    TypeVar,
+    Union,
+    overload,
 )
-from .indicators import WatchListIndicator, RoHSIndicator
+
+from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
+
+from ._item_definitions import (
+    BaseSubstanceReference,
+    CoatingReference,
+    MaterialDefinition,
+    MaterialReference,
+    PartDefinition,
+    PartReference,
+    ProcessReference,
+    ReferenceType,
+    SpecificationDefinition,
+    SpecificationReference,
+    TransportReference,
+)
+from .indicators import RoHSIndicator, WatchListIndicator
 
 if TYPE_CHECKING:
     from ._query_results import MaterialImpactedSubstancesQueryResult  # noqa: F401

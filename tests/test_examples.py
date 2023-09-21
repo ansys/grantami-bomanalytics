@@ -1,7 +1,8 @@
-import sys
-import pytest
-import subprocess
 from pathlib import Path
+import subprocess
+import sys
+
+import pytest
 
 pytestmark = pytest.mark.integration
 IPYTHONDIR = str(Path(__file__).parent.parent) + "/.ipython"

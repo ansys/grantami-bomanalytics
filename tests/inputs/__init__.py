@@ -1,5 +1,6 @@
 import pathlib
-from .examples import examples_as_strings, examples_as_dicts
+
+from .examples import examples_as_dicts, examples_as_strings
 
 _bom_path = pathlib.Path(__file__).parent / "bom.xml"
 with open(_bom_path, "r") as f:

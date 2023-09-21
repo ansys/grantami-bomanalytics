@@ -1,22 +1,22 @@
-import pytest
-from ansys.grantami.bomanalytics._item_definitions import (
-    MaterialDefinition,
-    SpecificationDefinition,
-    PartDefinition,
-    SubstanceDefinition,
-    ReferenceType,
-    CoatingReference,
-    ProcessReference,
-    TransportReference,
-    RecordReference,
-)
 from ansys.grantami.bomanalytics_openapi import (
-    CommonMaterialReference as MatRef,
-    CommonPartReference as PartRef,
-    CommonSpecificationReference as SpecRef,
     GetComplianceForSubstancesSubstanceWithAmount as SubsRef,
 )
+from ansys.grantami.bomanalytics_openapi import CommonMaterialReference as MatRef
+from ansys.grantami.bomanalytics_openapi import CommonPartReference as PartRef
+from ansys.grantami.bomanalytics_openapi import CommonSpecificationReference as SpecRef
+import pytest
 
+from ansys.grantami.bomanalytics._item_definitions import (
+    CoatingReference,
+    MaterialDefinition,
+    PartDefinition,
+    ProcessReference,
+    RecordReference,
+    ReferenceType,
+    SpecificationDefinition,
+    SubstanceDefinition,
+    TransportReference,
+)
 
 common_test_cases = [
     ({"reference_type": ReferenceType.MiRecordGuid, "reference_value": "TEST_GUID"}, "record_guid"),

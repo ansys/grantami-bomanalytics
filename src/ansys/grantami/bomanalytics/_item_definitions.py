@@ -5,9 +5,9 @@ These are sub-classed in the ``_bom_item_results.py`` file to include the result
 """
 
 from abc import ABC, abstractmethod
-from typing import Callable, Type, Union, List, Dict, Optional, cast
 from enum import Enum, auto
 import numbers
+from typing import Callable, Dict, List, Optional, Type, Union, cast
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 

@@ -1,7 +1,9 @@
-import pytest
 import random
-from ansys.grantami.bomanalytics import indicators
+
 from ansys.grantami.bomanalytics_openapi import CommonIndicatorDefinition
+import pytest
+
+from ansys.grantami.bomanalytics import indicators
 
 
 def create_rohs_indicator(ignore_exemptions) -> indicators.RoHSIndicator:

@@ -1,6 +1,8 @@
 import pytest
+
 from ansys.grantami.bomanalytics import queries
-from ..common import LEGISLATIONS, INDICATORS
+
+from ..common import INDICATORS, LEGISLATIONS
 
 TEST_GUIDS = [
     [],

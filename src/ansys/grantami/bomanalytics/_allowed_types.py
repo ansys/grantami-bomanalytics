@@ -67,7 +67,7 @@ def validate_argument_type(*allowed_types: Any) -> Callable:
             result = any([_check_type_wrapper(value, allowed_type) for allowed_type in allowed_types])
             if not result:
                 raise TypeError(f'Incorrect type for value "{value}". Expected "{allowed_types}"')
-            return method(*args, **kwargs)  # type: ignore[call-arg]
+            return method(*args, **kwargs)
 
         return check_types
 

@@ -7,7 +7,7 @@ These are sub-classed in the ``_bom_item_results.py`` file to include the result
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 import numbers
-from typing import Callable, Dict, List, Optional, Type, Union, cast
+from typing import Dict, Optional, Union, cast
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
@@ -316,64 +316,6 @@ class TransportReference(RecordReference, ABC):
     """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
 
 
-class AbstractBomFactory:
-    """Creates factories for a given type of API query. The request object in the low-level
-    API is the key to controlling which definition is created.
-    .
-    """
-
-    registry: Dict[Type[models.ModelBase], Type["BomItemDefinitionFactory"]] = {}
-    """Mapping between a factory class and the definition object it can create."""
-
-    @classmethod
-    def register(cls, request_types: List[Type[models.ModelBase]]) -> Callable:
-        """Registers a specific factory class with a low-level API request type.
-
-        Parameters
-        ----------
-        request_types
-
-        Returns
-        -------
-        Callable
-            The function that's being decorated.
-        """
-
-        def inner(item_factory: Type[BomItemDefinitionFactory]) -> Type[BomItemDefinitionFactory]:
-            for request_type in request_types:
-                cls.registry[request_type] = item_factory
-            return item_factory
-
-        return inner
-
-    @classmethod
-    def create_factory_for_request_type(cls, request_type: Type[models.ModelBase]) -> "BomItemDefinitionFactory":
-        """Instantiate and return a specific item definition factory.
-
-        Parameters
-        ----------
-        request_type
-            Request type for which a definition is needed.
-
-        Returns
-        -------
-        Factory
-            Instance of a factory to create the appropriate definitions.
-
-        Raises
-        ------
-        RuntimeError
-            Error raised if a request type is not registered to any factory.
-        """
-
-        try:
-            item_factory_class = cls.registry[request_type]
-        except KeyError as e:
-            raise RuntimeError(f'Unregistered request type "{request_type}"').with_traceback(e.__traceback__)
-        item_factory = item_factory_class()
-        return item_factory
-
-
 class BomItemDefinitionFactory(ABC):
     """Creates a specific definition object. This base factory class applies to definitions based on records only.
 
@@ -400,12 +342,6 @@ class BomItemDefinitionFactory(ABC):
         pass
 
 
-@AbstractBomFactory.register(
-    [
-        models.GetComplianceForMaterialsRequest,
-        models.GetImpactedSubstancesForMaterialsRequest,
-    ]
-)
 class MaterialDefinitionFactory(BomItemDefinitionFactory):
     """Creates material definition objects."""
 
@@ -479,12 +415,6 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
         return MaterialDefinition(reference_type=ReferenceType.MaterialId, reference_value=material_id)
 
 
-@AbstractBomFactory.register(
-    [
-        models.GetComplianceForPartsRequest,
-        models.GetImpactedSubstancesForPartsRequest,
-    ]
-)
 class PartDefinitionFactory(BomItemDefinitionFactory):
     """Creates part definition objects."""
 
@@ -558,12 +488,6 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
         return PartDefinition(reference_type=ReferenceType.PartNumber, reference_value=part_number)
 
 
-@AbstractBomFactory.register(
-    [
-        models.GetComplianceForSpecificationsRequest,
-        models.GetImpactedSubstancesForSpecificationsRequest,
-    ]
-)
 class SpecificationDefinitionFactory(BomItemDefinitionFactory):
     """Creates specification definition objects."""
 
@@ -641,7 +565,6 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
         return SpecificationDefinition(reference_type=ReferenceType.SpecificationId, reference_value=specification_id)
 
 
-@AbstractBomFactory.register([models.GetComplianceForSubstancesRequest])
 class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
     """Creates substance compliance definition objects."""
 

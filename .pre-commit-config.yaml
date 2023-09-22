@@ -32,7 +32,7 @@ repos:
     types: [python]
     require_serial: true
     files: "^(src/)"
-    additional_dependencies: ["mypy==0.910"]
+    additional_dependencies: ["mypy==1.5.1"]
 
 #- repo: https://github.com/pycqa/pydocstyle
 #  rev: 6.3.0

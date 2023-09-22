@@ -56,6 +56,7 @@ if TYPE_CHECKING:
         MaterialImpactedSubstancesQueryResult,
         PartComplianceQueryResult,
         PartImpactedSubstancesQueryResult,
+        ResultBaseClass,
         SpecificationComplianceQueryResult,
         SpecificationImpactedSubstancesQueryResult,
         SubstanceComplianceQueryResult,
@@ -72,6 +73,7 @@ if TYPE_CHECKING:
         SpecificationComplianceQuery,
         SpecificationImpactedSubstancesQuery,
         SubstanceComplianceQuery,
+        _BaseQuery,
     )
 
 
@@ -389,19 +391,19 @@ class BomAnalyticsClient(ApiClient):
     def run(self, query: "BomSustainabilitySummaryQuery") -> "BomSustainabilitySummaryQueryResult":
         ...
 
-    def run(self, query):  # type: ignore[no-untyped-def]
+    def run(self, query: Union["_BaseQuery", Type["Yaml"]]) -> Union["ResultBaseClass", str]:
         """Run a query against the Granta MI database.
 
         Parameters
         ----------
         query
-            A compliance, impacted substance, or YAML query object.
+            A compliance, impacted substance, sustainability, or YAML query object.
 
         Returns
         -------
         Query Result
-            Specific result object based on the provided query, which contains either the compliance or
-            impacted substances results. In the case of a YAML query, a string is returned.
+            Specific result object based on the provided query, which contains either the compliance,
+            impacted substances, or sustainability results. In the case of a YAML query, a string is returned.
 
         Raises
         ------

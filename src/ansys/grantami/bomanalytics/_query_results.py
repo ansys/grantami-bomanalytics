@@ -5,7 +5,7 @@ the entire query result instead of being constrained to individual parts and mat
 """
 from abc import ABC
 from collections import defaultdict, namedtuple
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Type, Union
+from typing import Any, Callable, Dict, List, Type, Union
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
@@ -27,10 +27,6 @@ from ._item_results import (
     TransportWithSustainabilityResult,
 )
 from .indicators import RoHSIndicator, WatchListIndicator
-
-if TYPE_CHECKING:
-    from .queries import Query_Result
-
 
 LogMessage = namedtuple("LogMessage", ["severity", "message"])
 """ Message returned by Granta MI when running the query.
@@ -83,7 +79,7 @@ class QueryResultFactory:
         results: Union[List[models.ModelBase], models.ModelBase],
         messages: List[models.CommonLogEntry],
         **kwargs: Dict,
-    ) -> "Query_Result":
+    ) -> "ResultBaseClass":
         """Returns a specific query result.
 
         Uses the type of the ``results`` parameter to determine which specific ``Query_Result`` object to return.
@@ -119,7 +115,7 @@ class QueryResultFactory:
         except KeyError as e:
             raise RuntimeError(f"Unregistered response type" f' "{response_type}"').with_traceback(e.__traceback__)
 
-        item_result: Query_Result = item_factory_class(results=results, messages=messages, **kwargs)
+        item_result: ResultBaseClass = item_factory_class(results=results, messages=messages, **kwargs)
         return item_result
 
 

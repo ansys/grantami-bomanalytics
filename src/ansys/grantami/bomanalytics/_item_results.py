@@ -3,6 +3,7 @@
 Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
 queries. These are mostly extensions of the classes in the ``_item_definitions.py`` file.
 """
+from abc import ABC
 from copy import deepcopy
 from typing import (
     TYPE_CHECKING,
@@ -27,6 +28,7 @@ from ._item_definitions import (
     PartDefinition,
     PartReference,
     ProcessReference,
+    RecordReference,
     ReferenceType,
     SpecificationDefinition,
     SpecificationReference,
@@ -705,13 +707,7 @@ class ImpactedSubstance(BaseSubstanceReference):
         )
 
 
-if TYPE_CHECKING:
-    mixin_base_class = PartDefinition
-else:
-    mixin_base_class = object
-
-
-class ImpactedSubstancesResultMixin(mixin_base_class):
+class ImpactedSubstancesResultMixin:
     """Adds results from an impacted substances query to an ``ItemDefinition`` class, turning it into an
     ``ItemWithImpactedSubstancesResult`` class.
 
@@ -799,6 +795,8 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
             results.extend(legislation_result)
         return results
 
+
+class RecordWithImpactedSubstancesResultMixin(ImpactedSubstancesResultMixin, RecordReference):
     def __repr__(self) -> str:
         return (
             f"<{self.__class__.__name__}({self._record_reference}), {len(self.substances_by_legislation)} legislations>"
@@ -806,7 +804,7 @@ class ImpactedSubstancesResultMixin(mixin_base_class):
 
 
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
-class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, MaterialDefinition):
+class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialDefinition):
     """Retrieves an individual material that is included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -837,7 +835,7 @@ class MaterialWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, Materi
 
 
 @ItemResultFactory.register("PartWithImpactedSubstances")
-class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefinition):
+class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartDefinition):
     """Retrieves an individual part included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -868,7 +866,7 @@ class PartWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, PartDefini
 
 
 @ItemResultFactory.register("SpecificationWithImpactedSubstances")
-class SpecificationWithImpactedSubstancesResult(ImpactedSubstancesResultMixin, SpecificationDefinition):
+class SpecificationWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, SpecificationDefinition):
     """Retrieves an individual specification included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -926,7 +924,13 @@ class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
         return f"<{self.__class__.__name__}(), {len(self.substances_by_legislation)} legislations>"
 
 
-class ComplianceResultMixin(mixin_base_class):
+class HasIndicators(ABC):
+    """Abstract base class to define the existence of indicator definitions."""
+
+    _indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+
+
+class ComplianceResultMixin(HasIndicators, RecordReference):
     """Adds results from a compliance query to a class deriving from ``ItemDefinition`` item, turning it into an
     ``[ItemType]WithComplianceResult`` class.
 
@@ -972,8 +976,6 @@ class ComplianceResultMixin(mixin_base_class):
     'item' is a 'Part', 'Specification', 'Material', 'Coating', or 'Substance'.
     """
 
-    _definition = None  # Required for linter, is supplied by the main RecordDefinition-derived class
-
     def __init__(
         self,
         indicator_results: List[models.CommonIndicatorResult],
@@ -996,13 +998,7 @@ class ComplianceResultMixin(mixin_base_class):
         return f"<{self.__class__.__name__}({self._record_reference}), {len(self.indicators)} indicators>"
 
 
-if TYPE_CHECKING:
-    child_base_class = ComplianceResultMixin
-else:
-    child_base_class = object
-
-
-class ChildSubstanceWithComplianceMixin(child_base_class):
+class ChildSubstanceWithComplianceMixin(HasIndicators, ABC):
     """Adds a ``substance`` attribute to an ``ItemWithComplianceResult`` class and populates it with child substances.
 
     See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
@@ -1045,7 +1041,7 @@ class ChildSubstanceWithComplianceMixin(child_base_class):
             self._substances.append(child_substance_with_compliance)
 
 
-class ChildMaterialWithComplianceMixin(child_base_class):
+class ChildMaterialWithComplianceMixin(HasIndicators, ABC):
     """Adds a ``materials`` attribute to an ``ItemWithComplianceResult`` class and populates it with child materials.
 
     See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
@@ -1094,7 +1090,7 @@ class ChildMaterialWithComplianceMixin(child_base_class):
             self._materials.append(child_material_with_compliance)
 
 
-class ChildSpecificationWithComplianceMixin(child_base_class):
+class ChildSpecificationWithComplianceMixin(HasIndicators, ABC):
     """Adds a '`specification`' attribute to an ``ItemWithComplianceResult`` class and populates it with child
     specifications.
 
@@ -1148,7 +1144,7 @@ class ChildSpecificationWithComplianceMixin(child_base_class):
             self._specifications.append(child_specification_with_compliance)
 
 
-class ChildPartWithComplianceMixin(child_base_class):
+class ChildPartWithComplianceMixin(HasIndicators, ABC):
     """Adds a ``part`` attribute to an ``ItemWithComplianceResult`` class and populates it with child parts.
 
     See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
@@ -1201,7 +1197,7 @@ class ChildPartWithComplianceMixin(child_base_class):
             self._parts.append(child_part_with_compliance)
 
 
-class ChildCoatingWithComplianceMixin(child_base_class):
+class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
     """Adds a ``coating`` attribute to an ``ItemWithComplianceResult`` class and populates it with child coatings.
 
     See the ``ComplianceResultMixin`` notes for more background on compliance query results and BoM structures.
@@ -1387,7 +1383,7 @@ class ValueWithUnit:
         return self._unit
 
 
-class SustainabilityResultMixin(mixin_base_class):
+class SustainabilityResultMixin:
     """Adds results from a sustainability query to a class.
 
     A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
@@ -1429,7 +1425,7 @@ class SustainabilityResultMixin(mixin_base_class):
         return self._climate_change
 
 
-class MassResultMixin(mixin_base_class):
+class MassResultMixin:
     """Adds results from a sustainability query to a class.
 
     A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
@@ -1467,7 +1463,7 @@ class MassResultMixin(mixin_base_class):
         return self._reported_mass
 
 
-class ReusabilityResultMixin(mixin_base_class):
+class ReusabilityResultMixin:
     """Adds results from a sustainability query to a class.
 
     A Bom-sustainability query returns a BoM-like results object, with additional sustainability information attached
@@ -1525,7 +1521,7 @@ class ReusabilityResultMixin(mixin_base_class):
         return self._downcycle
 
 
-class ChildMaterialWithSustainabilityMixin(mixin_base_class):
+class ChildMaterialWithSustainabilityMixin:
     """Provides the implementation for managing children materials, by adding a ``materials`` property to the class.
 
     Parameters
@@ -1566,7 +1562,7 @@ class ChildMaterialWithSustainabilityMixin(mixin_base_class):
             self._materials.append(child_material_with_sustainability)
 
 
-class ChildPartWithSustainabilityMixin(mixin_base_class):
+class ChildPartWithSustainabilityMixin:
     """Provides the implementation for managing children parts, by adding a ``parts`` property to the class.
 
     Parameters
@@ -1607,7 +1603,7 @@ class ChildPartWithSustainabilityMixin(mixin_base_class):
             self._parts.append(child_part_with_sustainability)
 
 
-class ChildSpecificationWithSustainabilityMixin(mixin_base_class):
+class ChildSpecificationWithSustainabilityMixin:
     """Provides the implementation for managing children specifications, by adding a ``specifications`` property to the
     class.
 
@@ -1649,7 +1645,7 @@ class ChildSpecificationWithSustainabilityMixin(mixin_base_class):
             self._specifications.append(child_specification_with_sustainability)
 
 
-class ChildSubstanceMixin(mixin_base_class):
+class ChildSubstanceMixin:
     """Provides the implementation for managing children substances, by adding a ``substances`` property to the
     class.
 
@@ -1687,7 +1683,7 @@ class ChildSubstanceMixin(mixin_base_class):
             self._substances.append(child_substance_result)
 
 
-class ChildCoatingMixin(mixin_base_class):
+class ChildCoatingMixin:
     """Provides the implementation for managing children coatings, by adding a ``coatings`` property to the class.
 
     Parameters
@@ -1724,7 +1720,7 @@ class ChildCoatingMixin(mixin_base_class):
             self._coatings.append(child_coating_result)
 
 
-class ChildProcessWithSustainabilityMixin(mixin_base_class):
+class ChildProcessWithSustainabilityMixin:
     """Provides the implementation for managing children processes, by adding a ``processes`` property to the class.
 
     Parameters
@@ -1911,7 +1907,7 @@ class TransportWithSustainabilityResult(
     # TODO is the record reference note relevant?
 
 
-class SustainabilitySummaryMixin(mixin_base_class):
+class SustainabilitySummaryMixin:
     # TODO reuse existing SusResultMixin?
     """Adds sustainability summary results to a class.
 
@@ -1975,7 +1971,7 @@ class SustainabilitySummaryMixin(mixin_base_class):
         return self._climate_change_percentage
 
 
-class NamedItemMixin(mixin_base_class):
+class NamedItemMixin:
     """Adds a name to a class.
 
     Parameters

@@ -3526,4 +3526,4 @@ examples = ["jupyterlab", "lxml", "pandas", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.0"
-content-hash = "b4b8eb0d91f56793b0f7a9a28a94f65f3ae7ec021f4876d2283308cb2acfb548"
+content-hash = "78b3fa44ac412ab1436d7d5e0d1a583ca6282bf212f5e9917d50975fa7c1b0de"

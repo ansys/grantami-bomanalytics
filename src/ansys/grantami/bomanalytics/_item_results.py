@@ -1382,6 +1382,9 @@ class ValueWithUnit:
         """
         return self._unit
 
+    def __repr__(self) -> str:
+        return f'<{self.__class__.__name__}(value={self._value}, unit="{self._unit}")>'
+
 
 class SustainabilityResultMixin:
     """Adds results from a sustainability query to a class.

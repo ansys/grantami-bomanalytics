@@ -58,6 +58,8 @@ pytest = "^7"
 pytest-cov = "^4"
 requests-mock = "^1"
 ipython = "^8"
+plotly = "^5.17.0"
+ipywidgets = "^8.1.1"
 
 [tool.poetry.group.doc]
 optional = true
@@ -81,6 +83,8 @@ examples = [
   "tabulate",
   "pandas",
   "jupyterlab",
+  "plotly",
+  "ipywidgets",
 ]
 
 [tool.tox]

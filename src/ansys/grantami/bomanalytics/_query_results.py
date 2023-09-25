@@ -167,7 +167,7 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
         --------
         >>> result: MaterialImpactedSubstancesQueryResult
         >>> result.impacted_substances_by_legislation
-        {'EU REACH - The Candidate List': [
+        {'Candidate_AnnexXV': [
             <ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
         }
         """

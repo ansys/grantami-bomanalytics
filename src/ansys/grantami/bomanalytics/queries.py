@@ -729,7 +729,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     def __init__(self) -> None:
         super().__init__()
         self._legislations: List[str] = []
-        """Legislation names added to the query."""
+        """Legislation ids added to the query."""
 
         self._api_method: str = ""
         """Name of the method in the ``api`` class. The name is specified in the concrete class and
@@ -747,12 +747,12 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     def with_legislations(self: _ImpactedSubstanceQuery, legislation_names: List[str]) -> _ImpactedSubstanceQuery:
         """Add a list or set of legislations to retrieve the impacted substances for.
 
-        Legislations are identified based on their ``Short title`` attribute value.
+        Legislations are identified based on their ``Legislation ID`` attribute value.
 
         Parameters
         ----------
         legislation_names : list[str] | set[str]
-            List or set of legistlation names.
+            List or set of legislation ids.
 
         Returns
         -------
@@ -788,10 +788,10 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         """
 
         api_method = getattr(api_instance, self._api_method)
-        arguments = {"legislation_names": self._legislations, **static_arguments}
+        arguments = {"legislation_ids": self._legislations, **static_arguments}
 
         legislations_text = ", ".join(['"' + leg + '"' for leg in self._legislations])
-        logger.debug(f"Legislation names: {legislations_text}")
+        logger.debug(f"Legislation ids: {legislations_text}")
 
         self._call_api(api_method, arguments)
         result: ResultBaseClass = QueryResultFactory.create_result(
@@ -912,7 +912,7 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
     >>> query = (
     ...     MaterialImpactedSubstancesQuery()
     ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-    ...     .with_legislations(["EU REACH - The Candidate List"])
+    ...     .with_legislations(["Candidate_AnnexXV"])
     ... )
     >>> cxn.run(query)
     <MaterialImpactedSubstancesQueryResult: 2 MaterialWithImpactedSubstances results>
@@ -1018,7 +1018,7 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
     >>> query = (
     ...     PartImpactedSubstancesQuery()
     ...     .with_part_numbers(['DRILL', 'FLRY34'])
-    ...     .with_legislations(["EU REACH - The Candidate List"])
+    ...     .with_legislations(["Candidate_AnnexXV"])
     ... )
     >>> cxn.run(query)
     <PartImpactedSubstancesQueryResult: 2 PartWithImpactedSubstances results>
@@ -1127,7 +1127,7 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
     >>> query = (
     ...     SpecificationImpactedSubstancesQuery()
     ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
-    ...     .with_legislations(["EU REACH - The Candidate List"])
+    ...     .with_legislations(["Candidate_AnnexXV"])
     ... )
     >>> cxn.run(query)
     <SpecificationImpactedSubstancesQueryResult:
@@ -1742,7 +1742,7 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     >>> query = (
     ...     BomImpactedSubstancesQuery()
     ...     .with_bom("<PartsEco xmlns...")
-    ...     .with_legislations(["EU REACH - The Candidate List"])
+    ...     .with_legislations(["Candidate_AnnexXV"])
     ... )
     >>> cxn.run(query)
     <BomImpactedSubstancesQueryResult: 1 Bom1711WithImpactedSubstances results>

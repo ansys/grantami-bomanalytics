@@ -176,7 +176,7 @@ sustainability_summary.material_details
 materials_df = pd.DataFrame.from_records(
     [
         {
-            "Name": item.name,
+            "Name": item.identity,
             "EE%": item.embodied_energy_percentage,
             EE_HEADER: item.embodied_energy.value,
             "CC%": item.climate_change_percentage,
@@ -232,7 +232,7 @@ primary_process_df = pd.DataFrame.from_records(
     [
         {
             "Process name": item.process_name,
-            "Material name": item.material_name,
+            "Material name": item.material_identity,
             "EE%": item.embodied_energy_percentage,
             EE_HEADER: item.embodied_energy.value,
             "CC%": item.climate_change_percentage,
@@ -260,7 +260,7 @@ secondary_process_df = pd.DataFrame.from_records(
     [
         {
             "Process name": item.process_name,
-            "Material name": item.material_name,
+            "Material name": item.material_identity,
             "EE%": item.embodied_energy_percentage,
             EE_HEADER: item.embodied_energy.value,
             "CC%": item.climate_change_percentage,

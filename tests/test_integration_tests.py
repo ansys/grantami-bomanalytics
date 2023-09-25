@@ -161,7 +161,7 @@ class TestActAsReadUser:
 
 class TestSpecLinkDepth:
     spec_ids = ["MIL-DTL-53039,TypeII"]
-    legislation_ids = ["EU REACH - The Candidate List"]
+    legislation_ids = ["Candidate_AnnexXV"]
 
     @pytest.fixture(scope="class")
     def connection_with_custom_tables(self, default_connection):
@@ -219,7 +219,7 @@ class TestSustainabilityBomQueries:
         assert len(response.phases_summary) == 3
 
         assert len(response.material_details) == 3
-        all_others = next(mat for mat in response.material_details if mat.name == "Other")
+        all_others = next(mat for mat in response.material_details if mat.identity == "Other")
 
     def test_sustainability_query(self, default_connection):
         query = queries.BomSustainabilityQuery()

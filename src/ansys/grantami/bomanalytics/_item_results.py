@@ -350,7 +350,7 @@ class ItemResultFactory:
             reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
             recyclable=result_with_sustainability.recyclable,
             biodegradable=result_with_sustainability.biodegradable,
-            downcycle=result_with_sustainability.downcycle,
+            functional_recycle=result_with_sustainability.functional_recycle,
         )
         material_with_sustainability._add_child_processes(result_with_sustainability.processes)
         material_with_sustainability._add_child_substances(result_with_sustainability.substances)
@@ -462,14 +462,12 @@ class ItemResultFactory:
         return transport_with_sustainability
 
     @classmethod
-    def create_unitted_value(
-        cls, result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit
-    ) -> "ValueWithUnit":
+    def create_unitted_value(cls, result: models.CommonValueWithUnit) -> "ValueWithUnit":
         """Returns a value with unit.
 
         Parameters
         ----------
-        result: models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit
+        result: models.CommonValueWithUnit
             Result from the REST API describing the value and unit.
 
         Returns
@@ -550,7 +548,7 @@ class ItemResultFactory:
         return MaterialSummaryResult(
             reference_type=reference_type,
             reference_value=result.record_reference.reference_value,
-            name=result.name,
+            identity=result.identity,
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
             embodied_energy_percentage=result.embodied_energy_percentage,
             climate_change=cls.create_unitted_value(result.climate_change),
@@ -600,7 +598,7 @@ class ItemResultFactory:
         ProcessSummaryResult
         """
         return ProcessSummaryResult(
-            material_name=result.material_name,
+            material_identity=result.material_identity,
             material_reference=MaterialDefinition(
                 reference_type=cls.parse_reference_type(result.material_record_reference.reference_type),
                 reference_value=result.material_record_reference.reference_value,
@@ -737,7 +735,7 @@ class ImpactedSubstancesResultMixin:
             new_substances = [
                 self._create_impacted_substance(substance) for substance in legislation.impacted_substances
             ]
-            self._substances_by_legislation[legislation.legislation_name] = new_substances
+            self._substances_by_legislation[legislation.legislation_id] = new_substances
 
     @staticmethod
     def _create_impacted_substance(
@@ -783,8 +781,7 @@ class ImpactedSubstancesResultMixin:
 
     @property
     def substances_by_legislation(self) -> Dict[str, List[ImpactedSubstance]]:
-        """Substances impacted for this item, grouped by legislation name."""
-        # TODO: will change to legislation id, presumably
+        """Substances impacted for this item, grouped by legislation ID."""
         return self._substances_by_legislation
 
     @property
@@ -825,7 +822,7 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
     >>> result: MaterialImpactedSubstancesQueryResult
     >>> material_result = result.impacted_substances_by_material[0]
     >>> material_result.substances_by_legislation
-    {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
+    {'Prop65': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
 
     >>> result: MaterialImpactedSubstancesQueryResult
     >>> material_result = result.impacted_substances_by_material[0]
@@ -856,7 +853,7 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
     >>> result: PartImpactedSubstancesQueryResult
     >>> part_result = result.impacted_substances_by_part[0]
     >>> part_result.substances_by_legislation
-    {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
+    {'Prop65': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
 
     >>> result: PartImpactedSubstancesQueryResult
     >>> part_result = result.impacted_substances_by_part[0]
@@ -887,7 +884,7 @@ class SpecificationWithImpactedSubstancesResult(RecordWithImpactedSubstancesResu
     >>> result: SpecificationImpactedSubstancesQueryResult
     >>> specification_result = result.impacted_substances_by_specification[0]
     >>> specification_result.substances_by_legislation
-    {'California Proposition 65 List': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
+    {'Prop65': [<ImpactedSubstance: {"cas_number": 90481-04-2}>]}
 
     >>> result: SpecificationImpactedSubstancesQueryResult
     >>> specification_result = result.impacted_substances_by_specification[0]
@@ -906,13 +903,6 @@ class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
     An individual BoM included as part of an impacted substances query result. This object includes only the impacted
     substances associated with the BoM, both as a flat list and separated by legislation. There is no item representing
     this BoM in Granta MI, and so there are no records to reference.
-
-    Attributes
-    ----------
-    substances_by_legislation : dict[str, list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]]
-        Substances impacted for a particular item, grouped by legislation name.
-    substances : list[:class:`~ansys.grantami.bomanalytics._item_results.ImpactedSubstance`]
-        Substances impacted for a particular item as a flattened list.
 
     Notes
     -----
@@ -1480,7 +1470,7 @@ class ReusabilityResultMixin:
     biodegradable
         Indicates whether a material is biodegradable. Includes any waste that is capable of undergoing anaerobic or
         aerobic decomposition.
-    downcycle:
+    functional_recycle:
         Indicates whether a material can be recycled into material of an equivalent quality, that can be used for the
         same (or similar) applications.
     **kwargs
@@ -1492,13 +1482,13 @@ class ReusabilityResultMixin:
         self,
         recyclable: bool,
         biodegradable: bool,
-        downcycle: bool,
+        functional_recycle: bool,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self._recyclable: bool = recyclable
         self._biodegradable: bool = biodegradable
-        self._downcycle: bool = downcycle
+        self._functional_recycle: bool = functional_recycle
 
     @property
     def recyclable(self) -> bool:
@@ -1516,12 +1506,12 @@ class ReusabilityResultMixin:
         return self._biodegradable
 
     @property
-    def downcycle(self) -> bool:
+    def functional_recycle(self) -> bool:
         """
         Indicates whether the material can be recycled into material of an equivalent quality, that can be used for the
         same (or similar) applications.
         """
-        return self._downcycle
+        return self._functional_recycle
 
 
 class ChildMaterialWithSustainabilityMixin:
@@ -2078,28 +2068,33 @@ class ContributingComponentResult(NamedItemMixin, PartReference):
         return f"<{self.__class__.__name__}('{self.name}', mass={_mass})>"
 
 
-class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, MaterialReference):
+class MaterialSummaryResult(SustainabilitySummaryMixin, MaterialReference):
     """
     Aggregated sustainability summary for a material.
 
     Describes the environmental footprint of a unique material, accounting for all occurrences of the material in BoM.
     """
 
-    # Overriding docstring for property `name` inherited from mixin
-    name: str
-    """Name of the material."""
-
     def __init__(
         self,
+        identity: str,
         mass_before_processing: ValueWithUnit,
         mass_after_processing: ValueWithUnit,
         contributors: List[ContributingComponentResult],
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
+        self._identity = identity
         self._mass_before_processing = mass_before_processing
         self._mass_after_processing = mass_after_processing
         self._contributors = contributors
+
+    @property
+    def identity(self) -> str:
+        """
+        Material identity.
+        """
+        return self._identity
 
     @property
     def mass_before_processing(self) -> ValueWithUnit:
@@ -2123,7 +2118,7 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, NamedItemMixin, Material
 
     def __repr__(self) -> str:
         return (
-            f"<{self.__class__.__name__}('{self.name}',"
+            f"<{self.__class__.__name__}('{self.identity}',"
             f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
         )
 
@@ -2138,14 +2133,14 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
 
     def __init__(
         self,
-        material_name: str,
+        material_identity: str,
         material_reference: MaterialReference,
         process_name: str,
         process_reference: ProcessReference,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self._material_name = material_name
+        self._material_identity = material_identity
         self._material_reference = material_reference
         self._process_name = process_name
         self._process_reference = process_reference
@@ -2165,11 +2160,11 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
         return self._process_reference
 
     @property
-    def material_name(self) -> str:
+    def material_identity(self) -> str:
         """
-        Material name.
+        Material identity.
         """
-        return self._material_name
+        return self._material_identity
 
     @property
     def material_reference(self) -> MaterialReference:
@@ -2180,6 +2175,6 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
 
     def __repr__(self) -> str:
         return (
-            f"<{self.__class__.__name__}(process='{self.process_name}', material='{self.material_name}', "
+            f"<{self.__class__.__name__}(process='{self.process_name}', material='{self.material_identity}', "
             f"EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
         )

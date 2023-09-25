@@ -1,11 +1,13 @@
 from pathlib import Path
 from typing import TYPE_CHECKING
-import xmlschema
+
+import xmlschema  # type: ignore[import]
 from xmlschema import XMLSchema
-from ansys.grantami.bomanalytics.bom_types import BoMReader, BoMWriter
+
+from .bom_types import BoMReader, BoMWriter
 
 if TYPE_CHECKING:
-    from ansys.grantami.bomanalytics.bom_types._bom_types import BillOfMaterials
+    from .bom_types import BillOfMaterials
 
 
 class BoMHandler:
@@ -82,7 +84,9 @@ class BoMHandler:
             Serialized representation of the BoM.
         """
         bom_dict = self._writer.convert_bom_to_dict(bom)
-        obj, errors = self._schema.encode(bom_dict, validation="lax", unordered=True)
+        obj, errors = self._schema.encode(
+            bom_dict, validation="lax", namespaces=self._schema.namespaces, unordered=True
+        )
 
         if len(errors) > 0:
             newline = "\n"

@@ -1,20 +1,18 @@
 import inspect
-from typing import Dict, Optional, Any, TYPE_CHECKING, cast, Iterable, Type
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, cast
 
-from xmlschema import XMLSchema
+from xmlschema import XMLSchema  # type: ignore[import]
 
-import ansys.grantami.bomanalytics.bom_types._bom_types as bom_types
-
+from . import _bom_types as bom_types
+from ._bom_types import BaseType
 
 if TYPE_CHECKING:
-    from ansys.grantami.bomanalytics.bom_types import BillOfMaterials, BaseType
+    from . import BaseType, BillOfMaterials, HasNamespace
 
 
 class BoMReader:
     _schema: XMLSchema
-    _namespaces: Dict[str, str] = {}
-    _class_members: Dict[str, Type] = {}
-    _field_reader: "Optional[NamespaceFieldReader]" = None
+    _class_members: Dict[str, type[BaseType]]
 
     def __init__(self, schema: XMLSchema):
         """
@@ -26,7 +24,10 @@ class BoMReader:
             Parsed XMLSchema representing the 2301 Eco BoM format
         """
         self._schema = schema
-        self._class_members = {k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)}
+        self._namespaces: Dict[str, str] = {}
+        self._class_members: Dict[str, type[BaseType]] = {
+            k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
+        }
 
     def read_bom(self, obj: Dict) -> "BillOfMaterials":
         """
@@ -50,12 +51,11 @@ class BoMReader:
                 namespaces[prefix] = v
 
         self._namespaces = namespaces
-        self._field_reader = NamespaceFieldReader(self._namespaces)
 
-        return cast("BillOfMaterials", self._create_type("BillOfMaterials", obj))
+        return cast("BillOfMaterials", self.create_type("BillOfMaterials", obj))
 
-    def _create_type(self, type_name: str, obj: Dict) -> "BaseType":
-        type_: BaseType = self._class_members[type_name]
+    def create_type(self, type_name: str, obj: Dict) -> "BaseType":
+        type_ = self._class_members[type_name]
         kwargs = {}
         for target_type, target_property_name, field_name in type_._props:
             kwargs.update(self._deserialize_single_type(type_, obj, target_type, target_property_name, field_name))
@@ -66,15 +66,15 @@ class BoMReader:
                 )
             )
         for target, source in type_._simple_values:
-            field_obj = self._field_reader.get_field(type_, obj, source)
+            field_obj = self.get_field(type_, obj, source)
             kwargs[target] = field_obj
-        kwargs.update(type_._process_custom_fields(obj, self._field_reader))
+        kwargs.update(type_._process_custom_fields(obj, self))
         instance = self._class_members[type_name](**kwargs)
         return instance
 
     def _deserialize_list_type(
         self,
-        instance: "BaseType",
+        instance: "type[BaseType]",
         obj: Dict,
         target_type: str,
         target_property_name: str,
@@ -82,35 +82,24 @@ class BoMReader:
         container_namespace: str,
         item_name: str,
     ) -> Dict[str, Iterable]:
-        container_obj = self._field_reader.get_field(instance, obj, container_name)
+        container_obj = self.get_field(instance, obj, container_name)
         if container_obj is not None:
-            items_obj = self._field_reader.get_field(instance, container_obj, item_name, container_namespace)
+            items_obj = self.get_field(instance, container_obj, item_name, container_namespace)
             if items_obj is not None and len(items_obj) > 0:
-                return {target_property_name: [self._create_type(target_type, item_dict) for item_dict in items_obj]}
+                return {target_property_name: [self.create_type(target_type, item_dict) for item_dict in items_obj]}
         return {}
 
     def _deserialize_single_type(
-        self, instance: "BaseType", obj: Dict, target_type: str, target_property_name: str, field_name: str
+        self, instance: "type[BaseType]", obj: Dict, target_type: str, target_property_name: str, field_name: str
     ) -> Dict[str, Any]:
-        field_obj = self._field_reader.get_field(instance, obj, field_name)
+        field_obj = self.get_field(instance, obj, field_name)
         if field_obj is not None:
-            return {target_property_name: self._create_type(target_type, field_obj)}
+            return {target_property_name: self.create_type(target_type, field_obj)}
         return {}
 
-
-class NamespaceFieldReader:
-    def __init__(self, namespaces: Dict[str, str]):
-        """
-        Helper class to map local names to qualified names based on the document's defined namespace prefixes.
-
-        Parameters
-        ----------
-        namespaces: Dict[str, str]
-            Mapping from namespace prefix to namespace URL as defined in the source BoM XML document.
-        """
-        self._namespaces = namespaces
-
-    def get_field(self, instance: "BaseType", obj: Dict, field_name: str, namespace_url: Optional[str] = None) -> Any:
+    def get_field(
+        self, instance: "type[HasNamespace]", obj: Dict, field_name: str, namespace_url: Optional[str] = None
+    ) -> Any:
         """
         Given an object and a local name, determines the qualified field name to fetch based on the document namespace
         tags.

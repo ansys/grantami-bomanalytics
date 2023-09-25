@@ -1,13 +1,13 @@
-import re
+from difflib import context_diff
 from pathlib import Path
-from typing import Dict, Any
+import re
+from typing import Any, Dict
 
-import pytest
 from lxml import etree
+import pytest
 
 from ansys.grantami.bomanalytics import BoMHandler
-from ansys.grantami.bomanalytics.bom_types import BillOfMaterials, BaseType
-from difflib import context_diff
+from ansys.grantami.bomanalytics.bom_types import BaseType, BillOfMaterials
 
 
 class TestableBoMHandler(BoMHandler):

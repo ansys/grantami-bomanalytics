@@ -1,9 +1,9 @@
-from typing import Dict, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, cast
 
-from xmlschema import XMLSchema
+from xmlschema import XMLSchema  # type: ignore[import]
 
 if TYPE_CHECKING:
-    from ansys.grantami.bomanalytics.bom_types import BaseType, BillOfMaterials
+    from . import BaseType, BillOfMaterials, HasNamespace
 
 
 class BoMWriter:
@@ -20,7 +20,7 @@ class BoMWriter:
         """
         self._schema = schema
 
-    def _get_qualified_name(self, obj: "BaseType", field_name: str) -> str:
+    def _get_qualified_name(self, obj: "HasNamespace", field_name: str) -> str:
         namespace_prefixes = [k for k, v in self._schema.namespaces.items() if v == obj._namespace]
         if len(namespace_prefixes) == 1:
             namespace_prefix = namespace_prefixes[0]

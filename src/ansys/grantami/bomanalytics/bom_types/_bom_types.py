@@ -1,12 +1,27 @@
-from typing import Optional, List, Union, Any, Dict, Tuple, cast
+from __future__ import annotations
 
 from enum import Enum
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Protocol, Tuple, Union, cast
 
-from ansys.grantami.bomanalytics.bom_types._bom_reader import BoMReader, NamespaceFieldReader
-from ansys.grantami.bomanalytics.bom_types._bom_writer import BoMWriter
+if TYPE_CHECKING:
+    from ._bom_reader import BoMReader
+    from ._bom_writer import BoMWriter
 
 
-class BaseType:
+class HasNamespace(Protocol):
+    _namespace: str
+
+
+class SupportsCustomFields(Protocol):
+    @classmethod
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+        ...
+
+    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+        ...
+
+
+class BaseType(HasNamespace, SupportsCustomFields):
     """Base type from which all XML DTOs inherit.
 
     Handles conversion from python properties to xmlschema objects.
@@ -36,11 +51,11 @@ class BaseType:
 
     _namespace = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
 
-    def __init__(self, *args: str, **kwargs: str) -> None:
+    def __init__(self, *args: Iterable, **kwargs: Dict[str, Any]) -> None:
         pass
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, field_reader: NamespaceFieldReader) -> Dict[str, Any]:
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
         """
         Populates any fields on the object that are in a nonstandard configuration. This can anonymous complex types,
         Sequences of simple types and similar. This is called after the standard deserialization occurs, and should
@@ -50,7 +65,7 @@ class BaseType:
         ----------
         obj: Dict
             The json representation of the source XML BoM to be parsed.
-        field_reader: NamespaceFieldReader
+        bom_reader: BoMReader
             Helper object that maintains information about the global namespaces.
 
         Returns
@@ -167,7 +182,7 @@ class PartialTableReference(BaseType):
         table_identity: Optional[int] = None,
         table_guid: Optional[str] = None,
         table_name: Optional[str] = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ):
         """
         A type that partially identifies a Table, but does not specify the MI Database. Usually, just one of the several
@@ -250,7 +265,7 @@ class MIAttributeReference(BaseType):
         attribute_name: Optional[str] = None,
         pseudo: Optional[PseudoAttribute] = None,
         is_standard: Optional[bool] = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ):
         """A type that allows identification of a particular Attribute in an MI Database. This may be done directly by
         specifying the Identity of the Attribute, or indirectly by specifying a lookup that will match (only) the
@@ -285,20 +300,20 @@ class MIAttributeReference(BaseType):
         self.is_standard = is_standard
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, field_reader: NamespaceFieldReader) -> Dict[str, Any]:
-        props = super()._process_custom_fields(obj, field_reader)
-        name_obj = field_reader.get_field(MIAttributeReference, obj, "name")
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+        props = super()._process_custom_fields(obj, bom_reader)
+        name_obj = bom_reader.get_field(MIAttributeReference, obj, "name")
         if name_obj is not None:
             props["table_reference"] = cast(
-                PartialTableReference, field_reader.create_type("PartialTableReference", name_obj)
+                PartialTableReference, bom_reader.create_type("PartialTableReference", name_obj)
             )
-            attribute_name_obj = field_reader.get_field(MIAttributeReference, name_obj, "attributeName")
+            attribute_name_obj = bom_reader.get_field(MIAttributeReference, name_obj, "attributeName")
             if attribute_name_obj is not None:
                 props["attribute_name"] = attribute_name_obj
-            pseudo_obj = field_reader.get_field(MIAttributeReference, name_obj, "pseudo")
+            pseudo_obj = bom_reader.get_field(MIAttributeReference, name_obj, "pseudo")
             if pseudo_obj is not None:
                 props["pseudo"] = pseudo_obj
-            is_standard_obj = field_reader.get_field(MIAttributeReference, name_obj, "@isStandard")
+            is_standard_obj = bom_reader.get_field(MIAttributeReference, name_obj, "@isStandard")
             if is_standard_obj is not None:
                 props["is_standard"] = is_standard_obj
         return props
@@ -416,7 +431,7 @@ class MIRecordReference(BaseType):
         lookup_attribute_reference: "Optional[MIAttributeReference]" = None,
         lookup_value: Optional[str] = None,
         record_uid: Optional[str] = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ):
         """A type that allows identification of a particular Record in an
         MI Database. This may be done directly by specifying the Identity or GUID of the Record, or
@@ -464,22 +479,22 @@ class MIRecordReference(BaseType):
         self.record_uid = record_uid
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, field_reader: NamespaceFieldReader) -> Dict[str, Any]:
-        props = super()._process_custom_fields(obj, field_reader)
-        identity_obj = field_reader.get_field(MIRecordReference, obj, "identity")
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+        props = super()._process_custom_fields(obj, bom_reader)
+        identity_obj = bom_reader.get_field(MIRecordReference, obj, "identity")
         if identity_obj is not None:
-            props["record_history_identity"] = field_reader.get_field(
+            props["record_history_identity"] = bom_reader.get_field(
                 MIRecordReference, identity_obj, "recordHistoryIdentity"
             )
-            version_obj = field_reader.get_field(MIRecordReference, identity_obj, "version")
+            version_obj = bom_reader.get_field(MIRecordReference, identity_obj, "version")
             if version_obj is not None:
                 props["record_version_number"] = version_obj
-        lookup_obj = field_reader.get_field(MIRecordReference, obj, "lookupValue")
+        lookup_obj = bom_reader.get_field(MIRecordReference, obj, "lookupValue")
         if lookup_obj is not None:
-            props["lookup_attribute_reference"] = field_reader.get_field(
+            props["lookup_attribute_reference"] = bom_reader.get_field(
                 MIRecordReference, lookup_obj, "attributeReference"
             )
-            props["lookup_value"] = field_reader.get_field(MIRecordReference, lookup_obj, "attributeValue")
+            props["lookup_value"] = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeValue")
         return props
 
     @property
@@ -608,8 +623,8 @@ class MIRecordReference(BaseType):
 
 # TODO - I don't like having a nice method to add props then replicating it here, can we do something better with
 #  inheritance?
-class InternalIdentifierMixin:
-    def __init__(self, *, internal_id: Optional[str] = None, **kwargs):
+class InternalIdentifierMixin(SupportsCustomFields):
+    def __init__(self, *, internal_id: Optional[str] = None, **kwargs: Dict[str, Any]):
         """A unique identity for this object in this BoM. This identity is only for internal use, allowing other
         elements to reference this element.
 
@@ -622,9 +637,10 @@ class InternalIdentifierMixin:
         self.internal_id = internal_id
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> None:
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        id_obj = bom_reader.get_field(cls, obj, "@id")
+        instance = cast(type[BaseType], cls)
+        id_obj = bom_reader.get_field(instance, obj, "@id")
         if id_obj is not None:
             props["internal_id"] = id_obj
         return props
@@ -632,7 +648,8 @@ class InternalIdentifierMixin:
     def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
         if self._internal_id is not None:
-            field_name = bom_writer._get_qualified_name(self, "@id")
+            instance = cast(BaseType, self)
+            field_name = bom_writer._get_qualified_name(instance, "@id")
             obj[field_name] = self._internal_id
 
     @property
@@ -651,14 +668,14 @@ class InternalIdentifierMixin:
         self._internal_id = value
 
 
-class CommonIdentifiersMixin:
+class CommonIdentifiersMixin(SupportsCustomFields):
     def __init__(
         self,
         *,
         identity: Optional[str] = None,
         name: Optional[str] = None,
         external_identity: Optional[str] = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ):
         """
         A set of identifiers used by external applications to reference and display parts of the BoM.
@@ -679,26 +696,28 @@ class CommonIdentifiersMixin:
 
     def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
+        instance = cast(BaseType, self)
         if self._identity is not None:
-            field_name = bom_writer._get_qualified_name(self, "Identity")
+            field_name = bom_writer._get_qualified_name(instance, "Identity")
             obj[field_name] = self._identity
         if self._name is not None:
-            field_name = bom_writer._get_qualified_name(self, "Name")
+            field_name = bom_writer._get_qualified_name(instance, "Name")
             obj[field_name] = self._name
         if self._external_identity is not None:
-            field_name = bom_writer._get_qualified_name(self, "ExternalIdentity")
+            field_name = bom_writer._get_qualified_name(instance, "ExternalIdentity")
             obj[field_name] = self._external_identity
 
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        identity_obj = bom_reader.get_field(cls, obj, "Identity")
+        instance = cast(type[BaseType], cls)
+        identity_obj = bom_reader.get_field(instance, obj, "Identity")
         if identity_obj is not None:
             props["identity"] = identity_obj
-        name_obj = bom_reader.get_field(cls, obj, "Name")
+        name_obj = bom_reader.get_field(instance, obj, "Name")
         if name_obj is not None:
             props["name"] = name_obj
-        external_identity_obj = bom_reader.get_field(cls, obj, "ExternalIdentity")
+        external_identity_obj = bom_reader.get_field(instance, obj, "ExternalIdentity")
         if external_identity_obj is not None:
             props["external_identity"] = external_identity_obj
         return props
@@ -754,7 +773,9 @@ class EndOfLifeFate(BaseType):
 
     _props = [("MIRecordReference", "mi_end_of_life_reference", "MIEndOfLifeReference")]
 
-    def __init__(self, *, mi_end_of_life_reference: "MIRecordReference", fraction: float, **kwargs) -> None:
+    def __init__(
+        self, *, mi_end_of_life_reference: "MIRecordReference", fraction: float, **kwargs: Dict[str, Any]
+    ) -> None:
         """
         The fate of a material at the end-of-life of the product. For example if a material can be recycled, and what
         fraction of the total mass or volume can be recycled.
@@ -804,7 +825,7 @@ class EndOfLifeFate(BaseType):
 class UnittedValue(BaseType):
     _simple_values = [("value", "$"), ("unit", "@Unit")]
 
-    def __init__(self, *, value: float, unit: Optional[str] = None, **kwargs) -> None:
+    def __init__(self, *, value: float, unit: Optional[str] = None, **kwargs: Dict[str, Any]) -> None:
         """
         A physical quantity with a unit. If provided in a input then the unit should exist within the MI database,
         otherwise an error will be raised.
@@ -861,7 +882,7 @@ class UnittedValue(BaseType):
 class Location(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
     _props = [("MIRecordReference", "mi_location_reference", "MILocationReference")]
 
-    def __init__(self, *, mi_location_reference: "Optional[MIRecordReference]" = None, **kwargs) -> None:
+    def __init__(self, *, mi_location_reference: "Optional[MIRecordReference]" = None, **kwargs: Any) -> None:
         """
         Defines the manufacturing location for the BoM for use in process calculations.
 
@@ -898,7 +919,7 @@ class ElectricityMix(BaseType):
         *,
         mi_region_reference: "Optional[MIRecordReference]" = None,
         percentage_fossil_fuels: Optional[float] = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """
         If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of
@@ -961,7 +982,7 @@ class MobileMode(BaseType):
         mi_transport_reference: "MIRecordReference",
         days_used_per_year: float,
         distance_travelled_per_day: "UnittedValue",
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """
         If the product is transported as part of its use then this type contains details about the way in which it is
@@ -1041,7 +1062,7 @@ class StaticMode(BaseType):
         power_rating: "UnittedValue",
         days_used_per_year: float,
         hours_used_per_day: float,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """
         Specifies the primary energy conversion that occurs during the product's use.
@@ -1139,7 +1160,7 @@ class UtilitySpecification(BaseType):
         industry_average_duration_years: Optional[float] = None,
         industry_average_number_of_functional_units: Optional[float] = None,
         utility: Optional[float] = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """
         Specifies how much use can be obtained from the product represented by this BoM in comparison to a
@@ -1222,7 +1243,7 @@ class ProductLifeSpan(BaseType):
         number_of_functional_units: Optional[float] = None,
         functional_unit_description: Optional[str] = None,
         utility: Optional[UtilitySpecification] = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """
         Specifies the average life span for the product represented by the BoM.
@@ -1322,7 +1343,7 @@ class UsePhase(BaseType):
         electricity_mix: "Optional[ElectricityMix]" = None,
         static_mode: "Optional[StaticMode]" = None,
         mobile_mode: "Optional[MobileMode]" = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """
         Provides information about the sustainability of the product whilst in use, including electricity use, emissions
@@ -1415,7 +1436,7 @@ class BoMDetails(BaseType):
         notes: Optional[str] = None,
         picture_url: Optional[str] = None,
         product_name: Optional[str] = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """
         Explanatory information about a BoM.
@@ -1490,7 +1511,12 @@ class TransportStage(InternalIdentifierMixin, BaseType):
     _simple_values = [("name", "Name")]
 
     def __init__(
-        self, *, name: str, mi_transport_reference: "MIRecordReference", distance: "UnittedValue", **kwargs
+        self,
+        *,
+        name: str,
+        mi_transport_reference: "MIRecordReference",
+        distance: "UnittedValue",
+        **kwargs: Any,
     ) -> None:
         """
         Defines the transportation applied to an object, in terms of the generic transportation type (stored in the
@@ -1564,7 +1590,11 @@ class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
     ]
 
     def __init__(
-        self, *, mi_specification_reference: "MIRecordReference", quantity: "Optional[UnittedValue]" = None, **kwargs
+        self,
+        *,
+        mi_specification_reference: "MIRecordReference",
+        quantity: "Optional[UnittedValue]" = None,
+        **kwargs: Any,
     ) -> None:
         """
         A specification for a part, process, or material. Refers to a record with the MI Database storing the details
@@ -1623,7 +1653,7 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         mi_substance_reference: "MIRecordReference",
         percentage: Optional[float] = None,
         category: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """
         A substance within a part, semi-finished part, material or specification. The substance is stored in the
@@ -1705,7 +1735,7 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         dimension_type: "DimensionType",
         percentage_of_part_affected: Optional[float] = None,
         quantity_affected: "Optional[UnittedValue]" = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """
         A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the
@@ -1731,10 +1761,10 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         self.quantity_affected = quantity_affected
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, field_reader: NamespaceFieldReader) -> Dict[str, Any]:
-        props = super()._process_custom_fields(obj, field_reader)
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+        props = super()._process_custom_fields(obj, bom_reader)
 
-        dimension_type_obj = field_reader.get_field(Process, obj, "DimensionType")
+        dimension_type_obj = bom_reader.get_field(Process, obj, "DimensionType")
         props["dimension_type"] = DimensionType.from_string(dimension_type_obj)
         return props
 
@@ -1830,9 +1860,9 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         mass: "Optional[UnittedValue]" = None,
         recycle_content_is_typical: Optional[bool] = None,
         recycle_content_percentage: Optional[float] = None,
-        processes: "List[Process]" = None,
-        end_of_life_fates: "List[EndOfLifeFate]" = None,
-        **kwargs,
+        processes: "Optional[List[Process]]" = None,
+        end_of_life_fates: "Optional[List[EndOfLifeFate]]" = None,
+        **kwargs: Any,
     ) -> None:
         """
         A Material within a part or semi-finished part. The material is stored in the Database.
@@ -1868,20 +1898,16 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
             end_of_life_fates = []
         self.end_of_life_fates = end_of_life_fates
 
-    def __repr__(self) -> str:
-        if self._percentage is not None:
-            return f"<Material "
-
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, field_reader: NamespaceFieldReader) -> Dict[str, Any]:
-        props = super()._process_custom_fields(obj, field_reader)
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+        props = super()._process_custom_fields(obj, bom_reader)
 
-        recycle_content_obj = field_reader.get_field(Material, obj, "RecycleContent")
+        recycle_content_obj = bom_reader.get_field(Material, obj, "RecycleContent")
         if recycle_content_obj is not None:
-            typical_obj = field_reader.get_field(Material, recycle_content_obj, "Typical")
+            typical_obj = bom_reader.get_field(Material, recycle_content_obj, "Typical")
             if typical_obj is not None:
                 props["recycle_content_is_typical"] = typical_obj
-            percentage_obj = field_reader.get_field(Material, recycle_content_obj, "Percentage")
+            percentage_obj = bom_reader.get_field(Material, recycle_content_obj, "Percentage")
             if percentage_obj is not None:
                 props["recycle_content_percentage"] = percentage_obj
         return props
@@ -2051,14 +2077,14 @@ class Part(InternalIdentifierMixin, BaseType):
         non_mi_part_reference: "Optional[Union[str, int]]" = None,
         part_name: Optional[str] = None,
         external_id: Optional[str] = None,
-        components: "List[Part]" = None,
-        specifications: "List[Specification]" = None,
-        materials: "List[Material]" = None,
-        substances: "List[Substance]" = None,
-        processes: "List[Process]" = None,
-        rohs_exemptions: List[str] = None,
-        end_of_life_fates: "List[EndOfLifeFate]" = None,
-        **kwargs,
+        components: "Optional[List[Part]]" = None,
+        specifications: "Optional[List[Specification]]" = None,
+        materials: "Optional[List[Material]]" = None,
+        substances: "Optional[List[Substance]]" = None,
+        processes: "Optional[List[Process]]" = None,
+        rohs_exemptions: Optional[List[str]] = None,
+        end_of_life_fates: "Optional[List[EndOfLifeFate]]" = None,
+        **kwargs: Any,
     ):
         """
         A single part which may or may not be stored in the MI Database.
@@ -2141,15 +2167,15 @@ class Part(InternalIdentifierMixin, BaseType):
         return f"<Part '{self._part_number}' with {len(self._components)} child components>"
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, field_reader: NamespaceFieldReader) -> Dict[str, Any]:
-        props = super()._process_custom_fields(obj, field_reader)
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+        props = super()._process_custom_fields(obj, bom_reader)
 
-        non_mi_part_ref_obj = field_reader.get_field(Part, obj, "NonMIPartReference")
+        non_mi_part_ref_obj = bom_reader.get_field(Part, obj, "NonMIPartReference")
         if non_mi_part_ref_obj is not None:
             props["non_mi_part_reference"] = non_mi_part_ref_obj
-        rohs_exemptions_obj = field_reader.get_field(Part, obj, "RohsExemptions")
+        rohs_exemptions_obj = bom_reader.get_field(Part, obj, "RohsExemptions")
         if rohs_exemptions_obj is not None:
-            rohs_exemption_obj = field_reader.get_field(
+            rohs_exemption_obj = bom_reader.get_field(
                 Part, rohs_exemptions_obj, "RohsExemption", "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
             )
             if rohs_exemption_obj is not None:
@@ -2404,7 +2430,9 @@ class Part(InternalIdentifierMixin, BaseType):
 class AnnotationSource(InternalIdentifierMixin, BaseType):
     _simple_values = [("name", "Name"), ("method", "Method")]
 
-    def __init__(self, *, name: str, method: Optional[str] = None, data: List[Any] = None, **kwargs) -> None:
+    def __init__(
+        self, *, name: str, method: Optional[str] = None, data: Optional[List[Any]] = None, **kwargs: Any
+    ) -> None:
         """
         An element indicating the source of annotations in the BoM. Each source may be
         referenced by zero or more annotations. The producer and consumer(s) of the BoM must agree the
@@ -2431,10 +2459,10 @@ class AnnotationSource(InternalIdentifierMixin, BaseType):
         self.data = data
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, field_reader: NamespaceFieldReader) -> Dict[str, Any]:
-        props = super()._process_custom_fields(cls, obj, field_reader)
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+        props = super()._process_custom_fields(obj, bom_reader)
 
-        data_obj = field_reader.get_field(AnnotationSource, obj, "Data")
+        data_obj = bom_reader.get_field(AnnotationSource, obj, "Data")
         if data_obj is not None:
             props["data"] = data_obj
         return props
@@ -2502,7 +2530,7 @@ class Annotation(BaseType):
         source_id: Optional[str] = None,
         type_: str,
         value: "Union[str, UnittedValue]",
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """
         An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
@@ -2550,7 +2578,7 @@ class Annotation(BaseType):
         self._target_id = value
 
     @property
-    def source_id(self) -> str:
+    def source_id(self) -> Optional[str]:
         """
         If provided, is the ``internal_identity`` of exactly one ``AnnotationSource`` object describing the source of
         the annotation. If absent, no source information is provided.
@@ -2562,7 +2590,7 @@ class Annotation(BaseType):
         return self.source_id
 
     @source_id.setter
-    def source_id(self, value: str) -> None:
+    def source_id(self, value: Optional[str]) -> None:
         self._source_id = value
 
     @property
@@ -2575,7 +2603,7 @@ class Annotation(BaseType):
         -------
         str
         """
-        return self._type
+        return self._type_
 
     @type_.setter
     def type_(self, value: str) -> None:
@@ -2618,13 +2646,13 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         self,
         *,
         components: "List[Part]",
-        transport_phase: "List[TransportStage]" = None,
+        transport_phase: "Optional[List[TransportStage]]" = None,
         use_phase: "Optional[UsePhase]" = None,
         location: "Optional[Location]" = None,
         notes: "Optional[BoMDetails]" = None,
-        annotations: "List[Annotation]" = None,
-        annotation_sources: "List[AnnotationSource]" = None,
-        **kwargs,
+        annotations: "Optional[List[Annotation]]" = None,
+        annotation_sources: "Optional[List[AnnotationSource]]" = None,
+        **kwargs: Any,
     ) -> None:
         """
         Type representing the root Bill of Materials object.

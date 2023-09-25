@@ -1,11 +1,6 @@
 from typing import Optional
 
-from ansys.grantami.bomanalytics.bom_types import (
-    PartialTableReference,
-    MIAttributeReference,
-    PseudoAttribute,
-    MIRecordReference,
-)
+from . import MIAttributeReference, MIRecordReference, PartialTableReference, PseudoAttribute
 
 
 class _AttributeReferenceByNameBuilder:

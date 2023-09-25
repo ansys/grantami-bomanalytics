@@ -3,34 +3,30 @@
 Defines the representations of the query results themselves, which allows them to implement pivots and summaries over
 the entire query result instead of being constrained to individual parts and materials.
 """
-from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
-from collections import defaultdict, namedtuple
 from abc import ABC
+from collections import defaultdict, namedtuple
+from typing import Any, Callable, Dict, List, Type, Union
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 from ._item_results import (
-    ItemResultFactory,
-    MaterialWithImpactedSubstancesResult,
-    MaterialWithComplianceResult,
-    PartWithImpactedSubstancesResult,
-    PartWithComplianceResult,
-    SpecificationWithImpactedSubstancesResult,
-    SpecificationWithComplianceResult,
-    SubstanceWithComplianceResult,
     ImpactedSubstance,
+    ItemResultFactory,
+    MaterialSummaryResult,
+    MaterialWithComplianceResult,
+    MaterialWithImpactedSubstancesResult,
+    PartWithComplianceResult,
+    PartWithImpactedSubstancesResult,
     PartWithSustainabilityResult,
-    TransportWithSustainabilityResult,
+    ProcessSummaryResult,
+    SpecificationWithComplianceResult,
+    SpecificationWithImpactedSubstancesResult,
+    SubstanceWithComplianceResult,
     SustainabilityPhaseSummaryResult,
     TransportSummaryResult,
-    MaterialSummaryResult,
-    ProcessSummaryResult,
+    TransportWithSustainabilityResult,
 )
-from .indicators import WatchListIndicator, RoHSIndicator
-
-if TYPE_CHECKING:
-    from .queries import Query_Result
-
+from .indicators import RoHSIndicator, WatchListIndicator
 
 LogMessage = namedtuple("LogMessage", ["severity", "message"])
 """ Message returned by Granta MI when running the query.
@@ -83,7 +79,7 @@ class QueryResultFactory:
         results: Union[List[models.ModelBase], models.ModelBase],
         messages: List[models.CommonLogEntry],
         **kwargs: Dict,
-    ) -> "Query_Result":
+    ) -> "ResultBaseClass":
         """Returns a specific query result.
 
         Uses the type of the ``results`` parameter to determine which specific ``Query_Result`` object to return.
@@ -119,7 +115,7 @@ class QueryResultFactory:
         except KeyError as e:
             raise RuntimeError(f"Unregistered response type" f' "{response_type}"').with_traceback(e.__traceback__)
 
-        item_result: Query_Result = item_factory_class(results=results, messages=messages, **kwargs)
+        item_result: ResultBaseClass = item_factory_class(results=results, messages=messages, **kwargs)
         return item_result
 
 

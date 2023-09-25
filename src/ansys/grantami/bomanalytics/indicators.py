@@ -10,9 +10,9 @@ an indicator represent the compliance status of that indicator against a certain
 or part.
 """
 
-from enum import Enum
 from abc import ABC, abstractmethod
-from typing import List, Union, Optional, TYPE_CHECKING, Type
+from enum import Enum
+from typing import TYPE_CHECKING, List, Optional, Type, Union
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 

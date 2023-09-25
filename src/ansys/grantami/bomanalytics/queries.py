@@ -3,55 +3,60 @@
 Describes and implements the main interface for the Bom Analytics API. The builder objects define
 the creation, validation, and execution of queries for impacted substances and compliance. One separate
 static class outside the main hierarchy implements the YAML API endpoint.
-
-Attributes
-----------
-Query_Builder
-    Generic type for builder configuration methods. Ensures that the specific subclass of the
-    object to which the method is bound is hinted as the return type. For example, if ``.with_record_guid()``
-    is called on a ``SpecificationCompliance`` object, the return type is correctly identified as
-    ``SpecificationCompliance``.
-Query_Result
-    Type of the result object, which can be any type that inherits from either the ``ComplianceBaseClass`` or
-    ``ImpactedSubstancesBaseClass`` class.
 """
 
 from abc import ABC, abstractmethod
+from numbers import Number
 from typing import (
+    TYPE_CHECKING,
     Any,
-    Union,
+    Callable,
+    Dict,
+    Generator,
     List,
     Literal,
-    Dict,
-    Tuple,
-    TypeVar,
-    Callable,
-    Generator,
     Optional,
+    Tuple,
     Type,
-    TYPE_CHECKING,
+    TypeVar,
+    Union,
 )
 import warnings
-from numbers import Number
 
-from ansys.grantami.bomanalytics_openapi import models, api  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import api, models  # type: ignore[import]
 
-from ._item_definitions import AbstractBomFactory, RecordDefinition, PartDefinition  # noqa: F401
 from ._allowed_types import validate_argument_type
-from ._query_results import (
-    QueryResultFactory,
-    ComplianceBaseClass,
-    ImpactedSubstancesBaseClass,
-)
-from .indicators import _Indicator, WatchListIndicator, RoHSIndicator
 from ._exceptions import GrantaMIException
+from ._item_definitions import (
+    BomItemDefinitionFactory,
+    MaterialDefinitionFactory,
+    PartDefinitionFactory,
+    RecordDefinition,
+    SpecificationDefinitionFactory,
+    SubstanceComplianceDefinitionFactory,
+)
 from ._logger import logger
+from ._query_results import QueryResultFactory, ResultBaseClass
+from .indicators import RoHSIndicator, WatchListIndicator, _Indicator
 
 if TYPE_CHECKING:
     from ._connection import Connection  # noqa: F401
 
-Query_Builder = TypeVar("Query_Builder", covariant=True, bound=Union["_BaseQueryBuilder", "_ApiMixin"])
-Query_Result = TypeVar("Query_Result", covariant=True, bound=Union[ComplianceBaseClass, ImpactedSubstancesBaseClass])
+
+_ImpactedSubstanceQuery = TypeVar("_ImpactedSubstanceQuery", bound="_ImpactedSubstanceMixin")
+_ComplianceQuery = TypeVar("_ComplianceQuery", bound="_ComplianceMixin")
+_SustainabilityQuery = TypeVar("_SustainabilityQuery", bound="_SustainabilityMixin")
+
+_RecordQuery = TypeVar("_RecordQuery", bound="_RecordBasedQueryBuilder")
+_MaterialQuery = TypeVar("_MaterialQuery", bound="_MaterialQueryBuilder")
+_PartQuery = TypeVar("_PartQuery", bound="_PartQueryBuilder")
+_SpecificationQuery = TypeVar("_SpecificationQuery", bound="_SpecificationQueryBuilder")
+_SubstanceQuery = TypeVar("_SubstanceQuery", bound="_SubstanceQueryBuilder")
+
+_BomQuery = TypeVar("_BomQuery", bound="_BomQueryBuilder")
+_Bom1711Query = TypeVar("_Bom1711Query", bound="_Bom1711QueryBuilder")
+_Bom2301Query = TypeVar("_Bom2301Query", bound="_Bom2301QueryBuilder")
+
 
 EXCEPTION_MAP = {
     "critical-error": logger.critical,
@@ -60,6 +65,16 @@ EXCEPTION_MAP = {
     "information": logger.info,
 }
 """Map between log severity strings returned by the Granta MI server and Python logger methods."""
+
+
+class _BaseQuery(ABC):
+    """Interface expected by the client."""
+
+    api_class: Type[api.ApiBase]
+
+    @abstractmethod
+    def _run_query(self, api_instance: api.ApiBase, static_arguments: Dict) -> Union[ResultBaseClass, str]:
+        raise NotImplementedError
 
 
 class _BaseQueryDataManager(ABC):
@@ -160,6 +175,11 @@ class _BaseQueryDataManager(ABC):
         """Messages returned by the server when processing all items in ``_item_definitions``"""
         return self._messages
 
+    @property
+    @abstractmethod
+    def batched_arguments(self) -> Any:
+        raise NotImplementedError
+
 
 class _RecordQueryDataManager(_BaseQueryDataManager):
     """Stores records for use in queries and generates the list of models to send to the server.
@@ -177,7 +197,7 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
         self._item_definitions = []
         self._item_results = []
 
-        self.item_type_name = item_type_name
+        self.item_type_name: str = item_type_name
         """ Name of the item collection as defined by the low-level API. For example, ``materials`` or ``parts``. """
 
         self.batch_size: Optional[int] = batch_size
@@ -272,6 +292,8 @@ class _RecordQueryDataManager(_BaseQueryDataManager):
 class _BaseQueryBuilder(ABC):
     """Provides the base class for all queries."""
 
+    _data: "_BaseQueryDataManager"
+
     def _validate_items(self) -> None:
         """Perform pre-flight checks on the items that have been added to the query.
 
@@ -281,7 +303,7 @@ class _BaseQueryBuilder(ABC):
             Error to raise if no items have been added to the query, warning that the response will be empty.
         """
 
-        if not self._data.populated_inputs:  # type: ignore[attr-defined]
+        if not self._data.populated_inputs:
             warnings.warn(
                 f"No {self._data.item_type_name} have been added to the "  # type: ignore[attr-defined]
                 "query. Server response will be empty.",
@@ -297,14 +319,16 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
     operate on multiple items.
     """
 
+    _definition_factory: BomItemDefinitionFactory
+
     def __init__(self) -> None:
-        self._data = _RecordQueryDataManager()
+        self._data: "_RecordQueryDataManager" = _RecordQueryDataManager()
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}: {self._data}>"
 
     @validate_argument_type(int)
-    def with_batch_size(self: Query_Builder, batch_size: int) -> Query_Builder:
+    def with_batch_size(self: _RecordQuery, batch_size: int) -> _RecordQuery:
         """Set the number of records to include in a single request for this query.
 
         Default values are set based on typical usage of the Restricted Substances database. This value can be changed
@@ -352,7 +376,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @validate_argument_type([int], {int})
-    def with_record_history_ids(self: Query_Builder, record_history_identities: List[int]) -> Query_Builder:
+    def with_record_history_ids(self: _RecordQuery, record_history_identities: List[int]) -> _RecordQuery:
         """Add a list or set of record history identities to a query.
 
         Parameters
@@ -385,7 +409,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @validate_argument_type([str], {str})
-    def with_record_history_guids(self: Query_Builder, record_history_guids: List[str]) -> Query_Builder:
+    def with_record_history_guids(self: _RecordQuery, record_history_guids: List[str]) -> _RecordQuery:
         """Add a list or set of record history GUIDs to a query.
 
         Parameters
@@ -419,7 +443,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @validate_argument_type([str], {str})
-    def with_record_guids(self: Query_Builder, record_guids: List[str]) -> Query_Builder:
+    def with_record_guids(self: _RecordQuery, record_guids: List[str]) -> _RecordQuery:
         """Add a list or set of record GUIDs to a query.
 
         Parameters
@@ -451,7 +475,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @validate_argument_type([{str: str}])
-    def with_stk_records(self: Query_Builder, stk_records: List[Dict[str, str]]) -> Query_Builder:
+    def with_stk_records(self: _RecordQuery, stk_records: List[Dict[str, str]]) -> _RecordQuery:
         """Add a list of records generated by the Granta MI Scripting Toolkit for Python.
 
         This method should only be used with the corresponding method in the MI Scripting Toolkit that generates a
@@ -494,16 +518,18 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         """
 
         record_guids: List[str] = [r["record_guid"] for r in stk_records]
-        query_builder: Query_Builder = self.with_record_guids(record_guids)
+        query_builder: _RecordQuery = self.with_record_guids(record_guids)
         return query_builder
 
 
-class _ApiMixin:
+class _ApiMixin(_BaseQueryBuilder, _BaseQuery, ABC):
     """Provides API-specific mixins.
 
     This base class describes generic properties of a call to an API, such as calling the API and processing results.
     It also defines abstract concepts related to the parameter dimension of a query, including validation.
     """
+
+    _request_type: Type[models.ModelBase]
 
     def __init__(self) -> None:
         super().__init__()
@@ -527,20 +553,20 @@ class _ApiMixin:
         """
 
         self._validate_parameters()
-        self._validate_items()  # type: ignore[attr-defined]
-        self._data.initialize_results()  # type: ignore[attr-defined]
-        for batch in self._data.batched_arguments:  # type: ignore[attr-defined]
+        self._validate_items()
+        self._data.initialize_results()
+        for batch in self._data.batched_arguments:
             args = {**arguments, **batch}
             request = self._request_type(**args)
             response = api_method(body=request)
-            self._data.append_response(response)  # type: ignore[attr-defined]
+            self._data.append_response(response)
 
     @abstractmethod
     def _run_query(
         self,
         api_instance: Union[api.ComplianceApi, api.ImpactedSubstancesApi, api.SustainabilityApi],
         static_arguments: Dict,
-    ) -> Query_Result:
+    ) -> ResultBaseClass:
         """
         Abstract method. Inherited classes must pass the current state of the query as arguments to _call_api and
         handle the response.
@@ -593,16 +619,13 @@ class _ComplianceMixin(_ApiMixin, ABC):
         and so only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
-        result = (
-            f"<{self.__class__.__name__}: {self._data},"  # type: ignore[attr-defined]
-            f" {len(self._indicators)} indicators>"
-        )
+        result = f"<{self.__class__.__name__}: {self._data}," f" {len(self._indicators)} indicators>"
         return result
 
     @validate_argument_type([_Indicator], {_Indicator})
     def with_indicators(
-        self: Query_Builder, indicators: List[Union[WatchListIndicator, RoHSIndicator]]
-    ) -> Query_Builder:
+        self: _ComplianceQuery, indicators: List[Union[WatchListIndicator, RoHSIndicator]]
+    ) -> _ComplianceQuery:
         """Add a list or set of :class:`~ansys.grantami.bomanalytics.indicators.WatchListIndicator` or
         :class:`~ansys.grantami.bomanalytics.indicators.RoHSIndicator` objects to evaluate compliance against.
 
@@ -635,7 +658,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
             self._indicators[value.name] = value
         return self
 
-    def _run_query(self, api_instance: api.ComplianceApi, static_arguments: Dict) -> Query_Result:
+    def _run_query(self, api_instance: api.ComplianceApi, static_arguments: Dict) -> ResultBaseClass:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
         This method should not be used by an end user. The ``BomAnalyticsClient.run()`` method should
@@ -672,9 +695,9 @@ class _ComplianceMixin(_ApiMixin, ABC):
         logger.debug(f"Indicators: {indicators_text}")
 
         self._call_api(api_method, arguments)
-        result: Query_Result = QueryResultFactory.create_result(
-            results=self._data.item_results,  # type: ignore[attr-defined]
-            messages=self._data.messages,  # type: ignore[attr-defined]
+        result: ResultBaseClass = QueryResultFactory.create_result(
+            results=self._data.item_results,
+            messages=self._data.messages,
             indicator_definitions=self._indicators,
         )
         return result
@@ -717,14 +740,11 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         and so only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
-        result = (
-            f"<{self.__class__.__name__}: {self._data}, "  # type: ignore[attr-defined]
-            f"{len(self._legislations)} legislations>"
-        )
+        result = f"<{self.__class__.__name__}: {self._data}, " f"{len(self._legislations)} legislations>"
         return result
 
     @validate_argument_type([str], {str})
-    def with_legislations(self: Query_Builder, legislation_names: List[str]) -> Query_Builder:
+    def with_legislations(self: _ImpactedSubstanceQuery, legislation_names: List[str]) -> _ImpactedSubstanceQuery:
         """Add a list or set of legislations to retrieve the impacted substances for.
 
         Legislations are identified based on their ``Short title`` attribute value.
@@ -748,7 +768,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         self._legislations.extend(legislation_names)
         return self
 
-    def _run_query(self, api_instance: api.ImpactedSubstancesApi, static_arguments: Dict) -> Query_Result:
+    def _run_query(self, api_instance: api.ImpactedSubstancesApi, static_arguments: Dict) -> ResultBaseClass:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
         Gets the bound method for this particular query from the ``api_instance`` parameter and passes it to the
@@ -774,9 +794,9 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         logger.debug(f"Legislation names: {legislations_text}")
 
         self._call_api(api_method, arguments)
-        result: Query_Result = QueryResultFactory.create_result(
-            results=self._data.item_results,  # type: ignore[attr-defined]
-            messages=self._data.messages,  # type: ignore[attr-defined]
+        result: ResultBaseClass = QueryResultFactory.create_result(
+            results=self._data.item_results,
+            messages=self._data.messages,
         )
         return result
 
@@ -801,13 +821,15 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
     """Provides the subclass for all queries where the items added to the query are direct references to material
     records."""
 
+    _definition_factory = MaterialDefinitionFactory()
+
     def __init__(self) -> None:
         super().__init__()
         self._data.item_type_name = "materials"
         self._data.batch_size = 100
 
     @validate_argument_type([str], {str})
-    def with_material_ids(self: Query_Builder, material_ids: List[str]) -> Query_Builder:
+    def with_material_ids(self: _MaterialQuery, material_ids: List[str]) -> _MaterialQuery:
         """Add a list or set of materials to a material query, referenced by the material ID attribute value.
 
         Material IDs are valid for both ``MaterialUniverse`` and ``Materials - in house`` records.
@@ -871,7 +893,6 @@ class MaterialComplianceQuery(_ComplianceMixin, _MaterialQueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetComplianceForMaterialsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_compliance_materials"
 
 
@@ -900,7 +921,6 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetImpactedSubstancesForMaterialsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_impactedsubstances_materials"
 
 
@@ -908,13 +928,15 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
     """Provides the subclass for all queries where the items added to the query are direct references to part
     records."""
 
+    _definition_factory = PartDefinitionFactory()
+
     def __init__(self) -> None:
         super().__init__()
         self._data.item_type_name = "parts"
         self._data.batch_size = 10
 
     @validate_argument_type([str], {str})
-    def with_part_numbers(self: Query_Builder, part_numbers: List[str]) -> Query_Builder:
+    def with_part_numbers(self: _PartQuery, part_numbers: List[str]) -> _PartQuery:
         """Add a list or set of parts to a part query, referenced by part number.
 
         Parameters
@@ -977,7 +999,6 @@ class PartComplianceQuery(_ComplianceMixin, _PartQueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetComplianceForPartsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_compliance_parts"
 
 
@@ -1006,7 +1027,6 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetImpactedSubstancesForPartsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_impactedsubstances_parts"
 
 
@@ -1014,13 +1034,15 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
     """Provides the subclass for all queries where the items added to the query are direct references to specification
     records."""
 
+    _definition_factory = SpecificationDefinitionFactory()
+
     def __init__(self) -> None:
         super().__init__()
         self._data.item_type_name = "specifications"
         self._data.batch_size = 10
 
     @validate_argument_type([str], {str})
-    def with_specification_ids(self: Query_Builder, specification_ids: List[str]) -> Query_Builder:
+    def with_specification_ids(self: _SpecificationQuery, specification_ids: List[str]) -> _SpecificationQuery:
         """Add a list or set of specifications to a specification query, referenced by specification ID.
 
         Parameters
@@ -1086,7 +1108,6 @@ class SpecificationComplianceQuery(_ComplianceMixin, _SpecificationQueryBuilder)
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetComplianceForSpecificationsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_compliance_specifications"
 
 
@@ -1116,7 +1137,6 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetImpactedSubstancesForSpecificationsRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_impactedsubstances_specifications"
 
 
@@ -1124,13 +1144,15 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
     """Provides the subclass for all queries where the items added to the query are direct references to substance
     records."""
 
+    _definition_factory = SubstanceComplianceDefinitionFactory()
+
     def __init__(self) -> None:
         super().__init__()
         self._data.item_type_name = "substances"
         self._data.batch_size = 500
 
     @validate_argument_type([str], {str})
-    def with_cas_numbers(self: Query_Builder, cas_numbers: List[str]) -> Query_Builder:
+    def with_cas_numbers(self: _SubstanceQuery, cas_numbers: List[str]) -> _SubstanceQuery:
         """Add a list or set of CAS numbers to a substance query.
 
         The amount of substance in the material is set to 100%.
@@ -1162,7 +1184,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @validate_argument_type([str], {str})
-    def with_ec_numbers(self: Query_Builder, ec_numbers: List[str]) -> Query_Builder:
+    def with_ec_numbers(self: "_SubstanceQueryBuilder", ec_numbers: List[str]) -> "_SubstanceQueryBuilder":
         """Add a list or set of EC numbers to a substance query.
 
         The amount of substance in the material is set to 100%.
@@ -1194,7 +1216,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         return self
 
     @validate_argument_type([str], {str})
-    def with_chemical_names(self: Query_Builder, chemical_names: List[str]) -> Query_Builder:
+    def with_chemical_names(self: "_SubstanceQueryBuilder", chemical_names: List[str]) -> "_SubstanceQueryBuilder":
         """Add a list or set of chemical names to a substance query.
 
         The amount of substance in the material is set to 100%.
@@ -1227,8 +1249,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @validate_argument_type([(int, Number)], {(int, Number)})
     def with_record_history_ids_and_amounts(
-        self: Query_Builder, record_history_identities_and_amounts: List[Tuple[int, float]]
-    ) -> Query_Builder:
+        self: "_SubstanceQueryBuilder", record_history_identities_and_amounts: List[Tuple[int, float]]
+    ) -> "_SubstanceQueryBuilder":
         """Add a list or set of record history identities and amounts to a substance query.
 
         The identity and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
@@ -1265,8 +1287,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @validate_argument_type([(str, Number)], {(str, Number)})
     def with_record_history_guids_and_amounts(
-        self: Query_Builder, record_history_guids_and_amounts: List[Tuple[str, float]]
-    ) -> Query_Builder:
+        self: "_SubstanceQueryBuilder", record_history_guids_and_amounts: List[Tuple[str, float]]
+    ) -> "_SubstanceQueryBuilder":
         """Add a list or set of record history GUID and amounts to a substance query.
 
         The GUID and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
@@ -1306,8 +1328,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @validate_argument_type([(str, Number)], {(str, Number)})
     def with_record_guids_and_amounts(
-        self: Query_Builder, record_guids_and_amounts: List[Tuple[str, float]]
-    ) -> Query_Builder:
+        self: "_SubstanceQueryBuilder", record_guids_and_amounts: List[Tuple[str, float]]
+    ) -> "_SubstanceQueryBuilder":
         """Add a list or set of record GUIDs and amounts to a substance query.
 
         The GUID and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
@@ -1345,8 +1367,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @validate_argument_type([(str, Number)], {(str, Number)})
     def with_cas_numbers_and_amounts(
-        self: Query_Builder, cas_numbers_and_amounts: List[Tuple[str, float]]
-    ) -> Query_Builder:
+        self: "_SubstanceQueryBuilder", cas_numbers_and_amounts: List[Tuple[str, float]]
+    ) -> "_SubstanceQueryBuilder":
         """Add a list or set of CAS numbers and amounts to a substance query.
 
         The CAS numbers and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
@@ -1381,8 +1403,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @validate_argument_type([(str, Number)], {(str, Number)})
     def with_ec_numbers_and_amounts(
-        self: Query_Builder, ec_numbers_and_amounts: List[Tuple[str, float]]
-    ) -> Query_Builder:
+        self: "_SubstanceQueryBuilder", ec_numbers_and_amounts: List[Tuple[str, float]]
+    ) -> "_SubstanceQueryBuilder":
         """Add a list or set of EC numbers and amounts to a substance query.
 
         The EC numbers and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
@@ -1418,8 +1440,8 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
     @validate_argument_type([(str, Number)], {(str, Number)})
     def with_chemical_names_and_amounts(
-        self: Query_Builder, chemical_names_and_amounts: List[Tuple[str, float]]
-    ) -> Query_Builder:
+        self: "_SubstanceQueryBuilder", chemical_names_and_amounts: List[Tuple[str, float]]
+    ) -> "_SubstanceQueryBuilder":
         """Add a list or set of chemical names and amounts to a substance query.
 
         The chemical names and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
@@ -1494,7 +1516,6 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
     def __init__(self) -> None:
         super().__init__()
         self._request_type = models.GetComplianceForSubstancesRequest
-        self._definition_factory = AbstractBomFactory.create_factory_for_request_type(self._request_type)
         self._api_method = "post_compliance_substances"
 
 
@@ -1568,10 +1589,10 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
     bom_version: Union[Literal["bom_xml1711"], Literal["bom_xml2301"]]
 
     def __init__(self) -> None:
-        self._data = _BomQueryDataManager(self.bom_version)
+        self._data: _BomQueryDataManager = _BomQueryDataManager(self.bom_version)
 
     @abstractmethod
-    def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
+    def with_bom(self: _BomQuery, bom: str) -> _BomQuery:
         """Set the BoM to use for the query.
 
         Abstract method must be implemented in sub-classes.
@@ -1593,8 +1614,9 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
 class _Bom1711QueryBuilder(_BomQueryBuilder):
     bom_version: Literal["bom_xml1711"] = "bom_xml1711"
 
+    # Method is redefined to override the docstring.
     @validate_argument_type(str)
-    def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
+    def with_bom(self: _Bom1711Query, bom: str) -> _Bom1711Query:
         """Set the BoM to use for the query.
 
         The BoM must be in the Ansys Granta 1711 XML BoM format.
@@ -1630,8 +1652,9 @@ class _Bom1711QueryBuilder(_BomQueryBuilder):
 class _Bom2301QueryBuilder(_BomQueryBuilder):
     bom_version: Literal["bom_xml2301"] = "bom_xml2301"
 
+    # Method is redefined to override the docstring.
     @validate_argument_type(str)
-    def with_bom(self: Query_Builder, bom: str) -> Query_Builder:
+    def with_bom(self: _Bom2301Query, bom: str) -> _Bom2301Query:
         """Set the BoM to use for the query.
 
         The BoM must be in the Ansys Granta 2301 XML BoM format.
@@ -1731,7 +1754,7 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
         self._api_method = "post_impactedsubstances_bom1711"
 
 
-class Yaml:
+class Yaml(_BaseQuery):
     """Gets the YAML description of the underlying REST API.
 
     Because the API is fully implemented in this package, the description is unlikely to be
@@ -1752,7 +1775,7 @@ class Yaml:
     api_class = api.DocumentationApi
 
     @staticmethod
-    def _run_query(api_instance: api.DocumentationApi, **kwargs: Dict) -> str:
+    def _run_query(api_instance: api.DocumentationApi, static_arguments: Dict) -> str:
         """Get the YAML representation of the API from Granta MI.
 
         Parameters
@@ -1773,9 +1796,10 @@ class Yaml:
 class _SustainabilityMixin(_ApiMixin):
     _api_method: str
     api_class = api.SustainabilityApi  # TODO consider making private. Manually excluded from docs for now.
+    _data: _BomQueryDataManager
 
     def __init_subclass__(cls, api_method: str, request_type: Type, **kwargs: Any):
-        super().__init_subclass__(**kwargs)  # type: ignore
+        super().__init_subclass__(**kwargs)
         cls._api_method = api_method
         cls._request_type = request_type
 
@@ -1784,13 +1808,20 @@ class _SustainabilityMixin(_ApiMixin):
         self._preferred_units = models.CommonPreferredUnits()
 
     def with_units(
-        self: Query_Builder, distance: Optional[str] = None, energy: Optional[str] = None, mass: Optional[str] = None
-    ) -> Query_Builder:
+        self: _SustainabilityQuery,
+        distance: Optional[str] = None,
+        energy: Optional[str] = None,
+        mass: Optional[str] = None,
+    ) -> _SustainabilityQuery:
         """
         Specifies units to use in the response.
 
-        Sets all units, overriding any previous configuration. Units not set will default to the API default unit.
-        Provided unit symbols must exist in the target database.
+        Sets all units, overriding any previous configuration. Provided unit symbols must exist in the target database.
+        Units not set will default to the API default unit:
+
+        * Distance: ``km``
+        * Energy: ``MJ``
+        * Mass: ``kg``
 
         Parameters
         ----------
@@ -1807,7 +1838,7 @@ class _SustainabilityMixin(_ApiMixin):
         self._preferred_units.mass_unit = mass
         return self
 
-    def _run_query(self, api_instance: api.SustainabilityApi, static_arguments: Dict) -> Query_Result:
+    def _run_query(self, api_instance: api.SustainabilityApi, static_arguments: Dict) -> ResultBaseClass:
         """Implementation of abstract method _run_query for sustainability endpoints.
 
         Sets the arguments ``preferred_units`` from user inputs.
@@ -1819,9 +1850,9 @@ class _SustainabilityMixin(_ApiMixin):
         }
 
         self._call_api(api_method, arguments)
-        result: Query_Result = QueryResultFactory.create_result(
-            results=self._data.item_results,  # type: ignore[attr-defined]
-            messages=self._data.messages,  # type: ignore[attr-defined]
+        result: ResultBaseClass = QueryResultFactory.create_result(
+            results=self._data.item_results,
+            messages=self._data.messages,
         )
         return result
 

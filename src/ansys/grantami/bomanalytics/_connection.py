@@ -26,16 +26,17 @@ GRANTA_APPLICATION_NAME_HEADER : str
     Identifier used internally by the Granta MI Server.
 """
 
-from typing import overload, TYPE_CHECKING, Union, Dict, Optional, Type, Any, Tuple, List
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union, overload
 
-from ansys.openapi.common import (  # type: ignore[import]
-    ApiClientFactory,
-    ApiClient,
-    ApiException,
-    generate_user_agent,
-    SessionConfiguration,
-)
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
+from ansys.openapi.common import (  # type: ignore[import]
+    ApiClient,
+    ApiClientFactory,
+    ApiException,
+    SessionConfiguration,
+    generate_user_agent,
+)
+
 from ._logger import logger
 from .queries import Yaml
 
@@ -46,31 +47,33 @@ GRANTA_APPLICATION_NAME_HEADER = "PyGranta BoM Analytics"
 
 
 if TYPE_CHECKING:
-    from .queries import (
-        MaterialImpactedSubstancesQuery,
-        MaterialComplianceQuery,
-        PartImpactedSubstancesQuery,
-        PartComplianceQuery,
-        SpecificationImpactedSubstancesQuery,
-        SpecificationComplianceQuery,
-        SubstanceComplianceQuery,
-        BomImpactedSubstancesQuery,
-        BomComplianceQuery,
-        BomSustainabilityQuery,
-        BomSustainabilitySummaryQuery,
-    )
     from ._query_results import (
-        MaterialImpactedSubstancesQueryResult,
-        MaterialComplianceQueryResult,
-        PartImpactedSubstancesQueryResult,
-        PartComplianceQueryResult,
-        SpecificationImpactedSubstancesQueryResult,
-        SpecificationComplianceQueryResult,
-        SubstanceComplianceQueryResult,
-        BomImpactedSubstancesQueryResult,
         BomComplianceQueryResult,
+        BomImpactedSubstancesQueryResult,
         BomSustainabilityQueryResult,
         BomSustainabilitySummaryQueryResult,
+        MaterialComplianceQueryResult,
+        MaterialImpactedSubstancesQueryResult,
+        PartComplianceQueryResult,
+        PartImpactedSubstancesQueryResult,
+        ResultBaseClass,
+        SpecificationComplianceQueryResult,
+        SpecificationImpactedSubstancesQueryResult,
+        SubstanceComplianceQueryResult,
+    )
+    from .queries import (
+        BomComplianceQuery,
+        BomImpactedSubstancesQuery,
+        BomSustainabilityQuery,
+        BomSustainabilitySummaryQuery,
+        MaterialComplianceQuery,
+        MaterialImpactedSubstancesQuery,
+        PartComplianceQuery,
+        PartImpactedSubstancesQuery,
+        SpecificationComplianceQuery,
+        SpecificationImpactedSubstancesQuery,
+        SubstanceComplianceQuery,
+        _BaseQuery,
     )
 
 
@@ -388,19 +391,19 @@ class BomAnalyticsClient(ApiClient):
     def run(self, query: "BomSustainabilitySummaryQuery") -> "BomSustainabilitySummaryQueryResult":
         ...
 
-    def run(self, query):  # type: ignore[no-untyped-def]
+    def run(self, query: Union["_BaseQuery", Type["Yaml"]]) -> Union["ResultBaseClass", str]:
         """Run a query against the Granta MI database.
 
         Parameters
         ----------
         query
-            A compliance, impacted substance, or YAML query object.
+            A compliance, impacted substance, sustainability, or YAML query object.
 
         Returns
         -------
         Query Result
-            Specific result object based on the provided query, which contains either the compliance or
-            impacted substances results. In the case of a YAML query, a string is returned.
+            Specific result object based on the provided query, which contains either the compliance,
+            impacted substances, or sustainability results. In the case of a YAML query, a string is returned.
 
         Raises
         ------

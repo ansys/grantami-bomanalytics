@@ -1,4 +1,5 @@
 import pytest
+
 from ansys.grantami.bomanalytics import queries
 
 DISTANCE = "a"

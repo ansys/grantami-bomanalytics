@@ -1,4 +1,5 @@
 import pytest
+
 from ansys.grantami.bomanalytics import queries
 
 all_bom_queries = pytest.mark.parametrize(

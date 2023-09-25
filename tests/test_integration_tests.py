@@ -1,7 +1,9 @@
 import pytest
-from .inputs import sample_bom_complex, sample_bom_custom_db, sample_bom_2301_complex
-from ansys.grantami.bomanalytics import queries, GrantaMIException
-from .common import LEGISLATIONS, INDICATORS, CUSTOM_TABLES
+
+from ansys.grantami.bomanalytics import GrantaMIException, queries
+
+from .common import CUSTOM_TABLES, INDICATORS, LEGISLATIONS
+from .inputs import sample_bom_2301_complex, sample_bom_complex, sample_bom_custom_db
 
 pytestmark = pytest.mark.integration
 

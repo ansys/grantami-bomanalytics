@@ -1,13 +1,11 @@
-from ansys.grantami.bomanalytics import queries, indicators
 from ansys.grantami.bomanalytics_openapi.models import (
-    GetImpactedSubstancesForMaterialsResponse,
     GetComplianceForMaterialsResponse,
+    GetImpactedSubstancesForMaterialsResponse,
 )
-from .common import (
-    BaseMockTester,
-    SubstanceValidator,
-    MaterialValidator,
-)
+
+from ansys.grantami.bomanalytics import indicators, queries
+
+from .common import BaseMockTester, MaterialValidator, SubstanceValidator
 
 
 class TestImpactedSubstances(BaseMockTester):

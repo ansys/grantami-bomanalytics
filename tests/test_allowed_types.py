@@ -1,6 +1,8 @@
-import pytest
 from numbers import Number
-from ansys.grantami.bomanalytics._allowed_types import validate_argument_type, _check_type
+
+import pytest
+
+from ansys.grantami.bomanalytics._allowed_types import _check_type, validate_argument_type
 
 
 def test_allowed_types_args():

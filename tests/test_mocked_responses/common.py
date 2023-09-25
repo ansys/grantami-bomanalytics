@@ -1,5 +1,7 @@
 import requests_mock
+
 from ansys.grantami.bomanalytics import indicators, queries
+
 from ..inputs import examples_as_strings
 
 

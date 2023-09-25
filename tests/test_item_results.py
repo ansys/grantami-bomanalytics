@@ -1,8 +1,11 @@
-import pytest
 from dataclasses import dataclass
+
 from ansys.grantami.bomanalytics_openapi import models
+import pytest
+
 from ansys.grantami.bomanalytics._item_definitions import ReferenceType
 from ansys.grantami.bomanalytics._item_results import ImpactedSubstance, ItemResultFactory
+
 from .common import INDICATORS
 
 
@@ -277,3 +280,10 @@ class TestSustainabilityResultsRepr:
         result = ItemResultFactory.create_substance_result(model)
         expected = "<SubstanceResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
         assert repr(result) == expected
+
+
+def test_unitted_value_repr():
+    model = models.GrantaBomAnalyticsServicesImplementationCommonValueWithUnit(unit="kg", value=255.2)
+    result = ItemResultFactory.create_unitted_value(model)
+    expected = '<ValueWithUnit(value=255.2, unit="kg")>'
+    assert repr(result) == expected

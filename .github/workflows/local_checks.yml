@@ -10,32 +10,13 @@ env:
   MAIN_PYTHON_VERSION: '3.9'
 
 jobs:
-  style:
-    name: Code Style Check
+  code-style:
+    name: "Code Style Check"
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v4
+      - uses: ansys/actions/code-style@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-      - name: Install style requirements
-        run: pip install 'tox<4' poetry --disable-pip-version-check
-
-      - name: Configure git
-        run: |
-          echo "https://${{ secrets.BOM_OPENAPI_TOKEN }}:@github.com" > $HOME/.git-credentials
-          git config --global credential.helper store
-
-      - name: Spell, Lint and Type Check
-        run: tox -e style
-
-      - name: Clean-up
-        if: always()
-        run: rm -f $HOME/.git-credentials
 
   docs-style:
     name: Documentation Style Check

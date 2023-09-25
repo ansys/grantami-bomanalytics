@@ -8,8 +8,8 @@ T
     Generic type to ensure static-type checking works as expected.
 """
 
-from typing import TypeVar, Type, Any, Callable
 import functools
+from typing import Any, Callable, Type, TypeVar
 
 T = TypeVar("T")
 
@@ -67,7 +67,7 @@ def validate_argument_type(*allowed_types: Any) -> Callable:
             result = any([_check_type_wrapper(value, allowed_type) for allowed_type in allowed_types])
             if not result:
                 raise TypeError(f'Incorrect type for value "{value}". Expected "{allowed_types}"')
-            return method(*args, **kwargs)  # type: ignore[call-arg]
+            return method(*args, **kwargs)
 
         return check_types
 

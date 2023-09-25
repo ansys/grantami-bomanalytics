@@ -1,12 +1,14 @@
 from inspect import getmodule
 from typing import Any, Optional
+
 from sphinx.ext.autodoc import (
-    ClassDocumenter as DefaultClassDocumenter,
-    PropertyDocumenter, MethodDocumenter,
     Documenter,
-    member_order_option,
+    MethodDocumenter,
     ModuleAnalyzer,
+    PropertyDocumenter,
+    member_order_option,
 )
+from sphinx.ext.autodoc import ClassDocumenter as DefaultClassDocumenter
 
 
 class CustomOrderException(Exception):

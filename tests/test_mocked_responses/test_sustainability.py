@@ -1,15 +1,15 @@
+from ansys.grantami.bomanalytics_openapi.models import (
+    GetSustainabilityForBom2301Response,
+    GetSustainabilitySummaryForBom2301Response,
+)
+
 from ansys.grantami.bomanalytics import queries
 from ansys.grantami.bomanalytics._query_results import (
     BomSustainabilityQueryResult,
     BomSustainabilitySummaryQueryResult,
 )
-from ansys.grantami.bomanalytics_openapi.models import (
-    GetSustainabilityForBom2301Response,
-    GetSustainabilitySummaryForBom2301Response,
-)
-from .common import (
-    BaseMockTester,
-)
+
+from .common import BaseMockTester
 
 
 class TestBomSustainability(BaseMockTester):

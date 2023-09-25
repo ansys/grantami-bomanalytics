@@ -8,6 +8,7 @@ from ansys.grantami.bomanalytics.bom_types._bom_writer import BoMWriter
 
 class BaseType:
     """Base type from which all XML DTOs inherit.
+
     Handles conversion from python properties to xmlschema objects.
 
     Attributes
@@ -48,9 +49,9 @@ class BaseType:
         Parameters
         ----------
         obj: Dict
-            The json representation of the source XML BoM to be parsed
+            The json representation of the source XML BoM to be parsed.
         field_reader: NamespaceFieldReader
-            Helper object that maintains information about the global namespaces
+            Helper object that maintains information about the global namespaces.
 
         Returns
         -------
@@ -70,7 +71,7 @@ class BaseType:
         obj: Dict
             Dictionary representing the current state of the serialization of self. Modified in place by this method.
         bom_writer: BoMWriter
-            Helper object that maintains information about the global namespaces
+            Helper object that maintains information about the global namespaces.
         """
         pass
 
@@ -97,7 +98,7 @@ class DimensionType(Enum):
         Parameters
         ----------
         value: str
-            String representation of this object
+            String representation of this object.
         """
         return DimensionType[value]
 
@@ -108,7 +109,7 @@ class DimensionType(Enum):
         Returns
         -------
         str
-            String representation of this object
+            String representation of this object.
         """
         return self.name
 
@@ -139,7 +140,7 @@ class PseudoAttribute(Enum):
         Parameters
         ----------
         value: str
-            String representation of this object
+            String representation of this object.
         """
         return PseudoAttribute[f"{value[0].upper()}{value[1:]}"]
 
@@ -150,16 +151,12 @@ class PseudoAttribute(Enum):
         Returns
         -------
         str
-            String representation of this object
+            String representation of this object.
         """
         return f"{self.name[0].lower()}{self.name[1:]}"
 
 
 class PartialTableReference(BaseType):
-    _table_identity: Optional[int] = None
-    _table_guid: Optional[str] = None
-    _table_name: Optional[str] = None
-
     _simple_values = [("table_identity", "tableIdentity"), ("table_guid", "tableGuid"), ("table_name", "tableName")]
 
     _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
@@ -240,13 +237,6 @@ class PartialTableReference(BaseType):
 
 
 class MIAttributeReference(BaseType):
-    _db_key: str
-    _attribute_identity: Optional[int] = None
-    _table_reference: Optional[PartialTableReference] = None
-    _attribute_name: Optional[str] = None
-    _pseudo: Optional[PseudoAttribute] = None
-    _is_standard: Optional[bool] = None
-
     _simple_values = [("db_key", "dbKey"), ("attribute_identity", "attributeIdentity")]
 
     _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
@@ -282,7 +272,7 @@ class MIAttributeReference(BaseType):
         attribute_name: Optional[str]
             Name of the Attribute.
         pseudo: Optional[PseudoAttribute]
-            The Pseudoattribute type if referring to a Pseudoattribute.
+            The pseudo-attribute type if referring to a pseudo-attribute.
         is_standard: Optional[bool]
             If True indicates that the provided ``attribute_name`` is a Standard Name.
         """
@@ -377,7 +367,7 @@ class MIAttributeReference(BaseType):
     @property
     def pseudo(self) -> Optional[PseudoAttribute]:
         """
-        The Pseudoattribute type if referring to a Pseudoattribute.
+        The pseudo-attribute type if referring to a pseudo-attribute.
 
         Returns
         -------
@@ -406,15 +396,6 @@ class MIAttributeReference(BaseType):
 
 
 class MIRecordReference(BaseType):
-    _db_key: str
-    _record_history_identity: Optional[int] = None
-    _record_version_number: Optional[int] = None
-    _record_guid: Optional[str] = None
-    _record_history_guid: Optional[str] = None
-    _lookup_attribute_reference: "Optional[MIAttributeReference]" = None
-    _lookup_value: Optional[str] = None
-    _record_uid: Optional[str] = None
-
     _simple_values = [
         ("db_key", "dbKey"),
         ("record_guid", "recordGUID"),
@@ -460,7 +441,7 @@ class MIRecordReference(BaseType):
             Identifies a particular version of a record by its GUID, this is a more persistent way to refer to a record.
         record_history_guid: Optional[str]
             Identifies a record history, the latest visible version will be returned. ``record_version_number`` has no
-            effect on references that use ``record_history_guid``
+            effect on references that use ``record_history_guid``.
         lookup_attribute_reference: Optional[MIAttributeReference]
             When provided in combination with ``lookup_value`` identifies a record by a unique short-text attribute.
             Specifies the attribute to be used for the lookup operation.
@@ -504,7 +485,7 @@ class MIRecordReference(BaseType):
     @property
     def db_key(self) -> str:
         """
-        Identifies the database to which this record belongs
+        Identifies the database to which this record belongs.
 
         Returns
         -------
@@ -519,7 +500,7 @@ class MIRecordReference(BaseType):
     @property
     def record_history_identity(self) -> Optional[int]:
         """
-        Identifies a record by its history identity
+        Identifies a record by its history identity.
 
         Returns
         -------
@@ -628,8 +609,6 @@ class MIRecordReference(BaseType):
 # TODO - I don't like having a nice method to add props then replicating it here, can we do something better with
 #  inheritance?
 class InternalIdentifierMixin:
-    _internal_id: Optional[str] = None
-
     def __init__(self, *, internal_id: Optional[str] = None, **kwargs):
         """A unique identity for this object in this BoM. This identity is only for internal use, allowing other
         elements to reference this element.
@@ -637,7 +616,7 @@ class InternalIdentifierMixin:
         Parameters
         ----------
         internal_id: Optional[str]
-            The identifier to assign to this object
+            The identifier to assign to this object.
         """
         super().__init__(**kwargs)
         self.internal_id = internal_id
@@ -673,10 +652,6 @@ class InternalIdentifierMixin:
 
 
 class CommonIdentifiersMixin:
-    _identity: Optional[str] = None
-    _name: Optional[str] = None
-    _external_identity: Optional[str] = None
-
     def __init__(
         self,
         *,
@@ -775,20 +750,35 @@ class CommonIdentifiersMixin:
 
 
 class EndOfLifeFate(BaseType):
-    _mi_end_of_life_reference: "MIRecordReference"
-    _fraction: float
-
     _simple_values = [("fraction", "Fraction")]
 
     _props = [("MIRecordReference", "mi_end_of_life_reference", "MIEndOfLifeReference")]
 
-    def __init__(self, *mi_end_of_life_reference: "MIRecordReference", fraction: float, **kwargs) -> None:
+    def __init__(self, *, mi_end_of_life_reference: "MIRecordReference", fraction: float, **kwargs) -> None:
+        """
+        The fate of a material at the end-of-life of the product. For example if a material can be recycled, and what
+        fraction of the total mass or volume can be recycled.
+
+        Parameters
+        ----------
+        mi_end_of_life_reference : MIRecordReference
+            Reference identifying the applicable fate within the MI Database.
+        fraction : float
+            Fraction of the total mass or volume of material to which this fate applies.
+        """
         super().__init__(**kwargs)
         self.mi_end_of_life_reference = mi_end_of_life_reference
         self.fraction = fraction
 
     @property
     def mi_end_of_life_reference(self) -> "MIRecordReference":
+        """
+        Reference identifying the applicable fate within the MI Database.
+
+        Returns
+        -------
+        MIRecordReference
+        """
         return self._mi_end_of_life_reference
 
     @mi_end_of_life_reference.setter
@@ -797,6 +787,13 @@ class EndOfLifeFate(BaseType):
 
     @property
     def fraction(self) -> float:
+        """
+        Fraction of the total mass or volume of material to which this fate applies.
+
+        Returns
+        -------
+        float
+        """
         return self._fraction
 
     @fraction.setter
@@ -805,9 +802,6 @@ class EndOfLifeFate(BaseType):
 
 
 class UnittedValue(BaseType):
-    _value: float
-    _unit: Optional[str] = None
-
     _simple_values = [("value", "$"), ("unit", "@Unit")]
 
     def __init__(self, *, value: float, unit: Optional[str] = None, **kwargs) -> None:
@@ -818,7 +812,7 @@ class UnittedValue(BaseType):
         Parameters
         ----------
         value: float
-            The value of the quantity in specified units
+            The value of the quantity in specified units.
         unit: Optional[str]
             If provided, specifies the unit symbol applying to the quantity. If absent the quantity will be treated as
             dimensionless.
@@ -865,8 +859,6 @@ class UnittedValue(BaseType):
 
 
 class Location(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
-    _mi_location_reference: "Optional[MIRecordReference]"
-
     _props = [("MIRecordReference", "mi_location_reference", "MILocationReference")]
 
     def __init__(self, *, mi_location_reference: "Optional[MIRecordReference]" = None, **kwargs) -> None:
@@ -898,9 +890,6 @@ class Location(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class ElectricityMix(BaseType):
-    _mi_region_reference: "Optional[MIRecordReference]" = None
-    _percentage_fossil_fuels: Optional[float] = None
-
     _props = [("MIRecordReference", "mi_region_reference", "MIRegionReference")]
     _simple_values = [("percentage_fossil_fuels", "PercentageFossilFuels")]
 
@@ -960,10 +949,6 @@ class ElectricityMix(BaseType):
 
 
 class MobileMode(BaseType):
-    _mi_transport_reference: "MIRecordReference"
-    _days_used_per_year: float
-    _distance_travelled_per_day: "UnittedValue"
-
     _props = [
         ("MIRecordReference", "mi_transport_reference", "MITransportReference"),
         ("UnittedValue", "distance_travelled_per_day", "DistanceTravelledPerDay"),
@@ -1043,11 +1028,6 @@ class MobileMode(BaseType):
 
 
 class StaticMode(BaseType):
-    _mi_energy_conversion_reference: "MIRecordReference"
-    _power_rating: "UnittedValue"
-    _days_used_per_year: float
-    _hours_used_per_day: float
-
     _props = [
         ("MIRecordReference", "mi_energy_conversion_reference", "MIEnergyConversionReference"),
         ("UnittedValue", "power_rating", "PowerRating"),
@@ -1072,11 +1052,11 @@ class StaticMode(BaseType):
             Reference to a record in the MI database representing the primary energy conversion taking place when the
             product is in use.
         power_rating: UnittedValue
-            The power rating of the product whilst in use
+            The power rating of the product whilst in use.
         days_used_per_year: float
-            The number of days per year that the product will be used
+            The number of days per year that the product will be used.
         hours_used_per_day: float
-            The number of hours per day of use that the product will be used
+            The number of hours per day of use that the product will be used.
         """
         super().__init__(**kwargs)
         self.mi_energy_conversion_reference = mi_energy_conversion_reference
@@ -1103,7 +1083,7 @@ class StaticMode(BaseType):
     @property
     def power_rating(self) -> "UnittedValue":
         """
-        The power rating of the product whilst in use
+        The power rating of the product whilst in use.
 
         Returns
         -------
@@ -1118,7 +1098,7 @@ class StaticMode(BaseType):
     @property
     def days_used_per_year(self) -> float:
         """
-        The number of days per year that the product will be used
+        The number of days per year that the product will be used.
 
         Returns
         -------
@@ -1133,7 +1113,7 @@ class StaticMode(BaseType):
     @property
     def hours_used_per_day(self) -> float:
         """
-        The number of hours per day of use that the product will be used
+        The number of hours per day of use that the product will be used.
 
         Returns
         -------
@@ -1147,10 +1127,6 @@ class StaticMode(BaseType):
 
 
 class UtilitySpecification(BaseType):
-    _industry_average_duration_years: Optional[float] = None
-    _industry_average_number_of_functional_units: Optional[float] = None
-    _utility: Optional[float] = None
-
     _simple_values = [
         ("industry_average_duration_years", "IndustryAverageDurationYears"),
         ("industry_average_number_of_functional_units", "IndustryAverageNumberOfFunctionalUnits"),
@@ -1232,11 +1208,6 @@ class UtilitySpecification(BaseType):
 
 
 class ProductLifeSpan(BaseType):
-    _duration_years: float
-    _number_of_functional_units: Optional[float] = None
-    _functional_unit_description: Optional[str] = None
-    _utility: "Optional[UtilitySpecification]" = None
-
     _props = [("UtilitySpecification", "utility", "Utility")]
     _simple_values = [
         ("duration_years", "DurationYears"),
@@ -1266,7 +1237,7 @@ class ProductLifeSpan(BaseType):
             A short (ideally one-word) description of a single functional unit.
         utility: Optional[UtilitySpecification]
             Indicates how much use can be obtained from the product represented by the BoM, compared to an
-            industry-average example
+            industry-average example.
         """
         super().__init__(**kwargs)
         self.duration_years = duration_years
@@ -1323,7 +1294,7 @@ class ProductLifeSpan(BaseType):
     def utility(self) -> "Optional[UtilitySpecification]":
         """
         Indicates how much use can be obtained from the product represented by the BoM, compared to an industry-average
-        example
+        example.
 
         Returns
         -------
@@ -1337,11 +1308,6 @@ class ProductLifeSpan(BaseType):
 
 
 class UsePhase(BaseType):
-    _product_life_span: "ProductLifeSpan"
-    _electricity_mix: "Optional[ElectricityMix]" = None
-    _static_mode: "Optional[StaticMode]" = None
-    _mobile_mode: "Optional[MobileMode]" = None
-
     _props = [
         ("ProductLifeSpan", "product_life_span", "ProductLifeSpan"),
         ("ElectricityMix", "electricity_mix", "ElectricityMix"),
@@ -1441,10 +1407,6 @@ class UsePhase(BaseType):
 
 
 class BoMDetails(BaseType):
-    _notes: Optional[str] = None
-    _picture_url: Optional[str] = None
-    _product_name: Optional[str] = None
-
     _simple_values = [("notes", "Notes"), ("picture_url", "PictureUrl"), ("product_name", "ProductName")]
 
     def __init__(
@@ -1461,7 +1423,7 @@ class BoMDetails(BaseType):
         Parameters
         ----------
         notes: Optional[str]
-            General notes for the BoM object
+            General notes for the BoM object.
         picture_url: Optional[str]
             The URL of an image to include at the top of the report. This URL must be accessible from the reporting
             services server.
@@ -1476,7 +1438,7 @@ class BoMDetails(BaseType):
     @property
     def notes(self) -> Optional[str]:
         """
-        General notes for the BoM object
+        General notes for the BoM object.
 
         Returns
         -------
@@ -1521,10 +1483,6 @@ class BoMDetails(BaseType):
 
 
 class TransportStage(InternalIdentifierMixin, BaseType):
-    _name: str
-    _mi_transport_reference: "MIRecordReference"
-    _distance: "UnittedValue"
-
     _props = [
         ("MIRecordReference", "mi_transport_reference", "MITransportReference"),
         ("UnittedValue", "distance", "Distance"),
@@ -1600,9 +1558,6 @@ class TransportStage(InternalIdentifierMixin, BaseType):
 
 
 class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
-    _mi_specification_reference: "MIRecordReference"
-    _quantity: "Optional[UnittedValue]" = None
-
     _props = [
         ("MIRecordReference", "mi_specification_reference", "MISpecificationReference"),
         ("UnittedValue", "quantity", "Quantity"),
@@ -1658,10 +1613,6 @@ class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
-    _percentage: Optional[float] = None
-    _category: Optional[str] = None
-    _mi_substance_reference: "MIRecordReference"
-
     _simple_values = [("percentage", "Percentage"), ("category", "Category")]
 
     _props = [("MIRecordReference", "mi_substance_reference", "MISubstanceReference")]
@@ -1740,11 +1691,6 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
-    _mi_process_reference: "MIRecordReference"
-    _dimension_type: DimensionType
-    _percentage_of_part_affected: Optional[float] = None
-    _quantity_affected: "Optional[UnittedValue]" = None
-
     _simple_values = [("percentage_of_part_affected", "Percentage")]
 
     _props = [
@@ -1773,7 +1719,7 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
             Object defining the dimension affected by the process, for example area for coatings, or volume for
             rough machining operations.
         percentage_of_part_affected: Optional[float]
-            Fraction of the object affected by the process, with basis specified by ``dimension_type``
+            Fraction of the object affected by the process, with basis specified by ``dimension_type``.
         quantity_affected: Optional[UnittedValue]
             Number of items affected by the process, if applicable. For example 17 fasteners are galvanized out of 24
             total.
@@ -1861,16 +1807,6 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
-    """A Material within a part or semi-finished part. The material is stored in the Database."""
-
-    _percentage: Optional[float] = None
-    _mass: "Optional[UnittedValue]" = None
-    _mi_material_reference: "MIRecordReference"
-    _recycle_content_is_typical: Optional[bool] = None
-    _recycle_content_percentage: Optional[float] = None
-    _processes: "List[Process]" = []
-    _end_of_life_fates: "List[EndOfLifeFate]" = []
-
     _simple_values = [("percentage", "Percentage")]
 
     _props = [("UnittedValue", "mass", "Mass"), ("MIRecordReference", "mi_material_reference", "MIMaterialReference")]
@@ -2074,24 +2010,6 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class Part(InternalIdentifierMixin, BaseType):
-    """A single part which may or may not be stored in the MI Database."""
-
-    _quantity: "Optional[UnittedValue]" = None
-    _mass_per_unit_of_measure: "Optional[UnittedValue]" = None
-    _volume_per_unit_of_measure: "Optional[UnittedValue]" = None
-    _mi_part_reference: "Optional[MIRecordReference]" = None
-    _non_mi_part_reference: "Optional[Union[str, int]]" = None
-    _part_number: str
-    _name: Optional[str] = None
-    _external_id: Optional[str] = None
-    _components: "List[Part]" = []
-    _specifications: "List[Specification]" = []
-    _materials: "List[Material]" = []
-    _substances: "List[Substance]" = []
-    _processes: "List[Process]" = []
-    _rohs_exemptions: "List[str]" = []
-    _end_of_life_fates: "List[EndOfLifeFate]" = []
-
     _props = [
         ("UnittedValue", "quantity", "Quantity"),
         ("UnittedValue", "mass_per_unit_of_measure", "MassPerUom"),
@@ -2484,10 +2402,6 @@ class Part(InternalIdentifierMixin, BaseType):
 
 
 class AnnotationSource(InternalIdentifierMixin, BaseType):
-    _name: str
-    _method: Optional[str] = None
-    _data: List[Any] = []
-
     _simple_values = [("name", "Name"), ("method", "Method")]
 
     def __init__(self, *, name: str, method: Optional[str] = None, data: List[Any] = None, **kwargs) -> None:
@@ -2577,11 +2491,6 @@ class AnnotationSource(InternalIdentifierMixin, BaseType):
 
 
 class Annotation(BaseType):
-    _target_id: str
-    _source_id: Optional[str]
-    _type: str
-    _value: "Union[str, UnittedValue]"
-
     _props = [("UnittedValue", "value", "Value")]
 
     _simple_values = [("type", "type"), ("target_id", "targetId"), ("source_id", "sourceId")]
@@ -2609,7 +2518,7 @@ class Annotation(BaseType):
         Parameters
         ----------
         target_id: str
-            The ``internal_identity`` of exactly one element to which the annotation applies
+            The ``internal_identity`` of exactly one element to which the annotation applies.
         source_id: Optional[str]
             If provided, is the ``internal_identity`` of exactly one ``AnnotationSource`` object describing the source
             of the annotation. If absent, no source information is provided.
@@ -2628,7 +2537,7 @@ class Annotation(BaseType):
     @property
     def target_id(self) -> str:
         """
-        The ``internal_identity`` of exactly one element to which the annotation applies
+        The ``internal_identity`` of exactly one element to which the annotation applies.
 
         Returns
         -------
@@ -2689,16 +2598,6 @@ class Annotation(BaseType):
 
 
 class BillOfMaterials(InternalIdentifierMixin, BaseType):
-    """Type for the root node of an Eco Bill of Materials (BoM)"""
-
-    _components: "List[Part]"
-    _transport_phase: "List[TransportStage]" = []
-    _use_phase: "Optional[UsePhase]" = None
-    _location: "Optional[Location]" = None
-    _notes: "Optional[BoMDetails]" = None
-    _annotations: "List[Annotation]" = []
-    _annotation_sources: "List[AnnotationSource]" = []
-
     _props = [
         ("UsePhase", "use_phase", "UsePhase"),
         ("Location", "location", "Location"),
@@ -2733,7 +2632,7 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         Parameters
         ----------
         components: List[Part]
-            The parts contained within this BoM
+            The parts contained within this BoM.
         transport_phase: List[TransportStage]
             The different forms of transport to which the parts are subject.
         use_phase: Optional[UsePhase]
@@ -2741,11 +2640,11 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         location: Optional[Location]
             The location in which the object represented by the BoM is assembled.
         notes: Optional[BoMDetails]
-            Any optional notes about this BoM
+            Any optional notes about this BoM.
         annotations: List[Annotation]
-            Any annotations that are associated with objects within the BoM
+            Any annotations that are associated with objects within the BoM.
         annotation_sources: List[AnnotationSource]
-            Sources for annotations present within the BoM
+            Sources for annotations present within the BoM.
         """
         super().__init__(**kwargs)
         self.components = components
@@ -2843,7 +2742,7 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
     @property
     def annotations(self) -> "List[Annotation]":
         """
-        Any annotations that are associated with objects within the BoM
+        Any annotations that are associated with objects within the BoM.
 
         Returns
         -------
@@ -2858,7 +2757,7 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
     @property
     def annotation_sources(self) -> "List[AnnotationSource]":
         """
-        Sources for annotations present within the BoM
+        Sources for annotations present within the BoM.
 
         Returns
         -------

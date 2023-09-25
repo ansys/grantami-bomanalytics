@@ -106,7 +106,7 @@ class AttributeReferenceBuilder:
 
     def with_attribute_identity(self, attribute_identity: int) -> "_FinalAttributeReferenceBuilder":
         """
-        Specify the attribute by its identity
+        Specify the attribute by its identity.
 
         Parameters
         ----------
@@ -122,7 +122,7 @@ class AttributeReferenceBuilder:
 
     def as_pseudo_attribute(self, pseudo_attribute: PseudoAttribute) -> "_FinalAttributeReferenceBuilder":
         """
-        Specify that the attribute is a Pseudoattribute
+        Specify the attribute as a specific pseudo-attribute.
 
         Parameters
         ----------
@@ -144,9 +144,9 @@ class AttributeReferenceBuilder:
         Parameters
         ----------
         attribute_name : str
-            The attribute's name
+            The attribute's name.
         is_standard_name : bool
-            If True, the attribute is defined by a standard name (default false)
+            If True, the attribute is defined by a standard name (default false).
 
         Returns
         -------
@@ -162,7 +162,7 @@ class RecordReferenceBuilder:
 
     def __init__(self, *, db_key: str, record_uid: Optional[str] = None) -> None:
         """
-        Create a MIRecordReference with a valid combination of properties
+        Create a MIRecordReference with a valid combination of properties.
 
         Parameters
         ----------
@@ -183,7 +183,7 @@ class RecordReferenceBuilder:
         Parameters
         ----------
         record_history_id : int
-            The record history identity
+            The record history identity.
         record_version_number : Optional[int]
             If the record is in a Version-Controlled table, return a specific version of the record, otherwise
             the latest released version will be returned.
@@ -198,12 +198,14 @@ class RecordReferenceBuilder:
 
     def with_record_guid(self, record_guid: str) -> "_FinalRecordReferenceBuilder":
         """
-        Specify the record by its GUID, this will specify an exact version if the table is Version-Controlled.
+        Specify the record by its GUID.
+
+        This will specify an exact version if the table is Version-Controlled.
 
         Parameters
         ----------
         record_guid : str
-            The record version GUID
+            The record version GUID.
 
         Returns
         -------
@@ -214,13 +216,15 @@ class RecordReferenceBuilder:
 
     def with_record_history_guid(self, record_history_guid: str) -> "_FinalRecordReferenceBuilder":
         """
-        Specify the record by its History GUID. This will return the latest released version of the record. If a
-        specific version is required then use the ``with_record_guid`` method instead.
+        Specify the record by its History GUID.
+
+        This will return the latest released version of the record. If a specific version is required then use the
+        ``with_record_guid`` method instead.
 
         Parameters
         ----------
         record_history_guid : str
-            The record history GUID
+            The record history GUID.
 
         Returns
         -------
@@ -233,15 +237,17 @@ class RecordReferenceBuilder:
         self, *, lookup_value: str, lookup_attribute_reference: MIAttributeReference
     ) -> "_FinalRecordReferenceBuilder":
         """
-        Specify the record by a unique value on a short-text attribute. You must specify both the attribute and the
-        lookup value. If the value is not unique then an exception will be raised.
+        Specify the record by a unique value on a short-text attribute.
+
+        You must specify both the attribute and the lookup value. If the value is not unique then an exception will be
+        raised.
 
         Parameters
         ----------
         lookup_value : str
-            The value identifying the record
+            The value identifying the record.
         lookup_attribute_reference : MIAttributeReference
-            The short-text attribute or compatible pseudoattribute to use for the lookup
+            The short-text attribute or compatible pseudo-attribute to use for the lookup.
 
         Returns
         -------
@@ -260,7 +266,7 @@ class _FinalRecordReferenceBuilder:
 
     def build(self) -> "MIRecordReference":
         """
-        Build the finished MI Record Reference
+        Build the finished MI Record Reference.
 
         Returns
         -------

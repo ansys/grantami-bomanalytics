@@ -23,12 +23,12 @@ class BoMHandler:
 
     def load_bom_from_file(self, file_path: Path) -> "BillOfMaterials":
         """
-        Read a BoM from a file and return the corresponding BillOfMaterials object for use
+        Read a BoM from a file and return the corresponding BillOfMaterials object for use.
 
         Parameters
         ----------
         file_path: Path
-            Location of the BoM XML file
+            Location of the BoM XML file.
 
         Returns
         -------
@@ -47,12 +47,12 @@ class BoMHandler:
 
     def load_bom_from_text(self, bom_text: str) -> "BillOfMaterials":
         """
-        Read a BoM from a string and return the corresponding BillOfMaterials object for use
+        Read a BoM from a string and return the corresponding BillOfMaterials object for use.
 
         Parameters
         ----------
         bom_text: str
-            String object containing an XML representation of a BoM
+            String object containing an XML representation of a BoM.
 
         Returns
         -------
@@ -70,7 +70,7 @@ class BoMHandler:
 
     def dump_bom(self, bom: "BillOfMaterials") -> str:
         """
-        Convert a BillOfMaterials object into a string XML representation
+        Convert a BillOfMaterials object into a string XML representation.
 
         Parameters
         ----------
@@ -79,7 +79,7 @@ class BoMHandler:
         Returns
         -------
         str
-            Serialized representation of the BoM
+            Serialized representation of the BoM.
         """
         bom_dict = self._writer.convert_bom_to_dict(bom)
         obj, errors = self._schema.encode(bom_dict, validation="lax", unordered=True)

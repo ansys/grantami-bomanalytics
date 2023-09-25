@@ -90,7 +90,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
 
-SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
+SIN_LIST = "SINList"
 impacted_substances_query = (
     queries.BomImpactedSubstancesQuery()
     .with_bom(valid_xml)

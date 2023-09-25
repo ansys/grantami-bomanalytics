@@ -71,7 +71,7 @@ class TestBomSustainability(BaseMockTester):
         assert part_0_0_material_0.reported_mass.value == 2
         assert part_0_0_material_0.recyclable is True
         assert part_0_0_material_0.biodegradable is False
-        assert part_0_0_material_0.downcycle is True
+        assert part_0_0_material_0.functional_recycle is True
         assert part_0_0_material_0.record_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6270"
 
         assert len(part_0_0_material_0.processes) == 1
@@ -121,7 +121,7 @@ class TestBomSustainabilitySummary(BaseMockTester):
 
         assert len(response.material_details) == 1
         unique_material_0 = response.material_details[0]
-        assert unique_material_0.name == "steel-kovar-annealed"
+        assert unique_material_0.identity == "steel-kovar-annealed"
         assert unique_material_0.record_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6270"
         assert unique_material_0.embodied_energy.value == 134.482549067761
         assert unique_material_0.embodied_energy.unit == "MJ"
@@ -148,7 +148,7 @@ class TestBomSustainabilitySummary(BaseMockTester):
         unique_ppmp_0 = response.primary_processes_details[0]
         assert unique_ppmp_0.process_name == "Metal casting"
         assert unique_ppmp_0.process_reference.record_guid == "baa6c95b-ff0e-4811-9120-92717ee15bda"
-        assert unique_ppmp_0.material_name == "High alloy steel, Kovar, annealed"
+        assert unique_ppmp_0.material_identity == "High alloy steel, Kovar, annealed"
         assert unique_ppmp_0.material_reference.record_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6270"
 
         assert unique_ppmp_0.embodied_energy.value == 6.55438765769984
@@ -163,7 +163,7 @@ class TestBomSustainabilitySummary(BaseMockTester):
         unique_spmp_0 = response.secondary_processes_details[0]
         assert unique_spmp_0.process_name == "Machining, coarse"
         assert unique_spmp_0.process_reference.record_guid == "907bda29-e800-44f6-b7ea-4eb8e7cff375"
-        assert unique_spmp_0.material_name == "High alloy steel, Kovar, annealed"
+        assert unique_spmp_0.material_identity == "High alloy steel, Kovar, annealed"
         assert unique_spmp_0.material_reference.record_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6270"
 
         assert unique_spmp_0.embodied_energy.value == 0.232599537624153

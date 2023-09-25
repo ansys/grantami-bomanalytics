@@ -38,7 +38,7 @@ class TestImpactedSubstances(BaseMockTester):
 
         # Test list of substances grouped by legislations
         assert len(part_0.substances_by_legislation) == 1
-        part_0_substances = part_0.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        part_0_substances = part_0.substances_by_legislation["SINList"]
         assert len(part_0_substances) == 2
         for substance in part_0_substances:
             sv = SubstanceValidator(substance)
@@ -56,7 +56,7 @@ class TestImpactedSubstances(BaseMockTester):
 
         # Test list of substances grouped by legislations
         assert len(part_1.substances_by_legislation) == 1
-        part_1_substances = part_1.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        part_1_substances = part_1.substances_by_legislation["SINList"]
         assert len(part_1_substances) == 2
         for substance in part_1_substances:
             sv = SubstanceValidator(substance)
@@ -65,7 +65,7 @@ class TestImpactedSubstances(BaseMockTester):
     def test_impacted_substances_by_legislation(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
         assert len(response.impacted_substances_by_legislation) == 1
-        legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        legislation = response.impacted_substances_by_legislation["SINList"]
         for substance in legislation:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()

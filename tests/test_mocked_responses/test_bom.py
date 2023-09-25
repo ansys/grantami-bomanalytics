@@ -15,7 +15,7 @@ class TestImpactedSubstances(BaseMockTester):
     def test_impacted_substances_by_legislation(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
         assert len(response.impacted_substances_by_legislation) == 1
-        legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        legislation = response.impacted_substances_by_legislation["SINList"]
         for substance in legislation:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()

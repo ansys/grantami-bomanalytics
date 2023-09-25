@@ -42,8 +42,8 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # + tags=[]
 PPS_ID = "plastic-pps-generalpurpose"
 PC_ID = "plastic-pc-20carbonfiber"
-SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
-REACH = "EU REACH - The Candidate List"
+SIN_LIST = "SINList"
+REACH = "Candidate_AnnexXV"
 # -
 
 # Next import the ``queries`` module and build the query with the references in the previous cell.

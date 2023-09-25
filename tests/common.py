@@ -1,6 +1,6 @@
 from ansys.grantami.bomanalytics import indicators
 
-LEGISLATIONS = ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]
+LEGISLATIONS = ["SINList", "CCC"]
 
 two_legislation_indicator = indicators.WatchListIndicator(
     name="Two legislations",

@@ -43,7 +43,7 @@ python = "^3.8.0"
 
 # Packages for core library
 ansys-openapi-common = "< 2.0.0"
-ansys-grantami-bomanalytics-openapi = { git = 'https://github.com/ansys/grantami-bomanalytics-openapi-private.git', subdirectory = 'ansys-grantami-bomanalytics-openapi', rev = '157ee51' }
+ansys-grantami-bomanalytics-openapi = { git = 'https://github.com/ansys/grantami-bomanalytics-openapi-private.git', subdirectory = 'ansys-grantami-bomanalytics-openapi', rev = '43692da' }
 
 # Packages for the examples extra
 jupyterlab = { version = ">=3,<5", optional = true }

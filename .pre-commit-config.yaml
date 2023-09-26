@@ -31,7 +31,7 @@ repos:
     language: python
     types: [python]
     require_serial: true
-    files: "^(ansys/)"
+    files: "^(src/)"
     additional_dependencies: ["mypy==1.5.1"]
 
 #- repo: https://github.com/pycqa/pydocstyle

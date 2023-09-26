@@ -1,5 +1,5 @@
 import inspect
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, cast
+from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Type, cast
 
 from xmlschema import XMLSchema  # type: ignore[import]
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class BoMReader:
     _schema: XMLSchema
-    _class_members: Dict[str, type[BaseType]]
+    _class_members: Dict[str, Type[BaseType]]
 
     def __init__(self, schema: XMLSchema):
         """
@@ -25,7 +25,7 @@ class BoMReader:
         """
         self._schema = schema
         self._namespaces: Dict[str, str] = {}
-        self._class_members: Dict[str, type[BaseType]] = {
+        self._class_members: Dict[str, Type[BaseType]] = {
             k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
         }
 
@@ -74,7 +74,7 @@ class BoMReader:
 
     def _deserialize_list_type(
         self,
-        instance: "type[BaseType]",
+        instance: "Type[BaseType]",
         obj: Dict,
         target_type: str,
         target_property_name: str,
@@ -90,7 +90,7 @@ class BoMReader:
         return {}
 
     def _deserialize_single_type(
-        self, instance: "type[BaseType]", obj: Dict, target_type: str, target_property_name: str, field_name: str
+        self, instance: "Type[BaseType]", obj: Dict, target_type: str, target_property_name: str, field_name: str
     ) -> Dict[str, Any]:
         field_obj = self.get_field(instance, obj, field_name)
         if field_obj is not None:
@@ -98,7 +98,7 @@ class BoMReader:
         return {}
 
     def get_field(
-        self, instance: "type[HasNamespace]", obj: Dict, field_name: str, namespace_url: Optional[str] = None
+        self, instance: "Type[HasNamespace]", obj: Dict, field_name: str, namespace_url: Optional[str] = None
     ) -> Any:
         """
         Given an object and a local name, determines the qualified field name to fetch based on the document namespace

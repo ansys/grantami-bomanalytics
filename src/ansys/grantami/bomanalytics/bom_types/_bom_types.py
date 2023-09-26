@@ -1,7 +1,19 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Protocol, Tuple, Union, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    Protocol,
+    Tuple,
+    Type,
+    Union,
+    cast,
+)
 
 if TYPE_CHECKING:
     from ._bom_reader import BoMReader
@@ -639,7 +651,7 @@ class InternalIdentifierMixin(SupportsCustomFields):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        instance = cast(type[BaseType], cls)
+        instance = cast(Type[BaseType], cls)
         id_obj = bom_reader.get_field(instance, obj, "@id")
         if id_obj is not None:
             props["internal_id"] = id_obj
@@ -710,7 +722,7 @@ class CommonIdentifiersMixin(SupportsCustomFields):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        instance = cast(type[BaseType], cls)
+        instance = cast(Type[BaseType], cls)
         identity_obj = bom_reader.get_field(instance, obj, "Identity")
         if identity_obj is not None:
             props["identity"] = identity_obj

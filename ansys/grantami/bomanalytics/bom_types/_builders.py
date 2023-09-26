@@ -1,15 +1,17 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from . import MIAttributeReference, MIRecordReference, PartialTableReference, PseudoAttribute
 
 
 class _AttributeReferenceByNameBuilder:
-    _parent: "AttributeReferenceBuilder"
+    _parent: AttributeReferenceBuilder
 
-    def __init__(self, root_builder: "AttributeReferenceBuilder") -> None:
+    def __init__(self, root_builder: AttributeReferenceBuilder) -> None:
         self._parent = root_builder
 
-    def with_table_name(self, table_name: str) -> "_FinalAttributeReferenceBuilder":
+    def with_table_name(self, table_name: str) -> _FinalAttributeReferenceBuilder:
         """
         Specify the table by name
 
@@ -27,7 +29,7 @@ class _AttributeReferenceByNameBuilder:
         self._set_table_reference(table_reference)
         return _FinalAttributeReferenceBuilder(self._parent)
 
-    def with_table_identity(self, table_identity: int) -> "_FinalAttributeReferenceBuilder":
+    def with_table_identity(self, table_identity: int) -> _FinalAttributeReferenceBuilder:
         """
         Specify the table by its identity
 
@@ -45,7 +47,7 @@ class _AttributeReferenceByNameBuilder:
         self._set_table_reference(table_reference)
         return _FinalAttributeReferenceBuilder(self._parent)
 
-    def with_table_guid(self, table_guid: str) -> "_FinalAttributeReferenceBuilder":
+    def with_table_guid(self, table_guid: str) -> _FinalAttributeReferenceBuilder:
         """
         Specify the table by its GUID
 
@@ -63,17 +65,17 @@ class _AttributeReferenceByNameBuilder:
         self._set_table_reference(table_reference)
         return _FinalAttributeReferenceBuilder(self._parent)
 
-    def _set_table_reference(self, table_reference: "PartialTableReference") -> None:
+    def _set_table_reference(self, table_reference: PartialTableReference) -> None:
         self._parent._build.table_reference = table_reference
 
 
 class _FinalAttributeReferenceBuilder:
-    _source: "AttributeReferenceBuilder"
+    _source: AttributeReferenceBuilder
 
-    def __init__(self, source: "AttributeReferenceBuilder") -> None:
+    def __init__(self, source: AttributeReferenceBuilder) -> None:
         self._source = source
 
-    def build(self) -> "MIAttributeReference":
+    def build(self) -> MIAttributeReference:
         """
         Build the finished MI Attribute Reference
 
@@ -85,10 +87,9 @@ class _FinalAttributeReferenceBuilder:
 
 
 class AttributeReferenceBuilder:
-    _build: "MIAttributeReference"
-    _is_complete: bool
+    _build: MIAttributeReference
 
-    def __init__(self, *, db_key: str) -> None:
+    def __init__(self, db_key: str) -> None:
         """
         Create a MI Attribute Reference with a valid combination of properties.
 
@@ -99,7 +100,7 @@ class AttributeReferenceBuilder:
         """
         self._build = MIAttributeReference(db_key=db_key)
 
-    def with_attribute_identity(self, attribute_identity: int) -> "_FinalAttributeReferenceBuilder":
+    def with_attribute_identity(self, attribute_identity: int) -> _FinalAttributeReferenceBuilder:
         """
         Specify the attribute by its identity.
 
@@ -115,7 +116,7 @@ class AttributeReferenceBuilder:
         self._build.attribute_identity = attribute_identity
         return _FinalAttributeReferenceBuilder(self)
 
-    def as_pseudo_attribute(self, pseudo_attribute: PseudoAttribute) -> "_FinalAttributeReferenceBuilder":
+    def as_pseudo_attribute(self, pseudo_attribute: PseudoAttribute) -> _FinalAttributeReferenceBuilder:
         """
         Specify the attribute as a specific pseudo-attribute.
 
@@ -131,8 +132,8 @@ class AttributeReferenceBuilder:
         return _FinalAttributeReferenceBuilder(self)
 
     def with_attribute_name(
-        self, attribute_name: str, is_standard_name: bool = False
-    ) -> "_AttributeReferenceByNameBuilder":
+        self, attribute_name: str, *, is_standard_name: bool = False
+    ) -> _AttributeReferenceByNameBuilder:
         """
         Specify the attribute by name, which may be a standard name.
 
@@ -153,9 +154,9 @@ class AttributeReferenceBuilder:
 
 
 class RecordReferenceBuilder:
-    _build: "MIRecordReference"
+    _build: MIRecordReference
 
-    def __init__(self, *, db_key: str, record_uid: Optional[str] = None) -> None:
+    def __init__(self, db_key: str, *, record_uid: Optional[str] = None) -> None:
         """
         Create a MIRecordReference with a valid combination of properties.
 
@@ -170,7 +171,7 @@ class RecordReferenceBuilder:
 
     def with_record_history_id(
         self, record_history_id: int, *, record_version_number: Optional[int] = None
-    ) -> "_FinalRecordReferenceBuilder":
+    ) -> _FinalRecordReferenceBuilder:
         """
         Specify the record by its history identity, and optionally the version number if the record is in a
         Version-Controlled table.
@@ -191,7 +192,7 @@ class RecordReferenceBuilder:
         self._build.record_version_number = record_version_number
         return _FinalRecordReferenceBuilder(self)
 
-    def with_record_guid(self, record_guid: str) -> "_FinalRecordReferenceBuilder":
+    def with_record_guid(self, record_guid: str) -> _FinalRecordReferenceBuilder:
         """
         Specify the record by its GUID.
 
@@ -209,7 +210,7 @@ class RecordReferenceBuilder:
         self._build.record_guid = record_guid
         return _FinalRecordReferenceBuilder(self)
 
-    def with_record_history_guid(self, record_history_guid: str) -> "_FinalRecordReferenceBuilder":
+    def with_record_history_guid(self, record_history_guid: str) -> _FinalRecordReferenceBuilder:
         """
         Specify the record by its History GUID.
 
@@ -230,7 +231,7 @@ class RecordReferenceBuilder:
 
     def with_lookup_value(
         self, *, lookup_value: str, lookup_attribute_reference: MIAttributeReference
-    ) -> "_FinalRecordReferenceBuilder":
+    ) -> _FinalRecordReferenceBuilder:
         """
         Specify the record by a unique value on a short-text attribute.
 
@@ -254,12 +255,12 @@ class RecordReferenceBuilder:
 
 
 class _FinalRecordReferenceBuilder:
-    _source: "RecordReferenceBuilder"
+    _source: RecordReferenceBuilder
 
-    def __init__(self, source: "RecordReferenceBuilder") -> None:
+    def __init__(self, source: RecordReferenceBuilder) -> None:
         self._source = source
 
-    def build(self) -> "MIRecordReference":
+    def build(self) -> MIRecordReference:
         """
         Build the finished MI Record Reference.
 

@@ -89,9 +89,9 @@ class BaseType(HasNamespace, SupportsCustomFields):
 
     def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
         """
-        Writes any fields on the serialized object that are in a nonstandard configuration. This can anonymous complex
-        types, Sequences of simple types and similar. This is called after the standard serialization occurs, and
-        should modify in place the ``obj`` argument.
+        Writes any fields on the serialized object that are in a nonstandard configuration. This can be anonymous
+        complex types, Sequences of simple types and similar. This is called after the standard serialization occurs,
+        and should modify the ``obj`` argument in place.
 
         Parameters
         ----------

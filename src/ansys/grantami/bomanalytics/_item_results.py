@@ -639,6 +639,13 @@ class ItemResultFactory:
         except KeyError as e:
             raise KeyError(f"Unknown reference_type {reference_type} " f"returned.").with_traceback(e.__traceback__)
 
+    @staticmethod
+    def create_licensing_result(result: models.GetAvailableLicensesResponse) -> "Licensing":
+        return Licensing(
+            restricted_substances=result.restricted_substances,
+            sustainability=result.sustainability,
+        )
+
 
 class ImpactedSubstance(BaseSubstanceReference):
     """Represents a substance impacted by a legislation.
@@ -2178,3 +2185,21 @@ class ProcessSummaryResult(SustainabilitySummaryMixin):
             f"<{self.__class__.__name__}(process='{self.process_name}', material='{self.material_identity}', "
             f"EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
         )
+
+
+class Licensing:
+    """Granta MI BomAnalytics Services licensing information."""
+
+    def __init__(self, restricted_substances: bool, sustainability: bool):
+        self._restricted_substances: bool = restricted_substances
+        self._sustainability: bool = sustainability
+
+    @property
+    def restricted_substances(self) -> bool:
+        """Whether the targeted Granta MI Server has a license for Restricted Substances analysis."""
+        return self._restricted_substances
+
+    @property
+    def sustainability(self) -> bool:
+        """Whether the targeted Granta MI Server has a license for Sustainability analysis."""
+        return self._sustainability

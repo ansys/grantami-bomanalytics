@@ -1,6 +1,8 @@
 from ansys.grantami.bomanalytics import indicators
 
+LICENSE_RESPONSE = {"LogMessages": [], "RestrictedSubstances": True, "Sustainability": True}
 LEGISLATIONS = ["SINList", "CCC"]
+
 
 two_legislation_indicator = indicators.WatchListIndicator(
     name="Two legislations",

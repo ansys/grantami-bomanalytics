@@ -35,3 +35,5 @@ Exceptions
 ==========
 
 .. autoclass:: ansys.grantami.bomanalytics.GrantaMIException
+
+.. autoclass:: ansys.grantami.bomanalytics.LicensingException

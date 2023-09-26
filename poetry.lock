@@ -66,22 +66,23 @@ oidc = ["keyring (>=22,<24)", "requests_auth (>=6.0,<7.0)"]
 
 [[package]]
 name = "ansys-sphinx-theme"
-version = "0.10.6"
+version = "0.12.0"
 description = "A theme devised by ANSYS, Inc. for Sphinx documentation."
 optional = false
 python-versions = ">=3.8,<4"
 files = [
-    {file = "ansys_sphinx_theme-0.10.6-py3-none-any.whl", hash = "sha256:0ff077a35d0d950aa2d8ebe95ec5f2e8ed217c9721bea5380623c2781ffcc2ac"},
-    {file = "ansys_sphinx_theme-0.10.6.tar.gz", hash = "sha256:b66082557fbab9fe192cc1b4be495e0a64c86ba107929775cd8866ff97d3fadc"},
+    {file = "ansys_sphinx_theme-0.12.0-py3-none-any.whl", hash = "sha256:dcff6cb0819d930a4fe2f84df1a927b65768925e68798df738cc209b1f895ed7"},
+    {file = "ansys_sphinx_theme-0.12.0.tar.gz", hash = "sha256:7d440f8aa764f4d11e89b96509da66085efce33e09fd6cac93ae044af7cdf033"},
 ]
 
 [package.dependencies]
+importlib-metadata = ">=4.0"
 Jinja2 = ">=3.1.2"
-pydata-sphinx-theme = "0.13.3"
+pydata-sphinx-theme = ">=0.14.0"
 Sphinx = ">=4.2.0"
 
 [package.extras]
-doc = ["Sphinx (==6.2.1)", "numpydoc (==1.5.0)", "requests (==2.31.0)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.4.1)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==0.8.3)"]
+doc = ["Sphinx (==7.2.6)", "numpydoc (==1.6.0)", "requests (==2.31.0)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.5.0)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==1.0.0)"]
 
 [[package]]
 name = "anyio"
@@ -2246,13 +2247,13 @@ files = [
 
 [[package]]
 name = "pydata-sphinx-theme"
-version = "0.13.3"
+version = "0.14.1"
 description = "Bootstrap-based Sphinx theme from the PyData community"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "pydata_sphinx_theme-0.13.3-py3-none-any.whl", hash = "sha256:bf41ca6c1c6216e929e28834e404bfc90e080b51915bbe7563b5e6fda70354f0"},
-    {file = "pydata_sphinx_theme-0.13.3.tar.gz", hash = "sha256:827f16b065c4fd97e847c11c108bf632b7f2ff53a3bca3272f63f3f3ff782ecc"},
+    {file = "pydata_sphinx_theme-0.14.1-py3-none-any.whl", hash = "sha256:c436027bc76ae023df4e70517e3baf90cdda5a88ee46b818b5ef0cc3884aba04"},
+    {file = "pydata_sphinx_theme-0.14.1.tar.gz", hash = "sha256:d8d4ac81252c16a002e835d21f0fea6d04cf3608e95045c816e8cc823e79b053"},
 ]
 
 [package.dependencies]
@@ -2262,13 +2263,14 @@ beautifulsoup4 = "*"
 docutils = "!=0.17.0"
 packaging = "*"
 pygments = ">=2.7"
-sphinx = ">=4.2"
+sphinx = ">=5.0"
 typing-extensions = "*"
 
 [package.extras]
+a11y = ["pytest-playwright"]
 dev = ["nox", "pre-commit", "pydata-sphinx-theme[doc,test]", "pyyaml"]
-doc = ["ablog (>=0.11.0rc2)", "colorama", "ipyleaflet", "jupyter_sphinx", "linkify-it-py", "matplotlib", "myst-nb", "nbsphinx", "numpy", "numpydoc", "pandas", "plotly", "rich", "sphinx-copybutton", "sphinx-design", "sphinx-favicon (>=1.0.1)", "sphinx-sitemap", "sphinx-togglebutton", "sphinxcontrib-youtube", "sphinxext-rediraffe", "xarray"]
-test = ["codecov", "pytest", "pytest-cov", "pytest-regressions"]
+doc = ["ablog (>=0.11.0rc2)", "colorama", "ipyleaflet", "jupyter_sphinx", "jupyterlite-sphinx", "linkify-it-py", "matplotlib", "myst-nb", "nbsphinx", "numpy", "numpydoc", "pandas", "plotly", "rich", "sphinx-autoapi", "sphinx-copybutton", "sphinx-design", "sphinx-favicon (>=1.0.1)", "sphinx-sitemap", "sphinx-togglebutton", "sphinxcontrib-youtube (<1.4)", "sphinxext-rediraffe", "xarray"]
+test = ["pytest", "pytest-cov", "pytest-regressions"]
 
 [[package]]
 name = "pygments"
@@ -3459,4 +3461,4 @@ examples = ["jupyterlab", "lxml", "pandas", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.0"
-content-hash = "5b91efe5c536999497fd693a7f53d2ea48298deeba5d349ffa8421b99de8d011"
+content-hash = "1de179cad1290c3c33e7fb7b4616d88ec17ce9142cf5e309fabf5810bab89518"

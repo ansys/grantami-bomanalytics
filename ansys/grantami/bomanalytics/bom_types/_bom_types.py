@@ -69,7 +69,7 @@ class BaseType(HasNamespace, SupportsCustomFields):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
         """
-        Populates any fields on the object that are in a nonstandard configuration. This can anonymous complex types,
+        Populates any fields on the object that are in a nonstandard configuration. This can be anonymous complex types,
         Sequences of simple types and similar. This is called after the standard deserialization occurs, and should
         return a dictionary mapping constructor argument names to values.
 

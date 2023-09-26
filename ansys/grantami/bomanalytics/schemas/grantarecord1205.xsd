@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.grantadesign.com/12/05/GrantaBaseTypes" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes">
+  <complexType name="MIEntityReference" abstract="true">
+    <annotation>
+      <documentation>A base type for types that identify entities in an MI Database. The details of how entities are identified differ between concrete sub-types.</documentation>
+    </annotation>
+    <sequence>
+      <element name="dbKey" type="normalizedString" minOccurs="0" maxOccurs="1">
+        <annotation>
+          <documentation>The key that uniquely identifies a particular Database on the MI Server. Though this element is defined as optional, a
+      database key is required in almost all references; only a few specialised usages will accept a reference without database key.</documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+
+  <attributeGroup name="StandardNameAttributes">
+    <annotation>
+      <documentation>Attributes for referencing an item by name, where the name may, or may not, be a Standard Name.</documentation>
+    </annotation>
+    <attribute name="isStandard" type="boolean"/>
+  </attributeGroup>
+  <complexType name="ReferenceByName">
+    <annotation>
+      <documentation>Element for referencing an item by name, where the name may, or may not, be a Standard Name.</documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="normalizedString">
+        <attributeGroup ref="gbt:StandardNameAttributes"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  <complexType name="MIRecordReference">
+    <annotation>
+      <documentation>A type that allows identification of a particular Record in an
+      MI Database. This may be done directly by specifying the Identity or GUID of the Record, or
+      indirectly by specifying a lookup that will match (only) the Record.</documentation>
+    </annotation>
+    <complexContent>
+      <extension base="gbt:MIEntityReference">
+        <sequence>
+          <sequence>
+            <annotation>
+              <documentation>For input you should provide exactly one of either identity, recordGUID, recordHistoryGUID
+                or lookupValue. If more than one element identifying the record is given, only one is used; the descending
+                order of priority is: identity, recordGUID, recordHistoryGUID, lookupValue. The Service Layer does not
+                check that the several elements identifying the record are all referencing the same record, it just picks the highest-priority
+                one and uses that.</documentation>
+            </annotation>
+            <element name="identity" minOccurs="0">
+              <annotation>
+                <documentation>This element will always be present if service layer has generated this reference.
+                If used as an input to the service layer, then this element is optional. This is the best-performing and
+                highest-priority way to reference a record; however, identities might not be suitable for long-term
+                persistence.</documentation>
+              </annotation>
+              <complexType>
+                <sequence>
+                  <element name="recordHistoryIdentity" type="int"/>
+                  <element name="version" minOccurs="0" type="int">
+                    <annotation>
+                      <documentation>If omitted, this means the latest version visible to the user.</documentation>
+                    </annotation>
+                  </element>
+                </sequence>
+              </complexType>
+            </element>
+            <element name="recordGUID" minOccurs="0" maxOccurs="1" type="gbt:StringifiedGUID">
+              <annotation>
+                <documentation>This element will usually be present if service layer has generated this reference.  If used as an input to the service layer, then this element is optional.</documentation>
+              </annotation>
+            </element>
+            <element name="recordHistoryGUID" minOccurs="0" type="gbt:StringifiedGUID">
+              <annotation>
+                <documentation>This element will usually be present if service layer has generated this reference.  If used as an input to the service layer, then this element is optional.</documentation>
+              </annotation>
+            </element>
+            <element name="lookupValue" minOccurs="0">
+              <annotation>
+                <documentation>This element is optional - the service layer may return this element if this element was specified in the input of the data export.</documentation>
+              </annotation>
+              <complexType>
+                <annotation>
+                  <documentation>Instead of by identity or GUID, records may also be
+                  looked up by an attribute value or pseudo-attribute value. Only
+                  a small number of simple attribute types and simple pseudo-attributes
+                  are supported for this lookup. In addition, the looked-up
+                  value must be unique; behaviour is undefined if it is not unique.</documentation>
+                </annotation>
+                <sequence>
+                  <element name="attributeReference" type="gbt:MIAttributeReference"/>
+                  <element name="attributeValue" type="string"/>
+                </sequence>
+              </complexType>
+            </element>
+          </sequence>
+        </sequence>
+        <attribute name="recordUID" type="token" use="optional">
+          <annotation>
+            <documentation>The recordUID may be used to identify a particular XML element
+              representing a record. Generally, it will be set by the caller and its value
+              will simply be retained by the Service Layer, as the element is passed around.
+              It does NOT represent any property or attribute of an actual MI Record.</documentation>
+          </annotation>
+        </attribute>
+      </extension>
+    </complexContent>
+  </complexType>
+  <element name="recordReferences">
+    <complexType>
+      <sequence>
+        <element name="record" minOccurs="0" maxOccurs="unbounded" type="gbt:MIRecordReference"/>
+      </sequence>
+    </complexType>
+  </element>
+  <simpleType name="MIPseudoAttribute">
+    <annotation>
+      <documentation>A type that may be used in some places where an Attribute is required, to
+      describe some information about a Record that is not stored in an actual Attribute. This
+      is sometimes referred to as a Record Property. Not a real attribute and hence only
+      applicable to certain operations; others may fail.</documentation>
+    </annotation>
+    <restriction base="token">
+      <enumeration value="name">
+        <annotation>
+          <documentation>The full name of the Record</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="shortName">
+        <annotation>
+          <documentation>The short or "tree" name of the Record</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="subsets">
+        <annotation>
+          <documentation>Comma-separated list of names of Subsets to which this Record belongs.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="releasedDate">
+        <annotation>
+          <documentation>The date at which this Record was Released, in a Version-Controlled database.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="modifiedDate">
+        <annotation>
+          <documentation>The date at which this Record was last modified. Note that not all changes that conceptually
+          appear to modify the Record actually result in this date being updated, because MI considers them to be
+          changes to related objects, rather than to the Record itself.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="recordType">
+        <annotation>
+          <documentation>Indicates whether the node is a plain Record, a Folder etc.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="recordHistoryIdentity">
+        <annotation>
+          <documentation>The identity, in the MI Database, of the Record History that owns all versions of the Record.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="recordColor">
+        <annotation>
+          <documentation>The colour that should be used to render the Record, for display.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="linkedRecords">
+        <annotation>
+          <documentation>The Records that are linked to this Record, via static RecordLinkGroups. This pseudo-attribute has been deprecated because it
+		  returns all links for a potentially large number of record link groups. Please use GetLinkedRecords or DataExport to get the linked records.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="versionState"/>
+      <enumeration value="recordGUID">
+        <annotation>
+          <documentation>The GUID of the specific version of the Record.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="recordHistoryGUID">
+        <annotation>
+          <documentation>The GUID of the Record History, which is shared by all versions of the Record.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="recordVersionNumber">
+        <annotation>
+          <documentation>The Version Number of the Record. For a non-version-controlled table, NotApplicable is set to true.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="tableName">
+        <annotation>
+          <documentation>The Name of the Table containing the Record.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="childRecords">
+        <annotation>
+          <documentation>All direct child records the Record. Does not include the children of those children; it is not recursive.</documentation>
+        </annotation>
+      </enumeration>
+      <enumeration value="tableFilters">
+        <annotation>
+          <documentation>The zero or more table filters matched by the Table from which the Record came.</documentation>
+        </annotation>
+      </enumeration>
+    </restriction>
+  </simpleType>
+  <complexType name="MIAttributeReference">
+    <annotation>
+      <documentation>A type that allows identification of a particular Attribute in an
+      MI Database. This may be done directly by specifying the Identity of the Attribute, or
+      indirectly by specifying a lookup that will match (only) the Attribute.
+      Note: in certain cases, an MIAttributeReference may match more than one Attribute in
+      the MI Database; depending on the operation, this may be legal or may result in
+      a Fault.</documentation>
+    </annotation>
+  <complexContent>
+    <extension base="gbt:MIEntityReference">
+        <sequence>
+          <choice>
+            <element name="attributeIdentity" type="int" maxOccurs="1"/>
+            <element name="name">
+              <complexType>
+                <sequence>
+                  <element name="table" type="gbt:PartialTableReference" minOccurs="0">
+                    <annotation>
+                      <documentation>Required for plain attribute name. Optional for standard attribute name.</documentation>
+                    </annotation>
+                  </element>
+                  <choice>
+                    <element name="attributeName" type="normalizedString"/>
+                    <element name="pseudo" type="gbt:MIPseudoAttribute">
+                    </element>
+                  </choice>
+                </sequence>
+                <attributeGroup ref="gbt:StandardNameAttributes"/>
+              </complexType>
+            </element>
+          </choice>
+        </sequence>
+    </extension>
+  </complexContent>
+  </complexType>
+  <complexType name="PartialTableReference">
+    <annotation>
+      <documentation>A type that partially identifies a Table, but does not specify the
+      MI Database. Usually, just one of the several optional fields should be provided; where
+      more than one is provided, the highest priority one is used, where the descending
+      priority order is: tableIdentity, tableGUID, tableName.</documentation>
+    </annotation>
+    <sequence>
+      <element name="tableIdentity" minOccurs="0" type="int">
+        <annotation>
+          <documentation>The table identity is the fastest and highest-priority way to reference a table. However, table
+          identities might not be a good choice for long-lived references to tables.</documentation>
+        </annotation>
+      </element>
+      <element name="tableGUID" minOccurs="0" type="gbt:StringifiedGUID">
+        <annotation>
+          <documentation>A table GUID is a good choice for long-lived references to tables.</documentation>
+        </annotation>
+      </element>
+      <element name="tableName" type="normalizedString" minOccurs="0">
+        <annotation>
+          <documentation>Table name. Note that table names vary between localisations of databases, so
+          may not be a good choice for long-lived references to tables.</documentation>
+        </annotation>
+      </element>
+    </sequence>
+  </complexType>
+  <complexType name="MITableReference">
+    <annotation>
+      <documentation>A type that allows identification of a particular Table in a particular MI Database.</documentation>
+    </annotation>
+    <complexContent>
+      <extension base="gbt:PartialTableReference">
+        <sequence>
+          <element name="dbKey" type="normalizedString">
+            <annotation>
+              <documentation>The key that uniquely identifies a particular Database on the MI Server</documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  <simpleType name="StringifiedGUID">
+    <annotation>
+      <documentation>A string representation of a Globally Unique IDentifier (GUID).</documentation>
+    </annotation>
+    <restriction base="normalizedString">
+      <pattern value="[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"/>
+    </restriction>
+  </simpleType>
+</schema>

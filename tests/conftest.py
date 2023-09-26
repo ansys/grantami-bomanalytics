@@ -7,7 +7,7 @@ import requests_mock
 
 from ansys.grantami.bomanalytics import Connection
 
-from .common import CUSTOM_TABLES
+from .common import CUSTOM_TABLES, LICENSE_RESPONSE
 
 sl_url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
 read_username = os.getenv("TEST_USER")
@@ -53,9 +53,9 @@ def configurable_connection_write(request):
 
 
 @pytest.fixture
-def mock_connection():
+def mock_connection(monkeypatch):
     with requests_mock.Mocker() as m:
-        m.get(requests_mock.ANY, text="")
+        m.get(requests_mock.ANY, json=LICENSE_RESPONSE)
         connection = Connection(api_url=sl_url).with_anonymous().connect()
     return connection
 

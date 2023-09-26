@@ -26,9 +26,9 @@ GRANTA_APPLICATION_NAME_HEADER : str
     Identifier used internally by the Granta MI Server.
 """
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type, Union, overload
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, overload
 
-from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import api, models  # type: ignore[import]
 from ansys.openapi.common import (  # type: ignore[import]
     ApiClient,
     ApiClientFactory,
@@ -37,16 +37,19 @@ from ansys.openapi.common import (  # type: ignore[import]
     generate_user_agent,
 )
 
+from ._exceptions import LicensingException
+from ._item_results import ItemResultFactory
 from ._logger import logger
-from .queries import Yaml
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
 SERVICE_PATH = "/BomAnalytics/v1.svc"
 MI_AUTH_PATH = "/Health/v2.svc"
 GRANTA_APPLICATION_NAME_HEADER = "PyGranta BoM Analytics"
 
+MINIMUM_GRANTA_MI_VERSION = (24, 1)
 
 if TYPE_CHECKING:
+    from ._item_results import Licensing
     from ._query_results import (
         BomComplianceQueryResult,
         BomImpactedSubstancesQueryResult,
@@ -149,6 +152,8 @@ class Connection(ApiClientFactory):
             When the client is not fully configured.
         ConnectionError
             If the resulting client cannot connect to the BoM Analytics service.
+        LicensingException
+            Error raised if no licenses were found.
         """
 
         self._validate_builder()
@@ -165,9 +170,9 @@ class Connection(ApiClientFactory):
     def _test_connection(client: "BomAnalyticsClient") -> None:
         """Check if the created client can be used to perform a query.
 
-        This method uses a YAML query because it is a GET query that does not require parameters.
+        This method checks for the licensing details, because it is a GET query that does not require parameters.
         It specifically checks for a 404 error, which most likely means that the BoM Analytics
-        service is not available.
+        service is not available, or is not the expected minimum version.
 
         Parameters
         ----------
@@ -178,20 +183,28 @@ class Connection(ApiClientFactory):
         ------
         ConnectionError
             Error raised if the test query fails.
+        LicensingException
+            Error raised if no licenses were found.
         """
         try:
-            client.run(Yaml)
+            licenses = client._get_licensing_information()
         except ApiException as e:
             if e.status_code == 404:
                 raise ConnectionError(
                     "Cannot find the BoM Analytics service in Granta MI Service Layer. Ensure a compatible version of "
-                    "the Restricted Substances Reports are available on the server and try again."
+                    "the Restricted Substances And Sustainability Reports are available on the server and try again."
+                    f"The minimum required version is {'.'.join([str(e) for e in MINIMUM_GRANTA_MI_VERSION])}."
                 )
             else:
                 raise ConnectionError(
                     "An unexpected error occurred when trying to connect to BoM Analytics service in Granta MI Service "
                     "Layer. Check the Service Layer logs for more information and try again."
                 )
+        if not licenses.restricted_substances and not licenses.sustainability:
+            raise LicensingException(
+                "The connection to BoM Analytics Services was successful, but there are no valid licenses for either "
+                "restricted substances or sustainability. Contact your Granta MI administrator."
+            )
 
 
 class BomAnalyticsClient(ApiClient):
@@ -376,14 +389,6 @@ class BomAnalyticsClient(ApiClient):
         ...
 
     @overload
-    def run(self, query: "Yaml") -> str:
-        ...
-
-    @overload
-    def run(self, query: Type["Yaml"]) -> str:
-        ...
-
-    @overload
     def run(self, query: "BomSustainabilityQuery") -> "BomSustainabilityQueryResult":
         ...
 
@@ -391,19 +396,19 @@ class BomAnalyticsClient(ApiClient):
     def run(self, query: "BomSustainabilitySummaryQuery") -> "BomSustainabilitySummaryQueryResult":
         ...
 
-    def run(self, query: Union["_BaseQuery", Type["Yaml"]]) -> Union["ResultBaseClass", str]:
+    def run(self, query: "_BaseQuery") -> "ResultBaseClass":
         """Run a query against the Granta MI database.
 
         Parameters
         ----------
         query
-            A compliance, impacted substance, sustainability, or YAML query object.
+            A compliance, impacted substance, or sustainability query object.
 
         Returns
         -------
         Query Result
             Specific result object based on the provided query, which contains either the compliance,
-            impacted substances, or sustainability results. In the case of a YAML query, a string is returned.
+            impacted substances, or sustainability results.
 
         Raises
         ------
@@ -464,3 +469,27 @@ class BomAnalyticsClient(ApiClient):
 
         arguments = {"config": config, "database_key": self._db_key}
         return arguments
+
+    def _get_licensing_information(self) -> "Licensing":
+        """
+        Get licensing information from the server.
+
+        Returns
+        -------
+        :class:`~ansys.grantami.bomanalytics._item_results.Licensing`
+        """
+        api_instance = api.LicensesApi(self)
+        response = api_instance.get_licenses()
+        return ItemResultFactory.create_licensing_result(response)
+
+    def _get_yaml(self) -> str:
+        """
+        Get the OpenAPI document for the BoM Analytics Services API.
+
+        Returns
+        -------
+        str
+        """
+        api_instance = api.DocumentationApi(self)
+        result: str = api_instance.get_yaml()
+        return result

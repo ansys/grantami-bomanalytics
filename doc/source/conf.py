@@ -46,7 +46,6 @@ add_module_names = False
 # sphinx.ext.autodoc
 autodoc_typehints = "description"
 autodoc_typehints_description_target = "documented"
-autodoc_type_aliases = {"Yaml": "Yaml"}
 
 # Intersphinx mapping
 intersphinx_mapping = {

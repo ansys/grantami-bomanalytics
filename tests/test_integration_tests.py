@@ -128,7 +128,15 @@ def test_missing_table_raises_grantami_exception(default_connection):
 
 @pytest.mark.parametrize("configurable_connection", [True, False], indirect=True)
 def test_yaml(configurable_connection):
-    assert configurable_connection.run(queries.Yaml)
+    api_def = configurable_connection._get_yaml()
+    assert len(api_def) > 0
+
+
+@pytest.mark.parametrize("configurable_connection", [True, False], indirect=True)
+def test_licensing(configurable_connection):
+    resp = configurable_connection._get_licensing_information()
+    assert resp.restricted_substances is True
+    assert resp.sustainability is True
 
 
 class TestActAsReadUser:

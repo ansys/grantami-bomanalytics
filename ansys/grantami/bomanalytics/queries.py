@@ -73,7 +73,7 @@ class _BaseQuery(ABC):
     api_class: Type[api.ApiBase]
 
     @abstractmethod
-    def _run_query(self, api_instance: api.ApiBase, static_arguments: Dict) -> Union[ResultBaseClass, str]:
+    def _run_query(self, api_instance: api.ApiBase, static_arguments: Dict) -> ResultBaseClass:
         raise NotImplementedError
 
 
@@ -1752,45 +1752,6 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
         super().__init__()
         self._request_type = models.GetImpactedSubstancesForBom1711Request
         self._api_method = "post_impactedsubstances_bom1711"
-
-
-class Yaml(_BaseQuery):
-    """Gets the YAML description of the underlying REST API.
-
-    Because the API is fully implemented in this package, the description is unlikely to be
-    useful to end users. It is provided for completeness only.
-
-    This class only contains static methods and class attributes so that it can be used without instantiation.
-
-    Examples
-    --------
-    >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
-    >>> cxn.run(Yaml)
-    openapi: 3.0.1
-    info:
-      title: Granta.BomAnalyticsServices
-    ...
-    """
-
-    api_class = api.DocumentationApi
-
-    @staticmethod
-    def _run_query(api_instance: api.DocumentationApi, static_arguments: Dict) -> str:
-        """Get the YAML representation of the API from Granta MI.
-
-        Parameters
-        ----------
-        api_instance : api.DocumentationApi
-            Instance of the low-level ``DocumentationApi`` class.
-
-        Returns
-        -------
-        yaml : str
-            YAML definition of the BoM Analytics API.
-        """
-
-        result: str = api_instance.get_yaml()
-        return result
 
 
 class _SustainabilityMixin(_ApiMixin):

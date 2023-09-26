@@ -270,6 +270,19 @@ class TestSustainabilityResultsRepr:
         assert repr(result) == expected
 
 
+class TestLicensing:
+    @pytest.mark.parametrize("restricted_substances", [True, False])
+    @pytest.mark.parametrize("sustainability", [True, False])
+    def test_factory(self, restricted_substances, sustainability):
+        response = models.GetAvailableLicensesResponse(
+            restricted_substances=restricted_substances,
+            sustainability=sustainability,
+        )
+        result = ItemResultFactory.create_licensing_result(response)
+        assert result.restricted_substances is restricted_substances
+        assert result.sustainability is sustainability
+
+
 def test_unitted_value_repr():
     model = models.CommonValueWithUnit(unit="kg", value=255.2)
     result = ItemResultFactory.create_unitted_value(model)

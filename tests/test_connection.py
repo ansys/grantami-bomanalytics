@@ -4,9 +4,9 @@ import re
 import pytest
 import requests_mock
 
-from ansys.grantami.bomanalytics import Connection, _connection
+from ansys.grantami.bomanalytics import Connection, LicensingException, _connection
 
-from .common import CUSTOM_TABLES
+from .common import CUSTOM_TABLES, LICENSE_RESPONSE
 
 SL_URL = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
 
@@ -80,7 +80,7 @@ class TestConnectToSL:
     )
     def test_mocked(self, sl_url):
         with requests_mock.Mocker() as m:
-            m.get(requests_mock.ANY, text="")
+            m.get(requests_mock.ANY, json=LICENSE_RESPONSE)
             connection = Connection(api_url=sl_url).with_anonymous().connect()
         sl_url_stripped = sl_url.strip("/")
         assert connection.api_url == sl_url_stripped + _connection.SERVICE_PATH
@@ -108,6 +108,14 @@ class TestConnectToSL:
                 ConnectionError, match="An unexpected error occurred when trying to connect to BoM Analytics service"
             ):
                 Connection(api_url=sl_url).with_anonymous().connect()
+
+    def test_no_licenses_raises_informative_error(self):
+        sl_url = "http://host/path"
+        with requests_mock.Mocker() as m:
+            no_license_response = {"LogMessages": [], "RestrictedSubstances": False, "Sustainability": False}
+            m.get(requests_mock.ANY, json=no_license_response)
+            with pytest.raises(LicensingException, match="no valid licenses "):
+                connection = Connection(api_url=sl_url).with_anonymous().connect()
 
     @pytest.mark.integration
     @pytest.mark.parametrize("trailing_slash", [True, False])

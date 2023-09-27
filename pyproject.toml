@@ -32,11 +32,8 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
 ]
 packages = [
-  { include = "ansys/**/*.py" },
+  { include = "ansys", from = "src" }
 ]
- include = [
-   { path = "ansys/**/*.xsd" }
- ]
 
 [tool.poetry.dependencies]
 python = "^3.8.0"
@@ -149,4 +146,4 @@ line_length = 100
 default_section = "THIRDPARTY"
 skip_gitignore = true
 skip = [".ipython", "cicd", "examples", "examples-dummy"]
-src_paths = ["ansys", "tests"]
+src_paths = ["src", "tests"]

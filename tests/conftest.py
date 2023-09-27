@@ -17,39 +17,47 @@ write_username = os.getenv("TEST_WRITE_USER")
 write_password = os.getenv("TEST_WRITE_PASS")
 
 
-@pytest.fixture(scope="session")
-def default_connection():
-    if read_username is not None:
-        connection = Connection(api_url=sl_url).with_credentials(read_username, read_password).connect()
-    else:
-        connection = Connection(api_url=sl_url).with_autologon().connect()
-    return connection
-
-
-def _get_connection(request, url, username, password):
+def _get_connection(url, username, password):
     if username is not None:
         connection = Connection(api_url=url).with_credentials(username, password).connect()
     else:
         connection = Connection(api_url=url).with_autologon().connect()
-    if request.param:
-        if isinstance(request.param, str):
-            db_key = request.param
-        else:
-            db_key = "MI_Restricted_Substances_Custom_Tables"
-        connection.set_database_details(database_key=db_key, **{pn: tn for pn, tn in CUSTOM_TABLES})
-    else:
-        connection.set_database_details()
     return connection
 
 
 @pytest.fixture
-def configurable_connection(request):
-    return _get_connection(request, sl_url, read_username, read_password)
+def connection():
+    return _get_connection(sl_url, read_username, read_password)
+
+
+def _configure_connection_for_custom_db(_cxn):
+    _cxn.set_database_details(
+        database_key="MI_Restricted_Substances_Custom_Tables",
+        **{pn: tn for pn, tn in CUSTOM_TABLES},
+    )
 
 
 @pytest.fixture
-def configurable_connection_write(request):
-    return _get_connection(request, sl_url, write_username, write_password)
+def connection_custom_db(connection):
+    _configure_connection_for_custom_db(connection)
+    return connection
+
+
+@pytest.fixture(params=["default_db", "custom_db"])
+def parameterized_connection(request):
+    connection = _get_connection(sl_url, read_username, read_password)
+    if request.param == "default_db":
+        return connection
+    elif request.param == "custom_db":
+        _configure_connection_for_custom_db(connection)
+    return connection
+
+
+@pytest.fixture
+def connection_write_custom_db():
+    cxn = _get_connection(sl_url, write_username, write_password)
+    _configure_connection_for_custom_db(cxn)
+    return cxn
 
 
 @pytest.fixture

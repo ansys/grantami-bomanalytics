@@ -44,11 +44,11 @@ def connection_custom_db(connection):
 
 
 @pytest.fixture(params=["default_db", "custom_db"])
-def parameterized_connection(request):
+def connection_with_db_variants(request):
+    """Parameterized fixture: tests using this fixture will run multiple times, according to parameter values provided
+    in the fixture decorator."""
     connection = _get_connection(sl_url, read_username, read_password)
-    if request.param == "default_db":
-        return connection
-    elif request.param == "custom_db":
+    if request.param == "custom_db":
         _configure_connection_for_custom_db(connection)
     return connection
 

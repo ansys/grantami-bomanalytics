@@ -615,7 +615,7 @@ class ItemResultFactory:
         )
 
     @staticmethod
-    def parse_reference_type(reference_type: str) -> ReferenceType:
+    def parse_reference_type(reference_type: Optional[str]) -> Optional[ReferenceType]:
         """Parse the ``reference_type`` returned by the low-level API into a ``ReferenceType``.
 
         Parameters
@@ -634,6 +634,8 @@ class ItemResultFactory:
             Error to raise if the ``reference_type`` returned by the low-level API doesn't appear in ``ReferenceType``.
         """
 
+        if reference_type is None:
+            return reference_type
         try:
             return ReferenceType[reference_type]
         except KeyError as e:
@@ -666,7 +668,7 @@ class ImpactedSubstance(BaseSubstanceReference):
 
     def __init__(
         self,
-        reference_type: ReferenceType,
+        reference_type: Optional[ReferenceType],
         reference_value: Union[int, str],
         max_percentage_amount_in_material: Optional[float],
         legislation_threshold: Optional[float],

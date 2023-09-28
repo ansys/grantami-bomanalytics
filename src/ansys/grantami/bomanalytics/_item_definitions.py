@@ -46,7 +46,7 @@ class RecordReference(ABC):
 
     def __init__(
         self,
-        reference_type: ReferenceType,
+        reference_type: Optional[ReferenceType],
         reference_value: Union[int, str, None],
     ):
         self._reference_type = reference_type
@@ -82,8 +82,9 @@ class RecordReference(ABC):
         """
 
         _reference_value = str(self._reference_value) if self._reference_value is not None else None
+        _reference_type = self._reference_type.name if self._reference_type is not None else None
         result = {
-            "reference_type": self._reference_type.name,
+            "reference_type": _reference_type,
             "reference_value": _reference_value,
         }
         return result

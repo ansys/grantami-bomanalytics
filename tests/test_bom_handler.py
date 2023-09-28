@@ -83,7 +83,7 @@ class TestBoMDeserialization:
 
     @pytest.fixture(scope="class")
     def simple_bom(self):
-        bom_path = self._bom_location / "bom.xml"
+        bom_path = self._bom_location / "bom-1711-as-2301.xml"
         with open(bom_path, "r", encoding="utf8") as fp:
             input_bom = fp.read()
 

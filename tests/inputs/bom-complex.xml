@@ -1,4 +1,4 @@
-<PartsEco xmlns="http://www.grantadesign.com/23/01/BillOfMaterialsEco" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes" id="R0">
+<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes" id="R0">
     <Components>
         <Part id="R1">
             <Quantity Unit="Each">1.0</Quantity>

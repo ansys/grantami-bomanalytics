@@ -21,17 +21,14 @@ from typing import (
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 from ._item_definitions import (
-    BaseSubstanceReference,
     CoatingReference,
-    MaterialDefinition,
     MaterialReference,
-    PartDefinition,
     PartReference,
     ProcessReference,
     RecordReference,
     ReferenceType,
-    SpecificationDefinition,
     SpecificationReference,
+    SubstanceReference,
     TransportReference,
 )
 from .indicators import RoHSIndicator, WatchListIndicator
@@ -599,7 +596,7 @@ class ItemResultFactory:
         """
         return ProcessSummaryResult(
             material_identity=result.material_identity,
-            material_reference=MaterialDefinition(
+            material_reference=MaterialReference(
                 reference_type=cls.parse_reference_type(result.material_record_reference.reference_type),
                 reference_value=result.material_record_reference.reference_value,
             ),
@@ -649,7 +646,7 @@ class ItemResultFactory:
         )
 
 
-class ImpactedSubstance(BaseSubstanceReference):
+class ImpactedSubstance(SubstanceReference):
     """Represents a substance impacted by a legislation.
 
     This object includes two categories of attributes:
@@ -810,7 +807,7 @@ class RecordWithImpactedSubstancesResultMixin(ImpactedSubstancesResultMixin, Rec
 
 
 @ItemResultFactory.register("MaterialWithImpactedSubstances")
-class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialDefinition):
+class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialReference):
     """Retrieves an individual material that is included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -841,7 +838,7 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
 
 
 @ItemResultFactory.register("PartWithImpactedSubstances")
-class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartDefinition):
+class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartReference):
     """Retrieves an individual part included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -872,7 +869,7 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
 
 
 @ItemResultFactory.register("SpecificationWithImpactedSubstances")
-class SpecificationWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, SpecificationDefinition):
+class SpecificationWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, SpecificationReference):
     """Retrieves an individual specification included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -1246,7 +1243,7 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
 
 
 @ItemResultFactory.register("SubstanceWithCompliance")
-class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
+class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReference):
     """Retrieves an individual substance included as part of a compliance query result.
     This object includes two categories of attributes:
 
@@ -1263,7 +1260,7 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReferenc
 
 
 @ItemResultFactory.register("MaterialWithCompliance")
-class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialDefinition):
+class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialReference):
     """Retrieves an individual material included as part of a compliance query result.
     This object includes three categories of attributes:
 
@@ -1289,7 +1286,7 @@ class PartWithComplianceResult(
     ChildSpecificationWithComplianceMixin,
     ChildPartWithComplianceMixin,
     ComplianceResultMixin,
-    PartDefinition,
+    PartReference,
 ):
     """Retrieves an individual part included as part of a compliance query result.
     This object includes three categories of attributes:
@@ -1316,7 +1313,7 @@ class SpecificationWithComplianceResult(
     ChildMaterialWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,
     ComplianceResultMixin,
-    SpecificationDefinition,
+    SpecificationReference,
 ):
     """Retrieves an individual specification included as part of a compliance query result.
     This object includes three categories of attributes:
@@ -1841,7 +1838,7 @@ class SpecificationWithSustainabilityResult(
     """
 
 
-class SubstanceResult(BaseSubstanceReference):
+class SubstanceResult(SubstanceReference):
     """Describes an individual specification included as part of a sustainability query result.
     This object includes only includes the reference to the part in Granta MI (if the substance references a record).
 

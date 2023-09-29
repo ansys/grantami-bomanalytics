@@ -196,7 +196,7 @@ class SpecificationDefinition(RecordDefinition, SpecificationReference):
         return result
 
 
-class BaseSubstanceReference(RecordReference, ABC):
+class SubstanceReference(RecordReference, ABC):
     """Represents a reference to a substance record from the abstract ``RecordReference`` subclass.
 
     This class extends the base constructor to also support CAS numbers, EC numbers, and chemical names.
@@ -228,7 +228,7 @@ class BaseSubstanceReference(RecordReference, ABC):
         return None
 
 
-class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
+class SubstanceDefinition(RecordDefinition, SubstanceReference):
     """Represents the definition of a substance as supplied to a compliance query from the concrete
     ``Substance`` subclass.
 

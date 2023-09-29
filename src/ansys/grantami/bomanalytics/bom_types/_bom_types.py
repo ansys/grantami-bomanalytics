@@ -316,9 +316,11 @@ class MIAttributeReference(BaseType):
         props = super()._process_custom_fields(obj, bom_reader)
         name_obj = bom_reader.get_field(MIAttributeReference, obj, "name")
         if name_obj is not None:
-            props["table_reference"] = cast(
-                PartialTableReference, bom_reader.create_type("PartialTableReference", name_obj)
-            )
+            table_obj = bom_reader.get_field(MIAttributeReference, name_obj, "table")
+            if table_obj is not None:
+                props["table_reference"] = cast(
+                    PartialTableReference, bom_reader.create_type("PartialTableReference", table_obj)
+                )
             attribute_name_obj = bom_reader.get_field(MIAttributeReference, name_obj, "attributeName")
             if attribute_name_obj is not None:
                 props["attribute_name"] = attribute_name_obj
@@ -329,6 +331,20 @@ class MIAttributeReference(BaseType):
             if is_standard_obj is not None:
                 props["is_standard"] = is_standard_obj
         return props
+
+    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+        super()._write_custom_fields(obj, bom_writer)
+        name_dict: Dict[str, Any] = {}
+        if self.table_reference is not None:
+            name_dict[bom_writer._get_qualified_name(self, "table")] = bom_writer._convert_to_dict(self.table_reference)
+        if self.attribute_name is not None:
+            name_dict[bom_writer._get_qualified_name(self, "attributeName")] = self.attribute_name
+        if self.pseudo is not None:
+            name_dict[bom_writer._get_qualified_name(self, "pseudo")] = self.pseudo.to_string()
+        if self.is_standard is not None:
+            name_dict[bom_writer._get_qualified_name(self, "@isStandard")] = self.is_standard
+        if name_dict != {}:
+            obj[bom_writer._get_qualified_name(self, "name")] = name_dict
 
     @property
     def db_key(self) -> str:
@@ -503,11 +519,28 @@ class MIRecordReference(BaseType):
                 props["record_version_number"] = version_obj
         lookup_obj = bom_reader.get_field(MIRecordReference, obj, "lookupValue")
         if lookup_obj is not None:
-            props["lookup_attribute_reference"] = bom_reader.get_field(
-                MIRecordReference, lookup_obj, "attributeReference"
-            )
+            attr_ref_obj = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeReference")
+            props["lookup_attribute_reference"] = bom_reader.create_type("MIAttributeReference", attr_ref_obj)
             props["lookup_value"] = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeValue")
         return props
+
+    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+        super()._write_custom_fields(obj, bom_writer)
+        if self.record_history_identity is not None:
+            identity_dict = {
+                bom_writer._get_qualified_name(self, "recordHistoryIdentity"): self.record_history_identity
+            }
+            if self.record_version_number is not None:
+                identity_dict[bom_writer._get_qualified_name(self, "version")] = self.record_version_number
+            obj[bom_writer._get_qualified_name(self, "identity")] = identity_dict
+        if self.lookup_value is not None:
+            lookup_dict = {
+                bom_writer._get_qualified_name(self, "attributeReference"): bom_writer._convert_to_dict(
+                    cast(BaseType, self.lookup_attribute_reference)
+                ),
+                bom_writer._get_qualified_name(self, "attributeValue"): self.lookup_value,
+            }
+            obj[bom_writer._get_qualified_name(self, "lookupValue")] = lookup_dict
 
     @property
     def db_key(self) -> str:

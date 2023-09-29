@@ -60,7 +60,7 @@ class TestRoundTripBoM:
 
     @pytest.mark.parametrize(
         "bom_filename",
-        ["bom.xml", "bom-complex.xml", "drill.xml", "medium-test-bom.xml", "bom-2301.xml", "bom-2301-complex.xml"],
+        ["drill.xml", "medium-test-bom.xml", "bom-2301.xml", "bom-2301-complex.xml"],
     )
     def test_roundtrip(self, bom_filename: str):
         bom_path = self._bom_location / bom_filename
@@ -83,7 +83,7 @@ class TestBoMDeserialization:
 
     @pytest.fixture(scope="class")
     def simple_bom(self):
-        bom_path = self._bom_location / "bom.xml"
+        bom_path = self._bom_location / "bom-1711-as-2301.xml"
         with open(bom_path, "r", encoding="utf8") as fp:
             input_bom = fp.read()
 

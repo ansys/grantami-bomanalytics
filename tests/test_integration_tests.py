@@ -219,3 +219,4 @@ class TestSustainabilityBomQueries:
         query = queries.BomSustainabilityQuery()
         query.with_bom(sample_bom_2301_complex)
         response = connection.run(query)
+        p = 1

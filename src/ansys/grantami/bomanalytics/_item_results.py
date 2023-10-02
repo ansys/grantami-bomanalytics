@@ -22,14 +22,21 @@ from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 from ._item_definitions import (
     CoatingReference,
+    CoatingReferenceWithIdentifier,
     MaterialReference,
+    MaterialReferenceWithIdentifiers,
     PartReference,
+    PartReferenceWithIdentifiers,
     ProcessReference,
+    ProcessReferenceWithIdentifiers,
     RecordReference,
     ReferenceType,
     SpecificationReference,
+    SpecificationReferenceWithIdentifiers,
     SubstanceReference,
+    SubstanceReferenceWithIdentifiers,
     TransportReference,
+    TransportReferenceWithIdentifier,
 )
 from .indicators import RoHSIndicator, WatchListIndicator
 
@@ -287,6 +294,10 @@ class ItemResultFactory:
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+            identity=result_with_sustainability.id,
+            external_identity=result_with_sustainability.external_identity,
+            name=result_with_sustainability.name,
+            input_part_number=result_with_sustainability.input_part_number,
         )
         part_with_sustainability._add_child_parts(result_with_sustainability.parts)
         part_with_sustainability._add_child_materials(result_with_sustainability.materials)
@@ -318,6 +329,9 @@ class ItemResultFactory:
             reference_value=result_with_sustainability.reference_value,
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            identity=result_with_sustainability.id,
+            external_identity=result_with_sustainability.external_identity,
+            name=result_with_sustainability.name,
         )
         return process_with_sustainability
 
@@ -348,6 +362,9 @@ class ItemResultFactory:
             recyclable=result_with_sustainability.recyclable,
             biodegradable=result_with_sustainability.biodegradable,
             functional_recycle=result_with_sustainability.functional_recycle,
+            identity=result_with_sustainability.id,
+            external_identity=result_with_sustainability.external_identity,
+            name=result_with_sustainability.name,
         )
         material_with_sustainability._add_child_processes(result_with_sustainability.processes)
         material_with_sustainability._add_child_substances(result_with_sustainability.substances)
@@ -377,6 +394,9 @@ class ItemResultFactory:
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+            identity=result_with_sustainability.id,
+            external_identity=result_with_sustainability.external_identity,
+            name=result_with_sustainability.name,
         )
         specification_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
         specification_with_sustainability._add_child_materials(result_with_sustainability.materials)
@@ -405,6 +425,9 @@ class ItemResultFactory:
         substance = SubstanceResult(
             reference_type=reference_type,
             reference_value=result.reference_value,
+            identity=result.id,
+            external_identity=result.external_identity,
+            name=result.name,
         )
         return substance
 
@@ -429,6 +452,7 @@ class ItemResultFactory:
         coating = CoatingResult(
             reference_type=reference_type,
             reference_value=result.reference_value,
+            identity=result.id,
         )
         return coating
 
@@ -455,6 +479,7 @@ class ItemResultFactory:
             reference_value=result_with_sustainability.reference_value,
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            identity=result_with_sustainability.id,
         )
         return transport_with_sustainability
 
@@ -1763,7 +1788,7 @@ class MaterialWithSustainabilityResult(
     SustainabilityResultMixin,
     ReusabilityResultMixin,
     MassResultMixin,
-    MaterialReference,
+    MaterialReferenceWithIdentifiers,
 ):
     """Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -1791,7 +1816,7 @@ class PartWithSustainabilityResult(
     ChildPartWithSustainabilityMixin,
     SustainabilityResultMixin,
     MassResultMixin,
-    PartReference,
+    PartReferenceWithIdentifiers,
 ):
     """Describes an individual part included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -1818,7 +1843,7 @@ class SpecificationWithSustainabilityResult(
     ChildSpecificationWithSustainabilityMixin,
     SustainabilityResultMixin,
     MassResultMixin,
-    SpecificationReference,
+    SpecificationReferenceWithIdentifiers,
 ):
     """Describes an individual specification included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -1838,7 +1863,7 @@ class SpecificationWithSustainabilityResult(
     """
 
 
-class SubstanceResult(SubstanceReference):
+class SubstanceResult(SubstanceReferenceWithIdentifiers):
     """Describes an individual specification included as part of a sustainability query result.
     This object includes only includes the reference to the part in Granta MI (if the substance references a record).
 
@@ -1854,7 +1879,7 @@ class SubstanceResult(SubstanceReference):
 # TODO: Consider documenting CoatingReference/SubstanceReference directly, since Material and PartRef need to be added
 #  anyway. Although having the result class means it can be extended in the future without qualifying as breaking
 #  changes.
-class CoatingResult(CoatingReference):
+class CoatingResult(CoatingReferenceWithIdentifier):
     """Provides an individual coating included as part of a sustainability query result.
 
     This object includes only includes the reference to the coating in Granta MI.
@@ -1868,7 +1893,7 @@ class CoatingResult(CoatingReference):
 
 class ProcessWithSustainabilityResult(
     SustainabilityResultMixin,
-    ProcessReference,
+    ProcessReferenceWithIdentifiers,
 ):
     """Describes a process included as part of a sustainability query result.
     This object includes two categories of attributes:
@@ -1887,7 +1912,7 @@ class ProcessWithSustainabilityResult(
 
 class TransportWithSustainabilityResult(
     SustainabilityResultMixin,
-    TransportReference,
+    TransportReferenceWithIdentifier,
 ):
     """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:

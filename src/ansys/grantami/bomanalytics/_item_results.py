@@ -111,70 +111,108 @@ class ItemResultFactory:
         return inner
 
     @classmethod
-    @overload
-    def create_impacted_substances_result(
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Material
+    def create_material_impacted_substances_result(
+        cls, result_with_impacted_substances: models.GetImpactedSubstancesForMaterialsMaterial
     ) -> "MaterialWithImpactedSubstancesResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_impacted_substances_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Part
-    ) -> "PartWithImpactedSubstancesResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_impacted_substances_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Specification
-    ) -> "SpecificationWithImpactedSubstancesResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_impacted_substances_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Bom
-    ) -> "BoM1711WithImpactedSubstancesResult":
-        ...
-
-    @classmethod
-    def create_impacted_substances_result(
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Any
-    ) -> "ImpactedSubstancesResultMixin":
-        """Return a specific impacted substances result.
+        """
+        Return a material impacted substances result.
 
         Parameters
         ----------
-        result_type_name
-            Name of the result for which an object is needed.
         result_with_impacted_substances
-            Result from the REST API describing the impacted substances for this item.
+           Result from the REST API describing the impacted substances for a material.
 
         Returns
         -------
-        Impacted Substances Item Result
-            An object that describes the substances that impacted a material, part, specification, or BoM. Substances
-            are grouped by legislation.
-
-        Raises
-        ------
-        RuntimeError
-            Error raised if a query type is not registered to any factory.
+        MaterialWithImpactedSubstancesResult
+           An object that describes the substances that impacted a material. Substances are grouped by legislation.
         """
+        reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        item_result = MaterialWithImpactedSubstancesResult(
+            reference_type=reference_type,
+            reference_value=result_with_impacted_substances.reference_value,
+            legislations=result_with_impacted_substances.legislations,
+            identity=result_with_impacted_substances.id,
+            external_identity=result_with_impacted_substances.external_identity,
+            name=result_with_impacted_substances.name,
+        )
+        return item_result
 
-        item_result_class = cls.registry[result_type_name]
-        assert issubclass(item_result_class, ImpactedSubstancesResultMixin)
-        try:
-            reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
-            item_result = item_result_class(
-                reference_type=reference_type,
-                reference_value=result_with_impacted_substances.reference_value,
-                legislations=result_with_impacted_substances.legislations,
-            )
-        except AttributeError:
-            # This is a BoM-type query result, and has no record reference
-            item_result = item_result_class(legislations=result_with_impacted_substances.legislations)
+    @classmethod
+    def create_part_impacted_substances_result(
+        cls, result_with_impacted_substances: models.GetImpactedSubstancesForPartsPart
+    ) -> "PartWithImpactedSubstancesResult":
+        """
+        Return a part impacted substances result.
+
+        Parameters
+        ----------
+        result_with_impacted_substances
+           Result from the REST API describing the impacted substances for a part.
+
+        Returns
+        -------
+        PartWithImpactedSubstancesResult
+           An object that describes the substances that impacted a part. Substances are grouped by legislation.
+        """
+        reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        item_result = PartWithImpactedSubstancesResult(
+            reference_type=reference_type,
+            reference_value=result_with_impacted_substances.reference_value,
+            legislations=result_with_impacted_substances.legislations,
+            identity=result_with_impacted_substances.id,
+            external_identity=result_with_impacted_substances.external_identity,
+            name=result_with_impacted_substances.name,
+            input_part_number=result_with_impacted_substances.input_part_number,
+        )
+        return item_result
+
+    @classmethod
+    def create_specification_impacted_substances_result(
+        cls, result_with_impacted_substances: models.GetImpactedSubstancesForSpecificationsSpecification
+    ) -> "SpecificationWithImpactedSubstancesResult":
+        """
+        Return a specification impacted substances result.
+
+        Parameters
+        ----------
+        result_with_impacted_substances
+           Result from the REST API describing the impacted substances for a specification.
+
+        Returns
+        -------
+        SpecificationWithImpactedSubstancesResult
+           An object that describes the substances that impacted a specification. Substances are grouped by legislation.
+        """
+        reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        item_result = SpecificationWithImpactedSubstancesResult(
+            reference_type=reference_type,
+            reference_value=result_with_impacted_substances.reference_value,
+            legislations=result_with_impacted_substances.legislations,
+            identity=result_with_impacted_substances.id,
+            external_identity=result_with_impacted_substances.external_identity,
+            name=result_with_impacted_substances.name,
+        )
+        return item_result
+
+    @classmethod
+    def create_bom_impacted_substances_result(
+        cls, result_with_impacted_substances: models.GetImpactedSubstancesForBom1711Response
+    ) -> "BoM1711WithImpactedSubstancesResult":
+        """
+        Return a bom impacted substances result.
+
+        Parameters
+        ----------
+        result_with_impacted_substances
+           Result from the REST API describing the impacted substances for a bom.
+
+        Returns
+        -------
+        BoM1711WithImpactedSubstancesResult
+           An object that describes the substances that impacted a bom. Substances are grouped by legislation.
+        """
+        item_result = BoM1711WithImpactedSubstancesResult(legislations=result_with_impacted_substances.legislations)
         return item_result
 
     @classmethod
@@ -831,8 +869,7 @@ class RecordWithImpactedSubstancesResultMixin(ImpactedSubstancesResultMixin, Rec
         )
 
 
-@ItemResultFactory.register("MaterialWithImpactedSubstances")
-class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialReference):
+class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialReferenceWithIdentifiers):
     """Retrieves an individual material that is included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -862,8 +899,7 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
     """
 
 
-@ItemResultFactory.register("PartWithImpactedSubstances")
-class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartReference):
+class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartReferenceWithIdentifiers):
     """Retrieves an individual part included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -893,8 +929,9 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
     """
 
 
-@ItemResultFactory.register("SpecificationWithImpactedSubstances")
-class SpecificationWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, SpecificationReference):
+class SpecificationWithImpactedSubstancesResult(
+    RecordWithImpactedSubstancesResultMixin, SpecificationReferenceWithIdentifiers
+):
     """Retrieves an individual specification included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -926,7 +963,6 @@ class SpecificationWithImpactedSubstancesResult(RecordWithImpactedSubstancesResu
     pass
 
 
-@ItemResultFactory.register("BomWithImpactedSubstances")
 class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
     """This class is instantiated, but since a BoM query can only return a single impacted substances result,
     this type is hidden and never seen by the user. As a result it is not documented.

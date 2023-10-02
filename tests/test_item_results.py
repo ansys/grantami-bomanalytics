@@ -61,43 +61,62 @@ def test_impacted_substance_repr():
     assert repr(impacted_substance) == f'<ImpactedSubstance: {{"cas_number": "123-456-789", "percent_amount": 50}}>'
 
 
-@pytest.mark.parametrize(
-    "result_type",
-    ["MaterialWithImpactedSubstances", "PartWithImpactedSubstances", "SpecificationWithImpactedSubstances"],
-)
-def test_impacted_substances_item_repr(result_type):
-    query_result = RecordSubstanceResultMock(
-        reference_type="MiRecordGuid", reference_value="TEST_GUID", legislations=legislation_results
-    )
-    result = ItemResultFactory.create_impacted_substances_result(result_type, query_result)
-    assert (
-        repr(result) == f"<{result_type}Result({{'reference_type': 'MiRecordGuid', "
-        f"'reference_value': 'TEST_GUID'}}), {len(legislation_results)} legislations>"
-    )
-    assert (
-        repr(result.substances) == '[<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
-        '<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
-        '<ImpactedSubstance: {"cas_number": "456-789", "percent_amount": None}>]'
-    )
+class TestImpactedSubstancesResultsRepr:
+    def _check_properties_repr(self, result):
+        assert (
+            repr(result.substances) == '[<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
+            '<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
+            '<ImpactedSubstance: {"cas_number": "456-789", "percent_amount": None}>]'
+        )
 
-    for legislation in legislation_results:
-        assert legislation.legislation_id in repr(result.substances_by_legislation)
-    assert "ImpactedSubstance" in repr(result.substances_by_legislation)
+        for legislation in legislation_results:
+            assert legislation.legislation_id in repr(result.substances_by_legislation)
+        assert "ImpactedSubstance" in repr(result.substances_by_legislation)
 
+    def test_specification_impacted_substances_item_repr(self):
+        query_result = models.GetImpactedSubstancesForSpecificationsSpecification(
+            reference_type="MiRecordGuid", reference_value="TEST_GUID", legislations=legislation_results
+        )
+        result = ItemResultFactory.create_specification_impacted_substances_result(query_result)
+        assert (
+            repr(result) == f"<SpecificationWithImpactedSubstancesResult({{'reference_type': 'MiRecordGuid', "
+            f"'reference_value': 'TEST_GUID'}}), {len(legislation_results)} legislations>"
+        )
+        self._check_properties_repr(result)
 
-def test_impacted_substances_bom_repr():
-    query_result = BomSubstanceResultMock(legislations=legislation_results)
-    result = ItemResultFactory.create_impacted_substances_result("BomWithImpactedSubstances", query_result)
-    assert repr(result) == f"<BoM1711WithImpactedSubstancesResult(), {len(legislation_results)} legislations>"
-    assert (
-        repr(result.substances) == '[<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
-        '<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
-        '<ImpactedSubstance: {"cas_number": "456-789", "percent_amount": None}>]'
-    )
+    def test_material_impacted_substances_item_repr(self):
+        query_result = models.GetImpactedSubstancesForMaterialsMaterial(
+            reference_type="MiRecordGuid", reference_value="TEST_GUID", legislations=legislation_results
+        )
+        result = ItemResultFactory.create_material_impacted_substances_result(query_result)
+        assert (
+            repr(result) == f"<MaterialWithImpactedSubstancesResult({{'reference_type': 'MiRecordGuid', "
+            f"'reference_value': 'TEST_GUID'}}), {len(legislation_results)} legislations>"
+        )
+        self._check_properties_repr(result)
 
-    for legislation in legislation_results:
-        assert legislation.legislation_id in repr(result.substances_by_legislation)
-    assert "ImpactedSubstance" in repr(result.substances_by_legislation)
+    def test_part_impacted_substances_item_repr(
+        self,
+    ):
+        query_result = models.GetImpactedSubstancesForPartsPart(
+            reference_type="MiRecordGuid", reference_value="TEST_GUID", legislations=legislation_results
+        )
+        result = ItemResultFactory.create_part_impacted_substances_result(query_result)
+        assert (
+            repr(result) == f"<PartWithImpactedSubstancesResult({{'reference_type': 'MiRecordGuid', "
+            f"'reference_value': 'TEST_GUID'}}), {len(legislation_results)} legislations>"
+        )
+        self._check_properties_repr(result)
+
+    def test_impacted_substances_bom_repr(self):
+        query_result = models.GetImpactedSubstancesForBom1711Response(
+            legislations=legislation_results,
+            log_messages=[],
+        )
+        result = ItemResultFactory.create_bom_impacted_substances_result(query_result)
+
+        assert repr(result) == f"<BoM1711WithImpactedSubstancesResult(), {len(legislation_results)} legislations>"
+        self._check_properties_repr(result)
 
 
 @pytest.mark.parametrize(

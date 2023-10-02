@@ -5,7 +5,7 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 """
 from abc import ABC
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
@@ -25,44 +25,10 @@ from ._item_definitions import (
     TransportReference,
     TransportReferenceWithIdentifier,
 )
-from .indicators import RoHSIndicator, WatchListIndicator
 
 if TYPE_CHECKING:
-    from ._query_results import MaterialImpactedSubstancesQueryResult  # noqa: F401
+    from .indicators import RoHSIndicator, WatchListIndicator
 
-Result_Model_Material = TypeVar(
-    "Result_Model_Material",
-    bound=Union[
-        models.GetImpactedSubstancesForMaterialsMaterial,
-        models.CommonMaterialWithCompliance,
-    ],
-)
-Result_Model_Part = TypeVar(
-    "Result_Model_Part",
-    bound=Union[
-        models.GetImpactedSubstancesForPartsPart,
-        models.CommonPartWithCompliance,
-    ],
-)
-Result_Model_Specification = TypeVar(
-    "Result_Model_Specification",
-    bound=Union[
-        models.GetImpactedSubstancesForSpecificationsSpecification,
-        models.CommonSpecificationWithCompliance,
-    ],
-)
-Result_Model_Substance = TypeVar("Result_Model_Substance", bound=models.CommonSubstanceWithCompliance)
-Result_Model_Coating = TypeVar("Result_Model_Coating", bound=models.CommonCoatingWithCompliance)
-Result_Model_Bom = TypeVar("Result_Model_Bom", bound=models.GetImpactedSubstancesForBom1711Response)
-Result_Model_Any = Union[
-    Result_Model_Part,
-    Result_Model_Material,
-    Result_Model_Specification,
-    Result_Model_Coating,
-    Result_Model_Substance,
-    Result_Model_Bom,
-]
-Item_Result = Union[Type["ImpactedSubstancesResultMixin"], Type["ComplianceResultMixin"]]
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
@@ -178,7 +144,7 @@ class ItemResultFactory:
     def create_material_compliance_result(
         cls,
         result_with_compliance: models.CommonMaterialWithCompliance,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        indicator_definitions: Indicator_Definitions,
     ) -> "MaterialWithComplianceResult":
         """Returns a material compliance result.
 
@@ -213,7 +179,7 @@ class ItemResultFactory:
     def create_part_compliance_result(
         cls,
         result_with_compliance: models.CommonPartWithCompliance,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        indicator_definitions: Indicator_Definitions,
     ) -> "PartWithComplianceResult":
         """Returns a part compliance result.
 
@@ -249,7 +215,7 @@ class ItemResultFactory:
     def create_specification_compliance_result(
         cls,
         result_with_compliance: models.CommonSpecificationWithCompliance,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        indicator_definitions: Indicator_Definitions,
     ) -> "SpecificationWithComplianceResult":
         """Returns a specification compliance result.
 
@@ -284,7 +250,7 @@ class ItemResultFactory:
     def create_coating_compliance_result(
         cls,
         result_with_compliance: models.CommonCoatingWithCompliance,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        indicator_definitions: Indicator_Definitions,
     ) -> "CoatingWithComplianceResult":
         """Returns a coating compliance result.
 
@@ -317,7 +283,7 @@ class ItemResultFactory:
     def create_substance_compliance_result(
         cls,
         result_with_compliance: models.CommonSubstanceWithCompliance,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        indicator_definitions: Indicator_Definitions,
     ) -> "SubstanceWithComplianceResult":
         """Returns a substance compliance result.
 
@@ -1024,7 +990,7 @@ class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
 class HasIndicators(ABC):
     """Abstract base class to define the existence of indicator definitions."""
 
-    _indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+    _indicator_definitions: Indicator_Definitions
 
 
 class ComplianceResultMixin(HasIndicators, RecordReference):
@@ -1076,18 +1042,18 @@ class ComplianceResultMixin(HasIndicators, RecordReference):
     def __init__(
         self,
         indicator_results: List[models.CommonIndicatorResult],
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        indicator_definitions: Indicator_Definitions,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self._indicator_definitions = indicator_definitions
-        self._indicators: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]] = deepcopy(indicator_definitions)
+        self._indicators: Indicator_Definitions = deepcopy(indicator_definitions)
 
         for indicator_result in indicator_results:
             self._indicators[indicator_result.name].flag = indicator_result.flag
 
     @property
-    def indicators(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:
+    def indicators(self) -> Indicator_Definitions:
         """Compliance status of this item for each indicator included in the original query."""
         return self._indicators
 

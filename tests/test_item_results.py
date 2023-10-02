@@ -119,26 +119,46 @@ class TestImpactedSubstancesResultsRepr:
         self._check_properties_repr(result)
 
 
-@pytest.mark.parametrize(
-    "result_type",
-    [
-        "PartWithCompliance",
-        "MaterialWithCompliance",
-        "SpecificationWithCompliance",
-        "SubstanceWithCompliance",
-        "CoatingWithCompliance",
-    ],
-)
-def test_compliance_item_repr(result_type):
-    indicator_results = [two_legislation_result, one_legislation_result]
-    query_result = ComplianceResultMock(
-        reference_type="MiRecordGuid", reference_value="TEST_GUID", indicators=indicator_results
+class TestComplianceResultsRepr:
+    _indicator_results = [two_legislation_result, one_legislation_result]
+    _default_kwargs = dict(
+        reference_type="MiRecordGuid",
+        reference_value="TEST_GUID",
+        indicators=_indicator_results,
     )
-    result = ItemResultFactory.create_compliance_result(result_type, query_result, INDICATORS)
-    assert (
-        repr(result) == f"<{result_type}Result({{'reference_type': 'MiRecordGuid', "
-        f"'reference_value': 'TEST_GUID'}}), {len(indicator_results)} indicators>"
+
+    @pytest.mark.parametrize(
+        ["result_type", "method_name", "input_model"],
+        [
+            ("PartWithCompliance", "create_part_compliance_result", models.CommonPartWithCompliance(**_default_kwargs)),
+            (
+                "MaterialWithCompliance",
+                "create_material_compliance_result",
+                models.CommonMaterialWithCompliance(**_default_kwargs),
+            ),
+            (
+                "SpecificationWithCompliance",
+                "create_specification_compliance_result",
+                models.CommonSpecificationWithCompliance(**_default_kwargs),
+            ),
+            (
+                "SubstanceWithCompliance",
+                "create_substance_compliance_result",
+                models.CommonSubstanceWithCompliance(**_default_kwargs),
+            ),
+            (
+                "CoatingWithCompliance",
+                "create_coating_compliance_result",
+                models.CommonCoatingWithCompliance(**_default_kwargs),
+            ),
+        ],
     )
+    def test_compliance_item_repr(self, result_type, method_name, input_model):
+        result = getattr(ItemResultFactory, method_name)(input_model, INDICATORS)
+        assert (
+            repr(result) == f"<{result_type}Result({{'reference_type': 'MiRecordGuid', "
+            f"'reference_value': 'TEST_GUID'}}), {len(self._indicator_results)} indicators>"
+        )
 
 
 class TestSustainabilitySummaryResultsRepr:

@@ -324,6 +324,8 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
     directly.
     """
 
+    _result_type_name = "MaterialWithCompliance"
+
     def __init__(
         self,
         results: List[models.CommonMaterialWithCompliance],
@@ -342,10 +344,8 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "MaterialWithCompliance"
         for result in results:
-            material_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            material_with_compliance = ItemResultFactory.create_material_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -443,6 +443,8 @@ class PartComplianceQueryResult(ComplianceBaseClass):
     directly.
     """
 
+    _result_type_name = "PartWithCompliance"
+
     def __init__(
         self,
         results: List[models.CommonPartWithCompliance],
@@ -461,10 +463,8 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "PartWithCompliance"
         for result in results:
-            part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -566,6 +566,8 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
     directly.
     """
 
+    _result_type_name = "SpecificationWithCompliance"
+
     def __init__(
         self,
         results: List[models.CommonSpecificationWithCompliance],
@@ -584,10 +586,8 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "SpecificationWithCompliance"
         for result in results:
-            specification_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            specification_with_compliance = ItemResultFactory.create_specification_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -651,8 +651,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
         self._results = []
         self._result_type_name = "SubstanceWithCompliance"
         for result in results:
-            substance_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            substance_with_compliance = ItemResultFactory.create_substance_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -725,6 +724,8 @@ class BomComplianceQueryResult(ComplianceBaseClass):
     directly.
     """
 
+    _result_type_name = "PartWithCompliance"
+
     def __init__(
         self,
         results: List[models.GetComplianceForBom1711Response],
@@ -743,11 +744,9 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "PartWithCompliance"
         parts: List[models.CommonPartWithCompliance] = results[0].parts
         for result in parts:
-            part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )

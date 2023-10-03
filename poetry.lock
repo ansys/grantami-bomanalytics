@@ -804,13 +804,13 @@ files = [
 
 [[package]]
 name = "enum-tools"
-version = "0.10.0"
+version = "0.11.0"
 description = "Tools to expand Python's enum module."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "enum_tools-0.10.0-py3-none-any.whl", hash = "sha256:87f4e8216468e53f2920d2e016dc18eea0972b0b6c1eea65756fbc331a3113d2"},
-    {file = "enum_tools-0.10.0.tar.gz", hash = "sha256:777dc3cfb4314780bb9ca2460b518be58c3f29e13bd77b33badead4c2c136976"},
+    {file = "enum_tools-0.11.0-py3-none-any.whl", hash = "sha256:9e76186ff4fd1798a64a855d334e245a7d2b67970c40029acccff06c58bf0535"},
+    {file = "enum_tools-0.11.0.tar.gz", hash = "sha256:ed10ae4c2109c52e6ca17505a3bdb173b2554f5f0449677621829023a9d8bd33"},
 ]
 
 [package.dependencies]
@@ -818,8 +818,8 @@ pygments = ">=2.6.1"
 typing-extensions = ">=3.7.4.3"
 
 [package.extras]
-all = ["sphinx (>=3.2.0)", "sphinx-jinja2-compat (>=0.1.1)", "sphinx-toolbox (>=2.16.0)"]
-sphinx = ["sphinx (>=3.2.0)", "sphinx-jinja2-compat (>=0.1.1)", "sphinx-toolbox (>=2.16.0)"]
+all = ["sphinx (>=3.4.0)", "sphinx-jinja2-compat (>=0.1.1)", "sphinx-toolbox (>=2.16.0)"]
+sphinx = ["sphinx (>=3.4.0)", "sphinx-jinja2-compat (>=0.1.1)", "sphinx-toolbox (>=2.16.0)"]
 
 [[package]]
 name = "exceptiongroup"
@@ -3465,4 +3465,4 @@ examples = ["jupyterlab", "lxml", "pandas", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.0"
-content-hash = "7b5cf7560d8057638e50ab9f9c57d021f2c8010573e8cf0b2ec7006dae9d5eb7"
+content-hash = "7036d379766f7dc8a72b3d380230c60d4b734c10bde80b17117190f0ce29f05c"

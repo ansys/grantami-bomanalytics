@@ -281,9 +281,29 @@ plot_footprint(
 )
 
 # ### Joining and finishing
-# If there are no processes in the BoM for a certain process category, the list is empty.
+#
+# Joining and finishing processes apply to parts or assemblies and therefore don't include a material identity.
 
 sustainability_summary.joining_and_finishing_processes_details
+
+joining_and_finishing_processes_df = pd.DataFrame.from_records(
+    [
+        {
+            "Name": item.process_name,
+            "EE%": item.embodied_energy_percentage,
+            EE_HEADER: item.embodied_energy.value,
+            "CC%": item.climate_change_percentage,
+            CC_HEADER: item.climate_change.value,
+        }
+        for item in sustainability_summary.joining_and_finishing_processes_details
+    ]
+)
+joining_and_finishing_processes_df
+
+plot_footprint(
+    joining_and_finishing_processes_df, "Aggregated secondary processes footprint",
+    textinfo="percent", hoverinfo="value+name+label"
+)
 
 # ## Hierarchical view
 #
@@ -291,8 +311,17 @@ sustainability_summary.joining_and_finishing_processes_details
 # chart. This highlights the largest contributors at each level. In this example, two levels are defined:
 # first the phase and then the contributors in the phase.
 
+# First, rename the processes ``Other`` rows, so that they remain distinguishable after all processes have been
+# grouped under a general ``Processes``.
+#
 # Use `assign` to add a `parent` column to each `DataFrame` being concatenated
 # The `join` argument value `inner` specifies that only columns common to all dataframes are kept in the result
+
+# +
+primary_process_df.loc[(primary_process_df["Name"] == "Other - None"), "Name"] = "Other primary processes"
+secondary_process_df.loc[(secondary_process_df["Name"] == "Other - None"), "Name"] = "Other secondary processes"
+joining_and_finishing_processes_df.loc[
+    (joining_and_finishing_processes_df["Name"] == "Other - None"), "Name"] = "Other joining and finishing processes"
 
 summary_df = pd.concat(
     [
@@ -301,6 +330,7 @@ summary_df = pd.concat(
         materials_df.assign(Parent="Material"),
         primary_process_df.assign(Parent="Processes"),
         secondary_process_df.assign(Parent="Processes"),
+        joining_and_finishing_processes_df.assign(Parent="Processes"),
     ],
     join="inner",
 )

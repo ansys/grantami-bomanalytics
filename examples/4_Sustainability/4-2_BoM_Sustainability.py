@@ -25,12 +25,13 @@
 # +
 from ansys.grantami.bomanalytics import Connection
 
-server_url = "http://my_grantami_server/mi_servicelayer"
-cxn = Connection(server_url).with_credentials("user_name", "password").connect()
+server_url = "http://cdcvdt4intg0002.win.ansys.com/mi_servicelayer"
+cxn = Connection(server_url).with_autologon().connect()
 # -
 
 # Next, create a sustainability query. The query accepts a single BoM as argument, as well as optional
-# configuration for units. If a unit is not specified, the default unit is used. Default units for the analysis are:
+# configuration for units. If a unit is not specified, the default unit is used. Default units for the
+# analysis are:
 # `MJ` for energy, `kg` for mass, and `km` for distance.
 
 # +
@@ -41,74 +42,106 @@ with open(xml_file_path) as f:
 from ansys.grantami.bomanalytics import queries
 
 query = queries.BomSustainabilityQuery().with_bom(bom)
+# -
+
+# Finally, run the query. A `BomSustainabilityQueryResult` object is returned, which contains the
+# results of the analysis.
+
+# +
 result = cxn.run(query)
 
 result
 # -
 
-# ## Sustainability query result
+# ## The ``BomSustainabilityQueryResult`` class
 #
 # ### Definition
 #
-# The structure of a BoM sustainabability query result is similar to the input BoM structure.
+# The structure of a BoM sustainabability query result mirrors the input BoM structure. However, each
+# item in the result objects also includes the results of the sustainability analysis for that item.
+# In addition to the properties described below, these objects also contain at least the following
+# properties which define the results of the sustainability analysis:
 #
-# #### Query result
+# * ``.embodied_energy``
+# * ``.climate_change``
 #
-# The ``BomSustainabilityQueryResult`` class defines two properties:
+# Additional properties are also available for each ``<ItemType>WithSustainabilityResult`` object,
+# see the <<TODO: link to sustainability API >> for more details.
+
+# ### The ``BomSustainabilityQueryResult.parts`` property
 #
-# - ``parts``: list of top-level parts of the BoM and their calculated environmental footprint.
-# - ``transport_stages``: list of transport stages defined in the BoM and their calculated environmental footprint.
-#
-# #### Parts
-#
-# Parts can be of two types: assemblies, or leaf parts.
+# The ``BomSustainabilityQueryResult.parts`` property contains the single 'root' part in the input
+# BoM. This part in turn also has a ``.parts`` property, which contains the list of
+# ``PartWithSustainabilityResult`` objects which are children of the root part. This structure
+# continues recursively to define all parts in the input BoM. These parts can be of two types:
+# assemblies, or leaf parts.
 #
 # ##### **Assemblies**
 #
-# Assemblies are parts that define sub-parts. They do not define materials.
+# Assemblies are ``PartWithSustainabilityResult`` objects that contain sub-parts. Assemblies do not
+# contain materials directly.
 #
-# Assemblies include:
+# Assemblies include the following properties which describe child BoM items:
 #
-# - ``parts``: list of sub-parts in the assembly.
-# - ``processes``: list of joining and finishing processes applied to the assembly.
+# - ``.parts``: the sub-parts of the assembly, defined as ``PartWithSustainabilityResult`` objects.
+# - ``.processes``: the joining and finishing processes applied to the assembly, defined as
+# ``ProcessWithSustainabilityResult`` objects.
 #
-# The environmental footprint of an assembly describes the sum of all sub-parts and processes applied to the assembly.
+# The environmental footprint of an assembly includes the sum of the environmental footprints of all
+# sub-parts and processes applied to the assembly.
 #
 # ##### **Leaf parts**
 #
-# Leaf parts are parts which do not include sub-parts. They can define the material they are made of.
+# Leaf parts are ``PartWithSustainabilityResult`` objects that do not include sub-parts. Leaf parts
+# can contain the materials they are made of as direct children.
 #
-# Leaf parts can include:
+# Leaf parts include the following properties:
 #
-# - ``materials``: list of materials that the part is made of.
-# - ``processes``: list of joining and finishing processes applied to the part.
+# - ``.materials``: the materials that the part is made of, defined as a list
+# ``MaterialWithSustainabilityResult`` objects.
+# - ``.processes``: the joining and finishing processes applied to the part, defined as a list of
+# ``ProcessWithSustainabilityResult`` objects.
 #
-# The environmental footprint of a leaf part includes the environmental footprint associated with the quantity of
-# materials used (see below for details) and processes applied to the part.
-#
+# The environmental footprint of a leaf part includes the sum of the environmental footprints
+# associated with the quantity of materials used (see below for details) and processes applied to the
+# part.
+
 # #### Materials
 #
-# Materials can include:
+# Materials are ``MaterialWithSustainabilityResult`` objects. They include the following properties:
 #
-# - ``processes``: list of primary and secondary processes applied to the mass of material.
+# - ``.processes``: the primary and secondary processes applied to the mass of material, defined as a
+# list of ``ProcessWithSustainabilityResult`` objects.
 #
-# The environmental footprint of a material includes the environmental footprint associated with the mass of material
-# used and the environmental footprint of all primary and secondary processes applied.
-#
+# The environmental footprint of a material includes the environmental footprint associated with the
+# mass of material used and the sum of the environmental footprints of all primary and secondary
+# processes applied to the material.
+
 # #### Processes
 #
-# Processes have no children.
+# Processes are represented by ``ProcessWithSustainabilityResult`` objects. Processes contain no BoM
+# properties. The environmental footprint of a process is just the environmental footprint associated
+# with the processes itself.
+
+# ### The `BomSustainabilityQueryResult.transport` property
 #
-# ### Processing
+# The ``BomSustainabilityQueryResult.transport`` property contains the transport stages in the input
+# BoM, defined as a list of ``TrasportWithSustainabilityResult`` objects. Transport stages contain no
+# BoM properties. The environmental footprint of a traansport stage is just the environmental
+# footprint associated with the transport stage itself.
+
+# ## Process the ``BomSustainabilityQueryResult`` object
 #
-# In order to visualize the results using [plotly](https://plotly.com/python/), the results will be loaded into a
-# [pandas](https://pandas.pydata.org/) ``DataFrame``.
+# In order to visualize the results using [plotly](https://plotly.com/python/), the results will be
+# loaded into a [pandas](https://pandas.pydata.org/) ``DataFrame``.
 #
-# Methods defined in the following cell help convert the BoM hierarchical structure into a flat list of items, as well
-# as converting each item into a dictionary of common values that the ``DataFrame`` will be able to interpret.
-# Importantly, each value in the resulting list includes its ``id`` and ``parent_id``, which are critical to preserve a
-# sense of hierarchy. The ``identity`` property is used as an identifier as it is unique across all BoM items, and
-# populated even if not initially populated on the BoM items.
+# The following cell defines functions which convert the BoM hierarchical structure into a flat list
+# of items. Each function also converts each item into a dictionary of common values that the
+# ``DataFrame`` can interpret.
+#
+# Each row in the DataFrame contains an ``id`` which uniquely identifies the item, and a ``parent_id``
+# which defines the parent item. The ``.identity`` property is used as an identifier as it is unique
+# across all BoM items, and populated even if not initially populated on the BoM items.
 
 # +
 def traverse_bom(query_response):
@@ -121,6 +154,7 @@ def traverse_bom(query_response):
     for transport in query_response.transport_stages:
         yield to_dict(transport, top_level_assembly_id)
 
+
 def traverse_part(part, parent_id):
     yield to_dict(part, parent_id)
     part_id = part.identity
@@ -131,10 +165,12 @@ def traverse_part(part, parent_id):
     for child_process in part.processes:
         yield to_dict(child_process, part_id)
 
+
 def traverse_material(material, parent_id):
     yield to_dict(material, parent_id)
     for child_process in material.processes:
         yield to_dict(child_process, parent_id)
+
 
 from ansys.grantami.bomanalytics._item_results import (
     PartWithSustainabilityResult,
@@ -142,6 +178,7 @@ from ansys.grantami.bomanalytics._item_results import (
     MaterialWithSustainabilityResult,
     ProcessWithSustainabilityResult,
 )
+
 
 def to_dict(item, parent):
     record = {
@@ -160,19 +197,28 @@ def to_dict(item, parent):
         record.update({"type": "Process", "name": item.name})
     return record
 
-records = list(traverse_bom(result))
+
 # -
 
-import pandas as pd
-df = pd.DataFrame.from_records(
-    records,
-    columns=["type", "parent_id", "id", "name", "embodied energy [MJ]", "climate change [kg CO2-eq]"],
-)
-df
+# Now call the ``traverse_bom`` function and print the first two dictionaries, representing the root
+# part and the first assembly in the BoM.
 
-# Finally, visualize the data in a ``sunburst`` hierarchical chart. Colors represent the type of items. Size of
-# sections represent the environmental footprint on an item.
-# A similar visualization can be performed to represent the climate change property of each item.
+records = list(traverse_bom(result))
+records[:2]
+
+# Now, use the list of dictionaries to create a DataFrame. Display the first five rows of the
+# DataFrame with the ``DataFrame.head()`` method.
+
+import pandas as pd
+df = pd.DataFrame.from_records(records)
+df.head()
+
+# Finally, visualize the data in a ``sunburst`` hierarchical chart:
+#
+# * The segments are represented hierarchically. The BoM is at the center, and items further down
+# the hierarchy are further out in the plot.
+# * Item type is represented by color.
+# * The size of the segment represents the environmental footprint of that item.
 
 # +
 import plotly.express as px
@@ -186,7 +232,12 @@ fig = px.sunburst(
     branchvalues="total",
     color=df["type"],
     title="Embodied energy [MJ] breakdown",
+    width=800,
+    height=800,
 )
 # Disable sorting, so that items appear in the same order as in the BoM.
 fig.update_traces(sort=False)
 fig.show()
+# -
+
+

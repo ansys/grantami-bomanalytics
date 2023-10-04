@@ -25,8 +25,8 @@
 # +
 from ansys.grantami.bomanalytics import Connection
 
-server_url = "http://cdcvdt4intg0002.win.ansys.com/mi_servicelayer"
-cxn = Connection(server_url).with_autologon().connect()
+server_url = "http://my_grantami_server/mi_servicelayer"
+cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
 # Next, create a sustainability query. The query accepts a single BoM as argument, as well as optional
@@ -238,6 +238,3 @@ fig = px.sunburst(
 # Disable sorting, so that items appear in the same order as in the BoM.
 fig.update_traces(sort=False)
 fig.show()
-# -
-
-

@@ -1,0 +1,277 @@
+<?xml version= "1.0"?>
+<PartsEco xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.grantadesign.com/23/01/BillOfMaterialsEco">
+	<Components>
+		<Part>
+			<Quantity Unit="Each">1</Quantity>
+			<PartNumber>ProductAssembly</PartNumber>
+
+			<Components>
+				<Part>
+					<Quantity Unit="Each">1</Quantity>
+					<PartNumber>SubAssembly</PartNumber>
+					<Components>
+						<Part>
+							<Quantity Unit="Each">1</Quantity>
+							<MassPerUom Unit="kg/Part">0.925</MassPerUom>
+							<PartNumber>SubSubPartA</PartNumber>
+							<Materials>
+								<Material>
+									<Percentage>100</Percentage>
+									<MIMaterialReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2086f56a-4f4d-4850-9891-3d6ad155d1f9</recordGUID>
+									</MIMaterialReference>
+									<Identity>stainless-astm-cn-7ms-cast</Identity>
+									<Processes>
+										<Process>
+											<MIProcessReference>
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
+											</MIProcessReference>
+											<Identity>Primary processing, Casting</Identity>
+											<DimensionType>Mass</DimensionType>
+											<Percentage>100</Percentage>
+										</Process>
+										<Process>
+											<MIProcessReference >
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">907bda29-e800-44f6-b7ea-4eb8e7cff375</recordGUID>
+											</MIProcessReference>
+											<Identity>Machining, coarse</Identity>
+											<DimensionType>MassRemoved</DimensionType>
+											<Percentage>8.0</Percentage>
+										</Process>
+										<Process>
+											<MIProcessReference >
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
+											</MIProcessReference>
+											<Identity>Machining, fine</Identity>
+											<DimensionType>MassRemoved</DimensionType>
+											<Percentage>0.5</Percentage>
+										</Process>
+									</Processes>
+								</Material>
+							</Materials>
+						</Part>
+						<Part>
+							<Quantity Unit="Each">3</Quantity>
+							<MassPerUom Unit="kg/Part">0.175</MassPerUom>
+							<PartNumber>SubSubPartB</PartNumber>
+							<Materials>
+								<Material >
+									<Percentage>100</Percentage>
+									<MIMaterialReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2086f56a-4f4d-4850-9891-3d6ad155d1f9</recordGUID>
+									</MIMaterialReference>
+									<Identity>stainless-astm-cn-7ms-cast</Identity>
+									<Processes>
+										<Process>
+											<MIProcessReference>
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
+											</MIProcessReference>
+											<Identity>Primary processing, Casting</Identity>
+											<DimensionType>Mass</DimensionType>
+											<Percentage>100</Percentage>
+										</Process>
+										<Process>
+											<MIProcessReference >
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
+											</MIProcessReference>
+											<Identity>Machining, fine</Identity>
+											<Name>Machining, fine</Name>
+											<DimensionType>MassRemoved</DimensionType>
+											<Percentage>2.0</Percentage>
+										</Process>
+									</Processes>
+								</Material>
+							</Materials>
+						</Part>
+					</Components>
+					<Processes>
+						<Process>
+							<MIProcessReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">21941b5e-fdbc-47fe-8180-809bb42e5e0a</recordGUID>
+							</MIProcessReference>
+							<Identity>Joining and finishing, Welding, electric</Identity>
+							<DimensionType>Length</DimensionType>
+							<Quantity Unit="m">0.45</Quantity>
+						</Process>
+					</Processes>
+				</Part>
+				<Part>
+					<Quantity Unit="Each">1</Quantity>
+					<MassPerUom Unit="kg/Part">0.610</MassPerUom>
+					<PartNumber>SubPartA</PartNumber>
+					<Materials>
+						<Material>
+							<Percentage>100</Percentage>
+							<MIMaterialReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
+							</MIMaterialReference>
+							<Identity>steel-1010-annealed</Identity>
+							<Processes>
+								<Process>
+									<MIProcessReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
+									</MIProcessReference>
+									<Identity>Primary processing, Metal extrusion, hot</Identity>
+									<DimensionType>Mass</DimensionType>
+									<Percentage>100</Percentage>
+								</Process>
+								<Process>
+									<MIProcessReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
+									</MIProcessReference>
+									<Identity>Machining, fine</Identity>
+									<Name>Machining, fine</Name>
+									<DimensionType>MassRemoved</DimensionType>
+									<Percentage>5.0</Percentage>
+								</Process>
+							</Processes>
+						</Material>
+					</Materials>
+				</Part>
+				<Part>
+					<Quantity Unit="Each">2</Quantity>
+					<MassPerUom Unit="kg/Part">0.495</MassPerUom>
+					<PartNumber>SubPartB</PartNumber>
+					<Materials>
+						<Material>
+							<Percentage>100</Percentage>
+							<MIMaterialReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
+							</MIMaterialReference>
+							<Identity>steel-1010-annealed</Identity>
+							<Processes>
+								<Process>
+									<MIProcessReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
+									</MIProcessReference>
+									<Identity>Primary processing, Casting</Identity>
+									<DimensionType>Mass</DimensionType>
+									<Percentage>100</Percentage>
+								</Process>
+								<Process>
+									<MIProcessReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">9b5b1824-f11e-449e-9a3f-f6a75396ac87</recordGUID>
+									</MIProcessReference>
+									<Identity>Secondary processing, Grinding</Identity>
+									<DimensionType>MassRemoved</DimensionType>
+									<Percentage>7.6</Percentage>
+								</Process>
+							</Processes>
+						</Material>
+					</Materials>
+				</Part>
+				<Part>
+					<Quantity Unit="Each">2</Quantity>
+					<MassPerUom Unit="kg/Part">0.520</MassPerUom>
+					<PartNumber>SubPartC</PartNumber>
+					<Materials>
+						<Material>
+							<Percentage>100</Percentage>
+							<MIMaterialReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
+							</MIMaterialReference>
+							<Identity>steel-1010-annealed</Identity>
+							<Processes>
+								<Process>
+									<MIProcessReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
+									</MIProcessReference>
+									<Identity>Metal extrusion, hot</Identity>
+									<DimensionType>Mass</DimensionType>
+									<Percentage>100</Percentage>
+								</Process>
+							</Processes>
+						</Material>
+					</Materials>
+				</Part>
+				<Part>
+					<Quantity Unit="Each">2</Quantity>
+					<MassPerUom Unit="kg/Part">0.012</MassPerUom>
+					<PartNumber>SubPartD</PartNumber>
+					<Materials>
+						<Material>
+							<Percentage>100</Percentage>
+							<MIMaterialReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">a0adc9d7-69a2-494e-b6da-d588f86cc5ab</recordGUID>
+							</MIMaterialReference>
+							<Identity>beryllium-beralcast191-cast</Identity>
+							<Processes>
+								<Process>
+									<MIProcessReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
+									</MIProcessReference>
+									<Identity>Metal extrusion, hot</Identity>
+									<DimensionType>Mass</DimensionType>
+									<Percentage>100</Percentage>
+								</Process>
+								<Process>
+									<MIProcessReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
+									</MIProcessReference>
+									<Identity>Machining, fine</Identity>
+									<DimensionType>MassRemoved</DimensionType>
+									<Percentage>11.2</Percentage>
+								</Process>
+							</Processes>
+						</Material>
+					</Materials>
+				</Part>
+
+			</Components>
+		</Part>
+
+	</Components>
+
+	<TransportPhase>
+		<TransportStage id="port_to_airport_truck">
+			<Name>Port to airport by truck</Name>
+			<MITransportReference>
+				<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+				<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+			</MITransportReference>
+			<Distance Unit="km">350</Distance>
+		</TransportStage>
+		<TransportStage id="air_travel">
+			<Name>Country 1 to country 2 by air</Name>
+			<MITransportReference>
+				<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+				<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">546b90cb-1f8e-423c-a284-a25f731a13e5</recordGUID>
+			</MITransportReference>
+			<Distance Unit="km">1500</Distance>
+		</TransportStage>
+		<TransportStage id="airport_to_distributor_truck">
+			<Name>Airport to distributor by truck</Name>
+			<MITransportReference>
+				<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+				<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+			</MITransportReference>
+			<Distance Unit="km">125</Distance>
+		</TransportStage>
+	</TransportPhase>
+	<Location>
+		<MILocationReference>
+			<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+			<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">345a50ab-3e15-41e7-8653-703f7337e779</recordGUID>
+		</MILocationReference>
+		<Identity>WholeWorld</Identity>
+	</Location>
+</PartsEco>

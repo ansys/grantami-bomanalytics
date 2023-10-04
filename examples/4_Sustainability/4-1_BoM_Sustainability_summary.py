@@ -16,7 +16,7 @@
 #
 # The following supporting files are required for this example:
 #
-# * [bom-2301-jack-stand.xml](supporting-files/bom-2301-jack-stand.xml)
+# * [bom-2301-assembly.xml](supporting-files/bom-2301-assembly.xml)
 
 # ## Run a BoM sustainability summary query
 #
@@ -33,7 +33,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # `MJ` for energy, `kg` for mass, and `km` for distance.
 
 # +
-xml_file_path = "supporting-files/bom-2301-jack-stand.xml"
+xml_file_path = "supporting-files/bom-2301-assembly.xml"
 with open(xml_file_path) as f:
     bom = f.read()
 

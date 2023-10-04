@@ -61,65 +61,104 @@ def test_impacted_substance_repr():
     assert repr(impacted_substance) == f'<ImpactedSubstance: {{"cas_number": "123-456-789", "percent_amount": 50}}>'
 
 
-@pytest.mark.parametrize(
-    "result_type",
-    ["MaterialWithImpactedSubstances", "PartWithImpactedSubstances", "SpecificationWithImpactedSubstances"],
-)
-def test_impacted_substances_item_repr(result_type):
-    query_result = RecordSubstanceResultMock(
-        reference_type="MiRecordGuid", reference_value="TEST_GUID", legislations=legislation_results
-    )
-    result = ItemResultFactory.create_impacted_substances_result(result_type, query_result)
-    assert (
-        repr(result) == f"<{result_type}Result({{'reference_type': 'MiRecordGuid', "
-        f"'reference_value': 'TEST_GUID'}}), {len(legislation_results)} legislations>"
-    )
-    assert (
-        repr(result.substances) == '[<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
-        '<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
-        '<ImpactedSubstance: {"cas_number": "456-789", "percent_amount": None}>]'
+class TestImpactedSubstancesResultsRepr:
+    def _check_properties_repr(self, result):
+        assert (
+            repr(result.substances) == '[<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
+            '<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
+            '<ImpactedSubstance: {"cas_number": "456-789", "percent_amount": None}>]'
+        )
+
+        for legislation in legislation_results:
+            assert legislation.legislation_id in repr(result.substances_by_legislation)
+        assert "ImpactedSubstance" in repr(result.substances_by_legislation)
+
+    def test_specification_impacted_substances_item_repr(self):
+        query_result = models.GetImpactedSubstancesForSpecificationsSpecification(
+            reference_type="MiRecordGuid", reference_value="TEST_GUID", legislations=legislation_results
+        )
+        result = ItemResultFactory.create_specification_impacted_substances_result(query_result)
+        assert (
+            repr(result) == f"<SpecificationWithImpactedSubstancesResult({{'reference_type': 'MiRecordGuid', "
+            f"'reference_value': 'TEST_GUID'}}), {len(legislation_results)} legislations>"
+        )
+        self._check_properties_repr(result)
+
+    def test_material_impacted_substances_item_repr(self):
+        query_result = models.GetImpactedSubstancesForMaterialsMaterial(
+            reference_type="MiRecordGuid", reference_value="TEST_GUID", legislations=legislation_results
+        )
+        result = ItemResultFactory.create_material_impacted_substances_result(query_result)
+        assert (
+            repr(result) == f"<MaterialWithImpactedSubstancesResult({{'reference_type': 'MiRecordGuid', "
+            f"'reference_value': 'TEST_GUID'}}), {len(legislation_results)} legislations>"
+        )
+        self._check_properties_repr(result)
+
+    def test_part_impacted_substances_item_repr(
+        self,
+    ):
+        query_result = models.GetImpactedSubstancesForPartsPart(
+            reference_type="MiRecordGuid", reference_value="TEST_GUID", legislations=legislation_results
+        )
+        result = ItemResultFactory.create_part_impacted_substances_result(query_result)
+        assert (
+            repr(result) == f"<PartWithImpactedSubstancesResult({{'reference_type': 'MiRecordGuid', "
+            f"'reference_value': 'TEST_GUID'}}), {len(legislation_results)} legislations>"
+        )
+        self._check_properties_repr(result)
+
+    def test_impacted_substances_bom_repr(self):
+        query_result = models.GetImpactedSubstancesForBom1711Response(
+            legislations=legislation_results,
+            log_messages=[],
+        )
+        result = ItemResultFactory.create_bom_impacted_substances_result(query_result)
+
+        assert repr(result) == f"<BoM1711WithImpactedSubstancesResult(), {len(legislation_results)} legislations>"
+        self._check_properties_repr(result)
+
+
+class TestComplianceResultsRepr:
+    _indicator_results = [two_legislation_result, one_legislation_result]
+    _default_kwargs = dict(
+        reference_type="MiRecordGuid",
+        reference_value="TEST_GUID",
+        indicators=_indicator_results,
     )
 
-    for legislation in legislation_results:
-        assert legislation.legislation_id in repr(result.substances_by_legislation)
-    assert "ImpactedSubstance" in repr(result.substances_by_legislation)
-
-
-def test_impacted_substances_bom_repr():
-    query_result = BomSubstanceResultMock(legislations=legislation_results)
-    result = ItemResultFactory.create_impacted_substances_result("BomWithImpactedSubstances", query_result)
-    assert repr(result) == f"<BoM1711WithImpactedSubstancesResult(), {len(legislation_results)} legislations>"
-    assert (
-        repr(result.substances) == '[<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
-        '<ImpactedSubstance: {"cas_number": "123-456", "percent_amount": 50}>, '
-        '<ImpactedSubstance: {"cas_number": "456-789", "percent_amount": None}>]'
+    @pytest.mark.parametrize(
+        ["result_type", "method_name", "input_model"],
+        [
+            ("PartWithCompliance", "create_part_compliance_result", models.CommonPartWithCompliance(**_default_kwargs)),
+            (
+                "MaterialWithCompliance",
+                "create_material_compliance_result",
+                models.CommonMaterialWithCompliance(**_default_kwargs),
+            ),
+            (
+                "SpecificationWithCompliance",
+                "create_specification_compliance_result",
+                models.CommonSpecificationWithCompliance(**_default_kwargs),
+            ),
+            (
+                "SubstanceWithCompliance",
+                "create_substance_compliance_result",
+                models.CommonSubstanceWithCompliance(**_default_kwargs),
+            ),
+            (
+                "CoatingWithCompliance",
+                "create_coating_compliance_result",
+                models.CommonCoatingWithCompliance(**_default_kwargs),
+            ),
+        ],
     )
-
-    for legislation in legislation_results:
-        assert legislation.legislation_id in repr(result.substances_by_legislation)
-    assert "ImpactedSubstance" in repr(result.substances_by_legislation)
-
-
-@pytest.mark.parametrize(
-    "result_type",
-    [
-        "PartWithCompliance",
-        "MaterialWithCompliance",
-        "SpecificationWithCompliance",
-        "SubstanceWithCompliance",
-        "CoatingWithCompliance",
-    ],
-)
-def test_compliance_item_repr(result_type):
-    indicator_results = [two_legislation_result, one_legislation_result]
-    query_result = ComplianceResultMock(
-        reference_type="MiRecordGuid", reference_value="TEST_GUID", indicators=indicator_results
-    )
-    result = ItemResultFactory.create_compliance_result(result_type, query_result, INDICATORS)
-    assert (
-        repr(result) == f"<{result_type}Result({{'reference_type': 'MiRecordGuid', "
-        f"'reference_value': 'TEST_GUID'}}), {len(indicator_results)} indicators>"
-    )
+    def test_compliance_item_repr(self, result_type, method_name, input_model):
+        result = getattr(ItemResultFactory, method_name)(input_model, INDICATORS)
+        assert (
+            repr(result) == f"<{result_type}Result({{'reference_type': 'MiRecordGuid', "
+            f"'reference_value': 'TEST_GUID'}}), {len(self._indicator_results)} indicators>"
+        )
 
 
 class TestSustainabilitySummaryResultsRepr:
@@ -198,11 +237,18 @@ class TestSustainabilityResultsRepr:
         "embodied_energy": models.CommonValueWithUnit(value=2.3, unit="KJ"),
         "climate_change": models.CommonValueWithUnit(value=5.1, unit="KJ"),
     }
+    _id = {"id": "TEST_ID"}
+    _identifiers = {
+        "id": "TEST_ID",
+        "external_identity": "TEST_EXT_ID",
+        "name": "TEST_NAME",
+    }
 
     def test_transport_result_repr(self):
         model = models.CommonSustainabilityTransportWithSustainability(
             **self._eco_metrics,
             **self._rec_ref_kwargs,
+            **self._id,
         )
         result = ItemResultFactory.create_transport_with_sustainability(model)
         expected = (
@@ -214,6 +260,8 @@ class TestSustainabilityResultsRepr:
         model = models.CommonSustainabilityPartWithSustainability(
             **self._eco_metrics,
             **self._rec_ref_kwargs,
+            **self._identifiers,
+            input_part_number="TEST_PN",
             materials=[],
             substances=[],
             specifications=[],
@@ -229,6 +277,7 @@ class TestSustainabilityResultsRepr:
         model = models.CommonSustainabilityMaterialWithSustainability(
             **self._eco_metrics,
             **self._rec_ref_kwargs,
+            **self._identifiers,
             biodegradable=True,
             functional_recycle=True,
             recyclable=True,
@@ -246,6 +295,7 @@ class TestSustainabilityResultsRepr:
         model = models.CommonSustainabilityProcessWithSustainability(
             **self._eco_metrics,
             **self._rec_ref_kwargs,
+            **self._identifiers,
         )
         result = ItemResultFactory.create_process_with_sustainability(model)
         expected = (
@@ -256,6 +306,7 @@ class TestSustainabilityResultsRepr:
     def test_coating_result_repr(self):
         model = models.CommonCoatingReference(
             **self._rec_ref_kwargs,
+            **self._id,
         )
         result = ItemResultFactory.create_coating_result(model)
         expected = "<CoatingResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
@@ -264,9 +315,28 @@ class TestSustainabilityResultsRepr:
     def test_substance_result_repr(self):
         model = models.CommonSubstanceReference(
             **self._rec_ref_kwargs,
+            **self._identifiers,
         )
         result = ItemResultFactory.create_substance_result(model)
         expected = "<SubstanceResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
+        assert repr(result) == expected
+
+    def test_specification_result_repr(self):
+        model = models.CommonSustainabilitySpecificationWithSustainability(
+            **self._rec_ref_kwargs,
+            **self._eco_metrics,
+            **self._identifiers,
+            reported_mass=models.CommonValueWithUnit(value=45, unit="kg"),
+            specifications=[],
+            materials=[],
+            substances=[],
+            coatings=[],
+        )
+        result = ItemResultFactory.create_specification_with_sustainability(model)
+        expected = (
+            "<SpecificationWithSustainabilityResult("
+            "{'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
+        )
         assert repr(result) == expected
 
 

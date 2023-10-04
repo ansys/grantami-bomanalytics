@@ -145,11 +145,6 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
     """
 
     _results: List
-    _result_type_name: str
-
-    def __repr__(self) -> str:
-        result = f"<{self.__class__.__name__}: {len(self._results)} " f"{self._result_type_name} results>"
-        return result
 
     @property
     def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
@@ -287,10 +282,8 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "MaterialWithImpactedSubstances"
         for result in results:
-            material_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name=self._result_type_name,
+            material_with_impacted_substances = ItemResultFactory.create_material_impacted_substances_result(
                 result_with_impacted_substances=result,
             )
             self._results.append(material_with_impacted_substances)
@@ -313,6 +306,10 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         return self._results
 
+    def __repr__(self) -> str:
+        result = f"<{self.__class__.__name__}: {len(self._results)} MaterialWithImpactedSubstances results>"
+        return result
+
 
 @QueryResultFactory.register(models.CommonMaterialWithCompliance)
 class MaterialComplianceQueryResult(ComplianceBaseClass):
@@ -326,6 +323,8 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
+    _result_type_name = "MaterialWithCompliance"
 
     def __init__(
         self,
@@ -345,10 +344,8 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "MaterialWithCompliance"
         for result in results:
-            material_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            material_with_compliance = ItemResultFactory.create_material_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -403,10 +400,8 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "PartWithImpactedSubstances"
         for result in results:
-            part_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name=self._result_type_name,
+            part_with_impacted_substances = ItemResultFactory.create_part_impacted_substances_result(
                 result_with_impacted_substances=result,
             )
             self._results.append(part_with_impacted_substances)
@@ -430,6 +425,10 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         return self._results
 
+    def __repr__(self) -> str:
+        result = f"<{self.__class__.__name__}: {len(self._results)} PartWithImpactedSubstances results>"
+        return result
+
 
 @QueryResultFactory.register(models.CommonPartWithCompliance)
 class PartComplianceQueryResult(ComplianceBaseClass):
@@ -443,6 +442,8 @@ class PartComplianceQueryResult(ComplianceBaseClass):
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
+    _result_type_name = "PartWithCompliance"
 
     def __init__(
         self,
@@ -462,10 +463,8 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "PartWithCompliance"
         for result in results:
-            part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -521,10 +520,8 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "SpecificationWithImpactedSubstances"
         for result in results:
-            specification_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name=self._result_type_name,
+            specification_with_impacted_substances = ItemResultFactory.create_specification_impacted_substances_result(
                 result_with_impacted_substances=result,
             )
             self._results.append(specification_with_impacted_substances)
@@ -551,6 +548,10 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         return self._results
 
+    def __repr__(self) -> str:
+        result = f"<{self.__class__.__name__}: {len(self._results)} SpecificationWithImpactedSubstances results>"
+        return result
+
 
 @QueryResultFactory.register(models.CommonSpecificationWithCompliance)
 class SpecificationComplianceQueryResult(ComplianceBaseClass):
@@ -564,6 +565,8 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
+    _result_type_name = "SpecificationWithCompliance"
 
     def __init__(
         self,
@@ -583,10 +586,8 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "SpecificationWithCompliance"
         for result in results:
-            specification_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            specification_with_compliance = ItemResultFactory.create_specification_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -650,8 +651,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
         self._results = []
         self._result_type_name = "SubstanceWithCompliance"
         for result in results:
-            substance_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            substance_with_compliance = ItemResultFactory.create_substance_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -701,12 +701,14 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         """
 
         super().__init__(messages)
-        self._result_type_name = "BomWithImpactedSubstances"
-        bom_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-            result_type_name=self._result_type_name,
+        bom_with_impacted_substances = ItemResultFactory.create_bom_impacted_substances_result(
             result_with_impacted_substances=results[0],
         )
         self._results = [bom_with_impacted_substances]
+
+    def __repr__(self) -> str:
+        result = f"<{self.__class__.__name__}: {len(self._results)} BomWithImpactedSubstances results>"
+        return result
 
 
 @QueryResultFactory.register(models.GetComplianceForBom1711Response)
@@ -721,6 +723,8 @@ class BomComplianceQueryResult(ComplianceBaseClass):
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
+
+    _result_type_name = "PartWithCompliance"
 
     def __init__(
         self,
@@ -740,11 +744,9 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "PartWithCompliance"
         parts: List[models.CommonPartWithCompliance] = results[0].parts
         for result in parts:
-            part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )

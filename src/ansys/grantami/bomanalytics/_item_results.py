@@ -5,264 +5,312 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 """
 from abc import ABC
 from copy import deepcopy
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Type,
-    TypeVar,
-    Union,
-    overload,
-)
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 from ._item_definitions import (
-    BaseSubstanceReference,
-    CoatingReference,
-    MaterialDefinition,
+    CoatingReferenceWithIdentifier,
     MaterialReference,
-    PartDefinition,
+    MaterialReferenceWithIdentifiers,
     PartReference,
+    PartReferenceWithIdentifiers,
     ProcessReference,
+    ProcessReferenceWithIdentifiers,
     RecordReference,
     ReferenceType,
-    SpecificationDefinition,
-    SpecificationReference,
+    SpecificationReferenceWithIdentifiers,
+    SubstanceReference,
+    SubstanceReferenceWithIdentifiers,
     TransportReference,
+    TransportReferenceWithIdentifier,
 )
-from .indicators import RoHSIndicator, WatchListIndicator
 
 if TYPE_CHECKING:
-    from ._query_results import MaterialImpactedSubstancesQueryResult  # noqa: F401
+    from .indicators import RoHSIndicator, WatchListIndicator
 
-Result_Model_Material = TypeVar(
-    "Result_Model_Material",
-    bound=Union[
-        models.GetImpactedSubstancesForMaterialsMaterial,
-        models.CommonMaterialWithCompliance,
-    ],
-)
-Result_Model_Part = TypeVar(
-    "Result_Model_Part",
-    bound=Union[
-        models.GetImpactedSubstancesForPartsPart,
-        models.CommonPartWithCompliance,
-    ],
-)
-Result_Model_Specification = TypeVar(
-    "Result_Model_Specification",
-    bound=Union[
-        models.GetImpactedSubstancesForSpecificationsSpecification,
-        models.CommonSpecificationWithCompliance,
-    ],
-)
-Result_Model_Substance = TypeVar("Result_Model_Substance", bound=models.CommonSubstanceWithCompliance)
-Result_Model_Coating = TypeVar("Result_Model_Coating", bound=models.CommonCoatingWithCompliance)
-Result_Model_Bom = TypeVar("Result_Model_Bom", bound=models.GetImpactedSubstancesForBom1711Response)
-Result_Model_Any = Union[
-    Result_Model_Part,
-    Result_Model_Material,
-    Result_Model_Specification,
-    Result_Model_Coating,
-    Result_Model_Substance,
-    Result_Model_Bom,
-]
-Item_Result = Union[Type["ImpactedSubstancesResultMixin"], Type["ComplianceResultMixin"]]
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
 class ItemResultFactory:
-    """Creates item results for a given type of API query.
-
-    The name of the query class in the ``queries.py``file is key to controlling
-    which result type is created.
-    """
-
-    registry: Dict[str, Item_Result] = {}
-    """Mapping between an item result class and the query type it supports."""
+    """Creates item results for a given type of API query."""
 
     @classmethod
-    def register(cls, name: str) -> Callable:
-        """Register a specific item result class with the name of a result type.
-
-        Parameters
-        ----------
-        name
-            Name of the result type to register.
-
-        Returns
-        -------
-        Callable
-            Function that's being decorated.
-        """
-
-        def inner(result_class: Item_Result) -> Item_Result:
-            cls.registry[name] = result_class
-            return result_class
-
-        return inner
-
-    @classmethod
-    @overload
-    def create_impacted_substances_result(
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Material
+    def create_material_impacted_substances_result(
+        cls, result_with_impacted_substances: models.GetImpactedSubstancesForMaterialsMaterial
     ) -> "MaterialWithImpactedSubstancesResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_impacted_substances_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Part
-    ) -> "PartWithImpactedSubstancesResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_impacted_substances_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Specification
-    ) -> "SpecificationWithImpactedSubstancesResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_impacted_substances_result(  # type: ignore[misc]
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Bom
-    ) -> "BoM1711WithImpactedSubstancesResult":
-        ...
-
-    @classmethod
-    def create_impacted_substances_result(
-        cls, result_type_name: str, result_with_impacted_substances: Result_Model_Any
-    ) -> "ImpactedSubstancesResultMixin":
-        """Return a specific impacted substances result.
+        """
+        Return a material impacted substances result.
 
         Parameters
         ----------
-        result_type_name
-            Name of the result for which an object is needed.
         result_with_impacted_substances
-            Result from the REST API describing the impacted substances for this item.
+           Result from the REST API describing the impacted substances for a material.
 
         Returns
         -------
-        Impacted Substances Item Result
-            An object that describes the substances that impacted a material, part, specification, or BoM. Substances
-            are grouped by legislation.
-
-        Raises
-        ------
-        RuntimeError
-            Error raised if a query type is not registered to any factory.
+        MaterialWithImpactedSubstancesResult
+           An object that describes the substances that impacted a material. Substances are grouped by legislation.
         """
-
-        item_result_class = cls.registry[result_type_name]
-        assert issubclass(item_result_class, ImpactedSubstancesResultMixin)
-        try:
-            reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
-            item_result = item_result_class(
-                reference_type=reference_type,
-                reference_value=result_with_impacted_substances.reference_value,
-                legislations=result_with_impacted_substances.legislations,
-            )
-        except AttributeError:
-            # This is a BoM-type query result, and has no record reference
-            item_result = item_result_class(legislations=result_with_impacted_substances.legislations)
+        reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        item_result = MaterialWithImpactedSubstancesResult(
+            reference_type=reference_type,
+            reference_value=result_with_impacted_substances.reference_value,
+            legislations=result_with_impacted_substances.legislations,
+            identity=result_with_impacted_substances.id,
+            external_identity=result_with_impacted_substances.external_identity,
+            name=result_with_impacted_substances.name,
+        )
         return item_result
 
     @classmethod
-    @overload
-    def create_compliance_result(
-        cls,
-        result_type_name: str,
-        result_with_compliance: Result_Model_Material,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
-    ) -> "MaterialWithComplianceResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_compliance_result(  # type: ignore[misc]
-        cls,
-        result_type_name: str,
-        result_with_compliance: Result_Model_Part,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
-    ) -> "PartWithComplianceResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_compliance_result(  # type: ignore[misc]
-        cls,
-        result_type_name: str,
-        result_with_compliance: Result_Model_Specification,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
-    ) -> "SpecificationWithComplianceResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_compliance_result(  # type: ignore[misc]
-        cls,
-        result_type_name: str,
-        result_with_compliance: Result_Model_Coating,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
-    ) -> "CoatingWithComplianceResult":
-        ...
-
-    @classmethod
-    @overload
-    def create_compliance_result(  # type: ignore[misc]
-        cls,
-        result_type_name: str,
-        result_with_compliance: Result_Model_Substance,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
-    ) -> "SubstanceWithComplianceResult":
-        ...
-
-    @classmethod
-    def create_compliance_result(
-        cls,
-        result_type_name: str,
-        result_with_compliance: Result_Model_Any,
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
-    ) -> "ComplianceResultMixin":
-        """Returns a specific item result.
+    def create_part_impacted_substances_result(
+        cls, result_with_impacted_substances: models.GetImpactedSubstancesForPartsPart
+    ) -> "PartWithImpactedSubstancesResult":
+        """
+        Return a part impacted substances result.
 
         Parameters
         ----------
-        result_type_name
-            Name of the result for which an object is needed.
+        result_with_impacted_substances
+           Result from the REST API describing the impacted substances for a part.
+
+        Returns
+        -------
+        PartWithImpactedSubstancesResult
+           An object that describes the substances that impacted a part. Substances are grouped by legislation.
+        """
+        reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        item_result = PartWithImpactedSubstancesResult(
+            reference_type=reference_type,
+            reference_value=result_with_impacted_substances.reference_value,
+            legislations=result_with_impacted_substances.legislations,
+            identity=result_with_impacted_substances.id,
+            external_identity=result_with_impacted_substances.external_identity,
+            name=result_with_impacted_substances.name,
+            input_part_number=result_with_impacted_substances.input_part_number,
+        )
+        return item_result
+
+    @classmethod
+    def create_specification_impacted_substances_result(
+        cls, result_with_impacted_substances: models.GetImpactedSubstancesForSpecificationsSpecification
+    ) -> "SpecificationWithImpactedSubstancesResult":
+        """
+        Return a specification impacted substances result.
+
+        Parameters
+        ----------
+        result_with_impacted_substances
+           Result from the REST API describing the impacted substances for a specification.
+
+        Returns
+        -------
+        SpecificationWithImpactedSubstancesResult
+           An object that describes the substances that impacted a specification. Substances are grouped by legislation.
+        """
+        reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        item_result = SpecificationWithImpactedSubstancesResult(
+            reference_type=reference_type,
+            reference_value=result_with_impacted_substances.reference_value,
+            legislations=result_with_impacted_substances.legislations,
+            identity=result_with_impacted_substances.id,
+            external_identity=result_with_impacted_substances.external_identity,
+            name=result_with_impacted_substances.name,
+        )
+        return item_result
+
+    @classmethod
+    def create_bom_impacted_substances_result(
+        cls, result_with_impacted_substances: models.GetImpactedSubstancesForBom1711Response
+    ) -> "BoM1711WithImpactedSubstancesResult":
+        """
+        Return a bom impacted substances result.
+
+        Parameters
+        ----------
+        result_with_impacted_substances
+           Result from the REST API describing the impacted substances for a bom.
+
+        Returns
+        -------
+        BoM1711WithImpactedSubstancesResult
+           An object that describes the substances that impacted a bom. Substances are grouped by legislation.
+        """
+        item_result = BoM1711WithImpactedSubstancesResult(legislations=result_with_impacted_substances.legislations)
+        return item_result
+
+    @classmethod
+    def create_material_compliance_result(
+        cls,
+        result_with_compliance: models.CommonMaterialWithCompliance,
+        indicator_definitions: Indicator_Definitions,
+    ) -> "MaterialWithComplianceResult":
+        """Returns a material compliance result.
+
+        Parameters
+        ----------
         result_with_compliance
-            Result from the REST API describing the compliance for this particular item.
+            Result from the REST API describing the compliance for this particular material.
         indicator_definitions
             Definitions of the indicators supplied to the original query. This is required because
             the REST API does not provide them in the response.
 
         Returns
         -------
-        Compliance Item Result
-            An object that describes the compliance of a substance, material, part, specification, or BoM.
+        MaterialWithComplianceResult
+            An object that describes the compliance of the material.
             This object is defined recursively, with each level of the BoM having a reported compliance
             status for each indicator.
-
-        Raises
-        ------
-        RuntimeError
-            Error raised if a query type is not registered to any factory.
         """
-
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
-        item_result_class = cls.registry[result_type_name]
-        assert issubclass(item_result_class, ComplianceResultMixin)
-        item_result = item_result_class(
+        item_result = MaterialWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
             indicator_results=result_with_compliance.indicators,
             indicator_definitions=indicator_definitions,
+            identity=result_with_compliance.id,
+            external_identity=result_with_compliance.external_identity,
+            name=result_with_compliance.name,
+        )
+        return item_result
+
+    @classmethod
+    def create_part_compliance_result(
+        cls,
+        result_with_compliance: models.CommonPartWithCompliance,
+        indicator_definitions: Indicator_Definitions,
+    ) -> "PartWithComplianceResult":
+        """Returns a part compliance result.
+
+        Parameters
+        ----------
+        result_with_compliance
+            Result from the REST API describing the compliance for this particular part.
+        indicator_definitions
+            Definitions of the indicators supplied to the original query. This is required because
+            the REST API does not provide them in the response.
+
+        Returns
+        -------
+        PartWithComplianceResult
+            An object that describes the compliance of the part.
+            This object is defined recursively, with each level of the BoM having a reported compliance
+            status for each indicator.
+        """
+        reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        item_result = PartWithComplianceResult(
+            reference_type=reference_type,
+            reference_value=result_with_compliance.reference_value,
+            indicator_results=result_with_compliance.indicators,
+            indicator_definitions=indicator_definitions,
+            identity=result_with_compliance.id,
+            external_identity=result_with_compliance.external_identity,
+            name=result_with_compliance.name,
+            input_part_number=result_with_compliance.input_part_number,
+        )
+        return item_result
+
+    @classmethod
+    def create_specification_compliance_result(
+        cls,
+        result_with_compliance: models.CommonSpecificationWithCompliance,
+        indicator_definitions: Indicator_Definitions,
+    ) -> "SpecificationWithComplianceResult":
+        """Returns a specification compliance result.
+
+        Parameters
+        ----------
+        result_with_compliance
+            Result from the REST API describing the compliance for this particular specification.
+        indicator_definitions
+            Definitions of the indicators supplied to the original query. This is required because
+            the REST API does not provide them in the response.
+
+        Returns
+        -------
+        SpecificationWithComplianceResult
+            An object that describes the compliance of the specification.
+            This object is defined recursively, with each level of the BoM having a reported compliance
+            status for each indicator.
+        """
+        reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        item_result = SpecificationWithComplianceResult(
+            reference_type=reference_type,
+            reference_value=result_with_compliance.reference_value,
+            indicator_results=result_with_compliance.indicators,
+            indicator_definitions=indicator_definitions,
+            identity=result_with_compliance.id,
+            external_identity=result_with_compliance.external_identity,
+            name=result_with_compliance.name,
+        )
+        return item_result
+
+    @classmethod
+    def create_coating_compliance_result(
+        cls,
+        result_with_compliance: models.CommonCoatingWithCompliance,
+        indicator_definitions: Indicator_Definitions,
+    ) -> "CoatingWithComplianceResult":
+        """Returns a coating compliance result.
+
+        Parameters
+        ----------
+        result_with_compliance
+            Result from the REST API describing the compliance for this particular coating.
+        indicator_definitions
+            Definitions of the indicators supplied to the original query. This is required because
+            the REST API does not provide them in the response.
+
+        Returns
+        -------
+        CoatingWithComplianceResult
+            An object that describes the compliance of the coating.
+            This object is defined recursively, with each level of the BoM having a reported compliance
+            status for each indicator.
+        """
+        reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        item_result = CoatingWithComplianceResult(
+            reference_type=reference_type,
+            reference_value=result_with_compliance.reference_value,
+            indicator_results=result_with_compliance.indicators,
+            indicator_definitions=indicator_definitions,
+            identity=result_with_compliance.id,
+        )
+        return item_result
+
+    @classmethod
+    def create_substance_compliance_result(
+        cls,
+        result_with_compliance: models.CommonSubstanceWithCompliance,
+        indicator_definitions: Indicator_Definitions,
+    ) -> "SubstanceWithComplianceResult":
+        """Returns a substance compliance result.
+
+        Parameters
+        ----------
+        result_with_compliance
+            Result from the REST API describing the compliance for this particular substance.
+        indicator_definitions
+            Definitions of the indicators supplied to the original query. This is required because
+            the REST API does not provide them in the response.
+
+        Returns
+        -------
+        SubstanceWithComplianceResult
+            An object that describes the compliance of the substance.
+            This object is defined recursively, with each level of the BoM having a reported compliance
+            status for each indicator.
+        """
+        reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        item_result = SubstanceWithComplianceResult(
+            reference_type=reference_type,
+            reference_value=result_with_compliance.reference_value,
+            indicator_results=result_with_compliance.indicators,
+            indicator_definitions=indicator_definitions,
+            identity=result_with_compliance.id,
+            external_identity=result_with_compliance.external_identity,
+            name=result_with_compliance.name,
         )
         return item_result
 
@@ -290,6 +338,10 @@ class ItemResultFactory:
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+            identity=result_with_sustainability.id,
+            external_identity=result_with_sustainability.external_identity,
+            name=result_with_sustainability.name,
+            input_part_number=result_with_sustainability.input_part_number,
         )
         part_with_sustainability._add_child_parts(result_with_sustainability.parts)
         part_with_sustainability._add_child_materials(result_with_sustainability.materials)
@@ -321,6 +373,9 @@ class ItemResultFactory:
             reference_value=result_with_sustainability.reference_value,
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            identity=result_with_sustainability.id,
+            external_identity=result_with_sustainability.external_identity,
+            name=result_with_sustainability.name,
         )
         return process_with_sustainability
 
@@ -351,6 +406,9 @@ class ItemResultFactory:
             recyclable=result_with_sustainability.recyclable,
             biodegradable=result_with_sustainability.biodegradable,
             functional_recycle=result_with_sustainability.functional_recycle,
+            identity=result_with_sustainability.id,
+            external_identity=result_with_sustainability.external_identity,
+            name=result_with_sustainability.name,
         )
         material_with_sustainability._add_child_processes(result_with_sustainability.processes)
         material_with_sustainability._add_child_substances(result_with_sustainability.substances)
@@ -380,6 +438,9 @@ class ItemResultFactory:
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
+            identity=result_with_sustainability.id,
+            external_identity=result_with_sustainability.external_identity,
+            name=result_with_sustainability.name,
         )
         specification_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
         specification_with_sustainability._add_child_materials(result_with_sustainability.materials)
@@ -408,6 +469,9 @@ class ItemResultFactory:
         substance = SubstanceResult(
             reference_type=reference_type,
             reference_value=result.reference_value,
+            identity=result.id,
+            external_identity=result.external_identity,
+            name=result.name,
         )
         return substance
 
@@ -432,6 +496,7 @@ class ItemResultFactory:
         coating = CoatingResult(
             reference_type=reference_type,
             reference_value=result.reference_value,
+            identity=result.id,
         )
         return coating
 
@@ -458,6 +523,7 @@ class ItemResultFactory:
             reference_value=result_with_sustainability.reference_value,
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
+            identity=result_with_sustainability.id,
         )
         return transport_with_sustainability
 
@@ -599,7 +665,7 @@ class ItemResultFactory:
         """
         return ProcessSummaryResult(
             material_identity=result.material_identity,
-            material_reference=MaterialDefinition(
+            material_reference=MaterialReference(
                 reference_type=cls.parse_reference_type(result.material_record_reference.reference_type),
                 reference_value=result.material_record_reference.reference_value,
             ),
@@ -615,7 +681,7 @@ class ItemResultFactory:
         )
 
     @staticmethod
-    def parse_reference_type(reference_type: str) -> ReferenceType:
+    def parse_reference_type(reference_type: Optional[str]) -> Optional[ReferenceType]:
         """Parse the ``reference_type`` returned by the low-level API into a ``ReferenceType``.
 
         Parameters
@@ -634,6 +700,8 @@ class ItemResultFactory:
             Error to raise if the ``reference_type`` returned by the low-level API doesn't appear in ``ReferenceType``.
         """
 
+        if reference_type is None:
+            return reference_type
         try:
             return ReferenceType[reference_type]
         except KeyError as e:
@@ -647,7 +715,7 @@ class ItemResultFactory:
         )
 
 
-class ImpactedSubstance(BaseSubstanceReference):
+class ImpactedSubstance(SubstanceReference):
     """Represents a substance impacted by a legislation.
 
     This object includes two categories of attributes:
@@ -666,7 +734,7 @@ class ImpactedSubstance(BaseSubstanceReference):
 
     def __init__(
         self,
-        reference_type: ReferenceType,
+        reference_type: Optional[ReferenceType],
         reference_value: Union[int, str],
         max_percentage_amount_in_material: Optional[float],
         legislation_threshold: Optional[float],
@@ -807,8 +875,7 @@ class RecordWithImpactedSubstancesResultMixin(ImpactedSubstancesResultMixin, Rec
         )
 
 
-@ItemResultFactory.register("MaterialWithImpactedSubstances")
-class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialDefinition):
+class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialReferenceWithIdentifiers):
     """Retrieves an individual material that is included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -838,8 +905,7 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
     """
 
 
-@ItemResultFactory.register("PartWithImpactedSubstances")
-class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartDefinition):
+class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartReferenceWithIdentifiers):
     """Retrieves an individual part included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -869,8 +935,9 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
     """
 
 
-@ItemResultFactory.register("SpecificationWithImpactedSubstances")
-class SpecificationWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, SpecificationDefinition):
+class SpecificationWithImpactedSubstancesResult(
+    RecordWithImpactedSubstancesResultMixin, SpecificationReferenceWithIdentifiers
+):
     """Retrieves an individual specification included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -902,7 +969,6 @@ class SpecificationWithImpactedSubstancesResult(RecordWithImpactedSubstancesResu
     pass
 
 
-@ItemResultFactory.register("BomWithImpactedSubstances")
 class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
     """This class is instantiated, but since a BoM query can only return a single impacted substances result,
     this type is hidden and never seen by the user. As a result it is not documented.
@@ -924,7 +990,7 @@ class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
 class HasIndicators(ABC):
     """Abstract base class to define the existence of indicator definitions."""
 
-    _indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+    _indicator_definitions: Indicator_Definitions
 
 
 class ComplianceResultMixin(HasIndicators, RecordReference):
@@ -976,18 +1042,18 @@ class ComplianceResultMixin(HasIndicators, RecordReference):
     def __init__(
         self,
         indicator_results: List[models.CommonIndicatorResult],
-        indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
+        indicator_definitions: Indicator_Definitions,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self._indicator_definitions = indicator_definitions
-        self._indicators: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]] = deepcopy(indicator_definitions)
+        self._indicators: Indicator_Definitions = deepcopy(indicator_definitions)
 
         for indicator_result in indicator_results:
             self._indicators[indicator_result.name].flag = indicator_result.flag
 
     @property
-    def indicators(self) -> Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]:
+    def indicators(self) -> Indicator_Definitions:
         """Compliance status of this item for each indicator included in the original query."""
         return self._indicators
 
@@ -1030,8 +1096,7 @@ class ChildSubstanceWithComplianceMixin(HasIndicators, ABC):
         """
 
         for child_substance in child_substances:
-            child_substance_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="SubstanceWithCompliance",
+            child_substance_with_compliance = ItemResultFactory.create_substance_compliance_result(
                 result_with_compliance=child_substance,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -1078,8 +1143,7 @@ class ChildMaterialWithComplianceMixin(HasIndicators, ABC):
         """
 
         for child_material in child_materials:
-            child_material_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="MaterialWithCompliance",
+            child_material_with_compliance = ItemResultFactory.create_material_compliance_result(
                 result_with_compliance=child_material,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -1129,8 +1193,7 @@ class ChildSpecificationWithComplianceMixin(HasIndicators, ABC):
         """
 
         for child_specification in child_specifications:
-            child_specification_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="SpecificationWithCompliance",
+            child_specification_with_compliance = ItemResultFactory.create_specification_compliance_result(
                 result_with_compliance=child_specification,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -1182,8 +1245,7 @@ class ChildPartWithComplianceMixin(HasIndicators, ABC):
         """
 
         for child_part in child_parts:
-            child_part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="PartWithCompliance",
+            child_part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=child_part,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -1234,8 +1296,7 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
         """
 
         for child_coating in child_coatings:
-            child_coating_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name="CoatingWithCompliance",
+            child_coating_with_compliance = ItemResultFactory.create_coating_compliance_result(
                 result_with_compliance=child_coating,
                 indicator_definitions=self._indicator_definitions,
             )
@@ -1243,8 +1304,7 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
             self._coatings.append(child_coating_with_compliance)
 
 
-@ItemResultFactory.register("SubstanceWithCompliance")
-class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReference):
+class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWithIdentifiers):
     """Retrieves an individual substance included as part of a compliance query result.
     This object includes two categories of attributes:
 
@@ -1260,8 +1320,9 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, BaseSubstanceReferenc
     """
 
 
-@ItemResultFactory.register("MaterialWithCompliance")
-class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialDefinition):
+class MaterialWithComplianceResult(
+    ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialReferenceWithIdentifiers
+):
     """Retrieves an individual material included as part of a compliance query result.
     This object includes three categories of attributes:
 
@@ -1280,14 +1341,13 @@ class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, Compliance
     """
 
 
-@ItemResultFactory.register("PartWithCompliance")
 class PartWithComplianceResult(
     ChildSubstanceWithComplianceMixin,
     ChildMaterialWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,
     ChildPartWithComplianceMixin,
     ComplianceResultMixin,
-    PartDefinition,
+    PartReferenceWithIdentifiers,
 ):
     """Retrieves an individual part included as part of a compliance query result.
     This object includes three categories of attributes:
@@ -1307,14 +1367,13 @@ class PartWithComplianceResult(
     """
 
 
-@ItemResultFactory.register("SpecificationWithCompliance")
 class SpecificationWithComplianceResult(
     ChildSubstanceWithComplianceMixin,
     ChildCoatingWithComplianceMixin,
     ChildMaterialWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,
     ComplianceResultMixin,
-    SpecificationDefinition,
+    SpecificationReferenceWithIdentifiers,
 ):
     """Retrieves an individual specification included as part of a compliance query result.
     This object includes three categories of attributes:
@@ -1334,8 +1393,9 @@ class SpecificationWithComplianceResult(
     """
 
 
-@ItemResultFactory.register("CoatingWithCompliance")
-class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
+class CoatingWithComplianceResult(
+    ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReferenceWithIdentifier
+):
     """Provides an individual coating included as part of a compliance query result.
 
     This object includes three categories of attributes:
@@ -1764,7 +1824,7 @@ class MaterialWithSustainabilityResult(
     SustainabilityResultMixin,
     ReusabilityResultMixin,
     MassResultMixin,
-    MaterialReference,
+    MaterialReferenceWithIdentifiers,
 ):
     """Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -1792,7 +1852,7 @@ class PartWithSustainabilityResult(
     ChildPartWithSustainabilityMixin,
     SustainabilityResultMixin,
     MassResultMixin,
-    PartReference,
+    PartReferenceWithIdentifiers,
 ):
     """Describes an individual part included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -1819,7 +1879,7 @@ class SpecificationWithSustainabilityResult(
     ChildSpecificationWithSustainabilityMixin,
     SustainabilityResultMixin,
     MassResultMixin,
-    SpecificationReference,
+    SpecificationReferenceWithIdentifiers,
 ):
     """Describes an individual specification included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -1839,7 +1899,7 @@ class SpecificationWithSustainabilityResult(
     """
 
 
-class SubstanceResult(BaseSubstanceReference):
+class SubstanceResult(SubstanceReferenceWithIdentifiers):
     """Describes an individual specification included as part of a sustainability query result.
     This object includes only includes the reference to the part in Granta MI (if the substance references a record).
 
@@ -1855,7 +1915,7 @@ class SubstanceResult(BaseSubstanceReference):
 # TODO: Consider documenting CoatingReference/SubstanceReference directly, since Material and PartRef need to be added
 #  anyway. Although having the result class means it can be extended in the future without qualifying as breaking
 #  changes.
-class CoatingResult(CoatingReference):
+class CoatingResult(CoatingReferenceWithIdentifier):
     """Provides an individual coating included as part of a sustainability query result.
 
     This object includes only includes the reference to the coating in Granta MI.
@@ -1869,7 +1929,7 @@ class CoatingResult(CoatingReference):
 
 class ProcessWithSustainabilityResult(
     SustainabilityResultMixin,
-    ProcessReference,
+    ProcessReferenceWithIdentifiers,
 ):
     """Describes a process included as part of a sustainability query result.
     This object includes two categories of attributes:
@@ -1888,7 +1948,7 @@ class ProcessWithSustainabilityResult(
 
 class TransportWithSustainabilityResult(
     SustainabilityResultMixin,
-    TransportReference,
+    TransportReferenceWithIdentifier,
 ):
     """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:

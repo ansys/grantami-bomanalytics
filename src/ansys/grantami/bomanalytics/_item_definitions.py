@@ -7,7 +7,7 @@ These are sub-classed in the ``_bom_item_results.py`` file to include the result
 from abc import ABC, abstractmethod
 from enum import Enum, auto
 import numbers
-from typing import Dict, Optional, Union, cast
+from typing import Any, Dict, Optional, Union, cast
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
@@ -29,6 +29,34 @@ class ReferenceType(Enum):
     EcNumber = auto()
 
 
+class IdentifierMixin(ABC):
+    def __init__(self, identity: Optional[str] = None, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._identity: Optional[str] = identity
+
+    @property
+    def identity(self) -> Optional[str]:
+        """Item identity."""
+        return self._identity
+
+
+class CommonIdentifiersMixin(IdentifierMixin, ABC):
+    def __init__(self, external_identity: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._external_identity: Optional[str] = external_identity
+        self._name: Optional[str] = name
+
+    @property
+    def external_identity(self) -> Optional[str]:
+        """Item external identity."""
+        return self._external_identity
+
+    @property
+    def name(self) -> Optional[str]:
+        """Item name."""
+        return self._name
+
+
 class RecordReference(ABC):
     """Provides all references to records in Granta MI.
 
@@ -46,7 +74,7 @@ class RecordReference(ABC):
 
     def __init__(
         self,
-        reference_type: ReferenceType,
+        reference_type: Optional[ReferenceType],
         reference_value: Union[int, str, None],
     ):
         self._reference_type = reference_type
@@ -82,8 +110,9 @@ class RecordReference(ABC):
         """
 
         _reference_value = str(self._reference_value) if self._reference_value is not None else None
+        _reference_type = self._reference_type.name if self._reference_type is not None else None
         result = {
-            "reference_type": self._reference_type.name,
+            "reference_type": _reference_type,
             "reference_value": _reference_value,
         }
         return result
@@ -118,6 +147,17 @@ class PartReference(RecordReference):
         return None
 
 
+class PartReferenceWithIdentifiers(CommonIdentifiersMixin, PartReference):
+    def __init__(self, input_part_number: Optional[str] = None, **kwargs: Any):
+        super().__init__(**kwargs)
+        self._input_part_number: Optional[str] = input_part_number
+
+    @property
+    def input_part_number(self) -> Optional[str]:
+        """Input part number."""
+        return self._input_part_number
+
+
 class PartDefinition(RecordDefinition, PartReference):
     """Represents a part record from the concrete :class:`RecordDefinition` subclass."""
 
@@ -147,6 +187,10 @@ class MaterialReference(RecordReference):
         if self._reference_type == ReferenceType.MaterialId:
             return cast(str, self._reference_value)
         return None
+
+
+class MaterialReferenceWithIdentifiers(CommonIdentifiersMixin, MaterialReference):
+    pass
 
 
 class MaterialDefinition(RecordDefinition, MaterialReference):
@@ -179,6 +223,10 @@ class SpecificationReference(RecordReference):
         return None
 
 
+class SpecificationReferenceWithIdentifiers(CommonIdentifiersMixin, SpecificationReference):
+    pass
+
+
 class SpecificationDefinition(RecordDefinition, SpecificationReference):
     """Represents a specification record from the concrete :class:`RecordDefinition` subclass."""
 
@@ -195,7 +243,7 @@ class SpecificationDefinition(RecordDefinition, SpecificationReference):
         return result
 
 
-class BaseSubstanceReference(RecordReference, ABC):
+class SubstanceReference(RecordReference):
     """Represents a reference to a substance record from the abstract ``RecordReference`` subclass.
 
     This class extends the base constructor to also support CAS numbers, EC numbers, and chemical names.
@@ -227,7 +275,11 @@ class BaseSubstanceReference(RecordReference, ABC):
         return None
 
 
-class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
+class SubstanceReferenceWithIdentifiers(CommonIdentifiersMixin, SubstanceReference):
+    pass
+
+
+class SubstanceDefinition(RecordDefinition, SubstanceReference):
     """Represents the definition of a substance as supplied to a compliance query from the concrete
     ``Substance`` subclass.
 
@@ -302,18 +354,30 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         return definition
 
 
-class CoatingReference(RecordReference, ABC):
+class CoatingReference(RecordReference):
     """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
 
 
-class ProcessReference(RecordReference, ABC):
+class CoatingReferenceWithIdentifier(IdentifierMixin, CoatingReference):
+    pass
+
+
+class ProcessReference(RecordReference):
     # Because of ProcessSummaryResult, this is publicly documented.
     # Extends RecordReference without changes, to re-define the class name, because it appears in the repr.
     """Represents a reference to a Process record."""
 
 
-class TransportReference(RecordReference, ABC):
+class ProcessReferenceWithIdentifiers(CommonIdentifiersMixin, ProcessReference):
+    pass
+
+
+class TransportReference(RecordReference):
     """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
+
+
+class TransportReferenceWithIdentifier(IdentifierMixin, TransportReference):
+    pass
 
 
 class BomItemDefinitionFactory(ABC):

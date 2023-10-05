@@ -3,17 +3,16 @@
 	<Components>
 		<Part>
 			<Quantity Unit="Each">1</Quantity>
-			<PartNumber>ProductAssembly</PartNumber>
-
+			<PartNumber>Part1[ProductAssembly]</PartNumber>
 			<Components>
 				<Part>
 					<Quantity Unit="Each">1</Quantity>
-					<PartNumber>SubAssembly</PartNumber>
+					<PartNumber>Part1.1[SubAssembly]</PartNumber>
 					<Components>
 						<Part>
 							<Quantity Unit="Each">1</Quantity>
 							<MassPerUom Unit="kg/Part">0.925</MassPerUom>
-							<PartNumber>SubSubPartA</PartNumber>
+							<PartNumber>Part1.1.A[LeafPart]</PartNumber>
 							<Materials>
 								<Material>
 									<Percentage>100</Percentage>
@@ -57,7 +56,7 @@
 						<Part>
 							<Quantity Unit="Each">3</Quantity>
 							<MassPerUom Unit="kg/Part">0.175</MassPerUom>
-							<PartNumber>SubSubPartB</PartNumber>
+							<PartNumber>Part1.1.B[LeafPart]</PartNumber>
 							<Materials>
 								<Material >
 									<Percentage>100</Percentage>
@@ -106,7 +105,7 @@
 				<Part>
 					<Quantity Unit="Each">1</Quantity>
 					<MassPerUom Unit="kg/Part">0.610</MassPerUom>
-					<PartNumber>SubPartA</PartNumber>
+					<PartNumber>Part1.A[LeafPart]</PartNumber>
 					<Materials>
 						<Material>
 							<Percentage>100</Percentage>
@@ -142,7 +141,7 @@
 				<Part>
 					<Quantity Unit="Each">2</Quantity>
 					<MassPerUom Unit="kg/Part">0.495</MassPerUom>
-					<PartNumber>SubPartB</PartNumber>
+					<PartNumber>Part1.B[LeafPart]</PartNumber>
 					<Materials>
 						<Material>
 							<Percentage>100</Percentage>
@@ -177,7 +176,7 @@
 				<Part>
 					<Quantity Unit="Each">2</Quantity>
 					<MassPerUom Unit="kg/Part">0.520</MassPerUom>
-					<PartNumber>SubPartC</PartNumber>
+					<PartNumber>Part1.C[LeafPart]</PartNumber>
 					<Materials>
 						<Material>
 							<Percentage>100</Percentage>
@@ -203,7 +202,7 @@
 				<Part>
 					<Quantity Unit="Each">2</Quantity>
 					<MassPerUom Unit="kg/Part">0.012</MassPerUom>
-					<PartNumber>SubPartD</PartNumber>
+					<PartNumber>Part1.D[LeafPart]</PartNumber>
 					<Materials>
 						<Material>
 							<Percentage>100</Percentage>
@@ -238,9 +237,7 @@
 
 			</Components>
 		</Part>
-
 	</Components>
-
 	<TransportPhase>
 		<TransportStage id="port_to_airport_truck">
 			<Name>Port to airport by truck</Name>

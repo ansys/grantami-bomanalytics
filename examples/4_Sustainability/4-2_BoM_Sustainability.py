@@ -66,7 +66,9 @@ result
 # * ``.climate_change``
 #
 # Additional properties are also available for each ``<ItemType>WithSustainabilityResult`` object,
-# see the <<TODO: link to sustainability API >> for more details.
+# see the
+# [Sustainability API](https://bomanalytics.grantami.docs.pyansys.com/version/stable/api/sustainability/index.html) for
+# more details.
 
 # ### The ``BomSustainabilityQueryResult.parts`` property
 #
@@ -76,7 +78,7 @@ result
 # continues recursively to define all parts in the input BoM. These parts can be of two types:
 # assemblies, or leaf parts.
 #
-# ##### **Assemblies**
+# #### **Assemblies**
 #
 # Assemblies are ``PartWithSustainabilityResult`` objects that contain sub-parts. Assemblies do not
 # contain materials directly.
@@ -90,7 +92,7 @@ result
 # The environmental footprint of an assembly includes the sum of the environmental footprints of all
 # sub-parts and processes applied to the assembly.
 #
-# ##### **Leaf parts**
+# #### **Leaf parts**
 #
 # Leaf parts are ``PartWithSustainabilityResult`` objects that do not include sub-parts. Leaf parts
 # can contain the materials they are made of as direct children.
@@ -106,7 +108,7 @@ result
 # associated with the quantity of materials used in the part (see below for details), processes
 # applied to the part directly, and processes applied to materials in the part.
 
-# #### Materials
+# #### **Materials**
 #
 # Materials are ``MaterialWithSustainabilityResult`` objects. They include the following properties:
 #
@@ -116,7 +118,7 @@ result
 # The environmental footprint of a material includes the environmental footprint associated with the
 # mass of material used.
 
-# #### Processes
+# #### **Processes**
 #
 # Processes are represented by ``ProcessWithSustainabilityResult`` objects. Processes contain no BoM
 # properties. The environmental footprint of a process is just the environmental footprint associated

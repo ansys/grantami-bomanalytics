@@ -103,8 +103,8 @@ result
 # ``ProcessWithSustainabilityResult`` objects.
 #
 # The environmental footprint of a leaf part includes the sum of the environmental footprints
-# associated with the quantity of materials used (see below for details) and processes applied to the
-# part.
+# associated with the quantity of materials used in the part (see below for details), processes
+# applied to the part directly, and processes applied to materials in the part.
 
 # #### Materials
 #
@@ -114,8 +114,7 @@ result
 # list of ``ProcessWithSustainabilityResult`` objects.
 #
 # The environmental footprint of a material includes the environmental footprint associated with the
-# mass of material used and the sum of the environmental footprints of all primary and secondary
-# processes applied to the material.
+# mass of material used.
 
 # #### Processes
 #

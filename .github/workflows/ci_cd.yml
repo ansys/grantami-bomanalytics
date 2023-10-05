@@ -25,35 +25,35 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       BOM_OPENAPI_TOKEN: ${{ secrets.BOM_OPENAPI_TOKEN }}
 
-#  integration_checks:
-#    name: Integration checks
-#    needs: local_checks
-#    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-#    uses: ./.github/workflows/server_checks.yml
-#    secrets:
-#      AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
-#      AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
-#      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-#      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
-#      AZURE_VM_NAME: ${{ secrets.AZURE_VM_NAME }}
-#      TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
-#      TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
-#      TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
-#      TEST_SERVER_WRITE_USER: ${{ secrets.TEST_SERVER_WRITE_USER }}
-#      TEST_SERVER_WRITE_PASS: ${{ secrets.TEST_SERVER_WRITE_PASS }}
-#      BOM_OPENAPI_TOKEN: ${{ secrets.BOM_OPENAPI_TOKEN }}
+  integration_checks:
+    name: Integration checks
+    needs: local_checks
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+    uses: ./.github/workflows/server_checks.yml
+    secrets:
+      AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
+      AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      AZURE_VM_NAME: ${{ secrets.AZURE_VM_NAME }}
+      TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
+      TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
+      TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
+      TEST_SERVER_WRITE_USER: ${{ secrets.TEST_SERVER_WRITE_USER }}
+      TEST_SERVER_WRITE_PASS: ${{ secrets.TEST_SERVER_WRITE_PASS }}
+      BOM_OPENAPI_TOKEN: ${{ secrets.BOM_OPENAPI_TOKEN }}
 
   doc-deploy-dev:
     name: "Deploy development documentation"
     runs-on: ubuntu-latest
-    needs: [ local_checks ]
+    needs: [ integration_checks ]
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
       - uses: ansys/actions/doc-deploy-dev@v4
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          doc-artifact-name: Documentation-html-no-examples
+          doc-artifact-name: Documentation-html
 
 #  Release:
 #    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'

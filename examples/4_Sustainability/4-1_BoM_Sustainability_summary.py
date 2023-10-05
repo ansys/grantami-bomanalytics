@@ -16,7 +16,7 @@
 #
 # The following supporting files are required for this example:
 #
-# * [bom-2301-jack-stand.xml](supporting-files/bom-2301-jack-stand.xml)
+# * [bom-2301-assembly.xml](supporting-files/bom-2301-assembly.xml)
 
 # ## Run a BoM sustainability summary query
 #
@@ -33,7 +33,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # `MJ` for energy, `kg` for mass, and `km` for distance.
 
 # +
-xml_file_path = "supporting-files/bom-2301-jack-stand.xml"
+xml_file_path = "supporting-files/bom-2301-assembly.xml"
 with open(xml_file_path) as f:
     bom = f.read()
 
@@ -104,7 +104,7 @@ def plot_footprint(df, title, textinfo="percent+label", hoverinfo="value+name"):
     )
     fig.add_trace(go.Pie(labels=df["Name"], values=df[EE_HEADER], name=ENERGY_UNIT), 1, 1)
     fig.add_trace(go.Pie(labels=df["Name"], values=df[CC_HEADER], name=MASS_UNIT), 1, 2)
-    fig.update_layout(title_text=title)
+    fig.update_layout(title_text=title, legend=dict(orientation="h"))
     fig.update_traces(textposition="inside", textinfo=textinfo, hoverinfo=hoverinfo)
     fig.show()
 
@@ -160,7 +160,10 @@ fig.add_trace(
 fig.add_trace(
     go.Pie(labels=transport_df["Name"], values=transport_df[CC_PER_DISTANCE], name=f"{MASS_UNIT}/{DISTANCE_UNIT}"), 1, 2
 )
-fig.update_layout(title_text="Transport stages footprint - Relative to distance travelled")
+fig.update_layout(
+    title_text="Transport stages footprint - Relative to distance travelled",
+    legend=dict(orientation="h")
+)
 fig.update_traces(textposition="inside", textinfo="percent+label", hoverinfo="value+name")
 fig.show()
 
@@ -210,6 +213,7 @@ fig = go.Figure(
     layout=go.Layout(
         xaxis=go.layout.XAxis(title="Materials"),
         yaxis=go.layout.YAxis(title=f"Mass [{MASS_UNIT}]"),
+        legend=dict(orientation="h")
     ),
 )
 fig.show()
@@ -281,9 +285,29 @@ plot_footprint(
 )
 
 # ### Joining and finishing
-# If there are no processes in the BoM for a certain process category, the list is empty.
+#
+# Joining and finishing processes apply to parts or assemblies and therefore don't include a material identity.
 
 sustainability_summary.joining_and_finishing_processes_details
+
+joining_and_finishing_processes_df = pd.DataFrame.from_records(
+    [
+        {
+            "Name": item.process_name,
+            "EE%": item.embodied_energy_percentage,
+            EE_HEADER: item.embodied_energy.value,
+            "CC%": item.climate_change_percentage,
+            CC_HEADER: item.climate_change.value,
+        }
+        for item in sustainability_summary.joining_and_finishing_processes_details
+    ]
+)
+joining_and_finishing_processes_df
+
+plot_footprint(
+    joining_and_finishing_processes_df, "Aggregated secondary processes footprint",
+    textinfo="percent", hoverinfo="value+name+label"
+)
 
 # ## Hierarchical view
 #
@@ -291,8 +315,17 @@ sustainability_summary.joining_and_finishing_processes_details
 # chart. This highlights the largest contributors at each level. In this example, two levels are defined:
 # first the phase and then the contributors in the phase.
 
+# First, rename the processes ``Other`` rows, so that they remain distinguishable after all processes have been
+# grouped under a general ``Processes``.
+#
 # Use `assign` to add a `parent` column to each `DataFrame` being concatenated
 # The `join` argument value `inner` specifies that only columns common to all dataframes are kept in the result
+
+# +
+primary_process_df.loc[(primary_process_df["Name"] == "Other - None"), "Name"] = "Other primary processes"
+secondary_process_df.loc[(secondary_process_df["Name"] == "Other - None"), "Name"] = "Other secondary processes"
+joining_and_finishing_processes_df.loc[
+    (joining_and_finishing_processes_df["Name"] == "Other - None"), "Name"] = "Other joining and finishing processes"
 
 summary_df = pd.concat(
     [
@@ -301,6 +334,7 @@ summary_df = pd.concat(
         materials_df.assign(Parent="Material"),
         primary_process_df.assign(Parent="Processes"),
         secondary_process_df.assign(Parent="Processes"),
+        joining_and_finishing_processes_df.assign(Parent="Processes"),
     ],
     join="inner",
 )

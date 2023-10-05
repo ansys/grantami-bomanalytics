@@ -10,3 +10,4 @@ These examples demonstrate how to determinate the environmental footprint for a 
    :maxdepth: 1
 
    4-1_BoM_Sustainability_summary.ipynb
+   4-2_BoM_Sustainability.ipynb

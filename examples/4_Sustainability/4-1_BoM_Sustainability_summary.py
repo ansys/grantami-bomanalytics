@@ -104,7 +104,7 @@ def plot_footprint(df, title, textinfo="percent+label", hoverinfo="value+name"):
     )
     fig.add_trace(go.Pie(labels=df["Name"], values=df[EE_HEADER], name=ENERGY_UNIT), 1, 1)
     fig.add_trace(go.Pie(labels=df["Name"], values=df[CC_HEADER], name=MASS_UNIT), 1, 2)
-    fig.update_layout(title_text=title)
+    fig.update_layout(title_text=title, legend=dict(orientation="h"))
     fig.update_traces(textposition="inside", textinfo=textinfo, hoverinfo=hoverinfo)
     fig.show()
 
@@ -160,7 +160,10 @@ fig.add_trace(
 fig.add_trace(
     go.Pie(labels=transport_df["Name"], values=transport_df[CC_PER_DISTANCE], name=f"{MASS_UNIT}/{DISTANCE_UNIT}"), 1, 2
 )
-fig.update_layout(title_text="Transport stages footprint - Relative to distance travelled")
+fig.update_layout(
+    title_text="Transport stages footprint - Relative to distance travelled",
+    legend=dict(orientation="h")
+)
 fig.update_traces(textposition="inside", textinfo="percent+label", hoverinfo="value+name")
 fig.show()
 
@@ -210,6 +213,7 @@ fig = go.Figure(
     layout=go.Layout(
         xaxis=go.layout.XAxis(title="Materials"),
         yaxis=go.layout.YAxis(title=f"Mass [{MASS_UNIT}]"),
+        legend=dict(orientation="h")
     ),
 )
 fig.show()

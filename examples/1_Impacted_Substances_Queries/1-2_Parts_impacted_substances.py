@@ -65,7 +65,7 @@ from ansys.grantami.bomanalytics import queries
 part_query = (
     queries.PartImpactedSubstancesQuery()
     .with_part_numbers([DRILL, WING])
-    .with_legislations([SIN_LIST, REACH])
+    .with_legislation_ids([SIN_LIST, REACH])
 )
 # -
 

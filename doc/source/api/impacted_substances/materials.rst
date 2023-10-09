@@ -14,7 +14,7 @@ Query definition
    .. automethod:: with_record_history_ids
    .. automethod:: with_material_ids
    .. automethod:: with_batch_size
-   .. automethod:: with_legislations
+   .. automethod:: with_legislation_ids
 
 Query result
 ~~~~~~~~~~~~

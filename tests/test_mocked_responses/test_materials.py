@@ -10,7 +10,7 @@ from .common import BaseMockTester, MaterialValidator, SubstanceValidator
 
 class TestImpactedSubstances(BaseMockTester):
     query = (
-        queries.MaterialImpactedSubstancesQuery().with_legislations(["Fake legislation"]).with_material_ids(["Fake ID"])
+        queries.MaterialImpactedSubstancesQuery().with_legislation_ids(["Fake legislation"]).with_material_ids(["Fake ID"])
     )
     mock_key = GetImpactedSubstancesForMaterialsResponse.__name__
 

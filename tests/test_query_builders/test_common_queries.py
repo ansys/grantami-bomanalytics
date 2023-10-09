@@ -166,7 +166,7 @@ class TestComplianceQueries:
 
     def test_add_legislations_attribute_error(self, query_type):
         with pytest.raises(AttributeError):
-            query_type().with_legislations(LEGISLATIONS)
+            query_type().with_legislation_ids(LEGISLATIONS)
 
 
 @pytest.mark.parametrize(
@@ -180,15 +180,15 @@ class TestComplianceQueries:
 )
 class TestSubstanceQueries:
     def test_add_legislations_correct_types(self, query_type):
-        query = query_type().with_legislations(LEGISLATIONS)
+        query = query_type().with_legislation_ids(LEGISLATIONS)
         assert len(query._legislations) == len(LEGISLATIONS)
         for idx, legislation in enumerate(LEGISLATIONS):
             assert query._legislations[idx] == legislation
 
     def test_add_legislations_wrong_types_type_error(self, query_type):
         with pytest.raises(TypeError):
-            query_type().with_legislations(INDICATORS)
-            query_type().with_legislations(legislations=INDICATORS)
+            query_type().with_legislation_ids(INDICATORS)
+            query_type().with_legislation_ids(legislations=INDICATORS)
 
     def test_add_indicators_attribute_error(self, query_type):
         with pytest.raises(AttributeError):

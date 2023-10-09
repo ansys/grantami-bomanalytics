@@ -49,7 +49,7 @@ Here's a brief example of how to use PyGranta BoM Analytics:
     >>> query = (
     ...     queries.MaterialImpactedSubstancesQuery()
     ...     .with_material_ids(['plastic-abs-pvc-flame'])
-    ...     .with_legislations(['Candidate_AnnexXV'])
+    ...     .with_legislation_ids(['Candidate_AnnexXV'])
     ... )
 
     # Print out the result from the query.

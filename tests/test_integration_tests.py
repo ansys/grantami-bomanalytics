@@ -121,7 +121,7 @@ class TestMissingDatabase:
         )
         with pytest.raises(GrantaMIException) as e:
             connection_missing_db.run(query)
-        assert str(e.value) == "None of the record references resolved to material records in 'MI_Missing_Database'."
+        assert str(e.value) == "DatabaseException encountered: Database with key 'MI_Missing_Database' does not exist."
 
 
 def test_missing_table_raises_grantami_exception(connection):

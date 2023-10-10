@@ -86,7 +86,7 @@ query
 # ``Candidate_AnnexXV`` is the ID of the ``EU REACH - The Candidate List`` legislation.
 
 # + tags=[]
-query = query.with_legislations(["Candidate_AnnexXV"])
+query = query.with_legislation_ids(["Candidate_AnnexXV"])
 query
 # -
 
@@ -94,7 +94,7 @@ query
 # consolidate the cells above into a single step:
 
 # + tags=[]
-query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislations(["Candidate_AnnexXV"])  # noqa: E501
+query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislation_ids(["Candidate_AnnexXV"])  # noqa: E501
 query
 # -
 
@@ -106,7 +106,7 @@ query
 query = (
     queries.MaterialImpactedSubstancesQuery()
     .with_material_ids(["plastic-abs-high-impact"])
-    .with_legislations(["Candidate_AnnexXV"])
+    .with_legislation_ids(["Candidate_AnnexXV"])
 )
 query
 # -

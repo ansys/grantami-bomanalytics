@@ -744,14 +744,14 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         return result
 
     @validate_argument_type([str], {str})
-    def with_legislations(self: _ImpactedSubstanceQuery, legislation_names: List[str]) -> _ImpactedSubstanceQuery:
+    def with_legislation_ids(self: _ImpactedSubstanceQuery, legislation_ids: List[str]) -> _ImpactedSubstanceQuery:
         """Add a list or set of legislations to retrieve the impacted substances for.
 
         Legislations are identified based on their ``Legislation ID`` attribute value.
 
         Parameters
         ----------
-        legislation_names : list[str] | set[str]
+        legislation_ids : list[str] | set[str]
             List or set of legislation ids.
 
         Returns
@@ -765,7 +765,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
             Error to raise if the method is called with values that do not match the types described earlier.
         """
 
-        self._legislations.extend(legislation_names)
+        self._legislations.extend(legislation_ids)
         return self
 
     def _run_query(self, api_instance: api.ImpactedSubstancesApi, static_arguments: Dict) -> ResultBaseClass:
@@ -912,7 +912,7 @@ class MaterialImpactedSubstancesQuery(_ImpactedSubstanceMixin, _MaterialQueryBui
     >>> query = (
     ...     MaterialImpactedSubstancesQuery()
     ...     .with_material_ids(['elastomer-butadienerubber', 'NBR-100'])
-    ...     .with_legislations(["Candidate_AnnexXV"])
+    ...     .with_legislation_ids(["Candidate_AnnexXV"])
     ... )
     >>> cxn.run(query)
     <MaterialImpactedSubstancesQueryResult: 2 MaterialWithImpactedSubstances results>
@@ -1018,7 +1018,7 @@ class PartImpactedSubstancesQuery(_ImpactedSubstanceMixin, _PartQueryBuilder):
     >>> query = (
     ...     PartImpactedSubstancesQuery()
     ...     .with_part_numbers(['DRILL', 'FLRY34'])
-    ...     .with_legislations(["Candidate_AnnexXV"])
+    ...     .with_legislation_ids(["Candidate_AnnexXV"])
     ... )
     >>> cxn.run(query)
     <PartImpactedSubstancesQueryResult: 2 PartWithImpactedSubstances results>
@@ -1127,7 +1127,7 @@ class SpecificationImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Specificati
     >>> query = (
     ...     SpecificationImpactedSubstancesQuery()
     ...     .with_specification_ids(['MIL-A-8625', 'PSP101'])
-    ...     .with_legislations(["Candidate_AnnexXV"])
+    ...     .with_legislation_ids(["Candidate_AnnexXV"])
     ... )
     >>> cxn.run(query)
     <SpecificationImpactedSubstancesQueryResult:
@@ -1742,7 +1742,7 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     >>> query = (
     ...     BomImpactedSubstancesQuery()
     ...     .with_bom("<PartsEco xmlns...")
-    ...     .with_legislations(["Candidate_AnnexXV"])
+    ...     .with_legislation_ids(["Candidate_AnnexXV"])
     ... )
     >>> cxn.run(query)
     <BomImpactedSubstancesQueryResult: 1 Bom1711WithImpactedSubstances results>

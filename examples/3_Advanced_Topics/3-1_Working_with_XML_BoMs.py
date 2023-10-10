@@ -94,7 +94,7 @@ SIN_LIST = "SINList"
 impacted_substances_query = (
     queries.BomImpactedSubstancesQuery()
     .with_bom(valid_xml)
-    .with_legislations([SIN_LIST])
+    .with_legislation_ids([SIN_LIST])
 )
 # -
 
@@ -162,7 +162,7 @@ print(f"BoM Compliance Status: {root_part.indicators['SVHC'].flag.name}")
 broken_query = (
     queries.BomImpactedSubstancesQuery()
     .with_bom(invalid_xml)
-    .with_legislations([SIN_LIST])
+    .with_legislation_ids([SIN_LIST])
 )
 
 RUN_QUERY = False

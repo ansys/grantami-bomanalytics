@@ -14,7 +14,7 @@ class TestMaterialQueries:
     ids = ["plastic-abs-pvc-flame", "plastic-pmma-pc"]
 
     def test_impacted_substances(self, connection_with_db_variants):
-        query = queries.MaterialImpactedSubstancesQuery().with_material_ids(self.ids).with_legislations(LEGISLATIONS)
+        query = queries.MaterialImpactedSubstancesQuery().with_material_ids(self.ids).with_legislation_ids(LEGISLATIONS)
         response = connection_with_db_variants.run(query)
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
@@ -32,7 +32,7 @@ class TestPartQueries:
     ids = ["DRILL", "asm_flap_mating"]
 
     def test_impacted_substances(self, connection_with_db_variants):
-        query = queries.PartImpactedSubstancesQuery().with_part_numbers(self.ids).with_legislations(LEGISLATIONS)
+        query = queries.PartImpactedSubstancesQuery().with_part_numbers(self.ids).with_legislation_ids(LEGISLATIONS)
         response = connection_with_db_variants.run(query)
 
         assert response.impacted_substances
@@ -55,7 +55,7 @@ class TestSpecificationQueries:
         query = (
             queries.SpecificationImpactedSubstancesQuery()
             .with_specification_ids(self.ids)
-            .with_legislations(LEGISLATIONS)
+            .with_legislation_ids(LEGISLATIONS)
         )
         response = connection_with_db_variants.run(query)
 
@@ -95,7 +95,7 @@ class TestBomQueries:
             return sample_bom_complex
 
     def test_impacted_substances(self, bom, connection_with_db_variants):
-        query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislations(LEGISLATIONS)
+        query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislation_ids(LEGISLATIONS)
         response = connection_with_db_variants.run(query)
 
         assert response.impacted_substances
@@ -116,14 +116,16 @@ class TestMissingDatabase:
         return connection
 
     def test_missing_database_raises_grantami_exception(self, connection_missing_db):
-        query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["mat_id"]).with_legislations(LEGISLATIONS)
+        query = (
+            queries.MaterialImpactedSubstancesQuery().with_material_ids(["mat_id"]).with_legislation_ids(LEGISLATIONS)
+        )
         with pytest.raises(GrantaMIException) as e:
             connection_missing_db.run(query)
         assert str(e.value) == "None of the record references resolved to material records in 'MI_Missing_Database'."
 
 
 def test_missing_table_raises_grantami_exception(connection):
-    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_custom_db).with_legislations(LEGISLATIONS)
+    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_custom_db).with_legislation_ids(LEGISLATIONS)
     with pytest.raises(GrantaMIException) as e:
         connection.run(query)
     assert "Table name" in str(e.value) and "not found in database" in str(e.value)
@@ -147,7 +149,7 @@ class TestActAsReadUser:
         mat_query = (
             queries.MaterialImpactedSubstancesQuery()
             .with_material_ids([MATERIAL_ID])
-            .with_legislations([LEGISLATION_ID])
+            .with_legislation_ids([LEGISLATION_ID])
         )
         results = connection.run(mat_query)
         return results
@@ -176,7 +178,7 @@ class TestSpecLinkDepth:
         query = (
             queries.SpecificationImpactedSubstancesQuery()
             .with_specification_ids(self.spec_ids)
-            .with_legislations(self.legislation_ids)
+            .with_legislation_ids(self.legislation_ids)
         )
         response = connection_custom_db.run(query)
         assert len(response.impacted_substances) == 1
@@ -194,7 +196,7 @@ class TestSpecLinkDepth:
         query = (
             queries.SpecificationImpactedSubstancesQuery()
             .with_specification_ids(self.spec_ids)
-            .with_legislations(self.legislation_ids)
+            .with_legislation_ids(self.legislation_ids)
         )
         response = connection_custom_db.run(query)
         assert len(response.impacted_substances) == 0

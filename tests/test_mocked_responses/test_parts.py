@@ -17,7 +17,7 @@ from .common import (
 class TestImpactedSubstances(BaseMockTester):
     query = (
         queries.PartImpactedSubstancesQuery()
-        .with_legislations(["Fake legislation"])
+        .with_legislation_ids(["Fake legislation"])
         .with_part_numbers(["Fake part number"])
     )
     mock_key = GetImpactedSubstancesForPartsResponse.__name__

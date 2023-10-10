@@ -26,7 +26,7 @@ class TestMessages(BaseMockTester):
     def test_non_critical_error_printed_to_stdout(self, mock_connection, severity, caplog):
         self.query = (
             queries.MaterialImpactedSubstancesQuery()
-            .with_legislations(["Fake legislation"])
+            .with_legislation_ids(["Fake legislation"])
             .with_material_ids(["Fake ID"])
         )
         mock_key = GetImpactedSubstancesForMaterialsResponse.__name__
@@ -45,7 +45,7 @@ class TestMessages(BaseMockTester):
     def test_info(self, mock_connection, caplog):
         self.query = (
             queries.MaterialImpactedSubstancesQuery()
-            .with_legislations(["Fake legislation"])
+            .with_legislation_ids(["Fake legislation"])
             .with_material_ids(["Fake ID"])
         )
         mock_key = GetImpactedSubstancesForMaterialsResponse.__name__

@@ -9,7 +9,7 @@ Query definition
 .. autoclass:: ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery
    :members:
 
-   .. automethod:: with_legislations
+   .. automethod:: with_legislation_ids
    .. automethod:: with_part_numbers
    .. automethod:: with_record_guids
    .. automethod:: with_record_history_guids

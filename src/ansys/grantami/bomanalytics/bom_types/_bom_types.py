@@ -2088,7 +2088,7 @@ class Part(InternalIdentifierMixin, BaseType):
         ("MIRecordReference", "mi_part_reference", "MIPartReference"),
     ]
 
-    _simple_values = [("part_number", "PartNumber"), ("part_name", "Name"), ("external_id", "ExternalIdentity")]
+    _simple_values = [("part_number", "PartNumber"), ("part_name", "Name"), ("external_identity", "ExternalIdentity")]
 
     _list_props = [
         ("Part", "components", "Components", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Part"),
@@ -2121,7 +2121,7 @@ class Part(InternalIdentifierMixin, BaseType):
         mi_part_reference: Optional[MIRecordReference] = None,
         non_mi_part_reference: Optional[Union[str, int]] = None,
         part_name: Optional[str] = None,
-        external_id: Optional[str] = None,
+        external_identity: Optional[str] = None,
         components: Optional[List[Part]] = None,
         specifications: Optional[List[Specification]] = None,
         materials: Optional[List[Material]] = None,
@@ -2156,7 +2156,7 @@ class Part(InternalIdentifierMixin, BaseType):
             A reference to a part stored in another system, for informational purposes only.
         part_name: Optional[str]
             Display name for the part.
-        external_id: Optional[str]
+        external_identity: Optional[str]
             A temporary reference populated and used by applications to refer to the item within the BoM.
         components: List[Part]
             List of subcomponents for this part.
@@ -2183,7 +2183,7 @@ class Part(InternalIdentifierMixin, BaseType):
         self.non_mi_part_reference = non_mi_part_reference
         self.part_number = part_number
         self.part_name = part_name
-        self.external_id = external_id
+        self.external_identity = external_identity
         if components is None:
             components = []
         self.components = components
@@ -2350,7 +2350,7 @@ class Part(InternalIdentifierMixin, BaseType):
         self._name = value
 
     @property
-    def external_id(self) -> Optional[str]:
+    def external_identity(self) -> Optional[str]:
         """
         A temporary reference populated and used by applications to refer to the item within the BoM.
 
@@ -2358,11 +2358,11 @@ class Part(InternalIdentifierMixin, BaseType):
         -------
         Optional[str]
         """
-        return self._external_id
+        return self._external_identity
 
-    @external_id.setter
-    def external_id(self, value: Optional[str]) -> None:
-        self._external_id = value
+    @external_identity.setter
+    def external_identity(self, value: Optional[str]) -> None:
+        self._external_identity = value
 
     @property
     def components(self) -> List[Part]:

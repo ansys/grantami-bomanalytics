@@ -10,7 +10,7 @@ from ansys.grantami.bomanalytics import BoMHandler
 from ansys.grantami.bomanalytics.bom_types import BaseType, BillOfMaterials
 
 
-class TestableBoMHandler(BoMHandler):
+class _TestableBoMHandler(BoMHandler):
     def __init__(self, default_namespace: str, namespace_mapping: Dict[str, str]):
         super().__init__()
         self._default_namespace = default_namespace
@@ -67,7 +67,7 @@ class TestRoundTripBoM:
         with open(bom_path, "r", encoding="utf8") as fp:
             input_bom = fp.read()
 
-        bom_handler = TestableBoMHandler(
+        bom_handler = _TestableBoMHandler(
             default_namespace=self._default_namespace, namespace_mapping=self._namespace_map
         )
         deserialized_bom = bom_handler.load_bom_from_text(input_bom)

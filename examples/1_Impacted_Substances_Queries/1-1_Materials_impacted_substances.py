@@ -54,7 +54,7 @@ from ansys.grantami.bomanalytics import queries
 mat_query = (
     queries.MaterialImpactedSubstancesQuery()
     .with_material_ids([PPS_ID, PC_ID])
-    .with_legislations([REACH, SIN_LIST])
+    .with_legislation_ids([REACH, SIN_LIST])
 )
 # -
 

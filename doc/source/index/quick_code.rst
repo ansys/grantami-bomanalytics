@@ -13,7 +13,7 @@ high concern) in an ABS/PVC blend:
     >>> query = (
     ...     queries.MaterialImpactedSubstancesQuery()
     ...     .with_material_ids(['plastic-abs-pvc-flame'])
-    ...     .with_legislations(['EU REACH - The Candidate List'])
+    ...     .with_legislation_ids(['Candidate_AnnexXV'])
     ... )
     >>> result = cxn.run(query)
     >>> pprint(result.impacted_substances)

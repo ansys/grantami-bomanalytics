@@ -11,7 +11,7 @@ Query definition
 .. autoclass:: ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery
    :members:
 
-   .. automethod:: with_legislations
+   .. automethod:: with_legislation_ids
    .. automethod:: with_bom
 
 .. _ref_grantami_bomanalytics_api_impactedsubstances_bom_queryresult:

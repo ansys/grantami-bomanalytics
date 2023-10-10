@@ -431,6 +431,7 @@ class RoHSIndicator(_Indicator):
 
     def __init__(
         self,
+        *,
         name: str,
         legislation_ids: List[str],
         default_threshold_percentage: Optional[float] = None,
@@ -526,6 +527,7 @@ class WatchListIndicator(_Indicator):
 
     def __init__(
         self,
+        *,
         name: str,
         legislation_ids: List[str],
         default_threshold_percentage: Optional[float] = None,

@@ -116,7 +116,9 @@ class TestMissingDatabase:
         return connection
 
     def test_missing_database_raises_grantami_exception(self, connection_missing_db):
-        query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["mat_id"]).with_legislation_ids(LEGISLATIONS)
+        query = (
+            queries.MaterialImpactedSubstancesQuery().with_material_ids(["mat_id"]).with_legislation_ids(LEGISLATIONS)
+        )
         with pytest.raises(GrantaMIException) as e:
             connection_missing_db.run(query)
         assert str(e.value) == "None of the record references resolved to material records in 'MI_Missing_Database'."

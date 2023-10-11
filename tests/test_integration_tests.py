@@ -119,9 +119,8 @@ class TestMissingDatabase:
         query = (
             queries.MaterialImpactedSubstancesQuery().with_material_ids(["mat_id"]).with_legislation_ids(LEGISLATIONS)
         )
-        with pytest.raises(GrantaMIException) as e:
+        with pytest.raises(GrantaMIException, match="Database with key 'MI_Missing_Database' does not exist."):
             connection_missing_db.run(query)
-        assert str(e.value) == "DatabaseException encountered: Database with key 'MI_Missing_Database' does not exist."
 
 
 def test_missing_table_raises_grantami_exception(connection):

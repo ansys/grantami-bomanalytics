@@ -120,7 +120,7 @@ class QueryResultFactory:
 
 
 class ResultBaseClass(ABC):
-    def __init__(self, log_messages: List[LogMessage]) -> None:
+    def __init__(self, log_messages: List[models.CommonLogEntry]) -> None:
         self._messages = [LogMessage(severity=msg.severity, message=msg.message) for msg in log_messages]
 
     @property

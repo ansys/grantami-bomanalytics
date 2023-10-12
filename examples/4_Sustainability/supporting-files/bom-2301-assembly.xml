@@ -2,20 +2,20 @@
 <PartsEco xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.grantadesign.com/23/01/BillOfMaterialsEco">
 	<Components>
 		<Part>
-			<Quantity Unit="Each">1</Quantity>
+			<Quantity Unit="Each">1.0</Quantity>
 			<PartNumber>Part1[ProductAssembly]</PartNumber>
 			<Components>
 				<Part>
-					<Quantity Unit="Each">1</Quantity>
+					<Quantity Unit="Each">1.0</Quantity>
 					<PartNumber>Part1.1[SubAssembly]</PartNumber>
 					<Components>
 						<Part>
-							<Quantity Unit="Each">1</Quantity>
+							<Quantity Unit="Each">1.0</Quantity>
 							<MassPerUom Unit="kg/Part">0.925</MassPerUom>
 							<PartNumber>Part1.1.A[LeafPart]</PartNumber>
 							<Materials>
 								<Material>
-									<Percentage>100</Percentage>
+									<Percentage>100.0</Percentage>
 									<MIMaterialReference>
 										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2086f56a-4f4d-4850-9891-3d6ad155d1f9</recordGUID>
@@ -29,7 +29,7 @@
 											</MIProcessReference>
 											<Identity>Primary processing, Casting</Identity>
 											<DimensionType>Mass</DimensionType>
-											<Percentage>100</Percentage>
+											<Percentage>100.0</Percentage>
 										</Process>
 										<Process>
 											<MIProcessReference >
@@ -38,7 +38,7 @@
 											</MIProcessReference>
 											<Identity>Machining, coarse</Identity>
 											<DimensionType>MassRemoved</DimensionType>
-											<Percentage>8.0</Percentage>
+											<Quantity Unit="kg">0.0808</Quantity>
 										</Process>
 										<Process>
 											<MIProcessReference >
@@ -47,19 +47,19 @@
 											</MIProcessReference>
 											<Identity>Machining, fine</Identity>
 											<DimensionType>MassRemoved</DimensionType>
-											<Percentage>0.5</Percentage>
+											<Quantity Unit="kg">0.00465</Quantity>
 										</Process>
 									</Processes>
 								</Material>
 							</Materials>
 						</Part>
 						<Part>
-							<Quantity Unit="Each">3</Quantity>
+							<Quantity Unit="Each">3.0</Quantity>
 							<MassPerUom Unit="kg/Part">0.175</MassPerUom>
 							<PartNumber>Part1.1.B[LeafPart]</PartNumber>
 							<Materials>
 								<Material >
-									<Percentage>100</Percentage>
+									<Percentage>100.0</Percentage>
 									<MIMaterialReference>
 										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2086f56a-4f4d-4850-9891-3d6ad155d1f9</recordGUID>
@@ -73,7 +73,7 @@
 											</MIProcessReference>
 											<Identity>Primary processing, Casting</Identity>
 											<DimensionType>Mass</DimensionType>
-											<Percentage>100</Percentage>
+											<Percentage>100.0</Percentage>
 										</Process>
 										<Process>
 											<MIProcessReference >
@@ -83,7 +83,7 @@
 											<Identity>Machining, fine</Identity>
 											<Name>Machining, fine</Name>
 											<DimensionType>MassRemoved</DimensionType>
-											<Percentage>2.0</Percentage>
+											<Quantity Unit="kg">0.0035</Quantity>
 										</Process>
 									</Processes>
 								</Material>
@@ -103,12 +103,12 @@
 					</Processes>
 				</Part>
 				<Part>
-					<Quantity Unit="Each">1</Quantity>
+					<Quantity Unit="Each">1.0</Quantity>
 					<MassPerUom Unit="kg/Part">0.610</MassPerUom>
 					<PartNumber>Part1.A[LeafPart]</PartNumber>
 					<Materials>
 						<Material>
-							<Percentage>100</Percentage>
+							<Percentage>100.0</Percentage>
 							<MIMaterialReference>
 								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
@@ -122,7 +122,7 @@
 									</MIProcessReference>
 									<Identity>Primary processing, Metal extrusion, hot</Identity>
 									<DimensionType>Mass</DimensionType>
-									<Percentage>100</Percentage>
+									<Percentage>100.0</Percentage>
 								</Process>
 								<Process>
 									<MIProcessReference>
@@ -132,19 +132,19 @@
 									<Identity>Machining, fine</Identity>
 									<Name>Machining, fine</Name>
 									<DimensionType>MassRemoved</DimensionType>
-									<Percentage>5.0</Percentage>
+									<Quantity Unit="kg">0.0305</Quantity>
 								</Process>
 							</Processes>
 						</Material>
 					</Materials>
 				</Part>
 				<Part>
-					<Quantity Unit="Each">2</Quantity>
+					<Quantity Unit="Each">2.0</Quantity>
 					<MassPerUom Unit="kg/Part">0.495</MassPerUom>
 					<PartNumber>Part1.B[LeafPart]</PartNumber>
 					<Materials>
 						<Material>
-							<Percentage>100</Percentage>
+							<Percentage>100.0</Percentage>
 							<MIMaterialReference>
 								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
@@ -158,7 +158,7 @@
 									</MIProcessReference>
 									<Identity>Primary processing, Casting</Identity>
 									<DimensionType>Mass</DimensionType>
-									<Percentage>100</Percentage>
+									<Percentage>100.0</Percentage>
 								</Process>
 								<Process>
 									<MIProcessReference>
@@ -167,19 +167,19 @@
 									</MIProcessReference>
 									<Identity>Secondary processing, Grinding</Identity>
 									<DimensionType>MassRemoved</DimensionType>
-									<Percentage>7.6</Percentage>
+									<Quantity Unit="kg">0.03762</Quantity>
 								</Process>
 							</Processes>
 						</Material>
 					</Materials>
 				</Part>
 				<Part>
-					<Quantity Unit="Each">2</Quantity>
+					<Quantity Unit="Each">2.0</Quantity>
 					<MassPerUom Unit="kg/Part">0.520</MassPerUom>
 					<PartNumber>Part1.C[LeafPart]</PartNumber>
 					<Materials>
 						<Material>
-							<Percentage>100</Percentage>
+							<Percentage>100.0</Percentage>
 							<MIMaterialReference>
 								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
@@ -193,19 +193,19 @@
 									</MIProcessReference>
 									<Identity>Metal extrusion, hot</Identity>
 									<DimensionType>Mass</DimensionType>
-									<Percentage>100</Percentage>
+									<Percentage>100.0</Percentage>
 								</Process>
 							</Processes>
 						</Material>
 					</Materials>
 				</Part>
 				<Part>
-					<Quantity Unit="Each">2</Quantity>
+					<Quantity Unit="Each">2.0</Quantity>
 					<MassPerUom Unit="kg/Part">0.012</MassPerUom>
 					<PartNumber>Part1.D[LeafPart]</PartNumber>
 					<Materials>
 						<Material>
-							<Percentage>100</Percentage>
+							<Percentage>100.0</Percentage>
 							<MIMaterialReference>
 								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">a0adc9d7-69a2-494e-b6da-d588f86cc5ab</recordGUID>
@@ -219,7 +219,7 @@
 									</MIProcessReference>
 									<Identity>Metal extrusion, hot</Identity>
 									<DimensionType>Mass</DimensionType>
-									<Percentage>100</Percentage>
+									<Percentage>100.0</Percentage>
 								</Process>
 								<Process>
 									<MIProcessReference>
@@ -228,7 +228,7 @@
 									</MIProcessReference>
 									<Identity>Machining, fine</Identity>
 									<DimensionType>MassRemoved</DimensionType>
-									<Percentage>11.2</Percentage>
+									<Quantity Unit="kg">0.0015</Quantity>
 								</Process>
 							</Processes>
 						</Material>
@@ -245,7 +245,7 @@
 				<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 				<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
 			</MITransportReference>
-			<Distance Unit="km">350</Distance>
+			<Distance Unit="km">350.0</Distance>
 		</TransportStage>
 		<TransportStage id="air_travel">
 			<Name>Country 1 to country 2 by air</Name>
@@ -253,7 +253,7 @@
 				<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 				<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">546b90cb-1f8e-423c-a284-a25f731a13e5</recordGUID>
 			</MITransportReference>
-			<Distance Unit="km">1500</Distance>
+			<Distance Unit="km">1500.0</Distance>
 		</TransportStage>
 		<TransportStage id="airport_to_distributor_truck">
 			<Name>Airport to distributor by truck</Name>
@@ -261,7 +261,7 @@
 				<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 				<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
 			</MITransportReference>
-			<Distance Unit="km">125</Distance>
+			<Distance Unit="km">125.0</Distance>
 		</TransportStage>
 	</TransportPhase>
 	<Location>

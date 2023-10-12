@@ -240,9 +240,9 @@ class TestSustainabilityBomQueries:
         assert (
             beryllium_summary.contributors[0].name is None
         )  # TODO: define names in example bom or create ticket to use part number?
-        assert beryllium_summary.contributors[0].material_mass_before_processing.value == pytest.approx(0.027027027)
+        assert beryllium_summary.contributors[0].material_mass_before_processing.value == pytest.approx(0.027)
         assert beryllium_summary.mass_after_processing.value == pytest.approx(0.024)
-        assert beryllium_summary.mass_before_processing.value == pytest.approx(0.027027027)
+        assert beryllium_summary.mass_before_processing.value == pytest.approx(0.027)
         assert beryllium_summary.record_guid is not None
         assert beryllium_summary.climate_change.value == pytest.approx(15.52, DEFAULT_TOLERANCE)
         assert beryllium_summary.climate_change_percentage == pytest.approx(54.32, DEFAULT_TOLERANCE)
@@ -286,10 +286,10 @@ class TestSustainabilityBomQueries:
 
         # Spot check secondary process
         secondary_process = response.secondary_processes_details[0]
-        assert secondary_process.climate_change.value == pytest.approx(0.137, DEFAULT_TOLERANCE)
-        assert secondary_process.embodied_energy.value == pytest.approx(2.12, DEFAULT_TOLERANCE)
-        assert secondary_process.climate_change_percentage == pytest.approx(43.15, DEFAULT_TOLERANCE)
-        assert secondary_process.embodied_energy_percentage == pytest.approx(46.48, DEFAULT_TOLERANCE)
+        assert secondary_process.climate_change.value == pytest.approx(0.127, DEFAULT_TOLERANCE)
+        assert secondary_process.embodied_energy.value == pytest.approx(1.95, DEFAULT_TOLERANCE)
+        assert secondary_process.climate_change_percentage == pytest.approx(41.69, DEFAULT_TOLERANCE)
+        assert secondary_process.embodied_energy_percentage == pytest.approx(44.94, DEFAULT_TOLERANCE)
         assert secondary_process.material_reference.record_guid is not None
         assert secondary_process.process_reference.record_guid is not None
 
@@ -408,8 +408,8 @@ class TestSustainabilityBomQueries:
         # Secondary process
         secondary_process = material.processes[1]
         assert secondary_process.record_guid is not None
-        assert secondary_process.climate_change.value == pytest.approx(0.0597, DEFAULT_TOLERANCE)
-        assert secondary_process.embodied_energy.value == pytest.approx(0.696, DEFAULT_TOLERANCE)
+        assert secondary_process.climate_change.value == pytest.approx(0.0567, DEFAULT_TOLERANCE)
+        assert secondary_process.embodied_energy.value == pytest.approx(0.661, DEFAULT_TOLERANCE)
 
         # Transports
         assert len(response.transport_stages) == 3

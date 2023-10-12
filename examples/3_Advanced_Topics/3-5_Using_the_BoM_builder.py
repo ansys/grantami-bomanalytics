@@ -130,10 +130,8 @@ source_joining_processes[0]
 # is travelled during the step, and hold a reference to the assigned Granta MI Transport record, which defines the
 # environmental footprint per distance for the transportation mode.
 
-# +
 source_transports = [item for item in data if item["type"] == "Transport"]
 source_transports[0]
-# -
 
 # ## Build the BillOfMaterials
 #
@@ -220,13 +218,17 @@ pprint(components)
 # source holds references to Granta MI records by record GUIDs. The GUIDs will be used to instantiate
 # ``MIRecordReference`` objects.
 
+def make_record_reference(item, db_key=DB_KEY):
+    return bom_types.MIRecordReference(
+        db_key=db_key,
+        record_guid=item["Granta_MI_Record_GUID"]
+    )
+
+
 for item in source_materials:
     parent_part_id = item["parent_part_identifier"]
     material = bom_types.Material(
-        mi_material_reference=bom_types.MIRecordReference(
-            db_key=DB_KEY,
-            record_guid=item["Granta_MI_Record_GUID"]
-        ),
+        mi_material_reference=make_record_reference(item),
         identity=item["name"],
         percentage=100.0,
         )
@@ -257,10 +259,7 @@ source_joining_processes.sort(key=lambda item: (item["parent_part_identifier"], 
 for item in source_joining_processes:
     parent_part_id = item["parent_part_identifier"]
     process = bom_types.Process(
-        mi_process_reference=bom_types.MIRecordReference(
-            db_key=DB_KEY,
-            record_guid=item["Granta_MI_Record_GUID"]
-        ),
+        mi_process_reference=make_record_reference(item),
         identity=item["name"],
         dimension_type=unit_to_dimension_type[item["quantity_unit"]],
         quantity_affected=bom_types.UnittedValue(value=item["quantity"], unit=item["quantity_unit"]),
@@ -289,10 +288,7 @@ for item in source_joining_processes:
 for item in source_primary_processes:
     parent_part_id = item["parent_part_identifier"]
     process = bom_types.Process(
-        mi_process_reference=bom_types.MIRecordReference(
-            db_key=DB_KEY,
-            record_guid=item["Granta_MI_Record_GUID"]
-        ),
+        mi_process_reference=make_record_reference(item),
         identity=item["name"],
         dimension_type=bom_types.DimensionType.Mass,
         percentage_of_part_affected=100.0
@@ -303,10 +299,7 @@ source_secondary_processes.sort(key=lambda item: (item["parent_part_identifier"]
 for item in source_secondary_processes:
     parent_part_id = item["parent_part_identifier"]
     process = bom_types.Process(
-        mi_process_reference=bom_types.MIRecordReference(
-            db_key=DB_KEY,
-            record_guid=item["Granta_MI_Record_GUID"]
-        ),
+        mi_process_reference=make_record_reference(item),
         identity=item["name"],
         dimension_type=bom_types.DimensionType.MassRemoved,
         quantity_affected=bom_types.UnittedValue(
@@ -329,10 +322,7 @@ bom = bom_types.BillOfMaterials(components=[components[product_id]])
 transports = [
     bom_types.TransportStage(
         name=item["name"],
-        mi_transport_reference=bom_types.MIRecordReference(
-            db_key=DB_KEY,
-            record_guid=item["Granta_MI_Record_GUID"]
-        ),
+        mi_transport_reference=make_record_reference(item),
         distance=bom_types.UnittedValue(value=item["distance_in_km"], unit="km")
     )
     for item in source_transports

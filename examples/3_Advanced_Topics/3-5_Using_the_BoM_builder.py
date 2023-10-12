@@ -225,7 +225,7 @@ for item in source_materials:
     material = bom_types.Material(
         mi_material_reference=bom_types.MIRecordReference(
             db_key=DB_KEY,
-            record_guid=item["GRANTA_MI_Record_GUID"]
+            record_guid=item["Granta_MI_Record_GUID"]
         ),
         identity=item["name"],
         percentage=100.0,
@@ -259,7 +259,7 @@ for item in source_joining_processes:
     process = bom_types.Process(
         mi_process_reference=bom_types.MIRecordReference(
             db_key=DB_KEY,
-            record_guid=item["GRANTA_MI_Record_GUID"]
+            record_guid=item["Granta_MI_Record_GUID"]
         ),
         identity=item["name"],
         dimension_type=unit_to_dimension_type[item["quantity_unit"]],
@@ -291,7 +291,7 @@ for item in source_primary_processes:
     process = bom_types.Process(
         mi_process_reference=bom_types.MIRecordReference(
             db_key=DB_KEY,
-            record_guid=item["GRANTA_MI_Record_GUID"]
+            record_guid=item["Granta_MI_Record_GUID"]
         ),
         identity=item["name"],
         dimension_type=bom_types.DimensionType.Mass,
@@ -305,7 +305,7 @@ for item in source_secondary_processes:
     process = bom_types.Process(
         mi_process_reference=bom_types.MIRecordReference(
             db_key=DB_KEY,
-            record_guid=item["GRANTA_MI_Record_GUID"]
+            record_guid=item["Granta_MI_Record_GUID"]
         ),
         identity=item["name"],
         dimension_type=bom_types.DimensionType.MassRemoved,
@@ -331,7 +331,7 @@ transports = [
         name=item["name"],
         mi_transport_reference=bom_types.MIRecordReference(
             db_key=DB_KEY,
-            record_guid=item["GRANTA_MI_Record_GUID"]
+            record_guid=item["Granta_MI_Record_GUID"]
         ),
         distance=bom_types.UnittedValue(value=item["distance_in_km"], unit="km")
     )

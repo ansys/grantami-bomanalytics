@@ -320,7 +320,21 @@
 
     <xsd:sequence>
       <xsd:element name="Percentage" type="xsd:double" minOccurs="0" />
-      <xsd:element name="Category" type="xsd:string" minOccurs="0" />
+      <xsd:element name="Category" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:annotation>
+            <xsd:documentation>Represents whether the substance remains present in the material after production</xsd:documentation>
+          </xsd:annotation>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null" />
+            <xsd:enumeration value="Incorporated" />
+            <xsd:enumeration value="MayBeIncorporated" />
+            <xsd:enumeration value="UsedInProduction" />
+            <xsd:enumeration value="MayBeUsedInProduction" />
+            <xsd:enumeration value="UsedInCoating" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
       <xsd:element name="MISubstanceReference" type="gbt:MIRecordReference" />
 
       <xsd:group ref="eco:CommonIdentifiers" />

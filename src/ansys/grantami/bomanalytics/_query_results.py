@@ -896,7 +896,6 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         return self._process_summary
 
-    # TODO confirm it is ALL and not some above threshold + Aggregated Other
     @property
     def transport_details(self) -> List[TransportSummaryResult]:
         """

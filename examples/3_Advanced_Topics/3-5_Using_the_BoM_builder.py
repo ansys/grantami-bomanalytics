@@ -20,7 +20,7 @@
 
 # Although it is unlikely that the data structures and processing presented here match your
 # requirements, this example is intended to demonstrate the principles behind using the BoM
-# schema python bindings within your existing processes. It shows how a BoM-like data structure
+# schema Python bindings within your existing processes. It shows how a BoM-like data structure
 # can be loaded from a neutral format and converted to the XML format expected by the Granta
 # MI BoM Analytics API. The approach is applicable to data in other formats, or data loaded
 # from other software platform APIs.
@@ -49,15 +49,15 @@ pprint(data[:3])
 # ## Inspect the external data
 # The external data source defines a flat list of items. Each item has a ``type`` field, identifying the type of the
 # item, a ``parent_part_identifier`` identifying the parent part in the hierarchy, as well as fields specific to each
-# type of items.
+# type of item.
 #
 # ### Components
 # The external data source defines multiple types of component:
 #
-# - a single item of type ``Product``. The external data source describes the bill of materials for this product. All
+# - A single item of type ``Product``. The external data source describes the bill of materials for this product. All
 # other items are expected to be children of this item.
-# - items of type ``Assembly``.
-# - items of type ``Part``.
+# - Items of type ``Assembly``.
+# - Items of type ``Part``.
 #
 
 source_product = next(item for item in data if item["type"] == "Product")
@@ -123,7 +123,7 @@ source_transports[0]
 # ## Build the BillOfMaterials
 #
 # The PyGranta BoM Analytics package provides a sub-package ``bom_types``, which implement Python bindings for the BoM
-# XML schema. It facilitates serialization and deserialization of Granta MI BoMs into and from Python objects.
+# XML schema. It facilitates serialization and deserialization of Granta MI BoMs to and from Python objects.
 # This section shows how data from the external data source is processed to create BoM Python objects, which can then
 # be used to generate an XML BoM.
 
@@ -136,11 +136,11 @@ DB_KEY = "MI_Restricted_Substances"
 
 # ### Components
 #
-# The third-party system defines a ``part_identifier`` field that uniquely identifies parts. On the other hand, the
+# The third-party system defines a ``part_identifier`` field that uniquely identifies parts. However, the
 # Granta MI BoM schema requires a Part to define a ``Part number``. We will use the external ``part_identifier`` as a
 # part number.
-# First,  create a ``bom_types.Part`` object for every item that maps to a BoM Part, and add it to a mapping indexed
-# by the part number. This will later allow to add materials and processes to the parts using the parent part identifier
+# First, create a ``bom_types.Part`` object for every item that maps to a BoM Part, and add it to a mapping indexed
+# by the part number. This will allow us to identify the correct parent part to add materials and processes to.
 # as an index.
 
 # +
@@ -180,9 +180,9 @@ for item in source_parts:
 pprint(components)
 
 # Now that all the parts have been instantiated, the hierarchy can be defined. While the external data source defines
-# hierarchy using a field in each item in the falat data structure, a Granta MI BoM represents hierarchy by nesting
-# objects. The following cell iterates over all source parts and assemblies again, and append child parts to their
-# parents ``components`` property.
+# the hierarchy using references between objects in a flat data structure, a Granta MI BoM represents the hierarchy by including a child object as an property of the parent.
+# object. The following cell iterates over all source parts and assemblies again, and appends child parts to their
+# parents' ``components`` property.
 
 # +
 for item in source_assemblies + source_parts:
@@ -225,7 +225,7 @@ for item in source_materials:
 # to ensure that they are added to the ``Part`` in the same order as defined by the external data source.
 #
 # The example external data only includes one type of part processes, which are quantified using a length. The Granta
-# MI BoM schema has support for multiple ``DimensionType`` value: this is to represent the impact of a process based
+# MI BoM schema has support for different ``DimensionType`` values: this is to represent the impact of a process based
 # on its most representative dimension. For example, welding generally is defined by the welding path length, whereas
 # a coating operation is best quantified by the affected surface area.
 # A simple mapping defines a lookup between the unit found in the external data source and the dimension type used in
@@ -305,7 +305,7 @@ for item in source_secondary_processes:
 # ### BillOfMaterials
 #
 # Now that the all parts, materials, and processes have been processed and redefined in a hierarchical structure, build
-# a ``BillOfMaterials`` object, and assign the top-level product as the single component, and add the transport stages,
+# a ``BillOfMaterials`` object, assign the top-level product as the single component, and add the transport stages,
 # which apply to the whole product.
 
 # +

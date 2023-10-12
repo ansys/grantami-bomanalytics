@@ -60,15 +60,20 @@ pprint(data[:3])
 # - Items of type ``Part``.
 #
 
+# +
 source_product = next(item for item in data if item["type"] == "Product")
 source_product
+# -
 
+# +
 source_assemblies = [item for item in data if item["type"] == "Assembly"]
 source_assemblies[0]
+# -
 
+# +
 source_parts = [item for item in data if item["type"] == "Part"]
 source_parts[0]
-
+# -
 
 # ### Materials
 # The third party system allows assignment from Granta MI. Materials are therefore described by a unique identifier to
@@ -81,8 +86,10 @@ source_parts[0]
 # material. It is assumed that the part referenced in the material's ``parent_part_identifier`` is made only of this
 # material.
 
+# +
 source_materials = [item for item in data if item["type"] == "Material"]
 source_materials[0]
+# -
 
 # ### Processes
 # There are multiple types of processes described by the external data source:
@@ -103,22 +110,30 @@ source_materials[0]
 # Similarly to materials, the third-party system does not store information about the process other than the reference
 # to the Granta MI record, which defines the environmental footprint of the process.
 
+# +
 source_primary_processes = [item for item in data if item["type"] == "MaterialFormingStep"]
 source_primary_processes[0]
+# -
 
+# +
 source_secondary_processes = [item for item in data if item["type"] == "MaterialProcessingStep"]
 source_secondary_processes[0]
+# -
 
+# +
 source_joining_processes = [item for item in data if item["type"] == "PartProcessingStep"]
 source_joining_processes[0]
+# -
 
 # ### Transports
 # The external data source defines transport stages. These items of type ``Transport`` define the distance that
 # is travelled during the step, and hold a reference to the assigned Granta MI Transport record, which defines the
 # environmental footprint per distance for the transportation mode.
 
+# +
 source_transports = [item for item in data if item["type"] == "Transport"]
 source_transports[0]
+# -
 
 # ## Build the BillOfMaterials
 #
@@ -141,7 +156,6 @@ DB_KEY = "MI_Restricted_Substances"
 # part number.
 # First, create a ``bom_types.Part`` object for every item that maps to a BoM Part, and add it to a mapping indexed
 # by the part number. This will allow us to identify the correct parent part to add materials and processes to.
-# as an index.
 
 # +
 components = {}
@@ -180,8 +194,9 @@ for item in source_parts:
 pprint(components)
 
 # Now that all the parts have been instantiated, the hierarchy can be defined. While the external data source defines
-# the hierarchy using references between objects in a flat data structure, a Granta MI BoM represents the hierarchy by including a child object as an property of the parent.
-# object. The following cell iterates over all source parts and assemblies again, and appends child parts to their
+# the hierarchy using references between objects in a flat data structure, a Granta MI BoM represents the hierarchy by
+# including a child object as a property of the parent.
+# The following cell iterates over all source parts and assemblies again, and appends child parts to their
 # parents' ``components`` property.
 
 # +

@@ -216,8 +216,7 @@ class TestSustainabilityBomQueries:
         query.with_bom(sample_bom_2301)
         response = connection.run(query)
 
-        # TODO check no warnings, CR-1388
-        # assert not response.messages
+        assert not response.messages
 
         assert response.process.name == "Processes"
         assert response.material.name == "Material"
@@ -249,13 +248,11 @@ class TestSustainabilityBomQueries:
         assert beryllium_summary.embodied_energy.value == pytest.approx(117.55, DEFAULT_TOLERANCE)
         assert beryllium_summary.embodied_energy_percentage == pytest.approx(41.04, DEFAULT_TOLERANCE)
 
-        # TODO processes aggregation will be updated
         # Check expected summaries for primary processes
-        assert len(response.primary_processes_details) == 4
+        assert len(response.primary_processes_details) == 3
         expected_primary_processes = [
+            ("Primary processing, Casting", "stainless-astm-cn-7ms-cast"),
             ("Primary processing, Casting", "steel-1010-annealed"),
-            ("Primary processing, Casting", "stainless-astm-cn-7ms-cast"),
-            ("Primary processing, Casting", "stainless-astm-cn-7ms-cast"),
             ("Other", None),
         ]
         primary_processes = [(p.process_name, p.material_identity) for p in response.primary_processes_details]
@@ -263,7 +260,7 @@ class TestSustainabilityBomQueries:
         self._check_percentages_add_up(response.primary_processes_details)
 
         # Spot check primary process
-        primary_process = response.primary_processes_details[0]
+        primary_process = response.primary_processes_details[1]
         assert primary_process.climate_change.value == pytest.approx(14.54, DEFAULT_TOLERANCE)
         assert primary_process.embodied_energy.value == pytest.approx(210.68, DEFAULT_TOLERANCE)
         assert primary_process.climate_change_percentage == pytest.approx(39.40, DEFAULT_TOLERANCE)
@@ -329,8 +326,7 @@ class TestSustainabilityBomQueries:
         query.with_bom(sample_bom_2301)
         response = connection.run(query)
 
-        # TODO check no warnings, CR-1388
-        # assert not response.messages
+        assert not response.messages
 
         # Check hierarchy
         assert len(response.parts) == 1

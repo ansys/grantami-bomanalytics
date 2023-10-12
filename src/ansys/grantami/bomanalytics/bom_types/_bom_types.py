@@ -183,6 +183,38 @@ class PseudoAttribute(Enum):
         return f"{self.name[0].lower()}{self.name[1:]}"
 
 
+class Category(Enum):
+    Null = 0
+    Incorporated = 1
+    MayBeIncorporated = 2
+    UsedInProduction = 3
+    MayBeUsedInProduction = 4
+    UsedInCoating = 5
+
+    @classmethod
+    def from_string(cls, value: str) -> Category:
+        """
+        Convert string representation of this object into an instance of this object.
+
+        Parameters
+        ----------
+        value: str
+            String representation of this object.
+        """
+        return Category[value]
+
+    def to_string(self) -> str:
+        """
+        Convert this Enum object to its string representation.
+
+        Returns
+        -------
+        str
+            String representation of this object.
+        """
+        return self.name
+
+
 class PartialTableReference(BaseType):
     _simple_values = [("table_identity", "tableIdentity"), ("table_guid", "tableGuid"), ("table_name", "tableName")]
 
@@ -1688,7 +1720,7 @@ class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
-    _simple_values = [("percentage", "Percentage"), ("category", "Category")]
+    _simple_values = [("percentage", "Percentage")]
 
     _props = [("MIRecordReference", "mi_substance_reference", "MISubstanceReference")]
 
@@ -1697,7 +1729,7 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         *,
         mi_substance_reference: MIRecordReference,
         percentage: Optional[float] = None,
-        category: Optional[str] = None,
+        category: Optional[Category] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -1711,8 +1743,8 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         percentage: Optional[Float]
             If the parent object consists of more than one substance, this defines the percentage of this
             substance.
-        category: Optional[str]
-            TODO - What is this?
+        category: Optional[Category]
+            Represents whether the substance remains present in the material after production.
         """
         super().__init__(**kwargs)
         self.mi_substance_reference = mi_substance_reference
@@ -1750,19 +1782,35 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         self._percentage = value
 
     @property
-    def category(self) -> Optional[str]:
+    def category(self) -> Optional[Category]:
         """
-        TODO - Who can say?
+        Represents whether the substance remains present in the material after production.
 
         Returns
         -------
-        Optional[str]
+        Optional[Category]
         """
         return self._category
 
     @category.setter
-    def category(self, value: Optional[str]) -> None:
+    def category(self, value: Optional[Category]) -> None:
         self._category = value
+
+    @classmethod
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+        props = super()._process_custom_fields(obj, bom_reader)
+
+        category_type_obj = bom_reader.get_field(Substance, obj, "Category")
+        if category_type_obj is not None:
+            props["category"] = Category.from_string(category_type_obj)
+        return props
+
+    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+        super()._write_custom_fields(obj, bom_writer)
+
+        if self.category is not None:
+            category_field_name = bom_writer._get_qualified_name(self, "Category")
+            obj[category_field_name] = self.category.to_string()
 
 
 class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):

@@ -81,6 +81,13 @@ numpydoc_validation_checks = {
     # type, unless multiple values are being returned"
 }
 
+extlinks = {
+    'MI_docs': (
+        'https://miniature-fortnight-dc09be55.pages.github.io/granta/v241/en/RS_and_Sustainability/%s',
+        None
+    )
+}
+
 # static path
 html_static_path = ["_static"]
 

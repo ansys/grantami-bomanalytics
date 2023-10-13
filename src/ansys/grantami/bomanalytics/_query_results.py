@@ -255,11 +255,6 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
     This class describes the substances in the specified materials impacted by one or more legislations.
 
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
-
     Examples
     --------
     >>> result: MaterialImpactedSubstancesQueryResult
@@ -317,11 +312,6 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of materials against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     _result_type_name = "MaterialWithCompliance"
@@ -379,11 +369,6 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     class.
 
     This class describes the substances in the specified parts impacted by one or more legislations.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -436,11 +421,6 @@ class PartComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of parts against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     _result_type_name = "PartWithCompliance"
@@ -499,11 +479,6 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     class.
 
     This class describes the substances in the specified specifications impacted by one or more legislations.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -559,11 +534,6 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of specifications against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     _result_type_name = "SpecificationWithCompliance"
@@ -624,11 +594,6 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of substances against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -681,11 +646,6 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     class.
 
     This class describes the substances in the specified BoM impacted by one or more legislations.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -717,11 +677,6 @@ class BomComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class summarizes the compliance status of a BoM against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     _result_type_name = "PartWithCompliance"
@@ -777,13 +732,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetSustainabilityForBom2301Response)
 class BomSustainabilityQueryResult(ResultBaseClass):
-    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
-    """
+    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`."""
 
     def __init__(
         self,
@@ -818,13 +767,7 @@ class BomSustainabilityQueryResult(ResultBaseClass):
 
 @QueryResultFactory.register(models.GetSustainabilitySummaryForBom2301Response)
 class BomSustainabilitySummaryQueryResult(ResultBaseClass):
-    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery`.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
-    """
+    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery`."""
 
     def __init__(
         self,

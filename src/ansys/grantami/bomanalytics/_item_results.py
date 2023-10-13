@@ -885,9 +885,6 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
-    they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
 
@@ -915,9 +912,6 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
-    they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
 
@@ -947,9 +941,6 @@ class SpecificationWithImpactedSubstancesResult(
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
 
@@ -1313,8 +1304,6 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWit
 
     Notes
     -----
-    Record reference parameters are only populated if they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1332,10 +1321,6 @@ class MaterialWithComplianceResult(
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another
-    compliance result object, only the ``record_history_identity`` parameter is populated.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1358,10 +1343,6 @@ class PartWithComplianceResult(
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another
-    compliance result object, only the ``record_history_identity`` parameter is populated.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1384,10 +1365,6 @@ class SpecificationWithComplianceResult(
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another
-    compliance result object, only the ``record_history_identity`` parameter is populated.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1835,10 +1812,6 @@ class MaterialWithSustainabilityResult(
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another result
-    object, only the ``record_history_identity`` parameter is populated.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1863,10 +1836,6 @@ class PartWithSustainabilityResult(
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another result
-    object, only the ``record_history_identity`` parameter is populated.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1890,10 +1859,6 @@ class SpecificationWithSustainabilityResult(
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another result
-    object, only the ``record_history_identity`` parameter is populated.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1905,8 +1870,6 @@ class SubstanceResult(SubstanceReferenceWithIdentifiers):
 
     Notes
     -----
-    Record reference parameters are only populated if they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1939,8 +1902,6 @@ class ProcessWithSustainabilityResult(
 
     Notes
     -----
-    Record reference parameters are only populated if they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1958,8 +1919,6 @@ class TransportWithSustainabilityResult(
 
     Notes
     -----
-    Record reference parameters are only populated if they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """

@@ -87,17 +87,18 @@ class _FinalAttributeReferenceBuilder:
 
 
 class AttributeReferenceBuilder:
+    """
+    Create a MI Attribute Reference with a valid combination of properties.
+
+    Parameters
+    ----------
+    db_key : str
+        Database Key specifying the database the Attribute is in.
+    """
+
     _build: MIAttributeReference
 
     def __init__(self, db_key: str) -> None:
-        """
-        Create a MI Attribute Reference with a valid combination of properties.
-
-        Parameters
-        ----------
-        db_key : str
-            Database Key specifying the database the Attribute is in.
-        """
         self._build = MIAttributeReference(db_key=db_key)
 
     def with_attribute_identity(self, attribute_identity: int) -> _FinalAttributeReferenceBuilder:
@@ -154,19 +155,20 @@ class AttributeReferenceBuilder:
 
 
 class RecordReferenceBuilder:
+    """
+    Create a MIRecordReference with a valid combination of properties.
+
+    Parameters
+    ----------
+    db_key : str
+        Database key specifying the database to which the Record belongs.
+    record_uid : Optional[str]
+        Optional identifier to annotate this record reference, will be returned with the response unchanged.
+    """
+
     _build: MIRecordReference
 
     def __init__(self, db_key: str, *, record_uid: Optional[str] = None) -> None:
-        """
-        Create a MIRecordReference with a valid combination of properties.
-
-        Parameters
-        ----------
-        db_key : str
-            Database key specifying the database to which the Record belongs.
-        record_uid : Optional[str]
-            Optional identifier to annotate this record reference, will be returned with the response unchanged.
-        """
         self._build = MIRecordReference(db_key=db_key, record_uid=record_uid)
 
     def with_record_history_id(

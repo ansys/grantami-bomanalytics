@@ -10,5 +10,5 @@ BoM Object Model
 
 
 .. automodule:: ansys.grantami.bomanalytics.bom_types._bom_types
-   :exclude-members: compliance_by_material_and_indicator
+   :exclude-members: BillOfMaterials
    :inherited-members:

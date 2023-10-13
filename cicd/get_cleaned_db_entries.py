@@ -44,7 +44,7 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 MI_URL = "http://localhost/mi_servicelayer"
-DB_KEY = "MI_Restricted_Substances"
+DB_KEY = "MI_Restricted_Substances_23R2"
 OUTPUT_FILE_NAME = Path("./rs_data.json").resolve()
 
 logger.info(f"Connecting to MI at {MI_URL} with AutoLogon")
@@ -67,16 +67,17 @@ table_information = {
     "Legislations and Lists": {"layout": "Legislations", "subset": "All legislations"},
 }
 
+# Generally static unless the BoM Analytics Servers logic has changed, or these attributes have been added to the layout
+# Both of these scenarios are unlikely
 extra_attributes = {"Coatings": ["Coating Code"], "Legislations and Lists": ["Legislation ID", "Short title"]}
 
-renamed_attributes = {"Specifications": {"Chemical name": "Substance name"}}
+# Will generally be different for each release, and will likely be empty.
+renamed_attributes = {}
 
 info = {}
 logger.info(f"Reading records and attributes from database '{DB_KEY}'")
 logger.info("Getting Table Information")
-tables: models.GrantaServerApiSchemaTablesInfo = tables_api.v1alpha_databases_database_key_tables_get(
-    database_key=DB_KEY
-)
+tables = tables_api.v1alpha_databases_database_key_tables_get(database_key=DB_KEY)
 table_name_map = {table.name: table for table in tables.tables}
 for table_name, table_details in table_information.items():
     logger.info(f"--Processing table '{table_name}'")
@@ -86,14 +87,12 @@ for table_name, table_details in table_information.items():
     logger.info(f"----Fetching attributes in layout '{layout_name}")
     renamed_attributes_for_table = renamed_attributes.get(table_name, [])
     table_info = table_name_map[table_name]
-    table_layouts: models.GrantaServerApiSchemaLayoutsLayoutsInfo = (
-        layouts_api.v1alpha_databases_database_key_tables_table_guid_layouts_get(
-            database_key=DB_KEY, table_guid=table_info.guid
-        )
+    table_layouts = layouts_api.v1alpha_databases_database_key_tables_table_guid_layouts_get(
+        database_key=DB_KEY, table_guid=table_info.guid
     )
     layout_map = {layout.name: layout for layout in table_layouts.layouts}
     layout_item = layout_map[layout_name]
-    sections_response: models.GrantaServerApiSchemaLayoutsLayoutSectionsInfo = (
+    sections_response = (
         layout_sections_api.v1alpha_databases_database_key_tables_table_guid_layouts_layout_guid_sections_get(
             database_key=DB_KEY, table_guid=table_info.guid, layout_guid=layout_item.guid, show_full_detail=True
         )
@@ -101,18 +100,14 @@ for table_name, table_details in table_information.items():
     layout_info = [section.to_dict() for section in sections_response.layout_sections]
     if table_name in extra_attributes:
         # Add extra attribute information to a section in the layout
-        table_attributes: models.GrantaServerApiSchemaAttributesAttributesInfo = (
-            attributes_api.v1alpha_databases_database_key_tables_table_guid_attributes_get(
-                DB_KEY, table_guid=table_info.guid
-            )
+        table_attributes = attributes_api.v1alpha_databases_database_key_tables_table_guid_attributes_get(
+            database_key=DB_KEY, table_guid=table_info.guid
         )
         attribute_name_map = {attribute.name: attribute for attribute in table_attributes.attributes}
         added_items = []
         relevant_attribute_names = extra_attributes[table_name]
         for extra_attribute_name in relevant_attribute_names:
-            attribute_info: models.GrantaServerApiSchemaSlimEntitiesSlimAttribute = attribute_name_map[
-                extra_attribute_name
-            ]
+            attribute_info = attribute_name_map[extra_attribute_name]
             added_items.append(
                 models.GrantaServerApiSchemaLayoutsLayoutAttributeItem(
                     attribute_type=attribute_info.type,
@@ -120,11 +115,17 @@ for table_name, table_details in table_information.items():
                     name=attribute_info.name,
                     meta_attributes=[],
                     tabular_columns=None,
+                    read_only=False,
+                    required=False,
+                    guid="",
                 )
             )
         layout_info.append(
             models.GrantaServerApiSchemaLayoutsFullLayoutSection(
-                name="Extra Attributes", section_items=added_items
+                name="Extra Attributes",
+                section_items=added_items,
+                display_names={},
+                guid="",
             ).to_dict()
         )
     if len(renamed_attributes_for_table) > 0:

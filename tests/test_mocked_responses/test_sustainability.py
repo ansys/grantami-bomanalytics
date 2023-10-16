@@ -75,7 +75,6 @@ class TestBomSustainability(BaseMockTester):
         assert part_0_0_material_0.record_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6270"
 
         assert len(part_0_0_material_0.processes) == 1
-        assert len(part_0_0_material_0.substances) == 0
 
         process = part_0_0_material_0.processes[0]
         assert process.embodied_energy.unit == "MJ"

@@ -282,7 +282,6 @@ class TestSustainabilityResultsRepr:
             functional_recycle=True,
             recyclable=True,
             processes=[],
-            substances=[],
             reported_mass=models.CommonValueWithUnit(value=45, unit="kg"),
         )
         result = ItemResultFactory.create_material_with_sustainability(model)
@@ -303,15 +302,6 @@ class TestSustainabilityResultsRepr:
         )
         assert repr(result) == expected
 
-    def test_coating_result_repr(self):
-        model = models.CommonCoatingReference(
-            **self._rec_ref_kwargs,
-            **self._id,
-        )
-        result = ItemResultFactory.create_coating_result(model)
-        expected = "<CoatingResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
-        assert repr(result) == expected
-
     def test_substance_result_repr(self):
         model = models.CommonSubstanceReference(
             **self._rec_ref_kwargs,
@@ -322,21 +312,12 @@ class TestSustainabilityResultsRepr:
         assert repr(result) == expected
 
     def test_specification_result_repr(self):
-        model = models.CommonSustainabilitySpecificationWithSustainability(
+        model = models.CommonSpecificationReference(
             **self._rec_ref_kwargs,
-            **self._eco_metrics,
             **self._identifiers,
-            reported_mass=models.CommonValueWithUnit(value=45, unit="kg"),
-            specifications=[],
-            materials=[],
-            substances=[],
-            coatings=[],
         )
-        result = ItemResultFactory.create_specification_with_sustainability(model)
-        expected = (
-            "<SpecificationWithSustainabilityResult("
-            "{'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
-        )
+        result = ItemResultFactory.create_specification_result(model)
+        expected = "<SpecificationResult(" "{'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
         assert repr(result) == expected
 
 

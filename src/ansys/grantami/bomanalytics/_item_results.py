@@ -491,6 +491,7 @@ class ItemResultFactory:
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             identity=result_with_sustainability.id,
+            name=result_with_sustainability.stage_name,
         )
         return transport_with_sustainability
 
@@ -1883,7 +1884,20 @@ class TransportWithSustainabilityResult(
     directly.
     """
 
-    # TODO is the record reference note relevant?
+    def __init__(
+        self,
+        name: str,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        """
+        Name of the transport stage.
+        """
+        return self._name
 
 
 class SustainabilitySummaryMixin:

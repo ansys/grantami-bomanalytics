@@ -855,9 +855,11 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         Summary information for aggregated materials.
 
         Relative and absolute contributions for materials whose relative contributions exceed 2% of the total impact
-        for materials (by embodied energy or climate change).
+        for materials (by :attr:`~.MaterialSummaryResult.embodied_energy_percentage` or
+        :attr:`~.MaterialSummaryResult.climate_change_percentage`).
+
         All materials found in the BoM, which do not exceed the 2% threshold, are aggregated under a virtual
-        :class:`~ansys.grantami.bomanalytics._item_results.MaterialSummaryResult`, whose ``name`` property is equal to
+        :class:`.MaterialSummaryResult`, whose :attr:`~.MaterialSummaryResult.identity` property is equal to
         ``Other``.
 
         Values in percentages express the contribution of the specific material, relative to contributions of all
@@ -872,9 +874,11 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         Summary information for primary processes, aggregated by process and the material it is applied to.
 
         The returned list includes all primary processes whose relative contributions exceed 5% of the total impact of
-        all primary processes (by embodied energy or climate change). Processes not exceeding the 5% threshold are
-        aggregated under a virtual :class:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult`, whose
-        :attr:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name` is equal to ``Other``.
+        all primary processes (by :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        :attr:`~.ProcessSummaryResult.climate_change_percentage`).
+
+        Processes not exceeding the 5% threshold are aggregated under a virtual :class:`~.ProcessSummaryResult`, whose
+        :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
 
         Values in percentages express the contribution of the specific process, relative to contributions of all
         primary processes.
@@ -887,9 +891,11 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         Summary information for secondary processes, aggregated by process and the material it is applied to.
 
         The returned list includes all secondary processes whose relative contributions exceed 5% of the total impact of
-        all secondary processes (by embodied energy or climate change). Processes not exceeding the 5% threshold are
-        aggregated under a virtual :class:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult`, whose
-        :attr:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name` is equal to ``Other``.
+        all secondary processes (by :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        :attr:`~.ProcessSummaryResult.climate_change_percentage`).
+
+        Processes not exceeding the 5% threshold are aggregated under a virtual
+        :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
 
         Values in percentages express the contribution of the specific process, relative to contributions of all
         secondary processes.
@@ -903,10 +909,12 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         to.
 
         The returned list includes all joining and finishing processes whose relative contributions exceed 5% of the
-        total impact of all joining and finishing processes (by embodied energy or climate change). Processes not
-        exceeding the 5% threshold are aggregated under a virtual
-        :class:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult`, whose
-        :attr:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name` is equal to ``Other``.
+        total impact of all joining and finishing processes (by
+        :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        :attr:`~.ProcessSummaryResult.climate_change_percentage`).
+
+        Processes not exceeding the 5% threshold are aggregated under a virtual
+        :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
 
         Values in percentages express the contribution of the specific process, relative to contributions of all
         joining and finishing processes.

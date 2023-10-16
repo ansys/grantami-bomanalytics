@@ -737,7 +737,7 @@ class BomSustainabilityQueryResult(ResultBaseClass):
     def __init__(
         self,
         results: List[models.GetSustainabilityForBom2301Response],
-        messages: List[LogMessage],
+        messages: List[models.CommonLogEntry],
     ) -> None:
         super().__init__(messages)
         self._response = results[0]
@@ -772,7 +772,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
     def __init__(
         self,
         results: List[models.GetSustainabilitySummaryForBom2301Response],
-        messages: List[LogMessage],
+        messages: List[models.CommonLogEntry],
     ) -> None:
         super().__init__(messages)
         self._response = results[0]

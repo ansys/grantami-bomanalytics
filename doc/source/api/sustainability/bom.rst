@@ -51,7 +51,7 @@ Process
 Specification
 ~~~~~~~~~~~~~
 
-.. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithSustainabilityResult
+.. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationResult
    :inherited-members:
    :member-order: by_mro_by_source
 

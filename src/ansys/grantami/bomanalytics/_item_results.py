@@ -415,37 +415,31 @@ class ItemResultFactory:
         return material_with_sustainability
 
     @classmethod
-    def create_specification_with_sustainability(
+    def create_specification_result(
         cls,
-        result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability,
-    ) -> "SpecificationWithSustainabilityResult":
-        """Returns a Specification object with sustainability metrics and child items.
+        result: models.CommonSpecificationReference,
+    ) -> "SpecificationResult":
+        """Returns a Specification object.
 
         Parameters
         ----------
-        result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability
-            Result from the REST API describing the sustainability for this particular specification.
+        result: models.CommonSpecificationReference
+            Result from the REST API describing a specification.
 
         Returns
         -------
-        SpecificationWithSustainabilityResult
+        SpecificationResult
         """
 
-        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
-        specification_with_sustainability = SpecificationWithSustainabilityResult(
+        reference_type = cls.parse_reference_type(result.reference_type)
+        specification = SpecificationResult(
             reference_type=reference_type,
-            reference_value=result_with_sustainability.reference_value,
-            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
-            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
-            reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
-            identity=result_with_sustainability.id,
-            external_identity=result_with_sustainability.external_identity,
-            name=result_with_sustainability.name,
+            reference_value=result.reference_value,
+            identity=result.id,
+            external_identity=result.external_identity,
+            name=result.name,
         )
-        specification_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
-        specification_with_sustainability._add_child_materials(result_with_sustainability.materials)
-        specification_with_sustainability._add_child_substances(result_with_sustainability.substances)
-        return specification_with_sustainability
+        return specification
 
     @classmethod
     def create_substance_result(
@@ -1637,7 +1631,7 @@ class ChildPartWithSustainabilityMixin:
             self._parts.append(child_part_with_sustainability)
 
 
-class ChildSpecificationWithSustainabilityMixin:
+class ChildSpecificationMixin:
     """Provides the implementation for managing children specifications, by adding a ``specifications`` property to the
     class.
 
@@ -1651,17 +1645,17 @@ class ChildSpecificationWithSustainabilityMixin:
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        self._specifications: List[SpecificationWithSustainabilityResult] = []
+        self._specifications: List[SpecificationResult] = []
 
     @property
-    def specifications(self) -> List["SpecificationWithSustainabilityResult"]:
+    def specifications(self) -> List["SpecificationResult"]:
         """Specification with sustainability result objects that are direct children of this item in the BoM."""
 
         return self._specifications
 
     def _add_child_specifications(
         self,
-        child_specifications: List[models.CommonSustainabilitySpecificationWithSustainability],
+        child_specifications: List[models.CommonSpecificationReference],
     ) -> None:
         """Populate the ``specifications`` attribute based on a list of low-level API specifications with
         compliance results.
@@ -1673,10 +1667,10 @@ class ChildSpecificationWithSustainabilityMixin:
         """
 
         for child_specification in child_specifications:
-            child_specification_with_sustainability = ItemResultFactory.create_specification_with_sustainability(
-                result_with_sustainability=child_specification,
+            child_specification_result = ItemResultFactory.create_specification_result(
+                result=child_specification,
             )
-            self._specifications.append(child_specification_with_sustainability)
+            self._specifications.append(child_specification_result)
 
 
 class ChildSubstanceMixin:
@@ -1782,7 +1776,7 @@ class MaterialWithSustainabilityResult(
 
 
 class PartWithSustainabilityResult(
-    ChildSpecificationWithSustainabilityMixin,
+    ChildSpecificationMixin,
     ChildSubstanceMixin,
     ChildProcessWithSustainabilityMixin,
     ChildMaterialWithSustainabilityMixin,
@@ -1809,20 +1803,11 @@ class PartWithSustainabilityResult(
     """
 
 
-class SpecificationWithSustainabilityResult(
-    ChildSubstanceMixin,
-    ChildMaterialWithSustainabilityMixin,
-    ChildSpecificationWithSustainabilityMixin,
-    SustainabilityResultMixin,
-    MassResultMixin,
+class SpecificationResult(
     SpecificationReferenceWithIdentifiers,
 ):
     """Describes an individual specification included as part of a sustainability query result.
-    This object includes three categories of attributes:
-
-      - The reference to the part in Granta MI (if the part references a record)
-      - The sustainability information for this specification
-      - Any specification, material, substance, or coating objects which are a child of this part object
+    This object includes only includes the reference to the record in Granta MI.
 
     Notes
     -----
@@ -1837,7 +1822,7 @@ class SpecificationWithSustainabilityResult(
 
 class SubstanceResult(SubstanceReferenceWithIdentifiers):
     """Describes an individual specification included as part of a sustainability query result.
-    This object includes only includes the reference to the part in Granta MI (if the substance references a record).
+    This object includes only includes the reference to the record in Granta MI (if the substance references a record).
 
     Notes
     -----

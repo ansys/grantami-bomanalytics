@@ -17,7 +17,7 @@ this exposes methods to read a BoM from a string or a file, and to write to a st
 passed to either a Sustainability or a Compliance query.
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    api
    builders

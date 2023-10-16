@@ -55,13 +55,6 @@ Specification
    :inherited-members:
    :member-order: by_mro_by_source
 
-Coating
-~~~~~~~
-
-.. autoclass:: ansys.grantami.bomanalytics._item_results.CoatingResult
-   :inherited-members:
-   :member-order: by_mro_by_source
-
 Substance
 ~~~~~~~~~
 

@@ -445,7 +445,6 @@ class ItemResultFactory:
         specification_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
         specification_with_sustainability._add_child_materials(result_with_sustainability.materials)
         specification_with_sustainability._add_child_substances(result_with_sustainability.substances)
-        specification_with_sustainability._add_child_coatings(result_with_sustainability.coatings)
         return specification_with_sustainability
 
     @classmethod
@@ -474,31 +473,6 @@ class ItemResultFactory:
             name=result.name,
         )
         return substance
-
-    @classmethod
-    def create_coating_result(
-        cls,
-        result: models.CommonCoatingReference,
-    ) -> "CoatingResult":
-        """Returns a Coating object.
-
-        Parameters
-        ----------
-        result: models.CommonCoatingReference
-            Result from the REST API describing this particular coating.
-
-        Returns
-        -------
-        CoatingResult
-        """
-
-        reference_type = cls.parse_reference_type(result.reference_type)
-        coating = CoatingResult(
-            reference_type=reference_type,
-            reference_value=result.reference_value,
-            identity=result.id,
-        )
-        return coating
 
     @classmethod
     def create_transport_with_sustainability(
@@ -1743,43 +1717,6 @@ class ChildSubstanceMixin:
             self._substances.append(child_substance_result)
 
 
-class ChildCoatingMixin:
-    """Provides the implementation for managing children coatings, by adding a ``coatings`` property to the class.
-
-    Parameters
-    ----------
-    child_coatings
-        Coatings returned by the low-level API that are children of this item.
-    **kwargs
-        Contains arguments handled by other mixins or base classes.
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self._coatings: List[CoatingResult] = []
-
-    @property
-    def coatings(self) -> List["CoatingResult"]:
-        """Coating objects that are direct children of this item in the BoM."""
-
-        return self._coatings
-
-    def _add_child_coatings(self, child_coatings: List[models.CommonCoatingReference]) -> None:
-        """Populate the ``coatings`` attribute based on a list of low-level API coatings results.
-
-        Parameters
-        ----------
-        child_coatings
-            List of coatings returned from the low-level API.
-        """
-
-        for child_coating in child_coatings:
-            child_coating_result = ItemResultFactory.create_coating_result(
-                result=child_coating,
-            )
-            self._coatings.append(child_coating_result)
-
-
 class ChildProcessWithSustainabilityMixin:
     """Provides the implementation for managing children processes, by adding a ``processes`` property to the class.
 
@@ -1873,7 +1810,6 @@ class PartWithSustainabilityResult(
 
 
 class SpecificationWithSustainabilityResult(
-    ChildCoatingMixin,
     ChildSubstanceMixin,
     ChildMaterialWithSustainabilityMixin,
     ChildSpecificationWithSustainabilityMixin,

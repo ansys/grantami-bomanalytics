@@ -411,7 +411,6 @@ class ItemResultFactory:
             name=result_with_sustainability.name,
         )
         material_with_sustainability._add_child_processes(result_with_sustainability.processes)
-        material_with_sustainability._add_child_substances(result_with_sustainability.substances)
         return material_with_sustainability
 
     @classmethod
@@ -1750,7 +1749,6 @@ class ChildProcessWithSustainabilityMixin:
 
 
 class MaterialWithSustainabilityResult(
-    ChildSubstanceMixin,
     ChildProcessWithSustainabilityMixin,
     SustainabilityResultMixin,
     ReusabilityResultMixin,
@@ -1762,7 +1760,7 @@ class MaterialWithSustainabilityResult(
 
       - The reference to the material in Granta MI
       - The sustainability information for this material
-      - Any process or substance objects that are a child of this material object
+      - Any process objects that are a child of this material object
 
     Notes
     -----

@@ -11,13 +11,14 @@ if TYPE_CHECKING:
 
 
 class BoMHandler:
+    """
+    Handler for XML formatted BoMs, supports reading from files and strings, and serializing to string format.
+    """
+
     _schema_path: Path = Path(__file__).parent / "schemas" / "BillOfMaterialsEco2301.xsd"
     _schema: XMLSchema
 
     def __init__(self) -> None:
-        """
-        Handler for XML formatted BoMs, supports reading from files and strings, and serializing to string format.
-        """
         self._schema = XMLSchema(self._schema_path)
         self._schema.namespaces[""] = self._schema.namespaces["eco"]
         self._reader = BoMReader(self._schema)

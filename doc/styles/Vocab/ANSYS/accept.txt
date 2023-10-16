@@ -6,3 +6,5 @@ BoM
 BoM Analytics
 legislations
 RoHS
+deserialization
+Deserialization

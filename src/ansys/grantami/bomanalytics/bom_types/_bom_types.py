@@ -21,10 +21,18 @@ if TYPE_CHECKING:
 
 
 class HasNamespace(Protocol):
+    """
+    Protocol defining that an inheritor has an attribute *_namespace*.
+    """
+
     _namespace: str
 
 
 class SupportsCustomFields(Protocol):
+    """
+    Protocol defining that an inheritor has methods to process and write custom fields.
+    """
+
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
         ...
@@ -216,6 +224,22 @@ class Category(Enum):
 
 
 class PartialTableReference(BaseType):
+    """
+    A type that partially identifies a Table, but does not specify the MI Database. Usually, just one of the several
+    optional fields should be provided; where more than one is provided, the highest priority one is used, where the
+    descending priority order is: tableIdentity, tableGUID, tableName.
+
+    Parameters
+    ----------
+    table_identity: Optional[int]
+        The identity of the table, this is the fastest way to reference a table.
+    table_guid: Optional[str]
+        The GUID of the table, this is likely to be a persistent way to refer to a table.
+    table_name: Optional[str]
+        The name of the table, note that table names can vary between localisations of a database, so this may not
+        be a safe way to refer to a table if the MI Database supports multiple locales.
+    """
+
     _simple_values = [("table_identity", "tableIdentity"), ("table_guid", "tableGuid"), ("table_name", "tableName")]
 
     _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
@@ -228,21 +252,6 @@ class PartialTableReference(BaseType):
         table_name: Optional[str] = None,
         **kwargs: Dict[str, Any],
     ):
-        """
-        A type that partially identifies a Table, but does not specify the MI Database. Usually, just one of the several
-        optional fields should be provided; where more than one is provided, the highest priority one is used, where the
-        descending priority order is: tableIdentity, tableGUID, tableName.
-
-        Parameters
-        ----------
-        table_identity: Optional[int]
-            The identity of the table, this is the fastest way to reference a table.
-        table_guid: Optional[str]
-            The GUID of the table, this is likely to be a persistent way to refer to a table.
-        table_name: Optional[str]
-            The name of the table, note that table names can vary between localisations of a database, so this may not
-            be a safe way to refer to a table if the MI Database supports multiple locales.
-        """
         super().__init__(**kwargs)
         self.table_identity = table_identity
         self.table_guid = table_guid
@@ -296,6 +305,31 @@ class PartialTableReference(BaseType):
 
 
 class MIAttributeReference(BaseType):
+    """A type that allows identification of a particular Attribute in an MI Database. This may be done directly by
+    specifying the Identity of the Attribute, or indirectly by specifying a lookup that will match (only) the
+    Attribute.
+
+    Note: in certain cases, an MIAttributeReference may match more than one Attribute in
+    the MI Database; depending on the operation, this may be legal or may result in
+    a Fault.
+
+    Parameters
+    ----------
+    db_key: str
+        The key that uniquely identifies a particular Database on the MI Server.
+    attribute_identity: Optional[int]
+        The identity of the attribute within the MI Database.
+    table_reference: Optional[PartialTableReference]
+        A reference to the table hosting the attribute. Required if ``attribute_name`` is specified and
+        ``is_standard`` is not True.
+    attribute_name: Optional[str]
+        Name of the Attribute.
+    pseudo: Optional[PseudoAttribute]
+        The pseudo-attribute type if referring to a pseudo-attribute.
+    is_standard: Optional[bool]
+        If True indicates that the provided ``attribute_name`` is a Standard Name.
+    """
+
     _simple_values = [("db_key", "dbKey"), ("attribute_identity", "attributeIdentity")]
 
     _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
@@ -311,30 +345,6 @@ class MIAttributeReference(BaseType):
         is_standard: Optional[bool] = None,
         **kwargs: Dict[str, Any],
     ):
-        """A type that allows identification of a particular Attribute in an MI Database. This may be done directly by
-        specifying the Identity of the Attribute, or indirectly by specifying a lookup that will match (only) the
-        Attribute.
-
-        Note: in certain cases, an MIAttributeReference may match more than one Attribute in
-        the MI Database; depending on the operation, this may be legal or may result in
-        a Fault.
-
-        Parameters
-        ----------
-        db_key: str
-            The key that uniquely identifies a particular Database on the MI Server.
-        attribute_identity: Optional[int]
-            The identity of the attribute within the MI Database.
-        table_reference: Optional[PartialTableReference]
-            A reference to the table hosting the attribute. Required if ``attribute_name`` is specified and
-            ``is_standard`` is not True.
-        attribute_name: Optional[str]
-            Name of the Attribute.
-        pseudo: Optional[PseudoAttribute]
-            The pseudo-attribute type if referring to a pseudo-attribute.
-        is_standard: Optional[bool]
-            If True indicates that the provided ``attribute_name`` is a Standard Name.
-        """
         super().__init__(**kwargs)
         self.db_key = db_key
         self.attribute_identity = attribute_identity
@@ -471,6 +481,42 @@ class MIAttributeReference(BaseType):
 
 
 class MIRecordReference(BaseType):
+    """A type that allows identification of a particular Record in an
+    MI Database. This may be done directly by specifying the Identity or GUID of the Record, or
+    indirectly by specifying a lookup that will match (only) the Record.
+
+    For input, you should provide exactly one of either identity, recordGUID, recordHistoryGUID
+    or lookupValue. If more than one element identifying the record is given, only one is used; the descending
+    order of priority is: identity, recordGUID, recordHistoryGUID, lookupValue. The Service Layer does not
+    check that the several elements identifying the record are all referencing the same record, it just picks the
+    highest-priority one and uses that.
+
+    Parameters
+    ----------
+    db_key: str
+        The key that uniquely identifies a particular Database on the MI Server.
+    record_history_identity: Optional[int]
+        This is the best-performing and highest-priority way to reference a record; however, identities might not
+        be suitable for long-term persistence.
+    record_version_number: Optional[int]
+        If omitted, this means the latest version visible to the user.
+    record_guid: Optional[str]
+        Identifies a particular version of a record by its GUID, this is a more persistent way to refer to a record.
+    record_history_guid: Optional[str]
+        Identifies a record history, the latest visible version will be returned. ``record_version_number`` has no
+        effect on references that use ``record_history_guid``.
+    lookup_attribute_reference: Optional[MIAttributeReference]
+        When provided in combination with ``lookup_value`` identifies a record by a unique short-text attribute.
+        Specifies the attribute to be used for the lookup operation.
+    lookup_value: Optional[str]
+        When provided in combination with ``lookup_attribute_reference`` identifies a record by a unique short-text
+        attribute. Specifies the value to be used for the lookup operation. If this is not unique an error will be
+        returned.
+    record_uid: Optional[str]
+        The recordUID may be used to identify a particular XML element representing a record. It does not represent
+        any property or attribute of an actual MI Record.
+    """
+
     _simple_values = [
         ("db_key", "dbKey"),
         ("record_guid", "recordGUID"),
@@ -493,41 +539,6 @@ class MIRecordReference(BaseType):
         record_uid: Optional[str] = None,
         **kwargs: Dict[str, Any],
     ):
-        """A type that allows identification of a particular Record in an
-        MI Database. This may be done directly by specifying the Identity or GUID of the Record, or
-        indirectly by specifying a lookup that will match (only) the Record.
-
-        For input, you should provide exactly one of either identity, recordGUID, recordHistoryGUID
-        or lookupValue. If more than one element identifying the record is given, only one is used; the descending
-        order of priority is: identity, recordGUID, recordHistoryGUID, lookupValue. The Service Layer does not
-        check that the several elements identifying the record are all referencing the same record, it just picks the
-        highest-priority one and uses that.
-
-        Parameters
-        ----------
-        db_key: str
-            The key that uniquely identifies a particular Database on the MI Server.
-        record_history_identity: Optional[int]
-            This is the best-performing and highest-priority way to reference a record; however, identities might not
-            be suitable for long-term persistence.
-        record_version_number: Optional[int]
-            If omitted, this means the latest version visible to the user.
-        record_guid: Optional[str]
-            Identifies a particular version of a record by its GUID, this is a more persistent way to refer to a record.
-        record_history_guid: Optional[str]
-            Identifies a record history, the latest visible version will be returned. ``record_version_number`` has no
-            effect on references that use ``record_history_guid``.
-        lookup_attribute_reference: Optional[MIAttributeReference]
-            When provided in combination with ``lookup_value`` identifies a record by a unique short-text attribute.
-            Specifies the attribute to be used for the lookup operation.
-        lookup_value: Optional[str]
-            When provided in combination with ``lookup_attribute_reference`` identifies a record by a unique short-text
-            attribute. Specifies the value to be used for the lookup operation. If this is not unique an error will be
-            returned.
-        record_uid: Optional[str]
-            The recordUID may be used to identify a particular XML element representing a record. It does not represent
-            any property or attribute of an actual MI Record.
-        """
         super().__init__(**kwargs)
         self.db_key = db_key
         self.record_history_identity = record_history_identity
@@ -701,15 +712,16 @@ class MIRecordReference(BaseType):
 # TODO - I don't like having a nice method to add props then replicating it here, can we do something better with
 #  inheritance?
 class InternalIdentifierMixin(SupportsCustomFields):
-    def __init__(self, *, internal_id: Optional[str] = None, **kwargs: Dict[str, Any]):
-        """A unique identity for this object in this BoM. This identity is only for internal use, allowing other
-        elements to reference this element.
+    """A unique identity for this object in this BoM. This identity is only for internal use, allowing other
+    elements to reference this element.
 
-        Parameters
-        ----------
-        internal_id: Optional[str]
-            The identifier to assign to this object.
-        """
+    Parameters
+    ----------
+    internal_id: Optional[str]
+        The identifier to assign to this object.
+    """
+
+    def __init__(self, *, internal_id: Optional[str] = None, **kwargs: Dict[str, Any]):
         super().__init__(**kwargs)
         self.internal_id = internal_id
 
@@ -746,6 +758,19 @@ class InternalIdentifierMixin(SupportsCustomFields):
 
 
 class CommonIdentifiersMixin(SupportsCustomFields):
+    """
+    A set of identifiers used by external applications to reference and display parts of the BoM.
+
+    Parameters
+    ----------
+    identity: Optional[str]
+        A display identity for the object.
+    name: Optional[str]
+        A display name for the object.
+    external_identity: Optional[str]
+        A temporary reference populated and used by applications to refer to the item within the BoM.
+    """
+
     def __init__(
         self,
         *,
@@ -754,18 +779,6 @@ class CommonIdentifiersMixin(SupportsCustomFields):
         external_identity: Optional[str] = None,
         **kwargs: Dict[str, Any],
     ):
-        """
-        A set of identifiers used by external applications to reference and display parts of the BoM.
-
-        Parameters
-        ----------
-        identity: Optional[str]
-            A display identity for the object.
-        name: Optional[str]
-            A display name for the object.
-        external_identity: Optional[str]
-            A temporary reference populated and used by applications to refer to the item within the BoM.
-        """
         super().__init__(**kwargs)
         self.identity = identity
         self.name = name
@@ -846,6 +859,18 @@ class CommonIdentifiersMixin(SupportsCustomFields):
 
 
 class EndOfLifeFate(BaseType):
+    """
+    The fate of a material at the end-of-life of the product. For example if a material can be recycled, and what
+    fraction of the total mass or volume can be recycled.
+
+    Parameters
+    ----------
+    mi_end_of_life_reference : MIRecordReference
+        Reference identifying the applicable fate within the MI Database.
+    fraction : float
+        Fraction of the total mass or volume of material to which this fate applies.
+    """
+
     _simple_values = [("fraction", "Fraction")]
 
     _props = [("MIRecordReference", "mi_end_of_life_reference", "MIEndOfLifeReference")]
@@ -853,17 +878,6 @@ class EndOfLifeFate(BaseType):
     def __init__(
         self, *, mi_end_of_life_reference: MIRecordReference, fraction: float, **kwargs: Dict[str, Any]
     ) -> None:
-        """
-        The fate of a material at the end-of-life of the product. For example if a material can be recycled, and what
-        fraction of the total mass or volume can be recycled.
-
-        Parameters
-        ----------
-        mi_end_of_life_reference : MIRecordReference
-            Reference identifying the applicable fate within the MI Database.
-        fraction : float
-            Fraction of the total mass or volume of material to which this fate applies.
-        """
         super().__init__(**kwargs)
         self.mi_end_of_life_reference = mi_end_of_life_reference
         self.fraction = fraction
@@ -900,21 +914,22 @@ class EndOfLifeFate(BaseType):
 
 
 class UnittedValue(BaseType):
+    """
+    A physical quantity with a unit. If provided in a input then the unit should exist within the MI database,
+    otherwise an error will be raised.
+
+    Parameters
+    ----------
+    value: float
+        The value of the quantity in specified units.
+    unit: Optional[str]
+        If provided, specifies the unit symbol applying to the quantity. If absent the quantity will be treated as
+        dimensionless.
+    """
+
     _simple_values = [("value", "$"), ("unit", "@Unit")]
 
     def __init__(self, *, value: float, unit: Optional[str] = None, **kwargs: Dict[str, Any]) -> None:
-        """
-        A physical quantity with a unit. If provided in a input then the unit should exist within the MI database,
-        otherwise an error will be raised.
-
-        Parameters
-        ----------
-        value: float
-            The value of the quantity in specified units.
-        unit: Optional[str]
-            If provided, specifies the unit symbol applying to the quantity. If absent the quantity will be treated as
-            dimensionless.
-        """
         super().__init__(**kwargs)
         self.value = value
         self.unit = unit
@@ -957,17 +972,18 @@ class UnittedValue(BaseType):
 
 
 class Location(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
+    """
+    Defines the manufacturing location for the BoM for use in process calculations.
+
+    Parameters
+    ----------
+    mi_location_reference: Optional[MIRecordReference]
+        Reference to a record in the MI database representing the manufacturing location.
+    """
+
     _props = [("MIRecordReference", "mi_location_reference", "MILocationReference")]
 
     def __init__(self, *, mi_location_reference: Optional[MIRecordReference] = None, **kwargs: Any) -> None:
-        """
-        Defines the manufacturing location for the BoM for use in process calculations.
-
-        Parameters
-        ----------
-        mi_location_reference: Optional[MIRecordReference]
-            Reference to a record in the MI database representing the manufacturing location.
-        """
         super().__init__(**kwargs)
         self.mi_location_reference = mi_location_reference
 
@@ -988,6 +1004,20 @@ class Location(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class ElectricityMix(BaseType):
+    """
+    If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of
+    fossil fuel burning power stations in the region of use.  This type lets you specify the electrical generation
+    mix by either specifying the region or country of use or by specifying the percentage of power that comes from
+    fossil fuel sources.
+
+    Parameters
+    ----------
+    mi_region_reference: Optional[MIRecordReference]
+        Reference to a record in the MI database representing the electricity mix for the destination country.
+    percentage_fossil_fuels: Optional[float]
+        The percentage of electrical power production within the destination country that comes from fossil fuels.
+    """
+
     _props = [("MIRecordReference", "mi_region_reference", "MIRegionReference")]
     _simple_values = [("percentage_fossil_fuels", "PercentageFossilFuels")]
 
@@ -998,19 +1028,6 @@ class ElectricityMix(BaseType):
         percentage_fossil_fuels: Optional[float] = None,
         **kwargs: Dict[str, Any],
     ) -> None:
-        """
-        If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of
-        fossil fuel burning power stations in the region of use.  This type lets you specify the electrical generation
-        mix by either specifying the region or country of use or by specifying the percentage of power that comes from
-        fossil fuel sources.
-
-        Parameters
-        ----------
-        mi_region_reference: Optional[MIRecordReference]
-            Reference to a record in the MI database representing the electricity mix for the destination country.
-        percentage_fossil_fuels: Optional[float]
-            The percentage of electrical power production within the destination country that comes from fossil fuels.
-        """
         super().__init__(**kwargs)
         self.mi_region_reference = mi_region_reference
         self.percentage_fossil_fuels = percentage_fossil_fuels
@@ -1047,6 +1064,20 @@ class ElectricityMix(BaseType):
 
 
 class MobileMode(BaseType):
+    """
+    If the product is transported as part of its use then this type contains details about the way in which it is
+    transported.
+
+    Parameters
+    ----------
+    mi_transport_reference: MIRecordReference
+        Reference to a record in the MI database representing the means of transport for this product during use.
+    days_used_per_year: float
+        The number of days in a year the product will be transported during use.
+    distance_travelled_per_day: UnittedValue
+        The distance the product will be transported each day as part of its use.
+    """
+
     _props = [
         ("MIRecordReference", "mi_transport_reference", "MITransportReference"),
         ("UnittedValue", "distance_travelled_per_day", "DistanceTravelledPerDay"),
@@ -1061,19 +1092,6 @@ class MobileMode(BaseType):
         distance_travelled_per_day: UnittedValue,
         **kwargs: Dict[str, Any],
     ) -> None:
-        """
-        If the product is transported as part of its use then this type contains details about the way in which it is
-        transported.
-
-        Parameters
-        ----------
-        mi_transport_reference: MIRecordReference
-            Reference to a record in the MI database representing the means of transport for this product during use.
-        days_used_per_year: float
-            The number of days in a year the product will be transported during use.
-        distance_travelled_per_day: UnittedValue
-            The distance the product will be transported each day as part of its use.
-        """
         super().__init__(**kwargs)
         self.mi_transport_reference = mi_transport_reference
         self.days_used_per_year = days_used_per_year
@@ -1126,6 +1144,22 @@ class MobileMode(BaseType):
 
 
 class StaticMode(BaseType):
+    """
+    Specifies the primary energy conversion that occurs during the product's use.
+
+    Parameters
+    ----------
+    mi_energy_conversion_reference: MIRecordReference
+        Reference to a record in the MI database representing the primary energy conversion taking place when the
+        product is in use.
+    power_rating: UnittedValue
+        The power rating of the product whilst in use.
+    days_used_per_year: float
+        The number of days per year that the product will be used.
+    hours_used_per_day: float
+        The number of hours per day of use that the product will be used.
+    """
+
     _props = [
         ("MIRecordReference", "mi_energy_conversion_reference", "MIEnergyConversionReference"),
         ("UnittedValue", "power_rating", "PowerRating"),
@@ -1141,21 +1175,6 @@ class StaticMode(BaseType):
         hours_used_per_day: float,
         **kwargs: Dict[str, Any],
     ) -> None:
-        """
-        Specifies the primary energy conversion that occurs during the product's use.
-
-        Parameters
-        ----------
-        mi_energy_conversion_reference: MIRecordReference
-            Reference to a record in the MI database representing the primary energy conversion taking place when the
-            product is in use.
-        power_rating: UnittedValue
-            The power rating of the product whilst in use.
-        days_used_per_year: float
-            The number of days per year that the product will be used.
-        hours_used_per_day: float
-            The number of hours per day of use that the product will be used.
-        """
         super().__init__(**kwargs)
         self.mi_energy_conversion_reference = mi_energy_conversion_reference
         self.power_rating = power_rating
@@ -1225,6 +1244,21 @@ class StaticMode(BaseType):
 
 
 class UtilitySpecification(BaseType):
+    """
+    Specifies how much use can be obtained from the product represented by this BoM in comparison to a
+    representative industry average.
+
+    Parameters
+    ----------
+    industry_average_duration_years: Optional[float]
+        The average lifespan of all examples, throughout the industry, of the kind of product described herein.
+    industry_average_number_of_functional_units: Optional[float]
+        The average number of functional units delivered, in their lifespan, by all examples, throughout the
+        industry, of the kind of product represented by this object.
+    utility: Optional[float]
+        Directly specifies the utility.
+    """
+
     _simple_values = [
         ("industry_average_duration_years", "IndustryAverageDurationYears"),
         ("industry_average_number_of_functional_units", "IndustryAverageNumberOfFunctionalUnits"),
@@ -1239,20 +1273,6 @@ class UtilitySpecification(BaseType):
         utility: Optional[float] = None,
         **kwargs: Dict[str, Any],
     ) -> None:
-        """
-        Specifies how much use can be obtained from the product represented by this BoM in comparison to a
-        representative industry average.
-
-        Parameters
-        ----------
-        industry_average_duration_years: Optional[float]
-            The average lifespan of all examples, throughout the industry, of the kind of product described herein.
-        industry_average_number_of_functional_units: Optional[float]
-            The average number of functional units delivered, in their lifespan, by all examples, throughout the
-            industry, of the kind of product represented by this object.
-        utility: Optional[float]
-            Directly specifies the utility.
-        """
         super().__init__(**kwargs)
         self.industry_average_duration_years = industry_average_duration_years
         self.industry_average_number_of_functional_units = industry_average_number_of_functional_units
@@ -1306,6 +1326,22 @@ class UtilitySpecification(BaseType):
 
 
 class ProductLifeSpan(BaseType):
+    """
+    Specifies the average life span for the product represented by the BoM.
+
+    Parameters
+    ----------
+    duration_years: float
+        The product lifespan in years.
+    number_of_functional_units: Optional[float]
+        The number of functional units delivered in the lifespan of the product represented by the BoM.
+    functional_unit_description: Optional[str]
+        A short (ideally one-word) description of a single functional unit.
+    utility: Optional[UtilitySpecification]
+        Indicates how much use can be obtained from the product represented by the BoM, compared to an
+        industry-average example.
+    """
+
     _props = [("UtilitySpecification", "utility", "Utility")]
     _simple_values = [
         ("duration_years", "DurationYears"),
@@ -1322,21 +1358,6 @@ class ProductLifeSpan(BaseType):
         utility: Optional[UtilitySpecification] = None,
         **kwargs: Dict[str, Any],
     ) -> None:
-        """
-        Specifies the average life span for the product represented by the BoM.
-
-        Parameters
-        ----------
-        duration_years: float
-            The product lifespan in years.
-        number_of_functional_units: Optional[float]
-            The number of functional units delivered in the lifespan of the product represented by the BoM.
-        functional_unit_description: Optional[str]
-            A short (ideally one-word) description of a single functional unit.
-        utility: Optional[UtilitySpecification]
-            Indicates how much use can be obtained from the product represented by the BoM, compared to an
-            industry-average example.
-        """
         super().__init__(**kwargs)
         self.duration_years = duration_years
         self.number_of_functional_units = number_of_functional_units
@@ -1406,6 +1427,22 @@ class ProductLifeSpan(BaseType):
 
 
 class UsePhase(BaseType):
+    """
+    Provides information about the sustainability of the product whilst in use, including electricity use, emissions
+    due to transport, emissions due to electricity consumption, and the expected life span of the product.
+
+    Parameters
+    ----------
+    product_life_span: ProductLifeSpan
+        Specifies the expected life span of the product.
+    electricity_mix: Optional[ElectricityMix]
+        Specifies the proportion of electricity within the destination country that comes from fossil fuels.
+    static_mode: Optional[StaticMode]
+        Provides information about the expected static use of the product.
+    mobile_mode: Optional[MobileMode]
+        Provides information about the expected mobile use of the product.
+    """
+
     _props = [
         ("ProductLifeSpan", "product_life_span", "ProductLifeSpan"),
         ("ElectricityMix", "electricity_mix", "ElectricityMix"),
@@ -1422,21 +1459,6 @@ class UsePhase(BaseType):
         mobile_mode: Optional[MobileMode] = None,
         **kwargs: Dict[str, Any],
     ) -> None:
-        """
-        Provides information about the sustainability of the product whilst in use, including electricity use, emissions
-        due to transport, emissions due to electricity consumption, and the expected life span of the product.
-
-        Parameters
-        ----------
-        product_life_span: ProductLifeSpan
-            Specifies the expected life span of the product.
-        electricity_mix: Optional[ElectricityMix]
-            Specifies the proportion of electricity within the destination country that comes from fossil fuels.
-        static_mode: Optional[StaticMode]
-            Provides information about the expected static use of the product.
-        mobile_mode: Optional[MobileMode]
-            Provides information about the expected mobile use of the product.
-        """
         super().__init__(**kwargs)
         self.product_life_span = product_life_span
         self.electricity_mix = electricity_mix
@@ -1505,6 +1527,20 @@ class UsePhase(BaseType):
 
 
 class BoMDetails(BaseType):
+    """
+    Explanatory information about a BoM.
+
+    Parameters
+    ----------
+    notes: Optional[str]
+        General notes for the BoM object.
+    picture_url: Optional[str]
+        The URL of an image to include at the top of the report. This URL must be accessible from the reporting
+        services server.
+    product_name: Optional[str]
+        The product name.
+    """
+
     _simple_values = [("notes", "Notes"), ("picture_url", "PictureUrl"), ("product_name", "ProductName")]
 
     def __init__(
@@ -1515,19 +1551,6 @@ class BoMDetails(BaseType):
         product_name: Optional[str] = None,
         **kwargs: Dict[str, Any],
     ) -> None:
-        """
-        Explanatory information about a BoM.
-
-        Parameters
-        ----------
-        notes: Optional[str]
-            General notes for the BoM object.
-        picture_url: Optional[str]
-            The URL of an image to include at the top of the report. This URL must be accessible from the reporting
-            services server.
-        product_name: Optional[str]
-            The product name.
-        """
         super().__init__(**kwargs)
         self.notes = notes
         self.picture_url = picture_url
@@ -1581,6 +1604,21 @@ class BoMDetails(BaseType):
 
 
 class TransportStage(InternalIdentifierMixin, BaseType):
+    """
+    Defines the transportation applied to an object, in terms of the generic transportation type (stored in the
+    Database) and the amount of that transport used in this instance.
+
+    Parameters
+    ----------
+    name: str
+        Name of this transportation stage, used only to identify the stage within the BoM.
+    mi_transport_reference: MIRecordReference
+        Reference to a record in the MI Database representing the means of transportation for this stage.
+    distance: UnittedValue
+        The distance covered by this transportation stage.
+
+    """
+
     _props = [
         ("MIRecordReference", "mi_transport_reference", "MITransportReference"),
         ("UnittedValue", "distance", "Distance"),
@@ -1595,20 +1633,6 @@ class TransportStage(InternalIdentifierMixin, BaseType):
         distance: UnittedValue,
         **kwargs: Any,
     ) -> None:
-        """
-        Defines the transportation applied to an object, in terms of the generic transportation type (stored in the
-        Database) and the amount of that transport used in this instance.
-
-        Parameters
-        ----------
-        name: str
-            Name of this transportation stage, used only to identify the stage within the BoM.
-        mi_transport_reference: MIRecordReference
-            Reference to a record in the MI Database representing the means of transportation for this stage.
-        distance: UnittedValue
-            The distance covered by this transportation stage.
-
-        """
         super().__init__(**kwargs)
         self.name = name
         self.mi_transport_reference = mi_transport_reference
@@ -1661,6 +1685,18 @@ class TransportStage(InternalIdentifierMixin, BaseType):
 
 
 class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
+    """
+    A specification for a part, process, or material. Refers to a record with the MI Database storing the details
+    of the specification and its impact.
+
+    Parameters
+    ----------
+    mi_specification_reference: MIRecordReference
+        Reference identifying the record representing this specification in the MI Database.
+    quantity: Optional[UnittedValue]
+        A quantification of the specification, if applicable.
+    """
+
     _props = [
         ("MIRecordReference", "mi_specification_reference", "MISpecificationReference"),
         ("UnittedValue", "quantity", "Quantity"),
@@ -1673,17 +1709,6 @@ class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         quantity: Optional[UnittedValue] = None,
         **kwargs: Any,
     ) -> None:
-        """
-        A specification for a part, process, or material. Refers to a record with the MI Database storing the details
-        of the specification and its impact.
-
-        Parameters
-        ----------
-        mi_specification_reference: MIRecordReference
-            Reference identifying the record representing this specification in the MI Database.
-        quantity: Optional[UnittedValue]
-            A quantification of the specification, if applicable.
-        """
         super().__init__(**kwargs)
         self.mi_specification_reference = mi_specification_reference
         self.quantity = quantity
@@ -1720,6 +1745,21 @@ class Specification(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
+    """
+    A substance within a part, semi-finished part, material or specification. The substance is stored in the
+    Database.
+
+    Parameters
+    ----------
+    mi_substance_reference: MIRecordReference
+        Reference identifying the record representing the substance in the MI Database.
+    percentage: Optional[Float]
+        If the parent object consists of more than one substance, this defines the percentage of this
+        substance.
+    category: Optional[Category]
+        Represents whether the substance remains present in the material after production.
+    """
+
     _simple_values = [("percentage", "Percentage")]
 
     _props = [("MIRecordReference", "mi_substance_reference", "MISubstanceReference")]
@@ -1732,20 +1772,6 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         category: Optional[Category] = None,
         **kwargs: Any,
     ) -> None:
-        """
-        A substance within a part, semi-finished part, material or specification. The substance is stored in the
-        Database.
-
-        Parameters
-        ----------
-        mi_substance_reference: MIRecordReference
-            Reference identifying the record representing the substance in the MI Database.
-        percentage: Optional[Float]
-            If the parent object consists of more than one substance, this defines the percentage of this
-            substance.
-        category: Optional[Category]
-            Represents whether the substance remains present in the material after production.
-        """
         super().__init__(**kwargs)
         self.mi_substance_reference = mi_substance_reference
         self.percentage = percentage
@@ -1814,6 +1840,24 @@ class Substance(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
+    """
+    A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the
+    Database.
+
+    Parameters
+    ----------
+    mi_process_reference: MIRecordReference
+        Reference identifying a record in the MI Database containing information about this process.
+    dimension_type: DimensionType
+        Object defining the dimension affected by the process, for example area for coatings, or volume for
+        rough machining operations.
+    percentage_of_part_affected: Optional[float]
+        Fraction of the object affected by the process, with basis specified by ``dimension_type``.
+    quantity_affected: Optional[UnittedValue]
+        Number of items affected by the process, if applicable. For example 17 fasteners are galvanized out of 24
+        total.
+    """
+
     _simple_values = [("percentage_of_part_affected", "Percentage")]
 
     _props = [
@@ -1830,23 +1874,6 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         quantity_affected: Optional[UnittedValue] = None,
         **kwargs: Any,
     ) -> None:
-        """
-        A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the
-        Database.
-
-        Parameters
-        ----------
-        mi_process_reference: MIRecordReference
-            Reference identifying a record in the MI Database containing information about this process.
-        dimension_type: DimensionType
-            Object defining the dimension affected by the process, for example area for coatings, or volume for
-            rough machining operations.
-        percentage_of_part_affected: Optional[float]
-            Fraction of the object affected by the process, with basis specified by ``dimension_type``.
-        quantity_affected: Optional[UnittedValue]
-            Number of items affected by the process, if applicable. For example 17 fasteners are galvanized out of 24
-            total.
-        """
         super().__init__(**kwargs)
         self.mi_process_reference = mi_process_reference
         self.dimension_type = dimension_type
@@ -1930,6 +1957,28 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
+    """
+    A Material within a part or semi-finished part. The material is stored in the Database.
+
+    Parameters
+    ----------
+    mi_material_reference: MIRecordReference
+        Reference identifying the material record within the MI Database.
+    percentage: Optional[float]
+        The fraction of the part consisting of this material. Provide either this or ``mass``.
+    mass: Optional[UnittedValue]
+        The mass of this material present within the part. Provide either this or ``percentage``.
+    recycle_content_is_typical: Optional[bool]
+        If True, indicates that the material's recyclability is typical, the value in the MI record will be used.
+    recycle_content_percentage: Optional[float]
+        If the recyclability is not typical for this material, or no typical value is available in the MI Database,
+        this value indicates which percentage of this material can be recycled.
+    processes: List[Process]
+        Any processes associated with the production and preparation of this material.
+    end_of_life_fates: List[EndOfLifeFate]
+        The fates of this material once the product is disposed of.
+    """
+
     _simple_values = [("percentage", "Percentage")]
 
     _props = [("UnittedValue", "mass", "Mass"), ("MIRecordReference", "mi_material_reference", "MIMaterialReference")]
@@ -1957,27 +2006,6 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         end_of_life_fates: Optional[List[EndOfLifeFate]] = None,
         **kwargs: Any,
     ) -> None:
-        """
-        A Material within a part or semi-finished part. The material is stored in the Database.
-
-        Parameters
-        ----------
-        mi_material_reference: MIRecordReference
-            Reference identifying the material record within the MI Database.
-        percentage: Optional[float]
-            The fraction of the part consisting of this material. Provide either this or ``mass``.
-        mass: Optional[UnittedValue]
-            The mass of this material present within the part. Provide either this or ``percentage``.
-        recycle_content_is_typical: Optional[bool]
-            If True, indicates that the material's recyclability is typical, the value in the MI record will be used.
-        recycle_content_percentage: Optional[float]
-            If the recyclability is not typical for this material, or no typical value is available in the MI Database,
-            this value indicates which percentage of this material can be recycled.
-        processes: List[Process]
-            Any processes associated with the production and preparation of this material.
-        end_of_life_fates: List[EndOfLifeFate]
-            The fates of this material once the product is disposed of.
-        """
         super().__init__(**kwargs)
         self.percentage = percentage
         self.mass = mass
@@ -2129,6 +2157,50 @@ class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
 
 
 class Part(InternalIdentifierMixin, BaseType):
+    """
+    A single part which may or may not be stored in the MI Database.
+
+    Parameters
+    ----------
+    part_number: str
+        The Part Number associated with this part.
+    quantity: Optional[UnittedValue]
+        The quantity of part(s) used in the parent part. For discrete parts, this will be the part count - an
+        integer with a blank unit (or "Each"). For continuous parts, it will be a mass, length, area or volume - a
+        float value with an appropriate units.
+    mass_per_unit_of_measure: Optional[UnittedValue]
+        The mass of the part, after processing, relative to the unit that Quantity is given in. If MassPerUom is
+        specified and VolumePerUom is not, then specifying materials within this part is interpreted to be
+        percentage by mass.
+    volume_per_unit_of_measure: Optional[UnittedValue]
+        The volume of the part, after processing, relative to the unit that Quantity is given in. If VolumePerUom
+        is specified and MassPerUom is not, then specifying materials within this part is interpreted to be
+        percentage by volume.
+    mi_part_reference: Optional[MIRecordReference]
+        A reference identifying a part stored in the MI Database.
+    non_mi_part_reference: Optional[Union[str, int]]
+        A reference to a part stored in another system, for informational purposes only.
+    part_name: Optional[str]
+        Display name for the part.
+    external_identity: Optional[str]
+        A temporary reference populated and used by applications to refer to the item within the BoM.
+    components: List[Part]
+        List of subcomponents for this part.
+    specifications: List[Specification]
+        List of specifications applying to this part.
+    materials: List[Material]
+        List of constituent materials making up this part.
+    substances: List[Substances]
+        List of substances contained within this part.
+    processes: List[Process]
+        List of processes used in the manufacture of this part.
+    rohs_exemptions: List[str]
+        If the part has a RoHS exemption, provide one or more justifications for the exemptions here. If the part is
+        analyzed as **Non-Compliant** then the RoHS indicator will return **Compliant with Exemptions** instead.
+    end_of_life_fates: List[EndOfLifeFate]
+        The fate(s) of the part, at the end-of-life of the product.
+    """
+
     _props = [
         ("UnittedValue", "quantity", "Quantity"),
         ("UnittedValue", "mass_per_unit_of_measure", "MassPerUom"),
@@ -2179,50 +2251,6 @@ class Part(InternalIdentifierMixin, BaseType):
         end_of_life_fates: Optional[List[EndOfLifeFate]] = None,
         **kwargs: Any,
     ):
-        """
-        A single part which may or may not be stored in the MI Database.
-
-        Parameters
-        ----------
-        part_number: str
-            The Part Number associated with this part.
-        quantity: Optional[UnittedValue]
-            The quantity of part(s) used in the parent part. For discrete parts, this will be the part count - an
-            integer with a blank unit (or "Each"). For continuous parts, it will be a mass, length, area or volume - a
-            float value with an appropriate units.
-        mass_per_unit_of_measure: Optional[UnittedValue]
-            The mass of the part, after processing, relative to the unit that Quantity is given in. If MassPerUom is
-            specified and VolumePerUom is not, then specifying materials within this part is interpreted to be
-            percentage by mass.
-        volume_per_unit_of_measure: Optional[UnittedValue]
-            The volume of the part, after processing, relative to the unit that Quantity is given in. If VolumePerUom
-            is specified and MassPerUom is not, then specifying materials within this part is interpreted to be
-            percentage by volume.
-        mi_part_reference: Optional[MIRecordReference]
-            A reference identifying a part stored in the MI Database.
-        non_mi_part_reference: Optional[Union[str, int]]
-            A reference to a part stored in another system, for informational purposes only.
-        part_name: Optional[str]
-            Display name for the part.
-        external_identity: Optional[str]
-            A temporary reference populated and used by applications to refer to the item within the BoM.
-        components: List[Part]
-            List of subcomponents for this part.
-        specifications: List[Specification]
-            List of specifications applying to this part.
-        materials: List[Material]
-            List of constituent materials making up this part.
-        substances: List[Substances]
-            List of substances contained within this part.
-        processes: List[Process]
-            List of processes used in the manufacture of this part.
-        rohs_exemptions: List[str]
-            If the part has a RoHS exemption, provide one or more justifications for the exemptions here. If the part is
-            analyzed as **Non-Compliant** then the RoHS indicator will return **Compliant with Exemptions** instead.
-        end_of_life_fates: List[EndOfLifeFate]
-            The fate(s) of the part, at the end-of-life of the product.
-        """
-
         super().__init__(**kwargs)
         self.quantity = quantity
         self.mass_per_unit_of_measure = mass_per_unit_of_measure
@@ -2521,29 +2549,30 @@ class Part(InternalIdentifierMixin, BaseType):
 
 
 class AnnotationSource(InternalIdentifierMixin, BaseType):
+    """
+    An element indicating the source of annotations in the BoM. Each source may be
+    referenced by zero or more annotations. The producer and consumer(s) of the BoM must agree the
+    understood annotation source semantics, particularly regarding the untyped data therein. When a tool consumes
+    and re-produces BoMs, it should generally retain any annotation sources that it does not understand (of course,
+    it can also decide whether to keep, modify or discard those annotation sources that it does understand).
+
+    The parameter documentation below is the suggested convention.
+
+    Parameters
+    ----------
+    name: str
+        The name of the software package that generated this annotation.
+    method: Optional[str]
+        The calculation method used to generate this annotation.
+    data: List[Any]
+        Data that the consumer of the BoM may require.
+    """
+
     _simple_values = [("name", "Name"), ("method", "Method")]
 
     def __init__(
         self, *, name: str, method: Optional[str] = None, data: Optional[List[Any]] = None, **kwargs: Any
     ) -> None:
-        """
-        An element indicating the source of annotations in the BoM. Each source may be
-        referenced by zero or more annotations. The producer and consumer(s) of the BoM must agree the
-        understood annotation source semantics, particularly regarding the untyped data therein. When a tool consumes
-        and re-produces BoMs, it should generally retain any annotation sources that it does not understand (of course,
-        it can also decide whether to keep, modify or discard those annotation sources that it does understand).
-
-        The parameter documentation below is the suggested convention.
-
-        Parameters
-        ----------
-        name: str
-            The name of the software package that generated this annotation.
-        method: Optional[str]
-            The calculation method used to generate this annotation.
-        data: List[Any]
-            Data that the consumer of the BoM may require.
-        """
         super().__init__(**kwargs)
         self.name = name
         self.method = method
@@ -2612,6 +2641,31 @@ class AnnotationSource(InternalIdentifierMixin, BaseType):
 
 
 class Annotation(BaseType):
+    """
+    An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
+    between the producer and consumer(s) of the BoM.  The producer and consumer(s) must also agree whether a
+    particular type of annotation is allowed to have multiple instances assigned to a single element, or whether
+    only a single annotation of that type per element is allowed. When a tool consumes and re-produces BoMs, it
+    should generally retain any annotations that it does not understand (of course, it can also decide whether to
+    keep, modify or discard those annotations that it does understand).
+
+    Annotations can either be pure textual data, providing additional data or context for an object, or they can
+    provide additional indicators, for example Embodied Energy of Production, or Cost of Raw Materials.
+
+    Parameters
+    ----------
+    target_id: str
+        The ``internal_identity`` of exactly one element to which the annotation applies.
+    source_id: Optional[str]
+        If provided, is the ``internal_identity`` of exactly one ``AnnotationSource`` object describing the source
+        of the annotation. If absent, no source information is provided.
+    type_: str
+        A string value indicating the type of the annotation, the accepted values for this parameter must be agreed
+        between the produced and consumer(s) of the BoM.
+    value: Union[str, UnittedValue]
+        The content of this annotation.
+    """
+
     _props = [("UnittedValue", "value", "Value")]
 
     _simple_values = [("type", "type"), ("target_id", "targetId"), ("source_id", "sourceId")]
@@ -2625,30 +2679,6 @@ class Annotation(BaseType):
         value: Union[str, UnittedValue],
         **kwargs: Dict[str, Any],
     ) -> None:
-        """
-        An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
-        between the producer and consumer(s) of the BoM.  The producer and consumer(s) must also agree whether a
-        particular type of annotation is allowed to have multiple instances assigned to a single element, or whether
-        only a single annotation of that type per element is allowed. When a tool consumes and re-produces BoMs, it
-        should generally retain any annotations that it does not understand (of course, it can also decide whether to
-        keep, modify or discard those annotations that it does understand).
-
-        Annotations can either be pure textual data, providing additional data or context for an object, or they can
-        provide additional indicators, for example Embodied Energy of Production, or Cost of Raw Materials.
-
-        Parameters
-        ----------
-        target_id: str
-            The ``internal_identity`` of exactly one element to which the annotation applies.
-        source_id: Optional[str]
-            If provided, is the ``internal_identity`` of exactly one ``AnnotationSource`` object describing the source
-            of the annotation. If absent, no source information is provided.
-        type_: str
-            A string value indicating the type of the annotation, the accepted values for this parameter must be agreed
-            between the produced and consumer(s) of the BoM.
-        value: Union[str, UnittedValue]
-            The content of this annotation.
-        """
         super().__init__(**kwargs)
         self.target_id = target_id
         self.source_id = source_id
@@ -2719,6 +2749,27 @@ class Annotation(BaseType):
 
 
 class BillOfMaterials(InternalIdentifierMixin, BaseType):
+    """
+    Type representing the root Bill of Materials object.
+
+    Parameters
+    ----------
+    components: List[Part]
+        The parts contained within this BoM.
+    transport_phase: List[TransportStage]
+        The different forms of transport to which the parts are subject.
+    use_phase: Optional[UsePhase]
+        The type of use to which this product is subject.
+    location: Optional[Location]
+        The location in which the object represented by the BoM is assembled.
+    notes: Optional[BoMDetails]
+        Any optional notes about this BoM.
+    annotations: List[Annotation]
+        Any annotations that are associated with objects within the BoM.
+    annotation_sources: List[AnnotationSource]
+        Sources for annotations present within the BoM.
+    """
+
     _props = [
         ("UsePhase", "use_phase", "UsePhase"),
         ("Location", "location", "Location"),
@@ -2747,26 +2798,6 @@ class BillOfMaterials(InternalIdentifierMixin, BaseType):
         annotation_sources: Optional[List[AnnotationSource]] = None,
         **kwargs: Any,
     ) -> None:
-        """
-        Type representing the root Bill of Materials object.
-
-        Parameters
-        ----------
-        components: List[Part]
-            The parts contained within this BoM.
-        transport_phase: List[TransportStage]
-            The different forms of transport to which the parts are subject.
-        use_phase: Optional[UsePhase]
-            The type of use to which this product is subject.
-        location: Optional[Location]
-            The location in which the object represented by the BoM is assembled.
-        notes: Optional[BoMDetails]
-            Any optional notes about this BoM.
-        annotations: List[Annotation]
-            Any annotations that are associated with objects within the BoM.
-        annotation_sources: List[AnnotationSource]
-            Sources for annotations present within the BoM.
-        """
         super().__init__(**kwargs)
         self.components = components
         if transport_phase is None:

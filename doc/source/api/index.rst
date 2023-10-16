@@ -18,6 +18,8 @@ The API for PyGranta BoM Analytics is split into these key sections:
   and how to interpret results.
 - :ref:`ref_grantami_bomanalytics_api_sustainability_index` explains how to build specific queries for sustainability
   and how to interpret results.
+- :ref:`ref_grantami_bomanalytics_bom_helpers_index` explains how to create, read, edit, and save Bill of Materials
+  objects for Compliance and Sustainability reporting.
 
 .. note::
    While some examples use a different class than the one being documented, both classes are always
@@ -31,3 +33,4 @@ The API for PyGranta BoM Analytics is split into these key sections:
    impacted_substances/index
    compliance/index
    sustainability/index
+   bom_builder/index

@@ -3,6 +3,10 @@
 BoM compliance
 ==============
 
+For more information about BoM item types relevant for compliance analysis, refer to the
+:MI_docs:`BoM item types for Restricted Substances <rs_and_sustainability/bom_items_rs.html>` section of the online
+documentation.
+
 Query definition
 ~~~~~~~~~~~~~~~~
 

@@ -853,9 +853,6 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
-    they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
 
@@ -883,9 +880,6 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
-    they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
 
@@ -915,9 +909,6 @@ class SpecificationWithImpactedSubstancesResult(
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
 
@@ -1278,13 +1269,6 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWit
 
       - The reference to the substance in Granta MI
       - The compliance status of this substance, stored in a dictionary of one or more indicator objects
-
-    Notes
-    -----
-    Record reference parameters are only populated if they are specified in the original query.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
 
@@ -1297,15 +1281,6 @@ class MaterialWithComplianceResult(
       - The reference to the material in Granta MI
       - The compliance status of this material, stored in a dictionary of one or more indicator objects
       - Any substance objects that are a child of this material object
-
-    Notes
-    -----
-    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another
-    compliance result object, only the ``record_history_identity`` parameter is populated.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
 
@@ -1323,15 +1298,6 @@ class PartWithComplianceResult(
       - The reference to the part in Granta MI (if the part references a record)
       - The compliance status of this part, stored in a dictionary of one or more indicator objects
       - Any part, specification, material, or substance objects which are a child of this part object
-
-    Notes
-    -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another
-    compliance result object, only the ``record_history_identity`` parameter is populated.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
 
@@ -1352,10 +1318,6 @@ class SpecificationWithComplianceResult(
 
     Notes
     -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another
-    compliance result object, only the ``record_history_identity`` parameter is populated.
-
     Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
     directly.
     """
@@ -1371,11 +1333,6 @@ class CoatingWithComplianceResult(
       - The reference to the coating in Granta MI
       - The compliance status of this coating, stored in one or more indicator objects
       - Any substance objects which are a child of this coating object
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     record_history_identity: Optional[int]
@@ -1762,15 +1719,6 @@ class MaterialWithSustainabilityResult(
       - The reference to the material in Granta MI
       - The sustainability information for this material
       - Any process objects that are a child of this material object
-
-    Notes
-    -----
-    With the exception of the ``record_history_identity`` parameter, record reference parameters are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another result
-    object, only the ``record_history_identity`` parameter is populated.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
 
@@ -1790,15 +1738,6 @@ class PartWithSustainabilityResult(
       - The reference to the part in Granta MI (if the part references a record)
       - The sustainability information for this part
       - Any part, material, process, substance, or specification objects which are a child of this part object
-
-    Notes
-    -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another result
-    object, only the ``record_history_identity`` parameter is populated.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
 
@@ -1806,29 +1745,15 @@ class SpecificationResult(
     SpecificationReferenceWithIdentifiers,
 ):
     """Describes an individual specification included as part of a sustainability query result.
-    This object includes only includes the reference to the record in Granta MI.
 
-    Notes
-    -----
-    With the exception of the ``record_history_identity`` parameter, record reference attributes are only populated if
-    they are specified in the original query. As a result, if this object is included as the child of another result
-    object, only the ``record_history_identity`` parameter is populated.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
+    This object only includes the reference to the record in Granta MI.
     """
 
 
 class SubstanceResult(SubstanceReferenceWithIdentifiers):
     """Describes an individual specification included as part of a sustainability query result.
-    This object includes only includes the reference to the record in Granta MI (if the substance references a record).
 
-    Notes
-    -----
-    Record reference parameters are only populated if they are specified in the original query.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
+    This object only includes the reference to the record in Granta MI (if the substance references a record).
     """
 
 
@@ -1838,12 +1763,7 @@ class SubstanceResult(SubstanceReferenceWithIdentifiers):
 class CoatingResult(CoatingReferenceWithIdentifier):
     """Provides an individual coating included as part of a sustainability query result.
 
-    This object includes only includes the reference to the coating in Granta MI.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
+    This object only includes the reference to the coating in Granta MI.
     """
 
 
@@ -1856,13 +1776,6 @@ class ProcessWithSustainabilityResult(
 
       - The reference to the part in Granta MI (if the process references a record)
       - The sustainability information for this process
-
-    Notes
-    -----
-    Record reference parameters are only populated if they are specified in the original query.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
 
@@ -1875,13 +1788,6 @@ class TransportWithSustainabilityResult(
 
       - The reference to the transport in Granta MI (if the part references a record)
       - The sustainability information for this transport stage
-
-    Notes
-    -----
-    Record reference parameters are only populated if they are specified in the original query.
-
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(

@@ -5,6 +5,7 @@ import xmlschema  # type: ignore[import]
 from xmlschema import XMLSchema
 
 from .bom_types import BoMReader, BoMWriter
+from .schemas import bom_schema_2301
 
 if TYPE_CHECKING:
     from .bom_types import BillOfMaterials
@@ -15,7 +16,7 @@ class BoMHandler:
     Handler for XML formatted BoMs, supports reading from files and strings, and serializing to string format.
     """
 
-    _schema_path: Path = Path(__file__).parent / "schemas" / "BillOfMaterialsEco2301.xsd"
+    _schema_path: Path = bom_schema_2301
     _schema: XMLSchema
 
     def __init__(self) -> None:

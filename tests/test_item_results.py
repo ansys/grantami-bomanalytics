@@ -317,7 +317,7 @@ class TestSustainabilityResultsRepr:
             **self._identifiers,
         )
         result = ItemResultFactory.create_specification_result(model)
-        expected = "<SpecificationResult(" "{'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
+        expected = "<SpecificationResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
         assert repr(result) == expected
 
 

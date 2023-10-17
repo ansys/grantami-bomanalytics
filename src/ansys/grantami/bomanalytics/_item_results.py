@@ -411,42 +411,34 @@ class ItemResultFactory:
             name=result_with_sustainability.name,
         )
         material_with_sustainability._add_child_processes(result_with_sustainability.processes)
-        material_with_sustainability._add_child_substances(result_with_sustainability.substances)
         return material_with_sustainability
 
     @classmethod
-    def create_specification_with_sustainability(
+    def create_specification_result(
         cls,
-        result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability,
-    ) -> "SpecificationWithSustainabilityResult":
-        """Returns a Specification object with sustainability metrics and child items.
+        result: models.CommonSpecificationReference,
+    ) -> "SpecificationResult":
+        """Returns a Specification object.
 
         Parameters
         ----------
-        result_with_sustainability: models.CommonSustainabilitySpecificationWithSustainability
-            Result from the REST API describing the sustainability for this particular specification.
+        result: models.CommonSpecificationReference
+            Result from the REST API describing a specification.
 
         Returns
         -------
-        SpecificationWithSustainabilityResult
+        SpecificationResult
         """
 
-        reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
-        specification_with_sustainability = SpecificationWithSustainabilityResult(
+        reference_type = cls.parse_reference_type(result.reference_type)
+        specification = SpecificationResult(
             reference_type=reference_type,
-            reference_value=result_with_sustainability.reference_value,
-            embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
-            climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
-            reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
-            identity=result_with_sustainability.id,
-            external_identity=result_with_sustainability.external_identity,
-            name=result_with_sustainability.name,
+            reference_value=result.reference_value,
+            identity=result.id,
+            external_identity=result.external_identity,
+            name=result.name,
         )
-        specification_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
-        specification_with_sustainability._add_child_materials(result_with_sustainability.materials)
-        specification_with_sustainability._add_child_substances(result_with_sustainability.substances)
-        specification_with_sustainability._add_child_coatings(result_with_sustainability.coatings)
-        return specification_with_sustainability
+        return specification
 
     @classmethod
     def create_substance_result(
@@ -476,31 +468,6 @@ class ItemResultFactory:
         return substance
 
     @classmethod
-    def create_coating_result(
-        cls,
-        result: models.CommonCoatingReference,
-    ) -> "CoatingResult":
-        """Returns a Coating object.
-
-        Parameters
-        ----------
-        result: models.CommonCoatingReference
-            Result from the REST API describing this particular coating.
-
-        Returns
-        -------
-        CoatingResult
-        """
-
-        reference_type = cls.parse_reference_type(result.reference_type)
-        coating = CoatingResult(
-            reference_type=reference_type,
-            reference_value=result.reference_value,
-            identity=result.id,
-        )
-        return coating
-
-    @classmethod
     def create_transport_with_sustainability(
         cls,
         result_with_sustainability: models.CommonSustainabilityTransportWithSustainability,
@@ -524,6 +491,7 @@ class ItemResultFactory:
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             identity=result_with_sustainability.id,
+            name=result_with_sustainability.stage_name,
         )
         return transport_with_sustainability
 
@@ -1620,7 +1588,7 @@ class ChildPartWithSustainabilityMixin:
             self._parts.append(child_part_with_sustainability)
 
 
-class ChildSpecificationWithSustainabilityMixin:
+class ChildSpecificationMixin:
     """Provides the implementation for managing children specifications, by adding a ``specifications`` property to the
     class.
 
@@ -1634,17 +1602,17 @@ class ChildSpecificationWithSustainabilityMixin:
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        self._specifications: List[SpecificationWithSustainabilityResult] = []
+        self._specifications: List[SpecificationResult] = []
 
     @property
-    def specifications(self) -> List["SpecificationWithSustainabilityResult"]:
+    def specifications(self) -> List["SpecificationResult"]:
         """Specification with sustainability result objects that are direct children of this item in the BoM."""
 
         return self._specifications
 
     def _add_child_specifications(
         self,
-        child_specifications: List[models.CommonSustainabilitySpecificationWithSustainability],
+        child_specifications: List[models.CommonSpecificationReference],
     ) -> None:
         """Populate the ``specifications`` attribute based on a list of low-level API specifications with
         compliance results.
@@ -1656,10 +1624,10 @@ class ChildSpecificationWithSustainabilityMixin:
         """
 
         for child_specification in child_specifications:
-            child_specification_with_sustainability = ItemResultFactory.create_specification_with_sustainability(
-                result_with_sustainability=child_specification,
+            child_specification_result = ItemResultFactory.create_specification_result(
+                result=child_specification,
             )
-            self._specifications.append(child_specification_with_sustainability)
+            self._specifications.append(child_specification_result)
 
 
 class ChildSubstanceMixin:
@@ -1698,43 +1666,6 @@ class ChildSubstanceMixin:
                 result=child_substance,
             )
             self._substances.append(child_substance_result)
-
-
-class ChildCoatingMixin:
-    """Provides the implementation for managing children coatings, by adding a ``coatings`` property to the class.
-
-    Parameters
-    ----------
-    child_coatings
-        Coatings returned by the low-level API that are children of this item.
-    **kwargs
-        Contains arguments handled by other mixins or base classes.
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self._coatings: List[CoatingResult] = []
-
-    @property
-    def coatings(self) -> List["CoatingResult"]:
-        """Coating objects that are direct children of this item in the BoM."""
-
-        return self._coatings
-
-    def _add_child_coatings(self, child_coatings: List[models.CommonCoatingReference]) -> None:
-        """Populate the ``coatings`` attribute based on a list of low-level API coatings results.
-
-        Parameters
-        ----------
-        child_coatings
-            List of coatings returned from the low-level API.
-        """
-
-        for child_coating in child_coatings:
-            child_coating_result = ItemResultFactory.create_coating_result(
-                result=child_coating,
-            )
-            self._coatings.append(child_coating_result)
 
 
 class ChildProcessWithSustainabilityMixin:
@@ -1776,7 +1707,6 @@ class ChildProcessWithSustainabilityMixin:
 
 
 class MaterialWithSustainabilityResult(
-    ChildSubstanceMixin,
     ChildProcessWithSustainabilityMixin,
     SustainabilityResultMixin,
     ReusabilityResultMixin,
@@ -1788,12 +1718,12 @@ class MaterialWithSustainabilityResult(
 
       - The reference to the material in Granta MI
       - The sustainability information for this material
-      - Any process or substance objects that are a child of this material object
+      - Any process objects that are a child of this material object
     """
 
 
 class PartWithSustainabilityResult(
-    ChildSpecificationWithSustainabilityMixin,
+    ChildSpecificationMixin,
     ChildSubstanceMixin,
     ChildProcessWithSustainabilityMixin,
     ChildMaterialWithSustainabilityMixin,
@@ -1811,27 +1741,19 @@ class PartWithSustainabilityResult(
     """
 
 
-class SpecificationWithSustainabilityResult(
-    ChildCoatingMixin,
-    ChildSubstanceMixin,
-    ChildMaterialWithSustainabilityMixin,
-    ChildSpecificationWithSustainabilityMixin,
-    SustainabilityResultMixin,
-    MassResultMixin,
+class SpecificationResult(
     SpecificationReferenceWithIdentifiers,
 ):
     """Describes an individual specification included as part of a sustainability query result.
-    This object includes three categories of attributes:
 
-      - The reference to the part in Granta MI (if the part references a record)
-      - The sustainability information for this specification
-      - Any specification, material, substance, or coating objects which are a child of this part object
+    This object only includes the reference to the record in Granta MI.
     """
 
 
 class SubstanceResult(SubstanceReferenceWithIdentifiers):
     """Describes an individual specification included as part of a sustainability query result.
-    This object includes only includes the reference to the part in Granta MI (if the substance references a record).
+
+    This object only includes the reference to the record in Granta MI (if the substance references a record).
     """
 
 
@@ -1841,7 +1763,7 @@ class SubstanceResult(SubstanceReferenceWithIdentifiers):
 class CoatingResult(CoatingReferenceWithIdentifier):
     """Provides an individual coating included as part of a sustainability query result.
 
-    This object includes only includes the reference to the coating in Granta MI.
+    This object only includes the reference to the coating in Granta MI.
     """
 
 
@@ -1868,7 +1790,20 @@ class TransportWithSustainabilityResult(
       - The sustainability information for this transport stage
     """
 
-    # TODO is the record reference note relevant?
+    def __init__(
+        self,
+        name: str,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        """
+        Name of the transport stage.
+        """
+        return self._name
 
 
 class SustainabilitySummaryMixin:

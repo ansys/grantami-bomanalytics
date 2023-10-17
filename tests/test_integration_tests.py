@@ -387,7 +387,6 @@ class TestSustainabilityBomQueries:
         material = leaf_part.materials[0]
 
         assert len(material.processes) == 2
-        assert not material.substances
 
         assert material.record_guid is not None
         assert material.climate_change.value == pytest.approx(0.939, DEFAULT_TOLERANCE)
@@ -411,9 +410,9 @@ class TestSustainabilityBomQueries:
 
         # Transports
         assert len(response.transport_stages) == 3
-        # TODO Check all transport names (CR-1399)
 
         transport = response.transport_stages[0]
+        assert transport.name == "Port to airport by truck"
         assert transport.climate_change.value == pytest.approx(0.345, DEFAULT_TOLERANCE)
         assert transport.embodied_energy.value == pytest.approx(5.23, DEFAULT_TOLERANCE)
         assert transport.record_guid is not None

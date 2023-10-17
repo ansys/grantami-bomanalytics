@@ -42,8 +42,8 @@ requests = "^2.26.0"
 [package.source]
 type = "git"
 url = "https://github.com/ansys/grantami-bomanalytics-openapi-private.git"
-reference = "a995bce"
-resolved_reference = "a995bced4e9fd52b89b3b7e9163c76764c2140d4"
+reference = "d7767ee"
+resolved_reference = "d7767ee37ac86ae081ef52303cc89398fbe7eb49"
 subdirectory = "ansys-grantami-bomanalytics-openapi"
 
 [[package]]
@@ -3556,4 +3556,4 @@ examples = ["jupyterlab", "lxml", "pandas", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8.0"
-content-hash = "d995585c95176bd55dde25e086dd6e792addfc99b22d0e2e1d7d8be28215cf83"
+content-hash = "bd6c6a12565e3776dd7fc3eb7624c21a70cf6ad683f696d6ec4a2b002a45019b"

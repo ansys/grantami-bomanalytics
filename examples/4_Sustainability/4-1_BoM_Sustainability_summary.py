@@ -223,10 +223,10 @@ fig.show()
 # The environmental contribution specifically from processing applied to raw materials is summarized in the
 # `primary_processes_details`, `secondary_processes_details`, and `joining_and_finishing_processes_details` properties
 # for primary, secondary, and joining and finishing process categories respectively. Each category lists unique
-# process-material pairs, which contribute at least 5% of the total for the process category. The relative contributions
-# describe the contribution of a process-material pair, relative to the total contributions of all processes from the
-# same category. Processes that do meet the contribution threshold are aggregated under the ``Other`` item, with the
-# material set to `None`.
+# process-material pairs, which contribute at least 5% of the total impact for the process category. The relative
+# contributions describe the contribution of a process-material pair, relative to the total contributions of all
+# processes from the same category. Processes that do meet the contribution threshold are aggregated under the
+# ``Other`` item, with the material set to `None`.
 
 # ### Primary processing
 

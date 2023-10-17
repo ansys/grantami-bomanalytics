@@ -6,10 +6,13 @@ Project Overview
 PyGranta BoM Analytics is part of the larger `PyAnsys <https://github.com/pyansys>`_
 effort to facilitate the use of Ansys technologies directly from Python.
 
-The Granta MI Restricted Substances solution includes a REST API for
-evaluating compliance of products, assemblies, specifications, and
-materials against legislations. This package abstracts automatically-
-generated code into an easy-to-use client library.
+The MI Restricted Substances and MI Sustainability solutions for Granta MI include REST APIs for:
+
+ - Evaluating compliance of products, assemblies, specifications, and
+   materials against legislations.
+ - Evaluating the environmental performance of products, assemblies, materials and processes.
+
+This package abstracts automatically-generated code into an easy-to-use client library.
 
 
 Installation

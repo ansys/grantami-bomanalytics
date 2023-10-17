@@ -21,7 +21,7 @@
 # - If the database key or table names have been modified from their default values, these must be set on the
 #   ``Connection`` object.
 # - If the number of linked records is very large, the batch sizes should be changed for each query. For more
-#   informatioon, see [Batching requests](../../api/batching.rst).
+#   information, see [Batching requests](../../api/batching.rst).
 
 # ## Specify a custom database key or table name
 

@@ -191,7 +191,7 @@ def to_dict(item, parent):
     if isinstance(item, PartWithSustainabilityResult):
         record.update({"type": "Part", "name": item.input_part_number})
     elif isinstance(item, TransportWithSustainabilityResult):
-        record.update({"type": "Transport", "name": item.identity})
+        record.update({"type": "Transport", "name": item.name})
     elif isinstance(item, MaterialWithSustainabilityResult):
         record.update({"type": "Material", "name": item.name})
     elif isinstance(item, ProcessWithSustainabilityResult):

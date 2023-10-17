@@ -255,11 +255,6 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
     This class describes the substances in the specified materials impacted by one or more legislations.
 
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
-
     Examples
     --------
     >>> result: MaterialImpactedSubstancesQueryResult
@@ -317,11 +312,6 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of materials against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     _result_type_name = "MaterialWithCompliance"
@@ -379,11 +369,6 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     class.
 
     This class describes the substances in the specified parts impacted by one or more legislations.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -436,11 +421,6 @@ class PartComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of parts against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     _result_type_name = "PartWithCompliance"
@@ -499,11 +479,6 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     class.
 
     This class describes the substances in the specified specifications impacted by one or more legislations.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -559,11 +534,6 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of specifications against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     _result_type_name = "SpecificationWithCompliance"
@@ -624,11 +594,6 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of substances against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -681,11 +646,6 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     class.
 
     This class describes the substances in the specified BoM impacted by one or more legislations.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -717,11 +677,6 @@ class BomComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class summarizes the compliance status of a BoM against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     _result_type_name = "PartWithCompliance"
@@ -777,18 +732,12 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetSustainabilityForBom2301Response)
 class BomSustainabilityQueryResult(ResultBaseClass):
-    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
-    """
+    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`."""
 
     def __init__(
         self,
         results: List[models.GetSustainabilityForBom2301Response],
-        messages: List[LogMessage],
+        messages: List[models.CommonLogEntry],
     ) -> None:
         super().__init__(messages)
         self._response = results[0]
@@ -818,18 +767,12 @@ class BomSustainabilityQueryResult(ResultBaseClass):
 
 @QueryResultFactory.register(models.GetSustainabilitySummaryForBom2301Response)
 class BomSustainabilitySummaryQueryResult(ResultBaseClass):
-    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery`.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
-    """
+    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery`."""
 
     def __init__(
         self,
         results: List[models.GetSustainabilitySummaryForBom2301Response],
-        messages: List[LogMessage],
+        messages: List[models.CommonLogEntry],
     ) -> None:
         super().__init__(messages)
         self._response = results[0]
@@ -911,10 +854,12 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         Summary information for aggregated materials.
 
-        Relative and absolute contributions for materials whose relative contributions exceed 2% of the total energy
-        for materials.
-        All materials found in the BoM, which do not exceed the threshold, are aggregated under a virtual
-        :class:`~ansys.grantami.bomanalytics._item_results.MaterialSummaryResult`, whose ``name`` property is equal to
+        Relative and absolute contributions for materials whose relative contributions exceed 2% of the total impact
+        for materials (by :attr:`~.MaterialSummaryResult.embodied_energy_percentage` or
+        :attr:`~.MaterialSummaryResult.climate_change_percentage`).
+
+        All materials found in the BoM, which do not exceed the 2% threshold, are aggregated under a virtual
+        :class:`.MaterialSummaryResult`, whose :attr:`~.MaterialSummaryResult.identity` property is equal to
         ``Other``.
 
         Values in percentages express the contribution of the specific material, relative to contributions of all
@@ -928,10 +873,12 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         Summary information for primary processes, aggregated by process and the material it is applied to.
 
-        The returned list includes all primary processes whose relative contributions exceed 5% of the total energy of
-        all primary processes. Processes not exceeding the threshold are aggregated under a virtual
-        :class:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult`, whose
-        :attr:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name` is equal to ``Other``.
+        The returned list includes all primary processes whose relative contributions exceed 5% of the total impact of
+        all primary processes (by :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        :attr:`~.ProcessSummaryResult.climate_change_percentage`).
+
+        Processes not exceeding the 5% threshold are aggregated under a virtual :class:`~.ProcessSummaryResult`, whose
+        :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
 
         Values in percentages express the contribution of the specific process, relative to contributions of all
         primary processes.
@@ -943,10 +890,12 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         Summary information for secondary processes, aggregated by process and the material it is applied to.
 
-        The returned list includes all secondary processes whose relative contributions exceed 5% of the total energy of
-        all secondary processes. Processes not exceeding the threshold are aggregated under a virtual
-        :class:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult`, whose
-        :attr:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name` is equal to ``Other``.
+        The returned list includes all secondary processes whose relative contributions exceed 5% of the total impact of
+        all secondary processes (by :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        :attr:`~.ProcessSummaryResult.climate_change_percentage`).
+
+        Processes not exceeding the 5% threshold are aggregated under a virtual
+        :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
 
         Values in percentages express the contribution of the specific process, relative to contributions of all
         secondary processes.
@@ -960,9 +909,12 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         to.
 
         The returned list includes all joining and finishing processes whose relative contributions exceed 5% of the
-        total energy of all joining and finishing processes. Processes not exceeding the threshold are aggregated under
-        a virtual :class:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult`, whose
-        :attr:`~ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name` is equal to ``Other``.
+        total impact of all joining and finishing processes (by
+        :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        :attr:`~.ProcessSummaryResult.climate_change_percentage`).
+
+        Processes not exceeding the 5% threshold are aggregated under a virtual
+        :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
 
         Values in percentages express the contribution of the specific process, relative to contributions of all
         joining and finishing processes.

@@ -2,6 +2,7 @@ from typing import List
 
 from ansys.grantami.bomanalytics import queries
 
+# TODO unused?
 RECORD_QUERY_TYPES: List = [
     queries.MaterialImpactedSubstancesQuery,
     queries.MaterialComplianceQuery,

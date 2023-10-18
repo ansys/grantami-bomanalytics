@@ -641,6 +641,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForBom1711Response)
+@QueryResultFactory.register(models.GetImpactedSubstancesForBom2301Response)
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`
     class.
@@ -672,6 +673,7 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
 
 @QueryResultFactory.register(models.GetComplianceForBom1711Response)
+@QueryResultFactory.register(models.GetComplianceForBom2301Response)
 class BomComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`
     class.

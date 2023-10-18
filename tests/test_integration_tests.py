@@ -108,6 +108,8 @@ class TestBomQueries:
         assert response.compliance_by_part_and_indicator
         assert response.compliance_by_indicator
 
+    # TODO integration tests: 2301 boms
+
 
 class TestMissingDatabase:
     @pytest.fixture

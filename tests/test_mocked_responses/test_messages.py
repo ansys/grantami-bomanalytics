@@ -7,12 +7,12 @@ import pytest
 from ansys.grantami.bomanalytics import GrantaMIException, queries
 from ansys.grantami.bomanalytics._query_results import LogMessage
 
-from ..inputs import examples_as_dicts
+from ..inputs import examples_as_dicts, sample_bom
 from .common import BaseMockTester
 
 
 class TestMessages(BaseMockTester):
-    query = queries.BomImpactedSubstancesQuery().with_bom("FakeBoM")  # Use fake BoM to avoid validation error
+    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom)
 
     def test_critical_error_raises_exception(self, mock_connection, caplog):
         error_message = "This is a critical message"

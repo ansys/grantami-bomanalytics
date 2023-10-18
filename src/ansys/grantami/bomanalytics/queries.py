@@ -6,7 +6,10 @@ static class outside the main hierarchy implements the YAML API endpoint.
 """
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from enum import Enum
 from numbers import Number
+import re
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -14,7 +17,6 @@ from typing import (
     Dict,
     Generator,
     List,
-    Literal,
     Optional,
     Tuple,
     Type,
@@ -22,6 +24,7 @@ from typing import (
     Union,
 )
 import warnings
+from xml.etree import ElementTree
 
 from ansys.grantami.bomanalytics_openapi import api, models  # type: ignore[import]
 
@@ -54,9 +57,6 @@ _SpecificationQuery = TypeVar("_SpecificationQuery", bound="_SpecificationQueryB
 _SubstanceQuery = TypeVar("_SubstanceQuery", bound="_SubstanceQueryBuilder")
 
 _BomQuery = TypeVar("_BomQuery", bound="_BomQueryBuilder")
-_Bom1711Query = TypeVar("_Bom1711Query", bound="_Bom1711QueryBuilder")
-_Bom2301Query = TypeVar("_Bom2301Query", bound="_Bom2301QueryBuilder")
-
 
 EXCEPTION_MAP = {
     "critical-error": logger.critical,
@@ -529,12 +529,11 @@ class _ApiMixin(_BaseQueryBuilder, _BaseQuery, ABC):
     """
 
     _request_type: Type[models.ModelBase]
+    """Type of object to send to the Granta MI server. The actual value is set in the concrete class
+    definition."""
 
     def __init__(self) -> None:
         super().__init__()
-        self._request_type: Type[models.ModelBase]
-        """Type of object to send to the Granta MI server. The actual value is set in the concrete class
-         definition."""
 
     def _call_api(self, api_method: Callable[..., models.ModelBase], arguments: Dict) -> None:
         """Perform the actual call against the Granta MI database.
@@ -604,14 +603,14 @@ class _ComplianceMixin(_ApiMixin, ABC):
     MI, and creates the compliance result objects.
     """
 
+    _api_method: str
+    """Name of the method in the ``api`` class. The name is specified in the concrete class and
+    retrieved dynamically because the ``api`` instance doesn't exist until runtime."""
+
     def __init__(self) -> None:
         super().__init__()
         self._indicators: Dict[str, _Indicator] = {}
         """Indicators added to the query."""
-
-        self._api_method: str = ""
-        """Name of the method in the ``api`` class. The name is specified in the concrete class and
-        retrieved dynamically because the ``api`` instance doesn't exist until runtime."""
 
         self.api_class: Type[api.ComplianceApi] = api.ComplianceApi
         """Class in the low-level API for this query type. This class requires instantiation with the client object,
@@ -725,14 +724,14 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
     Granta MI, and creates the impacted substance result objects.
     """
 
+    _api_method: str
+    """Name of the method in the ``api`` class. The name is specified in the concrete class and
+    retrieved dynamically because the `api` instance doesn't exist until runtime."""
+
     def __init__(self) -> None:
         super().__init__()
         self._legislations: List[str] = []
         """Legislation ids added to the query."""
-
-        self._api_method: str = ""
-        """Name of the method in the ``api`` class. The name is specified in the concrete class and
-        retrieved dynamically because the `api` instance doesn't exist until runtime."""
 
         self.api_class: Type[api.ImpactedSubstancesApi] = api.ImpactedSubstancesApi
         """Class in the low-level API for this query type. This class requires instantiation with the client object,
@@ -1518,6 +1517,19 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
         self._api_method = "post_compliance_substances"
 
 
+_ROOT_NAMESPACE_REGEX = re.compile(r"\{(.*)\}PartsEco")
+
+
+class _BomFormat(Enum):
+    """
+    Defines all supported BoM formats and provides a mapping between the expected argument name in a request and the
+    associated namespace.
+    """
+
+    bom_xml1711 = "http://www.grantadesign.com/17/11/BillOfMaterialsEco"
+    bom_xml2301 = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
+
+
 class _BomQueryDataManager(_BaseQueryDataManager):
     """Stores a BoM for use in queries and generates the kwarg to send to the server.
 
@@ -1525,11 +1537,11 @@ class _BomQueryDataManager(_BaseQueryDataManager):
     single string because only one BoM can be sent to the server in a single query.
     """
 
-    def __init__(self, item_type_name: Union[Literal["bom_xml1711"], Literal["bom_xml2301"]]) -> None:
+    def __init__(self, supported_bom_formats: List[_BomFormat]) -> None:
         super().__init__()
-        self.item_type_name = item_type_name
         self._item_definitions = []
         self._item_results = []
+        self._supported_bom_formats = supported_bom_formats
 
     def __repr__(self) -> str:
         items_repr = f' {{bom: "{self._item_definitions[0][:100]}"}}' if self._item_definitions else ""
@@ -1550,6 +1562,11 @@ class _BomQueryDataManager(_BaseQueryDataManager):
 
     @bom.setter
     def bom(self, value: str) -> None:
+        ns = self._read_namespace(value)
+        bom_format = self._validate_namespace(ns)
+        self._validate_bom_format(bom_format)
+
+        self.item_type_name = bom_format.name
         self._item_definitions = [value]
 
     @property
@@ -1582,114 +1599,109 @@ class _BomQueryDataManager(_BaseQueryDataManager):
         """
         return [response]
 
+    @staticmethod
+    def _read_namespace(bom: str) -> str:
+        try:
+            root = ElementTree.XML(bom)
+        except ElementTree.ParseError as e:
+            raise ValueError(f"BoM provided as input is not valid XML ({str(e)}).") from e
+        match = _ROOT_NAMESPACE_REGEX.match(root.tag)
+        if match is None:
+            raise ValueError(
+                "Could not read BoM version from provided input BoM. Ensure the document is compliant with the expected"
+                " XML schema."
+            )
+        ns = match.group(1)
+        return ns
+
+    @staticmethod
+    def _validate_namespace(namespace: str) -> _BomFormat:
+        try:
+            bom_format = _BomFormat(namespace)
+        except ValueError:
+            raise Exception(
+                f"Invalid namespace on input BoM: '{namespace}'. Ensure the document is compliant with the expected XML"
+                f" schema."
+            )
+        return bom_format
+
+    def _validate_bom_format(self, bom_format: _BomFormat) -> None:
+        if bom_format not in self._supported_bom_formats:
+            raise ValueError(f"BoM format {bom_format.name} ({bom_format.value}) is not supported by this query.")
+
+
+@dataclass
+class _BomFormatConfiguration:
+    """Defines the class for a BoM request and the api method to pass it to."""
+
+    request_model_type: Type
+    api_method_name: str
+
 
 class _BomQueryBuilder(_BaseQueryBuilder, ABC):
     """Sub-class for all queries where the items added to the query are Boms."""
 
-    bom_version: Union[Literal["bom_xml1711"], Literal["bom_xml2301"]]
+    _supported_bom_formats: Dict[_BomFormat, _BomFormatConfiguration]
 
     def __init__(self) -> None:
-        self._data: _BomQueryDataManager = _BomQueryDataManager(self.bom_version)
+        self._data: _BomQueryDataManager = _BomQueryDataManager(list(self._supported_bom_formats.keys()))
 
-    @abstractmethod
+    @validate_argument_type(str)
     def with_bom(self: _BomQuery, bom: str) -> _BomQuery:
-        """Set the BoM to use for the query.
-
-        Abstract method must be implemented in sub-classes.
+        """Set the BoM to use for the query. See the query documentation for supported BoM formats.
 
         Parameters
         ----------
         bom : str
-            BoM to use for the query.
+           BoM to use for the query.
 
         Returns
         -------
         Query
-            Current query object.
-        """
-
-        raise NotImplementedError
-
-
-class _Bom1711QueryBuilder(_BomQueryBuilder):
-    bom_version: Literal["bom_xml1711"] = "bom_xml1711"
-
-    # Method is redefined to override the docstring.
-    @validate_argument_type(str)
-    def with_bom(self: _Bom1711Query, bom: str) -> _Bom1711Query:
-        """Set the BoM to use for the query.
-
-        The BoM must be in the Ansys Granta 1711 XML BoM format.
-
-        Parameters
-        ----------
-        bom : str
-            BoM to use for the query.
-
-        Returns
-        -------
-        Query
-            Current query object.
+           Current query object.
 
         Raises
         ------
         TypeError
-            Error to raise if the method is called with values that do not match the types described earlier.
-
-        Notes
-        -----
-        The XML schema is defined by the schema document
-        :download:`BillOfMaterialsEco1711.xsd </_static/xml_schemas/BillOfMaterialsEco1711.xsd>`, which in turn
-        references :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD
-        files can be used to validate that the BoM is both valid XML and adheres to the Ansys Granta 1711 XML BoM
-        schema.
+           Error raised if the method is called with values that do not match the types described earlier.
+        ValueError
+            Error raised if the bom isn't valid XML, or isn't in a known supported BoM format.
         """
-
         self._data.bom = bom
         return self
 
+    @property
+    def _input_bom_format(self) -> _BomFormat:
+        """BoM format as obtained from the internal BoMDataManager."""
+        return _BomFormat[self._data.item_type_name]
 
-class _Bom2301QueryBuilder(_BomQueryBuilder):
-    bom_version: Literal["bom_xml2301"] = "bom_xml2301"
+    @property
+    def _request_type(self) -> Type:
+        """Request model type, resolved from the input BoM format."""
+        return self._supported_bom_formats[self._input_bom_format].request_model_type
 
-    # Method is redefined to override the docstring.
-    @validate_argument_type(str)
-    def with_bom(self: _Bom2301Query, bom: str) -> _Bom2301Query:
-        """Set the BoM to use for the query.
+    @property
+    def _api_method(self) -> str:
+        """Api method name, resolved from the input BoM format."""
+        return self._supported_bom_formats[self._input_bom_format].api_method_name
 
-        The BoM must be in the Ansys Granta 2301 XML BoM format.
-
-        Parameters
-        ----------
-        bom : str
-            BoM to use for the query.
-
-        Returns
-        -------
-        Query
-            Current query object.
+    def _validate_items(self) -> None:
+        """Override validation method to replace error message with a more generic value, since the `item_type_name`
+        isn't known until a BoM has been provided.
 
         Raises
-        ------
-        TypeError
-            Error to raise if the method is called with values that do not match the types described earlier.
-
-        Notes
         -----
-        The XML schema is defined by the schema document
-        :download:`BillOfMaterialsEco2301.xsd </_static/xml_schemas/BillOfMaterialsEco2301.xsd>`, which in turn
-        references :download:`grantarecord1205.xsd</_static/xml_schemas/grantarecord1205.xsd>`. Together, these XSD
-        files can be used to validate that the BoM is both valid XML and adheres to the Ansys Granta 2301 XML BoM
-        schema.
+        ValueError
+            Error to raise if no items have been added to the query.
         """
+        if not self._data.populated_inputs:
+            raise ValueError(f"No BoM has been added to the query.")
 
-        self._data.bom = bom
-        return self
 
+class BomComplianceQuery(_ComplianceMixin, _BomQueryBuilder):
+    """Evaluates compliance for a BoM against a number of indicators.
 
-class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
-    """Evaluates compliance for a BoM in the Ansys Granta 1711 XML BoM format against a number of
-    indicators.
+    The BoM must be in the Ansys Granta 1711 XML BoM format or Ansys Granta 2301 XML BoM format.
 
     All BoM-based queries only operate on a single BoM. As a result, the ``.with_batch_size()`` method is not
     implemented for BoM-based queries.
@@ -1718,15 +1730,20 @@ class BomComplianceQuery(_ComplianceMixin, _Bom1711QueryBuilder):
     <BomComplianceQueryResult: 1 PartWithCompliance results>
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._request_type = models.GetComplianceForBom1711Request
-        self._api_method = "post_compliance_bom1711"
+    _supported_bom_formats = {
+        _BomFormat.bom_xml1711: _BomFormatConfiguration(
+            request_model_type=models.GetComplianceForBom1711Request, api_method_name="post_compliance_bom1711"
+        ),
+        _BomFormat.bom_xml2301: _BomFormatConfiguration(
+            request_model_type=models.GetComplianceForBom2301Request, api_method_name="post_compliance_bom2301"
+        ),
+    }
 
 
-class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
-    """Gets the substances impacted by a list of legislations for a BoM in the Ansys Granta
-    1711 XML BoM format.
+class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _BomQueryBuilder):
+    """Gets the substances impacted by a list of legislations for a BoM.
+
+    The BoM must be in the Ansys Granta 1711 XML BoM format or Ansys Granta 2301 XML BoM format.
 
     All BoM-based queries only operate on a single BoM. As a result, the ``.with_batch_size()`` method is not
     implemented for BoM-based queries.
@@ -1748,21 +1765,21 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _Bom1711QueryBuilder):
     <BomImpactedSubstancesQueryResult: 1 Bom1711WithImpactedSubstances results>
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._request_type = models.GetImpactedSubstancesForBom1711Request
-        self._api_method = "post_impactedsubstances_bom1711"
+    _supported_bom_formats = {
+        _BomFormat.bom_xml1711: _BomFormatConfiguration(
+            request_model_type=models.GetImpactedSubstancesForBom1711Request,
+            api_method_name="post_impactedsubstances_bom1711",
+        ),
+        _BomFormat.bom_xml2301: _BomFormatConfiguration(
+            request_model_type=models.GetImpactedSubstancesForBom2301Request,
+            api_method_name="post_impactedsubstances_bom2301",
+        ),
+    }
 
 
 class _SustainabilityMixin(_ApiMixin):
     _api_method: str
     api_class = api.SustainabilityApi  # TODO consider making private. Manually excluded from docs for now.
-    _data: _BomQueryDataManager
-
-    def __init_subclass__(cls, api_method: str, request_type: Type, **kwargs: Any):
-        super().__init_subclass__(**kwargs)
-        cls._api_method = api_method
-        cls._request_type = request_type
 
     def __init__(self) -> None:
         super().__init__()
@@ -1821,12 +1838,7 @@ class _SustainabilityMixin(_ApiMixin):
         pass
 
 
-class BomSustainabilityQuery(
-    _SustainabilityMixin,
-    _Bom2301QueryBuilder,
-    api_method="post_sustainability_bom2301",
-    request_type=models.GetSustainabilityForBom2301Request,
-):
+class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
     """Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format.
 
     The methods used to configure units and add the BoM to this query return the query itself so that they can be
@@ -1848,13 +1860,14 @@ class BomSustainabilityQuery(
 
     """
 
+    _supported_bom_formats = {
+        _BomFormat.bom_xml2301: _BomFormatConfiguration(
+            request_model_type=models.GetSustainabilityForBom2301Request, api_method_name="post_sustainability_bom2301"
+        ),
+    }
 
-class BomSustainabilitySummaryQuery(
-    _SustainabilityMixin,
-    _Bom2301QueryBuilder,
-    api_method="post_sustainabilitysummary_bom2301",
-    request_type=models.GetSustainabilitySummaryForBom2301Request,
-):
+
+class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
     """
     Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format and returns aggregated metrics.
 
@@ -1876,3 +1889,10 @@ class BomSustainabilitySummaryQuery(
     >>> cxn.run(query)
 
     """
+
+    _supported_bom_formats = {
+        _BomFormat.bom_xml2301: _BomFormatConfiguration(
+            request_model_type=models.GetSustainabilitySummaryForBom2301Request,
+            api_method_name="post_sustainabilitysummary_bom2301",
+        ),
+    }

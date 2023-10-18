@@ -1,18 +1,18 @@
 from ansys.grantami.bomanalytics_openapi.models import (
     GetComplianceForBom1711Response,
+    GetComplianceForBom2301Response,
     GetImpactedSubstancesForBom1711Response,
+    GetImpactedSubstancesForBom2301Response,
 )
 import pytest
 
 from ansys.grantami.bomanalytics import indicators, queries
 
+from ..inputs import sample_bom, sample_bom_2301
 from .common import BaseMockTester, MaterialValidator, PartValidator, SubstanceValidator
 
 
-class TestImpactedSubstances(BaseMockTester):
-    query = queries.BomImpactedSubstancesQuery().with_bom("FakeBoM")  # Use fake BoM to avoid validation error
-    mock_key = GetImpactedSubstancesForBom1711Response.__name__
-
+class _TestImpactedSubstances(BaseMockTester):
     def get_mocked_response(self, *args, **kwargs):
         with pytest.warns(RuntimeWarning, match="No legislations"):
             return super().get_mocked_response(*args, **kwargs)
@@ -47,24 +47,24 @@ class TestImpactedSubstances(BaseMockTester):
         assert "ImpactedSubstance" in repr(response.impacted_substances_by_legislation)
 
 
-class TestCompliance(BaseMockTester):
+class TestImpactedSubstances1711(_TestImpactedSubstances):
+    # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
+    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom)
+    mock_key = GetImpactedSubstancesForBom1711Response.__name__
+
+
+class TestImpactedSubstances2301(_TestImpactedSubstances):
+    # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
+    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_2301)
+    mock_key = GetImpactedSubstancesForBom2301Response.__name__
+
+
+class _TestCompliance(BaseMockTester):
     """Check that each mocked result has the correct record references, indicator results, child objects, and bom
     relationships.
 
     A mocked query is used, populated by the examples included in the API definition.
     """
-
-    query = (
-        queries.BomComplianceQuery()
-        .with_indicators(
-            [
-                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
-                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
-            ]
-        )
-        .with_bom("FakeBoM")
-    )  # Use fake BoM to avoid validation error
-    mock_key = GetComplianceForBom1711Response.__name__
 
     def test_compliance_by_part_and_indicator(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
@@ -165,3 +165,33 @@ class TestCompliance(BaseMockTester):
     def test_compliance_by_substance_and_indicator_repr(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
         assert "PartWithComplianceResult" in repr(response.compliance_by_part_and_indicator)
+
+
+class TestCompliance1711(_TestCompliance):
+    # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
+    query = (
+        queries.BomComplianceQuery()
+        .with_indicators(
+            [
+                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
+                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
+            ]
+        )
+        .with_bom(sample_bom)
+    )
+    mock_key = GetComplianceForBom1711Response.__name__
+
+
+class TestCompliance2301(_TestCompliance):
+    # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
+    query = (
+        queries.BomComplianceQuery()
+        .with_indicators(
+            [
+                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
+                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
+            ]
+        )
+        .with_bom(sample_bom_2301)
+    )
+    mock_key = GetComplianceForBom2301Response.__name__

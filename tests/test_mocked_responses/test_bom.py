@@ -2,6 +2,7 @@ from ansys.grantami.bomanalytics_openapi.models import (
     GetComplianceForBom1711Response,
     GetImpactedSubstancesForBom1711Response,
 )
+import pytest
 
 from ansys.grantami.bomanalytics import indicators, queries
 
@@ -11,6 +12,10 @@ from .common import BaseMockTester, MaterialValidator, PartValidator, SubstanceV
 class TestImpactedSubstances(BaseMockTester):
     query = queries.BomImpactedSubstancesQuery()
     mock_key = GetImpactedSubstancesForBom1711Response.__name__
+
+    def get_mocked_response(self, *args, **kwargs):
+        with pytest.warns(RuntimeWarning, match="No legislations"):
+            return super().get_mocked_response(*args, **kwargs)
 
     def test_impacted_substances_by_legislation(self, mock_connection):
         response = self.get_mocked_response(mock_connection)

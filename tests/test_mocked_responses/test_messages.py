@@ -17,7 +17,7 @@ class TestMessages(BaseMockTester):
     def test_critical_error_raises_exception(self, mock_connection, caplog):
         error_message = "This is a critical message"
         response = {"LogMessages": [{"Severity": "critical-error", "Message": error_message}]}
-        with pytest.raises(GrantaMIException) as e:
+        with pytest.raises(GrantaMIException) as e, pytest.warns(RuntimeWarning, match="No legislations"):
             self.get_mocked_response(mock_connection, response=json.dumps(response))
         assert str(e.value) == error_message
         assert self.check_log(caplog, "CRITICAL", error_message)

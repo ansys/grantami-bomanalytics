@@ -137,23 +137,16 @@ class BoMReader:
         return None
 
     def _match_element(self, item_name: str, field_name: str, namespace_url: str) -> bool:
-        if ":" in item_name:
-            namespace_prefix, stripped_name = item_name.split(":")
-            field_namespace_url = self._namespaces[namespace_prefix]
-            return namespace_url == field_namespace_url and stripped_name == field_name
-        else:
+        if ":" not in item_name:
             return "" in self._namespaces and namespace_url == self._namespaces[""] and item_name == field_name
+        namespace_prefix, stripped_name = item_name.split(":")
+        field_namespace_url = self._namespaces[namespace_prefix]
+        return namespace_url == field_namespace_url and stripped_name == field_name
 
     def _match_attribute(self, item_name: str, field_name: str, namespace_url: str) -> bool:
         if not item_name.startswith("@"):
             return False
-        if ":" in item_name:
-            item_name = item_name[1:]
-            namespace_prefix, stripped_name = item_name.split(":")
-            stripped_name = f"@{stripped_name}"
-            field_namespace_url = self._namespaces[namespace_prefix]
-            return namespace_url == field_namespace_url and stripped_name == field_name
-        else:
+        if ":" not in item_name:
             if "" in self._namespaces:
                 return namespace_url == self._namespaces[""] and item_name == field_name
             else:
@@ -161,3 +154,8 @@ class BoMReader:
                 # TODO - properly check the _parent_ object's namespace and make sure that we expect a namespace
                 # if we're in a different namespace than the parent.
                 return item_name == field_name
+        item_name = item_name[1:]
+        namespace_prefix, stripped_name = item_name.split(":")
+        stripped_name = f"@{stripped_name}"
+        field_namespace_url = self._namespaces[namespace_prefix]
+        return namespace_url == field_namespace_url and stripped_name == field_name

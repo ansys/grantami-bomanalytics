@@ -10,7 +10,7 @@ from .common import BaseMockTester, MaterialValidator, PartValidator, SubstanceV
 
 
 class TestImpactedSubstances(BaseMockTester):
-    query = queries.BomImpactedSubstancesQuery()
+    query = queries.BomImpactedSubstancesQuery().with_bom("FakeBoM")  # Use fake BoM to avoid validation error
     mock_key = GetImpactedSubstancesForBom1711Response.__name__
 
     def get_mocked_response(self, *args, **kwargs):
@@ -54,12 +54,16 @@ class TestCompliance(BaseMockTester):
     A mocked query is used, populated by the examples included in the API definition.
     """
 
-    query = queries.BomComplianceQuery().with_indicators(
-        [
-            indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
-            indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
-        ]
-    )
+    query = (
+        queries.BomComplianceQuery()
+        .with_indicators(
+            [
+                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
+                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
+            ]
+        )
+        .with_bom("FakeBoM")
+    )  # Use fake BoM to avoid validation error
     mock_key = GetComplianceForBom1711Response.__name__
 
     def test_compliance_by_part_and_indicator(self, mock_connection):

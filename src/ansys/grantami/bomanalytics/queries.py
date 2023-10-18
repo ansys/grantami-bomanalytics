@@ -92,6 +92,9 @@ class _BaseQueryDataManager(ABC):
     _item_results: list
     """List of results to be returned by the low-level API."""
 
+    item_type_name: str
+    """Name of the argument managed by this class and expected by the request object."""  # TODO is this correct?
+
     def __init__(self) -> None:
         self._messages: List[models.CommonLogEntry] = []
 
@@ -297,18 +300,14 @@ class _BaseQueryBuilder(ABC):
     def _validate_items(self) -> None:
         """Perform pre-flight checks on the items that have been added to the query.
 
-        Warns
+        Raises
         -----
-        RuntimeWarning
-            Error to raise if no items have been added to the query, warning that the response will be empty.
+        ValueError
+            Error to raise if no items have been added to the query.
         """
 
         if not self._data.populated_inputs:
-            warnings.warn(
-                f"No {self._data.item_type_name} have been added to the "  # type: ignore[attr-defined]
-                "query. Server response will be empty.",
-                RuntimeWarning,
-            )
+            raise ValueError(f"No {self._data.item_type_name} have been added to the query.")
 
 
 class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
@@ -1529,11 +1528,12 @@ class _BomQueryDataManager(_BaseQueryDataManager):
     def __init__(self, item_type_name: Union[Literal["bom_xml1711"], Literal["bom_xml2301"]]) -> None:
         super().__init__()
         self.item_type_name = item_type_name
-        self._item_definitions = [""]
+        self._item_definitions = []
         self._item_results = []
 
     def __repr__(self) -> str:
-        return f'<_BomQueryDataManager {{bom: "{self._item_definitions[0][:100]}"}}>'
+        items_repr = f' {{bom: "{self._item_definitions[0][:100]}"}}' if self._item_definitions else ""
+        return f"<_BomQueryDataManager{items_repr}>"
 
     @property
     def bom(self) -> str:

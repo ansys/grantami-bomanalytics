@@ -89,9 +89,8 @@ class TestBomArgManager:
     @pytest.mark.parametrize("bom_version", ["bom_xml1711", "bom_xml2301"])
     def test_uninitialized_configuration(self, bom_version):
         am = queries._BomQueryDataManager(bom_version)
-        assert isinstance(am._item_definitions[0], str)
-        assert am._item_definitions[0] == ""
-        assert am.__repr__() == '<_BomQueryDataManager {bom: ""}>'
+        assert am._item_definitions == []
+        assert am.__repr__() == "<_BomQueryDataManager>"
 
     @pytest.mark.parametrize(
         ["bom", "bom_version"],

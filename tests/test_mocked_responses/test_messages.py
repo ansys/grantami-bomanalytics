@@ -12,7 +12,7 @@ from .common import BaseMockTester
 
 
 class TestMessages(BaseMockTester):
-    query = queries.BomImpactedSubstancesQuery()
+    query = queries.BomImpactedSubstancesQuery().with_bom("FakeBoM")  # Use fake BoM to avoid validation error
 
     def test_critical_error_raises_exception(self, mock_connection, caplog):
         error_message = "This is a critical message"

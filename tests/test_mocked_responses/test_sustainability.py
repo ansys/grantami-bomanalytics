@@ -13,7 +13,7 @@ from .common import BaseMockTester
 
 
 class TestBomSustainability(BaseMockTester):
-    query = queries.BomSustainabilityQuery()
+    query = queries.BomSustainabilityQuery().with_bom("FakeBoM")  # Use fake BoM to avoid validation error
     mock_key = GetSustainabilityForBom2301Response.__name__
 
     def test_response_processing(self, mock_connection):
@@ -85,7 +85,7 @@ class TestBomSustainability(BaseMockTester):
 
 
 class TestBomSustainabilitySummary(BaseMockTester):
-    query = queries.BomSustainabilitySummaryQuery()
+    query = queries.BomSustainabilitySummaryQuery().with_bom("FakeBoM")  # Use fake BoM to avoid validation error
     mock_key = GetSustainabilitySummaryForBom2301Response.__name__
 
     def test_response_processing(self, mock_connection):

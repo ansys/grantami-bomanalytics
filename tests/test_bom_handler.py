@@ -62,7 +62,7 @@ class TestRoundTripBoM:
         "bom_filename",
         ["drill.xml", "medium-test-bom.xml"],
     )
-    def test_roundtrip(self, bom_filename: str):
+    def test_roundtrip_with_assertions(self, bom_filename: str):
         bom_path = self._bom_location / bom_filename
         with open(bom_path, "r", encoding="utf8") as fp:
             input_bom = fp.read()
@@ -76,6 +76,21 @@ class TestRoundTripBoM:
         diff = self._compare_boms(source_bom=input_bom, result_bom=output_bom)
 
         assert len(diff) == 0, "\n".join(diff)
+
+    @pytest.mark.parametrize(
+        "bom_filename",
+        ["drill.xml", "medium-test-bom.xml"],
+    )
+    def test_roundtrip_parsing_succeeds(self, bom_filename: str):
+        bom_path = self._bom_location / bom_filename
+        with open(bom_path, "r", encoding="utf8") as fp:
+            input_bom = fp.read()
+
+        bom_handler = BoMHandler()
+        deserialized_bom = bom_handler.load_bom_from_text(input_bom)
+
+        rendered_bom = bom_handler.dump_bom(deserialized_bom)
+        bom_handler.load_bom_from_text(rendered_bom)
 
 
 class TestBoMDeserialization:

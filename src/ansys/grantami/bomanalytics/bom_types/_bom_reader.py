@@ -118,22 +118,44 @@ class BoMReader:
         """
         if namespace_url is None:
             namespace_url = instance._namespace
+
         for k, v in obj.items():
             if k.startswith("@xmlns"):
                 continue
-            if ":" not in k:
-                if "" in self._namespaces and namespace_url == self._namespaces[""] and k == field_name:
+
+            if k == "$" and field_name == "$":
+                return v
+
+            if k.startswith("@"):
+                is_matched = self._match_attribute(k, field_name, namespace_url)
+                if is_matched:
                     return v
             else:
-                is_attribute = False
-                item_name = k
-                if item_name.startswith("@"):
-                    item_name = item_name[1:]
-                    is_attribute = True
-                namespace_prefix, stripped_name = item_name.split(":")
-                if is_attribute:
-                    stripped_name = f"@{stripped_name}"
-                field_namespace_url = self._namespaces[namespace_prefix]
-                if namespace_url == field_namespace_url and stripped_name == field_name:
+                is_matched = self._match_element(k, field_name, namespace_url)
+                if is_matched:
                     return v
         return None
+
+    def _match_element(self, item_name: str, field_name: str, namespace_url: str) -> bool:
+        if ":" not in item_name:
+            return "" in self._namespaces and namespace_url == self._namespaces[""] and item_name == field_name
+        namespace_prefix, stripped_name = item_name.split(":")
+        field_namespace_url = self._namespaces[namespace_prefix]
+        return namespace_url == field_namespace_url and stripped_name == field_name
+
+    def _match_attribute(self, item_name: str, field_name: str, namespace_url: str) -> bool:
+        if not item_name.startswith("@"):
+            return False
+        if ":" not in item_name:
+            if "" in self._namespaces:
+                return namespace_url == self._namespaces[""] and item_name == field_name
+            else:
+                # Workaround for https://github.com/ansys/grantami-bomanalytics-private/issues/75
+                # TODO - properly check the _parent_ object's namespace and make sure that we expect a namespace
+                # if we're in a different namespace than the parent.
+                return item_name == field_name
+        item_name = item_name[1:]
+        namespace_prefix, stripped_name = item_name.split(":")
+        stripped_name = f"@{stripped_name}"
+        field_namespace_url = self._namespaces[namespace_prefix]
+        return namespace_url == field_namespace_url and stripped_name == field_name

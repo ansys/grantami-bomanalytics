@@ -22,4 +22,5 @@ passed to either a Sustainability or a Compliance query.
    api
    builders
    helpers
+   schemas
 

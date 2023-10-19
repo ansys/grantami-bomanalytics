@@ -1666,6 +1666,11 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
            Error raised if the method is called with values that do not match the types described earlier.
         ValueError
             Error raised if the bom isn't valid XML, or isn't in a known supported BoM format.
+
+        Notes
+        -----
+        See the :py:mod:`ansys.grantami.bomanalytics.schemas` sub-package for Ansys Granta XML BoM Schema Definitions.
+
         """
         self._data.bom = bom
         return self

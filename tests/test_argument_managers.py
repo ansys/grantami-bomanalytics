@@ -5,7 +5,7 @@ import pytest
 
 from ansys.grantami.bomanalytics import queries
 
-from .inputs import sample_bom, sample_bom_2301, sample_bom_complex
+from .inputs import sample_bom_1711, sample_bom_2301, sample_bom_complex
 
 
 class MockRecordDefinition:
@@ -99,7 +99,7 @@ class TestBomArgManager:
     @pytest.mark.parametrize(
         ["bom", "bom_version"],
         [
-            (sample_bom, "bom_xml1711"),
+            (sample_bom_1711, "bom_xml1711"),
             (sample_bom_2301, "bom_xml2301"),
         ],
     )
@@ -116,7 +116,7 @@ class TestBomNameSpaceParsing:
         ["bom", "namespace"],
         [
             (sample_bom_2301, "http://www.grantadesign.com/23/01/BillOfMaterialsEco"),
-            (sample_bom, "http://www.grantadesign.com/17/11/BillOfMaterialsEco"),
+            (sample_bom_1711, "http://www.grantadesign.com/17/11/BillOfMaterialsEco"),
             (sample_bom_complex, "http://www.grantadesign.com/17/11/BillOfMaterialsEco"),
         ],
     )
@@ -125,12 +125,12 @@ class TestBomNameSpaceParsing:
         assert ns == namespace
 
     def test_not_valid_xml(self):
-        bom = sample_bom.replace("<Components>", "<Component>")
+        bom = sample_bom_1711.replace("<Components>", "<Component>")
         with pytest.raises(ValueError, match="BoM provided as input is not valid XML"):
             queries._BomQueryDataManager(all_bom_formats).bom = bom
 
     def test_xml_but_not_a_bom(self):
-        bom = sample_bom.replace("PartsEco", "SomeOtherRoot")
+        bom = sample_bom_1711.replace("PartsEco", "SomeOtherRoot")
         with pytest.raises(ValueError, match="Could not read BoM version .* compliant with the expected XML schema"):
             queries._BomQueryDataManager(all_bom_formats).bom = bom
 
@@ -151,9 +151,9 @@ def test_add_boms_sequentially():
     # Check that properties are updated as expected when overwriting a bom with a bom from another version
     bom_manager = queries._BomQueryDataManager(all_bom_formats)
     # assert query.item_type_name is None  # TODO attribute does not exist
-    bom_manager.bom = sample_bom
+    bom_manager.bom = sample_bom_1711
     assert bom_manager.item_type_name == "bom_xml1711"
-    assert bom_manager._item_definitions[0] == sample_bom
+    assert bom_manager._item_definitions[0] == sample_bom_1711
 
     bom_manager.bom = sample_bom_2301
     assert bom_manager.item_type_name == "bom_xml2301"

@@ -3,7 +3,7 @@ import pytest
 from ansys.grantami.bomanalytics import GrantaMIException, queries
 
 from .common import INDICATORS, LEGISLATIONS
-from .inputs import sample_bom_2301, sample_bom_complex, sample_bom_custom_db
+from .inputs import sample_bom_1711, sample_bom_2301, sample_bom_complex, sample_bom_custom_db
 
 pytestmark = pytest.mark.integration
 
@@ -94,12 +94,22 @@ class TestBomQueries:
         else:
             return sample_bom_complex
 
+    @pytest.fixture
+    def bom1711(self):
+        _bom = sample_bom_1711.replace(
+            "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+        )
+        return _bom
+
     def test_impacted_substances(self, bom, connection_with_db_variants):
         query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislation_ids(LEGISLATIONS)
         response = connection_with_db_variants.run(query)
 
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
+
+        assert connection_with_db_variants.last_response.request.url.endswith("bom1711")
 
     def test_compliance(self, bom, connection_with_db_variants):
         query = queries.BomComplianceQuery().with_bom(bom).with_indicators(indicators)
@@ -108,7 +118,21 @@ class TestBomQueries:
         assert response.compliance_by_part_and_indicator
         assert response.compliance_by_indicator
 
-    # TODO integration tests: 2301 boms
+        assert connection_with_db_variants.last_response.request.url.endswith("bom1711")
+
+    def test_impacted_substances_2301(self, connection, bom1711):
+        query = queries.BomImpactedSubstancesQuery().with_bom(bom1711).with_legislation_ids(LEGISLATIONS)
+        response = connection.run(query)
+
+        assert not response.messages
+        assert connection.last_response.request.url.endswith("bom2301")
+
+    def test_compliance_2301(self, connection, bom1711):
+        query = queries.BomComplianceQuery().with_bom(bom1711).with_indicators(indicators)
+        response = connection.run(query)
+
+        assert not response.messages
+        assert connection.last_response.request.url.endswith("bom2301")
 
 
 class TestMissingDatabase:

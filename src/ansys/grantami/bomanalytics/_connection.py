@@ -292,6 +292,9 @@ class BomAnalyticsClient(ApiClient):
         products_and_parts_table_name: Optional[str] = None,
         substances_table_name: Optional[str] = None,
         coatings_table_name: Optional[str] = None,
+        process_universe_table_name: Optional[str] = None,
+        location_table_name: Optional[str] = None,
+        transport_table_name: Optional[str] = None,
     ) -> None:
         """Configure the database key and table names if different from the defaults.
 
@@ -321,6 +324,15 @@ class BomAnalyticsClient(ApiClient):
         coatings_table_name : str, optional
             Name of the table that implements the ``Coatings`` schema. The default
             is ``None``, in which case  ``Coatings`` is used.
+        process_universe_table_name : str, optional
+            Name of the table that implements the ``ProcessUniverse`` schema. The default
+            is ``None``, in which case  ``ProcessUniverse`` is used.
+        location_table_name : str, optional
+            Name of the table that implements the ``Location`` schema. The default
+            is ``None``, in which case  ``Location`` is used.
+        transport_table_name : str, optional
+            Name of the table that implements the ``Transport`` schema. The default
+            is ``None``, in which case  ``Transport`` is used.
 
         Notes
         -----
@@ -336,6 +348,9 @@ class BomAnalyticsClient(ApiClient):
           - Products and parts
           - Restricted Substances
           - Coatings
+          - ProcessUniverse
+          - Location
+          - Transport
 
         Examples
         --------
@@ -351,6 +366,9 @@ class BomAnalyticsClient(ApiClient):
         self._table_names["products_and_parts_table_name"] = products_and_parts_table_name
         self._table_names["substances_table_name"] = substances_table_name
         self._table_names["coatings_table_name"] = coatings_table_name
+        self._table_names["process_universe_table_name"] = process_universe_table_name
+        self._table_names["location_table_name"] = location_table_name
+        self._table_names["transport_table_name"] = transport_table_name
 
     @overload
     def run(self, query: "MaterialImpactedSubstancesQuery") -> "MaterialImpactedSubstancesQueryResult":

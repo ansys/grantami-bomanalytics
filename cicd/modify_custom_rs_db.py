@@ -48,6 +48,9 @@ if __name__ == "__main__":
         "Products and parts": "Parts 'n' Products",
         "Restricted Substances": "Chemicals",
         "Coatings": "Coverings",
+        "Locations": "Places",
+        "ProcessUniverse": "Methods",
+        "Transport": "Locomotion",
     }
 
     URL = "http://localhost/mi_servicelayer"
@@ -120,7 +123,7 @@ if __name__ == "__main__":
     delete_response = data_import_service.DeleteOrWithdrawIfLatestRecordVersion(withdrawal_request)
 
     logger.info("Creating linked specifications. (TestSpecificationLinkDepth)")
-    specs_guid = custom_table_name_map["specs"]
+    specs_guid = custom_table_name_map["Specifications"]
 
     tabular_type = gdl.TabularDataType()
     tabular_type.AddColumn("Thickness")

@@ -24,4 +24,7 @@ CUSTOM_TABLES = [
     ("products_and_parts_table_name", "Parts 'n' Products"),
     ("substances_table_name", "Chemicals"),
     ("coatings_table_name", "Coverings"),
+    ("process_universe_table_name", "Methods"),
+    ("location_table_name", "Places"),
+    ("transport_table_name", "Locomotion"),
 ]

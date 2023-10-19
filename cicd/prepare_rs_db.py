@@ -356,8 +356,8 @@ if __name__ == "__main__":
     vanilla_table_name_map = table_browser.get_table_name_guid_map(vanilla_db_key)
     process_database(vanilla_db_key, api_client, gdl_session, vanilla_table_name_map)
 
-    # custom_db_key = "MI_Restricted_Substances_Custom_Tables"
-    # custom_table_name_map = table_browser.get_table_name_guid_map(custom_db_key)
-    # process_database(custom_db_key, api_client, gdl_session, custom_table_name_map)
+    custom_db_key = "MI_Restricted_Substances_Custom_Tables"
+    custom_table_name_map = table_browser.get_table_name_guid_map(custom_db_key)
+    process_database(custom_db_key, api_client, gdl_session, custom_table_name_map)
 
     logger.info("All done")

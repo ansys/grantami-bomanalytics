@@ -95,7 +95,7 @@ class TestBomQueries:
             return sample_bom_complex
 
     @pytest.fixture
-    def bom1711(self):
+    def bom2301(self):
         _bom = sample_bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
             "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
@@ -120,15 +120,15 @@ class TestBomQueries:
 
         assert connection_with_db_variants.last_response.request.url.endswith("bom1711")
 
-    def test_impacted_substances_2301(self, connection, bom1711):
-        query = queries.BomImpactedSubstancesQuery().with_bom(bom1711).with_legislation_ids(LEGISLATIONS)
+    def test_impacted_substances_2301(self, connection, bom2301):
+        query = queries.BomImpactedSubstancesQuery().with_bom(bom2301).with_legislation_ids(LEGISLATIONS)
         response = connection.run(query)
 
         assert not response.messages
         assert connection.last_response.request.url.endswith("bom2301")
 
-    def test_compliance_2301(self, connection, bom1711):
-        query = queries.BomComplianceQuery().with_bom(bom1711).with_indicators(indicators)
+    def test_compliance_2301(self, connection, bom2301):
+        query = queries.BomComplianceQuery().with_bom(bom2301).with_indicators(indicators)
         response = connection.run(query)
 
         assert not response.messages

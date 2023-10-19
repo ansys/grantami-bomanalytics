@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<bom>
+<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco">
   <part>1</part>
   <material>10</material>
-</bom>
+</PartsEco>

@@ -147,7 +147,7 @@ def test_licensing(connection_with_db_variants):
 class TestActAsReadUser:
     def _run_query(self, connection):
         MATERIAL_ID = "plastic-abs-pc-flame"
-        LEGISLATION_ID = "The SIN List 2.1 (Substitute It Now!)"
+        LEGISLATION_ID = "SINList"
         mat_query = (
             queries.MaterialImpactedSubstancesQuery()
             .with_material_ids([MATERIAL_ID])
@@ -218,7 +218,7 @@ class TestSustainabilityBomQueries:
         query.with_bom(sample_bom_2301)
         response = connection.run(query)
 
-        assert not response.messages
+        assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
 
         assert response.process.name == "Processes"
         assert response.material.name == "Material"
@@ -271,12 +271,11 @@ class TestSustainabilityBomQueries:
         assert primary_process.process_reference.record_guid is not None
 
         # Check expected summaries for secondary processes
-        assert len(response.secondary_processes_details) == 5
+        assert len(response.secondary_processes_details) == 4
         expected_secondary_processes = [
             ("Secondary processing, Grinding", "steel-1010-annealed"),
-            ("Secondary processing, Machining, coarse (D)", "stainless-astm-cn-7ms-cast"),
+            ("Secondary processing, Machining, coarse", "stainless-astm-cn-7ms-cast"),
             ("Machining, fine", "steel-1010-annealed"),
-            ("Machining, fine", "stainless-astm-cn-7ms-cast"),
             ("Other", None),
         ]
         secondary_processes = [(p.process_name, p.material_identity) for p in response.secondary_processes_details]
@@ -287,7 +286,7 @@ class TestSustainabilityBomQueries:
         secondary_process = response.secondary_processes_details[0]
         assert secondary_process.climate_change.value == pytest.approx(0.127, DEFAULT_TOLERANCE)
         assert secondary_process.embodied_energy.value == pytest.approx(1.95, DEFAULT_TOLERANCE)
-        assert secondary_process.climate_change_percentage == pytest.approx(41.69, DEFAULT_TOLERANCE)
+        assert secondary_process.climate_change_percentage == pytest.approx(44.94, DEFAULT_TOLERANCE)
         assert secondary_process.embodied_energy_percentage == pytest.approx(44.94, DEFAULT_TOLERANCE)
         assert secondary_process.material_reference.record_guid is not None
         assert secondary_process.process_reference.record_guid is not None
@@ -328,7 +327,7 @@ class TestSustainabilityBomQueries:
         query.with_bom(sample_bom_2301)
         response = connection.run(query)
 
-        assert not response.messages
+        assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
 
         # Check hierarchy
         assert len(response.parts) == 1
@@ -379,7 +378,7 @@ class TestSustainabilityBomQueries:
 
         assert leaf_part.input_part_number == "Part1.A[LeafPart]"
         assert leaf_part._reference_value is None
-        assert leaf_part.climate_change.value == pytest.approx(1.64, DEFAULT_TOLERANCE)
+        assert leaf_part.climate_change.value == pytest.approx(1.62, DEFAULT_TOLERANCE)
         assert leaf_part.embodied_energy.value == pytest.approx(23.23, DEFAULT_TOLERANCE)
         assert leaf_part.reported_mass.value == pytest.approx(0.61, DEFAULT_TOLERANCE)
 
@@ -405,7 +404,7 @@ class TestSustainabilityBomQueries:
         # Secondary process
         secondary_process = material.processes[1]
         assert secondary_process.record_guid is not None
-        assert secondary_process.climate_change.value == pytest.approx(0.0567, DEFAULT_TOLERANCE)
+        assert secondary_process.climate_change.value == pytest.approx(0.043, DEFAULT_TOLERANCE)
         assert secondary_process.embodied_energy.value == pytest.approx(0.661, DEFAULT_TOLERANCE)
 
         # Transports

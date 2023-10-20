@@ -1,10 +1,12 @@
+from functools import wraps
+import json
+import logging
+import os
+import platform
+import time
+
 import requests
 from requests.auth import HTTPBasicAuth
-import os
-import json
-import time
-from functools import wraps
-import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
@@ -34,12 +36,25 @@ def block_until_server_is_ok(func):
 
 @block_until_server_is_ok
 def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
+    python_implementation = platform.python_implementation()
+    python_version = platform.python_version()
+    os_version = platform.platform()
+    user_agent = f"check_server.py {python_implementation}/{python_version} ({os_version})"
+
     try:
-        response = requests.get(url + "/Health/v2.svc/", auth=auth_header)
-    except requests.exceptions.RequestException:
-        # This generally won't happen in normal operation. But if a RequestException happens we want to make sure we
-        # handle it and try again.
-        # If MI isn't running we'll generally get a 5xx status from the gateway instead, which is handled below.
+        response = requests.get(
+            url + "/Health/v2.svc/",
+            auth=auth_header,
+            headers={
+                "User-Agent": user_agent,
+            },
+        )
+    except requests.exceptions.RequestException as e:
+        # This generally won't happen in normal operation. But if a RequestException happens we want
+        # to make sure we handle it and try again.
+        # If MI isn't running we'll generally get a 5xx status from the gateway instead, which is
+        # handled below.
+        logger.error(e)
         return False
     logger.info(f"Received {response.status_code} response.")
     if response.status_code != 200:

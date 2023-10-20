@@ -93,7 +93,7 @@ class _BaseQueryDataManager(ABC):
     """List of results to be returned by the low-level API."""
 
     item_type_name: str
-    """Name of the argument managed by this class and expected by the request object."""  # TODO is this correct?
+    """Name of the argument managed by this class and expected by the request object."""
 
     def __init__(self) -> None:
         self._messages: List[models.CommonLogEntry] = []
@@ -301,7 +301,7 @@ class _BaseQueryBuilder(ABC):
         """Perform pre-flight checks on the items that have been added to the query.
 
         Raises
-        -----
+        ------
         ValueError
             Error to raise if no items have been added to the query.
         """

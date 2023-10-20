@@ -44,7 +44,7 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 MI_URL = "http://localhost/mi_servicelayer"
-DB_KEY = "MI_Restricted_Substances_23R2"
+DB_KEY = "MI_Restricted_Substances"
 OUTPUT_FILE_NAME = Path("./rs_data.json").resolve()
 
 logger.info(f"Connecting to MI at {MI_URL} with AutoLogon")

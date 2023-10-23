@@ -113,16 +113,16 @@ class TestBomArgManager:
 
 class TestBomNameSpaceParsing:
     @pytest.mark.parametrize(
-        ["bom", "namespace"],
+        ["bom", "bom_format"],
         [
-            (sample_bom_2301, "http://www.grantadesign.com/23/01/BillOfMaterialsEco"),
-            (sample_bom_1711, "http://www.grantadesign.com/17/11/BillOfMaterialsEco"),
-            (sample_bom_complex, "http://www.grantadesign.com/17/11/BillOfMaterialsEco"),
+            (sample_bom_2301, queries._BomFormat.bom_xml2301),
+            (sample_bom_1711, queries._BomFormat.bom_xml1711),
+            (sample_bom_complex, queries._BomFormat.bom_xml1711),
         ],
     )
-    def test_valid_namespace_parsing(self, bom, namespace):
-        ns = queries._BomQueryDataManager._read_namespace(bom)
-        assert ns == namespace
+    def test_valid_namespace_parsing(self, bom, bom_format):
+        parsed_format = queries._BomQueryDataManager(all_bom_formats)._validate_bom(bom)
+        assert parsed_format == bom_format
 
     def test_not_valid_xml(self):
         bom = sample_bom_1711.replace("<Components>", "<Component>")
@@ -131,12 +131,16 @@ class TestBomNameSpaceParsing:
 
     def test_xml_but_not_a_bom(self):
         bom = sample_bom_1711.replace("PartsEco", "SomeOtherRoot")
-        with pytest.raises(ValueError, match="Could not read BoM version .* compliant with the expected XML schema"):
+        with pytest.raises(
+            ValueError, match="Invalid input BoM. Ensure the document is compliant with the expected XML schema"
+        ):
             queries._BomQueryDataManager(all_bom_formats).bom = bom
 
     def test_xml_bom_but_unknown_namespace(self):
         bom = sample_bom_2301.replace("http://www.grantadesign.com/23/01/BillOfMaterialsEco", "UnknownNamespace")
-        with pytest.raises(Exception, match="Invalid namespace"):  # TODO
+        with pytest.raises(
+            ValueError, match="Invalid input BoM. Ensure the document is compliant with the expected XML schema"
+        ):
             queries._BomQueryDataManager(all_bom_formats).bom = bom
 
     def test_xml_bom_but_not_version_supported_by_query(self):

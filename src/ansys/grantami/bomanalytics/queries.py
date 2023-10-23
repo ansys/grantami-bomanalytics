@@ -9,7 +9,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from enum import Enum
 from numbers import Number
-import re
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -1517,9 +1516,6 @@ class SubstanceComplianceQuery(_ComplianceMixin, _SubstanceQueryBuilder):
         self._api_method = "post_compliance_substances"
 
 
-_ROOT_NAMESPACE_REGEX = re.compile(r"\{(.*)\}PartsEco")
-
-
 class _BomFormat(Enum):
     """
     Defines all supported BoM formats and provides a mapping between the expected argument name in a request and the
@@ -1562,12 +1558,29 @@ class _BomQueryDataManager(_BaseQueryDataManager):
 
     @bom.setter
     def bom(self, value: str) -> None:
-        ns = self._read_namespace(value)
-        bom_format = self._validate_namespace(ns)
-        self._validate_bom_format(bom_format)
-
+        bom_format = self._validate_bom(value)
         self.item_type_name = bom_format.name
         self._item_definitions = [value]
+
+    def _validate_bom(self, bom: str) -> _BomFormat:
+        """
+        Checks that the provided string is valid XML and that the root tag matches the root tag of a supported BoM
+        format.
+        """
+        try:
+            root = ElementTree.XML(bom)
+        except ElementTree.ParseError as e:
+            raise ValueError(f"BoM provided as input is not valid XML ({str(e)}).") from e
+
+        valid_bom_formats = {f"{{{_format.value}}}PartsEco": _format for _format in _BomFormat}
+        try:
+            _bom_format = valid_bom_formats[root.tag]
+        except KeyError:
+            raise ValueError(f"Invalid input BoM. Ensure the document is compliant with the expected XML schema.")
+        if _bom_format not in self._supported_bom_formats:
+            raise ValueError(f"BoM format {_bom_format.name} ({_bom_format.value}) is not supported by this query.")
+
+        return _bom_format
 
     @property
     def batched_arguments(self) -> List[Dict[str, str]]:
@@ -1599,36 +1612,6 @@ class _BomQueryDataManager(_BaseQueryDataManager):
         """
         return [response]
 
-    @staticmethod
-    def _read_namespace(bom: str) -> str:
-        try:
-            root = ElementTree.XML(bom)
-        except ElementTree.ParseError as e:
-            raise ValueError(f"BoM provided as input is not valid XML ({str(e)}).") from e
-        match = _ROOT_NAMESPACE_REGEX.match(root.tag)
-        if match is None:
-            raise ValueError(
-                "Could not read BoM version from provided input BoM. Ensure the document is compliant with the expected"
-                " XML schema."
-            )
-        ns = match.group(1)
-        return ns
-
-    @staticmethod
-    def _validate_namespace(namespace: str) -> _BomFormat:
-        try:
-            bom_format = _BomFormat(namespace)
-        except ValueError:
-            raise Exception(
-                f"Invalid namespace on input BoM: '{namespace}'. Ensure the document is compliant with the expected XML"
-                f" schema."
-            )
-        return bom_format
-
-    def _validate_bom_format(self, bom_format: _BomFormat) -> None:
-        if bom_format not in self._supported_bom_formats:
-            raise ValueError(f"BoM format {bom_format.name} ({bom_format.value}) is not supported by this query.")
-
 
 @dataclass
 class _BomFormatConfiguration:
@@ -1648,7 +1631,12 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
 
     @validate_argument_type(str)
     def with_bom(self: _BomQuery, bom: str) -> _BomQuery:
-        """Set the BoM to use for the query. See the query documentation for supported BoM formats.
+        """Set the BoM to use for the query.
+
+        See the query documentation for supported BoM formats.
+
+        Minimal validation is performed on the provided ``bom`` to ensure the request is sent to the appropriate
+        endpoint. XSD files are provided in :mod:`~.schemas` for full validation.
 
         Parameters
         ----------

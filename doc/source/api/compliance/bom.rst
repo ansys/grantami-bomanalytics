@@ -11,10 +11,8 @@ Query definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.BomComplianceQuery
-   :members:
-
-   .. automethod:: with_indicators
-   .. automethod:: with_bom
+   :inherited-members:
+   :exclude-members: api_class
 
 Query result
 ~~~~~~~~~~~~

@@ -9,11 +9,13 @@ from ansys.grantami.bomanalytics._query_results import (
     BomSustainabilitySummaryQueryResult,
 )
 
+from ..inputs import sample_bom_2301
 from .common import BaseMockTester
 
 
 class TestBomSustainability(BaseMockTester):
-    query = queries.BomSustainabilityQuery()
+    # Use sample BoM to avoid validation error
+    query = queries.BomSustainabilityQuery().with_bom(sample_bom_2301)
     mock_key = GetSustainabilityForBom2301Response.__name__
 
     def test_response_processing(self, mock_connection):
@@ -85,7 +87,8 @@ class TestBomSustainability(BaseMockTester):
 
 
 class TestBomSustainabilitySummary(BaseMockTester):
-    query = queries.BomSustainabilitySummaryQuery()
+    # Use sample BoM to avoid validation error
+    query = queries.BomSustainabilitySummaryQuery().with_bom(sample_bom_2301)
     mock_key = GetSustainabilitySummaryForBom2301Response.__name__
 
     def test_response_processing(self, mock_connection):

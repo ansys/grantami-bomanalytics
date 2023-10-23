@@ -4,7 +4,7 @@ from .examples import examples_as_dicts, examples_as_strings
 
 _bom_path = pathlib.Path(__file__).parent / "bom.xml"
 with open(_bom_path, "r") as f:
-    sample_bom = f.read()
+    sample_bom_1711 = f.read()
 
 _complex_bom_path = pathlib.Path(__file__).parent / "bom-complex.xml"
 with open(_complex_bom_path, "r") as f:

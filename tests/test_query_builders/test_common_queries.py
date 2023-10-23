@@ -89,15 +89,10 @@ class TestRecordQueries:
             query_type().with_record_history_ids(test_values)
             query_type().with_record_history_ids(record_history_identities=test_values)
 
-    def test_no_items_raises_warning(self, query_type):
+    def test_no_items_raises_error(self, query_type):
         query = query_type()
-        with pytest.warns(RuntimeWarning) as w:
+        with pytest.raises(ValueError, match=r"No \w+ have been added to the query"):
             query._validate_items()
-        assert len(w) == 1
-        assert (
-            f"No {query._data.item_type_name} have been added to the query. Server response will be"
-            f" empty." in w[0].message.args[0]
-        )
 
     def test_stk_object(self, query_type):
         stk_object = [

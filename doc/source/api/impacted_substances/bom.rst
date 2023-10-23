@@ -13,10 +13,8 @@ Query definition
 ~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery
-   :members:
-
-   .. automethod:: with_legislation_ids
-   .. automethod:: with_bom
+   :inherited-members:
+   :exclude-members: api_class
 
 .. _ref_grantami_bomanalytics_api_impactedsubstances_bom_queryresult:
 

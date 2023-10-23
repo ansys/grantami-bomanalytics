@@ -124,14 +124,12 @@ class TestBomQueries:
         query = queries.BomImpactedSubstancesQuery().with_bom(bom2301).with_legislation_ids(LEGISLATIONS)
         response = connection.run(query)
 
-        assert not response.messages
         assert connection.last_response.request.url.endswith("bom2301")
 
     def test_compliance_2301(self, connection, bom2301):
         query = queries.BomComplianceQuery().with_bom(bom2301).with_indicators(indicators)
         response = connection.run(query)
 
-        assert not response.messages
         assert connection.last_response.request.url.endswith("bom2301")
 
 

@@ -360,8 +360,6 @@ class TestSustainabilityBomQueries:
         product = response.parts[0]
         assert not product.processes
         assert not product.materials
-        assert not product.specifications
-        assert not product.substances
 
         assert product.input_part_number == "Part1[ProductAssembly]"
         assert product._reference_value is None
@@ -376,8 +374,6 @@ class TestSustainabilityBomQueries:
         assert len(subassembly.parts) == 2
         assert len(subassembly.processes) == 1
         assert not subassembly.materials
-        assert not subassembly.specifications
-        assert not subassembly.substances
 
         assert subassembly.input_part_number == "Part1.1[SubAssembly]"
         assert subassembly._reference_value is None
@@ -397,8 +393,6 @@ class TestSustainabilityBomQueries:
         assert not leaf_part.parts
         assert not leaf_part.processes
         assert len(leaf_part.materials) == 1
-        assert not leaf_part.specifications
-        assert not leaf_part.substances
 
         assert leaf_part.input_part_number == "Part1.A[LeafPart]"
         assert leaf_part._reference_value is None

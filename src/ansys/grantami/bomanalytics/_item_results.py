@@ -615,6 +615,7 @@ class ItemResultFactory:
         """
         reference_type = cls.parse_reference_type(result.record_reference.reference_type)
         return ContributingComponentResult(
+            part_number=result.component_part_number,
             part_reference=PartReference(
                 reference_type=reference_type,
                 reference_value=result.record_reference.reference_value,
@@ -1975,13 +1976,22 @@ class ContributingComponentResult(NamedItemMixin):
 
     def __init__(
         self,
+        part_number: str,  # TODO optional or not? what about name?
         part_reference: PartReference,
         material_mass_before_processing: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
+        self._part_number = part_number
         self._part_reference = part_reference
         self._material_mass_before_processing = material_mass_before_processing
+
+    @property
+    def part_number(self) -> str:
+        """
+        Part number.
+        """
+        return self._part_number
 
     @property
     def part_reference(self) -> PartReference:

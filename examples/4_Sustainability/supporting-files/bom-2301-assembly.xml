@@ -203,6 +203,7 @@
 					<Quantity Unit="Each">2.0</Quantity>
 					<MassPerUom Unit="kg/Part">0.012</MassPerUom>
 					<PartNumber>Part1.D[LeafPart]</PartNumber>
+					<Name>Part1.D</Name>
 					<Materials>
 						<Material>
 							<Percentage>100.0</Percentage>

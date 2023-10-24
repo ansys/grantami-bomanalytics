@@ -124,7 +124,7 @@ class TestBomSustainabilitySummary(BaseMockTester):
         assert len(response.material_details) == 1
         unique_material_0 = response.material_details[0]
         assert unique_material_0.identity == "steel-kovar-annealed"
-        assert unique_material_0.record_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6270"
+        assert unique_material_0.material_reference.record_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6270"
         assert unique_material_0.embodied_energy.value == 134.482549067761
         assert unique_material_0.embodied_energy.unit == "MJ"
         assert unique_material_0.climate_change.value == 4.3276934674222

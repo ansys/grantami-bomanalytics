@@ -262,13 +262,12 @@ class TestSustainabilityBomQueries:
         # Spot check one material summary
         beryllium_summary = next(m for m in response.material_details if m.identity == "beryllium-beralcast191-cast")
         assert len(beryllium_summary.contributors) == 1
-        assert (
-            beryllium_summary.contributors[0].name is None
-        )  # TODO: define names in example bom or create ticket to use part number?
+        assert beryllium_summary.contributors[0].name == "Part1.D"
+        assert beryllium_summary.contributors[0].part_number == "Part1.D[LeafPart]"
         assert beryllium_summary.contributors[0].material_mass_before_processing.value == pytest.approx(0.027)
         assert beryllium_summary.mass_after_processing.value == pytest.approx(0.024)
         assert beryllium_summary.mass_before_processing.value == pytest.approx(0.027)
-        assert beryllium_summary.record_guid is not None
+        assert beryllium_summary.material_reference.record_guid is not None
         assert beryllium_summary.climate_change.value == pytest.approx(15.52, DEFAULT_TOLERANCE)
         assert beryllium_summary.climate_change_percentage == pytest.approx(54.32, DEFAULT_TOLERANCE)
         assert beryllium_summary.embodied_energy.value == pytest.approx(117.55, DEFAULT_TOLERANCE)

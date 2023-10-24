@@ -550,8 +550,10 @@ class ItemResultFactory:
         """
         reference_type = cls.parse_reference_type(result.record_reference.reference_type)
         return TransportSummaryResult(
-            reference_type=reference_type,
-            reference_value=result.record_reference.reference_value,
+            transport_reference=TransportReference(
+                reference_type=reference_type,
+                reference_value=result.record_reference.reference_value,
+            ),
             name=result.stage_name,
             distance=cls.create_unitted_value(result.distance),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
@@ -580,8 +582,10 @@ class ItemResultFactory:
         # TODO one of these is a bucket for all other materials that do not contribute >2% EE. Worth separating it?
         #  It does not have a valid record reference or contributors.
         return MaterialSummaryResult(
-            reference_type=reference_type,
-            reference_value=result.record_reference.reference_value,
+            material_reference=MaterialReference(
+                reference_type=cls.parse_reference_type(result.record_reference.reference_type),
+                reference_value=result.record_reference.reference_value,
+            ),
             identity=result.identity,
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
             embodied_energy_percentage=result.embodied_energy_percentage,
@@ -611,8 +615,10 @@ class ItemResultFactory:
         """
         reference_type = cls.parse_reference_type(result.record_reference.reference_type)
         return ContributingComponentResult(
-            reference_type=reference_type,
-            reference_value=result.record_reference.reference_value,
+            part_reference=PartReference(
+                reference_type=reference_type,
+                reference_value=result.record_reference.reference_value,
+            ),
             material_mass_before_processing=cls.create_unitted_value(result.material_mass_before_processing),
             name=result.component_name,
         )
@@ -1921,7 +1927,7 @@ class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixi
         )
 
 
-class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin, TransportReference):
+class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin):
     """
     Sustainability summary for a transport stage.
     """
@@ -1929,9 +1935,22 @@ class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin, Transpo
     name: str
     """Name of the transport stage."""
 
-    def __init__(self, distance: ValueWithUnit, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        transport_reference: TransportReference,
+        distance: ValueWithUnit,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(**kwargs)
+        self._transport_reference = transport_reference
         self._distance = distance
+
+    @property
+    def transport_reference(self) -> TransportReference:
+        """
+        Transport record reference.
+        """
+        return self._transport_reference
 
     @property
     def distance(self) -> ValueWithUnit:
@@ -1945,7 +1964,7 @@ class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin, Transpo
         )
 
 
-class ContributingComponentResult(NamedItemMixin, PartReference):
+class ContributingComponentResult(NamedItemMixin):
     """
     Identifies a Part as one the largest contributors to the environmental footprint of a material.
     """
@@ -1956,11 +1975,20 @@ class ContributingComponentResult(NamedItemMixin, PartReference):
 
     def __init__(
         self,
+        part_reference: PartReference,
         material_mass_before_processing: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
+        self._part_reference = part_reference
         self._material_mass_before_processing = material_mass_before_processing
+
+    @property
+    def part_reference(self) -> PartReference:
+        """
+        Part record reference.
+        """
+        return self._part_reference
 
     @property
     def material_mass_before_processing(self) -> ValueWithUnit:
@@ -1974,7 +2002,7 @@ class ContributingComponentResult(NamedItemMixin, PartReference):
         return f"<{self.__class__.__name__}('{self.name}', mass={_mass})>"
 
 
-class MaterialSummaryResult(SustainabilitySummaryMixin, MaterialReference):
+class MaterialSummaryResult(SustainabilitySummaryMixin):
     """
     Aggregated sustainability summary for a material.
 
@@ -1984,6 +2012,7 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, MaterialReference):
     def __init__(
         self,
         identity: str,
+        material_reference: MaterialReference,
         mass_before_processing: ValueWithUnit,
         mass_after_processing: ValueWithUnit,
         contributors: List[ContributingComponentResult],
@@ -1991,6 +2020,7 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, MaterialReference):
     ) -> None:
         super().__init__(**kwargs)
         self._identity = identity
+        self._material_reference = material_reference
         self._mass_before_processing = mass_before_processing
         self._mass_after_processing = mass_after_processing
         self._contributors = contributors
@@ -2001,6 +2031,13 @@ class MaterialSummaryResult(SustainabilitySummaryMixin, MaterialReference):
         Material identity.
         """
         return self._identity
+
+    @property
+    def material_reference(self) -> MaterialReference:
+        """
+        Material record reference.
+        """
+        return self._material_reference
 
     @property
     def mass_before_processing(self) -> ValueWithUnit:

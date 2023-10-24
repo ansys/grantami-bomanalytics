@@ -24,8 +24,6 @@ class TestBomSustainability(BaseMockTester):
     def test_response_processing(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
 
-        # TODO Example isn't complete enough
-
         assert isinstance(response, BomSustainabilityQueryResult)
 
         assert len(response.transport_stages) == 0
@@ -36,8 +34,6 @@ class TestBomSustainability(BaseMockTester):
         part_0 = response.parts[0]
         assert len(part_0.materials) == 0
         assert len(part_0.processes) == 0
-        assert len(part_0.substances) == 0
-        assert len(part_0.specifications) == 0
 
         assert part_0.embodied_energy.unit == "MJ"
         assert part_0.embodied_energy.value == pytest.approx(490.22, 0.01)
@@ -55,8 +51,6 @@ class TestBomSustainability(BaseMockTester):
 
         assert len(part_0_0.parts) == 0
         assert len(part_0_0.processes) == 0
-        assert len(part_0_0.substances) == 0
-        assert len(part_0_0.specifications) == 0
 
         assert part_0_0.embodied_energy.unit == "MJ"
         assert part_0_0.embodied_energy.value == pytest.approx(490.22, 0.01)

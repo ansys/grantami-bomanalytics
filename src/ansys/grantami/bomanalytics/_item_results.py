@@ -346,8 +346,6 @@ class ItemResultFactory:
         part_with_sustainability._add_child_parts(result_with_sustainability.parts)
         part_with_sustainability._add_child_materials(result_with_sustainability.materials)
         part_with_sustainability._add_child_processes(result_with_sustainability.processes)
-        part_with_sustainability._add_child_specifications(result_with_sustainability.specifications)
-        part_with_sustainability._add_child_substances(result_with_sustainability.substances)
         return part_with_sustainability
 
     @classmethod
@@ -412,60 +410,6 @@ class ItemResultFactory:
         )
         material_with_sustainability._add_child_processes(result_with_sustainability.processes)
         return material_with_sustainability
-
-    @classmethod
-    def create_specification_result(
-        cls,
-        result: models.CommonSpecificationReference,
-    ) -> "SpecificationResult":
-        """Returns a Specification object.
-
-        Parameters
-        ----------
-        result: models.CommonSpecificationReference
-            Result from the REST API describing a specification.
-
-        Returns
-        -------
-        SpecificationResult
-        """
-
-        reference_type = cls.parse_reference_type(result.reference_type)
-        specification = SpecificationResult(
-            reference_type=reference_type,
-            reference_value=result.reference_value,
-            identity=result.id,
-            external_identity=result.external_identity,
-            name=result.name,
-        )
-        return specification
-
-    @classmethod
-    def create_substance_result(
-        cls,
-        result: models.CommonSubstanceReference,
-    ) -> "SubstanceResult":
-        """Returns a Substance object.
-
-        Parameters
-        ----------
-        result: models.CommonSubstanceReference
-            Result from the REST API describing this particular substance.
-
-        Returns
-        -------
-        SubstanceResult
-        """
-
-        reference_type = cls.parse_reference_type(result.reference_type)
-        substance = SubstanceResult(
-            reference_type=reference_type,
-            reference_value=result.reference_value,
-            identity=result.id,
-            external_identity=result.external_identity,
-            name=result.name,
-        )
-        return substance
 
     @classmethod
     def create_transport_with_sustainability(
@@ -1595,86 +1539,6 @@ class ChildPartWithSustainabilityMixin:
             self._parts.append(child_part_with_sustainability)
 
 
-class ChildSpecificationMixin:
-    """Provides the implementation for managing children specifications, by adding a ``specifications`` property to the
-    class.
-
-    Parameters
-    ----------
-    child_specifications
-        Specifications returned by the low-level API that are children of this item.
-    **kwargs
-        Contains arguments handled by other mixins or base classes.
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self._specifications: List[SpecificationResult] = []
-
-    @property
-    def specifications(self) -> List["SpecificationResult"]:
-        """Specification with sustainability result objects that are direct children of this item in the BoM."""
-
-        return self._specifications
-
-    def _add_child_specifications(
-        self,
-        child_specifications: List[models.CommonSpecificationReference],
-    ) -> None:
-        """Populate the ``specifications`` attribute based on a list of low-level API specifications with
-        compliance results.
-
-        Parameters
-        ----------
-        child_specifications
-            List of specifications with sustainability returned from the low-level API
-        """
-
-        for child_specification in child_specifications:
-            child_specification_result = ItemResultFactory.create_specification_result(
-                result=child_specification,
-            )
-            self._specifications.append(child_specification_result)
-
-
-class ChildSubstanceMixin:
-    """Provides the implementation for managing children substances, by adding a ``substances`` property to the
-    class.
-
-    Parameters
-    ----------
-    child_substances
-        Substances returned by the low-level API that are children of this item.
-    **kwargs
-        Contains arguments handled by other mixins or base classes.
-    """
-
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self._substances: List[SubstanceResult] = []
-
-    @property
-    def substances(self) -> List["SubstanceResult"]:
-        """Substance objects that are direct children of this item in the BoM."""
-
-        return self._substances
-
-    def _add_child_substances(self, child_substances: List[models.CommonSubstanceReference]) -> None:
-        """Populate the ``substances`` attribute based on a list of low-level API substances results.
-
-        Parameters
-        ----------
-        child_substances
-            List of substances returned from the low-level API.
-        """
-
-        for child_substance in child_substances:
-            child_substance_result = ItemResultFactory.create_substance_result(
-                result=child_substance,
-            )
-            self._substances.append(child_substance_result)
-
-
 class ChildProcessWithSustainabilityMixin:
     """Provides the implementation for managing children processes, by adding a ``processes`` property to the class.
 
@@ -1730,8 +1594,6 @@ class MaterialWithSustainabilityResult(
 
 
 class PartWithSustainabilityResult(
-    ChildSpecificationMixin,
-    ChildSubstanceMixin,
     ChildProcessWithSustainabilityMixin,
     ChildMaterialWithSustainabilityMixin,
     ChildPartWithSustainabilityMixin,
@@ -1744,33 +1606,7 @@ class PartWithSustainabilityResult(
 
       - The reference to the part in Granta MI (if the part references a record)
       - The sustainability information for this part
-      - Any part, material, process, substance, or specification objects which are a child of this part object
-    """
-
-
-class SpecificationResult(
-    SpecificationReferenceWithIdentifiers,
-):
-    """Describes an individual specification included as part of a sustainability query result.
-
-    This object only includes the reference to the record in Granta MI.
-    """
-
-
-class SubstanceResult(SubstanceReferenceWithIdentifiers):
-    """Describes an individual specification included as part of a sustainability query result.
-
-    This object only includes the reference to the record in Granta MI (if the substance references a record).
-    """
-
-
-# TODO: Consider documenting CoatingReference/SubstanceReference directly, since Material and PartRef need to be added
-#  anyway. Although having the result class means it can be extended in the future without qualifying as breaking
-#  changes.
-class CoatingResult(CoatingReferenceWithIdentifier):
-    """Provides an individual coating included as part of a sustainability query result.
-
-    This object only includes the reference to the coating in Granta MI.
+      - Any part, material, or process objects which are a child of this part object
     """
 
 

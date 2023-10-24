@@ -1599,7 +1599,7 @@ class PartWithSustainabilityResult(
 
       - The reference to the part in Granta MI (if the part references a record)
       - The sustainability information for this part
-      - Any part, material, process, substance, or specification objects which are a child of this part object
+      - Any part, material, or process objects which are a child of this part object
     """
 
 

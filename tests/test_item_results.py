@@ -302,24 +302,6 @@ class TestSustainabilityResultsRepr:
         )
         assert repr(result) == expected
 
-    def test_substance_result_repr(self):
-        model = models.CommonSubstanceReference(
-            **self._rec_ref_kwargs,
-            **self._identifiers,
-        )
-        result = ItemResultFactory.create_substance_result(model)
-        expected = "<SubstanceResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
-        assert repr(result) == expected
-
-    def test_specification_result_repr(self):
-        model = models.CommonSpecificationReference(
-            **self._rec_ref_kwargs,
-            **self._identifiers,
-        )
-        result = ItemResultFactory.create_specification_result(model)
-        expected = "<SpecificationResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
-        assert repr(result) == expected
-
 
 class TestLicensing:
     @pytest.mark.parametrize("restricted_substances", [True, False])

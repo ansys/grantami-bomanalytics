@@ -47,17 +47,3 @@ Process
 .. autoclass:: ansys.grantami.bomanalytics._item_results.ProcessWithSustainabilityResult
    :inherited-members:
    :member-order: by_mro_by_source
-
-Specification
-~~~~~~~~~~~~~
-
-.. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationResult
-   :inherited-members:
-   :member-order: by_mro_by_source
-
-Substance
-~~~~~~~~~
-
-.. autoclass:: ansys.grantami.bomanalytics._item_results.SubstanceResult
-   :inherited-members:
-   :member-order: by_mro_by_source

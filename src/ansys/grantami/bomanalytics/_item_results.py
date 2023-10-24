@@ -1877,16 +1877,16 @@ class SustainabilitySummaryMixin:
         return self._climate_change_percentage
 
 
-class NamedItemMixin:
-    """Adds a name to a class.
+class SustainabilityPhaseSummaryResult(SustainabilitySummaryMixin):
+    """
+    High-level sustainability summary for a phase.
 
-    Parameters
-    ----------
-    name : str
-        Name of the item.
-    **kwargs
-        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
-        for ``RecordDefinition``-based objects.
+    Phases currently include:
+
+     - ``Material``
+     - ``Processes``
+     - ``Transport``
+
     """
 
     def __init__(
@@ -1899,27 +1899,8 @@ class NamedItemMixin:
 
     @property
     def name(self) -> str:
-        """
-        Item name.
-        """
+        """Name of the phase. Supported values are ``Material``, ``Processes``, and ``Transport``."""
         return self._name
-
-
-class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixin):
-    """
-    High-level sustainability summary for a phase.
-
-    Phases currently include:
-
-     - ``Material``
-     - ``Processes``
-     - ``Transport``
-
-    """
-
-    # Overriding docstring for property `name` inherited from mixin
-    name: str
-    """Name of the phase. Supported values are ``Material``, ``Processes``, and ``Transport``."""
 
     def __repr__(self) -> str:
         return (
@@ -1928,23 +1909,27 @@ class SustainabilityPhaseSummaryResult(NamedItemMixin, SustainabilitySummaryMixi
         )
 
 
-class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin):
+class TransportSummaryResult(SustainabilitySummaryMixin):
     """
     Sustainability summary for a transport stage.
     """
 
-    name: str
-    """Name of the transport stage."""
-
     def __init__(
         self,
+        name: Optional[str],
         transport_reference: TransportReference,
         distance: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
+        self._name = name
         self._transport_reference = transport_reference
         self._distance = distance
+
+    @property
+    def name(self) -> Optional[str]:
+        """Name of the transport stage."""
+        return self._name
 
     @property
     def transport_reference(self) -> TransportReference:
@@ -1965,33 +1950,38 @@ class TransportSummaryResult(NamedItemMixin, SustainabilitySummaryMixin):
         )
 
 
-class ContributingComponentResult(NamedItemMixin):
+class ContributingComponentResult:
     """
     Identifies a Part as one the largest contributors to the environmental footprint of a material.
     """
 
-    # Overriding docstring for property `name` inherited from mixin
-    name: str
-    """Name of the part."""
-
     def __init__(
         self,
-        part_number: str,  # TODO optional or not? what about name?
+        name: Optional[str],
+        part_number: Optional[str],
         part_reference: PartReference,
         material_mass_before_processing: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
+        self._name = name
         self._part_number = part_number
         self._part_reference = part_reference
         self._material_mass_before_processing = material_mass_before_processing
 
     @property
-    def part_number(self) -> str:
+    def part_number(self) -> Optional[str]:
         """
         Part number.
         """
         return self._part_number
+
+    @property
+    def name(self) -> Optional[str]:
+        """
+        Name of the part (if populated on the BoM used in the query).
+        """
+        return self._name
 
     @property
     def part_reference(self) -> PartReference:

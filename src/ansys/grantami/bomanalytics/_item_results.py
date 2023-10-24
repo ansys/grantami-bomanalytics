@@ -1649,9 +1649,10 @@ class TransportWithSustainabilityResult(
         return self._name
 
 
-class SustainabilitySummaryMixin:
-    # TODO reuse existing SusResultMixin?
-    """Adds sustainability summary results to a class.
+class SustainabilitySummaryBase:
+    """Base class for sustainability summary results.
+
+    Implements common environmental indicators.
 
     Parameters
     ----------
@@ -1664,9 +1665,6 @@ class SustainabilitySummaryMixin:
         equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.
     climate_change_percentage : float
         Represents the percentage contribution of the item to total climate change of the parent collection.
-    **kwargs
-        Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
-        for ``RecordDefinition``-based objects.
     """
 
     def __init__(
@@ -1675,9 +1673,7 @@ class SustainabilitySummaryMixin:
         embodied_energy_percentage: float,
         climate_change: ValueWithUnit,
         climate_change_percentage: float,
-        **kwargs: Any,
     ) -> None:
-        super().__init__(**kwargs)
         self._embodied_energy = embodied_energy
         self._embodied_energy_percentage = embodied_energy_percentage
         self._climate_change = climate_change
@@ -1713,7 +1709,7 @@ class SustainabilitySummaryMixin:
         return self._climate_change_percentage
 
 
-class SustainabilityPhaseSummaryResult(SustainabilitySummaryMixin):
+class SustainabilityPhaseSummaryResult(SustainabilitySummaryBase):
     """
     High-level sustainability summary for a phase.
 
@@ -1745,7 +1741,7 @@ class SustainabilityPhaseSummaryResult(SustainabilitySummaryMixin):
         )
 
 
-class TransportSummaryResult(SustainabilitySummaryMixin):
+class TransportSummaryResult(SustainabilitySummaryBase):
     """
     Sustainability summary for a transport stage.
     """
@@ -1838,7 +1834,7 @@ class ContributingComponentResult:
         return f"<{self.__class__.__name__}('{self.name}', mass={_mass})>"
 
 
-class MaterialSummaryResult(SustainabilitySummaryMixin):
+class MaterialSummaryResult(SustainabilitySummaryBase):
     """
     Aggregated sustainability summary for a material.
 
@@ -1902,7 +1898,7 @@ class MaterialSummaryResult(SustainabilitySummaryMixin):
         )
 
 
-class ProcessSummaryResult(SustainabilitySummaryMixin):
+class ProcessSummaryResult(SustainabilitySummaryBase):
     """
     Aggregated sustainability summary for a process, applied to a unique material.
 

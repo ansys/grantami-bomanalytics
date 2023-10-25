@@ -19,19 +19,19 @@ this code:
     pip install ansys-grantami-bomanalytics
 
 
-Alternatively, to install the latest from `ansys-grantami-bomanalytics GitHub <https://github.com/pyansys/grantami-bomanalytics>`_,
+Alternatively, to install the latest from `ansys-grantami-bomanalytics GitHub <https://github.com/ansys/grantami-bomanalytics>`_,
 use this code:
 
 .. code::
 
-    pip install git:https://github.com/pyansys/grantami-bomanalytics.git
+    pip install git:https://github.com/ansys/grantami-bomanalytics.git
 
 
 To install a local *development* version with Git and Poetry, use this code:
 
 .. code::
 
-    git clone https://github.com/pyansys/grantami-bomanalytics
+    git clone https://github.com/ansys/grantami-bomanalytics
     cd grantami-bomanalytics
     poetry install
 

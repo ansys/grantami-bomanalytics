@@ -45,6 +45,11 @@ You must have a working installation of Ansys Granta MI 2024 R1
 or later with read access, along with an 2024 R1 or later installation of the MI Restricted
 Substances and Sustainability Reports Bundle.
 
+Licensing
+~~~~~~~~~
+``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately.
+Endpoints available to end users depend on the licenses purchased by their organization.
+
 Verify your installation
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Check that you can start the BomServices Client from Python by running this code:

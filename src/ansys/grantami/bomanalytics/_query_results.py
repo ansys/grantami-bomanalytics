@@ -6,6 +6,7 @@ the entire query result instead of being constrained to individual parts and mat
 from abc import ABC
 from collections import defaultdict, namedtuple
 from typing import Any, Callable, Dict, List, Type, Union
+import warnings
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
@@ -743,6 +744,11 @@ class BomSustainabilityQueryResult(ResultBaseClass):
     ) -> None:
         super().__init__(messages)
         self._response = results[0]
+        if len(self._response.parts) > 1:
+            warnings.warn(
+                f"BomSustainabilityQuery only supports a single root part (found {len(self._response.parts)}). Extra "
+                f"parts do not include sustainability results."
+            )
         self._parts: List[PartWithSustainabilityResult] = [
             ItemResultFactory.create_part_with_sustainability(result_with_sustainability=part)
             for part in self._response.parts

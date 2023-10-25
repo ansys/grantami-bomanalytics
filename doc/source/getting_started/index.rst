@@ -3,7 +3,7 @@
 Getting started
 ---------------
 To use the ``ansys.grantami.bomanalytics`` package, you must have access to a
-Granta MI server that includes MI Restricted Substances Reports 2022 R1
+Granta MI server that includes MI Restricted Substances and Sustainability Reports 2024 R1
 or later.
 
 The ``ansys.grantami.bomanalytics`` package currently supports Python 3.8
@@ -41,9 +41,9 @@ with your changes reflected in your Python setup after restarting the Python ker
 
 Ansys software requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-For the latest features, you must have a working installation of Ansys Granta MI 2022 R1
-or later with read access, along with an 2022 R1 or later installation of the MI Restricted
-Substances Reports Bundle.
+You must have a working installation of Ansys Granta MI 2024 R1
+or later with read access, along with an 2024 R1 or later installation of the MI Restricted
+Substances and Sustainability Reports Bundle.
 
 Verify your installation
 ~~~~~~~~~~~~~~~~~~~~~~~~

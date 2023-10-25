@@ -746,8 +746,8 @@ class BomSustainabilityQueryResult(ResultBaseClass):
         self._response = results[0]
         if len(self._response.parts) > 1:
             warnings.warn(
-                f"BomSustainabilityQuery only supports a single root part (found {len(self._response.parts)}). Extra "
-                f"parts do not include sustainability results."
+                f"BomSustainabilityQuery only supports a single root part (found {len(self._response.parts)}). "
+                f"Additional root parts do not include sustainability results."
             )
         self._parts: List[PartWithSustainabilityResult] = [
             ItemResultFactory.create_part_with_sustainability(result_with_sustainability=part)

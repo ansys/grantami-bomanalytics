@@ -9,6 +9,8 @@ import pytest
 from ansys.grantami.bomanalytics import BoMHandler
 from ansys.grantami.bomanalytics.bom_types import BaseType, BillOfMaterials
 
+from .inputs import sample_bom_1711
+
 
 class _TestableBoMHandler(BoMHandler):
     def __init__(self, default_namespace: str, namespace_mapping: Dict[str, str]):
@@ -94,14 +96,12 @@ class TestRoundTripBoM:
 
 
 class TestBoMDeserialization:
-    _bom_location = Path(__file__).parent / "inputs"
-
     @pytest.fixture(scope="class")
     def simple_bom(self):
-        bom_path = self._bom_location / "bom-1711-as-2301.xml"
-        with open(bom_path, "r", encoding="utf8") as fp:
-            input_bom = fp.read()
-
+        input_bom = sample_bom_1711.replace(
+            "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+        )
         bom_handler = BoMHandler()
         yield bom_handler.load_bom_from_text(input_bom)
 

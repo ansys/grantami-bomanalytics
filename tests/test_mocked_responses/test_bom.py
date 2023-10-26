@@ -8,7 +8,7 @@ import pytest
 
 from ansys.grantami.bomanalytics import indicators, queries
 
-from ..inputs import sample_bom_1711, sample_bom_2301
+from ..inputs import sample_bom_1711, sample_sustainability_bom_2301
 from .common import BaseMockTester, MaterialValidator, PartValidator, SubstanceValidator
 
 
@@ -55,7 +55,7 @@ class TestImpactedSubstances1711(_TestImpactedSubstances):
 
 class TestImpactedSubstances2301(_TestImpactedSubstances):
     # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
-    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_2301)
+    query = queries.BomImpactedSubstancesQuery().with_bom(sample_sustainability_bom_2301)
     mock_key = GetImpactedSubstancesForBom2301Response.__name__
 
 
@@ -192,6 +192,6 @@ class TestCompliance2301(_TestCompliance):
                 indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
             ]
         )
-        .with_bom(sample_bom_2301)
+        .with_bom(sample_sustainability_bom_2301)
     )
     mock_key = GetComplianceForBom2301Response.__name__

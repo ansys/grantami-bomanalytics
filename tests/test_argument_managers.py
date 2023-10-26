@@ -5,7 +5,7 @@ import pytest
 
 from ansys.grantami.bomanalytics import queries
 
-from .inputs import sample_bom_1711, sample_bom_2301, sample_bom_complex
+from .inputs import sample_bom_1711, sample_compliance_bom_1711, sample_sustainability_bom_2301
 
 
 class MockRecordDefinition:
@@ -100,7 +100,7 @@ class TestBomArgManager:
         ["bom", "bom_version"],
         [
             (sample_bom_1711, "bom_xml1711"),
-            (sample_bom_2301, "bom_xml2301"),
+            (sample_sustainability_bom_2301, "bom_xml2301"),
         ],
     )
     def test_add_bom(self, bom, bom_version):
@@ -115,9 +115,9 @@ class TestBomNameSpaceParsing:
     @pytest.mark.parametrize(
         ["bom", "bom_format"],
         [
-            (sample_bom_2301, queries._BomFormat.bom_xml2301),
+            (sample_sustainability_bom_2301, queries._BomFormat.bom_xml2301),
             (sample_bom_1711, queries._BomFormat.bom_xml1711),
-            (sample_bom_complex, queries._BomFormat.bom_xml1711),
+            (sample_compliance_bom_1711, queries._BomFormat.bom_xml1711),
         ],
     )
     def test_valid_namespace_parsing(self, bom, bom_format):
@@ -137,7 +137,9 @@ class TestBomNameSpaceParsing:
             queries._BomQueryDataManager(all_bom_formats).bom = bom
 
     def test_xml_bom_but_unknown_namespace(self):
-        bom = sample_bom_2301.replace("http://www.grantadesign.com/23/01/BillOfMaterialsEco", "UnknownNamespace")
+        bom = sample_sustainability_bom_2301.replace(
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "UnknownNamespace"
+        )
         with pytest.raises(
             ValueError, match="Invalid input BoM. Ensure the document is compliant with the expected XML schema"
         ):
@@ -148,7 +150,7 @@ class TestBomNameSpaceParsing:
             "bom_xml2301 (http://www.grantadesign.com/23/01/BillOfMaterialsEco) is not supported by this query."
         )
         with pytest.raises(ValueError, match=expected_error):
-            queries._BomQueryDataManager([queries._BomFormat.bom_xml1711]).bom = sample_bom_2301
+            queries._BomQueryDataManager([queries._BomFormat.bom_xml1711]).bom = sample_sustainability_bom_2301
 
 
 def test_add_boms_sequentially():
@@ -159,9 +161,9 @@ def test_add_boms_sequentially():
     assert bom_manager.item_type_name == "bom_xml1711"
     assert bom_manager._item_definitions[0] == sample_bom_1711
 
-    bom_manager.bom = sample_bom_2301
+    bom_manager.bom = sample_sustainability_bom_2301
     assert bom_manager.item_type_name == "bom_xml2301"
-    assert bom_manager._item_definitions[0] == sample_bom_2301
+    assert bom_manager._item_definitions[0] == sample_sustainability_bom_2301
 
 
 class TestBomFormatEnum:

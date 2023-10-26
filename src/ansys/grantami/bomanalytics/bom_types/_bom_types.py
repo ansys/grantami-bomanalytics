@@ -1849,20 +1849,20 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
     mi_process_reference: MIRecordReference
         Reference identifying a record in the MI Database containing information about this process.
     dimension_type: DimensionType
-        Object defining the dimension affected by the process, for example area for coatings, or volume for
-        rough machining operations.
-    percentage_of_part_affected: Optional[float]
-        Fraction of the object affected by the process, with basis specified by ``dimension_type``.
-    quantity_affected: Optional[UnittedValue]
-        Number of items affected by the process, if applicable. For example 17 fasteners are galvanized out of 24
-        total.
+        Object defining the dimension affected by the process, for example area for coatings, or mass removed for
+        machining operations.
+    percentage: Optional[float]
+        Fraction of the object affected by the process, with basis specified by ``dimension_type``. Only supported for
+        dimension types ``Mass`` and ``MassRemoved``.
+    quantity: Optional[UnittedValue]
+        A quantification of the process according to its dimension type.
     """
 
-    _simple_values = [("percentage_of_part_affected", "Percentage")]
+    _simple_values = [("percentage", "Percentage")]
 
     _props = [
         ("MIRecordReference", "mi_process_reference", "MIProcessReference"),
-        ("UnittedValue", "quantity_affected", "Quantity"),
+        ("UnittedValue", "quantity", "Quantity"),
     ]
 
     def __init__(
@@ -1870,15 +1870,15 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         *,
         mi_process_reference: MIRecordReference,
         dimension_type: DimensionType,
-        percentage_of_part_affected: Optional[float] = None,
-        quantity_affected: Optional[UnittedValue] = None,
+        percentage: Optional[float] = None,
+        quantity: Optional[UnittedValue] = None,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self.mi_process_reference = mi_process_reference
         self.dimension_type = dimension_type
-        self.percentage_of_part_affected = percentage_of_part_affected
-        self.quantity_affected = quantity_affected
+        self.percentage = percentage
+        self.quantity = quantity
 
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
@@ -1912,7 +1912,7 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
     @property
     def dimension_type(self) -> DimensionType:
         """
-        Object defining the dimension affected by the process, for example area for coatings, or volume for rough
+        Object defining the dimension affected by the process, for example ``Area`` for coatings, or ``MassRemoved`` for
         machining operations.
 
         Returns
@@ -1926,34 +1926,35 @@ class Process(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):
         self._dimension_type = value
 
     @property
-    def percentage_of_part_affected(self) -> Optional[float]:
+    def percentage(self) -> Optional[float]:
         """
-        Fraction of the object affected by the process, with basis specified by ``dimension_type``.
+        Fraction of the object affected by the process, with basis specified by ``dimension_type``. Only supported for
+        dimension types ``Mass`` and ``MassRemoved``.
 
         Returns
         -------
         Optional[float]
         """
-        return self._percentage_of_part_affected
+        return self._percentage
 
-    @percentage_of_part_affected.setter
-    def percentage_of_part_affected(self, value: Optional[float]) -> None:
-        self._percentage_of_part_affected = value
+    @percentage.setter
+    def percentage(self, value: Optional[float]) -> None:
+        self._percentage = value
 
     @property
-    def quantity_affected(self) -> Optional[UnittedValue]:
+    def quantity(self) -> Optional[UnittedValue]:
         """
-        Number of items affected by the process, if applicable. For example 17 fasteners are galvanized out of 24 total.
+        A quantification of the process according to its dimension type.
 
         Returns
         -------
         Optional[UnittedValue]
         """
-        return self._quantity_affected
+        return self._quantity
 
-    @quantity_affected.setter
-    def quantity_affected(self, value: Optional[UnittedValue]) -> None:
-        self._quantity_affected = value
+    @quantity.setter
+    def quantity(self, value: Optional[UnittedValue]) -> None:
+        self._quantity = value
 
 
 class Material(CommonIdentifiersMixin, InternalIdentifierMixin, BaseType):

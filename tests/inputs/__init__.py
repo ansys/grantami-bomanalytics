@@ -3,8 +3,9 @@ import pathlib
 from .examples import examples_as_dicts, examples_as_strings
 
 repository_root = pathlib.Path(__file__).parents[2]
+inputs_dir = pathlib.Path(__file__).parent
 
-_sample_bom_1711_path = pathlib.Path(__file__).parent / "bom.xml"
+_sample_bom_1711_path = inputs_dir / "bom.xml"
 with open(_sample_bom_1711_path, "r") as f:
     sample_bom_1711 = f.read()
 
@@ -23,3 +24,11 @@ _sample_sustainability_bom_2301_path = (
 )
 with open(_sample_sustainability_bom_2301_path, "r") as f:
     sample_sustainability_bom_2301 = f.read()
+
+_large_bom_2301_path = inputs_dir / "medium-test-bom.xml"
+with open(_large_bom_2301_path, "r") as f:
+    large_bom_2301 = f.read()
+
+_drill_bom_2301_path = inputs_dir / "drill.xml"
+with open(_drill_bom_2301_path, "r") as f:
+    drill_bom_2301 = f.read()

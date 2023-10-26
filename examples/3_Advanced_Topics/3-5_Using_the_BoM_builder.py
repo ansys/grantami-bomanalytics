@@ -262,7 +262,7 @@ for item in source_joining_processes:
         mi_process_reference=make_record_reference(item),
         identity=item["name"],
         dimension_type=unit_to_dimension_type[item["quantity_unit"]],
-        quantity_affected=bom_types.UnittedValue(value=item["quantity"], unit=item["quantity_unit"]),
+        quantity=bom_types.UnittedValue(value=item["quantity"], unit=item["quantity_unit"]),
         )
     components[parent_part_id].processes.append(process)
 # -
@@ -291,7 +291,7 @@ for item in source_primary_processes:
         mi_process_reference=make_record_reference(item),
         identity=item["name"],
         dimension_type=bom_types.DimensionType.Mass,
-        percentage_of_part_affected=100.0
+        percentage=100.0
     )
     components[parent_part_id].materials[0].processes.append(process)
 
@@ -302,7 +302,7 @@ for item in source_secondary_processes:
         mi_process_reference=make_record_reference(item),
         identity=item["name"],
         dimension_type=bom_types.DimensionType.MassRemoved,
-        quantity_affected=bom_types.UnittedValue(
+        quantity=bom_types.UnittedValue(
             value=item["mass_removed_in_kg"],
             unit="kg",
         )

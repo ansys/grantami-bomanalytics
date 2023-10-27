@@ -82,25 +82,7 @@ class BaseType(HasNamespace, SupportsCustomFields):
         Dict[str, Any]
             Dictionary mapping constructor argument names to values for this type.
         """
-        props = {}
-        instance = cls
-        if hasattr(cls, "internal_id"):
-            id_obj = bom_reader.get_field(instance, obj, "@id")
-            if id_obj is not None:
-                props["internal_id"] = id_obj
-        if hasattr(cls, "identity"):
-            identity_obj = bom_reader.get_field(instance, obj, "Identity")
-            if identity_obj is not None:
-                props["identity"] = identity_obj
-        if hasattr(cls, "name"):
-            name_obj = bom_reader.get_field(instance, obj, "Name")
-            if name_obj is not None:
-                props["name"] = name_obj
-        if hasattr(cls, "external_identity"):
-            external_identity_obj = bom_reader.get_field(instance, obj, "ExternalIdentity")
-            if external_identity_obj is not None:
-                props["external_identity"] = external_identity_obj
-        return props
+        return {}
 
     def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
         """
@@ -115,24 +97,7 @@ class BaseType(HasNamespace, SupportsCustomFields):
         bom_writer: BoMWriter
             Helper object that maintains information about the global namespaces.
         """
-        # Temporarily deal with repeated fields in the base class
-        instance = self
-        if hasattr(self, "internal_id"):
-            if self.internal_id is not None:
-                field_name = bom_writer._get_qualified_name(instance, "@id")
-                obj[field_name] = self.internal_id
-        if hasattr(self, "identity"):
-            if self.identity is not None:
-                field_name = bom_writer._get_qualified_name(instance, "Identity")
-                obj[field_name] = self.identity
-        if hasattr(self, "name"):
-            if self.name is not None:
-                field_name = bom_writer._get_qualified_name(instance, "Name")
-                obj[field_name] = self.name
-        if hasattr(self, "external_identity"):
-            if self.external_identity is not None:
-                field_name = bom_writer._get_qualified_name(instance, "ExternalIdentity")
-                obj[field_name] = self.external_identity
+        pass
 
 
 class DimensionType(Enum):
@@ -467,6 +432,12 @@ class UnittedValue(BaseType):
 @dataclass
 class Location(BaseType):
     _props = [("MIRecordReference", "mi_location_reference", "MILocationReference")]
+    _simple_values = [
+        ("identity", "Identity"),
+        ("name", "Name"),
+        ("external_identity", "ExternalIdentity"),
+        ("internal_id", "@id"),
+    ]
 
     mi_location_reference: Optional[MIRecordReference] = None  # TODO not optional though
     """Reference to a record in the MI database representing the manufacturing location."""
@@ -676,7 +647,7 @@ class TransportStage(BaseType):
         ("MIRecordReference", "mi_transport_reference", "MITransportReference"),
         ("UnittedValue", "distance", "Distance"),
     ]
-    _simple_values = [("name", "Name")]
+    _simple_values = [("name", "Name"), ("internal_id", "@id")]
 
     name: str
     """Name of this transportation stage, used only to identify the stage within the BoM."""
@@ -702,6 +673,12 @@ class Specification(BaseType):
     _props = [
         ("MIRecordReference", "mi_specification_reference", "MISpecificationReference"),
         ("UnittedValue", "quantity", "Quantity"),
+    ]
+    _simple_values = [
+        ("identity", "Identity"),
+        ("name", "Name"),
+        ("external_identity", "ExternalIdentity"),
+        ("internal_id", "@id"),
     ]
 
     mi_specification_reference: MIRecordReference
@@ -730,8 +707,13 @@ class Substance(BaseType):
     A substance within a part, semi-finished part, material or specification. The substance is stored in the
     Database."""
 
-    _simple_values = [("percentage", "Percentage")]
-
+    _simple_values = [
+        ("percentage", "Percentage"),
+        ("identity", "Identity"),
+        ("name", "Name"),
+        ("external_identity", "ExternalIdentity"),
+        ("internal_id", "@id"),
+    ]
     _props = [("MIRecordReference", "mi_substance_reference", "MISubstanceReference")]
 
     mi_substance_reference: MIRecordReference
@@ -781,7 +763,13 @@ class Process(BaseType):
     Database.
     """
 
-    _simple_values = [("percentage", "Percentage")]
+    _simple_values = [
+        ("percentage", "Percentage"),
+        ("identity", "Identity"),
+        ("name", "Name"),
+        ("external_identity", "ExternalIdentity"),
+        ("internal_id", "@id"),
+    ]
 
     _props = [
         ("MIRecordReference", "mi_process_reference", "MIProcessReference"),
@@ -836,7 +824,13 @@ class Material(BaseType):
     A Material within a part or semi-finished part. The material is stored in the Database.
     """
 
-    _simple_values = [("percentage", "Percentage")]
+    _simple_values = [
+        ("percentage", "Percentage"),
+        ("identity", "Identity"),
+        ("name", "Name"),
+        ("external_identity", "ExternalIdentity"),
+        ("internal_id", "@id"),
+    ]
 
     _props = [("UnittedValue", "mass", "Mass"), ("MIRecordReference", "mi_material_reference", "MIMaterialReference")]
 
@@ -927,7 +921,12 @@ class Part(BaseType):
         ("MIRecordReference", "mi_part_reference", "MIPartReference"),
     ]
 
-    _simple_values = [("part_number", "PartNumber"), ("part_name", "Name"), ("external_identity", "ExternalIdentity")]
+    _simple_values = [
+        ("part_number", "PartNumber"),
+        ("part_name", "Name"),
+        ("external_identity", "ExternalIdentity"),
+        ("internal_id", "@id"),
+    ]
 
     _list_props = [
         ("Part", "components", "Components", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Part"),
@@ -978,7 +977,7 @@ class Part(BaseType):
     """Display name for the part."""
 
     external_identity: Optional[str] = None
-    """A temporary reference populated and used by applications to refer to the item within the BoM."""  # TODO?
+    """A temporary reference populated and used by applications to refer to the item within the BoM."""
 
     components: List[Part] = field(default_factory=list)
     """List of subcomponents for this part."""
@@ -1113,6 +1112,7 @@ class BillOfMaterials(BaseType):
     Type representing the root Bill of Materials object.
     """
 
+    _simple_values = [("internal_id", "@id")]
     _props = [
         ("UsePhase", "use_phase", "UsePhase"),
         ("Location", "location", "Location"),

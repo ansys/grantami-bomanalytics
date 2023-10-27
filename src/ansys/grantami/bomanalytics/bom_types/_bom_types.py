@@ -255,7 +255,7 @@ class PartialTableReference(BaseType):
     descending priority order is: tableIdentity, tableGUID, tableName.
     """
 
-    _simple_values = [("table_identity", "tableIdentity"), ("table_guid", "tableGuid"), ("table_name", "tableName")]
+    _simple_values = [("table_identity", "tableIdentity"), ("table_guid", "tableGUID"), ("table_name", "tableName")]
 
     _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
 
@@ -515,7 +515,7 @@ class MobileMode(BaseType):
         ("MIRecordReference", "mi_transport_reference", "MITransportReference"),
         ("UnittedValue", "distance_travelled_per_day", "DistanceTravelledPerDay"),
     ]
-    _simple_values = [("days_user_per_year", "DaysUsedPerYear")]
+    _simple_values = [("days_used_per_year", "DaysUsedPerYear")]
 
     mi_transport_reference: MIRecordReference
     """Reference to a record in the MI database representing the means of transport for this product during use."""
@@ -537,7 +537,6 @@ class StaticMode(BaseType):
         ("MIRecordReference", "mi_energy_conversion_reference", "MIEnergyConversionReference"),
         ("UnittedValue", "power_rating", "PowerRating"),
     ]
-    _simple_values = [("days_used_per_year", "DaysUsedPerYear"), ("hours_used_per_day", "HoursUsedPerDay")]
 
     mi_energy_conversion_reference: MIRecordReference
     """Reference to a record in the MI database representing the primary energy conversion taking place when the
@@ -551,6 +550,23 @@ class StaticMode(BaseType):
 
     hours_used_per_day: float
     """The number of hours per day of use that the product will be used."""
+
+    @classmethod
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+        props = super()._process_custom_fields(obj, bom_reader)
+        usage_obj = bom_reader.get_field(cls, obj, "Usage")
+        if usage_obj is not None:
+            props["hours_used_per_day"] = bom_reader.get_field(cls, usage_obj, "HoursUsedPerDay")
+            props["days_used_per_year"] = bom_reader.get_field(cls, usage_obj, "DaysUsedPerYear")
+        return props
+
+    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+        super()._write_custom_fields(obj, bom_writer)
+        usage_dict = {
+            bom_writer._get_qualified_name(self, "DaysUsedPerYear"): self.days_used_per_year,
+            bom_writer._get_qualified_name(self, "HoursUsedPerDay"): self.hours_used_per_day,
+        }
+        obj[bom_writer._get_qualified_name(self, "Usage")] = usage_dict
 
 
 @dataclass
@@ -603,6 +619,7 @@ class ProductLifeSpan(BaseType):
     industry-average example."""
 
 
+@dataclass
 class UsePhase(BaseType):
     """
     Provides information about the sustainability of the product whilst in use, including electricity use, emissions
@@ -889,7 +906,7 @@ class Material(BaseType):
         if self.recycle_content_is_typical is not None:
             typical_name = bom_writer._get_qualified_name(self, "Typical")
             recycle_element[typical_name] = self.recycle_content_is_typical
-        elif self.recycle_content_is_typical is not None:
+        elif self.recycle_content_percentage is not None:
             percentage_name = bom_writer._get_qualified_name(self, "Percentage")
             recycle_element[percentage_name] = self.recycle_content_percentage
         else:
@@ -1073,7 +1090,7 @@ class Annotation(BaseType):
 
     _props = [("UnittedValue", "value", "Value")]
 
-    _simple_values = [("type", "type"), ("target_id", "targetId"), ("source_id", "sourceId")]
+    _simple_values = [("type_", "type"), ("target_id", "targetId"), ("source_id", "sourceId")]
 
     target_id: str
     """The ``internal_identity`` of exactly one element to which the annotation applies."""

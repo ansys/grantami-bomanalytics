@@ -971,8 +971,8 @@ class Part(BaseType):
     mi_part_reference: Optional[MIRecordReference] = None
     """A reference identifying a part stored in the MI Database."""
 
-    non_mi_part_reference: Optional[Union[str, int]] = None
-    """A reference to a part stored in another system, for informational purposes only."""
+    # non_mi_part_reference: Optional[str] = None
+    # """A reference to a part stored in another system, for informational purposes only."""
 
     part_name: Optional[str] = None
     """Display name for the part."""
@@ -1010,9 +1010,9 @@ class Part(BaseType):
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        non_mi_part_ref_obj = bom_reader.get_field(Part, obj, "NonMIPartReference")
-        if non_mi_part_ref_obj is not None:
-            props["non_mi_part_reference"] = non_mi_part_ref_obj
+        # non_mi_part_ref_obj = bom_reader.get_field(Part, obj, "NonMIPartReference")
+        # if non_mi_part_ref_obj is not None:
+        #     props["non_mi_part_reference"] = non_mi_part_ref_obj
         rohs_exemptions_obj = bom_reader.get_field(Part, obj, "RohsExemptions")
         if rohs_exemptions_obj is not None:
             rohs_exemption_obj = bom_reader.get_field(
@@ -1024,9 +1024,9 @@ class Part(BaseType):
 
     def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
-        if self.non_mi_part_reference is not None:
-            non_mi_field_name = bom_writer._get_qualified_name(self, "NonMIPartReference")
-            obj[non_mi_field_name] = self.non_mi_part_reference
+        # if self.non_mi_part_reference is not None:
+        #     non_mi_field_name = bom_writer._get_qualified_name(self, "NonMIPartReference")
+        #     obj[non_mi_field_name] = self.non_mi_part_reference
         if len(self.rohs_exemptions) > 0:
             rohs_exemptions_field_name = bom_writer._get_qualified_name(self, "RohsExemptions")
             rohs_exemption_field_name = bom_writer._get_qualified_name(self, "RohsExemption")
@@ -1093,7 +1093,7 @@ class Annotation(BaseType):
     _simple_values = [("type_", "type"), ("target_id", "targetId"), ("source_id", "sourceId")]
 
     target_id: str
-    """The ``internal_identity`` of exactly one element to which the annotation applies."""
+    """The ``internal_identity`` of exactly one element to which the annotation applies.""" # TODO internal_identity doesn't exist
 
     type_: str
     """A string value indicating the type of the annotation, the accepted values for this parameter must be agreed
@@ -1144,11 +1144,12 @@ class BillOfMaterials(BaseType):
     notes: Optional[BoMDetails] = None
     """Any optional notes about this BoM."""
 
-    annotations: List[Annotation] = field(default_factory=list)
-    """Any annotations that are associated with objects within the BoM."""
-
-    annotation_sources: List[AnnotationSource] = field(default_factory=list)
-    """Sources for annotations present within the BoM."""
+    # TODO fix annotations
+    # annotations: List[Annotation] = field(default_factory=list)
+    # """Any annotations that are associated with objects within the BoM."""
+    #
+    # annotation_sources: List[AnnotationSource] = field(default_factory=list)
+    # """Sources for annotations present within the BoM."""
 
     internal_id: Optional[str] = None
     """A unique identity for this object in this BoM. This identity is only for internal use, allowing other elements

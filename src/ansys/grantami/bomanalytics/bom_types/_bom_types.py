@@ -908,7 +908,7 @@ class Material(BaseType):
             recycle_element[typical_name] = self.recycle_content_is_typical
         elif self.recycle_content_percentage is not None:
             percentage_name = bom_writer._get_qualified_name(self, "Percentage")
-            recycle_element[percentage_name] = self.recycle_content_percentage
+            recycle_element[percentage_name] = self.recycle_content_percentage  # type: ignore
         else:
             return
         obj[recycle_content_name] = recycle_element
@@ -1093,7 +1093,7 @@ class Annotation(BaseType):
     _simple_values = [("type_", "type"), ("target_id", "targetId"), ("source_id", "sourceId")]
 
     target_id: str
-    """The ``internal_identity`` of exactly one element to which the annotation applies.""" # TODO internal_identity doesn't exist
+    """The ``internal_id`` of exactly one element to which the annotation applies."""
 
     type_: str
     """A string value indicating the type of the annotation, the accepted values for this parameter must be agreed
@@ -1103,7 +1103,7 @@ class Annotation(BaseType):
     """The content of this annotation."""
 
     source_id: Optional[str] = None
-    """If provided, is the ``internal_identity`` of exactly one ``AnnotationSource`` object describing the source
+    """If provided, is the ``internal_id`` of exactly one ``AnnotationSource`` object describing the source
     of the annotation. If absent, no source information is provided."""
 
 

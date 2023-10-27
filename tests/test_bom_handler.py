@@ -3,11 +3,11 @@ from pathlib import Path
 import re
 from typing import Any, Dict
 import uuid
+
 from lxml import etree
 import pytest
 
-from ansys.grantami.bomanalytics import BoMHandler
-from ansys.grantami.bomanalytics.bom_types import *
+from ansys.grantami.bomanalytics import BoMHandler, bom_types
 
 
 class _TestableBoMHandler(BoMHandler):
@@ -16,7 +16,7 @@ class _TestableBoMHandler(BoMHandler):
         self._default_namespace = default_namespace
         self._namespace_mapping = namespace_mapping
 
-    def dump_bom(self, bom: BillOfMaterials) -> str:
+    def dump_bom(self, bom: bom_types.BillOfMaterials) -> str:
         raw = super().dump_bom(bom)
 
         root = etree.fromstring(raw)
@@ -107,7 +107,7 @@ class TestBoMDeserialization:
         bom_handler = BoMHandler()
         yield bom_handler.load_bom_from_text(input_bom)
 
-    def get_field(self, obj: BaseType, p_path: str) -> Any:
+    def get_field(self, obj: bom_types.BaseType, p_path: str) -> Any:
         tokens = p_path.split("/")
         while True:
             try:
@@ -166,20 +166,15 @@ class TestBoMDeserialization:
             ),
         ],
     )
-    def test_simple_bom(self, simple_bom: BillOfMaterials, query: str, value: Any) -> None:
+    def test_simple_bom(self, simple_bom: bom_types.BillOfMaterials, query: str, value: Any) -> None:
         deserialized_field = self.get_field(simple_bom, query)
         assert deserialized_field == value
 
 
 @pytest.fixture
 def empty_bom():
-    return BillOfMaterials(
-        components=[],
-        transport_phase=[],
-        use_phase=None,
-        location=None,
-        notes=None,
-        internal_id="BomId"
+    return bom_types.BillOfMaterials(
+        components=[], transport_phase=[], use_phase=None, location=None, notes=None, internal_id="BomId"
     )
 
 
@@ -196,6 +191,7 @@ def test_empty_bom(empty_bom):
 def full_bom():
     class Counter:
         """Used to generate unique identities and test values."""
+
         def __init__(self):
             self._int = 0
             self._float = 0.1
@@ -212,22 +208,24 @@ def full_bom():
 
     # Very invalid BoM for any query, but aims to exercise all fields of all types
     # TODO add non mi part reference
-    return BillOfMaterials(
+    return bom_types.BillOfMaterials(
         components=[
-            Part(
+            bom_types.Part(
                 components=[
-                    Part(
+                    bom_types.Part(
                         part_number="SubPart0",
                     )
                 ],
                 part_number="RootPartNumber",
                 part_name="RootPartName",
                 internal_id="RootPartId",
-                mass_per_unit_of_measure=UnittedValue(counter.get_float(), "RootPartMassPerUnitOfMeasure"),
-                quantity=UnittedValue(counter.get_float(), "RootPartQuantity"),
-                volume_per_unit_of_measure=UnittedValue(counter.get_float(), "RootPartVolumePerUnitOfMeasure"),
+                mass_per_unit_of_measure=bom_types.UnittedValue(counter.get_float(), "RootPartMassPerUnitOfMeasure"),
+                quantity=bom_types.UnittedValue(counter.get_float(), "RootPartQuantity"),
+                volume_per_unit_of_measure=bom_types.UnittedValue(
+                    counter.get_float(), "RootPartVolumePerUnitOfMeasure"
+                ),
                 # Exercise all attributes of all references
-                mi_part_reference=MIRecordReference(
+                mi_part_reference=bom_types.MIRecordReference(
                     db_key="RootPartRefDbKey",
                     record_guid=str(uuid.uuid4()),
                     record_history_guid=str(uuid.uuid4()),
@@ -235,11 +233,11 @@ def full_bom():
                     record_history_identity=counter.get_int(),
                     record_uid="RootPartRefRecordUID",
                     lookup_value="RootPartRefLookupValue",
-                    lookup_attribute_reference=MIAttributeReference(
+                    lookup_attribute_reference=bom_types.MIAttributeReference(
                         db_key="RootPartRefLookupRefDbKey",
                         attribute_name="RootPartRefLookupRefAttributeName",
                         # attribute_identity=counter.get_int(), # TODO Choice with AttName
-                        table_reference=PartialTableReference(
+                        table_reference=bom_types.PartialTableReference(
                             table_identity=counter.get_int(),
                             table_guid=str(uuid.uuid4()),
                             table_name="RootPartRefLookupRefTableRefName",
@@ -249,18 +247,20 @@ def full_bom():
                     ),
                 ),
                 materials=[
-                    Material(
-                        mi_material_reference=MIRecordReference(
+                    bom_types.Material(
+                        mi_material_reference=bom_types.MIRecordReference(
                             db_key="RootPartMaterial0RefDbKey",
                             record_guid=str(uuid.uuid4()),
                         ),
                         percentage=counter.get_float(),
-                        # mass=UnittedValue(counter.get_float(), "RootPartMaterial0MassUnit"), # CHoice percentage
-                        # recycle_content_is_typical=True, # TODO choice with recycle_content_percentage, need a second material
+                        # TODO Choice with percentage
+                        # mass=UnittedValue(counter.get_float(), "RootPartMaterial0MassUnit"),
+                        # TODO choice with recycle_content_percentage, need a second material
+                        # recycle_content_is_typical=True,
                         recycle_content_percentage=counter.get_float(),
                         end_of_life_fates=[
-                            EndOfLifeFate(
-                                mi_end_of_life_reference=MIRecordReference(
+                            bom_types.EndOfLifeFate(
+                                mi_end_of_life_reference=bom_types.MIRecordReference(
                                     db_key="RootPartMaterial0EOLFRefDbKey",
                                     record_guid=str(uuid.uuid4()),
                                 ),
@@ -272,8 +272,8 @@ def full_bom():
                         identity="RootPartMaterial0Identity",
                         name="RootPartMaterial0Name",
                         processes=[
-                            Process(  # Process with all fields
-                                mi_process_reference=MIRecordReference(
+                            bom_types.Process(  # Process with all fields
+                                mi_process_reference=bom_types.MIRecordReference(
                                     db_key="RootPartMaterial0Process0RefDbKey",
                                     record_guid=str(uuid.uuid4()),
                                 ),
@@ -281,7 +281,7 @@ def full_bom():
                                 external_identity="RootPartMaterial0Process0ExternalIdentity",
                                 internal_id="RootPartMaterial0Process0Id",
                                 name="RootPartMaterial0Process0Name",
-                                dimension_type=DimensionType.MassRemoved,
+                                dimension_type=bom_types.DimensionType.MassRemoved,
                                 percentage=counter.get_float(),
                                 # TODO choice, make another process to test quantity
                                 # quantity=UnittedValue(
@@ -289,27 +289,27 @@ def full_bom():
                                 #     unit="RootPartMaterial0Process0QuantityUnit",
                                 # )
                             )
-                        ]
+                        ],
                     )
                 ],
                 processes=[
-                    Process(  # Minimal process
-                        mi_process_reference=MIRecordReference(
+                    bom_types.Process(  # Minimal process
+                        mi_process_reference=bom_types.MIRecordReference(
                             db_key="RootPartProcess0RefDbKey",
                             record_guid=str(uuid.uuid4()),
                         ),
-                        dimension_type=DimensionType.Mass,
+                        dimension_type=bom_types.DimensionType.Mass,
                         # TODO process requires either Percentage/Quantity, but that's not reflected in typing
-                        percentage=counter.get_float()
+                        percentage=counter.get_float(),
                     )
                 ],
                 specifications=[
-                    Specification(
-                        mi_specification_reference=MIRecordReference(
+                    bom_types.Specification(
+                        mi_specification_reference=bom_types.MIRecordReference(
                             db_key="RootPartSpec0RefDbKey",
                             record_guid=str(uuid.uuid4()),
                         ),
-                        quantity=UnittedValue(counter.get_float(), "RootPartSpec0QuantityUnit"),
+                        quantity=bom_types.UnittedValue(counter.get_float(), "RootPartSpec0QuantityUnit"),
                         identity="RootPartSpec0Identity",
                         external_identity="RootPartSpec0ExternalIdentity",
                         internal_id="RootPartSpec0Id",
@@ -317,26 +317,23 @@ def full_bom():
                     )
                 ],
                 substances=[
-                    Substance(
-                        mi_substance_reference=MIRecordReference(
+                    bom_types.Substance(
+                        mi_substance_reference=bom_types.MIRecordReference(
                             db_key="RootPartSubstance0RefDbKey",
                             record_guid=str(uuid.uuid4()),
                         ),
                         percentage=counter.get_float(),
-                        category=Category.Incorporated,
+                        category=bom_types.Category.Incorporated,
                         identity="RootPartSubstance0Identity",
                         external_identity="RootPartSubstance0ExternalIdentity",
                         internal_id="RootPartSubstance0Id",
                         name="RootPartSubstance0Name",
                     )
                 ],
-                rohs_exemptions=[
-                    "RootPartRohsExemption0"
-                    "RootPartRohsExemption1"
-                ],
+                rohs_exemptions=["RootPartRohsExemption0" "RootPartRohsExemption1"],
                 end_of_life_fates=[
-                    EndOfLifeFate(
-                        mi_end_of_life_reference=MIRecordReference(
+                    bom_types.EndOfLifeFate(
+                        mi_end_of_life_reference=bom_types.MIRecordReference(
                             db_key="RootPartEOLFRefDbKey",
                             record_guid=str(uuid.uuid4()),
                         ),
@@ -346,57 +343,57 @@ def full_bom():
             ),
         ],
         transport_phase=[
-            TransportStage(
-                mi_transport_reference=MIRecordReference(
+            bom_types.TransportStage(
+                mi_transport_reference=bom_types.MIRecordReference(
                     db_key="Transport0RefDbKey",
                     record_guid=str(uuid.uuid4()),
                 ),
                 name="Transport0Name",
-                distance=UnittedValue(counter.get_float(), "Transport0DistanceUnit"),
+                distance=bom_types.UnittedValue(counter.get_float(), "Transport0DistanceUnit"),
                 internal_id="Transport0Id",
             ),
         ],
-        use_phase=UsePhase(
-            product_life_span=ProductLifeSpan(
+        use_phase=bom_types.UsePhase(
+            product_life_span=bom_types.ProductLifeSpan(
                 duration_years=counter.get_float(),
                 number_of_functional_units=counter.get_float(),
                 functional_unit_description="UsePhaseFunctionalUnitDescription",
-                utility=UtilitySpecification(
+                utility=bom_types.UtilitySpecification(
                     # TODO choice between the three
                     # industry_average_number_of_functional_units=counter.get_float(),
                     # industry_average_duration_years=counter.get_float(),
                     utility=counter.get_float(),
-                )
+                ),
             ),
-            electricity_mix=ElectricityMix(
-                mi_region_reference=MIRecordReference(
+            electricity_mix=bom_types.ElectricityMix(
+                mi_region_reference=bom_types.MIRecordReference(
                     db_key="UsePhaseElectricityMixRefDbKey",
                     record_guid=str(uuid.uuid4()),
                 )
             ),
-            mobile_mode=MobileMode(
-                mi_transport_reference=MIRecordReference(
+            mobile_mode=bom_types.MobileMode(
+                mi_transport_reference=bom_types.MIRecordReference(
                     db_key="UsePhaseMobileModeRefDbKey",
                     record_guid=str(uuid.uuid4()),
                 ),
                 days_used_per_year=counter.get_float(),
-                distance_travelled_per_day=UnittedValue(
+                distance_travelled_per_day=bom_types.UnittedValue(
                     value=counter.get_float(),
                     unit="UsePhaseMobileDistancePerDayUnit",
                 ),
             ),
-            static_mode=StaticMode(
-                mi_energy_conversion_reference=MIRecordReference(
+            static_mode=bom_types.StaticMode(
+                mi_energy_conversion_reference=bom_types.MIRecordReference(
                     db_key="UsePhaseStaticModeRefDbKey",
                     record_guid=str(uuid.uuid4()),
                 ),
                 days_used_per_year=counter.get_float(),
                 hours_used_per_day=counter.get_float(),
-                power_rating=UnittedValue(counter.get_float(), "UsePhaseStaticModePowerRating"),
+                power_rating=bom_types.UnittedValue(counter.get_float(), "UsePhaseStaticModePowerRating"),
             ),
         ),
-        location=Location(
-            mi_location_reference=MIRecordReference(
+        location=bom_types.Location(
+            mi_location_reference=bom_types.MIRecordReference(
                 db_key="LocationRefDbKey",
                 record_guid=str(uuid.uuid4()),
             ),
@@ -405,13 +402,13 @@ def full_bom():
             external_identity="LocationExternalIdentity",
             internal_id="LocationId",
         ),
-        notes=BoMDetails(
+        notes=bom_types.BoMDetails(
             notes="BomNotes",
             picture_url="https://www.ansys.com/",
             product_name="ProductName",
         ),
         # annotations=[  # TODO annotations differ quite a lot from schema
-        #     Annotation(
+        #     bom_types.Annotation(
         #         target_id="RootPartId",
         #         type_="Annotation0Type",
         #         source_id="AnnotationSource0Id",
@@ -419,7 +416,7 @@ def full_bom():
         #     )
         # ],
         # annotation_sources=[
-        #     AnnotationSource(
+        #     bom_types.AnnotationSource(
         #         name="AnnotationSource0Name",
         #         method="AnnotationSource0Method",
         #         data=[
@@ -428,8 +425,9 @@ def full_bom():
         #         internal_id="AnnotationSource0Id"
         #     )
         # ],
-        internal_id="BomId"
+        internal_id="BomId",
     )
+
 
 # TODO fix annotations
 
@@ -440,4 +438,3 @@ def test_everything_bom(full_bom):
 
     rebuilt = bom_handler.load_bom_from_text(text)
     assert rebuilt == full_bom
-

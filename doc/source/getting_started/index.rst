@@ -48,7 +48,7 @@ Substances and Sustainability Reports Bundle.
 Licensing
 ~~~~~~~~~
 ``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately.
-Endpoints available to end users depend on the licenses purchased by their organization.
+Endpoints available to end users depend on the available licenses.
 
 Verify your installation
 ~~~~~~~~~~~~~~~~~~~~~~~~

@@ -284,7 +284,7 @@ class MIAttributeReference(BaseType):
                 props["attribute_name"] = attribute_name_obj
             pseudo_obj = bom_reader.get_field(MIAttributeReference, name_obj, "pseudo")
             if pseudo_obj is not None:
-                props["pseudo"] = pseudo_obj
+                props["pseudo"] = PseudoAttribute.from_string(pseudo_obj)
             is_standard_obj = bom_reader.get_field(MIAttributeReference, name_obj, "@isStandard")
             if is_standard_obj is not None:
                 props["is_standard"] = is_standard_obj
@@ -377,20 +377,23 @@ class MIRecordReference(BaseType):
 
     def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
+        # Always write the wrapper object, even if incomplete. This way, users get an error when serializing, rather
+        # than the serialization ignoring a populated value.
+        identity_dict = {}
         if self.record_history_identity is not None:
-            identity_dict = {
-                bom_writer._get_qualified_name(self, "recordHistoryIdentity"): self.record_history_identity
-            }
-            if self.record_version_number is not None:
-                identity_dict[bom_writer._get_qualified_name(self, "version")] = self.record_version_number
+            identity_dict[bom_writer._get_qualified_name(self, "recordHistoryIdentity")] = self.record_history_identity
+        if self.record_version_number is not None:
+            identity_dict[bom_writer._get_qualified_name(self, "version")] = self.record_version_number
+        if identity_dict:
             obj[bom_writer._get_qualified_name(self, "identity")] = identity_dict
+        lookup_dict: Dict[str, Any] = {}
         if self.lookup_value is not None:
-            lookup_dict = {
-                bom_writer._get_qualified_name(self, "attributeReference"): bom_writer._convert_to_dict(
-                    cast(BaseType, self.lookup_attribute_reference)
-                ),
-                bom_writer._get_qualified_name(self, "attributeValue"): self.lookup_value,
-            }
+            lookup_dict[bom_writer._get_qualified_name(self, "attributeValue")] = self.lookup_value
+        if self.lookup_attribute_reference is not None:
+            lookup_dict[bom_writer._get_qualified_name(self, "attributeReference")] = bom_writer._convert_to_dict(
+                cast(BaseType, self.lookup_attribute_reference)
+            )
+        if lookup_dict:
             obj[bom_writer._get_qualified_name(self, "lookupValue")] = lookup_dict
 
 
@@ -853,8 +856,8 @@ class Material(BaseType):
     mass: Optional[UnittedValue] = None
     """The mass of this material present within the part. Provide either this or ``percentage``."""
 
-    recycle_content_is_typical: Optional[bool] = None
-    """If True, indicates that the material's recyclability is typical, the value in the MI record will be used."""
+    # recycle_content_is_typical: Optional[bool] = None
+    # """If True, indicates that the material's recyclability is typical, the value in the MI record will be used."""
 
     recycle_content_percentage: Optional[float] = None
     """If the recyclability is not typical for this material, or no typical value is available in the MI Database,
@@ -886,8 +889,8 @@ class Material(BaseType):
         recycle_content_obj = bom_reader.get_field(Material, obj, "RecycleContent")
         if recycle_content_obj is not None:
             typical_obj = bom_reader.get_field(Material, recycle_content_obj, "Typical")
-            if typical_obj is not None:
-                props["recycle_content_is_typical"] = typical_obj
+            # if typical_obj is not None:
+            #     props["recycle_content_is_typical"] = typical_obj
             percentage_obj = bom_reader.get_field(Material, recycle_content_obj, "Percentage")
             if percentage_obj is not None:
                 props["recycle_content_percentage"] = percentage_obj
@@ -897,15 +900,13 @@ class Material(BaseType):
         super()._write_custom_fields(obj, bom_writer)
         recycle_content_name = bom_writer._get_qualified_name(self, "RecycleContent")
         recycle_element = {}
-        if self.recycle_content_is_typical is not None:
-            typical_name = bom_writer._get_qualified_name(self, "Typical")
-            recycle_element[typical_name] = self.recycle_content_is_typical
-        elif self.recycle_content_percentage is not None:
+        # if self.recycle_content_is_typical is not None:
+        #     typical_name = bom_writer._get_qualified_name(self, "Typical")
+        #     recycle_element[typical_name] = self.recycle_content_is_typical
+        if self.recycle_content_percentage is not None:
             percentage_name = bom_writer._get_qualified_name(self, "Percentage")
-            recycle_element[percentage_name] = self.recycle_content_percentage  # type: ignore
-        else:
-            return
-        obj[recycle_content_name] = recycle_element
+            recycle_element[percentage_name] = self.recycle_content_percentage
+            obj[recycle_content_name] = recycle_element
 
 
 @dataclass

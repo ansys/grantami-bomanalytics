@@ -97,6 +97,8 @@ class TestRoundTripBoM:
 class TestBoMDeserialization:
     @pytest.fixture(scope="class")
     def simple_bom(self):
+        # 17/11 and 23/01 are quite similar, and in the context of this particular BoM and test, substituting the
+        # namespace is sufficient to obtain a valid 23/01 BoM.
         input_bom = sample_bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
             "http://www.grantadesign.com/23/01/BillOfMaterialsEco",

@@ -28,7 +28,7 @@ The sequence of events is as follows:
 #. Connect to Granta MI.
 #. Create the appropriate query, choosing between:
 
-   - Query type: Compliance or impacted substances
+   - Query type: Compliance, impacted substances, or sustainability
    - Reference type: Materials, parts, specifications, substances, or an XML BoM
 
 #. Specify the legislations and records of interest.

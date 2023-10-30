@@ -20,20 +20,27 @@ The expected use cases for this package are as follows:
 - Allowing compliance to be determined for BoMs (Bills of Materials) stored
   in third-party systems, such as PLM or ERP systems.
 
+Starting in version 2024 R1, Granta MI provides a method for managing
+sustainability data as part of the Restricted Substances and Sustainability
+solution. The ``grantami-bomanalytics`` package now also exposes an API
+allowing to evaluate the sustainability performance of BoMs (Bills of Materials).
+
 
 Background
 ----------
 The Granta MI Restricted Substances solution includes a REST API for
 evaluating compliance of products, assemblies, specifications, and
-materials against legislations. This package automatically abstracts
-generated code into an easy-to-use client library.
+materials against legislations.
+The Granta MI Sustainability solution includes a REST API for evaluating the environmental
+performance of products, assemblies, materials, manufacturing and transport stages.
+This package automatically abstracts generated code into an easy-to-use client library.
 
 
 Dependencies
 ------------
 To use the ``grantami-bomanalytics`` package, you must have access
-to a Granta MI server that includes MI Restricted Substances Reports
-2022 R1 or later. This package also has the following Python package
+to a Granta MI server that includes MI Restricted Substances and Sustainability Reports
+2024 R1 or later. This package also has the following Python package
 dependencies:
 
 - ``ansys-grantami-bomanalytics-openapi`` package

@@ -145,7 +145,7 @@ html_theme = "ansys_sphinx_theme"
 html_favicon = ansys_favicon
 html_logo = pyansys_logo_black
 html_theme_options = {
-    "github_url": "https://github.com/pyansys/grantami-bomanalytics",
+    "github_url": "https://github.com/ansys/grantami-bomanalytics",
     "additional_breadcrumbs": [
         ("PyAnsys Documentation", "https://docs.pyansys.com/"),
         ("PyGranta", "https://grantami.docs.pyansys.com/"),

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Protocol, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Protocol, Tuple, cast
 
 if TYPE_CHECKING:
     from ._bom_reader import BoMReader
@@ -1033,77 +1033,77 @@ class Part(BaseType):
             obj[rohs_exemptions_field_name] = rohs_exemptions
 
 
-@dataclass
-class AnnotationSource(BaseType):
-    """
-    An element indicating the source of annotations in the BoM. Each source may be
-    referenced by zero or more annotations. The producer and consumer(s) of the BoM must agree the
-    understood annotation source semantics, particularly regarding the untyped data therein. When a tool consumes
-    and re-produces BoMs, it should generally retain any annotation sources that it does not understand (of course,
-    it can also decide whether to keep, modify or discard those annotation sources that it does understand).
-    """
-
-    _simple_values = [("name", "Name"), ("method", "Method")]
-
-    name: str
-    """The name of the software package that generated this annotation."""
-
-    method: Optional[str] = None
-    """The calculation method used to generate this annotation."""
-
-    data: List[Any] = field(default_factory=list)
-    """Data that the consumer of the BoM may require."""
-
-    internal_id: Optional[str] = None
-    """A unique identity for this object in this BoM. This identity is only for internal use, allowing other elements
-    to reference this element."""
-
-    @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
-        props = super()._process_custom_fields(obj, bom_reader)
-
-        data_obj = bom_reader.get_field(AnnotationSource, obj, "Data")
-        if data_obj is not None:
-            props["data"] = data_obj
-        return props
-
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
-        if len(self.data) > 0:
-            data_field_name = bom_writer._get_qualified_name(self, "Data")
-            obj[data_field_name] = self.data
-
-
-@dataclass
-class Annotation(BaseType):
-    """
-    An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
-    between the producer and consumer(s) of the BoM.  The producer and consumer(s) must also agree whether a
-    particular type of annotation is allowed to have multiple instances assigned to a single element, or whether
-    only a single annotation of that type per element is allowed. When a tool consumes and re-produces BoMs, it
-    should generally retain any annotations that it does not understand (of course, it can also decide whether to
-    keep, modify or discard those annotations that it does understand).
-
-    Annotations can either be pure textual data, providing additional data or context for an object, or they can
-    provide additional indicators, for example Embodied Energy of Production, or Cost of Raw Materials.
-    """
-
-    _props = [("UnittedValue", "value", "Value")]
-
-    _simple_values = [("type_", "type"), ("target_id", "targetId"), ("source_id", "sourceId")]
-
-    target_id: str
-    """The ``internal_id`` of exactly one element to which the annotation applies."""
-
-    type_: str
-    """A string value indicating the type of the annotation, the accepted values for this parameter must be agreed
-    between the produced and consumer(s) of the BoM."""
-
-    value: Union[str, UnittedValue]
-    """The content of this annotation."""
-
-    source_id: Optional[str] = None
-    """If provided, is the ``internal_id`` of exactly one ``AnnotationSource`` object describing the source
-    of the annotation. If absent, no source information is provided."""
+# @dataclass
+# class AnnotationSource(BaseType):
+#     """
+#     An element indicating the source of annotations in the BoM. Each source may be
+#     referenced by zero or more annotations. The producer and consumer(s) of the BoM must agree the
+#     understood annotation source semantics, particularly regarding the untyped data therein. When a tool consumes
+#     and re-produces BoMs, it should generally retain any annotation sources that it does not understand (of course,
+#     it can also decide whether to keep, modify or discard those annotation sources that it does understand).
+#     """
+#
+#     _simple_values = [("name", "Name"), ("method", "Method")]
+#
+#     name: str
+#     """The name of the software package that generated this annotation."""
+#
+#     method: Optional[str] = None
+#     """The calculation method used to generate this annotation."""
+#
+#     data: List[Any] = field(default_factory=list)
+#     """Data that the consumer of the BoM may require."""
+#
+#     internal_id: Optional[str] = None
+#     """A unique identity for this object in this BoM. This identity is only for internal use, allowing other elements
+#     to reference this element."""
+#
+#     @classmethod
+#     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+#         props = super()._process_custom_fields(obj, bom_reader)
+#
+#         data_obj = bom_reader.get_field(AnnotationSource, obj, "Data")
+#         if data_obj is not None:
+#             props["data"] = data_obj
+#         return props
+#
+#     def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+#         if len(self.data) > 0:
+#             data_field_name = bom_writer._get_qualified_name(self, "Data")
+#             obj[data_field_name] = self.data
+#
+#
+# @dataclass
+# class Annotation(BaseType):
+#     """
+#     An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
+#     between the producer and consumer(s) of the BoM.  The producer and consumer(s) must also agree whether a
+#     particular type of annotation is allowed to have multiple instances assigned to a single element, or whether
+#     only a single annotation of that type per element is allowed. When a tool consumes and re-produces BoMs, it
+#     should generally retain any annotations that it does not understand (of course, it can also decide whether to
+#     keep, modify or discard those annotations that it does understand).
+#
+#     Annotations can either be pure textual data, providing additional data or context for an object, or they can
+#     provide additional indicators, for example Embodied Energy of Production, or Cost of Raw Materials.
+#     """
+#
+#     _props = [("UnittedValue", "value", "Value")]
+#
+#     _simple_values = [("type_", "@type"), ("target_id", "@targetId"), ("source_id", "@sourceId")]
+#
+#     target_id: str
+#     """The ``internal_id`` of exactly one element to which the annotation applies."""
+#
+#     type_: str
+#     """A string value indicating the type of the annotation, the accepted values for this parameter must be agreed
+#     between the produced and consumer(s) of the BoM."""
+#
+#     value: Union[str, UnittedValue]
+#     """The content of this annotation."""
+#
+#     source_id: Optional[str] = None
+#     """If provided, is the ``internal_id`` of exactly one ``AnnotationSource`` object describing the source
+#     of the annotation. If absent, no source information is provided."""
 
 
 @dataclass

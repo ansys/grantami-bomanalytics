@@ -3,7 +3,7 @@ ansys-grantami-bomanalytics
 
 Project Overview
 ----------------
-PyGranta BoM Analytics is part of the larger `PyAnsys <https://github.com/pyansys>`_
+PyGranta BoM Analytics is part of the larger `PyAnsys <https://docs.pyansys.com>`_
 effort to facilitate the use of Ansys technologies directly from Python.
 
 The MI Restricted Substances and MI Sustainability solutions for Granta MI include REST APIs for:
@@ -27,7 +27,7 @@ Alternatively, clone and install this package with this code:
 
 .. code::
 
-   git clone https://github.com/pyansys/grantami-bomanalytics
+   git clone https://github.com/ansys/grantami-bomanalytics
    cd grantami-bomanalytics
    pip install .
 

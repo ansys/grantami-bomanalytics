@@ -1,7 +1,7 @@
 (?i)ansys
 API
+Analytics
 BoM
-BoM Analytics
 [Dd]eserialization
 Granta MI
 legislations

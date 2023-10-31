@@ -1,9 +1,9 @@
 (?i)ansys
 API
-PyGranta BoM Analytics
 BoM
 BoM Analytics
+[Dd]eserialization
 Granta MI
 legislations
+PyGranta BoM Analytics
 RoHS
-[Dd]eserialization

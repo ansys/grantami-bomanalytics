@@ -80,6 +80,10 @@ numpydoc_validation_checks = {
     "RT02",  # The first line of the Returns section should contain only the
     # type, unless multiple values are being returned"
 }
+# Ignore missing docstring warning on dataclasses parameters.
+numpydoc_validation_exclude = {
+    "^ansys\.grantami\.bomanalytics\.bom_types\._bom_types\.[\w]+\.[\w]+$"
+}
 
 extlinks = {
     'MI_docs': (

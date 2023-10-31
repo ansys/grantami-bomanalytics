@@ -2,12 +2,12 @@ from difflib import context_diff
 from pathlib import Path
 import re
 from typing import Any, Dict
+import uuid
 
 from lxml import etree
 import pytest
 
-from ansys.grantami.bomanalytics import BoMHandler
-from ansys.grantami.bomanalytics.bom_types import BaseType, BillOfMaterials
+from ansys.grantami.bomanalytics import BoMHandler, bom_types
 
 from .inputs import drill_bom_2301, large_bom_2301, sample_bom_1711, sample_sustainability_bom_2301
 
@@ -18,7 +18,7 @@ class _TestableBoMHandler(BoMHandler):
         self._default_namespace = default_namespace
         self._namespace_mapping = namespace_mapping
 
-    def dump_bom(self, bom: BillOfMaterials) -> str:
+    def dump_bom(self, bom: bom_types.BillOfMaterials) -> str:
         raw = super().dump_bom(bom)
 
         root = etree.fromstring(raw)
@@ -91,7 +91,9 @@ class TestRoundTripBoM:
         deserialized_bom = bom_handler.load_bom_from_text(input_bom)
 
         rendered_bom = bom_handler.dump_bom(deserialized_bom)
-        bom_handler.load_bom_from_text(rendered_bom)
+        deserialized_bom_roundtriped = bom_handler.load_bom_from_text(rendered_bom)
+
+        assert deserialized_bom == deserialized_bom_roundtriped
 
 
 class TestBoMDeserialization:
@@ -106,7 +108,7 @@ class TestBoMDeserialization:
         bom_handler = BoMHandler()
         yield bom_handler.load_bom_from_text(input_bom)
 
-    def get_field(self, obj: BaseType, p_path: str) -> Any:
+    def get_field(self, obj: bom_types.BaseType, p_path: str) -> Any:
         tokens = p_path.split("/")
         while True:
             try:
@@ -165,6 +167,299 @@ class TestBoMDeserialization:
             ),
         ],
     )
-    def test_simple_bom(self, simple_bom: BillOfMaterials, query: str, value: Any) -> None:
+    def test_simple_bom(self, simple_bom: bom_types.BillOfMaterials, query: str, value: Any) -> None:
         deserialized_field = self.get_field(simple_bom, query)
         assert deserialized_field == value
+
+
+@pytest.fixture
+def empty_bom():
+    return bom_types.BillOfMaterials(
+        components=[], transport_phase=[], use_phase=None, location=None, notes=None, internal_id="BomId"
+    )
+
+
+@pytest.mark.xfail(reason="Empty BoMs can be instantiated and serialized, but not deserialized.")
+def test_empty_bom(empty_bom):
+    bom_handler = BoMHandler()
+    text = bom_handler.dump_bom(empty_bom)
+
+    rebuilt = bom_handler.load_bom_from_text(text)
+    assert rebuilt == empty_bom
+
+
+class BoMFactory:
+    def __init__(self):
+        self._int = 0
+        self._float = 0.1
+
+    def get_int(self) -> int:
+        self._int += 1
+        return self._int
+
+    def get_float(self) -> float:
+        self._float += 0.1
+        return self._float
+
+    def get_guid(self) -> str:
+        return str(uuid.uuid4())
+
+    def make_full_bom(self, use_phase_utility_kwarg) -> bom_types.BillOfMaterials:
+        # Very invalid BoM for any query, but attempts to exercise all fields of all types
+        # TODO add non mi part reference
+        return bom_types.BillOfMaterials(
+            components=[
+                bom_types.Part(
+                    components=[
+                        bom_types.Part(
+                            part_number="SubPart0",
+                        )
+                    ],
+                    part_number="RootPartNumber",
+                    part_name="RootPartName",
+                    internal_id="RootPartId",
+                    mass_per_unit_of_measure=bom_types.UnittedValue(self.get_float(), "RootPartMassPerUnitOfMeasure"),
+                    quantity=bom_types.UnittedValue(self.get_float(), "RootPartQuantity"),
+                    volume_per_unit_of_measure=bom_types.UnittedValue(
+                        self.get_float(), "RootPartVolumePerUnitOfMeasure"
+                    ),
+                    # Exercise as many attributes as possible for references
+                    mi_part_reference=bom_types.MIRecordReference(
+                        db_key="RootPartRefDbKey",
+                        record_guid=self.get_guid(),
+                        record_history_guid=self.get_guid(),
+                        record_version_number=self.get_int(),
+                        record_history_identity=self.get_int(),
+                        record_uid="RootPartRefRecordUID",
+                        lookup_value="RootPartRefLookupValue",
+                        lookup_attribute_reference=bom_types.MIAttributeReference(
+                            db_key="RootPartRefLookupRefDbKey",
+                            # Choice attribute_name | attribute_identity | pseudo
+                            attribute_name="RootPartRefLookupRefAttributeName",
+                            table_reference=bom_types.PartialTableReference(
+                                table_identity=self.get_int(),
+                                table_guid=self.get_guid(),
+                                table_name="RootPartRefLookupRefTableRefName",
+                            ),
+                            is_standard=False,
+                        ),
+                    ),
+                    materials=[
+                        bom_types.Material(
+                            mi_material_reference=bom_types.MIRecordReference(
+                                db_key="RootPartMaterial0RefDbKey",
+                                lookup_value="RootPartMaterial0RefLookupValue",
+                                lookup_attribute_reference=bom_types.MIAttributeReference(
+                                    db_key="RootPartMaterial0RefDbKey",
+                                    # Choice attribute_name | attribute_identity | pseudo
+                                    attribute_identity=self.get_int(),
+                                ),
+                            ),
+                            # Choice percentage | mass
+                            percentage=self.get_float(),
+                            # Choice recycle_content_is_typical | recycle_content_percentage
+                            recycle_content_percentage=self.get_float(),
+                            end_of_life_fates=[
+                                bom_types.EndOfLifeFate(
+                                    mi_end_of_life_reference=bom_types.MIRecordReference(
+                                        db_key="RootPartMaterial0EOLFRefDbKey",
+                                        record_guid=self.get_guid(),
+                                    ),
+                                    fraction=self.get_float(),
+                                )
+                            ],
+                            external_identity="RootPartMaterial0ExternalIdentity",
+                            internal_id="RootPartMaterial0Id",
+                            identity="RootPartMaterial0Identity",
+                            name="RootPartMaterial0Name",
+                            processes=[
+                                bom_types.Process(  # Process with all fields
+                                    mi_process_reference=bom_types.MIRecordReference(
+                                        db_key="RootPartMaterial0Process0RefDbKey",
+                                        record_guid=self.get_guid(),
+                                    ),
+                                    identity="RootPartMaterial0Process0Identity",
+                                    external_identity="RootPartMaterial0Process0ExternalIdentity",
+                                    internal_id="RootPartMaterial0Process0Id",
+                                    name="RootPartMaterial0Process0Name",
+                                    dimension_type=bom_types.DimensionType.MassRemoved,
+                                    # Choice quantity|percentage: another process defines percentage.
+                                    quantity=bom_types.UnittedValue(
+                                        self.get_float(),
+                                        unit="RootPartMaterial0Process0QuantityUnit",
+                                    ),
+                                )
+                            ],
+                        ),
+                        bom_types.Material(
+                            mi_material_reference=bom_types.MIRecordReference(
+                                db_key="RootPartMaterial1RefDbKey",
+                                lookup_value="RootPartMaterial1RefLookupValue",
+                                lookup_attribute_reference=bom_types.MIAttributeReference(
+                                    db_key="RootPartMaterial0RefDbKey",
+                                    # Choice attribute_name | attribute_identity | pseudo
+                                    pseudo=bom_types.PseudoAttribute.Name,
+                                ),
+                            ),
+                            # Choice percentage | mass
+                            mass=bom_types.UnittedValue(self.get_float(), "RootPartMaterial1MassUnit"),
+                            # Choice recycle_content_is_typical | recycle_content_percentage
+                            # recycle_content_is_typical=True, # TODO broken
+                        ),
+                    ],
+                    processes=[
+                        bom_types.Process(  # Minimal process
+                            mi_process_reference=bom_types.MIRecordReference(
+                                db_key="RootPartProcess0RefDbKey",
+                                record_guid=self.get_guid(),
+                            ),
+                            dimension_type=bom_types.DimensionType.Mass,
+                            # Choice quantity|percentage: another process defines quantity.
+                            percentage=self.get_float(),
+                        )
+                    ],
+                    specifications=[
+                        bom_types.Specification(
+                            mi_specification_reference=bom_types.MIRecordReference(
+                                db_key="RootPartSpec0RefDbKey",
+                                record_guid=self.get_guid(),
+                            ),
+                            quantity=bom_types.UnittedValue(self.get_float(), "RootPartSpec0QuantityUnit"),
+                            identity="RootPartSpec0Identity",
+                            external_identity="RootPartSpec0ExternalIdentity",
+                            internal_id="RootPartSpec0Id",
+                            name="RootPartSpec0Name",
+                        )
+                    ],
+                    substances=[
+                        bom_types.Substance(
+                            mi_substance_reference=bom_types.MIRecordReference(
+                                db_key="RootPartSubstance0RefDbKey",
+                                record_guid=self.get_guid(),
+                            ),
+                            percentage=self.get_float(),
+                            category=bom_types.Category.Incorporated,
+                            identity="RootPartSubstance0Identity",
+                            external_identity="RootPartSubstance0ExternalIdentity",
+                            internal_id="RootPartSubstance0Id",
+                            name="RootPartSubstance0Name",
+                        )
+                    ],
+                    rohs_exemptions=["RootPartRohsExemption0" "RootPartRohsExemption1"],
+                    end_of_life_fates=[
+                        bom_types.EndOfLifeFate(
+                            mi_end_of_life_reference=bom_types.MIRecordReference(
+                                db_key="RootPartEOLFRefDbKey",
+                                record_guid=self.get_guid(),
+                            ),
+                            fraction=self.get_float(),
+                        )
+                    ],
+                ),
+            ],
+            transport_phase=[
+                bom_types.TransportStage(
+                    mi_transport_reference=bom_types.MIRecordReference(
+                        db_key="Transport0RefDbKey",
+                        record_guid=self.get_guid(),
+                    ),
+                    name="Transport0Name",
+                    distance=bom_types.UnittedValue(self.get_float(), "Transport0DistanceUnit"),
+                    internal_id="Transport0Id",
+                ),
+            ],
+            use_phase=bom_types.UsePhase(
+                product_life_span=bom_types.ProductLifeSpan(
+                    duration_years=self.get_float(),
+                    number_of_functional_units=self.get_float(),
+                    functional_unit_description="UsePhaseFunctionalUnitDescription",
+                    utility=bom_types.UtilitySpecification(
+                        **{use_phase_utility_kwarg: self.get_float()},
+                    ),
+                ),
+                electricity_mix=bom_types.ElectricityMix(
+                    mi_region_reference=bom_types.MIRecordReference(
+                        db_key="UsePhaseElectricityMixRefDbKey",
+                        record_guid=self.get_guid(),
+                    )
+                ),
+                mobile_mode=bom_types.MobileMode(
+                    mi_transport_reference=bom_types.MIRecordReference(
+                        db_key="UsePhaseMobileModeRefDbKey",
+                        record_guid=self.get_guid(),
+                    ),
+                    days_used_per_year=self.get_float(),
+                    distance_travelled_per_day=bom_types.UnittedValue(
+                        value=self.get_float(),
+                        unit="UsePhaseMobileDistancePerDayUnit",
+                    ),
+                ),
+                static_mode=bom_types.StaticMode(
+                    mi_energy_conversion_reference=bom_types.MIRecordReference(
+                        db_key="UsePhaseStaticModeRefDbKey",
+                        record_guid=self.get_guid(),
+                    ),
+                    days_used_per_year=self.get_float(),
+                    hours_used_per_day=self.get_float(),
+                    power_rating=bom_types.UnittedValue(self.get_float(), "UsePhaseStaticModePowerRating"),
+                ),
+            ),
+            location=bom_types.Location(
+                mi_location_reference=bom_types.MIRecordReference(
+                    db_key="LocationRefDbKey",
+                    record_guid=self.get_guid(),
+                ),
+                identity="LocationIdentity",
+                name="LocationName",
+                external_identity="LocationExternalIdentity",
+                internal_id="LocationId",
+            ),
+            notes=bom_types.BoMDetails(
+                notes="BomNotes",
+                picture_url="https://www.ansys.com/",
+                product_name="ProductName",
+            ),
+            # annotations=[
+            #     bom_types.Annotation(
+            #         target_id="RootPartId",
+            #         type_="Annotation0Type",
+            #         source_id="AnnotationSource0Id",
+            #         value="Annotation0",
+            #     )
+            # ],
+            # annotation_sources=[
+            #     bom_types.AnnotationSource(
+            #         name="AnnotationSource0Name",
+            #         method="AnnotationSource0Method",
+            #         data=[
+            #             "AnnotationSource0Data0"
+            #         ],
+            #         internal_id="AnnotationSource0Id"
+            #     )
+            # ],
+            internal_id="BomId",
+        )
+
+
+# Utility appears only once in BoM, so the whole test is repeated to exercise the three mutually exclusive possible
+# choices.
+@pytest.mark.parametrize(
+    "use_phase_utility_kwarg",
+    [
+        "industry_average_number_of_functional_units",
+        "industry_average_duration_years",
+        "utility",
+    ],
+)
+def test_everything_bom(use_phase_utility_kwarg):
+    bom = BoMFactory().make_full_bom(use_phase_utility_kwarg)
+    bom_handler = BoMHandler()
+    text = bom_handler.dump_bom(bom)
+
+    rebuilt = bom_handler.load_bom_from_text(text)
+    assert rebuilt == bom
+
+
+def test_unexpected_args_raises_error():
+    with pytest.raises(TypeError, match="unexpected keyword argument 'unexpected_kwarg'"):
+        bom_types.Part(part_number="PartNumber", unexpected_kwarg="UnexpectedKwargValue")

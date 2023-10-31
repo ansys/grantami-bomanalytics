@@ -856,6 +856,7 @@ class Material(BaseType):
     mass: Optional[UnittedValue] = None
     """The mass of this material present within the part. Provide either this or ``percentage``."""
 
+    # TODO support recycle content (issue #95)
     # recycle_content_is_typical: Optional[bool] = None
     # """If True, indicates that the material's recyclability is typical, the value in the MI record will be used."""
 
@@ -888,7 +889,8 @@ class Material(BaseType):
 
         recycle_content_obj = bom_reader.get_field(Material, obj, "RecycleContent")
         if recycle_content_obj is not None:
-            typical_obj = bom_reader.get_field(Material, recycle_content_obj, "Typical")
+            # TODO support recycle content (issue #95)
+            # typical_obj = bom_reader.get_field(Material, recycle_content_obj, "Typical")
             # if typical_obj is not None:
             #     props["recycle_content_is_typical"] = typical_obj
             percentage_obj = bom_reader.get_field(Material, recycle_content_obj, "Percentage")
@@ -900,6 +902,7 @@ class Material(BaseType):
         super()._write_custom_fields(obj, bom_writer)
         recycle_content_name = bom_writer._get_qualified_name(self, "RecycleContent")
         recycle_element = {}
+        # TODO support recycle content (issue #95)
         # if self.recycle_content_is_typical is not None:
         #     typical_name = bom_writer._get_qualified_name(self, "Typical")
         #     recycle_element[typical_name] = self.recycle_content_is_typical
@@ -971,6 +974,7 @@ class Part(BaseType):
     mi_part_reference: Optional[MIRecordReference] = None
     """A reference identifying a part stored in the MI Database."""
 
+    # TODO support non_mi_part_reference (issue #95)
     # non_mi_part_reference: Optional[str] = None
     # """A reference to a part stored in another system, for informational purposes only."""
 
@@ -1009,7 +1013,7 @@ class Part(BaseType):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-
+        # TODO support non_mi_part_reference (issue #95)
         # non_mi_part_ref_obj = bom_reader.get_field(Part, obj, "NonMIPartReference")
         # if non_mi_part_ref_obj is not None:
         #     props["non_mi_part_reference"] = non_mi_part_ref_obj
@@ -1024,6 +1028,7 @@ class Part(BaseType):
 
     def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
+        # TODO support non_mi_part_reference (issue #95)
         # if self.non_mi_part_reference is not None:
         #     non_mi_field_name = bom_writer._get_qualified_name(self, "NonMIPartReference")
         #     obj[non_mi_field_name] = self.non_mi_part_reference
@@ -1145,7 +1150,7 @@ class BillOfMaterials(BaseType):
     notes: Optional[BoMDetails] = None
     """Any optional notes about this BoM."""
 
-    # TODO fix annotations
+    # TODO support annotations (issue #95)
     # annotations: List[Annotation] = field(default_factory=list)
     # """Any annotations that are associated with objects within the BoM."""
     #

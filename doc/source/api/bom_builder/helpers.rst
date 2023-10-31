@@ -1,6 +1,6 @@
 .. _ref_grantami_bomanalytics_api_bomhandler:
 
-BoM Handler
+BoM handler
 ===========
 
 The BoM handler provides the serialization and deserialization of BillOfMaterial objects to and from XML format, this

@@ -1,7 +1,9 @@
 (?i)ansys
+API
 PyGranta BoM Analytics
 BoM
 BoM Analytics
+Granta MI
 legislations
 RoHS
 [Dd]eserialization

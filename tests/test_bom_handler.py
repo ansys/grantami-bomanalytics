@@ -9,6 +9,8 @@ import pytest
 
 from ansys.grantami.bomanalytics import BoMHandler, bom_types
 
+from .inputs import drill_bom_2301, large_bom_2301, sample_bom_1711, sample_sustainability_bom_2301
+
 
 class _TestableBoMHandler(BoMHandler):
     def __init__(self, default_namespace: str, namespace_mapping: Dict[str, str]):
@@ -59,14 +61,13 @@ class TestRoundTripBoM:
         return output_lines
 
     @pytest.mark.parametrize(
-        "bom_filename",
-        ["drill.xml", "medium-test-bom.xml"],
+        "input_bom",
+        [
+            pytest.param(drill_bom_2301, id="drill"),
+            pytest.param(large_bom_2301, id="large_bom"),
+        ],
     )
-    def test_roundtrip_with_assertions(self, bom_filename: str):
-        bom_path = self._bom_location / bom_filename
-        with open(bom_path, "r", encoding="utf8") as fp:
-            input_bom = fp.read()
-
+    def test_roundtrip_with_assertions(self, input_bom: str):
         bom_handler = _TestableBoMHandler(
             default_namespace=self._default_namespace, namespace_mapping=self._namespace_map
         )
@@ -78,14 +79,14 @@ class TestRoundTripBoM:
         assert len(diff) == 0, "\n".join(diff)
 
     @pytest.mark.parametrize(
-        "bom_filename",
-        ["drill.xml", "medium-test-bom.xml"],
+        "input_bom",
+        [
+            pytest.param(drill_bom_2301, id="drill"),
+            pytest.param(large_bom_2301, id="large_bom"),
+            pytest.param(sample_sustainability_bom_2301, id="sustainability_bom"),
+        ],
     )
-    def test_roundtrip_parsing_succeeds(self, bom_filename: str):
-        bom_path = self._bom_location / bom_filename
-        with open(bom_path, "r", encoding="utf8") as fp:
-            input_bom = fp.read()
-
+    def test_roundtrip_parsing_succeeds(self, input_bom: str):
         bom_handler = BoMHandler()
         deserialized_bom = bom_handler.load_bom_from_text(input_bom)
 
@@ -96,14 +97,14 @@ class TestRoundTripBoM:
 
 
 class TestBoMDeserialization:
-    _bom_location = Path(__file__).parent / "inputs"
-
     @pytest.fixture(scope="class")
     def simple_bom(self):
-        bom_path = self._bom_location / "bom-1711-as-2301.xml"
-        with open(bom_path, "r", encoding="utf8") as fp:
-            input_bom = fp.read()
-
+        # 17/11 and 23/01 are quite similar, and in the context of this particular BoM and test, substituting the
+        # namespace is sufficient to obtain a valid 23/01 BoM.
+        input_bom = sample_bom_1711.replace(
+            "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+        )
         bom_handler = BoMHandler()
         yield bom_handler.load_bom_from_text(input_bom)
 

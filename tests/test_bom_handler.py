@@ -458,3 +458,8 @@ def test_everything_bom(use_phase_utility_kwarg):
 
     rebuilt = bom_handler.load_bom_from_text(text)
     assert rebuilt == bom
+
+
+def test_unexpected_args_raises_error():
+    with pytest.raises(TypeError, match="unexpected keyword argument 'unexpected_kwarg'"):
+        bom_types.Part(part_number="PartNumber", unexpected_kwarg="UnexpectedKwargValue")

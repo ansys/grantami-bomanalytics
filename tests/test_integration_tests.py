@@ -3,7 +3,12 @@ import pytest
 from ansys.grantami.bomanalytics import GrantaMIException, queries
 
 from .common import INDICATORS, LEGISLATIONS
-from .inputs import sample_bom_1711, sample_bom_2301, sample_bom_complex, sample_bom_custom_db
+from .inputs import (
+    sample_bom_1711,
+    sample_bom_custom_db,
+    sample_compliance_bom_1711,
+    sample_sustainability_bom_2301,
+)
 
 pytestmark = pytest.mark.integration
 
@@ -92,7 +97,7 @@ class TestBomQueries:
         if connection_with_db_variants._db_key == "MI_Restricted_Substances_Custom_Tables":
             return sample_bom_custom_db
         else:
-            return sample_bom_complex
+            return sample_compliance_bom_1711
 
     @pytest.fixture
     def bom2301(self):
@@ -239,7 +244,7 @@ class TestSustainabilityBomQueries:
 
     def test_sustainability_summary_query(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
-        query.with_bom(sample_bom_2301)
+        query.with_bom(sample_sustainability_bom_2301)
         response = connection.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
@@ -347,7 +352,7 @@ class TestSustainabilityBomQueries:
 
     def test_sustainability_query(self, connection):
         query = queries.BomSustainabilityQuery()
-        query.with_bom(sample_bom_2301)
+        query.with_bom(sample_sustainability_bom_2301)
         response = connection.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])

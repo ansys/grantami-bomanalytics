@@ -101,6 +101,10 @@ class BaseType(HasNamespace, SupportsCustomFields):
 
 
 class DimensionType(Enum):
+    """
+    Valid values for DimensionType.
+    """
+
     Mass = 0  # If the process affects the bulk of the material or part (e.g. it is a shaping process) then
     # the amount of material affected by the process should be specified. The amount may be
     # specified as a percentage by weight or an absolute value.
@@ -139,6 +143,10 @@ class DimensionType(Enum):
 
 
 class PseudoAttribute(Enum):
+    """
+    Valid values for PseudoAttribute.
+    """
+
     Name = 0
     ShortName = 1
     Subsets = 2
@@ -181,6 +189,10 @@ class PseudoAttribute(Enum):
 
 
 class Category(Enum):
+    """
+    Valid values for Category.
+    """
+
     Null = 0
     Incorporated = 1
     MayBeIncorporated = 2
@@ -434,6 +446,10 @@ class UnittedValue(BaseType):
 
 @dataclass
 class Location(BaseType):
+    """
+    Defines the manufacturing location for the BoM for use in process calculations.
+    """
+
     _props = [("MIRecordReference", "mi_location_reference", "MILocationReference")]
     _simple_values = [
         ("identity", "Identity"),

@@ -65,14 +65,19 @@ table_information = {
     "Coatings": {"layout": "All properties", "subset": "All coatings"},
     "Restricted Substances": {"layout": "Restricted substances", "subset": "All substances"},
     "Legislations and Lists": {"layout": "Legislations", "subset": "All legislations"},
+    "Locations": {"layout": "All locations", "subset": "All locations"},
+    "ProcessUniverse": {"layout": "All processes", "subset": "All processes"},
+    "Transport": {"layout": "All transport", "subset": "All transport"},
 }
 
 # Generally static unless the BoM Analytics Servers logic has changed, or these attributes have been added to the layout
 # Both of these scenarios are unlikely
+# dict[Table name: list[Attribute name]]
 extra_attributes = {"Coatings": ["Coating Code"], "Legislations and Lists": ["Legislation ID", "Short title"]}
 
-# Will generally be different for each release, and will likely be empty.
-renamed_attributes = {}
+# Will generally be different for each release, and may be empty.
+# dict[Table name: dict[Current attribute name: New attribute name]]
+renamed_attributes = {"Products and parts": {"General comments": "Comments"}}
 
 info = {}
 logger.info(f"Reading records and attributes from database '{DB_KEY}'")
@@ -97,7 +102,7 @@ for table_name, table_details in table_information.items():
             database_key=DB_KEY, table_guid=table_info.guid, layout_guid=layout_item.guid, show_full_detail=True
         )
     )
-    layout_info = [section.to_dict() for section in sections_response.layout_sections]
+    layout_info = [section.to_dict() for section in sections_response.layout_sections if section.section_items]
     if table_name in extra_attributes:
         # Add extra attribute information to a section in the layout
         table_attributes = attributes_api.v1alpha_databases_database_key_tables_table_guid_attributes_get(
@@ -134,7 +139,7 @@ for table_name, table_details in table_information.items():
             for item in section["section_items"]:
                 if item["name"] in renamed_attributes_for_table:
                     new_name = renamed_attributes_for_table[item["name"]]
-                    logger.info(f"------Renaming attribute '{item['name']}' to '{new_name}")
+                    logger.info(f"------Renaming attribute '{item['name']}' to '{new_name}'")
                     item["name"] = renamed_attributes_for_table[item["name"]]
                 if "tabular_columns" in item and item["tabular_columns"] is not None:
                     for column in item["tabular_columns"]:

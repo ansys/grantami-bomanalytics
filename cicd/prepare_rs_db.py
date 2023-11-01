@@ -153,7 +153,7 @@ class TableLayoutApplier(ServerApiClient):
     def _process_attribute(self, layout_item: Mapping):
         attribute_name = layout_item["name"]
         logger.info(f"--Attribute - '{attribute_name}'")
-        meta_names = layout_item["meta_attributes"]
+        meta_names = [i["name"] for i in layout_item["meta_attributes"]]
         attribute_guid = self._attribute_name_map[attribute_name]
 
         new_section_item = models.GrantaServerApiSchemaLayoutsNewLayoutAttributeItem(attribute_guid=attribute_guid)

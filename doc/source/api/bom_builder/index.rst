@@ -1,6 +1,6 @@
 .. _ref_grantami_bomanalytics_bom_helpers_index:
 
-BoM Helpers
+BoM helpers
 ==============
 
 This section provides an introduction to the BoM Helpers. These represent a BoM (bill of materials) in Ansys Granta

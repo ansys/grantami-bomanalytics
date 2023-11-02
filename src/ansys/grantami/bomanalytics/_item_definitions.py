@@ -36,7 +36,12 @@ class IdentifierMixin(ABC):
 
     @property
     def identity(self) -> Optional[str]:
-        """Item identity."""
+        """Item unique identifier.
+
+        This property is only populated on BoM queries results and is equal to the ``id`` attribute of the
+        corresponding input BoM item. If no ''id'' has been defined on the BoM item, a unique auto-generated value is
+        assigned during analysis.
+        """
         return self._identity
 
 
@@ -48,12 +53,20 @@ class CommonIdentifiersMixin(IdentifierMixin, ABC):
 
     @property
     def external_identity(self) -> Optional[str]:
-        """Item external identity."""
+        """Item external identity.
+
+        This property is only populated on BoM queries results and is equal to the ``<ExternalIdentity>`` element of
+        the corresponding input BoM item.
+        """
         return self._external_identity
 
     @property
     def name(self) -> Optional[str]:
-        """Item name."""
+        """Item name.
+
+        This property is only populated on BoM queries results and is equal to the ``<Name>`` element of
+        the corresponding input BoM item.
+        """
         return self._name
 
 
@@ -154,7 +167,11 @@ class PartReferenceWithIdentifiers(CommonIdentifiersMixin, PartReference):
 
     @property
     def input_part_number(self) -> Optional[str]:
-        """Input part number."""
+        """Input part number.
+
+        This property is only populated on BoM queries results and is equal to the ``<PartNumber>`` element of
+        the corresponding input BoM item.
+        """
         return self._input_part_number
 
 

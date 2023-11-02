@@ -1291,7 +1291,7 @@ class CoatingWithComplianceResult(
 
 
 class ValueWithUnit:
-    """Describes a value obtained from the API"""
+    """Describes a value obtained from the API."""
 
     def __init__(
         self,

@@ -1,6 +1,6 @@
 .. _ref_grantami_bomanalytics_bom_api:
 
-BoM Object Model
+BoM object model
 ================
 
 .. _ref_grantami_bomanalytics_api_billofmaterials:

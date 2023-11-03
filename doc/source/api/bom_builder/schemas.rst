@@ -1,6 +1,6 @@
 .. _ref_grantami_bomanalytics_api_bomschemas:
 
-BoM Schemas
+BoM schemas
 ===========
 
 .. automodule:: ansys.grantami.bomanalytics.schemas

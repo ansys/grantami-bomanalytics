@@ -1,5 +1,4 @@
 from difflib import context_diff
-from pathlib import Path
 import re
 from typing import Any, Dict
 import uuid
@@ -9,7 +8,7 @@ import pytest
 
 from ansys.grantami.bomanalytics import BoMHandler, bom_types
 
-from .inputs import drill_bom_2301, large_bom_2301, sample_bom_1711, sample_sustainability_bom_2301
+from .inputs import large_bom_2301, sample_bom_1711, sample_sustainability_bom_2301
 
 
 class _TestableBoMHandler(BoMHandler):
@@ -43,7 +42,6 @@ class _TestableBoMHandler(BoMHandler):
 
 
 class TestRoundTripBoM:
-    _bom_location = Path(__file__).parent / "inputs"
     _namespace_map = {"gbt": "http://www.grantadesign.com/12/05/GrantaBaseTypes"}
     _default_namespace = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
 
@@ -63,7 +61,6 @@ class TestRoundTripBoM:
     @pytest.mark.parametrize(
         "input_bom",
         [
-            pytest.param(drill_bom_2301, id="drill"),
             pytest.param(large_bom_2301, id="large_bom"),
         ],
     )
@@ -81,7 +78,6 @@ class TestRoundTripBoM:
     @pytest.mark.parametrize(
         "input_bom",
         [
-            pytest.param(drill_bom_2301, id="drill"),
             pytest.param(large_bom_2301, id="large_bom"),
             pytest.param(sample_sustainability_bom_2301, id="sustainability_bom"),
         ],

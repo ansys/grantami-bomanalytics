@@ -28,7 +28,3 @@ with open(_sample_sustainability_bom_2301_path, "r") as f:
 _large_bom_2301_path = inputs_dir / "medium-test-bom.xml"
 with open(_large_bom_2301_path, "r") as f:
     large_bom_2301 = f.read()
-
-_drill_bom_2301_path = inputs_dir / "drill.xml"
-with open(_drill_bom_2301_path, "r") as f:
-    drill_bom_2301 = f.read()

@@ -1372,9 +1372,7 @@ class MassResultMixin:
     ----------
     reported_mass:
         Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
-        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
-        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
-        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+        the item specified in the BoM, taking into account the quantities of parent assemblies.
     **kwargs
         Contains arguments handled by other mixins or base classes, e.g. ``reference_type`` and ``reference_value``
         for ``RecordDefinition``-based objects.
@@ -1392,9 +1390,7 @@ class MassResultMixin:
     def reported_mass(self) -> ValueWithUnit:
         """
         Indicates a mass value that is calculated by the analysis, that represents the total mass for the quantity of
-        the item specified in the BoM, taking into account the quantities of parent assemblies. For example, for a part
-        in the BoM, the Reported mass is for the number of parts specified in the Quantity column, multiplied by the
-        Quantity of its parent assembly, and similarly by the Quantity of each of its ancestors in the BoM hierarchy.
+        the item specified in the BoM, taking into account the quantities of parent assemblies.
         """
         return self._reported_mass
 
@@ -1784,7 +1780,9 @@ class TransportSummaryResult(SustainabilitySummaryBase):
 
 class ContributingComponentResult:
     """
-    Identifies a Part as one the largest contributors to the environmental footprint of a material.
+    Describes a Part item of the BoM.
+
+    Listed as :attr:`~.MaterialSummaryResult.contributors` of a :class:`~.MaterialSummaryResult`.
     """
 
     def __init__(
@@ -1874,8 +1872,7 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
     @property
     def mass_before_processing(self) -> ValueWithUnit:
         """
-        Original mass of material prior to any subtractive processing (i.e. removal of material). Environmental
-        footprint for primary production of material and/or primary processing is calculated based on this mass.
+        Original mass of material prior to any subtractive processing.
         """
         return self._mass_before_processing
 
@@ -1886,9 +1883,7 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
 
     @property
     def contributors(self) -> List[ContributingComponentResult]:
-        """Components containing the most of this material."""
-        # TODO document aggregation method?
-        # TODO translate docstring to actual English
+        """Top three parts of the BoM, which are made of this material (by :attr:`.mass_before_processing`)."""
         return self._contributors
 
     def __repr__(self) -> str:

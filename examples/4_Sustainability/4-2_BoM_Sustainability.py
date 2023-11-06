@@ -127,8 +127,8 @@ result
 # ### The `BomSustainabilityQueryResult.transport` property
 #
 # The ``BomSustainabilityQueryResult.transport`` property contains the transport stages in the input
-# BoM, defined as a list of ``TrasportWithSustainabilityResult`` objects. Transport stages contain no
-# BoM properties. The environmental footprint of a traansport stage is just the environmental
+# BoM, defined as a list of ``TransportWithSustainabilityResult`` objects. Transport stages contain no
+# BoM properties. The environmental footprint of a transport stage is just the environmental
 # footprint associated with the transport stage itself.
 
 # ## Process the ``BomSustainabilityQueryResult`` object

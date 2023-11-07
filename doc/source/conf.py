@@ -72,7 +72,6 @@ numpydoc_show_class_members = False
 numpydoc_xref_param_type = True
 numpydoc_xref_ignore = {
     "optional",
-    # TODO Are these classes necessary? They add a lot of confusion
     "_FinalAttributeReferenceBuilder",
     "_FinalRecordReferenceBuilder",
     "_AttributeReferenceByNameBuilder",

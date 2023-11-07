@@ -42,6 +42,14 @@ extensions = [
 
 # sphinx
 add_module_names = False
+nitpick_ignore = [
+    # Ignore "Query Result", the type of the Returns section of client.run()
+    ("py:obj", "Query"),
+    ("py:obj", "Result"),
+    # Ignore `available_flags` on indicator classes, as sphinx seems to struggle with a type as a class attribute. The
+    # link is generated correctly, but a warning is emitted.
+    ('py:obj', 'available_flags'),
+]
 
 # sphinx.ext.autodoc
 autodoc_typehints = "description"
@@ -62,6 +70,12 @@ intersphinx_mapping = {
 # numpydoc configuration
 numpydoc_show_class_members = False
 numpydoc_xref_param_type = True
+numpydoc_xref_ignore = {
+    "optional",
+    "_FinalAttributeReferenceBuilder",
+    "_FinalRecordReferenceBuilder",
+    "_AttributeReferenceByNameBuilder",
+}
 
 # Consider enabling numpydoc validation. See:
 # https://numpydoc.readthedocs.io/en/latest/validation.html#

@@ -115,20 +115,21 @@ result
 # - ``.processes``: the primary and secondary processes applied to the mass of material, defined as a
 # list of ``ProcessWithSustainabilityResult`` objects.
 #
-# The environmental footprint of a material includes the environmental footprint associated with the
-# mass of material used.
+# The environmental footprint of a material is calculated from database data and the mass of material used.
+# Even though processes appear as children of materials in the hierarchy, their environmental footprint is
+# not summed up in the parent material's footprint, as opposed to the environmental footprint of parts.
 
 # #### **Processes**
 #
-# Processes are represented by ``ProcessWithSustainabilityResult`` objects. Processes contain no BoM
-# properties. The environmental footprint of a process is just the environmental footprint associated
-# with the processes itself.
+# Processes are represented by ``ProcessWithSustainabilityResult`` objects. Processes are child items
+# in the BoM and have no children themselves. The environmental footprint of a process is calculated
+# from database data and masses defined in the BoM.
 
 # ### The `BomSustainabilityQueryResult.transport` property
 #
 # The ``BomSustainabilityQueryResult.transport`` property contains the transport stages in the input
-# BoM, defined as a list of ``TrasportWithSustainabilityResult`` objects. Transport stages contain no
-# BoM properties. The environmental footprint of a traansport stage is just the environmental
+# BoM, defined as a list of ``TransportWithSustainabilityResult`` objects. Transport stages contain no
+# BoM properties. The environmental footprint of a transport stage is just the environmental
 # footprint associated with the transport stage itself.
 
 # ## Process the ``BomSustainabilityQueryResult`` object

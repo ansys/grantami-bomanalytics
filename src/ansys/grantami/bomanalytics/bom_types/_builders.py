@@ -123,7 +123,7 @@ class AttributeReferenceBuilder:
 
         Parameters
         ----------
-        pseudo_attribute : PseudoAttribute
+        pseudo_attribute : :class:`~._bom_types.PseudoAttribute`
 
         Returns
         -------
@@ -244,7 +244,7 @@ class RecordReferenceBuilder:
         ----------
         lookup_value : str
             The value identifying the record.
-        lookup_attribute_reference : MIAttributeReference
+        lookup_attribute_reference : :class:`.MIAttributeReference`
             The short-text attribute or compatible pseudo-attribute to use for the lookup.
 
         Returns

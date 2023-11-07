@@ -39,7 +39,7 @@ class IdentifierMixin(ABC):
         """Item unique identifier.
 
         This property is only populated on BoM queries results and is equal to the ``id`` attribute of the
-        corresponding input BoM item. If no ''id'' has been defined on the BoM item, a unique auto-generated value is
+        corresponding input BoM item. If no ``id`` has been defined on the BoM item, a unique auto-generated value is
         assigned during analysis.
         """
         return self._identity
@@ -147,7 +147,7 @@ class RecordDefinition(RecordReference):
 
 
 class PartReference(RecordReference):
-    """Represents a reference to a part record from the concrete :class:`RecordReference` subclass.
+    """Represents a reference to a Part record.
 
     This class extends the base class to also support part numbers.
     """
@@ -390,7 +390,9 @@ class ProcessReferenceWithIdentifiers(CommonIdentifiersMixin, ProcessReference):
 
 
 class TransportReference(RecordReference):
-    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
+    """Represents a reference to a Transport record."""
+
+    # Extends RecordReference without changes, to re-define the class name, because it appears in the repr
 
 
 class TransportReferenceWithIdentifier(IdentifierMixin, TransportReference):

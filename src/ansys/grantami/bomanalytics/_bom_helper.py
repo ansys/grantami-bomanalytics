@@ -31,12 +31,12 @@ class BoMHandler:
 
         Parameters
         ----------
-        file_path: Path
+        file_path : :class:`~pathlib.Path`
             Location of the BoM XML file.
 
         Returns
         -------
-        BillOfMaterials
+        :class:`~._bom_types.BillOfMaterials`
         """
         with open(file_path, "r", encoding="utf8") as fp:
             obj, errors = self._schema.decode(fp, validation="lax")
@@ -55,12 +55,12 @@ class BoMHandler:
 
         Parameters
         ----------
-        bom_text: str
+        bom_text : str
             String object containing an XML representation of a BoM.
 
         Returns
         -------
-        BillOfMaterials
+        :class:`~._bom_types.BillOfMaterials`
         """
         obj, errors = self._schema.decode(bom_text, validation="lax", keep_empty=True)
 
@@ -78,7 +78,7 @@ class BoMHandler:
 
         Parameters
         ----------
-        bom: BillOfMaterials
+        bom : :class:`~._bom_types.BillOfMaterials`
 
         Returns
         -------

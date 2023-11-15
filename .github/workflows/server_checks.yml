@@ -84,7 +84,9 @@ jobs:
 
       - name: Install kerberos headers (ubuntu only)
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: sudo apt install libkrb5-dev
+        run: |
+          sudo apt-get update
+          sudo apt install libkrb5-dev
 
       - name: Install dependencies
         run: pip install poetry 'tox<4' --disable-pip-version-check

@@ -150,8 +150,9 @@ class TestMissingDatabase:
         )
         with pytest.raises(
             GrantaMIException,
-            match="DatabaseException encountered: Database with key 'MI_Missing_Database' does not exist.",
-        ) as e:
+            match="Legislation ID 'SINList' does not correspond to a legislation record in database "
+            "'MI_Missing_Database'",
+        ):
             connection_missing_db.run(query)
 
 

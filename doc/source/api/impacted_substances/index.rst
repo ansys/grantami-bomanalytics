@@ -8,9 +8,13 @@ This section gives an overview of the API for impacted substances. The
 :ref:`ref_grantami_bomanalytics_api_impactedsubstances_specifications`, and
 :ref:`ref_grantami_bomanalytics_api_impactedsubstances_parts` queries accept a list of references to records in a
 Granta MI database and determine the impacted substances that are directly or indirectly associated with these records via
-associated records in the Granta MI database. The :ref:`ref_grantami_bomanalytics_api_impactedsubstances_bom` query is
+associated records in the Granta MI database.
+
+The :ref:`ref_grantami_bomanalytics_api_impactedsubstances_bom` query is
 similar, but instead of records it accepts a Bill of Materials in XML format, which in turn includes references to
-Granta MI records.
+Granta MI records. As opposed to record based queries, the BoM impacted substances analysis is only performed on items
+directly defined in the input BoM (even for BoM items defined as MI record references, associated records in the MI
+database are not taken into account).
 
 In all cases, impacted substances are determined by a list of legislations, identified by legislation name.
 

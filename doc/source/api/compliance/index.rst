@@ -15,7 +15,9 @@ legislations in an amount that exceeds the threshold, the record is not complian
 information about possible results, see the definitions of the indicators.
 
 The :ref:`ref_grantami_bomanalytics_api_compliance_bom` query accepts a BoM (bill of materials) in XML format and
-returns the compliance status of the BoM based on the Granta MI records referenced by it.
+returns the compliance status of the BoM based on the Granta MI records referenced by it. As opposed to record based
+queries, which expand the request input from linked items in the database,the BoM compliance analysis only considers
+items defined in the input BoM and does traverse database links to find linked items.
 
 In general, the result of each query is a recursive BoM (or multi-level BoM) that shows the compliance status and impacted
 substances at each level. If you are looking for a simple determination of the substances indirectly or directly

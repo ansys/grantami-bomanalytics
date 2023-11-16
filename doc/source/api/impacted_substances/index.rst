@@ -16,7 +16,7 @@ includes references to Granta MI records. As opposed to record-based queries, th
 considers items explicitly defined in the input BoM. It does not follow links to other BoM items as in the
 record-based queries described above.
 
-In all cases, impacted substances are determined by a list of legislations, identified by legislation ID.
+In both cases, impacted substances are determined by a list of legislations, identified by legislation ID.
 
 These queries do not take the quantity of the substance in the parent item into consideration. If the quantity is
 important, for example to determine compliance against a legislation that imposes a certain threshold, you should

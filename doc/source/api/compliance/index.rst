@@ -7,17 +7,20 @@ This section provides an overview of the API for compliance. The
 :ref:`ref_grantami_bomanalytics_api_compliance_substances`,
 :ref:`ref_grantami_bomanalytics_api_compliance_materials`,
 :ref:`ref_grantami_bomanalytics_api_compliance_specifications`, and
-:ref:`ref_grantami_bomanalytics_api_compliance_parts` queries
-can be used to determine the compliance of records in a Granta MI database based on a number of
-:ref:`ref_grantami_bomanalytics_api_compliance_indicators`. An indicator is a collection of one or more legislations and
-a threshold. If a certain record directly or indirectly contains substances impacted by one of the specified
-legislations in an amount that exceeds the threshold, the record is not compliant with that indicator. For more
-information about possible results, see the definitions of the indicators.
+:ref:`ref_grantami_bomanalytics_api_compliance_parts` queries (collectively referred to as record-based compliance
+queries) can be used to determine the compliance of records in a Granta MI database. These queries will also consider
+any additional associated BoM items stored in Granta MI. For example, if the specified part record contains links to
+other parts and specifications, these will be included in the analysis.
+
+Compliance is determined based on a number of :ref:`ref_grantami_bomanalytics_api_compliance_indicators`. An indicator
+is a collection of one or more legislations and a threshold. If a certain record directly or indirectly contains
+substances impacted by one of the specified legislations in an amount that exceeds the threshold, the record is not
+compliant with that indicator. For more information about possible results, see the definitions of the indicators.
 
 The :ref:`ref_grantami_bomanalytics_api_compliance_bom` query accepts a BoM (bill of materials) in XML format and
-returns the compliance status of the BoM based on the Granta MI records referenced by it. As opposed to record based
-queries, which expand the request input from linked items in the database,the BoM compliance analysis only considers
-items defined in the input BoM and does traverse database links to find linked items.
+returns the compliance status of the BoM based on the BoM's contents. As opposed to record-based queries, the BoM
+compliance analysis only considers items explicitly defined in the input BoM. It does not follow links to other BoM
+items as in the record-based queries described above.
 
 In general, the result of each query is a recursive BoM (or multi-level BoM) that shows the compliance status and impacted
 substances at each level. If you are looking for a simple determination of the substances indirectly or directly

@@ -9,8 +9,8 @@ This section provides an overview of the API for sustainability. The
 can be used to determine the environmental performance of a BoM (bill of materials) in Ansys Granta MI 2301 XML BoM
 format.
 
-BoM analysis is only performed on items directly defined in the input BoM. Items defined as MI record references might
-have associated items defined in the database, but they are not taken into consideration in the analysis.
+The BoM analysis only considers items explicitly defined in the input BoM. It does not follow links to other BoM items
+as in the record-based queries available for Impacted Substances and Compliance analysis.
 
 For more information about BoM item types relevant for sustainability analysis, refer to the
 :MI_docs:`BoM item types for Sustainability <rs_and_sustainability/bom_types_sustainability.html>` section of the online

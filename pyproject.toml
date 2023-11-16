@@ -29,6 +29,7 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
 packages = [
   { include = "ansys", from = "src" }
@@ -103,6 +104,7 @@ python =
     3.9: py39
     3.10: py310
     3.11: py311
+    3.12: py312
 
 [testenv]
 whitelist_externals = poetry

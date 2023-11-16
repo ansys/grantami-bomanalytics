@@ -860,7 +860,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
     @property
     def material_details(self) -> List[MaterialSummaryResult]:
         """
-        Summary information for aggregated materials.
+        Summary information for materials, aggregated by ``identity``.
 
         Relative and absolute contributions for materials whose relative contributions exceed 2% of the total impact
         for materials (by :attr:`~.MaterialSummaryResult.embodied_energy_percentage` or
@@ -879,7 +879,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
     @property
     def primary_processes_details(self) -> List[ProcessSummaryResult]:
         """
-        Summary information for primary processes, aggregated by process and the material it is applied to.
+        Summary information for primary processes, aggregated by ``process_name`` and ``material_identity``.
 
         The returned list includes all primary processes whose relative contributions exceed 5% of the total impact of
         all primary processes (by :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
@@ -896,7 +896,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
     @property
     def secondary_processes_details(self) -> List[ProcessSummaryResult]:
         """
-        Summary information for secondary processes, aggregated by process and the material it is applied to.
+        Summary information for secondary processes, aggregated by ``process_name`` and ``material_identity``.
 
         The returned list includes all secondary processes whose relative contributions exceed 5% of the total impact of
         all secondary processes (by :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
@@ -913,8 +913,8 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
     @property
     def joining_and_finishing_processes_details(self) -> List[ProcessSummaryResult]:
         """
-        Summary information for joining and finishing processes, aggregated by process and the material it is applied
-        to.
+        Summary information for joining and finishing processes, , aggregated by ``process_name`` and
+        ``material_identity``.
 
         The returned list includes all joining and finishing processes whose relative contributions exceed 5% of the
         total impact of all joining and finishing processes (by

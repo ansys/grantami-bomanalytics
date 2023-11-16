@@ -36,11 +36,11 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.8.0"
+python = "^3.9.0"
 
 # Packages for core library
 ansys-openapi-common = "< 2.0.0"
-ansys-grantami-bomanalytics-openapi = { git = 'https://github.com/ansys/grantami-bomanalytics-openapi-private.git', subdirectory = 'ansys-grantami-bomanalytics-openapi', rev = '16ca550' }
+ansys-grantami-bomanalytics-openapi = { git = 'https://github.com/ansys/grantami-bomanalytics-openapi-private.git', subdirectory = 'ansys-grantami-bomanalytics-openapi', rev = '0b43560' }
 xmlschema = "^2.4.0"
 
 # Packages for the examples extra

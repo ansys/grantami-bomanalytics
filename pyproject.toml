@@ -41,13 +41,16 @@ python = "^3.8.0"
 # Packages for core library
 ansys-openapi-common = "< 2.0.0"
 ansys-grantami-bomanalytics-openapi = { git = 'https://github.com/ansys/grantami-bomanalytics-openapi-private.git', subdirectory = 'ansys-grantami-bomanalytics-openapi', rev = '16ca550' }
+xmlschema = "^2.4.0"
 
 # Packages for the examples extra
 jupyterlab = { version = ">=3,<5", optional = true }
 lxml = { version = "^4", optional = true }
 pandas = { version = "^2.0", optional = true }
 tabulate = { version = "^0.9", optional = true }
-xmlschema = "^2.4.0"
+plotly = { version = "^5.17.0", optional = true }
+ipywidgets = { version = "^8.1.1", optional = true }
+
 
 [tool.poetry.group.dev.dependencies]
 # Common packages for test, examples, and docs

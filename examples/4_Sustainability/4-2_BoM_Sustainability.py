@@ -49,7 +49,6 @@ query = queries.BomSustainabilityQuery().with_bom(bom)
 
 # +
 result = cxn.run(query)
-
 result
 # -
 

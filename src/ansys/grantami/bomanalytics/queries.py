@@ -1783,6 +1783,9 @@ class _SustainabilityMixin(_ApiMixin):
     def _validate_parameters(self) -> None:
         pass
 
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}: {self._data}>"
+
 
 class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
     """Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format.

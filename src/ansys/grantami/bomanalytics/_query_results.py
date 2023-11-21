@@ -772,6 +772,9 @@ class BomSustainabilityQueryResult(ResultBaseClass):
         """
         return self._transports
 
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}>"
+
 
 @QueryResultFactory.register(models.GetSustainabilitySummaryForBom2301Response)
 class BomSustainabilitySummaryQueryResult(ResultBaseClass):
@@ -928,3 +931,6 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         joining and finishing processes.
         """
         return self._joining_and_finishing_processes_details
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}>"

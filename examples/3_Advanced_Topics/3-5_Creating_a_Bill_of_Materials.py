@@ -317,10 +317,11 @@ for item in source_joining_processes:
 # contains the entire structure of parts, materials, and process objects. The cell below extracts
 # this component from the dictionary of all components, deletes the dictionary, and prints
 # an arbitrary property of the root component to illustrate this structure.
+
 root_component = components[source_product["part_identifier"]]
 del components
 print(root_component.components[0].components[1].materials[0].processes[1].identity)
-#
+
 # The final step is to create a ``BillOfMaterials`` object and add the root component and transport
 # stages. Note that the transport stages are added to the ``BillOfMaterials`` object itself, not to
 # a specific component.

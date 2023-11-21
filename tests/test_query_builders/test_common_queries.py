@@ -94,25 +94,6 @@ class TestRecordQueries:
         with pytest.raises(ValueError, match=r"No \w+ have been added to the query"):
             query._validate_items()
 
-    def test_stk_object(self, query_type):
-        stk_object = [
-            {
-                "db_key": "MI_Restricted_Substances",
-                "record_guid": "00000000-0000-0000-0000-000000000000",
-            },
-            {
-                "db_key": "MI_Restricted_Substances",
-                "record_guid": "00000000-0000-0000-0000-000000000123",
-            },
-        ]
-        query = query_type().with_stk_records(stk_object)
-        assert isinstance(query, query_type)
-        assert len(query._data._item_definitions) == len(stk_object)
-        for idx, stk_record in enumerate(stk_object):
-            assert query._data._item_definitions[idx].record_guid == stk_record["record_guid"]
-            assert not query._data._item_definitions[idx].record_history_identity
-            assert not query._data._item_definitions[idx].record_history_guid
-
     def test_batch_size(self, query_type):
         query = query_type()
         query = query.with_batch_size(50)

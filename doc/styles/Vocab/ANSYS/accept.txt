@@ -3,6 +3,7 @@ API
 Analytics
 BoM
 [Dd]eserialization
+deserialize
 Granta MI
 legislations
 PyGranta BoM Analytics

@@ -126,10 +126,10 @@ result
 # ## View query results
 
 # In the case of ``MaterialImpactedSubstancesQuery``, the results object contains the list of substances present in
-# the material that are impacted by the specified legislations.
+# the material that are impacted by the specified legislations. Display the five first substances in the list.
 
 # + tags=[]
-result.impacted_substances
+result.impacted_substances[:5]
 # -
 
 # ## View logged messages

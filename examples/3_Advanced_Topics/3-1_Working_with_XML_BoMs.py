@@ -112,8 +112,8 @@ rows = [
     [substance.cas_number, substance.max_percentage_amount_in_material]
     for substance in impacted_substances_result.impacted_substances
 ]
-print(f'Substances impacted by "{SIN_LIST}" in a BoM (10/{len(rows)})')
-print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
+print(f'Substances impacted by "{SIN_LIST}" in a BoM (5/{len(rows)})')
+print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
 # ## Running a compliance XML-based query

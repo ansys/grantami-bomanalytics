@@ -744,26 +744,34 @@ class BomSustainabilityQueryResult(ResultBaseClass):
     ) -> None:
         super().__init__(messages)
         self._response = results[0]
+        if not self._response.parts:
+            raise ValueError(
+                "Found no part in BoM sustainability response. Ensure the request BoM defines a single root part."
+            )
         if len(self._response.parts) > 1:
             warnings.warn(
                 f"BomSustainabilityQuery only supports a single root part (found {len(self._response.parts)}). "
-                f"Additional root parts do not include sustainability results."
+                f"Additional root parts do not include sustainability results and are not exposed in the query result"
+                f" properties."
             )
-        self._parts: List[PartWithSustainabilityResult] = [
-            ItemResultFactory.create_part_with_sustainability(result_with_sustainability=part)
-            for part in self._response.parts
-        ]
+        # Exposing only a single root part:
+        # API V1 only processes the first root part but still returns part empty part objects for extra root parts.
+        # API V2 will only return a single root part.
+        self._part: PartWithSustainabilityResult = ItemResultFactory.create_part_with_sustainability(
+            result_with_sustainability=self._response.parts[0]
+        )
+
         self._transports: List[TransportWithSustainabilityResult] = [
             ItemResultFactory.create_transport_with_sustainability(result_with_sustainability=transport)
             for transport in self._response.transport_stages
         ]
 
     @property
-    def parts(self) -> List[PartWithSustainabilityResult]:
-        """Sustainability information for each root part included in the BoM specified in the original
+    def part(self) -> PartWithSustainabilityResult:
+        """Sustainability information for the root part included in the BoM specified in the original
         query.
         """
-        return self._parts
+        return self._part
 
     @property
     def transport_stages(self) -> List[TransportWithSustainabilityResult]:

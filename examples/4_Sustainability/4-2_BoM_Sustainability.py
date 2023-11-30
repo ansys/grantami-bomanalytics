@@ -147,7 +147,7 @@ result
 # +
 def traverse_bom(query_response):
     # Identify top-level assembly, which includes transport stages contributions.
-    top_level_assembly = query_response.parts[0]
+    top_level_assembly = query_response.part
     top_level_assembly_id = top_level_assembly.identity
     yield to_dict(top_level_assembly, "")
     for part in top_level_assembly.parts:

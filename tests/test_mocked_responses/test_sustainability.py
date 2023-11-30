@@ -32,8 +32,7 @@ class TestBomSustainability(BaseMockTester):
         assert len(response.messages) == 1
 
         # Top-level
-        assert len(response.parts) == 1
-        part_0 = response.parts[0]
+        part_0 = response.part
         assert len(part_0.materials) == 0
         assert len(part_0.processes) == 0
 

@@ -237,7 +237,6 @@ class TestSpecLinkDepth:
 DEFAULT_TOLERANCE = 0.01
 
 
-# TODO test with custom db?
 class TestSustainabilityBomQueries:
     def _check_percentages_add_up(self, items):
         assert sum(item.embodied_energy_percentage for item in items) == pytest.approx(100)
@@ -358,11 +357,8 @@ class TestSustainabilityBomQueries:
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
 
-        # Check hierarchy
-        assert len(response.parts) == 1
-
         # Product
-        product = response.parts[0]
+        product = response.part
         assert not product.processes
         assert not product.materials
 

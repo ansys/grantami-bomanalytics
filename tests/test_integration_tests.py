@@ -326,6 +326,7 @@ class TestSustainabilityBomQueries:
         # Spot check one J&F process
         assert jf_process.process_name == "Joining and finishing, Welding, electric"
         assert jf_process.material_identity is None
+        assert jf_process.material_reference is None
         assert jf_process.climate_change.value == pytest.approx(0.23, DEFAULT_TOLERANCE)
         assert jf_process.embodied_energy.value == pytest.approx(3.21, DEFAULT_TOLERANCE)
         assert jf_process.climate_change_percentage == 100.0

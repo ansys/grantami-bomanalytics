@@ -88,7 +88,7 @@ result
 # - ``.processes``: the joining and finishing processes applied to the assembly, defined as
 # ``ProcessWithSustainabilityResult`` objects.
 #
-# The environmental footprint of an assembly includes the sum of the environmental footprints of all
+# The environmental impact of an assembly includes the sum of the environmental impacts of all
 # sub-parts and processes applied to the assembly.
 #
 # #### **Leaf parts**
@@ -103,7 +103,7 @@ result
 # - ``.processes``: the joining and finishing processes applied to the part, defined as a list of
 # ``ProcessWithSustainabilityResult`` objects.
 #
-# The environmental footprint of a leaf part includes the sum of the environmental footprints
+# The environmental impact of a leaf part includes the sum of the environmental impacts
 # associated with the quantity of materials used in the part (see below for details), processes
 # applied to the part directly, and processes applied to materials in the part.
 
@@ -114,22 +114,22 @@ result
 # - ``.processes``: the primary and secondary processes applied to the mass of material, defined as a
 # list of ``ProcessWithSustainabilityResult`` objects.
 #
-# The environmental footprint of a material is calculated from database data and the mass of material used.
-# Even though processes appear as children of materials in the hierarchy, their environmental footprint is
-# not summed up in the parent material's footprint, as opposed to the environmental footprint of parts.
+# The environmental impact of a material is calculated from database data and the mass of material used.
+# Even though processes appear as children of materials in the hierarchy, their environmental impact is
+# not summed up in the parent material's impact, as opposed to the environmental impact of parts.
 
 # #### **Processes**
 #
 # Processes are represented by ``ProcessWithSustainabilityResult`` objects. Processes are child items
-# in the BoM and have no children themselves. The environmental footprint of a process is calculated
+# in the BoM and have no children themselves. The environmental impact of a process is calculated
 # from database data and masses defined in the BoM.
 
 # ### The `BomSustainabilityQueryResult.transport` property
 #
 # The ``BomSustainabilityQueryResult.transport`` property contains the transport stages in the input
 # BoM, defined as a list of ``TransportWithSustainabilityResult`` objects. Transport stages contain no
-# BoM properties. The environmental footprint of a transport stage is just the environmental
-# footprint associated with the transport stage itself.
+# BoM properties. The environmental impact of a transport stage is just the environmental
+# impact associated with the transport stage itself.
 
 # ## Process the ``BomSustainabilityQueryResult`` object
 #
@@ -219,7 +219,7 @@ df.head()
 # * The segments are represented hierarchically. The BoM is at the center, and items further down
 # the hierarchy are further out in the plot.
 # * Item type is represented by color.
-# * The size of the segment represents the environmental footprint of that item.
+# * The size of the segment represents the environmental impact of that item.
 
 # +
 import plotly.express as px

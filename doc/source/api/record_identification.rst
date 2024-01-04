@@ -3,16 +3,20 @@
 Record identification
 =====================
 
-
-BoM queries
+Query types
 -----------
 
-Returned input BoM items
-~~~~~~~~~~~~~~~~~~~~~~~~~
+.. include:: ../reusable_text/query_types.rst
 
-BoM queries accept a BoM as input to the request. According to the Ansys Granta MI XML BoM formats,
-record references can be defined in many ways. As a general rule, items in the query result which correspond to an
-item provided in the input BoM, are described by the same identifier.
+BoM-based queries
+-----------------
+
+Input BoM items included in the response
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+BoM-based queries accept a BoM as input to the request. According to the Ansys Granta MI XML BoM
+formats, record references can be defined in many ways. As a general rule, items in the query result
+which correspond to an item provided in the input BoM, are described by the same identifier.
 
 For example, a ``MIMaterialReference`` in an input BoM using a ``recordGUID``
 
@@ -47,8 +51,8 @@ If the record reference in an input BoM is defined via a ``lookupValue``:
         </lookupValue>
     </MIPartReference>
 
-then the objects in the response are identified by ``record_guid``, unless the attribute used for the lookup is a
-special identifier such as:
+then the objects in the response are identified by ``record_guid``, unless the attribute used for
+the lookup is a special identifier such as:
 
 - ``part_number``
 - ``material_id``
@@ -58,37 +62,32 @@ special identifier such as:
 in which case the corresponding property is populated.
 
 
-Expanded BoM items
-~~~~~~~~~~~~~~~~~~
-
-Expanded items are items that were not included in the input BoM, but were expanded during the analysis from other
-items included in the input BoM. For example, specifications in a
-:class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery` are expanded, and the linked specifications are
-included in the analysis.
-
-Expanded items are identified by the ``record_history_identity`` property.
-
-
-Item queries
-------------
+Record-based queries
+--------------------
  .. py:currentmodule:: ansys.grantami.bomanalytics.queries
 
 Returned request items
 ~~~~~~~~~~~~~~~~~~~~~~
 
-Queries that accept record references as inputs, such as :class:`~PartComplianceQuery`, allow the input records to be
-defined via different identifiers.
+Queries that accept record references as inputs, such as :class:`~PartComplianceQuery`, allow the
+input records to be defined via different record identifiers.
 
-The corresponding item in the query result is identified by the same identifier than the one used in the request.
+The corresponding item in the query result is identified by the same identifier than the one used in
+the request.
 
-For example, parts added to the query with :meth:`~.PartComplianceQuery.with_part_numbers` are identified in the
-query result by their ``part_number`` property, and parts added with :meth:`~.PartComplianceQuery.with_record_guids`
-are identified in the query result by their ``record_guid`` property.
+For example, parts added to the query with :meth:`~.PartComplianceQuery.with_part_numbers` are
+identified in the query result by their ``part_number`` property, and parts added with
+:meth:`~.PartComplianceQuery.with_record_guids` are identified in the query result by their
+``record_guid`` property.
 
-Expanded items
-~~~~~~~~~~~~~~
+Items added during analysis
+---------------------------
 
-Item queries expand children based on the links defined in MI records. For example, during the processing of a
-:class:`~.PartComplianceQuery`, children parts of the requested MI Part records are expanded.
+In both record and BoM-based queries, additional items are included both in the analysis and the
+response based on links defined in the records in Granta MI. For example, during the processing of a
+:class:`~.PartComplianceQuery`, children of the referenced part are included in the analysis and
+returned in the response. Similarly, in a :class:`~.BoMComplianceQuery`, child items of any parts
+and specifications included in the BoM will be included in the analysis and returned in the
+response.
 
-Expanded items are identified by the ``record_history_identity`` property.
+Items added during the analysis are always identified by the ``record_history_identity`` property.

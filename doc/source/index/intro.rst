@@ -29,14 +29,14 @@ This package provides access to two similar but distinct APIs:
 #. The Granta MI Restricted Substances API is used to determine the impacted
    substances and compliance of products, assemblies, specifications, and
    materials against one or more legislations.
-#. The Granta MI Sustainability API us used to evaluate the environmental
+#. The Granta MI Sustainability API is used to evaluate the environmental
    performance of products, assemblies, materials, manufacturing processes
    and transport stages.
 
 In both cases, this package makes the underlying REST APIs easier to use by
 providing idiomatic Python interfaces and example scripts.
 
-This package also provides a subpackage to help constructing Granta XML BoMs.
+This package also provides a sub-package to help constructing Granta XML BoMs.
 
 
 Dependencies

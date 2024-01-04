@@ -8,8 +8,8 @@ This section provides an overview of the API for sustainability. The
 :ref:`ref_grantami_bomanalytics_api_sustainability_summary_bom` queries can be used to determine the
 environmental performance of a BoM (bill of materials) in Ansys Granta MI 2301 XML BoM format.
 
-.. note:: The functionality documented in this section is only available if you have the MI
-  Sustainability feature included in your license. A
+.. note:: The API documented in this section is only available if you have the MI Restricted
+  Substances feature included in your license. A
   :class:`~ansys.grantami.bomanalytics.LicensingException` will be raised if the feature is not
   available.
 

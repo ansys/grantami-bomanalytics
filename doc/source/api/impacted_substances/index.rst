@@ -12,8 +12,8 @@ database. These queries will also consider any additional associated BoM items s
 For example, if the specified part record contains links to other parts and specifications, these
 will be included in the analysis.
 
-.. note:: The functionality documented in this section is only available if you have the MI
-  Restricted Substances feature included in your license. A
+.. note:: The API documented in this section is only available if you have the MI Restricted
+  Substances feature included in your license. A
   :class:`~ansys.grantami.bomanalytics.LicensingException` will be raised if the feature is not
   available.
 

@@ -16,11 +16,11 @@ Both the :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery` an
 and so this page is not relevant for sustainability analysis. The advice given below is relevant
 for restricted substances analysis only.
 
-When should I worry about the batch size?
------------------------------------------
-The exact optimal size for batching cannot be determined generally because it depends
+When should the batch size be modified?
+---------------------------------------
+The exact conditions and size for batching cannot be determined generally because it depends
 on the data that is used to determine impacted substances and compliance. Given the
-following conditions, you might need to change the batch size.
+following conditions, you might need to modify the batch size.
 
 Very complex part and specification hierarchies
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

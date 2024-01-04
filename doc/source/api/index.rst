@@ -4,7 +4,7 @@ API reference
 =============
 
 The API for PyGranta BoM Analytics is split into different sections. The following sections describe
-general functionality that is applicable to both Restricted Substances and Sustainability:
+general capabilities applicable to both Restricted Substances and Sustainability:
 
 - :ref:`ref_grantami_bomanalytics_common_connection` describes how to connect to Granta MI and, if
   required, configure any schema customizations in the API client. It also explains how to run

@@ -2,17 +2,18 @@
 
 Indicators
 ==========
-The PyGranta BoM Analytics API determines compliance against an indicator, which essentially represents a legislation
-with a threshold. If a substance appears in a certain item, either directly or indirectly, in a quantity that exceeds that
-threshold, the item is non-compliant with that indicator. In cases where the
-legislation defines a per-substance threshold (for example, RoHS), then this per-substance threshold is used instead.
+The PyGranta BoM Analytics API determines compliance against one or more indicators. An indicator essentially represents
+a legislation with a threshold. If a substance appears in a certain item, either directly or indirectly, in a quantity
+that exceeds that threshold, the item is non-compliant with that indicator. In cases where the legislation defines a
+per-substance threshold (for example, RoHS), then this per-substance threshold is used instead.
 
 Indicators can include a list of legislations, in which case a substance is impacted by the indicator if it is
 impacted by one or more legislations included in that indicator.
 
 There are two different types of indicator, and they compute compliance in slightly different ways. It is therefore
-important to understand the differences between them. For more information, see the *Granta MI Restricted Substances
-Reports User Guide* supplied with Granta MI Restricted Substances Reports.
+important to understand the differences between them. For more information, see the
+:MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>` supplied with
+Granta MI Restricted Substances Reports.
 
 
 RoHS indicator

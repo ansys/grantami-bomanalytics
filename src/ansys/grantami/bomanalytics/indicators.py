@@ -70,7 +70,8 @@ class RoHSFlag(_Flag):
     A larger value means that the item is less compliant. The further down the list the compliance
     result appears, the worse it is.
 
-    For more information, see the *Restricted Substances Reports User Guide*.
+    For more information, see the
+    :MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>`.
     """
 
     RohsNotImpacted = (
@@ -148,7 +149,8 @@ class WatchListFlag(_Flag):
     An increasing value means less compliance. The further down the list the compliance result
     appears, the worse it is.
 
-    For more information, see the *Restricted Substances Reports User Guide*.
+    For more information, see the
+    :MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>`.
     """
 
     WatchListNotImpacted = (

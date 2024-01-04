@@ -582,6 +582,9 @@ class ItemResultFactory:
         -------
         ProcessSummaryResult
         """
+        # TODO result.material_identity can be None. Ajdust ProcessSummaryResult accordingly
+        # TODO result.material_record_reference.reference_type and reference_value can be None, resulting in an empty
+        #  MaterialReference. Consider allowing  ProcessSummaryResult.material_reference to be None instead.
         return ProcessSummaryResult(
             material_identity=result.material_identity,
             material_reference=MaterialReference(
@@ -1613,7 +1616,7 @@ class ProcessWithSustainabilityResult(
     """Describes a process included as part of a sustainability query result.
     This object includes two categories of attributes:
 
-      - The reference to the part in Granta MI (if the process references a record)
+      - The reference to the process record in Granta MI
       - The sustainability information for this process
     """
 
@@ -1625,7 +1628,7 @@ class TransportWithSustainabilityResult(
     """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:
 
-      - The reference to the transport in Granta MI (if the part references a record)
+      - The reference to the transport record in Granta MI
       - The sustainability information for this transport stage
     """
 
@@ -1809,7 +1812,7 @@ class ContributingComponentResult:
     @property
     def name(self) -> Optional[str]:
         """
-        Name of the part (if populated on the BoM used in the query).
+        Name of the part (if populated in the input BoM used in the query).
         """
         return self._name
 
@@ -1823,7 +1826,7 @@ class ContributingComponentResult:
     @property
     def material_mass_before_processing(self) -> ValueWithUnit:
         """
-        Original mass of parent material prior to any subtractive processing (i.e. removal of material).
+        Original mass of parent material prior to any subtractive processing (removal of material).
         """
         return self._material_mass_before_processing
 
@@ -1883,7 +1886,7 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
 
     @property
     def contributors(self) -> List[ContributingComponentResult]:
-        """Top three parts of the BoM, which are made of this material (by :attr:`.mass_before_processing`)."""
+        """Top three parts in the BoM that are made of this material (by :attr:`.mass_before_processing`)."""
         return self._contributors
 
     def __repr__(self) -> str:

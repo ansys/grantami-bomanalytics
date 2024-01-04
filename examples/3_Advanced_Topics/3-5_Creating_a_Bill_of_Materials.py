@@ -52,7 +52,7 @@ pprint(data[:3])
 # Items that refer to components do not have an equivalent record in Granta MI, and so they
 # contain only the fields described above, and the quantity and mass field.
 #
-# Items that refer to materials, processes, and transport steps correspond to records in Granta MI
+# Items that refer to materials, processes, and transport stages correspond to records in Granta MI
 # which contain the relevant sustainability metrics for these items. As a result, these items
 # contain both a human-readable ``name`` field and a ``Granta_MI_Record_GUID`` field. In this
 # scenario, the system that provided the data source contains the direct material assignments from

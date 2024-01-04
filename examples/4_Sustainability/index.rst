@@ -3,7 +3,7 @@
 Sustainability
 ==============
 
-These examples demonstrate how to determinate the environmental footprint for a BoM using the
+These examples demonstrate how to determine the environmental footprint for a BoM using the
 :ref:`ref_grantami_bomanalytics_api_sustainability_index`.
 
 .. toctree::

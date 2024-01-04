@@ -60,9 +60,9 @@ sustainability_summary
 # The next sections show examples of visualizations for the results of the sustainability summary query.
 #
 # ## Summary per phase
-# The sustainability summary result object contains a `phases_summary` property. This property divides environmental
-# footprint contributions into three categories: materials, processes, and transport phases. Each include their absolute
-# and relative contributions to the product as a whole.
+# The sustainability summary result object contains a `phases_summary` property. This property summarizes the
+# environmental impact contributions by lifecycle phase: materials, processes, and transport phases. The results for
+# each phase include their absolute and relative contributions to the product as a whole.
 
 sustainability_summary.phases_summary
 
@@ -220,13 +220,13 @@ fig.show()
 
 # ## The material processing phase
 #
-# The environmental contribution specifically from processing applied to raw materials is summarized in the
-# `primary_processes_details`, `secondary_processes_details`, and `joining_and_finishing_processes_details` properties
-# for primary, secondary, and joining and finishing process categories respectively. Each category lists unique
-# process-material pairs, which contribute at least 5% of the total impact for the process category. The relative
-# contributions describe the contribution of a process-material pair, relative to the total contributions of all
-# processes from the same category. Processes that do meet the contribution threshold are aggregated under the
-# ``Other`` item, with the material set to `None`.
+# The environmental contributions from primary and secondary processing (applied to materials), and joining and
+# finishing processes (applied to parts) are summarized in the primary_processes_details, secondary_processes_details,
+# and joining_and_finishing_processes_details properties respectively. Each of these properties lists the unique
+# process-material pairs (for primary and secondary processing) or individual processes (for joining and finishing) that
+# contribute at least 5% of the total impact for that category of process. The percentage contributions are relative to
+# the total contribution of all processes from the same category. Processes that do not meet the contribution threshold
+# are aggregated under the Other item, with the material set to None.
 
 # ### Primary processing
 
@@ -318,8 +318,8 @@ plot_footprint(
 # First, rename the processes ``Other`` rows, so that they remain distinguishable after all processes have been
 # grouped under a general ``Processes``.
 #
-# Use `assign` to add a `parent` column to each `DataFrame` being concatenated
-# The `join` argument value `inner` specifies that only columns common to all dataframes are kept in the result
+# Use `assign` to add a `parent` column to each `DataFrame` being concatenated.
+# The `join` argument value `inner` specifies that only columns common to all dataframes are kept in the result.
 
 # +
 primary_process_df.loc[(primary_process_df["Name"] == "Other - None"), "Name"] = "Other primary processes"

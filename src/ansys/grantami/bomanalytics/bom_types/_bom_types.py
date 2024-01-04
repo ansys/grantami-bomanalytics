@@ -243,7 +243,7 @@ class PartialTableReference(BaseType):
     """The GUID of the table, this is likely to be a persistent way to refer to a table."""
 
     table_name: Optional[str] = None
-    """The name of the table, note that table names can vary between localisations of a database, so this may not be a
+    """The name of the table. Note that table names can vary between localisations of a database, so this may not be a
     safe way to refer to a table if the MI Database supports multiple locales."""
 
 
@@ -430,7 +430,7 @@ class EndOfLifeFate(BaseType):
 @dataclass
 class UnittedValue(BaseType):
     """
-    A physical quantity with a unit. If provided in a input then the unit should exist within the MI database,
+    A physical quantity with a unit. If provided in an input then the unit must exist within the MI database,
     otherwise an error will be raised.
     """
 
@@ -685,8 +685,8 @@ class TransportStage(BaseType):
 @dataclass
 class Specification(BaseType):
     """
-    A specification for a part, process, or material. Refers to a record with the MI Database storing the details
-    of the specification and its impact.
+    A specification for a surface treatment, part, process, or material. Refers to a record within the MI Database
+    storing the details of the specification and its impact.
     """
 
     _props = [

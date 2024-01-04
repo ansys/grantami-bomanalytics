@@ -23,7 +23,7 @@ The expected use cases for this package are as follows:
 Starting in version 2024 R1, Granta MI provides a method for managing
 sustainability data as part of the Restricted Substances and Sustainability
 solution. The ``grantami-bomanalytics`` package now also exposes an API
-allowing to evaluate the sustainability performance of BoMs (Bills of Materials).
+allowing users to evaluate the sustainability performance of BoMs (Bills of Materials).
 
 
 Background

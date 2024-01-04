@@ -420,7 +420,7 @@ class BomAnalyticsClient(ApiClient):
         Parameters
         ----------
         query
-            A compliance, impacted substance, or sustainability query object.
+            A compliance, impacted substances, or sustainability query object.
 
         Returns
         -------

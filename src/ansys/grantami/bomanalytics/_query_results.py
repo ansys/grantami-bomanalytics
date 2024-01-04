@@ -827,7 +827,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
     @property
     def phases_summary(self) -> List[SustainabilityPhaseSummaryResult]:
         """
-        Sustainability summary for all phases.
+        Sustainability summary for all lifecycle phases analyzed by the query.
         """
         return [self._material_summary, self._process_summary, self._transport_summary]
 
@@ -836,7 +836,8 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         Sustainability summary for the transport phase.
 
-        Values in percentages express the contribution of this phase, relative to contributions of all phases.
+        Values in percentages express the contribution of this phase, relative to the total contribution of all phases
+        analyzed by the query.
         """
         return self._transport_summary
 
@@ -845,7 +846,8 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         Sustainability summary for the material phase.
 
-        Values in percentages express the contribution of this phase, relative to contributions of all phases.
+        Values in percentages express the contribution of this phase, relative to the total contribution of all phases
+        analyzed by the query.
         """
         return self._material_summary
 
@@ -854,7 +856,8 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         Sustainability summary for the process phase.
 
-        Values in percentages express the contribution of this phase, relative to contributions of all phases.
+        Values in percentages express the contribution of this phase, relative to the total contribution of all phases
+        analyzed by the query.
         """
         return self._process_summary
 
@@ -877,7 +880,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         for materials (by :attr:`~.MaterialSummaryResult.embodied_energy_percentage` or
         :attr:`~.MaterialSummaryResult.climate_change_percentage`).
 
-        All materials found in the BoM, which do not exceed the 2% threshold, are aggregated under a virtual
+        All materials in the BoM that do not exceed the 2% threshold are aggregated under a virtual
         :class:`.MaterialSummaryResult`, whose :attr:`~.MaterialSummaryResult.identity` property is equal to
         ``Other``.
 
@@ -892,12 +895,13 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         Summary information for primary processes, aggregated by ``process_name`` and ``material_identity``.
 
-        The returned list includes all primary processes whose relative contributions exceed 5% of the total impact of
-        all primary processes (by :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        The returned list includes all unique primary process/material combinations whose relative contributions
+        exceed 5% of the total impact of all primary processes (by
+        :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
         :attr:`~.ProcessSummaryResult.climate_change_percentage`).
 
-        Processes not exceeding the 5% threshold are aggregated under a virtual :class:`~.ProcessSummaryResult`, whose
-        :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
+        All process/material combinations that do not exceed the 5% threshold are aggregated under a virtual
+        :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
 
         Values in percentages express the contribution of the specific process, relative to contributions of all
         primary processes.
@@ -909,11 +913,12 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         """
         Summary information for secondary processes, aggregated by ``process_name`` and ``material_identity``.
 
-        The returned list includes all secondary processes whose relative contributions exceed 5% of the total impact of
-        all secondary processes (by :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        The returned list includes all unique secondary process/material combinations whose relative contributions
+        exceed 5% of the total impact of all secondary processes (by
+        :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
         :attr:`~.ProcessSummaryResult.climate_change_percentage`).
 
-        Processes not exceeding the 5% threshold are aggregated under a virtual
+        All process/material combinations that do not exceed the 5% threshold are aggregated under a virtual
         :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
 
         Values in percentages express the contribution of the specific process, relative to contributions of all
@@ -932,7 +937,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
         :attr:`~.ProcessSummaryResult.climate_change_percentage`).
 
-        Processes not exceeding the 5% threshold are aggregated under a virtual
+        All processes that do not exceed the 5% threshold are aggregated under a virtual
         :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
 
         Values in percentages express the contribution of the specific process, relative to contributions of all

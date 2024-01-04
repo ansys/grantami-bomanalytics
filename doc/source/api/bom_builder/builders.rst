@@ -6,7 +6,7 @@ BoM reference builders
 Record reference builder
 ------------------------
 
-Many types of entity are referenced within a Granta MI database, these references can use several different ways of
+Many types of entity are referenced within a Granta MI database. These references can use several different ways of
 identifying the target object. The RecordReferenceBuilder helps to ensure that a reference contains the required
 information and to reduce the risk of ambiguous references being provided.
 

@@ -1740,7 +1740,7 @@ class _SustainabilityMixin(_ApiMixin):
         """
         Specifies units to use in the response.
 
-        Sets all units, overriding any previous configuration. Provided unit symbols must exist in the target database.
+        Sets all units, overriding any previous configuration. The specified units must exist in the target database.
         Units not set will default to the API default unit:
 
         * Distance: ``km``
@@ -1750,11 +1750,11 @@ class _SustainabilityMixin(_ApiMixin):
         Parameters
         ----------
         distance : str | None
-            Unit symbol for distance.
+            Unit for distance.
         energy : str | None
-            Unit symbol for energy.
+            Unit for energy.
         mass : str | None
-            Unit symbol for mass.
+            Unit for mass.
 
         """
         self._preferred_units.distance_unit = distance
@@ -1788,7 +1788,8 @@ class _SustainabilityMixin(_ApiMixin):
 
 
 class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
-    """Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format.
+    """Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format, and returns metrics for each
+    item in the BoM.
 
     The methods used to configure units and add the BoM to this query return the query itself so that they can be
     chained together as required.

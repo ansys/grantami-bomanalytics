@@ -3,7 +3,6 @@
 BoM sustainability
 ==================
 
-
 Query definition
 ~~~~~~~~~~~~~~~~
 

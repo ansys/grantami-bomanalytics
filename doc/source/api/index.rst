@@ -4,7 +4,7 @@ API reference
 =============
 
 The API for PyGranta BoM Analytics is split into different sections. The following sections describe
-general capabilities applicable to both Restricted Substances and Sustainability:
+general capabilities applicable to both restricted substances and sustainability:
 
 - :ref:`ref_grantami_bomanalytics_common_connection` describes how to connect to Granta MI and, if
   required, configure any schema customizations in the API client. It also explains how to run
@@ -15,13 +15,14 @@ general capabilities applicable to both Restricted Substances and Sustainability
   might be raised.
 - :ref:`ref_grantami_bomanalytics_batching` explains how queries are batched if they exceed a
   certain size.
-- :ref:`ref_grantami_bomanalytics_record_identification` explains how Granta MI records are
-  identified throughout the package.
+- :ref:`ref_grantami_bomanalytics_query_type_differences` explains some key differences between
+  record-based and BoM-based queries, including how records are identified and how additional
+  items are included in the analysis.
 - :ref:`ref_grantami_bomanalytics_bom_helpers_index` explains how to create, read, edit, and save
-  Bill of Materials objects for Compliance and Sustainability reporting.
+  BoM objects for restricted substances and sustainability analysis.
 
-Additionally, the following sections describe how to build queries and interpret results for
-different types of analysis:
+The following sections describe how to build queries and interpret results for different types of
+analysis:
 
 - :ref:`ref_grantami_bomanalytics_api_impactedsubstances_index`
 - :ref:`ref_grantami_bomanalytics_api_compliance_index`
@@ -34,10 +35,11 @@ different types of analysis:
 
 .. toctree::
    :maxdepth: 2
+   :hidden:
 
    common
    batching
-   record_identification
+   query_type_differences
    impacted_substances/index
    compliance/index
    sustainability/index

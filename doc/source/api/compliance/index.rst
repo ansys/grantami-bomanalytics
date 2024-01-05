@@ -13,11 +13,6 @@ database. These queries will also consider any additional associated BoM items s
 For example, if the specified part record contains links to other parts and specifications, these
 will be included in the analysis.
 
-.. note:: The API documented in this section is only available if you have the MI Restricted
-  Substances feature included in your license. A
-  :class:`~ansys.grantami.bomanalytics.LicensingException` will be raised if the feature is not
-  available.
-
 The :ref:`ref_grantami_bomanalytics_api_compliance_bom` query accepts a BoM (bill of materials) in
 XML format and returns the compliance status of the BoM based on the BoM's contents. As opposed to
 record-based queries, the BoM compliance analysis only considers items explicitly defined in the
@@ -36,6 +31,11 @@ compliance status and impacted substances at each level. If you are looking for 
 determination of the substances indirectly or directly contained within a item represented by a
 Granta MI record, consider using the
 :ref:`ref_grantami_bomanalytics_api_impactedsubstances_index`.
+
+.. note:: The API documented in this section is only available if you have the MI Restricted
+  Substances feature included in your license. A
+  :class:`~ansys.grantami.bomanalytics.LicensingException` will be raised if the feature is not
+  available.
 
 .. toctree::
    :maxdepth: 3

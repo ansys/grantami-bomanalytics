@@ -582,15 +582,17 @@ class ItemResultFactory:
         -------
         ProcessSummaryResult
         """
-        # TODO result.material_identity can be None. Ajdust ProcessSummaryResult accordingly
-        # TODO result.material_record_reference.reference_type and reference_value can be None, resulting in an empty
-        #  MaterialReference. Consider allowing  ProcessSummaryResult.material_reference to be None instead.
-        return ProcessSummaryResult(
-            material_identity=result.material_identity,
-            material_reference=MaterialReference(
+        material_reference = (
+            MaterialReference(
                 reference_type=cls.parse_reference_type(result.material_record_reference.reference_type),
                 reference_value=result.material_record_reference.reference_value,
-            ),
+            )
+            if result.material_record_reference.reference_type is not None
+            else None
+        )
+        return ProcessSummaryResult(
+            material_identity=result.material_identity,
+            material_reference=material_reference,
             process_name=result.process_name,
             process_reference=ProcessReference(
                 reference_type=cls.parse_reference_type(result.process_record_reference.reference_type),
@@ -1898,7 +1900,11 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
 
 class ProcessSummaryResult(SustainabilitySummaryBase):
     """
-    Aggregated sustainability summary for a process, applied to a unique material.
+    Aggregated sustainability summary for a process.
+
+    For primary and secondary processes, this corresponds to a unique process/material combination. For joining and
+    finishing processes, this corresponds to a unique process, and :attr:`~.material_identity` and
+    :attr:`~.material_reference` are `None`.
 
     Describes the environmental footprint of a process, accounting for all occurrences of the process-material pair
     found in the BoM.
@@ -1906,8 +1912,8 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
 
     def __init__(
         self,
-        material_identity: str,
-        material_reference: MaterialReference,
+        material_identity: Optional[str],
+        material_reference: Optional[MaterialReference],
         process_name: str,
         process_reference: ProcessReference,
         **kwargs: Any,
@@ -1933,16 +1939,20 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
         return self._process_reference
 
     @property
-    def material_identity(self) -> str:
+    def material_identity(self) -> Optional[str]:
         """
         Material identity.
+
+        Only populated for primary and secondary processes.
         """
         return self._material_identity
 
     @property
-    def material_reference(self) -> MaterialReference:
+    def material_reference(self) -> Optional[MaterialReference]:
         """
         Material record reference.
+
+        Only populated for primary and secondary processes.
         """
         return self._material_reference
 

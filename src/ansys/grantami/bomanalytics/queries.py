@@ -1586,7 +1586,7 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
     def with_bom(self: _BomQuery, bom: str) -> _BomQuery:
         """Set the BoM to use for the query.
 
-        See the query documentation for supported BoM formats.
+        See the documentation for the parent query class for supported BoM formats.
 
         Minimal validation is performed on the provided ``bom`` to ensure the request is sent to the appropriate
         endpoint. XSD files are provided in :mod:`~.schemas` for full validation.

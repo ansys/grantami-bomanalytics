@@ -1475,7 +1475,7 @@ class ChildMaterialWithSustainabilityMixin:
 
     @property
     def materials(self) -> List["MaterialWithSustainabilityResult"]:
-        """Material with sustainability result objects that are direct children of this item in the BoM."""
+        """``MaterialWithSustainabilityResult`` objects that are direct children of this item in the BoM."""
 
         return self._materials
 
@@ -1516,7 +1516,7 @@ class ChildPartWithSustainabilityMixin:
 
     @property
     def parts(self) -> List["PartWithSustainabilityResult"]:
-        """Part with sustainability result objects that are direct children of this item in the BoM."""
+        """``PartWithSustainabilityResult`` objects that are direct children of this item in the BoM."""
 
         return self._parts
 
@@ -1557,7 +1557,7 @@ class ChildProcessWithSustainabilityMixin:
 
     @property
     def processes(self) -> List["ProcessWithSustainabilityResult"]:
-        """Process with sustainability result objects that are direct children of this item in the BoM."""
+        """``ProcessWithSustainabilityResult`` objects that are direct children of this item in the BoM."""
 
         return self._processes
 

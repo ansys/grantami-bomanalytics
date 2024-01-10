@@ -4,36 +4,39 @@ This project is part of the larger PyAnsys effort to facilitate the use
 of Ansys technologies directly from within Python.
 
 Granta MI provides a mature and feature-rich method for managing
-compliance data as part of the Restricted Substances solution.
-When combined with the Granta MI BoM Analyzer and Restricted Substances
-Reports, the data managed in Granta MI can be leveraged to
-determine compliance for complex specification hierarchies, assemblies,
-and even entire products.
+restricted substances and sustainability data as part of the Granta MI
+Restricted Substances and Sustainability database. When combined with the
+Granta MI BoM Analyzer and Reports, the data managed in Granta MI can be
+leveraged to determine compliance and sustainability for components,
+assemblies, and even entire products.
 
 The ``grantami-bomanalytics`` package takes the functionality available
 interactively through the web Granta MI browser and exposes it as an API.
 The expected use cases for this package are as follows:
 
-- Rolling up compliance results periodically and storing these results
-  in Granta MI.
-- Scripting compliance calculations as part of a release process.
-- Allowing compliance to be determined for BoMs (Bills of Materials) stored
-  in third-party systems, such as PLM or ERP systems.
-
-Starting in version 2024 R1, Granta MI provides a method for managing
-sustainability data as part of the Restricted Substances and Sustainability
-solution. The ``grantami-bomanalytics`` package now also exposes an API
-allowing users to evaluate the sustainability performance of BoMs (Bills of Materials).
+- Rolling up compliance and sustainability results periodically and storing
+  these results in Granta MI.
+- Scripting compliance and sustainability calculations as part of a release
+  process.
+- Allowing compliance and sustainability to be determined for BoMs (Bills of
+  Materials) stored in third-party systems, such as PLM or ERP systems.
 
 
 Background
 ----------
-The Granta MI Restricted Substances solution includes a REST API for
-evaluating compliance of products, assemblies, specifications, and
-materials against legislations.
-The Granta MI Sustainability solution includes a REST API for evaluating the environmental
-performance of products, assemblies, materials, manufacturing and transport stages.
-This package automatically abstracts generated code into an easy-to-use client library.
+This package provides access to two similar but distinct APIs:
+
+#. The Granta MI Restricted Substances API is used to determine the impacted
+   substances and compliance of products, assemblies, specifications, and
+   materials against one or more legislations.
+#. The Granta MI Sustainability API is used to evaluate the environmental
+   performance of products, assemblies, materials, manufacturing processes
+   and transport stages.
+
+In both cases, this package makes the underlying REST APIs easier to use by
+providing idiomatic Python interfaces and example scripts.
+
+This package also provides a sub-package to help constructing Granta XML BoMs.
 
 
 Dependencies

@@ -54,7 +54,7 @@ sustainability_summary = cxn.run(sustainability_summary_query)
 sustainability_summary
 
 # The ``BomSustainabilitySummaryQueryResult`` object returned implements a ``messages`` property, and properties
-# showing the environmental footprint of the items included in the BoM.
+# showing the environmental impact of the items included in the BoM.
 # Log messages are sorted by decreasing severity. The same messages are available on in the MI Service Layer log file,
 # and are logged via the standard ``logging`` module.
 # The next sections show examples of visualizations for the results of the sustainability summary query.
@@ -95,7 +95,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-def plot_footprint(df, title, textinfo="percent+label", hoverinfo="value+name"):
+def plot_impact(df, title, textinfo="percent+label", hoverinfo="value+name"):
     fig = make_subplots(
         rows=1,
         cols=2,
@@ -109,13 +109,13 @@ def plot_footprint(df, title, textinfo="percent+label", hoverinfo="value+name"):
     fig.show()
 
 
-plot_footprint(phases_df, "BoM sustainability summary - By phase")
+plot_impact(phases_df, "BoM sustainability summary - By phase")
 # -
 
 # ## The transport phase
 #
 # The environmental contribution from the transport phase is summarized in the `transport_details` property. Results
-# include the individual environmental footprint for each transport stage included in the input BoM.
+# include the individual environmental impact for each transport stage included in the input BoM.
 
 sustainability_summary.transport_details
 
@@ -138,9 +138,9 @@ transport_df = pd.DataFrame.from_records(
 transport_df
 # -
 
-plot_footprint(transport_df, "Transport stages - environmental footprint")
+plot_impact(transport_df, "Transport stages - environmental impact")
 
-# In some situations, it may be useful to calculate the environmental footprint per distance travelled and add the
+# In some situations, it may be useful to calculate the environmental impact per distance travelled and add the
 # results as new columns in the `DataFrame`.
 
 EE_PER_DISTANCE = f"EE [{ENERGY_UNIT}/{DISTANCE_UNIT}]"
@@ -161,7 +161,7 @@ fig.add_trace(
     go.Pie(labels=transport_df["Name"], values=transport_df[CC_PER_DISTANCE], name=f"{MASS_UNIT}/{DISTANCE_UNIT}"), 1, 2
 )
 fig.update_layout(
-    title_text="Transport stages footprint - Relative to distance travelled",
+    title_text="Transport stages impact - Relative to distance travelled",
     legend=dict(orientation="h")
 )
 fig.update_traces(textposition="inside", textinfo="percent+label", hoverinfo="value+name")
@@ -170,8 +170,8 @@ fig.show()
 # ## The materials phase
 #
 # The environmental contribution from the material phase is summarized in the `material_details` property. The results
-# are aggregated: each item in ``material_details`` represents the total environmental footprint of a material summed
-# from all its occurrences in the BoM. Listed materials contribute more than 2% of the total footprint for the material
+# are aggregated: each item in ``material_details`` represents the total environmental impact of a material summed
+# from all its occurrences in the BoM. Listed materials contribute more than 2% of the total impact for the material
 # phase. Materials that do not contribute at least 2% of the total are aggregated under the ``Other`` item.
 
 sustainability_summary.material_details
@@ -192,10 +192,10 @@ materials_df = pd.DataFrame.from_records(
 )
 materials_df
 
-plot_footprint(materials_df, "Aggregated materials footprint")
+plot_impact(materials_df, "Aggregated materials impact")
 
 # Mass before and mass after secondary processing can help determine if the material mass removed during processing
-# contributes a significant fraction of the footprint of the overall material phase.
+# contributes a significant fraction of the impact of the overall material phase.
 
 fig = go.Figure(
     data=[
@@ -252,8 +252,8 @@ primary_process_df
 primary_process_df["Name"] = primary_process_df.apply(
     lambda row: f"{row['Process name']} - {row['Material name']}", axis=1
 )
-plot_footprint(
-    primary_process_df, "Aggregated primary processes footprint", textinfo="percent", hoverinfo="value+name+label"
+plot_impact(
+    primary_process_df, "Aggregated primary processes impact", textinfo="percent", hoverinfo="value+name+label"
 )
 
 # ### Secondary processing
@@ -280,8 +280,8 @@ secondary_process_df
 secondary_process_df["Name"] = secondary_process_df.apply(
     lambda row: f"{row['Process name']} - {row['Material name']}", axis=1
 )
-plot_footprint(
-    secondary_process_df, "Aggregated secondary processes footprint", textinfo="percent", hoverinfo="value+name+label"
+plot_impact(
+    secondary_process_df, "Aggregated secondary processes impact", textinfo="percent", hoverinfo="value+name+label"
 )
 
 # ### Joining and finishing
@@ -304,8 +304,8 @@ joining_and_finishing_processes_df = pd.DataFrame.from_records(
 )
 joining_and_finishing_processes_df
 
-plot_footprint(
-    joining_and_finishing_processes_df, "Aggregated secondary processes footprint",
+plot_impact(
+    joining_and_finishing_processes_df, "Aggregated secondary processes impact",
     textinfo="percent", hoverinfo="value+name+label"
 )
 

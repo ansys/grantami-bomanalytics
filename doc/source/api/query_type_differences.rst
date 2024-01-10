@@ -66,7 +66,7 @@ Record-based queries
 Queries that accept record references as inputs, such as :class:`~PartComplianceQuery`, allow the
 input records to be defined via different record identifiers.
 
-The corresponding item in the query result is identified by the same identifier than the one used in
+The corresponding item in the query result is identified by the same identifier as the one used in
 the request.
 
 For example, parts added to the query with :meth:`~.PartComplianceQuery.with_part_numbers` are

@@ -40,7 +40,7 @@ python = "^3.9.0"
 
 # Packages for core library
 ansys-openapi-common = "< 2.0.0"
-ansys-grantami-bomanalytics-openapi = { git = 'https://github.com/ansys/grantami-bomanalytics-openapi-private.git', subdirectory = 'ansys-grantami-bomanalytics-openapi', rev = '4a34858' }
+ansys-grantami-bomanalytics-openapi = { git = 'https://github.com/ansys/grantami-bomanalytics-openapi.git', subdirectory = 'ansys-grantami-bomanalytics-openapi', rev = '4a34858' }
 xmlschema = "^2.4.0"
 
 # Packages for the examples extra

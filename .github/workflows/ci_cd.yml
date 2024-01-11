@@ -23,7 +23,6 @@ jobs:
     uses: ./.github/workflows/local_checks.yml
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      BOM_OPENAPI_TOKEN: ${{ secrets.BOM_OPENAPI_TOKEN }}
 
   integration_checks:
     name: Integration checks

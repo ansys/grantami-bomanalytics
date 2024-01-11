@@ -29,8 +29,6 @@ on:
         required: true
       TEST_SERVER_WRITE_PASS:
         required: true
-      BOM_OPENAPI_TOKEN:
-        required: true
   workflow_dispatch:
 
 concurrency:
@@ -91,13 +89,6 @@ jobs:
       - name: Install dependencies
         run: pip install poetry 'tox<4' --disable-pip-version-check
 
-      - name: Configure git
-        shell: bash
-        run: |
-          echo "https://${{ secrets.BOM_OPENAPI_TOKEN }}:@github.com" > $HOME/.git-credentials
-          git config --global credential.helper store
-          git config --global core.longpaths true
-
       - name: Test with tox (integration tests only)
         run: tox -- -m "integration"
         env:
@@ -106,11 +97,6 @@ jobs:
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
           TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
           TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
-
-      - name: Clean-up
-        if: always()
-        shell: bash
-        run: rm -f $HOME/.git-credentials
 
   docs:
     name: Build documentation
@@ -132,19 +118,10 @@ jobs:
           sudo apt install pandoc
           sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
 
-      - name: Configure git
-        run: |
-          echo "https://${{ secrets.BOM_OPENAPI_TOKEN }}:@github.com" > $HOME/.git-credentials
-          git config --global credential.helper store
-
       - name: Install library
         run: |
           pip install poetry --disable-pip-version-check
           poetry install --with doc
-      
-      - name: Clean-up
-        if: always()
-        run: rm -f $HOME/.git-credentials
 
       - name: Build HTML Documentation
         run:  make -C doc html SPHINXOPTS="-W"

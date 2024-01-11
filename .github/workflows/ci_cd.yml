@@ -46,60 +46,60 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           doc-artifact-name: Documentation-html
 
-#  Release:
-#    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
-#    needs: integration_checks
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: "Deploy stable documentation"
-#        uses: pyansys/actions/doc-deploy-stable@v4
-#        with:
-#          cname: ${{ env.DOCUMENTATION_CNAME }}
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          doc-artifact-name: Documentation-html
-#
-#      - uses: actions/checkout@v3
-#
-#      - name: Set up Python 3.9
-#        uses: actions/setup-python@v4
-#        with:
-#          python-version: '3.9'
-#
-#      - uses: actions/download-artifact@v3
-#        with:
-#          name: ansys-grantami-bomanalytics-wheel
-#          path: dist
-#
-#      - uses: actions/download-artifact@v3
-#        with:
-#          name: Documentation-pdf
-#          path: dist
-#
-#      - uses: actions/download-artifact@v3
-#        with:
-#          name: Documentation-html
-#          path: dist/documentation-html/
-#
-#      - name: "Compressing HTML documentation"
-#        uses: vimtor/action-zip@v1.1
-#        with:
-#          files: dist/documentation-html/
-#          dest: dist/documentation-html.zip
-#
-#      # note how we use the PyPI tokens
-##      - name: Upload to PyPI
-##        run: |
-##          pip install twine
-##          twine upload --non-interactive --skip-existing dist/*.whl
-##        env:
-##          TWINE_USERNAME: __token__
-##          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-#
-#      - name: Release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          generate_release_notes: true
-#          files: |
-#            dist/*.whl
-#            dist/documentation-html.zip
-#            dist/*.pdf
+  Release:
+    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
+    needs: integration_checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Deploy stable documentation"
+        uses: ansys/actions/doc-deploy-stable@v4
+        with:
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          doc-artifact-name: Documentation-html
+
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: ansys-grantami-bomanalytics-wheel
+          path: dist
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: Documentation-pdf
+          path: dist
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: Documentation-html
+          path: dist/documentation-html/
+
+      - name: "Compressing HTML documentation"
+        uses: vimtor/action-zip@v1.1
+        with:
+          files: dist/documentation-html/
+          dest: dist/documentation-html.zip
+
+      # note how we use the PyPI tokens
+      - name: Upload to PyPI
+        run: |
+          pip install twine
+          twine upload --non-interactive --skip-existing dist/*.whl
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          files: |
+            dist/*.whl
+            dist/documentation-html.zip
+            dist/*.pdf

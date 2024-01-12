@@ -18,6 +18,12 @@ this code:
 
     pip install ansys-grantami-bomanalytics
 
+To install a release compatible with a specific version of Granta MI, use the
+`PyGranta <https://grantami.docs.pyansys.com/>`_ meta-package with a requirement specifier:
+
+.. code::
+
+    pip install pygranta==2023.2.0
 
 Alternatively, to install the latest from `ansys-grantami-bomanalytics GitHub <https://github.com/ansys/grantami-bomanalytics>`_,
 use this code:

@@ -97,7 +97,6 @@ class BaseType(HasNamespace, SupportsCustomFields):
         bom_writer: BoMWriter
             Helper object that maintains information about the global namespaces.
         """
-        pass
 
 
 class DimensionType(Enum):

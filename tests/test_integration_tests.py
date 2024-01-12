@@ -127,7 +127,7 @@ class TestBomQueries:
 
     def test_impacted_substances_2301(self, connection, bom2301):
         query = queries.BomImpactedSubstancesQuery().with_bom(bom2301).with_legislation_ids(LEGISLATIONS)
-        response = connection.run(query)
+        connection.run(query)
 
         assert connection.last_response.request.url.endswith("bom2301")
 

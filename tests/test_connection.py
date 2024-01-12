@@ -115,7 +115,7 @@ class TestConnectToSL:
             no_license_response = {"LogMessages": [], "RestrictedSubstances": False, "Sustainability": False}
             m.get(requests_mock.ANY, json=no_license_response)
             with pytest.raises(LicensingException, match="no valid licenses "):
-                connection = Connection(api_url=sl_url).with_anonymous().connect()
+                Connection(api_url=sl_url).with_anonymous().connect()
 
     @pytest.mark.integration
     @pytest.mark.parametrize("trailing_slash", [True, False])

@@ -183,4 +183,4 @@ class TestBomFormatEnum:
             queries._BomFormat(value)
 
     def test_by_name(self):
-        queries._BomFormat["bom_xml1711"]
+        _ = queries._BomFormat["bom_xml1711"]

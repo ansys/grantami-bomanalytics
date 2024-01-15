@@ -101,7 +101,7 @@ numpydoc_validation_exclude = {
 
 extlinks = {
     'MI_docs': (
-        'https://miniature-fortnight-dc09be55.pages.github.io/granta/v241/en/RS_and_Sustainability/%s',
+        'https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/Granta/v241/en/RS_and_Sustainability/%s',
         None
     )
 }

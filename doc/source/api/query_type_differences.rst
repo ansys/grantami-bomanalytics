@@ -40,7 +40,7 @@ included in the analysis and returned in the response.
 BoM-based queries
 ~~~~~~~~~~~~~~~~~
 In a BoM-based query, only child specifications are included in the analysis and returned in the
-response. Considering a :class:`~.BoMComplianceQuery` containing the root part
+response. Considering a :class:`~.BomComplianceQuery` containing the root part
 in structure described above, only the child specifications are included in the analysis and
 returned in the response. The child part and material are *not* included unless they are explicitly
 added to the BoM.

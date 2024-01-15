@@ -175,12 +175,12 @@ class TestBomFormatEnum:
         ],
     )
     def test_valid_values_by_namespace(self, value):
-        enum_value = queries._BomFormat(value)
+        queries._BomFormat(value)
 
     def test_invalid_value(self):
         value = "SomeOtherNotValidValue"
         with pytest.raises(ValueError, match=f"'{value}' is not a valid _BomFormat"):
-            enum_value = queries._BomFormat(value)
+            queries._BomFormat(value)
 
     def test_by_name(self):
-        value = queries._BomFormat["bom_xml1711"]
+        _ = queries._BomFormat["bom_xml1711"]

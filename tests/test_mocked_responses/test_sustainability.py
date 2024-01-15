@@ -104,7 +104,7 @@ class TestBomSustainability(BaseMockTester):
         )
         mock_response = json.dumps(mock_connection.sanitize_for_serialization(two_parts_response))
         with pytest.warns(UserWarning, match="single root part"):
-            response = self.get_mocked_response(mock_connection, response=mock_response)
+            self.get_mocked_response(mock_connection, response=mock_response)
 
 
 class TestBomSustainabilitySummary(BaseMockTester):

@@ -75,5 +75,5 @@ class BoMWriter:
             if k != "":
                 raw_obj[f"@xmlns:{k}"] = v
             else:
-                raw_obj[f"@xmlns"] = v
+                raw_obj["@xmlns"] = v
         return raw_obj

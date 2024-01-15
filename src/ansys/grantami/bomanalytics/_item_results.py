@@ -510,7 +510,6 @@ class ItemResultFactory:
     def create_material_summary(
         cls, result: models.CommonSustainabilityMaterialSummaryEntry
     ) -> "MaterialSummaryResult":
-        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
         """Returns a MaterialSummaryResult instantiated from the low-level API model.
 
         Parameters
@@ -525,9 +524,10 @@ class ItemResultFactory:
         """
         # TODO one of these is a bucket for all other materials that do not contribute >2% EE. Worth separating it?
         #  It does not have a valid record reference or contributors.
+        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
         return MaterialSummaryResult(
             material_reference=MaterialReference(
-                reference_type=cls.parse_reference_type(result.record_reference.reference_type),
+                reference_type=reference_type,
                 reference_value=result.record_reference.reference_value,
             ),
             identity=result.identity,

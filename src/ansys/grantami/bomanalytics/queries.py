@@ -541,7 +541,6 @@ class _ApiMixin(_BaseQueryBuilder, _BaseQuery, ABC):
         it to the ``self._call_api()`` method, which performs the actual call. It then passes the result to
         the ``QueryResultFactory`` class to build the corresponding result object.
         """
-        pass
 
     @abstractmethod
     def _validate_parameters(self) -> None:
@@ -1529,7 +1528,7 @@ class _BomQueryDataManager(_BaseQueryDataManager):
         try:
             _bom_format = valid_bom_formats[root.tag]
         except KeyError:
-            raise ValueError(f"Invalid input BoM. Ensure the document is compliant with the expected XML schema.")
+            raise ValueError("Invalid input BoM. Ensure the document is compliant with the expected XML schema.")
         if _bom_format not in self._supported_bom_formats:
             raise ValueError(f"BoM format {_bom_format.name} ({_bom_format.value}) is not supported by this query.")
 
@@ -1641,7 +1640,7 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
             Error to raise if no items have been added to the query.
         """
         if not self._data.populated_inputs:
-            raise ValueError(f"No BoM has been added to the query.")
+            raise ValueError("No BoM has been added to the query.")
 
 
 class BomComplianceQuery(_ComplianceMixin, _BomQueryBuilder):

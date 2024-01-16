@@ -64,17 +64,17 @@ jobs:
         with:
           python-version: '3.9'
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: ansys-grantami-bomanalytics-wheel
           path: dist
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: Documentation-pdf
           path: dist
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: Documentation-html
           path: dist/documentation-html/

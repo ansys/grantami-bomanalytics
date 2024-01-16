@@ -157,7 +157,7 @@ copybutton_prompt_is_regexp = True
 
 
 # -- Options for HTML output -------------------------------------------------
-cname = os.getenv("DOCUMENTATION_CNAME", "animated-broccoli-k6emqn7.pages.github.io")
+cname = os.getenv("DOCUMENTATION_CNAME", "bomanalytics.grantami.docs.pyansys.com")
 """The canonical name of the webpage hosting the documentation."""
 html_theme = "ansys_sphinx_theme"
 html_favicon = ansys_favicon
@@ -173,7 +173,7 @@ html_theme_options = {
         "json_url": f"https://{cname}/versions.json",
         "version_match": get_version_match(__version__),
     },
-    "check_switcher": False
+    "check_switcher": True
 }
 
 # -- Options for HTMLHelp output ---------------------------------------------

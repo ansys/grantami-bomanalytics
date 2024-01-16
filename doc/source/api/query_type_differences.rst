@@ -19,11 +19,11 @@ depends on the type of query used.
 
 In the sections below, the following structure is used as an example:
 
-* A part record, which links to...
+* A part record, which links to
 
-  * A part record which contains a substance declaration,...
-  * A material record which contains a substance declaration, and...
-  * A specification record, which links to...
+  * A part record which contains a substance declaration,
+  * A material record which contains a substance declaration, and
+  * A specification record, which links to
 
     * A specification record which contains a substance declaration.
 
@@ -47,7 +47,7 @@ added to the BoM.
 
  .. note::
   The API assumes that, excluding specifications, a BoM represents the entire structure of the
-  product. The API will not use any record-to-record links in Granta MI in the analysis, except for
+  product. The API does not use any record-to-record links in Granta MI in the analysis, except for
   specification records.
 
   If you want to use a BoM-based query, you *must* include the full product

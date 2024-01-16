@@ -1,8 +1,10 @@
-ANSYS
-Ansys
-ansys
-PyGranta BoM Analytics
+(?i)ansys
+API
+Analytics
 BoM
-BoM Analytics
+[Dd]eserialization
+deserialize
+Granta MI
 legislations
+PyGranta BoM Analytics
 RoHS

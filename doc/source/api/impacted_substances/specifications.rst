@@ -9,7 +9,7 @@ Query definition
 .. autoclass:: ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery
    :members:
 
-   .. automethod:: with_legislations
+   .. automethod:: with_legislation_ids
    .. automethod:: with_specification_ids
    .. automethod:: with_record_guids
    .. automethod:: with_record_history_guids
@@ -32,3 +32,5 @@ Specification result
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.SpecificationWithImpactedSubstancesResult
+   :inherited-members:
+   :member-order: by_mro_by_source

@@ -29,17 +29,9 @@ jobs:
     needs: local_checks
     if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     uses: ./.github/workflows/server_checks.yml
-    secrets:
-      AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
-      AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
-      AZURE_VM_NAME: ${{ secrets.AZURE_VM_NAME }}
-      TEST_SERVER_URL: ${{ secrets.TEST_SERVER_URL }}
-      TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
-      TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
-      TEST_SERVER_WRITE_USER: ${{ secrets.TEST_SERVER_WRITE_USER }}
-      TEST_SERVER_WRITE_PASS: ${{ secrets.TEST_SERVER_WRITE_PASS }}
+    with:
+      skip-vm-management: ${{ vars.SKIP_VM_MANAGEMENT == 'true' }}
+    secrets: inherit
 
   doc-deploy-dev:
     name: "Deploy development documentation"

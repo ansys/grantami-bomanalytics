@@ -1,18 +1,18 @@
-from ansys.grantami.bomanalytics import queries, indicators
 from ansys.grantami.bomanalytics_openapi.models import (
-    GetImpactedSubstancesForMaterialsResponse,
     GetComplianceForMaterialsResponse,
+    GetImpactedSubstancesForMaterialsResponse,
 )
-from .common import (
-    BaseMockTester,
-    SubstanceValidator,
-    MaterialValidator,
-)
+
+from ansys.grantami.bomanalytics import indicators, queries
+
+from .common import BaseMockTester, MaterialValidator, SubstanceValidator
 
 
 class TestImpactedSubstances(BaseMockTester):
     query = (
-        queries.MaterialImpactedSubstancesQuery().with_legislations(["Fake legislation"]).with_material_ids(["Fake ID"])
+        queries.MaterialImpactedSubstancesQuery()
+        .with_legislation_ids(["Fake legislation"])
+        .with_material_ids(["Fake ID"])
     )
     mock_key = GetImpactedSubstancesForMaterialsResponse.__name__
 
@@ -33,7 +33,7 @@ class TestImpactedSubstances(BaseMockTester):
         # Test list of substances grouped by legislations
         legislations = mat_results.substances_by_legislation
         assert len(legislations) == 1
-        substances = legislations["The SIN List 2.1 (Substitute It Now!)"]
+        substances = legislations["SINList"]
         assert len(substances) == 2
         for substance in substances:
             sv = SubstanceValidator(substance)
@@ -42,7 +42,7 @@ class TestImpactedSubstances(BaseMockTester):
     def test_impacted_substances_by_legislation(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
         assert len(response.impacted_substances_by_legislation) == 1
-        legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        legislation = response.impacted_substances_by_legislation["SINList"]
         for substance in legislation:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
@@ -86,8 +86,8 @@ class TestCompliance(BaseMockTester):
         queries.MaterialComplianceQuery()
         .with_indicators(
             [
-                indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
-                indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
+                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
+                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
             ]
         )
         .with_material_ids(["Fake ID"])

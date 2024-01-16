@@ -5,9 +5,9 @@ These are sub-classed in the ``_bom_item_results.py`` file to include the result
 """
 
 from abc import ABC, abstractmethod
-from typing import Callable, Type, Union, List, Dict, Optional, cast
 from enum import Enum, auto
 import numbers
+from typing import Any, Dict, Optional, Union, cast
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
@@ -29,6 +29,47 @@ class ReferenceType(Enum):
     EcNumber = auto()
 
 
+class IdentifierMixin(ABC):
+    def __init__(self, identity: Optional[str] = None, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._identity: Optional[str] = identity
+
+    @property
+    def identity(self) -> Optional[str]:
+        """Item unique identifier.
+
+        This property is only populated on BoM query results and is equal to the ``id`` attribute of the
+        corresponding input BoM item. If no ``id`` has been defined on the BoM item, a unique auto-generated value is
+        assigned during analysis.
+        """
+        return self._identity
+
+
+class CommonIdentifiersMixin(IdentifierMixin, ABC):
+    def __init__(self, external_identity: Optional[str] = None, name: Optional[str] = None, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._external_identity: Optional[str] = external_identity
+        self._name: Optional[str] = name
+
+    @property
+    def external_identity(self) -> Optional[str]:
+        """Item external identity.
+
+        This property is only populated on BoM query results and is equal to the ``<ExternalIdentity>`` element of
+        the corresponding input BoM item.
+        """
+        return self._external_identity
+
+    @property
+    def name(self) -> Optional[str]:
+        """Item name.
+
+        This property is only populated on BoM query results and is equal to the ``<Name>`` element of
+        the corresponding input BoM item.
+        """
+        return self._name
+
+
 class RecordReference(ABC):
     """Provides all references to records in Granta MI.
 
@@ -46,51 +87,51 @@ class RecordReference(ABC):
 
     def __init__(
         self,
-        reference_type: ReferenceType,
+        reference_type: Optional[ReferenceType],
         reference_value: Union[int, str, None],
     ):
-        self.record_history_identity = None
-        self.record_guid = None
-        self.record_history_guid = None
-        if reference_type == ReferenceType.MiRecordHistoryIdentity:
-            self.record_history_identity = cast(int, reference_value)
-        elif reference_type == ReferenceType.MiRecordGuid:
-            self.record_guid = cast(str, reference_value)
-        elif reference_type == ReferenceType.MiRecordHistoryGuid:
-            self.record_history_guid = cast(str, reference_value)
+        self._reference_type = reference_type
+        self._reference_value = reference_value
 
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
+    def record_history_identity(self) -> Optional[int]:
+        """Record history identity."""
+        if self._reference_type == ReferenceType.MiRecordHistoryIdentity:
+            return cast(int, self._reference_value)
+        return None
+
+    @property
+    def record_history_guid(self) -> Optional[str]:
+        """Record history GUID."""
+        if self._reference_type == ReferenceType.MiRecordHistoryGuid:
+            return cast(str, self._reference_value)
+        return None
+
+    @property
+    def record_guid(self) -> Optional[str]:
+        """Record GUID."""
+        if self._reference_type == ReferenceType.MiRecordGuid:
+            return cast(str, self._reference_value)
+        return None
+
+    @property
+    def _record_reference(self) -> Dict[str, Optional[str]]:
         """Converts the separate reference attributes back into a single dictionary that describes the type and value.
 
         This method is used to create the low-level API model object that references this record and is returned as-is
         as the repr for this object and subobjects.
         """
 
-        if self.record_guid:
-            result: Dict[str, Optional[str]] = {
-                "reference_type": ReferenceType.MiRecordGuid.name,
-                "reference_value": self.record_guid,
-            }
-        elif self.record_history_guid:
-            result = {
-                "reference_type": ReferenceType.MiRecordHistoryGuid.name,
-                "reference_value": self.record_history_guid,
-            }
-        elif self.record_history_identity:
-            result = {
-                "reference_type": ReferenceType.MiRecordHistoryIdentity.name,
-                "reference_value": str(self.record_history_identity),
-            }
-        else:
-            result = {
-                "reference_type": None,
-                "reference_value": None,
-            }
+        _reference_value = str(self._reference_value) if self._reference_value is not None else None
+        _reference_type = self._reference_type.name if self._reference_type is not None else None
+        result = {
+            "reference_type": _reference_type,
+            "reference_value": _reference_value,
+        }
         return result
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}({self.record_reference})>"
+        return f"<{self.__class__.__name__}({self._record_reference})>"
 
 
 class RecordDefinition(RecordReference):
@@ -105,91 +146,72 @@ class RecordDefinition(RecordReference):
         pass
 
 
-class PartDefinition(RecordDefinition):
-    """Represents a part record from the concrete :class:`RecordDefinition` subclass.
+class PartReference(RecordReference):
+    """Represents a reference to a Part record.
 
-    This class extends the base constructor to also support part numbers.
-
-    Parameters
-    ----------
-    reference_type
-        Type of the record reference value.
-    reference_value; str, int
-        Value of the record reference. All values are strings except for record identities values, which are integers.
+    This class extends the base class to also support part numbers.
     """
 
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self.part_number = None
-        if reference_type == ReferenceType.PartNumber:
-            self.part_number = cast(str, reference_value)
+    @property
+    def part_number(self) -> Optional[str]:
+        """Part number."""
+        if self._reference_type == ReferenceType.PartNumber:
+            return cast(str, self._reference_value)
+        return None
+
+
+class PartReferenceWithIdentifiers(CommonIdentifiersMixin, PartReference):
+    def __init__(self, input_part_number: Optional[str] = None, **kwargs: Any):
+        super().__init__(**kwargs)
+        self._input_part_number: Optional[str] = input_part_number
 
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
-        if self.part_number:
-            return {
-                "reference_type": ReferenceType.PartNumber.name,
-                "reference_value": self.part_number,
-            }
-        else:
-            return super().record_reference
+    def input_part_number(self) -> Optional[str]:
+        """Input part number.
+
+        This property is only populated on BoM query results and is equal to the ``<PartNumber>`` element of
+        the corresponding input BoM item.
+        """
+        return self._input_part_number
+
+
+class PartDefinition(RecordDefinition, PartReference):
+    """Represents a part record from the concrete :class:`RecordDefinition` subclass."""
 
     @property
     def _definition(self) -> models.CommonPartReference:
-        """Low-level API material definition.
+        """Low-level API part definition.
 
         Returns
         -------
         Definition
         """
 
-        result = models.CommonPartReference(**self.record_reference)
+        result = models.CommonPartReference(**self._record_reference)
         return result
 
 
-class MaterialDefinition(RecordDefinition):
-    """Represents a material record from the concrete :class:`RecordDefinition` subclass.
+class MaterialReference(RecordReference):
+    # Because of ProcessSummaryResult, this is publicly documented.
+    """Represents a reference to a Material record.
 
-    This class extends the base constructor to also support material IDs.
-
-    Parameters
-    ----------
-    reference_type
-        Type of the record reference value.
-    reference_value : str, int
-        Value of the record reference. All are strings except for record history identities,
-        which are integers.
+    This class extends the base class to also support material IDs.
     """
 
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self.material_id = None
-        if reference_type == ReferenceType.MaterialId:
-            self.material_id = cast(str, reference_value)
-
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
-        if self.material_id:
-            return {
-                "reference_type": ReferenceType.MaterialId.name,
-                "reference_value": self.material_id,
-            }
-        else:
-            return super().record_reference
+    def material_id(self) -> Optional[str]:
+        """Material ID."""
+        if self._reference_type == ReferenceType.MaterialId:
+            return cast(str, self._reference_value)
+        return None
+
+
+class MaterialReferenceWithIdentifiers(CommonIdentifiersMixin, MaterialReference):
+    pass
+
+
+class MaterialDefinition(RecordDefinition, MaterialReference):
+    """Represents a material record from the concrete :class:`RecordDefinition` subclass."""
 
     @property
     def _definition(self) -> models.CommonMaterialReference:
@@ -200,46 +222,30 @@ class MaterialDefinition(RecordDefinition):
         Definition
         """
 
-        result = models.CommonMaterialReference(**self.record_reference)
+        result = models.CommonMaterialReference(**self._record_reference)
         return result
 
 
-class SpecificationDefinition(RecordDefinition):
-    """Represents a specification record from the concrete :class:`RecordDefinition` subclass.
+class SpecificationReference(RecordReference):
+    """Represents a reference to a specification record from the concrete :class:`RecordReference` subclass.
 
-    This class extends the base constructor to also support specification IDs.
-
-    Parameters
-    ----------
-    reference_type
-        Type of the record reference value.
-    reference_value : str, int
-        Value of the record reference. All are strings except for record history identities,
-        which are integers.
+    This class extends the base class to also support specification IDs.
     """
 
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self.specification_id = None
-        if reference_type == ReferenceType.SpecificationId:
-            self.specification_id = cast(str, reference_value)
-
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
-        if self.specification_id:
-            return {
-                "reference_type": ReferenceType.SpecificationId.name,
-                "reference_value": self.specification_id,
-            }
-        else:
-            return super().record_reference
+    def specification_id(self) -> Optional[str]:
+        """Specification ID."""
+        if self._reference_type == ReferenceType.SpecificationId:
+            return cast(str, self._reference_value)
+        return None
+
+
+class SpecificationReferenceWithIdentifiers(CommonIdentifiersMixin, SpecificationReference):
+    pass
+
+
+class SpecificationDefinition(RecordDefinition, SpecificationReference):
+    """Represents a specification record from the concrete :class:`RecordDefinition` subclass."""
 
     @property
     def _definition(self) -> models.CommonSpecificationReference:
@@ -250,11 +256,11 @@ class SpecificationDefinition(RecordDefinition):
         Definition
         """
 
-        result = models.CommonSpecificationReference(**self.record_reference)
+        result = models.CommonSpecificationReference(**self._record_reference)
         return result
 
 
-class BaseSubstanceReference(RecordReference, ABC):
+class SubstanceReference(RecordReference):
     """Represents a reference to a substance record from the abstract ``RecordReference`` subclass.
 
     This class extends the base constructor to also support CAS numbers, EC numbers, and chemical names.
@@ -262,57 +268,35 @@ class BaseSubstanceReference(RecordReference, ABC):
     Substance references come in multiple flavors. Inputs, compliance results, and impacted substance results quantify
     substances in slightly different ways. This class implements the reference aspects of the substance record only.
     The quantifications are implemented in the subclasses.
-
-    Parameters
-    ----------
-    reference_type
-        Type of the record reference value.
-    reference_value
-        Value of the record reference. All are strings except for record history identities,
-        which are integers.
     """
 
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
-        self.chemical_name = None
-        self.cas_number = None
-        self.ec_number = None
-        if reference_type == ReferenceType.ChemicalName:
-            self.chemical_name = cast(str, reference_value)
-        elif reference_type == ReferenceType.CasNumber:
-            self.cas_number = cast(str, reference_value)
-        elif reference_type == ReferenceType.EcNumber:
-            self.ec_number = cast(str, reference_value)
+    @property
+    def cas_number(self) -> Optional[str]:
+        """CAS number."""
+        if self._reference_type == ReferenceType.CasNumber:
+            return cast(str, self._reference_value)
+        return None
 
     @property
-    def record_reference(self) -> Dict[str, Optional[str]]:
-        if self.chemical_name:
-            return {
-                "reference_type": ReferenceType.ChemicalName.name,
-                "reference_value": self.chemical_name,
-            }
-        elif self.cas_number:
-            return {
-                "reference_type": ReferenceType.CasNumber.name,
-                "reference_value": self.cas_number,
-            }
-        elif self.ec_number:
-            return {
-                "reference_type": ReferenceType.EcNumber.name,
-                "reference_value": self.ec_number,
-            }
-        else:
-            return super().record_reference
+    def ec_number(self) -> Optional[str]:
+        """EC number."""
+        if self._reference_type == ReferenceType.EcNumber:
+            return cast(str, self._reference_value)
+        return None
+
+    @property
+    def chemical_name(self) -> Optional[str]:
+        """Chemical name."""
+        if self._reference_type == ReferenceType.ChemicalName:
+            return cast(str, self._reference_value)
+        return None
 
 
-class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
+class SubstanceReferenceWithIdentifiers(CommonIdentifiersMixin, SubstanceReference):
+    pass
+
+
+class SubstanceDefinition(RecordDefinition, SubstanceReference):
     """Represents the definition of a substance as supplied to a compliance query from the concrete
     ``Substance`` subclass.
 
@@ -382,106 +366,37 @@ class SubstanceDefinition(RecordDefinition, BaseSubstanceReference):
         """
 
         definition = models.GetComplianceForSubstancesSubstanceWithAmount(
-            **self.record_reference, percentage_amount=self.percentage_amount
+            **self._record_reference, percentage_amount=self.percentage_amount
         )
         return definition
 
 
-class CoatingReference(RecordReference, ABC):
-    def __init__(
-        self,
-        reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
-    ):
-        super().__init__(
-            reference_type=reference_type,
-            reference_value=reference_value,
-        )
+class CoatingReference(RecordReference):
+    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
 
 
-class BoM1711Definition:
-    """Represents a BoM that is supplied as part of a BoM query.
-
-    The XML contains record references within it, so there are no explicit references to records in this object.
-
-    Parameters
-    ----------
-    bom
-        BoM in XML 1711 format.
-    """
-
-    def __init__(self, bom: str):
-        super().__init__()
-        self._bom = bom
-
-    @property
-    def _definition(self) -> str:
-        """Low-level API BoM definition.
-
-        Returns
-        -------
-        Definition
-        """
-
-        return self._bom
+class CoatingReferenceWithIdentifier(IdentifierMixin, CoatingReference):
+    pass
 
 
-class AbstractBomFactory:
-    """Creates factories for a given type of API query. The request object in the low-level
-    API is the key to controlling which definition is created.
-    .
-    """
+class ProcessReference(RecordReference):
+    # Because of ProcessSummaryResult, this is publicly documented.
+    # Extends RecordReference without changes, to re-define the class name, because it appears in the repr.
+    """Represents a reference to a Process record."""
 
-    registry: Dict[Type[models.ModelBase], Type["BomItemDefinitionFactory"]] = {}
-    """Mapping between a factory class and the definition object it can create."""
 
-    @classmethod
-    def register(cls, request_types: List[Type[models.ModelBase]]) -> Callable:
-        """Registers a specific factory class with a low-level API request type.
+class ProcessReferenceWithIdentifiers(CommonIdentifiersMixin, ProcessReference):
+    pass
 
-        Parameters
-        ----------
-        request_types
 
-        Returns
-        -------
-        Callable
-            The function that's being decorated.
-        """
+class TransportReference(RecordReference):
+    """Represents a reference to a Transport record."""
 
-        def inner(item_factory: Type[BomItemDefinitionFactory]) -> Type[BomItemDefinitionFactory]:
-            for request_type in request_types:
-                cls.registry[request_type] = item_factory
-            return item_factory
+    # Extends RecordReference without changes, to re-define the class name, because it appears in the repr
 
-        return inner
 
-    @classmethod
-    def create_factory_for_request_type(cls, request_type: Type[models.ModelBase]) -> "BomItemDefinitionFactory":
-        """Instantiate and return a specific item definition factory.
-
-        Parameters
-        ----------
-        request_type
-            Request type for which a definition is needed.
-
-        Returns
-        -------
-        Factory
-            Instance of a factory to create the appropriate definitions.
-
-        Raises
-        ------
-        RuntimeError
-            Error raised if a request type is not registered to any factory.
-        """
-
-        try:
-            item_factory_class = cls.registry[request_type]
-        except KeyError as e:
-            raise RuntimeError(f'Unregistered request type "{request_type}"').with_traceback(e.__traceback__)
-        item_factory = item_factory_class()
-        return item_factory
+class TransportReferenceWithIdentifier(IdentifierMixin, TransportReference):
+    pass
 
 
 class BomItemDefinitionFactory(ABC):
@@ -510,12 +425,6 @@ class BomItemDefinitionFactory(ABC):
         pass
 
 
-@AbstractBomFactory.register(
-    [
-        models.GetComplianceForMaterialsRequest,
-        models.GetImpactedSubstancesForMaterialsRequest,
-    ]
-)
 class MaterialDefinitionFactory(BomItemDefinitionFactory):
     """Creates material definition objects."""
 
@@ -589,12 +498,6 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
         return MaterialDefinition(reference_type=ReferenceType.MaterialId, reference_value=material_id)
 
 
-@AbstractBomFactory.register(
-    [
-        models.GetComplianceForPartsRequest,
-        models.GetImpactedSubstancesForPartsRequest,
-    ]
-)
 class PartDefinitionFactory(BomItemDefinitionFactory):
     """Creates part definition objects."""
 
@@ -668,12 +571,6 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
         return PartDefinition(reference_type=ReferenceType.PartNumber, reference_value=part_number)
 
 
-@AbstractBomFactory.register(
-    [
-        models.GetComplianceForSpecificationsRequest,
-        models.GetImpactedSubstancesForSpecificationsRequest,
-    ]
-)
 class SpecificationDefinitionFactory(BomItemDefinitionFactory):
     """Creates specification definition objects."""
 
@@ -751,7 +648,6 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
         return SpecificationDefinition(reference_type=ReferenceType.SpecificationId, reference_value=specification_id)
 
 
-@AbstractBomFactory.register([models.GetComplianceForSubstancesRequest])
 class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
     """Creates substance compliance definition objects."""
 
@@ -857,29 +753,3 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
         """
 
         return SubstanceDefinition(reference_type=ReferenceType.EcNumber, reference_value=ec_number)
-
-
-@AbstractBomFactory.register(
-    [
-        models.GetComplianceForBom1711Request,
-        models.GetImpactedSubstancesForBom1711Request,
-    ]
-)
-class BomFactory:
-    """Creates bom definition objects."""
-
-    @staticmethod
-    def create_definition(bom: str) -> BoM1711Definition:
-        """Instantiate and return a ``Bom1711Definition`` object based on a BoM.
-
-        Parameters
-        ----------
-        bom
-           BoM.
-
-        Returns
-        -------
-        Bom1711Definition
-        """
-
-        return BoM1711Definition(bom=bom)

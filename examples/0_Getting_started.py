@@ -82,10 +82,11 @@ query
 # Note that because the ``MaterialImpactedSubstancesQuery`` object has a fluent interface, you receive the same object
 # back that you started with, but with the material IDs added.
 #
-# Finally, add the legislation to the query. Legislations are identified by their ``Short title`` attribute.
+# Finally, add the legislation to the query. Legislations are identified by their ``Legislation ID`` attribute.
+# ``Candidate_AnnexXV`` is the ID of the ``EU REACH - The Candidate List`` legislation.
 
 # + tags=[]
-query = query.with_legislations(["EU REACH - The Candidate List"])
+query = query.with_legislation_ids(["Candidate_AnnexXV"])
 query
 # -
 
@@ -93,7 +94,7 @@ query
 # consolidate the cells above into a single step:
 
 # + tags=[]
-query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislations(["EU REACH - The Candidate List"])  # noqa: E501
+query = queries.MaterialImpactedSubstancesQuery().with_material_ids(["plastic-abs-high-impact"]).with_legislation_ids(["Candidate_AnnexXV"])  # noqa: E501
 query
 # -
 
@@ -105,7 +106,7 @@ query
 query = (
     queries.MaterialImpactedSubstancesQuery()
     .with_material_ids(["plastic-abs-high-impact"])
-    .with_legislations(["EU REACH - The Candidate List"])
+    .with_legislation_ids(["Candidate_AnnexXV"])
 )
 query
 # -
@@ -125,10 +126,10 @@ result
 # ## View query results
 
 # In the case of ``MaterialImpactedSubstancesQuery``, the results object contains the list of substances present in
-# the material that are impacted by the specified legislations.
+# the material that are impacted by the specified legislations. Display the five first substances in the list.
 
 # + tags=[]
-result.impacted_substances
+result.impacted_substances[:5]
 # -
 
 # ## View logged messages

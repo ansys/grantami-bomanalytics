@@ -23,14 +23,14 @@ dependencies to run the tests.
 
 .. code::
 
-    git clone https://github.com/pyansys/grantami-bomanalytics
+    git clone https://github.com/ansys/grantami-bomanalytics
     cd grantami-bomanalytics
     poetry install
 
 
 Post issues
 -----------
-Use the `Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_ page for
+Use the `Issues <https://github.com/ansys/grantami-bomanalytics/issues>`_ page for
 this repository to submit questions, report bugs, and request new features.
 
 To reach the PyAnsys support team, email `pyansys.support@ansys.com <pyansys.support@ansys.com>`_.

@@ -1,13 +1,15 @@
-from ansys.grantami.bomanalytics import queries, indicators
 from ansys.grantami.bomanalytics_openapi.models import (
-    GetImpactedSubstancesForSpecificationsResponse,
     GetComplianceForSpecificationsResponse,
+    GetImpactedSubstancesForSpecificationsResponse,
 )
+
+from ansys.grantami.bomanalytics import indicators, queries
+
 from .common import (
     BaseMockTester,
-    SpecificationValidator,
     CoatingValidator,
     MaterialValidator,
+    SpecificationValidator,
     SubstanceValidator,
 )
 
@@ -15,7 +17,7 @@ from .common import (
 class TestImpactedSubstances(BaseMockTester):
     query = (
         queries.SpecificationImpactedSubstancesQuery()
-        .with_legislations(["Fake legislation"])
+        .with_legislation_ids(["Fake legislation"])
         .with_specification_ids(["Fake ID"])
     )
     mock_key = GetImpactedSubstancesForSpecificationsResponse.__name__
@@ -26,7 +28,7 @@ class TestImpactedSubstances(BaseMockTester):
 
         spec_result_0 = response.impacted_substances_by_specification[0]
         specv_0 = SpecificationValidator(spec_result_0)
-        assert specv_0.check_reference(record_history_identity="14321")
+        assert specv_0.check_reference(record_history_identity="545019")
 
         # Test flattened list of substances
         assert len(spec_result_0.substances) == 2
@@ -36,7 +38,7 @@ class TestImpactedSubstances(BaseMockTester):
 
         # Test list of substances grouped by legislations
         assert len(spec_result_0.substances_by_legislation) == 1
-        substances_0 = spec_result_0.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        substances_0 = spec_result_0.substances_by_legislation["SINList"]
         assert len(substances_0) == 2
         for substance in substances_0:
             sv = SubstanceValidator(substance)
@@ -44,7 +46,7 @@ class TestImpactedSubstances(BaseMockTester):
 
         spec_result_1 = response.impacted_substances_by_specification[1]
         specv_1 = SpecificationValidator(spec_result_1)
-        assert specv_1.check_reference(specification_id="MSP89,TypeI")
+        assert specv_1.check_reference(specification_id="AMS03-27")
 
         # Test flattened list of substances
         assert len(spec_result_1.substances) == 2
@@ -54,7 +56,7 @@ class TestImpactedSubstances(BaseMockTester):
 
         # Test list of substances grouped by legislations
         assert len(spec_result_1.substances_by_legislation) == 1
-        substances_1 = spec_result_1.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        substances_1 = spec_result_1.substances_by_legislation["SINList"]
         assert len(substances_1) == 2
         for substance in substances_1:
             sv = SubstanceValidator(substance)
@@ -63,7 +65,7 @@ class TestImpactedSubstances(BaseMockTester):
     def test_impacted_substances_by_legislation(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
         assert len(response.impacted_substances_by_legislation) == 1
-        legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        legislation = response.impacted_substances_by_legislation["SINList"]
         for substance in legislation:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
@@ -110,8 +112,8 @@ class TestCompliance(BaseMockTester):
         queries.SpecificationComplianceQuery()
         .with_indicators(
             [
-                indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
-                indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
+                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
+                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
             ]
         )
         .with_specification_ids(["Fake ID"])

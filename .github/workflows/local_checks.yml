@@ -8,24 +8,11 @@ env:
   MAIN_PYTHON_VERSION: '3.9'
 
 jobs:
-  style:
-    name: Code Style Check
+  code-style:
+    name: "Code Style Check"
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-      - name: Install style requirements
-        run: pip install 'tox<4' poetry --disable-pip-version-check
-
-      - name: Spell, Lint and Type Check
-        run: tox -e style
-
+      - uses: ansys/actions/code-style@v4
 
   docs-style:
     name: Documentation Style Check
@@ -35,6 +22,7 @@ jobs:
         uses: ansys/actions/doc-style@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          vale-version: "2.29.6"
 
   unit_tests:
     name: Unit tests
@@ -42,12 +30,14 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [ '3.8', '3.9', '3.10', '3.11' ]
+        python-version: [ '3.9', '3.10', '3.11', '3.12' ]
     steps:
       - uses: actions/checkout@v4
 
       - name: Install kerberos headers
-        run: sudo apt install libkrb5-dev
+        run: |
+          sudo apt-get update
+          sudo apt install libkrb5-dev
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
@@ -59,12 +49,6 @@ jobs:
 
       - name: Test with tox (no integration tests)
         run: tox -- -m "not integration"
-
-      - name: Upload coverage report
-        uses: codecov/codecov-action@v3
-        with:
-          fail_ci_if_error: true
-          token: ${{ secrets.CODECOV_TOKEN }}
 
   package:
     name: Build package

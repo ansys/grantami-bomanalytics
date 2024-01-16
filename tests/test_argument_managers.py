@@ -1,7 +1,11 @@
-import pytest
 from dataclasses import dataclass
+import re
+
+import pytest
+
 from ansys.grantami.bomanalytics import queries
-from .inputs import sample_bom
+
+from .inputs import sample_bom_1711, sample_compliance_bom_1711, sample_sustainability_bom_2301
 
 
 class MockRecordDefinition:
@@ -14,7 +18,7 @@ class MockRecordDefinition:
         self._definition = self.Definition(reference_type, reference_value)
 
     @property
-    def record_reference(self) -> str:
+    def _record_reference(self) -> str:
         return {"reference_type": self._definition.reference_type, "reference_value": self._definition.reference_value}
 
 
@@ -82,17 +86,101 @@ class TestRecordArgManager:
         assert am.__repr__() == '<_RecordQueryDataManager {record_type_name: "TEST_NAME", batch_size: 100}, length = 1>'
 
 
-class TestBomArgManager:
-    def test_uninitialized_configuration(self):
-        am = queries._BomQueryDataManager()
-        assert isinstance(am._item_definitions[0], str)
-        assert am._item_definitions[0] == ""
-        assert am.__repr__() == '<_BomQueryDataManager {bom: ""}>'
+all_bom_formats = [item for item in queries._BomFormat]
 
-    @pytest.mark.parametrize("bom", ["Test bom less than 100 chars", sample_bom])
-    def test_add_bom(self, bom):
-        am = queries._BomQueryDataManager()
-        am._item_definitions = [bom]
+
+class TestBomArgManager:
+    @pytest.mark.parametrize("bom_version", ["bom_xml1711", "bom_xml2301"])
+    def test_uninitialized_configuration(self, bom_version):
+        am = queries._BomQueryDataManager(all_bom_formats)
+        assert am._item_definitions == []
+        assert am.__repr__() == "<_BomQueryDataManager>"
+
+    @pytest.mark.parametrize(
+        ["bom", "bom_version"],
+        [
+            (sample_bom_1711, "bom_xml1711"),
+            (sample_sustainability_bom_2301, "bom_xml2301"),
+        ],
+    )
+    def test_add_bom(self, bom, bom_version):
+        am = queries._BomQueryDataManager(all_bom_formats)
+        am.bom = bom
         assert am._item_definitions[0] == bom
-        assert am.batched_arguments == [{"bom_xml1711": bom}]
+        assert am.batched_arguments == [{bom_version: bom}]
         assert am.__repr__() == f'<_BomQueryDataManager {{bom: "{bom[:100]}"}}>'
+
+
+class TestBomNameSpaceParsing:
+    @pytest.mark.parametrize(
+        ["bom", "bom_format"],
+        [
+            (sample_sustainability_bom_2301, queries._BomFormat.bom_xml2301),
+            (sample_bom_1711, queries._BomFormat.bom_xml1711),
+            (sample_compliance_bom_1711, queries._BomFormat.bom_xml1711),
+        ],
+    )
+    def test_valid_namespace_parsing(self, bom, bom_format):
+        parsed_format = queries._BomQueryDataManager(all_bom_formats)._validate_bom(bom)
+        assert parsed_format == bom_format
+
+    def test_not_valid_xml(self):
+        bom = sample_bom_1711.replace("<Components>", "<Component>")
+        with pytest.raises(ValueError, match="BoM provided as input is not valid XML"):
+            queries._BomQueryDataManager(all_bom_formats).bom = bom
+
+    def test_xml_but_not_a_bom(self):
+        bom = sample_bom_1711.replace("PartsEco", "SomeOtherRoot")
+        with pytest.raises(
+            ValueError, match="Invalid input BoM. Ensure the document is compliant with the expected XML schema"
+        ):
+            queries._BomQueryDataManager(all_bom_formats).bom = bom
+
+    def test_xml_bom_but_unknown_namespace(self):
+        bom = sample_sustainability_bom_2301.replace(
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "UnknownNamespace"
+        )
+        with pytest.raises(
+            ValueError, match="Invalid input BoM. Ensure the document is compliant with the expected XML schema"
+        ):
+            queries._BomQueryDataManager(all_bom_formats).bom = bom
+
+    def test_xml_bom_but_not_version_supported_by_query(self):
+        expected_error = re.escape(
+            "bom_xml2301 (http://www.grantadesign.com/23/01/BillOfMaterialsEco) is not supported by this query."
+        )
+        with pytest.raises(ValueError, match=expected_error):
+            queries._BomQueryDataManager([queries._BomFormat.bom_xml1711]).bom = sample_sustainability_bom_2301
+
+
+def test_add_boms_sequentially():
+    # Check that properties are updated as expected when overwriting a bom with a bom from another version
+    bom_manager = queries._BomQueryDataManager(all_bom_formats)
+    # assert query.item_type_name is None  # TODO attribute does not exist
+    bom_manager.bom = sample_bom_1711
+    assert bom_manager.item_type_name == "bom_xml1711"
+    assert bom_manager._item_definitions[0] == sample_bom_1711
+
+    bom_manager.bom = sample_sustainability_bom_2301
+    assert bom_manager.item_type_name == "bom_xml2301"
+    assert bom_manager._item_definitions[0] == sample_sustainability_bom_2301
+
+
+class TestBomFormatEnum:
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
+            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+        ],
+    )
+    def test_valid_values_by_namespace(self, value):
+        queries._BomFormat(value)
+
+    def test_invalid_value(self):
+        value = "SomeOtherNotValidValue"
+        with pytest.raises(ValueError, match=f"'{value}' is not a valid _BomFormat"):
+            queries._BomFormat(value)
+
+    def test_by_name(self):
+        _ = queries._BomFormat["bom_xml1711"]

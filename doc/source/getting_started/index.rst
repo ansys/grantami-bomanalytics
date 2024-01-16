@@ -3,7 +3,7 @@
 Getting started
 ---------------
 To use the ``ansys.grantami.bomanalytics`` package, you must have access to a
-Granta MI server that includes MI Restricted Substances Reports 2022 R1
+Granta MI server that includes MI Restricted Substances and Sustainability Reports 2024 R1
 or later.
 
 The ``ansys.grantami.bomanalytics`` package currently supports Python 3.8
@@ -18,20 +18,26 @@ this code:
 
     pip install ansys-grantami-bomanalytics
 
+To install a release compatible with a specific version of Granta MI, use the
+`PyGranta <https://grantami.docs.pyansys.com/>`_ meta-package with a requirement specifier:
 
-Alternatively, to install the latest from `ansys-grantami-bomanalytics GitHub <https://github.com/pyansys/grantami-bomanalytics>`_,
+.. code::
+
+    pip install pygranta==2023.2.0
+
+Alternatively, to install the latest from `ansys-grantami-bomanalytics GitHub <https://github.com/ansys/grantami-bomanalytics>`_,
 use this code:
 
 .. code::
 
-    pip install git:https://github.com/pyansys/grantami-bomanalytics.git
+    pip install git:https://github.com/ansys/grantami-bomanalytics.git
 
 
 To install a local *development* version with Git and Poetry, use this code:
 
 .. code::
 
-    git clone https://github.com/pyansys/grantami-bomanalytics
+    git clone https://github.com/ansys/grantami-bomanalytics
     cd grantami-bomanalytics
     poetry install
 
@@ -41,9 +47,14 @@ with your changes reflected in your Python setup after restarting the Python ker
 
 Ansys software requirements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-For the latest features, you must have a working installation of Ansys Granta MI 2022 R1
-or later with read access, along with an 2022 R1 or later installation of the MI Restricted
-Substances Reports Bundle.
+You must have a working installation of Ansys Granta MI 2024 R1
+or later with read access, along with an 2024 R1 or later installation of the MI Restricted
+Substances and Sustainability Reports Bundle.
+
+Licensing
+~~~~~~~~~
+``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately.
+Endpoints available to end users depend on the available licenses.
 
 Verify your installation
 ~~~~~~~~~~~~~~~~~~~~~~~~

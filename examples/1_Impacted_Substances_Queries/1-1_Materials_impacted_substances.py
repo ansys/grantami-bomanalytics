@@ -42,8 +42,8 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # + tags=[]
 PPS_ID = "plastic-pps-generalpurpose"
 PC_ID = "plastic-pc-20carbonfiber"
-SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
-REACH = "EU REACH - The Candidate List"
+SIN_LIST = "SINList"
+REACH = "Candidate_AnnexXV"
 # -
 
 # Next import the ``queries`` module and build the query with the references in the previous cell.
@@ -54,7 +54,7 @@ from ansys.grantami.bomanalytics import queries
 mat_query = (
     queries.MaterialImpactedSubstancesQuery()
     .with_material_ids([PPS_ID, PC_ID])
-    .with_legislations([REACH, SIN_LIST])
+    .with_legislation_ids([REACH, SIN_LIST])
 )
 # -
 
@@ -95,8 +95,8 @@ from tabulate import tabulate
 rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
     for substance in substances_by_material[PC_ID]]
 
-print(f'Substances impacted by "{SIN_LIST}" in "{PC_ID}" (10/{len(rows)})')
-print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
+print(f'Substances impacted by "{SIN_LIST}" in "{PC_ID}" (5/{len(rows)})')
+print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
 # ## View results grouped by legislation
@@ -111,8 +111,8 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 material_substances_sin = results.impacted_substances_by_legislation[SIN_LIST]
 rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
     for substance in material_substances_sin]
-print(f'Substances impacted by "{SIN_LIST}" in all materials (10/{len(rows)})')
-print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
+print(f'Substances impacted by "{SIN_LIST}" in all materials (5/{len(rows)})')
+print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
 # ## View results as a flat list
@@ -128,6 +128,6 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 material_substances_all = results.impacted_substances
 rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
     for substance in material_substances_all]
-print(f"Impacted substances for all materials and legislations (10/{len(rows)})")
-print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
+print(f"Impacted substances for all materials and legislations (5/{len(rows)})")
+print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 # -

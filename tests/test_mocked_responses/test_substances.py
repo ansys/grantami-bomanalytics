@@ -1,5 +1,7 @@
-from ansys.grantami.bomanalytics import queries, indicators
 from ansys.grantami.bomanalytics_openapi.models import GetComplianceForSubstancesResponse
+
+from ansys.grantami.bomanalytics import indicators, queries
+
 from .common import BaseMockTester, SubstanceValidator
 
 
@@ -14,8 +16,8 @@ class TestCompliance(BaseMockTester):
         queries.SubstanceComplianceQuery()
         .with_indicators(
             [
-                indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
-                indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
+                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
+                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
             ]
         )
         .with_cas_numbers(["Fake ID"])

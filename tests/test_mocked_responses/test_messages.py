@@ -1,21 +1,23 @@
 import json
 import logging
 
-import pytest
-from ansys.grantami.bomanalytics import queries, GrantaMIException
-from ansys.grantami.bomanalytics._query_results import LogMessage
-from .common import BaseMockTester
-from ..inputs import examples_as_dicts
 from ansys.grantami.bomanalytics_openapi.models import GetImpactedSubstancesForMaterialsResponse
+import pytest
+
+from ansys.grantami.bomanalytics import GrantaMIException, queries
+from ansys.grantami.bomanalytics._query_results import LogMessage
+
+from ..inputs import examples_as_dicts, sample_bom_1711
+from .common import BaseMockTester
 
 
 class TestMessages(BaseMockTester):
-    query = queries.BomImpactedSubstancesQuery()
+    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_1711)
 
     def test_critical_error_raises_exception(self, mock_connection, caplog):
         error_message = "This is a critical message"
         response = {"LogMessages": [{"Severity": "critical-error", "Message": error_message}]}
-        with pytest.raises(GrantaMIException) as e:
+        with pytest.raises(GrantaMIException) as e, pytest.warns(RuntimeWarning, match="No legislations"):
             self.get_mocked_response(mock_connection, response=json.dumps(response))
         assert str(e.value) == error_message
         assert self.check_log(caplog, "CRITICAL", error_message)
@@ -24,7 +26,7 @@ class TestMessages(BaseMockTester):
     def test_non_critical_error_printed_to_stdout(self, mock_connection, severity, caplog):
         self.query = (
             queries.MaterialImpactedSubstancesQuery()
-            .with_legislations(["Fake legislation"])
+            .with_legislation_ids(["Fake legislation"])
             .with_material_ids(["Fake ID"])
         )
         mock_key = GetImpactedSubstancesForMaterialsResponse.__name__
@@ -43,7 +45,7 @@ class TestMessages(BaseMockTester):
     def test_info(self, mock_connection, caplog):
         self.query = (
             queries.MaterialImpactedSubstancesQuery()
-            .with_legislations(["Fake legislation"])
+            .with_legislation_ids(["Fake legislation"])
             .with_material_ids(["Fake ID"])
         )
         mock_key = GetImpactedSubstancesForMaterialsResponse.__name__

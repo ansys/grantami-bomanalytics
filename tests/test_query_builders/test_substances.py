@@ -1,5 +1,7 @@
 import pytest
+
 from ansys.grantami.bomanalytics import queries
+
 from .common import check_query_manager_attributes
 
 SubstanceCompliance = queries.SubstanceComplianceQuery

@@ -14,7 +14,6 @@ Query definition
    .. automethod:: with_record_guids
    .. automethod:: with_record_history_guids
    .. automethod:: with_record_history_ids
-   .. automethod:: with_stk_records
    .. automethod:: with_batch_size
 
 
@@ -34,3 +33,5 @@ Part result
 ~~~~~~~~~~~
 
 .. autoclass:: ansys.grantami.bomanalytics._item_results.PartWithComplianceResult
+   :inherited-members:
+   :member-order: by_mro_by_source

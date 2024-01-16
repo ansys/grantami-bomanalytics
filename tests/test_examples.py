@@ -1,10 +1,15 @@
-import sys
-import pytest
-import subprocess
+import os
 from pathlib import Path
+import subprocess
+import sys
+
+import pytest
 
 pytestmark = pytest.mark.integration
 IPYTHONDIR = str(Path(__file__).parent.parent) + "/.ipython"
+
+env = os.environ.copy()
+env["PLOTLY_RENDERER"] = "json"
 
 
 def test_examples(example_script: Path):
@@ -18,6 +23,7 @@ def test_examples(example_script: Path):
             str(example_script),  # str() needed in py <= 3.7
         ],
         cwd=example_script.parent,
+        env=env,
     )
     p.wait()
     assert p.returncode == 0

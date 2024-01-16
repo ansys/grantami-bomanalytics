@@ -52,8 +52,12 @@ test-output.xml
 # Docs builds
 doc/build
 
+.ipython/profile_default/history.sqlite
+
 # ipynb (generated from py files on docs build)
 *.ipynb
 
 # Pypi things
 deps
+
+venv/

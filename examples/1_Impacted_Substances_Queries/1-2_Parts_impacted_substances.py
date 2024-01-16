@@ -53,8 +53,8 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # + tags=[]
 DRILL = "DRILL"
 WING = "asm_flap_mating"
-SIN_LIST = "The SIN List 2.1 (Substitute It Now!)"
-REACH = "EU REACH - The Candidate List"
+SIN_LIST = "SINList"
+REACH = "Candidate_AnnexXV"
 # -
 
 # Next, import the ``queries`` module and build the query with the references in the previous cell.
@@ -65,7 +65,7 @@ from ansys.grantami.bomanalytics import queries
 part_query = (
     queries.PartImpactedSubstancesQuery()
     .with_part_numbers([DRILL, WING])
-    .with_legislations([SIN_LIST, REACH])
+    .with_legislation_ids([SIN_LIST, REACH])
 )
 # -
 
@@ -121,8 +121,8 @@ print(tabulate(rows, headers=["CAS Number", "Amount (wt. %)"]))
 part_substances_sin = part_result.impacted_substances_by_legislation[SIN_LIST]
 rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
         for substance in part_substances_sin]
-print(f'Substances impacted by "{SIN_LIST}" in all parts (10/{len(rows)})')
-print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
+print(f'Substances impacted by "{SIN_LIST}" in all parts (5/{len(rows)})')
+print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 # -
 
 # ## Results as a Flat List
@@ -138,6 +138,6 @@ print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
 part_substances_all = part_result.impacted_substances
 rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
         for substance in part_substances_all]
-print(f'Impacted substances across all legislations in "DRILL" (10/{len(rows)})')
-print(tabulate(rows[:10], headers=["CAS Number", "Amount (wt. %)"]))
+print(f'Impacted substances across all legislations in "DRILL" (5/{len(rows)})')
+print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 # -

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://www.grantadesign.com/12/05/GrantaBaseTypes" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes" xmlns:xsd="undefined">
+<schema targetNamespace="http://www.grantadesign.com/12/05/GrantaBaseTypes" elementFormDefault="qualified" attributeFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes">
   <complexType name="MIEntityReference" abstract="true">
     <annotation>
       <documentation>A base type for types that identify entities in an MI Database. The details of how entities are identified differ between concrete sub-types.</documentation>
@@ -165,7 +165,7 @@
       </enumeration>
       <enumeration value="linkedRecords">
         <annotation>
-          <documentation>The Records that are linked to this Record, via static RecordLinkGroups. This pseudo-attribute has been deprecated because it 
+          <documentation>The Records that are linked to this Record, via static RecordLinkGroups. This pseudo-attribute has been deprecated because it
 		  returns all links for a potentially large number of record link groups. Please use GetLinkedRecords or DataExport to get the linked records.</documentation>
         </annotation>
       </enumeration>

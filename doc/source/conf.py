@@ -1,13 +1,19 @@
-import sys
-import os
 from datetime import datetime
-from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
-import shutil
+import os
 from pathlib import Path
+import shutil
+import sys
+
+from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import jupytext
+from sphinx.application import Sphinx
+
+from ansys.grantami.bomanalytics import __version__
+
+sys.path.insert(0, os.path.abspath("../"))
+from class_documenter import ClassDocumenter
 
 sys.path.insert(0, os.path.abspath("../../src"))
-from ansys.grantami.bomanalytics import __version__
 
 
 # -- Project information -----------------------------------------------------
@@ -25,7 +31,6 @@ extensions = [
     "sphinx.ext.autodoc",
     "numpydoc",
     "sphinx.ext.doctest",
-    "sphinx.ext.autosummary",
     "notfound.extension",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
@@ -37,11 +42,18 @@ extensions = [
 
 # sphinx
 add_module_names = False
+nitpick_ignore = [
+    # Ignore "Query Result", the type of the Returns section of client.run()
+    ("py:obj", "Query"),
+    ("py:obj", "Result"),
+    # Ignore `available_flags` on indicator classes, as sphinx seems to struggle with a type as a class attribute. The
+    # link is generated correctly, but a warning is emitted.
+    ('py:obj', 'available_flags'),
+]
 
 # sphinx.ext.autodoc
 autodoc_typehints = "description"
 autodoc_typehints_description_target = "documented"
-autodoc_type_aliases = {"Yaml": "Yaml"}
 
 # Intersphinx mapping
 intersphinx_mapping = {
@@ -58,6 +70,12 @@ intersphinx_mapping = {
 # numpydoc configuration
 numpydoc_show_class_members = False
 numpydoc_xref_param_type = True
+numpydoc_xref_ignore = {
+    "optional",
+    "_FinalAttributeReferenceBuilder",
+    "_FinalRecordReferenceBuilder",
+    "_AttributeReferenceByNameBuilder",
+}
 
 # Consider enabling numpydoc validation. See:
 # https://numpydoc.readthedocs.io/en/latest/validation.html#
@@ -75,6 +93,17 @@ numpydoc_validation_checks = {
     # "SS05", # Summary must start with infinitive verb, not third person
     "RT02",  # The first line of the Returns section should contain only the
     # type, unless multiple values are being returned"
+}
+# Ignore missing docstring warning on dataclasses parameters.
+numpydoc_validation_exclude = {
+    "^ansys\.grantami\.bomanalytics\.bom_types\._bom_types\.[\w]+\.[\w]+$"
+}
+
+extlinks = {
+    'MI_docs': (
+        'https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/Granta/v241/en/RS_and_Sustainability/%s',
+        None
+    )
 }
 
 # static path
@@ -128,13 +157,13 @@ copybutton_prompt_is_regexp = True
 
 
 # -- Options for HTML output -------------------------------------------------
-cname = os.getenv("DOCUMENTATION_CNAME", "bomanalytics.grantami.docs.pyansys.com")
+cname = os.getenv("DOCUMENTATION_CNAME", "animated-broccoli-k6emqn7.pages.github.io")
 """The canonical name of the webpage hosting the documentation."""
 html_theme = "ansys_sphinx_theme"
 html_favicon = ansys_favicon
 html_logo = pyansys_logo_black
 html_theme_options = {
-    "github_url": "https://github.com/pyansys/grantami-bomanalytics",
+    "github_url": "https://github.com/ansys/grantami-bomanalytics",
     "additional_breadcrumbs": [
         ("PyAnsys Documentation", "https://docs.pyansys.com/"),
         ("PyGranta", "https://grantami.docs.pyansys.com/"),
@@ -144,6 +173,7 @@ html_theme_options = {
         "json_url": f"https://{cname}/versions.json",
         "version_match": get_version_match(__version__),
     },
+    "check_switcher": False
 }
 
 # -- Options for HTMLHelp output ---------------------------------------------
@@ -271,3 +301,8 @@ Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb
 
 ----
 """
+
+
+def setup(app: Sphinx):
+    # Register custom documenter as the default documenter for classes.
+    app.add_autodocumenter(ClassDocumenter, override=True)

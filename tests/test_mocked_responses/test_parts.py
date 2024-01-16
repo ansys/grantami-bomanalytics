@@ -1,13 +1,15 @@
-from ansys.grantami.bomanalytics import queries, indicators
 from ansys.grantami.bomanalytics_openapi.models import (
-    GetImpactedSubstancesForPartsResponse,
     GetComplianceForPartsResponse,
+    GetImpactedSubstancesForPartsResponse,
 )
+
+from ansys.grantami.bomanalytics import indicators, queries
+
 from .common import (
     BaseMockTester,
+    MaterialValidator,
     PartValidator,
     SpecificationValidator,
-    MaterialValidator,
     SubstanceValidator,
 )
 
@@ -15,7 +17,7 @@ from .common import (
 class TestImpactedSubstances(BaseMockTester):
     query = (
         queries.PartImpactedSubstancesQuery()
-        .with_legislations(["Fake legislation"])
+        .with_legislation_ids(["Fake legislation"])
         .with_part_numbers(["Fake part number"])
     )
     mock_key = GetImpactedSubstancesForPartsResponse.__name__
@@ -36,7 +38,7 @@ class TestImpactedSubstances(BaseMockTester):
 
         # Test list of substances grouped by legislations
         assert len(part_0.substances_by_legislation) == 1
-        part_0_substances = part_0.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        part_0_substances = part_0.substances_by_legislation["SINList"]
         assert len(part_0_substances) == 2
         for substance in part_0_substances:
             sv = SubstanceValidator(substance)
@@ -54,7 +56,7 @@ class TestImpactedSubstances(BaseMockTester):
 
         # Test list of substances grouped by legislations
         assert len(part_1.substances_by_legislation) == 1
-        part_1_substances = part_1.substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        part_1_substances = part_1.substances_by_legislation["SINList"]
         assert len(part_1_substances) == 2
         for substance in part_1_substances:
             sv = SubstanceValidator(substance)
@@ -63,7 +65,7 @@ class TestImpactedSubstances(BaseMockTester):
     def test_impacted_substances_by_legislation(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
         assert len(response.impacted_substances_by_legislation) == 1
-        legislation = response.impacted_substances_by_legislation["The SIN List 2.1 (Substitute It Now!)"]
+        legislation = response.impacted_substances_by_legislation["SINList"]
         for substance in legislation:
             sv = SubstanceValidator(substance)
             sv.check_substance_details()
@@ -107,8 +109,8 @@ class TestCompliance(BaseMockTester):
         queries.PartComplianceQuery()
         .with_indicators(
             [
-                indicators.WatchListIndicator(name="Indicator 1", legislation_names=["Mock"]),
-                indicators.RoHSIndicator(name="Indicator 2", legislation_names=["Mock"]),
+                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
+                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
             ]
         )
         .with_part_numbers(["Fake part number"])
@@ -146,7 +148,7 @@ class TestCompliance(BaseMockTester):
         # Part 1
         part_1 = response.compliance_by_part_and_indicator[1]
         pv_1 = PartValidator(part_1)
-        assert pv_1.check_reference(record_guid="3df206df-9fc8-4859-90d4-3519764f8b55")
+        assert pv_1.check_reference(record_guid="f622cc99-158d-43eb-881e-209a08af1108")
         part_1_result = [
             indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
             indicators.RoHSFlag.RohsNonCompliant,

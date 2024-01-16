@@ -1,7 +1,9 @@
-import pytest
 import random
-from ansys.grantami.bomanalytics import indicators
+
 from ansys.grantami.bomanalytics_openapi import CommonIndicatorDefinition
+import pytest
+
+from ansys.grantami.bomanalytics import indicators
 
 
 def create_rohs_indicator(ignore_exemptions) -> indicators.RoHSIndicator:
@@ -15,7 +17,7 @@ def create_watchlist_indicator(ignore_process_chemicals) -> indicators.WatchList
 def create_indicator(indicator, **kwargs) -> indicators._Indicator:
     return indicator(
         name="TestIndicator",
-        legislation_names=["Test legislation 1, Test legislation 2"],
+        legislation_ids=["Test legislation 1, Test legislation 2"],
         default_threshold_percentage=5,
         **kwargs,
     )
@@ -106,7 +108,7 @@ class TestRohsIndicator:
 
     def test_indicator_definition(self):
         assert self.test_indicator.name == "TestIndicator"
-        assert self.test_indicator.legislation_names == ["Test legislation 1, Test legislation 2"]
+        assert self.test_indicator.legislation_ids == ["Test legislation 1, Test legislation 2"]
         assert self.test_indicator.default_threshold_percentage == 5
         assert self.test_indicator._indicator_type == "Rohs"
         assert self.test_indicator._ignore_exemptions is True
@@ -118,7 +120,7 @@ class TestRohsIndicator:
         assert isinstance(definition, CommonIndicatorDefinition)
         def_dict = definition.to_dict()
         assert def_dict["name"] == self.test_indicator.name
-        assert def_dict["legislation_names"] == self.test_indicator.legislation_names
+        assert def_dict["legislation_ids"] == self.test_indicator.legislation_ids
         assert def_dict["default_threshold_percentage"] == self.test_indicator.default_threshold_percentage
         assert def_dict["type"] == self.test_indicator._indicator_type
         assert def_dict["ignore_exemptions"] == self.test_indicator._ignore_exemptions
@@ -130,7 +132,7 @@ class TestWatchListIndicator:
 
     def test_indicator_definition(self):
         assert self.test_indicator.name == "TestIndicator"
-        assert self.test_indicator.legislation_names == ["Test legislation 1, Test legislation 2"]
+        assert self.test_indicator.legislation_ids == ["Test legislation 1, Test legislation 2"]
         assert self.test_indicator.default_threshold_percentage == 5
         assert self.test_indicator._indicator_type == "WatchList"
         assert self.test_indicator._ignore_process_chemicals is True
@@ -142,7 +144,7 @@ class TestWatchListIndicator:
         assert isinstance(definition, CommonIndicatorDefinition)
         def_dict = definition.to_dict()
         assert def_dict["name"] == self.test_indicator.name
-        assert def_dict["legislation_names"] == self.test_indicator.legislation_names
+        assert def_dict["legislation_ids"] == self.test_indicator.legislation_ids
         assert def_dict["default_threshold_percentage"] == self.test_indicator.default_threshold_percentage
         assert def_dict["type"] == self.test_indicator._indicator_type
         assert def_dict["ignore_exemptions"] is None

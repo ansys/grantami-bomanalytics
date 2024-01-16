@@ -1,5 +1,13 @@
 on:
   workflow_call:
+    inputs:
+      skip-vm-management:
+        description: >
+          Whether to skip or not the start up of the virtual machine. Default
+          value is ``false``.
+        required: false
+        default: false
+        type: boolean
     secrets:
       AZURE_APP_ID:
         required: true
@@ -38,6 +46,7 @@ jobs:
       - name: Start VM with Azure CLI
         id: azure_cli
         uses: azure/CLI@v1
+        if: ${{ !(inputs.skip-vm-management)}}
         with:
           azcliversion: 2.32.0
           inlineScript: |
@@ -73,7 +82,9 @@ jobs:
 
       - name: Install kerberos headers (ubuntu only)
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: sudo apt install libkrb5-dev
+        run: |
+          sudo apt-get update
+          sudo apt install libkrb5-dev
 
       - name: Install dependencies
         run: pip install poetry 'tox<4' --disable-pip-version-check
@@ -141,7 +152,7 @@ jobs:
     name: Stop Azure VM
     runs-on: ubuntu-latest
     needs: docs
-    if: always()
+    if: ${{ always() && !(inputs.skip-vm-management)}}
 
     steps:
       - name: Stop Azure VM

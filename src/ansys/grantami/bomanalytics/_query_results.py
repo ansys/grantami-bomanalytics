@@ -3,28 +3,31 @@
 Defines the representations of the query results themselves, which allows them to implement pivots and summaries over
 the entire query result instead of being constrained to individual parts and materials.
 """
-from typing import List, Dict, Type, Callable, Any, Union, TYPE_CHECKING
-from collections import defaultdict, namedtuple
 from abc import ABC
+from collections import defaultdict, namedtuple
+from typing import Any, Callable, Dict, List, Type, Union
+import warnings
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
 from ._item_results import (
-    ItemResultFactory,
-    MaterialWithImpactedSubstancesResult,
-    MaterialWithComplianceResult,
-    PartWithImpactedSubstancesResult,
-    PartWithComplianceResult,
-    SpecificationWithImpactedSubstancesResult,
-    SpecificationWithComplianceResult,
-    SubstanceWithComplianceResult,
     ImpactedSubstance,
+    ItemResultFactory,
+    MaterialSummaryResult,
+    MaterialWithComplianceResult,
+    MaterialWithImpactedSubstancesResult,
+    PartWithComplianceResult,
+    PartWithImpactedSubstancesResult,
+    PartWithSustainabilityResult,
+    ProcessSummaryResult,
+    SpecificationWithComplianceResult,
+    SpecificationWithImpactedSubstancesResult,
+    SubstanceWithComplianceResult,
+    SustainabilityPhaseSummaryResult,
+    TransportSummaryResult,
+    TransportWithSustainabilityResult,
 )
-from .indicators import WatchListIndicator, RoHSIndicator
-
-if TYPE_CHECKING:
-    from .queries import Query_Result
-
+from .indicators import RoHSIndicator, WatchListIndicator
 
 LogMessage = namedtuple("LogMessage", ["severity", "message"])
 """ Message returned by Granta MI when running the query.
@@ -77,7 +80,7 @@ class QueryResultFactory:
         results: Union[List[models.ModelBase], models.ModelBase],
         messages: List[models.CommonLogEntry],
         **kwargs: Dict,
-    ) -> "Query_Result":
+    ) -> "ResultBaseClass":
         """Returns a specific query result.
 
         Uses the type of the ``results`` parameter to determine which specific ``Query_Result`` object to return.
@@ -113,12 +116,12 @@ class QueryResultFactory:
         except KeyError as e:
             raise RuntimeError(f"Unregistered response type" f' "{response_type}"').with_traceback(e.__traceback__)
 
-        item_result: Query_Result = item_factory_class(results=results, messages=messages, **kwargs)
+        item_result: ResultBaseClass = item_factory_class(results=results, messages=messages, **kwargs)
         return item_result
 
 
 class ResultBaseClass(ABC):
-    def __init__(self, log_messages: List[LogMessage]) -> None:
+    def __init__(self, log_messages: List[models.CommonLogEntry]) -> None:
         self._messages = [LogMessage(severity=msg.severity, message=msg.message) for msg in log_messages]
 
     @property
@@ -130,17 +133,6 @@ class ResultBaseClass(ABC):
 
         Messages are also logged using the Python ``logging`` module to the ``ansys.grantami.bomanalytics`` logger. By
         default, messages with a severity of ``"warning"`` or higher are printed on stderr.
-
-        Returns
-        -------
-        list[:class:`~ansys.grantami.bomanalytics._query_results.LogMessage`]
-
-        Examples
-        --------
-        >>> result: MaterialImpactedSubstancesQueryResult
-        >>> result.messages
-        [LogMessage(severity='warning', message='Material "ABS+PVC (flame retarded)" has
-            2 substance row(s) with missing substance links.')]
         """
 
         return self._messages
@@ -154,11 +146,6 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
     """
 
     _results: List
-    _result_type_name: str
-
-    def __repr__(self) -> str:
-        result = f"<{self.__class__.__name__}: {len(self._results)} " f"{self._result_type_name} results>"
-        return result
 
     @property
     def impacted_substances_by_legislation(self) -> Dict[str, List["ImpactedSubstance"]]:
@@ -176,7 +163,7 @@ class ImpactedSubstancesBaseClass(ResultBaseClass):
         --------
         >>> result: MaterialImpactedSubstancesQueryResult
         >>> result.impacted_substances_by_legislation
-        {'EU REACH - The Candidate List': [
+        {'Candidate_AnnexXV': [
             <ImpactedSubstance: {"cas_number": 90481-04-2}>, ...]
         }
         """
@@ -269,10 +256,12 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
     This class describes the substances in the specified materials impacted by one or more legislations.
 
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
+    Examples
+    --------
+    >>> result: MaterialImpactedSubstancesQueryResult
+    >>> result.messages
+    [LogMessage(severity='warning', message='Material "ABS+PVC (flame retarded)" has
+        2 substance row(s) with missing substance links.')]
     """
 
     def __init__(
@@ -289,10 +278,8 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "MaterialWithImpactedSubstances"
         for result in results:
-            material_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name=self._result_type_name,
+            material_with_impacted_substances = ItemResultFactory.create_material_impacted_substances_result(
                 result_with_impacted_substances=result,
             )
             self._results.append(material_with_impacted_substances)
@@ -315,6 +302,10 @@ class MaterialImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         return self._results
 
+    def __repr__(self) -> str:
+        result = f"<{self.__class__.__name__}: {len(self._results)} MaterialWithImpactedSubstances results>"
+        return result
+
 
 @QueryResultFactory.register(models.CommonMaterialWithCompliance)
 class MaterialComplianceQueryResult(ComplianceBaseClass):
@@ -322,12 +313,9 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of materials against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
+
+    _result_type_name = "MaterialWithCompliance"
 
     def __init__(
         self,
@@ -347,10 +335,8 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "MaterialWithCompliance"
         for result in results:
-            material_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            material_with_compliance = ItemResultFactory.create_material_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -384,11 +370,6 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     class.
 
     This class describes the substances in the specified parts impacted by one or more legislations.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -405,10 +386,8 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "PartWithImpactedSubstances"
         for result in results:
-            part_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name=self._result_type_name,
+            part_with_impacted_substances = ItemResultFactory.create_part_impacted_substances_result(
                 result_with_impacted_substances=result,
             )
             self._results.append(part_with_impacted_substances)
@@ -432,6 +411,10 @@ class PartImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         return self._results
 
+    def __repr__(self) -> str:
+        result = f"<{self.__class__.__name__}: {len(self._results)} PartWithImpactedSubstances results>"
+        return result
+
 
 @QueryResultFactory.register(models.CommonPartWithCompliance)
 class PartComplianceQueryResult(ComplianceBaseClass):
@@ -439,12 +422,9 @@ class PartComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of parts against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
+
+    _result_type_name = "PartWithCompliance"
 
     def __init__(
         self,
@@ -464,10 +444,8 @@ class PartComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "PartWithCompliance"
         for result in results:
-            part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -502,11 +480,6 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     class.
 
     This class describes the substances in the specified specifications impacted by one or more legislations.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -523,10 +496,8 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "SpecificationWithImpactedSubstances"
         for result in results:
-            specification_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-                result_type_name=self._result_type_name,
+            specification_with_impacted_substances = ItemResultFactory.create_specification_impacted_substances_result(
                 result_with_impacted_substances=result,
             )
             self._results.append(specification_with_impacted_substances)
@@ -553,6 +524,10 @@ class SpecificationImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
         return self._results
 
+    def __repr__(self) -> str:
+        result = f"<{self.__class__.__name__}: {len(self._results)} SpecificationWithImpactedSubstances results>"
+        return result
+
 
 @QueryResultFactory.register(models.CommonSpecificationWithCompliance)
 class SpecificationComplianceQueryResult(ComplianceBaseClass):
@@ -560,12 +535,9 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of specifications against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
+
+    _result_type_name = "SpecificationWithCompliance"
 
     def __init__(
         self,
@@ -585,10 +557,8 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "SpecificationWithCompliance"
         for result in results:
-            specification_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            specification_with_compliance = ItemResultFactory.create_specification_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -625,11 +595,6 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
     class.
 
     This class describes the compliance status of substances against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -652,8 +617,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
         self._results = []
         self._result_type_name = "SubstanceWithCompliance"
         for result in results:
-            substance_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            substance_with_compliance = ItemResultFactory.create_substance_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -678,16 +642,12 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
 
 
 @QueryResultFactory.register(models.GetImpactedSubstancesForBom1711Response)
+@QueryResultFactory.register(models.GetImpactedSubstancesForBom2301Response)
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`
     class.
 
     This class describes the substances in the specified BoM impacted by one or more legislations.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
 
     def __init__(
@@ -703,26 +663,26 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         """
 
         super().__init__(messages)
-        self._result_type_name = "BomWithImpactedSubstances"
-        bom_with_impacted_substances = ItemResultFactory.create_impacted_substances_result(
-            result_type_name=self._result_type_name,
+        bom_with_impacted_substances = ItemResultFactory.create_bom_impacted_substances_result(
             result_with_impacted_substances=results[0],
         )
         self._results = [bom_with_impacted_substances]
 
+    def __repr__(self) -> str:
+        result = f"<{self.__class__.__name__}: {len(self._results)} BomWithImpactedSubstances results>"
+        return result
+
 
 @QueryResultFactory.register(models.GetComplianceForBom1711Response)
+@QueryResultFactory.register(models.GetComplianceForBom2301Response)
 class BomComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`
     class.
 
     This class summarizes the compliance status of a BoM against one or more indicators.
-
-    Notes
-    -----
-    Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
-    directly.
     """
+
+    _result_type_name = "PartWithCompliance"
 
     def __init__(
         self,
@@ -742,11 +702,9 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        self._result_type_name = "PartWithCompliance"
         parts: List[models.CommonPartWithCompliance] = results[0].parts
         for result in parts:
-            part_with_compliance = ItemResultFactory.create_compliance_result(
-                result_type_name=self._result_type_name,
+            part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
@@ -773,3 +731,219 @@ class BomComplianceQueryResult(ComplianceBaseClass):
         """
 
         return self._results
+
+
+@QueryResultFactory.register(models.GetSustainabilityForBom2301Response)
+class BomSustainabilityQueryResult(ResultBaseClass):
+    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`."""
+
+    def __init__(
+        self,
+        results: List[models.GetSustainabilityForBom2301Response],
+        messages: List[models.CommonLogEntry],
+    ) -> None:
+        super().__init__(messages)
+        self._response = results[0]
+        if not self._response.parts:
+            raise ValueError(
+                "Found no part in BoM sustainability response. Ensure the request BoM defines a single root part."
+            )
+        if len(self._response.parts) > 1:
+            warnings.warn(
+                f"BomSustainabilityQuery only supports a single root part (found {len(self._response.parts)}). "
+                f"Additional root parts do not include sustainability results and are not exposed in the query result"
+                f" properties."
+            )
+        # Exposing only a single root part:
+        # API V1 only processes the first root part but still returns part empty part objects for extra root parts.
+        # API V2 will only return a single root part.
+        self._part: PartWithSustainabilityResult = ItemResultFactory.create_part_with_sustainability(
+            result_with_sustainability=self._response.parts[0]
+        )
+
+        self._transports: List[TransportWithSustainabilityResult] = [
+            ItemResultFactory.create_transport_with_sustainability(result_with_sustainability=transport)
+            for transport in self._response.transport_stages
+        ]
+
+    @property
+    def part(self) -> PartWithSustainabilityResult:
+        """Sustainability information for the root part included in the BoM specified in the original
+        query.
+        """
+        return self._part
+
+    @property
+    def transport_stages(self) -> List[TransportWithSustainabilityResult]:
+        """Sustainability information for each transport stage included in the BoM specified in the original
+        query.
+        """
+        return self._transports
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}>"
+
+
+@QueryResultFactory.register(models.GetSustainabilitySummaryForBom2301Response)
+class BomSustainabilitySummaryQueryResult(ResultBaseClass):
+    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery`."""
+
+    def __init__(
+        self,
+        results: List[models.GetSustainabilitySummaryForBom2301Response],
+        messages: List[models.CommonLogEntry],
+    ) -> None:
+        super().__init__(messages)
+        self._response = results[0]
+
+        self._transport_summary = ItemResultFactory.create_phase_summary(self._response.transport_summary.phase_summary)
+        self._material_summary = ItemResultFactory.create_phase_summary(self._response.material_summary.phase_summary)
+        self._process_summary = ItemResultFactory.create_phase_summary(self._response.process_summary.phase_summary)
+
+        self._transport_details: List[TransportSummaryResult] = [
+            ItemResultFactory.create_transport_summary(transport)
+            for transport in self._response.transport_summary.summary
+        ]
+        self._material_details: List[MaterialSummaryResult] = [
+            ItemResultFactory.create_material_summary(material) for material in self._response.material_summary.summary
+        ]
+        self._primary_processes_details: List[ProcessSummaryResult] = [
+            ItemResultFactory.create_process_summary(process)
+            for process in self._response.process_summary.primary_processes
+        ]
+        self._secondary_processes_details: List[ProcessSummaryResult] = [
+            ItemResultFactory.create_process_summary(process)
+            for process in self._response.process_summary.secondary_processes
+        ]
+        self._joining_and_finishing_processes_details: List[ProcessSummaryResult] = [
+            ItemResultFactory.create_process_summary(process)
+            for process in self._response.process_summary.joining_and_finishing_processes
+        ]
+
+    # High level summaries:
+    # - provide list of all phases -> allow generic plotting/reporting of all phases indistinctively
+    # - provide individual phase summaries -> allow direct access without iterating through all phases
+
+    @property
+    def phases_summary(self) -> List[SustainabilityPhaseSummaryResult]:
+        """
+        Sustainability summary for all lifecycle phases analyzed by the query.
+        """
+        return [self._material_summary, self._process_summary, self._transport_summary]
+
+    @property
+    def transport(self) -> SustainabilityPhaseSummaryResult:
+        """
+        Sustainability summary for the transport phase.
+
+        Values in percentages express the contribution of this phase, relative to the total contribution of all phases
+        analyzed by the query.
+        """
+        return self._transport_summary
+
+    @property
+    def material(self) -> SustainabilityPhaseSummaryResult:
+        """
+        Sustainability summary for the material phase.
+
+        Values in percentages express the contribution of this phase, relative to the total contribution of all phases
+        analyzed by the query.
+        """
+        return self._material_summary
+
+    @property
+    def process(self) -> SustainabilityPhaseSummaryResult:
+        """
+        Sustainability summary for the process phase.
+
+        Values in percentages express the contribution of this phase, relative to the total contribution of all phases
+        analyzed by the query.
+        """
+        return self._process_summary
+
+    @property
+    def transport_details(self) -> List[TransportSummaryResult]:
+        """
+        Summary information for all transport stages.
+
+        Values in percentages express the contribution of the specific transport stage, relative to contributions of all
+        transport stages.
+        """
+        return self._transport_details
+
+    @property
+    def material_details(self) -> List[MaterialSummaryResult]:
+        """
+        Summary information for materials, aggregated by ``identity``.
+
+        Relative and absolute contributions for materials whose relative contributions exceed 2% of the total impact
+        for materials (by :attr:`~.MaterialSummaryResult.embodied_energy_percentage` or
+        :attr:`~.MaterialSummaryResult.climate_change_percentage`).
+
+        All materials in the BoM that do not exceed the 2% threshold are aggregated under a virtual
+        :class:`.MaterialSummaryResult`, whose :attr:`~.MaterialSummaryResult.identity` property is equal to
+        ``Other``.
+
+        Values in percentages express the contribution of the specific material, relative to contributions of all
+        materials.
+        """
+        # TODO: Feature request: it would be nice if threshold could be a request arg
+        return self._material_details
+
+    @property
+    def primary_processes_details(self) -> List[ProcessSummaryResult]:
+        """
+        Summary information for primary processes, aggregated by ``process_name`` and ``material_identity``.
+
+        The returned list includes all unique primary process/material combinations whose relative contributions
+        exceed 5% of the total impact of all primary processes (by
+        :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        :attr:`~.ProcessSummaryResult.climate_change_percentage`).
+
+        All process/material combinations that do not exceed the 5% threshold are aggregated under a virtual
+        :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
+
+        Values in percentages express the contribution of the specific process, relative to contributions of all
+        primary processes.
+        """
+        return self._primary_processes_details
+
+    @property
+    def secondary_processes_details(self) -> List[ProcessSummaryResult]:
+        """
+        Summary information for secondary processes, aggregated by ``process_name`` and ``material_identity``.
+
+        The returned list includes all unique secondary process/material combinations whose relative contributions
+        exceed 5% of the total impact of all secondary processes (by
+        :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        :attr:`~.ProcessSummaryResult.climate_change_percentage`).
+
+        All process/material combinations that do not exceed the 5% threshold are aggregated under a virtual
+        :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
+
+        Values in percentages express the contribution of the specific process, relative to contributions of all
+        secondary processes.
+        """
+        return self._secondary_processes_details
+
+    @property
+    def joining_and_finishing_processes_details(self) -> List[ProcessSummaryResult]:
+        """
+        Summary information for joining and finishing processes, , aggregated by ``process_name`` and
+        ``material_identity``.
+
+        The returned list includes all joining and finishing processes whose relative contributions exceed 5% of the
+        total impact of all joining and finishing processes (by
+        :attr:`~.ProcessSummaryResult.embodied_energy_percentage` or
+        :attr:`~.ProcessSummaryResult.climate_change_percentage`).
+
+        All processes that do not exceed the 5% threshold are aggregated under a virtual
+        :class:`~.ProcessSummaryResult`, whose :attr:`~.ProcessSummaryResult.process_name` is equal to ``Other``.
+
+        Values in percentages express the contribution of the specific process, relative to contributions of all
+        joining and finishing processes.
+        """
+        return self._joining_and_finishing_processes_details
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}>"

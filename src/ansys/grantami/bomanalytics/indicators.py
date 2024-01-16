@@ -10,9 +10,9 @@ an indicator represent the compliance status of that indicator against a certain
 or part.
 """
 
-from enum import Enum
 from abc import ABC, abstractmethod
-from typing import List, Union, Optional, TYPE_CHECKING, Type
+from enum import Enum
+from typing import TYPE_CHECKING, List, Optional, Type, Union
 
 from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
 
@@ -70,7 +70,8 @@ class RoHSFlag(_Flag):
     A larger value means that the item is less compliant. The further down the list the compliance
     result appears, the worse it is.
 
-    For more information, see the *Restricted Substances Reports User Guide*.
+    For more information, see the
+    :MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>`.
     """
 
     RohsNotImpacted = (
@@ -148,7 +149,8 @@ class WatchListFlag(_Flag):
     An increasing value means less compliance. The further down the list the compliance result
     appears, the worse it is.
 
-    For more information, see the *Restricted Substances Reports User Guide*.
+    For more information, see the
+    :MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>`.
     """
 
     WatchListNotImpacted = (
@@ -228,11 +230,11 @@ class _Indicator(ABC):
     def __init__(
         self,
         name: str,
-        legislation_names: List[str],
+        legislation_ids: List[str],
         default_threshold_percentage: Union[float, None] = None,
     ):
         self.name = name
-        self.legislation_names = legislation_names
+        self.legislation_ids = legislation_ids
         self.default_threshold_percentage = default_threshold_percentage
         self._indicator_type: Optional[str] = None
         self._flag: Optional[_Flag] = None
@@ -370,9 +372,17 @@ class RoHSIndicator(_Indicator):
     ----------
     name : str
         Name of the indicator that is to identify the indicator in the query result.
-    legislation_names : list[str]
+    legislation_ids : list[str]
+        .. versionadded:: 2.0
+
         Legislations against which compliance will be determined. Legislations are identified based
-        on their ``Short title`` attribute value.
+        on their ``Legislation ID`` attribute value.
+
+        .. important::
+           This argument replaces ``legislation_names``, which has been removed in version **2.0**.
+
+           When updating scripts from version **1.x**, replace the ``legislation_names`` argument with the
+           ``legislation_ids`` argument and ensure the value provided is a list of ``Legislation ID`` attribute values.
     default_threshold_percentage : float, optional
         Concentration of substance that is to be determined to be non-compliant. The default is ``None``.
         This parameter is only used if the legislation doesn't define a specific threshold for the substance.
@@ -403,7 +413,7 @@ class RoHSIndicator(_Indicator):
     Examples
     --------
     >>> indicator = RoHSIndicator(name='RoHS substances',
-    ...                           legislation_names=["EU Directive 2011/65/EU (RoHS 2)"],
+    ...                           legislation_ids=["RoHS"],
     ...                           default_threshold_percentage=0.1,
     ...                           ignore_exemptions=True)
     >>> indicator
@@ -423,12 +433,13 @@ class RoHSIndicator(_Indicator):
 
     def __init__(
         self,
+        *,
         name: str,
-        legislation_names: List[str],
+        legislation_ids: List[str],
         default_threshold_percentage: Optional[float] = None,
         ignore_exemptions: bool = False,
     ) -> None:
-        super().__init__(name, legislation_names, default_threshold_percentage)
+        super().__init__(name, legislation_ids, default_threshold_percentage)
         self._ignore_exemptions: bool = ignore_exemptions
         self._indicator_type: str = "Rohs"
         self._flag: Optional[RoHSFlag] = None
@@ -438,7 +449,7 @@ class RoHSIndicator(_Indicator):
         """Generate the low-level API indicator object."""
         return models.CommonIndicatorDefinition(
             name=self.name,
-            legislation_names=self.legislation_names,
+            legislation_ids=self.legislation_ids,
             default_threshold_percentage=self.default_threshold_percentage,
             type=self._indicator_type,
             ignore_exemptions=self._ignore_exemptions,
@@ -456,9 +467,17 @@ class WatchListIndicator(_Indicator):
     ----------
     name : str
         Name of the indicator that is used to identify the indicator in the query result.
-    legislation_names : list[str]
-        Legislations against which compliance is to be determined. Legislations are identified based
-        on their ``Short title`` attribute value.
+    legislation_ids : list[str]
+        .. versionadded:: 2.0
+
+        Legislations against which compliance will be determined. Legislations are identified based
+        on their ``Legislation ID`` attribute value.
+
+        .. important::
+           This argument replaces ``legislation_names``, which has been removed in version **2.0**.
+
+           When updating scripts from version **1.x**, replace the ``legislation_names`` argument with the
+           ``legislation_ids`` argument and ensure the value provided is a list of ``Legislation ID`` attribute values.
     default_threshold_percentage : float, optional
         Percentage of substance concentration that is to be determined to be non-compliant. The default is ``None``.
         This parameter is only used if the legislation doesn't define a specific threshold for the substance.
@@ -489,7 +508,7 @@ class WatchListIndicator(_Indicator):
     Examples
     --------
     >>> indicator = RoHSIndicator(name='Tracked substances',
-    ...                           legislation_names=["The SIN List 2.1 (Substitute It Now!)"],
+    ...                           legislation_ids=["SINList"],
     ...                           default_threshold_percentage=0.1,
     ...                           ignore_process_chemicals=True)
     >>> indicator
@@ -510,12 +529,13 @@ class WatchListIndicator(_Indicator):
 
     def __init__(
         self,
+        *,
         name: str,
-        legislation_names: List[str],
+        legislation_ids: List[str],
         default_threshold_percentage: Optional[float] = None,
         ignore_process_chemicals: bool = False,
     ) -> None:
-        super().__init__(name, legislation_names, default_threshold_percentage)
+        super().__init__(name, legislation_ids, default_threshold_percentage)
         self._ignore_process_chemicals: bool = ignore_process_chemicals
         self._indicator_type: str = "WatchList"
         self._flag: Optional[WatchListFlag] = None
@@ -525,7 +545,7 @@ class WatchListIndicator(_Indicator):
         """Generate the low-level API indicator object."""
         return models.CommonIndicatorDefinition(
             name=self.name,
-            legislation_names=self.legislation_names,
+            legislation_ids=self.legislation_ids,
             default_threshold_percentage=self.default_threshold_percentage,
             type=self._indicator_type,
             ignore_process_chemicals=self._ignore_process_chemicals,

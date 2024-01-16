@@ -1,24 +1,22 @@
-import pytest
-from ansys.grantami.bomanalytics._item_definitions import (
-    BoM1711Definition,
-    MaterialDefinition,
-    SpecificationDefinition,
-    PartDefinition,
-    SubstanceDefinition,
-    ReferenceType,
-)
 from ansys.grantami.bomanalytics_openapi import (
-    CommonMaterialReference as MatRef,
-    CommonPartReference as PartRef,
-    CommonSpecificationReference as SpecRef,
     GetComplianceForSubstancesSubstanceWithAmount as SubsRef,
 )
+from ansys.grantami.bomanalytics_openapi import CommonMaterialReference as MatRef
+from ansys.grantami.bomanalytics_openapi import CommonPartReference as PartRef
+from ansys.grantami.bomanalytics_openapi import CommonSpecificationReference as SpecRef
+import pytest
 
-
-def test_bom_definition():
-    bom_item = BoM1711Definition("TEST_BOM")
-    assert bom_item._definition == "TEST_BOM"
-
+from ansys.grantami.bomanalytics._item_definitions import (
+    CoatingReference,
+    MaterialDefinition,
+    PartDefinition,
+    ProcessReference,
+    RecordReference,
+    ReferenceType,
+    SpecificationDefinition,
+    SubstanceDefinition,
+    TransportReference,
+)
 
 common_test_cases = [
     ({"reference_type": ReferenceType.MiRecordGuid, "reference_value": "TEST_GUID"}, "record_guid"),
@@ -28,6 +26,16 @@ common_test_cases = [
     ),
     ({"reference_type": ReferenceType.MiRecordHistoryGuid, "reference_value": "TEST_RH_GUID"}, "record_history_guid"),
 ]
+
+
+@pytest.mark.parametrize(
+    "kwargs, variable_name",
+    common_test_cases,
+)
+@pytest.mark.parametrize("item_type", [RecordReference, ProcessReference, CoatingReference, TransportReference])
+def test_base_record_references(kwargs, variable_name, item_type):
+    item = item_type(**kwargs)
+    assert getattr(item, variable_name) == kwargs["reference_value"]
 
 
 @pytest.mark.parametrize(

@@ -1,37 +1,37 @@
-<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" id="B0">
+<PartsEco xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes" id="B0">
     <Components>
         <Part id="A0">
-            <Quantity Unit="Each">2</Quantity>
+            <Quantity Unit="Each">2.0</Quantity>
             <PartNumber>123456789</PartNumber>
             <Name>Part One</Name>
             <Components>
                 <Part>
-                    <Quantity Unit="Each">1</Quantity>
-                    <MassPerUom Unit="kg/Part">2</MassPerUom>
+                    <Quantity Unit="Each">1.0</Quantity>
+                    <MassPerUom Unit="kg/Part">2.0</MassPerUom>
                     <PartNumber>987654321</PartNumber>
                     <Name>New Part One</Name>
                     <Substances>
                         <Substance>
-                            <Percentage>66</Percentage>
+                            <Percentage>66.0</Percentage>
                             <MISubstanceReference>
-                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
-                                <recordHistoryGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">af1cb650-6db5-49d6-b4a2-0eee9a090207</recordHistoryGUID>
+                                <gbt:dbKey>MI_Restricted_Substances</gbt:dbKey>
+                                <gbt:recordHistoryGUID>af1cb650-6db5-49d6-b4a2-0eee9a090207</gbt:recordHistoryGUID>
                             </MISubstanceReference>
                             <Name>Lead oxide</Name>
                         </Substance>
                     </Substances>
                 </Part>
                 <Part>
-                    <Quantity Unit="Each">1</Quantity>
-                    <MassPerUom Unit="kg/Part">2</MassPerUom>
+                    <Quantity Unit="Each">1.0</Quantity>
+                    <MassPerUom Unit="kg/Part">2.0</MassPerUom>
                     <PartNumber>3333</PartNumber>
                     <Name>Part Two</Name>
                     <Materials>
                         <Material>
-                            <Percentage>80</Percentage>
+                            <Percentage>80.0</Percentage>
                             <MIMaterialReference>
-                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
-                                <recordHistoryGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">ab4147f6-0e97-47f0-be53-cb5d17dfa82b</recordHistoryGUID>
+                                <gbt:dbKey>MI_Restricted_Substances</gbt:dbKey>
+                                <gbt:recordHistoryGUID>ab4147f6-0e97-47f0-be53-cb5d17dfa82b</gbt:recordHistoryGUID>
                             </MIMaterialReference>
                         </Material>
                     </Materials>

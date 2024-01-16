@@ -1,15 +1,17 @@
 from ansys.grantami.bomanalytics import indicators
 
-LEGISLATIONS = ["The SIN List 2.1 (Substitute It Now!)", "Canadian Chemical Challenge"]
+LICENSE_RESPONSE = {"LogMessages": [], "RestrictedSubstances": True, "Sustainability": True}
+LEGISLATIONS = ["SINList", "CCC"]
+
 
 two_legislation_indicator = indicators.WatchListIndicator(
     name="Two legislations",
-    legislation_names=["GADSL", "California Proposition 65 List"],
+    legislation_ids=["GADSL", "Prop65"],
     default_threshold_percentage=2,
 )
 one_legislation_indicator = indicators.RoHSIndicator(
     name="One legislation",
-    legislation_names=["EU Directive 2011/65/EU (RoHS 2)"],
+    legislation_ids=["RoHS"],
     default_threshold_percentage=0.01,
 )
 
@@ -22,4 +24,7 @@ CUSTOM_TABLES = [
     ("products_and_parts_table_name", "Parts 'n' Products"),
     ("substances_table_name", "Chemicals"),
     ("coatings_table_name", "Coverings"),
+    ("process_universe_table_name", "Methods"),
+    ("location_table_name", "Places"),
+    ("transport_table_name", "Locomotion"),
 ]

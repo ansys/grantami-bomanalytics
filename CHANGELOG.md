@@ -6,8 +6,12 @@
 
 * Add sustainability analysis support, including examples and documentation.
 * Add `bom_types` subpackage.
-* Remove `with_stk_records` method.
 * Add licensing check as part of connection to server.
+
+### Backwards-incompatible changes
+
+* Change the `legislation_names` method to `legislation_ids`.
+* Remove `with_stk_records` method.
 
 ### Doc improvements
 

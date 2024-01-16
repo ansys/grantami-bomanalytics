@@ -63,19 +63,19 @@ oidc = ["keyring (>=22,<25)", "requests_auth (>=6,<8)"]
 
 [[package]]
 name = "ansys-sphinx-theme"
-version = "0.12.5"
+version = "0.13.1"
 description = "A theme devised by ANSYS, Inc. for Sphinx documentation."
 optional = false
 python-versions = ">=3.9,<4"
 files = [
-    {file = "ansys_sphinx_theme-0.12.5-py3-none-any.whl", hash = "sha256:8b18c2c5b6eeffc382bd1b9fa4a860783a4a785a859c3530fce3bef06ebb7f80"},
-    {file = "ansys_sphinx_theme-0.12.5.tar.gz", hash = "sha256:81e50f7cc9812a39ed02a4f3894c9a64bec2ff8d0402877cd90c6cc988ddac6d"},
+    {file = "ansys_sphinx_theme-0.13.1-py3-none-any.whl", hash = "sha256:d82c266cecc46cf535e929ce4354d6392a731fe623d05977d88b408b032dd867"},
+    {file = "ansys_sphinx_theme-0.13.1.tar.gz", hash = "sha256:863574c46ed51eb12b55472d085df04c48cd0a84db84d5e95594683aedfbf4a3"},
 ]
 
 [package.dependencies]
 importlib-metadata = ">=4.0"
 Jinja2 = ">=3.1.2"
-pydata-sphinx-theme = ">=0.14.0"
+pydata-sphinx-theme = ">=0.14,<0.15"
 Sphinx = ">=4.2.0"
 
 [package.extras]
@@ -1088,13 +1088,13 @@ testing = ["Django", "attrs", "colorama", "docopt", "pytest (<7.0.0)"]
 
 [[package]]
 name = "jinja2"
-version = "3.1.2"
+version = "3.1.3"
 description = "A very fast and expressive template engine."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "Jinja2-3.1.2-py3-none-any.whl", hash = "sha256:6088930bfe239f0e6710546ab9c19c9ef35e29792895fed6e6e31a023a182a61"},
-    {file = "Jinja2-3.1.2.tar.gz", hash = "sha256:31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852"},
+    {file = "Jinja2-3.1.3-py3-none-any.whl", hash = "sha256:7d6d50dd97d52cbc355597bd845fabfbac3f551e1f99619e39a35ce8c370b5fa"},
+    {file = "Jinja2-3.1.3.tar.gz", hash = "sha256:ac8bd6544d4bb2c9792bf3a159e80bba8fda7f07e81bc3aed565432d5925ba90"},
 ]
 
 [package.dependencies]
@@ -3569,4 +3569,4 @@ examples = ["ipywidgets", "jupyterlab", "lxml", "pandas", "plotly", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "1379af0bc55db6d8cdf4ddf58f95e4b313e266539258ca96b896ed2684be288e"
+content-hash = "0cfa59c8353780768b34d6ab7e20a5e963f77e73edbf6174d2d81043edc2d323"

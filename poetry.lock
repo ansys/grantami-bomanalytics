@@ -3516,13 +3516,13 @@ files = [
 
 [[package]]
 name = "xmlschema"
-version = "2.5.0"
+version = "3.0.1"
 description = "An XML Schema validator and decoder"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "xmlschema-2.5.0-py3-none-any.whl", hash = "sha256:f2b29c45485fac414cc1fdb38d18a220c5987d7d3aa996e6df6ff35ee94d5a63"},
-    {file = "xmlschema-2.5.0.tar.gz", hash = "sha256:276a03e0fd3c94c148d528bff4d9482f9b99bf8c7b4056a2e8e703d28149d454"},
+    {file = "xmlschema-3.0.1-py3-none-any.whl", hash = "sha256:116243b2ad38cd2df9ee0606d4e4e898a6f156736b39ab0017e6f49862c0809e"},
+    {file = "xmlschema-3.0.1.tar.gz", hash = "sha256:bb24a5f4738e49d85d9eb03a2b5af26bbbbfdb055517ad953d98925094b8c026"},
 ]
 
 [package.dependencies]
@@ -3554,4 +3554,4 @@ examples = ["ipywidgets", "jupyterlab", "lxml", "pandas", "plotly", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "75340a1ff537a287efca8b64fdc101bdca84af3c0a3a2f2d360b0bbc8adefa73"
+content-hash = "bbe2560321a430b0398417a12443bf0f0df7c06e4a38ac32d847e6f0aa14df6d"

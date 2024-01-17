@@ -1,6 +1,6 @@
 # Changelog
 
-## grantami-bomanalytics 2.0.0, DATE TBD
+## grantami-bomanalytics 2.0.0, 2024-01-17
 
 ### New features
 

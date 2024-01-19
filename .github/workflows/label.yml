@@ -12,15 +12,6 @@ concurrency:
 
 jobs:
 
-  label-syncer:
-    name: Syncer
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: micnncim/action-label-syncer@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   labeler:
     name: Set labels
     needs: [label-syncer]

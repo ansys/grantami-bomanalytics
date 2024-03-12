@@ -1,7 +1,7 @@
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING, cast
 
-import xmlschema  # type: ignore[import]
+import xmlschema
 from xmlschema import XMLSchema
 
 from .bom_types import BoMReader, BoMWriter
@@ -39,7 +39,7 @@ class BoMHandler:
         :class:`~._bom_types.BillOfMaterials`
         """
         with open(file_path, "r", encoding="utf8") as fp:
-            obj, errors = self._schema.decode(fp, validation="lax")
+            obj, errors = cast(Tuple, self._schema.decode(fp, validation="lax"))
 
         if len(errors) > 0:
             newline = "\n"
@@ -62,7 +62,7 @@ class BoMHandler:
         -------
         :class:`~._bom_types.BillOfMaterials`
         """
-        obj, errors = self._schema.decode(bom_text, validation="lax", keep_empty=True)
+        obj, errors = cast(Tuple, self._schema.decode(bom_text, validation="lax", keep_empty=True))
 
         if len(errors) > 0:
             newline = "\n"

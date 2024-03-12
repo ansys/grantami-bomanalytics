@@ -1,6 +1,7 @@
 import pytest
 
 from ansys.grantami.bomanalytics import queries
+from ansys.openapi.common import Unset
 
 DISTANCE = "a"
 ENERGY = "b"
@@ -8,9 +9,9 @@ MASS = "c"
 
 
 class TestUnitSelection:
-    @pytest.mark.parametrize("mass", [MASS, None])
-    @pytest.mark.parametrize("energy", [ENERGY, None])
-    @pytest.mark.parametrize("distance", [DISTANCE, None])
+    @pytest.mark.parametrize("mass", [MASS, Unset])
+    @pytest.mark.parametrize("energy", [ENERGY, Unset])
+    @pytest.mark.parametrize("distance", [DISTANCE, Unset])
     @pytest.mark.parametrize("query_type", [queries.BomSustainabilitySummaryQuery, queries.BomSustainabilityQuery])
     def test_units_are_set(self, query_type, mass, energy, distance):
         query = query_type()

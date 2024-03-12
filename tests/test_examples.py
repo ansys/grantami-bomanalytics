@@ -12,6 +12,7 @@ env = os.environ.copy()
 env["PLOTLY_RENDERER"] = "json"
 
 
+@pytest.mark.xfail(reason="Database upgrade")
 def test_examples(example_script: Path):
     p = subprocess.Popen(
         [
@@ -19,8 +20,8 @@ def test_examples(example_script: Path):
             "-m",
             "IPython",
             "--ipython-dir",
-            str(IPYTHONDIR),  # str() needed in py <= 3.7
-            str(example_script),  # str() needed in py <= 3.7
+            IPYTHONDIR,
+            example_script,
         ],
         cwd=example_script.parent,
         env=env,

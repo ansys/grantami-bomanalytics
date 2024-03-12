@@ -8,7 +8,8 @@ from collections import defaultdict, namedtuple
 from typing import Any, Callable, Dict, List, Type, Union
 import warnings
 
-from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models
+from ansys.openapi.common import Unset_Type
 
 from ._item_results import (
     ImpactedSubstance,
@@ -108,7 +109,7 @@ class QueryResultFactory:
         """
 
         try:
-            response_type = type(results[0])
+            response_type = type(results[0])  # type: ignore[index]
         except TypeError:
             response_type = type(results)  # BoM results aren't returned in an iterable
         try:
@@ -702,7 +703,9 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        parts: List[models.CommonPartWithCompliance] = results[0].parts
+        if isinstance(results[0].parts, Unset_Type):
+            return
+        parts = results[0].parts
         for result in parts:
             part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=result,
@@ -761,6 +764,8 @@ class BomSustainabilityQueryResult(ResultBaseClass):
             result_with_sustainability=self._response.parts[0]
         )
 
+        if isinstance(self._response.transport_stages, Unset_Type):
+            return
         self._transports: List[TransportWithSustainabilityResult] = [
             ItemResultFactory.create_transport_with_sustainability(result_with_sustainability=transport)
             for transport in self._response.transport_stages
@@ -796,29 +801,39 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         super().__init__(messages)
         self._response = results[0]
 
-        self._transport_summary = ItemResultFactory.create_phase_summary(self._response.transport_summary.phase_summary)
-        self._material_summary = ItemResultFactory.create_phase_summary(self._response.material_summary.phase_summary)
-        self._process_summary = ItemResultFactory.create_phase_summary(self._response.process_summary.phase_summary)
+        if not isinstance(self._response.transport_summary, Unset_Type):
+            trans_summary_resp = self._response.transport_summary
+            if not isinstance(trans_summary_resp.phase_summary, Unset_Type):
+                self._transport_summary = ItemResultFactory.create_phase_summary(trans_summary_resp.phase_summary)
+            if not isinstance(trans_summary_resp.summary, Unset_Type):
+                self._transport_details = [ItemResultFactory.create_transport_summary(transport) for transport in trans_summary_resp.summary]
 
-        self._transport_details: List[TransportSummaryResult] = [
-            ItemResultFactory.create_transport_summary(transport)
-            for transport in self._response.transport_summary.summary
-        ]
-        self._material_details: List[MaterialSummaryResult] = [
-            ItemResultFactory.create_material_summary(material) for material in self._response.material_summary.summary
-        ]
-        self._primary_processes_details: List[ProcessSummaryResult] = [
-            ItemResultFactory.create_process_summary(process)
-            for process in self._response.process_summary.primary_processes
-        ]
-        self._secondary_processes_details: List[ProcessSummaryResult] = [
-            ItemResultFactory.create_process_summary(process)
-            for process in self._response.process_summary.secondary_processes
-        ]
-        self._joining_and_finishing_processes_details: List[ProcessSummaryResult] = [
-            ItemResultFactory.create_process_summary(process)
-            for process in self._response.process_summary.joining_and_finishing_processes
-        ]
+        if not isinstance(self._response.material_summary, Unset_Type):
+            mat_summary_resp = self._response.material_summary
+            if not isinstance(mat_summary_resp.phase_summary, Unset_Type):
+                self._material_summary = ItemResultFactory.create_phase_summary(mat_summary_resp.phase_summary)
+            if not isinstance(mat_summary_resp.summary, Unset_Type):
+                self._material_details = [ItemResultFactory.create_material_summary(material) for material in mat_summary_resp.summary]
+
+        if not isinstance(self._response.process_summary, Unset_Type):
+            proc_summary_resp = self._response.process_summary
+            if not isinstance(proc_summary_resp.phase_summary, Unset_Type):
+                self._process_summary = ItemResultFactory.create_phase_summary(proc_summary_resp.phase_summary)
+            if not isinstance(proc_summary_resp.primary_processes, Unset_Type):
+                self._primary_processes_details = [
+                    ItemResultFactory.create_process_summary(process)
+                    for process in proc_summary_resp.primary_processes
+                ]
+            if not isinstance(proc_summary_resp.secondary_processes, Unset_Type):
+                self._secondary_processes_details = [
+                    ItemResultFactory.create_process_summary(process)
+                    for process in proc_summary_resp.secondary_processes
+                ]
+            if not isinstance(proc_summary_resp.joining_and_finishing_processes, Unset_Type):
+                self._joining_and_finishing_processes_details = [
+                    ItemResultFactory.create_process_summary(process)
+                    for process in proc_summary_resp.joining_and_finishing_processes
+                ]
 
     # High level summaries:
     # - provide list of all phases -> allow generic plotting/reporting of all phases indistinctively

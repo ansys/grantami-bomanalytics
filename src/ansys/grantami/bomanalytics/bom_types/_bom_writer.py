@@ -1,6 +1,6 @@
 from typing import Dict, cast
 
-from xmlschema import XMLSchema  # type: ignore[import]
+from xmlschema import XMLSchema
 
 from . import BaseType, BillOfMaterials, HasNamespace
 

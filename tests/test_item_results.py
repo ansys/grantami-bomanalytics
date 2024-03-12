@@ -263,8 +263,6 @@ class TestSustainabilityResultsRepr:
             **self._identifiers,
             input_part_number="TEST_PN",
             materials=[],
-            substances=[],
-            specifications=[],
             processes=[],
             parts=[],
             reported_mass=models.CommonValueWithUnit(value=45, unit="kg"),

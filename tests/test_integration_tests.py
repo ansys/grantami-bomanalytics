@@ -14,7 +14,10 @@ pytestmark = pytest.mark.integration
 
 indicators = list(INDICATORS.values())
 
+out_of_date_database_xfail = pytest.mark.xfail(reason="Out of date database", raises=ValueError, strict=True)
 
+
+@out_of_date_database_xfail
 class TestMaterialQueries:
     ids = ["plastic-abs-pvc-flame", "plastic-pmma-pc"]
 
@@ -33,6 +36,7 @@ class TestMaterialQueries:
         assert response.compliance_by_material_and_indicator
 
 
+@out_of_date_database_xfail
 class TestPartQueries:
     ids = ["DRILL", "asm_flap_mating"]
 
@@ -53,6 +57,7 @@ class TestPartQueries:
         assert response.compliance_by_part_and_indicator
 
 
+@out_of_date_database_xfail
 class TestSpecificationQueries:
     ids = ["MIL-DTL-53039,TypeI", "AMS2404,Class1"]
 
@@ -77,6 +82,7 @@ class TestSpecificationQueries:
         assert response.compliance_by_indicator
 
 
+@out_of_date_database_xfail
 class TestSubstancesQueries:
     def test_compliance(self, connection_with_db_variants):
         query = (
@@ -91,6 +97,7 @@ class TestSubstancesQueries:
         assert response.compliance_by_indicator
 
 
+@out_of_date_database_xfail
 class TestBomQueries:
     @pytest.fixture
     def bom(self, connection_with_db_variants):
@@ -138,6 +145,7 @@ class TestBomQueries:
         assert connection.last_response.request.url.endswith("bom2301")
 
 
+@out_of_date_database_xfail
 class TestMissingDatabase:
     @pytest.fixture
     def connection_missing_db(self, connection):
@@ -156,6 +164,7 @@ class TestMissingDatabase:
             connection_missing_db.run(query)
 
 
+@out_of_date_database_xfail
 def test_missing_table_raises_grantami_exception(connection):
     query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_custom_db).with_legislation_ids(LEGISLATIONS)
     with pytest.raises(GrantaMIException) as e:
@@ -174,6 +183,7 @@ def test_licensing(connection_with_db_variants):
     assert resp.sustainability is True
 
 
+@out_of_date_database_xfail
 class TestActAsReadUser:
     def _run_query(self, connection):
         MATERIAL_ID = "plastic-abs-pc-flame"
@@ -200,6 +210,7 @@ class TestActAsReadUser:
         )
 
 
+@out_of_date_database_xfail
 class TestSpecLinkDepth:
     spec_ids = ["MIL-DTL-53039,TypeII"]
     legislation_ids = ["Candidate_AnnexXV"]
@@ -237,6 +248,7 @@ class TestSpecLinkDepth:
 DEFAULT_TOLERANCE = 0.01
 
 
+@out_of_date_database_xfail
 class TestSustainabilityBomQueries:
     def _check_percentages_add_up(self, items):
         assert sum(item.embodied_energy_percentage for item in items) == pytest.approx(100)

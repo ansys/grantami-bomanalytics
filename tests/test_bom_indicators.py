@@ -4,7 +4,7 @@ from ansys.grantami.bomanalytics_openapi import CommonIndicatorDefinition
 import pytest
 
 from ansys.grantami.bomanalytics import indicators
-
+from ansys.openapi.common import Unset
 
 def create_rohs_indicator(ignore_exemptions) -> indicators.RoHSIndicator:
     return create_indicator(indicators.RoHSIndicator, ignore_exemptions=ignore_exemptions)
@@ -124,7 +124,7 @@ class TestRohsIndicator:
         assert def_dict["default_threshold_percentage"] == self.test_indicator.default_threshold_percentage
         assert def_dict["type"] == self.test_indicator._indicator_type
         assert def_dict["ignore_exemptions"] == self.test_indicator._ignore_exemptions
-        assert def_dict["ignore_process_chemicals"] is None
+        assert def_dict["ignore_process_chemicals"] is Unset
 
 
 class TestWatchListIndicator:
@@ -147,7 +147,7 @@ class TestWatchListIndicator:
         assert def_dict["legislation_ids"] == self.test_indicator.legislation_ids
         assert def_dict["default_threshold_percentage"] == self.test_indicator.default_threshold_percentage
         assert def_dict["type"] == self.test_indicator._indicator_type
-        assert def_dict["ignore_exemptions"] is None
+        assert def_dict["ignore_exemptions"] is Unset
         assert def_dict["ignore_process_chemicals"] == self.test_indicator._ignore_process_chemicals
 
 

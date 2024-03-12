@@ -806,14 +806,18 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
             if not isinstance(trans_summary_resp.phase_summary, Unset_Type):
                 self._transport_summary = ItemResultFactory.create_phase_summary(trans_summary_resp.phase_summary)
             if not isinstance(trans_summary_resp.summary, Unset_Type):
-                self._transport_details = [ItemResultFactory.create_transport_summary(transport) for transport in trans_summary_resp.summary]
+                self._transport_details = [
+                    ItemResultFactory.create_transport_summary(transport) for transport in trans_summary_resp.summary
+                ]
 
         if not isinstance(self._response.material_summary, Unset_Type):
             mat_summary_resp = self._response.material_summary
             if not isinstance(mat_summary_resp.phase_summary, Unset_Type):
                 self._material_summary = ItemResultFactory.create_phase_summary(mat_summary_resp.phase_summary)
             if not isinstance(mat_summary_resp.summary, Unset_Type):
-                self._material_details = [ItemResultFactory.create_material_summary(material) for material in mat_summary_resp.summary]
+                self._material_details = [
+                    ItemResultFactory.create_material_summary(material) for material in mat_summary_resp.summary
+                ]
 
         if not isinstance(self._response.process_summary, Unset_Type):
             proc_summary_resp = self._response.process_summary
@@ -821,8 +825,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
                 self._process_summary = ItemResultFactory.create_phase_summary(proc_summary_resp.phase_summary)
             if not isinstance(proc_summary_resp.primary_processes, Unset_Type):
                 self._primary_processes_details = [
-                    ItemResultFactory.create_process_summary(process)
-                    for process in proc_summary_resp.primary_processes
+                    ItemResultFactory.create_process_summary(process) for process in proc_summary_resp.primary_processes
                 ]
             if not isinstance(proc_summary_resp.secondary_processes, Unset_Type):
                 self._secondary_processes_details = [

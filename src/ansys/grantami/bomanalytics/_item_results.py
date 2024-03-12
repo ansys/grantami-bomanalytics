@@ -5,7 +5,7 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 """
 from abc import ABC
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, cast, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union, cast
 
 from ansys.grantami.bomanalytics_openapi import models
 from ansys.openapi.common import Unset, Unset_Type
@@ -32,13 +32,16 @@ if TYPE_CHECKING:
 
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
-Record_References = TypeVar("Record_References", bound=Union[
-    models.CommonPartReference,
-    models.CommonMaterialReference,
-    models.CommonTransportReference,
-    models.CommonSpecificationReference,
-    models.CommonProcessReference,
-])
+Record_References = TypeVar(
+    "Record_References",
+    bound=Union[
+        models.CommonPartReference,
+        models.CommonMaterialReference,
+        models.CommonTransportReference,
+        models.CommonSpecificationReference,
+        models.CommonProcessReference,
+    ],
+)
 
 
 class ItemResultFactory:
@@ -471,7 +474,8 @@ class ItemResultFactory:
 
     @classmethod
     def create_phase_summary(
-        cls, result: models.CommonSustainabilityPhaseSummary,
+        cls,
+        result: models.CommonSustainabilityPhaseSummary,
     ) -> "SustainabilityPhaseSummaryResult":
         """Returns a SustainabilityPhaseSummaryResult instantiated from the low-level API model.
 
@@ -692,9 +696,9 @@ class ItemResultFactory:
     @classmethod
     def _safely_cast_record_reference(cls, record_reference: Union[Record_References, Unset_Type]) -> Record_References:
         if isinstance(record_reference, Unset_Type):
-            raise ValueError('Result does not contain a valid record reference. Cannot continue.')
+            raise ValueError("Result does not contain a valid record reference. Cannot continue.")
         if isinstance(record_reference.reference_value, Unset_Type):
-            raise ValueError('Record reference does not contain a valid value. Cannot continue.')
+            raise ValueError("Record reference does not contain a valid value. Cannot continue.")
         return record_reference
 
 
@@ -802,8 +806,7 @@ class ImpactedSubstancesResultMixin:
             if isinstance(legislation.impacted_substances, Unset_Type):
                 continue
             new_substances = [
-                self._create_impacted_substance(substance)
-                for substance in legislation.impacted_substances
+                self._create_impacted_substance(substance) for substance in legislation.impacted_substances
             ]
             self._substances_by_legislation[cast(str, legislation.legislation_id)] = new_substances
 
@@ -1073,7 +1076,9 @@ class ChildSubstanceWithComplianceMixin(HasIndicators, ABC):
 
         return self._substances
 
-    def _add_child_substances(self, child_substances: Union[List[models.CommonSubstanceWithCompliance], Unset_Type]) -> None:
+    def _add_child_substances(
+        self, child_substances: Union[List[models.CommonSubstanceWithCompliance], Unset_Type]
+    ) -> None:
         """Populate the ``substances`` attribute based on a list of low-level API substances with compliance
         results.
 
@@ -1651,7 +1656,9 @@ class ChildProcessWithSustainabilityMixin:
 
         return self._processes
 
-    def _add_child_processes(self, child_processes: Union[List[models.CommonSustainabilityProcessWithSustainability], Unset_Type]) -> None:
+    def _add_child_processes(
+        self, child_processes: Union[List[models.CommonSustainabilityProcessWithSustainability], Unset_Type]
+    ) -> None:
         """Populate the ``processes`` attribute based on a list of low-level API processes with sustainability
         results.
 

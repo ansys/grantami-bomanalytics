@@ -1,7 +1,7 @@
+from ansys.openapi.common import Unset
 import pytest
 
 from ansys.grantami.bomanalytics import queries
-from ansys.openapi.common import Unset
 
 DISTANCE = "a"
 ENERGY = "b"

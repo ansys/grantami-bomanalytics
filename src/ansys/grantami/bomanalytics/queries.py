@@ -535,7 +535,11 @@ class _ApiMixin(_BaseQueryBuilder, _BaseQuery, ABC):
     @abstractmethod
     def _run_query(
         self,
-        api_instance: Union[api.ComplianceApi, api.ImpactedSubstancesApi, api.SustainabilityApi],  # type: ignore[override]
+        api_instance: Union[  # type: ignore[override]
+            api.ComplianceApi,
+            api.ImpactedSubstancesApi,
+            api.SustainabilityApi,
+        ],
         static_arguments: Dict,
     ) -> ResultBaseClass:
         """
@@ -628,7 +632,11 @@ class _ComplianceMixin(_ApiMixin, ABC):
             self._indicators[value.name] = value
         return self
 
-    def _run_query(self, api_instance: api.ComplianceApi, static_arguments: Dict) -> ResultBaseClass:  # type: ignore[override]
+    def _run_query(
+        self,
+        api_instance: api.ComplianceApi,  # type: ignore[override]
+        static_arguments: Dict,
+    ) -> ResultBaseClass:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
         This method should not be used by an end user. The ``BomAnalyticsClient.run()`` method should
@@ -738,7 +746,11 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         self._legislations.extend(legislation_ids)
         return self
 
-    def _run_query(self, api_instance: api.ImpactedSubstancesApi, static_arguments: Dict) -> ResultBaseClass:  # type: ignore[override]
+    def _run_query(
+        self,
+        api_instance: api.ImpactedSubstancesApi,  # type: ignore[override]
+        static_arguments: Dict,
+    ) -> ResultBaseClass:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
         Gets the bound method for this particular query from the ``api_instance`` parameter and passes it to the
@@ -1785,7 +1797,11 @@ class _SustainabilityMixin(_ApiMixin):
             self._preferred_units.mass_unit = mass
         return self
 
-    def _run_query(self, api_instance: api.SustainabilityApi, static_arguments: Dict) -> ResultBaseClass:  # type: ignore[override]
+    def _run_query(
+        self,
+        api_instance: api.SustainabilityApi,  # type: ignore[override]
+        static_arguments: Dict,
+    ) -> ResultBaseClass:
         """Implementation of abstract method _run_query for sustainability endpoints.
 
         Sets the arguments ``preferred_units`` from user inputs.

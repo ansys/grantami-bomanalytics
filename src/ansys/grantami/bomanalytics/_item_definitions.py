@@ -10,7 +10,6 @@ import numbers
 from typing import Any, Dict, Optional, Union, cast
 
 from ansys.grantami.bomanalytics_openapi import models
-from ansys.openapi.common import Unset, Unset_Type
 
 
 class ReferenceType(Enum):
@@ -116,7 +115,7 @@ class RecordReference(ABC):
         return None
 
     @property
-    def _record_reference(self) -> Dict[str, Union[str, str]]:
+    def _record_reference(self) -> Dict[str, str]:
         """Converts the separate reference attributes back into a single dictionary that describes the type and value.
 
         This method is used to create the low-level API model object that references this record and is returned as-is

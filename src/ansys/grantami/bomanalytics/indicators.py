@@ -447,8 +447,11 @@ class RoHSIndicator(_Indicator):
     @property
     def _definition(self) -> models.CommonIndicatorDefinition:
         """Generate the low-level API indicator object."""
-        kwargs: Dict[str, Any] = {"name": self.name, "legislation_ids": self.legislation_ids,
-                  "type": self._indicator_type}
+        kwargs: Dict[str, Any] = {
+            "name": self.name,
+            "legislation_ids": self.legislation_ids,
+            "type": self._indicator_type,
+        }
         if self.default_threshold_percentage is not None:
             kwargs["default_threshold_percentage"] = self.default_threshold_percentage
         if self._ignore_exemptions is not None:
@@ -543,7 +546,11 @@ class WatchListIndicator(_Indicator):
     @property
     def _definition(self) -> models.CommonIndicatorDefinition:
         """Generate the low-level API indicator object."""
-        kwargs: Dict[str, Any] = {"name": self.name, "legislation_ids": self.legislation_ids, "type": self._indicator_type}
+        kwargs: Dict[str, Any] = {
+            "name": self.name,
+            "legislation_ids": self.legislation_ids,
+            "type": self._indicator_type,
+        }
         if self.default_threshold_percentage is not None:
             kwargs["default_threshold_percentage"] = self.default_threshold_percentage
         if self._ignore_process_chemicals is not None:

@@ -14,7 +14,11 @@ from ansys.grantami.bomanalytics._query_results import (
     BomSustainabilitySummaryQueryResult,
 )
 
-from ..inputs import examples_as_dicts, sample_sustainability_bom_2301, BOM_PART_RECORD_HISTORY_IDENTITY
+from ..inputs import (
+    BOM_PART_RECORD_HISTORY_IDENTITY,
+    examples_as_dicts,
+    sample_sustainability_bom_2301,
+)
 from .common import BaseMockTester
 
 

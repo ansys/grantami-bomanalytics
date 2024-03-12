@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Tuple, TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Tuple, cast
 
 import xmlschema
 from xmlschema import XMLSchema

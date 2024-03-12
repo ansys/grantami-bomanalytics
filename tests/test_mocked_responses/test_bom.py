@@ -8,7 +8,11 @@ import pytest
 
 from ansys.grantami.bomanalytics import indicators, queries
 
-from ..inputs import sample_bom_1711, sample_sustainability_bom_2301, BOM_PART_RECORD_HISTORY_IDENTITY
+from ..inputs import (
+    BOM_PART_RECORD_HISTORY_IDENTITY,
+    sample_bom_1711,
+    sample_sustainability_bom_2301,
+)
 from .common import BaseMockTester, MaterialValidator, PartValidator, SubstanceValidator
 
 

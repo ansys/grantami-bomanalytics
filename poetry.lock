@@ -3683,4 +3683,4 @@ examples = ["ipywidgets", "jupyterlab", "lxml", "pandas", "plotly", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "dbe37f3856fa5fbccd1ff7cd73d1e8d18bb801b009804d4c580576ad2efd6237"
+content-hash = "070d59c6353edafd4a303d9e270f3b9eec550a7ee4c63ddd65e7f611236cc2cf"

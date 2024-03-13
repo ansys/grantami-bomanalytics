@@ -32,6 +32,7 @@ from pathlib import Path
 
 from GRANTA_MIScriptingToolkit import granta as mpy
 from ansys.grantami.serverapi_openapi import api, models
+from ansys.openapi.common import Unset
 
 from cicd.connection import Connection
 
@@ -82,7 +83,7 @@ renamed_attributes = {"Products and parts": {"General comments": "Comments"}}
 info = {}
 logger.info(f"Reading records and attributes from database '{DB_KEY}'")
 logger.info("Getting Table Information")
-tables = tables_api.v1alpha_databases_database_key_tables_get(database_key=DB_KEY)
+tables = tables_api.get_tables(database_key=DB_KEY)
 table_name_map = {table.name: table for table in tables.tables}
 for table_name, table_details in table_information.items():
     logger.info(f"--Processing table '{table_name}'")
@@ -92,22 +93,24 @@ for table_name, table_details in table_information.items():
     logger.info(f"----Fetching attributes in layout '{layout_name}")
     renamed_attributes_for_table = renamed_attributes.get(table_name, [])
     table_info = table_name_map[table_name]
-    table_layouts = layouts_api.v1alpha_databases_database_key_tables_table_guid_layouts_get(
-        database_key=DB_KEY, table_guid=table_info.guid
-    )
+    table_layouts = layouts_api.get_layouts(database_key=DB_KEY, table_guid=table_info.guid)
     layout_map = {layout.name: layout for layout in table_layouts.layouts}
     layout_item = layout_map[layout_name]
-    sections_response = (
-        layout_sections_api.v1alpha_databases_database_key_tables_table_guid_layouts_layout_guid_sections_get(
-            database_key=DB_KEY, table_guid=table_info.guid, layout_guid=layout_item.guid, show_full_detail=True
-        )
+    sections_response = layout_sections_api.get_layout_sections(
+        database_key=DB_KEY, table_guid=table_info.guid, layout_guid=layout_item.guid, show_full_detail=True
     )
     layout_info = [section.to_dict() for section in sections_response.layout_sections if section.section_items]
+    # for layout in layout_info:
+    #     for item in layout["section_items"]:
+    #         if "tabular_columns" in item and item["tabular_columns"] is Unset:
+    #             item["tabular_columns"] = None
+    #         if "meta_attributes" in item and item["meta_attributes"] is not Unset:
+    #             for meta_attribute in item["meta_attributes"]:
+    #                 if item["meta_attributes"] is Unset:
+    #                     item["meta_attributes"] = None
     if table_name in extra_attributes:
         # Add extra attribute information to a section in the layout
-        table_attributes = attributes_api.v1alpha_databases_database_key_tables_table_guid_attributes_get(
-            database_key=DB_KEY, table_guid=table_info.guid
-        )
+        table_attributes = attributes_api.get_attributes(database_key=DB_KEY, table_guid=table_info.guid)
         attribute_name_map = {attribute.name: attribute for attribute in table_attributes.attributes}
         added_items = []
         relevant_attribute_names = extra_attributes[table_name]
@@ -141,7 +144,7 @@ for table_name, table_details in table_information.items():
                     new_name = renamed_attributes_for_table[item["name"]]
                     logger.info(f"------Renaming attribute '{item['name']}' to '{new_name}'")
                     item["name"] = renamed_attributes_for_table[item["name"]]
-                if "tabular_columns" in item and item["tabular_columns"] is not None:
+                if "tabular_columns" in item and item["tabular_columns"] is not Unset:
                     for column in item["tabular_columns"]:
                         if column["name"] in renamed_attributes_for_table:
                             new_name = renamed_attributes_for_table[column["name"]]
@@ -156,6 +159,12 @@ for table_name, table_details in table_information.items():
     ]
     info[table_name] = {"layout": layout_info, "records": records}
 
+
+def serialize_unset(obj):
+    if obj is Unset:
+        return None
+
+
 logger.info(f"Finished processing data, writing to {OUTPUT_FILE_NAME}")
 with open(OUTPUT_FILE_NAME, "w", encoding="utf8") as fp:
-    json.dump(info, fp)
+    json.dump(info, fp, default=serialize_unset)

@@ -60,14 +60,12 @@ if __name__ == "__main__":
     database_client = api.SchemaDatabasesApi(api_client)
 
     logger.info("Renaming Database")
-    database_info: models.GrantaServerApiSchemaDatabase = database_client.v1alpha_databases_database_key_get(
-        database_key=CUSTOM_DB_KEY
-    )
+    database_info: models.GrantaServerApiSchemaDatabase = database_client.get_database(database_key=CUSTOM_DB_KEY)
     guid = database_info.guid
     new_name = "Restricted Substances Custom Tables"
     rename_request = models.GrantaServerApiSchemaUpdateDatabase(name=new_name)
 
-    database_client.v1alpha_databases_database_key_patch(database_key=CUSTOM_DB_KEY, body=rename_request)
+    database_client.update_database(database_key=CUSTOM_DB_KEY, body=rename_request)
 
     table_browser = TableBrowser(api_client, logger)
     custom_table_name_map = table_browser.get_table_name_guid_map(CUSTOM_DB_KEY)

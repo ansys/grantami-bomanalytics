@@ -4,7 +4,7 @@ from typing import Optional
 from ansys.grantami.serverapi_openapi import models
 from ansys.openapi.common import SessionConfiguration, ApiClientFactory, generate_user_agent, ApiClient
 
-SERVICE_PATH = "/proxy/v1.svc"
+SERVICE_PATH = "/proxy/v1.svc/mi"
 MI_AUTH_PATH = "/v1alpha/schema/mi-version"
 GRANTA_APPLICATION_NAME_HEADER = "PyGranta ServerAPI"
 

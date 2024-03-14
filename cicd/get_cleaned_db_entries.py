@@ -100,14 +100,6 @@ for table_name, table_details in table_information.items():
         database_key=DB_KEY, table_guid=table_info.guid, layout_guid=layout_item.guid, show_full_detail=True
     )
     layout_info = [section.to_dict() for section in sections_response.layout_sections if section.section_items]
-    # for layout in layout_info:
-    #     for item in layout["section_items"]:
-    #         if "tabular_columns" in item and item["tabular_columns"] is Unset:
-    #             item["tabular_columns"] = None
-    #         if "meta_attributes" in item and item["meta_attributes"] is not Unset:
-    #             for meta_attribute in item["meta_attributes"]:
-    #                 if item["meta_attributes"] is Unset:
-    #                     item["meta_attributes"] = None
     if table_name in extra_attributes:
         # Add extra attribute information to a section in the layout
         table_attributes = attributes_api.get_attributes(database_key=DB_KEY, table_guid=table_info.guid)

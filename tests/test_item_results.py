@@ -237,7 +237,10 @@ class TestSustainabilityResultsRepr:
         "embodied_energy": models.CommonValueWithUnit(value=2.3, unit="KJ"),
         "climate_change": models.CommonValueWithUnit(value=5.1, unit="KJ"),
     }
-    _id = {"id": "TEST_ID"}
+    _id = {
+        "id": "TEST_ID",
+        "stage_name": "TEST_STAGE_NAME",
+    }
     _identifiers = {
         "id": "TEST_ID",
         "external_identity": "TEST_EXT_ID",

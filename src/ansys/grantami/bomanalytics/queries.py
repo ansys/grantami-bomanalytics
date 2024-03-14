@@ -21,13 +21,11 @@ from typing import (
     Type,
     TypeVar,
     Union,
-    cast,
 )
 import warnings
 from xml.etree import ElementTree
 
 from ansys.grantami.bomanalytics_openapi import api, models
-from ansys.openapi.common import Unset_Type
 
 from ._allowed_types import validate_argument_type
 from ._exceptions import GrantaMIException
@@ -41,6 +39,7 @@ from ._item_definitions import (
 )
 from ._logger import logger
 from ._query_results import QueryResultFactory, ResultBaseClass
+from ._typing import _cast_unset_union_to_any
 from .indicators import RoHSIndicator, WatchListIndicator, _Indicator
 
 if TYPE_CHECKING:
@@ -155,11 +154,10 @@ class _BaseQueryDataManager(ABC):
         response
            Response returned by the low-level API.
         """
-        if isinstance(response.log_messages, Unset_Type):
-            return
 
-        self._emit_log_messages(response.log_messages)
-        self._messages.extend(response.log_messages)
+        messages = _cast_unset_union_to_any(response.log_messages)
+        self._emit_log_messages(messages)
+        self._messages.extend(messages)
         results = self._extract_results_from_response(response)
         self._item_results.extend(results)
 
@@ -181,10 +179,12 @@ class _BaseQueryDataManager(ABC):
 
         exception_messages = []
         for log_msg in log_messages:
-            log_method = EXCEPTION_MAP.get(cast(str, log_msg.severity), logger.warning)
+            severity = _cast_unset_union_to_any(log_msg.severity)
+            log_method = EXCEPTION_MAP.get(severity, logger.warning)
             log_method(log_msg.message)
             if log_method == logger.critical:
-                exception_messages.append(cast(str, log_msg.message))
+                message = _cast_unset_union_to_any(log_msg.message)
+                exception_messages.append(message)
         if exception_messages:
             error_text = "\n".join(exception_messages)
             raise GrantaMIException(error_text)

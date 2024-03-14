@@ -5,7 +5,7 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 """
 from abc import ABC
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from ansys.grantami.bomanalytics_openapi import models
 from ansys.openapi.common import Unset, Unset_Type
@@ -26,22 +26,12 @@ from ._item_definitions import (
     TransportReference,
     TransportReferenceWithIdentifier,
 )
+from ._typing import _cast_unset_union_to_any, _convert_unset_to_none
 
 if TYPE_CHECKING:
     from .indicators import RoHSIndicator, WatchListIndicator
 
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
-
-Record_References = TypeVar(
-    "Record_References",
-    bound=Union[
-        models.CommonPartReference,
-        models.CommonMaterialReference,
-        models.CommonTransportReference,
-        models.CommonSpecificationReference,
-        models.CommonProcessReference,
-    ],
-)
 
 
 class ItemResultFactory:
@@ -68,7 +58,7 @@ class ItemResultFactory:
         item_result = MaterialWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
-            legislations=result_with_impacted_substances.legislations,
+            legislations=_cast_unset_union_to_any(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
             name=result_with_impacted_substances.name,
@@ -96,7 +86,7 @@ class ItemResultFactory:
         item_result = PartWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
-            legislations=result_with_impacted_substances.legislations,
+            legislations=_cast_unset_union_to_any(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
             name=result_with_impacted_substances.name,
@@ -125,7 +115,7 @@ class ItemResultFactory:
         item_result = SpecificationWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
-            legislations=result_with_impacted_substances.legislations,
+            legislations=_cast_unset_union_to_any(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
             name=result_with_impacted_substances.name,
@@ -149,7 +139,9 @@ class ItemResultFactory:
         BoM1711WithImpactedSubstancesResult
            An object that describes the substances that impacted a bom. Substances are grouped by legislation.
         """
-        item_result = BoM1711WithImpactedSubstancesResult(legislations=result_with_impacted_substances.legislations)
+        item_result = BoM1711WithImpactedSubstancesResult(
+            legislations=_cast_unset_union_to_any(result_with_impacted_substances.legislations)
+        )
         return item_result
 
     @classmethod
@@ -318,7 +310,7 @@ class ItemResultFactory:
         item_result = SubstanceWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
-            indicator_results=result_with_compliance.indicators,
+            indicator_results=_cast_unset_union_to_any(result_with_compliance.indicators),
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
             external_identity=result_with_compliance.external_identity,
@@ -355,9 +347,9 @@ class ItemResultFactory:
             name=result_with_sustainability.name,
             input_part_number=result_with_sustainability.input_part_number,
         )
-        part_with_sustainability._add_child_parts(result_with_sustainability.parts)
-        part_with_sustainability._add_child_materials(result_with_sustainability.materials)
-        part_with_sustainability._add_child_processes(result_with_sustainability.processes)
+        part_with_sustainability._add_child_parts(_cast_unset_union_to_any(result_with_sustainability.parts))
+        part_with_sustainability._add_child_materials(_cast_unset_union_to_any(result_with_sustainability.materials))
+        part_with_sustainability._add_child_processes(_cast_unset_union_to_any(result_with_sustainability.processes))
         return part_with_sustainability
 
     @classmethod
@@ -420,7 +412,9 @@ class ItemResultFactory:
             external_identity=result_with_sustainability.external_identity,
             name=result_with_sustainability.name,
         )
-        material_with_sustainability._add_child_processes(result_with_sustainability.processes)
+        material_with_sustainability._add_child_processes(
+            _cast_unset_union_to_any(result_with_sustainability.processes)
+        )
         return material_with_sustainability
 
     @classmethod
@@ -441,17 +435,13 @@ class ItemResultFactory:
         """
 
         reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
-
-        if isinstance(result_with_sustainability.stage_name, Unset_Type):
-            raise ValueError('Result does not contain a valid "stage_name" paraemter. Cannot continue.')
-
         transport_with_sustainability = TransportWithSustainabilityResult(
             reference_type=reference_type,
             reference_value=result_with_sustainability.reference_value,
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             identity=result_with_sustainability.id,
-            name=result_with_sustainability.stage_name,
+            name=_cast_unset_union_to_any(result_with_sustainability.stage_name),
         )
         return transport_with_sustainability
 
@@ -468,14 +458,12 @@ class ItemResultFactory:
         -------
         ValueWithUnit
         """
-        if isinstance(result, Unset_Type):
-            raise ValueError("Result cannot be empty.")
-        return ValueWithUnit(value=result.value, unit=result.unit)  # type: ignore[arg-type]
+        valid_result = _cast_unset_union_to_any(result)
+        return ValueWithUnit(value=valid_result.value, unit=valid_result.unit)  # type: ignore[arg-type]
 
     @classmethod
     def create_phase_summary(
-        cls,
-        result: models.CommonSustainabilityPhaseSummary,
+        cls, result: models.CommonSustainabilityPhaseSummary
     ) -> "SustainabilityPhaseSummaryResult":
         """Returns a SustainabilityPhaseSummaryResult instantiated from the low-level API model.
 
@@ -488,11 +476,8 @@ class ItemResultFactory:
         -------
         SustainabilityPhaseSummaryResult
         """
-        if isinstance(result.phase, Unset_Type):
-            raise ValueError('Result does not contain a valid "phase" parameter. Cannot continue.')
-
         return SustainabilityPhaseSummaryResult(
-            name=result.phase,
+            name=_cast_unset_union_to_any(result.phase),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
             embodied_energy_percentage=result.embodied_energy_percentage,
             climate_change=cls.create_unitted_value(result.climate_change),
@@ -514,23 +499,19 @@ class ItemResultFactory:
         -------
         TransportSummaryResult
         """
-        record_reference = cls._safely_cast_record_reference(result.record_reference)
+        record_reference = _cast_unset_union_to_any(result.record_reference)
         reference_type = cls.parse_reference_type(record_reference.reference_type)
-
-        if isinstance(result.stage_name, Unset_Type):
-            raise ValueError('Result does not contain a valid "stage_name" parameter. Cannot continue.')
-
         return TransportSummaryResult(
             transport_reference=TransportReference(
                 reference_type=reference_type,
-                reference_value=cast(str, record_reference.reference_value),
+                reference_value=record_reference.reference_value,
             ),
-            name=result.stage_name,
+            name=_convert_unset_to_none(result.stage_name),
             distance=cls.create_unitted_value(result.distance),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
-            embodied_energy_percentage=result.embodied_energy_percentage,
+            embodied_energy_percentage=_cast_unset_union_to_any(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
-            climate_change_percentage=result.climate_change_percentage,
+            climate_change_percentage=_cast_unset_union_to_any(result.climate_change_percentage),
         )
 
     @classmethod
@@ -551,22 +532,18 @@ class ItemResultFactory:
         """
         # TODO one of these is a bucket for all other materials that do not contribute >2% EE. Worth separating it?
         #  It does not have a valid record reference or contributors.
-        record_reference = cls._safely_cast_record_reference(result.record_reference)
+        record_reference = _cast_unset_union_to_any(result.record_reference)
         reference_type = cls.parse_reference_type(record_reference.reference_type)
-
-        if isinstance(result.identity, Unset_Type):
-            raise ValueError('Result does not contain a valid "identity" parameter. Cannot continue.')
-
         return MaterialSummaryResult(
             material_reference=MaterialReference(
                 reference_type=reference_type,
-                reference_value=cast(str, record_reference.reference_value),
+                reference_value=record_reference.reference_value,
             ),
-            identity=result.identity,
+            identity=_cast_unset_union_to_any(result.identity),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
-            embodied_energy_percentage=result.embodied_energy_percentage,
+            embodied_energy_percentage=_cast_unset_union_to_any(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
-            climate_change_percentage=result.climate_change_percentage,
+            climate_change_percentage=_cast_unset_union_to_any(result.climate_change_percentage),
             mass_after_processing=cls.create_unitted_value(result.mass_after_processing),
             mass_before_processing=cls.create_unitted_value(result.mass_before_processing),
             contributors=[cls.create_contributing_component(component) for component in result.largest_contributors]
@@ -589,23 +566,16 @@ class ItemResultFactory:
         -------
         ContributingComponentResult
         """
-        record_reference = cls._safely_cast_record_reference(result.record_reference)
+        record_reference = _cast_unset_union_to_any(result.record_reference)
         reference_type = cls.parse_reference_type(record_reference.reference_type)
-
-        if isinstance(result.component_part_number, Unset_Type):
-            raise ValueError('Result does not contain a valid "component_part_number" parameter. Cannot continue.')
-
-        if isinstance(result.component_name, Unset_Type):
-            raise ValueError('Result does not contain a valid "component_name" parameter. Cannot continue.')
-
         return ContributingComponentResult(
-            part_number=result.component_part_number,
+            part_number=_convert_unset_to_none(result.component_part_number),
             part_reference=PartReference(
                 reference_type=reference_type,
-                reference_value=cast(str, record_reference.reference_value),
+                reference_value=record_reference.reference_value,
             ),
             material_mass_before_processing=cls.create_unitted_value(result.material_mass_before_processing),
-            name=result.component_name,
+            name=_convert_unset_to_none(result.component_name),
         )
 
     @classmethod
@@ -622,41 +592,29 @@ class ItemResultFactory:
         -------
         ProcessSummaryResult
         """
-        material_record_reference = cls._safely_cast_record_reference(result.material_record_reference)
-        material_reference_type = cls.parse_reference_type(material_record_reference.reference_type)
-
+        material_record_reference = _cast_unset_union_to_any(result.material_record_reference)
         material_reference = (
             MaterialReference(
-                reference_type=material_reference_type,
-                reference_value=cast(str, material_record_reference.reference_value),
+                reference_type=cls.parse_reference_type(material_record_reference.reference_type),
+                reference_value=material_record_reference.reference_value,
             )
             if material_record_reference.reference_type is not Unset
             else None
         )
 
-        process_record_reference = cls._safely_cast_record_reference(result.process_record_reference)
-        process_reference_type = cls.parse_reference_type(process_record_reference.reference_type)
-
-        process_reference = ProcessReference(
-            reference_type=process_reference_type,
-            reference_value=cast(str, process_record_reference.reference_value),
-        )
-
-        if isinstance(result.material_identity, Unset_Type):
-            raise ValueError('Result does not contain a valid "material_identity" parameter. Cannot continue.')
-
-        if isinstance(result.process_name, Unset_Type):
-            raise ValueError('Result does not contain a valid "process_name" parameter. Cannot continue.')
-
+        process_record_reference = _cast_unset_union_to_any(result.process_record_reference)
         return ProcessSummaryResult(
-            material_identity=result.material_identity,
+            material_identity=_convert_unset_to_none(result.material_identity),
             material_reference=material_reference,
-            process_name=result.process_name,
-            process_reference=process_reference,
+            process_name=_cast_unset_union_to_any(result.process_name),
+            process_reference=ProcessReference(
+                reference_type=cls.parse_reference_type(process_record_reference.reference_type),
+                reference_value=process_record_reference.reference_value,
+            ),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
-            embodied_energy_percentage=result.embodied_energy_percentage,
+            embodied_energy_percentage=_convert_unset_to_none(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
-            climate_change_percentage=result.climate_change_percentage,
+            climate_change_percentage=_convert_unset_to_none(result.climate_change_percentage),
         )
 
     @staticmethod
@@ -689,17 +647,9 @@ class ItemResultFactory:
     @staticmethod
     def create_licensing_result(result: models.GetAvailableLicensesResponse) -> "Licensing":
         return Licensing(
-            restricted_substances=cast(bool, result.restricted_substances),
-            sustainability=cast(bool, result.sustainability),
+            restricted_substances=_cast_unset_union_to_any(result.restricted_substances),
+            sustainability=_cast_unset_union_to_any(result.sustainability),
         )
-
-    @classmethod
-    def _safely_cast_record_reference(cls, record_reference: Union[Record_References, Unset_Type]) -> Record_References:
-        if isinstance(record_reference, Unset_Type):
-            raise ValueError("Result does not contain a valid record reference. Cannot continue.")
-        if isinstance(record_reference.reference_value, Unset_Type):
-            raise ValueError("Record reference does not contain a valid value. Cannot continue.")
-        return record_reference
 
 
 class ImpactedSubstance(SubstanceReference):
@@ -723,8 +673,8 @@ class ImpactedSubstance(SubstanceReference):
         self,
         reference_type: Optional[ReferenceType],
         reference_value: Union[int, str],
-        max_percentage_amount_in_material: Union[float, None, Unset_Type],
-        legislation_threshold: Union[float, None, Unset_Type],
+        max_percentage_amount_in_material: Optional[float],
+        legislation_threshold: Optional[float],
     ):
         """
         Parameters
@@ -744,15 +694,8 @@ class ImpactedSubstance(SubstanceReference):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        if not isinstance(max_percentage_amount_in_material, Unset_Type):
-            self._max_percentage_amount_in_material = max_percentage_amount_in_material
-        else:
-            self._max_percentage_amount_in_material = None
-
-        if not isinstance(legislation_threshold, Unset_Type):
-            self._legislation_threshold = legislation_threshold
-        else:
-            self._legislation_threshold = None
+        self._max_percentage_amount_in_material = max_percentage_amount_in_material
+        self._legislation_threshold = legislation_threshold
 
     @property
     def max_percentage_amount_in_material(self) -> Optional[float]:
@@ -783,7 +726,7 @@ class ImpactedSubstancesResultMixin:
 
     def __init__(
         self,
-        legislations: Union[List[models.CommonLegislationWithImpactedSubstances], Unset_Type],
+        legislations: List[models.CommonLegislationWithImpactedSubstances],
         **kwargs: Any,
     ) -> None:
         """
@@ -800,15 +743,12 @@ class ImpactedSubstancesResultMixin:
 
         self._substances_by_legislation: Dict[str, List[ImpactedSubstance]] = {}
 
-        if isinstance(legislations, Unset_Type):
-            return
         for legislation in legislations:
-            if isinstance(legislation.impacted_substances, Unset_Type):
-                continue
             new_substances = [
-                self._create_impacted_substance(substance) for substance in legislation.impacted_substances
+                self._create_impacted_substance(substance)
+                for substance in _cast_unset_union_to_any(legislation.impacted_substances)
             ]
-            self._substances_by_legislation[cast(str, legislation.legislation_id)] = new_substances
+            self._substances_by_legislation[_cast_unset_union_to_any(legislation.legislation_id)] = new_substances
 
     @staticmethod
     def _create_impacted_substance(
@@ -845,8 +785,8 @@ class ImpactedSubstancesResultMixin:
                 "of the base BoM Analytics package."
             )
         impacted_substance = ImpactedSubstance(
-            max_percentage_amount_in_material=substance.max_percentage_amount_in_material,
-            legislation_threshold=substance.legislation_threshold,
+            max_percentage_amount_in_material=_convert_unset_to_none(substance.max_percentage_amount_in_material),
+            legislation_threshold=_convert_unset_to_none(substance.legislation_threshold),
             reference_type=reference_type,
             reference_value=reference_value,
         )
@@ -1030,7 +970,7 @@ class ComplianceResultMixin(HasIndicators, RecordReference):
 
     def __init__(
         self,
-        indicator_results: Union[List[models.CommonIndicatorResult], Unset_Type],
+        indicator_results: List[models.CommonIndicatorResult],
         indicator_definitions: Indicator_Definitions,
         **kwargs: Any,
     ) -> None:
@@ -1038,8 +978,6 @@ class ComplianceResultMixin(HasIndicators, RecordReference):
         self._indicator_definitions = indicator_definitions
         self._indicators: Indicator_Definitions = deepcopy(indicator_definitions)
 
-        if isinstance(indicator_results, Unset_Type):
-            return
         for indicator_result in indicator_results:
             self._indicators[indicator_result.name].flag = indicator_result.flag  # type: ignore[assignment, index]
 
@@ -1076,9 +1014,7 @@ class ChildSubstanceWithComplianceMixin(HasIndicators, ABC):
 
         return self._substances
 
-    def _add_child_substances(
-        self, child_substances: Union[List[models.CommonSubstanceWithCompliance], Unset_Type]
-    ) -> None:
+    def _add_child_substances(self, child_substances: List[models.CommonSubstanceWithCompliance]) -> None:
         """Populate the ``substances`` attribute based on a list of low-level API substances with compliance
         results.
 
@@ -1087,9 +1023,6 @@ class ChildSubstanceWithComplianceMixin(HasIndicators, ABC):
         child_substances
             List of substances with compliance returned from the low-level API.
         """
-
-        if isinstance(child_substances, Unset_Type):
-            return
 
         for child_substance in child_substances:
             child_substance_with_compliance = ItemResultFactory.create_substance_compliance_result(
@@ -1125,7 +1058,7 @@ class ChildMaterialWithComplianceMixin(HasIndicators, ABC):
 
     def _add_child_materials(
         self,
-        child_materials: Union[List[models.CommonMaterialWithCompliance], Unset_Type],
+        child_materials: List[models.CommonMaterialWithCompliance],
     ) -> None:
         """Populates the ``materials`` attribute based on a list of low-level API materials with compliance
         results.
@@ -1137,15 +1070,13 @@ class ChildMaterialWithComplianceMixin(HasIndicators, ABC):
         child_materials
             List of materials with compliance returned from the low-level API.
         """
-        if isinstance(child_materials, Unset_Type):
-            return
 
         for child_material in child_materials:
             child_material_with_compliance = ItemResultFactory.create_material_compliance_result(
                 result_with_compliance=child_material,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_material_with_compliance._add_child_substances(child_material.substances)
+            child_material_with_compliance._add_child_substances(_cast_unset_union_to_any(child_material.substances))
             self._materials.append(child_material_with_compliance)
 
 
@@ -1176,7 +1107,7 @@ class ChildSpecificationWithComplianceMixin(HasIndicators, ABC):
 
     def _add_child_specifications(
         self,
-        child_specifications: Union[List[models.CommonSpecificationWithCompliance], Unset_Type],
+        child_specifications: List[models.CommonSpecificationWithCompliance],
     ) -> None:
         """Populate the ``specifications`` attribute based on a list of low-level API specifications with
         compliance results.
@@ -1189,18 +1120,24 @@ class ChildSpecificationWithComplianceMixin(HasIndicators, ABC):
         child_specifications
             List of specifications with compliance returned from the low-level API
         """
-        if isinstance(child_specifications, Unset_Type):
-            return
 
         for child_specification in child_specifications:
             child_specification_with_compliance = ItemResultFactory.create_specification_compliance_result(
                 result_with_compliance=child_specification,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_specification_with_compliance._add_child_materials(child_specification.materials)
-            child_specification_with_compliance._add_child_specifications(child_specification.specifications)
-            child_specification_with_compliance._add_child_coatings(child_specification.coatings)
-            child_specification_with_compliance._add_child_substances(child_specification.substances)
+            child_specification_with_compliance._add_child_materials(
+                _cast_unset_union_to_any(child_specification.materials)
+            )
+            child_specification_with_compliance._add_child_specifications(
+                _cast_unset_union_to_any(child_specification.specifications)
+            )
+            child_specification_with_compliance._add_child_coatings(
+                _cast_unset_union_to_any(child_specification.coatings)
+            )
+            child_specification_with_compliance._add_child_substances(
+                _cast_unset_union_to_any(child_specification.substances)
+            )
             self._specifications.append(child_specification_with_compliance)
 
 
@@ -1230,7 +1167,7 @@ class ChildPartWithComplianceMixin(HasIndicators, ABC):
 
     def _add_child_parts(
         self,
-        child_parts: Union[List[models.CommonPartWithCompliance], Unset_Type],
+        child_parts: List[models.CommonPartWithCompliance],
     ) -> None:
         """Populate the ``parts`` attribute based on a list of low-level API parts with compliance
         results.
@@ -1243,18 +1180,16 @@ class ChildPartWithComplianceMixin(HasIndicators, ABC):
         child_parts
            List of parts with compliance returned from the low-level API
         """
-        if isinstance(child_parts, Unset_Type):
-            return
 
         for child_part in child_parts:
             child_part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=child_part,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_part_with_compliance._add_child_parts(child_part.parts)
-            child_part_with_compliance._add_child_specifications(child_part.specifications)
-            child_part_with_compliance._add_child_materials(child_part.materials)
-            child_part_with_compliance._add_child_substances(child_part.substances)
+            child_part_with_compliance._add_child_parts(_cast_unset_union_to_any(child_part.parts))
+            child_part_with_compliance._add_child_specifications(_cast_unset_union_to_any(child_part.specifications))
+            child_part_with_compliance._add_child_materials(_cast_unset_union_to_any(child_part.materials))
+            child_part_with_compliance._add_child_substances(_cast_unset_union_to_any(child_part.substances))
             self._parts.append(child_part_with_compliance)
 
 
@@ -1284,7 +1219,7 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
 
     def _add_child_coatings(
         self,
-        child_coatings: Union[List[models.CommonCoatingWithCompliance], Unset_Type],
+        child_coatings: List[models.CommonCoatingWithCompliance],
     ) -> None:
         """Populate the ``coatings`` attribute based on a list of low-level API coatings with compliance
         results.
@@ -1297,15 +1232,12 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
             List of coatings with compliance returned from the low-level API.
         """
 
-        if isinstance(child_coatings, Unset_Type):
-            return
-
         for child_coating in child_coatings:
             child_coating_with_compliance = ItemResultFactory.create_coating_compliance_result(
                 result_with_compliance=child_coating,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_coating_with_compliance._add_child_substances(child_coating.substances)
+            child_coating_with_compliance._add_child_substances(_cast_unset_union_to_any(child_coating.substances))
             self._coatings.append(child_coating_with_compliance)
 
 
@@ -1571,7 +1503,7 @@ class ChildMaterialWithSustainabilityMixin:
 
     def _add_child_materials(
         self,
-        child_materials: Union[List[models.CommonSustainabilityMaterialWithSustainability], Unset_Type],
+        child_materials: List[models.CommonSustainabilityMaterialWithSustainability],
     ) -> None:
         """Populates the ``materials`` attribute based on a list of low-level API materials with sustainability
         results.
@@ -1581,9 +1513,6 @@ class ChildMaterialWithSustainabilityMixin:
         child_materials
             List of materials with sustainability returned from the low-level API.
         """
-
-        if isinstance(child_materials, Unset_Type):
-            return
 
         for child_material in child_materials:
             child_material_with_sustainability = ItemResultFactory.create_material_with_sustainability(
@@ -1615,7 +1544,7 @@ class ChildPartWithSustainabilityMixin:
 
     def _add_child_parts(
         self,
-        child_parts: Union[List[models.CommonSustainabilityPartWithSustainability], Unset_Type],
+        child_parts: List[models.CommonSustainabilityPartWithSustainability],
     ) -> None:
         """Populate the ``parts`` attribute based on a list of low-level API parts with sustainability
         results.
@@ -1625,8 +1554,6 @@ class ChildPartWithSustainabilityMixin:
         child_parts
            List of parts with sustainability returned from the low-level API
         """
-        if isinstance(child_parts, Unset_Type):
-            return
 
         for child_part in child_parts:
             child_part_with_sustainability = ItemResultFactory.create_part_with_sustainability(
@@ -1656,9 +1583,7 @@ class ChildProcessWithSustainabilityMixin:
 
         return self._processes
 
-    def _add_child_processes(
-        self, child_processes: Union[List[models.CommonSustainabilityProcessWithSustainability], Unset_Type]
-    ) -> None:
+    def _add_child_processes(self, child_processes: List[models.CommonSustainabilityProcessWithSustainability]) -> None:
         """Populate the ``processes`` attribute based on a list of low-level API processes with sustainability
         results.
 
@@ -1667,10 +1592,8 @@ class ChildProcessWithSustainabilityMixin:
         child_processes
             List of processes with sustainability returned from the low-level API.
         """
-        if child_processes is not Unset_Type:
-            return
 
-        for child_process in cast(List[models.CommonSustainabilityProcessWithSustainability], child_processes):
+        for child_process in child_processes:
             child_process_result = ItemResultFactory.create_process_with_sustainability(
                 result_with_sustainability=child_process,
             )

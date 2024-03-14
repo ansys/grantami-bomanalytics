@@ -10,6 +10,7 @@ import numbers
 from typing import Any, Dict, Optional, Union, cast
 
 from ansys.grantami.bomanalytics_openapi import models
+from ansys.openapi.common import Unset_Type
 
 
 class ReferenceType(Enum):
@@ -88,10 +89,13 @@ class RecordReference(ABC):
     def __init__(
         self,
         reference_type: Optional[ReferenceType],
-        reference_value: Union[int, str, None],
+        reference_value: Union[int, str, Unset_Type],
     ):
         self._reference_type = reference_type
-        self._reference_value = reference_value
+        if isinstance(reference_value, Unset_Type):
+            self._reference_value = None
+        else:
+            self._reference_value = reference_value
 
     @property
     def record_history_identity(self) -> Optional[int]:
@@ -316,7 +320,7 @@ class SubstanceDefinition(RecordDefinition, SubstanceReference):
     def __init__(
         self,
         reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
+        reference_value: Union[int, str, Unset_Type],
         percentage_amount: Union[float, None] = None,
     ):
         super().__init__(

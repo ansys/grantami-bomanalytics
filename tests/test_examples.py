@@ -12,7 +12,6 @@ env = os.environ.copy()
 env["PLOTLY_RENDERER"] = "json"
 
 
-@pytest.mark.xfail(reason="Database upgrade")
 def test_examples(example_script: Path):
     p = subprocess.Popen(
         [

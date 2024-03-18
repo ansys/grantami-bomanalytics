@@ -45,7 +45,7 @@ jobs:
 
       - name: Start VM with Azure CLI
         id: azure_cli
-        uses: azure/CLI@v1
+        uses: azure/CLI@v2
         if: ${{ !(inputs.skip-vm-management)}}
         with:
           azcliversion: 2.32.0
@@ -156,7 +156,7 @@ jobs:
 
     steps:
       - name: Stop Azure VM
-        uses: azure/CLI@v1
+        uses: azure/CLI@v2
         with:
           azcliversion: 2.32.0
           inlineScript: |

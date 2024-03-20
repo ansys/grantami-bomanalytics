@@ -14,11 +14,7 @@ from ansys.grantami.bomanalytics._query_results import (
     BomSustainabilitySummaryQueryResult,
 )
 
-from ..inputs import (
-    BOM_PART_RECORD_HISTORY_IDENTITY,
-    examples_as_dicts,
-    sample_sustainability_bom_2301,
-)
+from ..inputs import examples_as_dicts, sample_sustainability_bom_2301
 from .common import BaseMockTester
 
 
@@ -48,7 +44,7 @@ class TestBomSustainability(BaseMockTester):
         assert part_0.reported_mass.value == 2
 
         assert part_0.part_number is None
-        assert part_0.record_history_identity == BOM_PART_RECORD_HISTORY_IDENTITY
+        assert part_0.record_history_identity is None
 
         # Level 1
         assert len(part_0.parts) == 1
@@ -117,11 +113,7 @@ class TestBomSustainabilitySummary(BaseMockTester):
 
     def test_response_processing(self, mock_connection):
         patched_response = examples_as_dicts[self.mock_key]
-        patched_response["MaterialSummary"]["Summary"][0]["LargestContributors"][0]["RecordReference"] = {
-            "Id": "<ID>",
-            "ReferenceType": "MiRecordHistoryIdentity",
-            "ReferenceValue": BOM_PART_RECORD_HISTORY_IDENTITY,
-        }
+        patched_response["MaterialSummary"]["Summary"][0]["LargestContributors"][0]["RecordReference"] = {}
         response = self.get_mocked_response(mock_connection, json.dumps(patched_response))
         assert isinstance(response, BomSustainabilitySummaryQueryResult)
 

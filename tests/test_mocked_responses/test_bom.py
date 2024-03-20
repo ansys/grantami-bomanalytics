@@ -8,11 +8,7 @@ import pytest
 
 from ansys.grantami.bomanalytics import indicators, queries
 
-from ..inputs import (
-    BOM_PART_RECORD_HISTORY_IDENTITY,
-    sample_bom_1711,
-    sample_sustainability_bom_2301,
-)
+from ..inputs import sample_bom_1711, sample_sustainability_bom_2301
 from .common import BaseMockTester, MaterialValidator, PartValidator, SubstanceValidator
 
 
@@ -77,7 +73,7 @@ class _TestCompliance(BaseMockTester):
         # Top level part 0
         part_0 = response.compliance_by_part_and_indicator[0]
         pv_0 = PartValidator(part_0)
-        assert pv_0.check_reference(record_history_identity=BOM_PART_RECORD_HISTORY_IDENTITY)
+        assert pv_0.check_reference()
         part_0_result = [
             indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
             indicators.RoHSFlag.RohsCompliant,
@@ -89,7 +85,7 @@ class _TestCompliance(BaseMockTester):
         # Level 1: Child part
         part_0_0 = part_0.parts[0]
         pv_0_0 = PartValidator(part_0_0)
-        assert pv_0_0.check_reference(record_history_identity=BOM_PART_RECORD_HISTORY_IDENTITY)
+        assert pv_0_0.check_reference()
         part_0_0_result = [
             indicators.WatchListFlag.WatchListAllSubstancesBelowThreshold,
             indicators.RoHSFlag.RohsCompliant,
@@ -109,7 +105,7 @@ class _TestCompliance(BaseMockTester):
         # Top level part 1
         part_1 = response.compliance_by_part_and_indicator[1]
         pv_1 = PartValidator(part_1)
-        assert pv_1.check_reference(record_history_identity=BOM_PART_RECORD_HISTORY_IDENTITY)
+        assert pv_1.check_reference()
         part_1_result = [
             indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
             indicators.RoHSFlag.RohsNonCompliant,

@@ -1,6 +1,6 @@
 import pathlib
 
-from .examples import BOM_PART_RECORD_HISTORY_IDENTITY, examples_as_dicts, examples_as_strings
+from .examples import examples_as_dicts, examples_as_strings
 
 repository_root = pathlib.Path(__file__).parents[2]
 inputs_dir = pathlib.Path(__file__).parent

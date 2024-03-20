@@ -27,7 +27,7 @@ from ._item_results import (
     TransportSummaryResult,
     TransportWithSustainabilityResult,
 )
-from ._typing import _cast_unset_union_to_any
+from ._typing import _raise_if_unset
 from .indicators import RoHSIndicator, WatchListIndicator
 
 LogMessage = namedtuple("LogMessage", ["severity", "message"])
@@ -341,7 +341,7 @@ class MaterialComplianceQueryResult(ComplianceBaseClass):
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
-            material_with_compliance._add_child_substances(_cast_unset_union_to_any(result.substances))
+            material_with_compliance._add_child_substances(_raise_if_unset(result.substances))
             self._results.append(material_with_compliance)
 
     @property
@@ -450,10 +450,10 @@ class PartComplianceQueryResult(ComplianceBaseClass):
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
-            part_with_compliance._add_child_parts(_cast_unset_union_to_any(result.parts))
-            part_with_compliance._add_child_materials(_cast_unset_union_to_any(result.materials))
-            part_with_compliance._add_child_specifications(_cast_unset_union_to_any(result.specifications))
-            part_with_compliance._add_child_substances(_cast_unset_union_to_any(result.substances))
+            part_with_compliance._add_child_parts(_raise_if_unset(result.parts))
+            part_with_compliance._add_child_materials(_raise_if_unset(result.materials))
+            part_with_compliance._add_child_specifications(_raise_if_unset(result.specifications))
+            part_with_compliance._add_child_substances(_raise_if_unset(result.substances))
             self._results.append(part_with_compliance)
 
     @property
@@ -563,10 +563,10 @@ class SpecificationComplianceQueryResult(ComplianceBaseClass):
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
-            specification_with_compliance._add_child_materials(_cast_unset_union_to_any(result.materials))
-            specification_with_compliance._add_child_specifications(_cast_unset_union_to_any(result.specifications))
-            specification_with_compliance._add_child_coatings(_cast_unset_union_to_any(result.coatings))
-            specification_with_compliance._add_child_substances(_cast_unset_union_to_any(result.substances))
+            specification_with_compliance._add_child_materials(_raise_if_unset(result.materials))
+            specification_with_compliance._add_child_specifications(_raise_if_unset(result.specifications))
+            specification_with_compliance._add_child_coatings(_raise_if_unset(result.coatings))
+            specification_with_compliance._add_child_substances(_raise_if_unset(result.substances))
             self._results.append(specification_with_compliance)
 
     @property
@@ -703,16 +703,16 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
         super().__init__(messages)
         self._results = []
-        parts = _cast_unset_union_to_any(results[0].parts)
+        parts = _raise_if_unset(results[0].parts)
         for result in parts:
             part_with_compliance = ItemResultFactory.create_part_compliance_result(
                 result_with_compliance=result,
                 indicator_definitions=indicator_definitions,
             )
-            part_with_compliance._add_child_parts(_cast_unset_union_to_any(result.parts))
-            part_with_compliance._add_child_materials(_cast_unset_union_to_any(result.materials))
-            part_with_compliance._add_child_specifications(_cast_unset_union_to_any(result.specifications))
-            part_with_compliance._add_child_substances(_cast_unset_union_to_any(result.substances))
+            part_with_compliance._add_child_parts(_raise_if_unset(result.parts))
+            part_with_compliance._add_child_materials(_raise_if_unset(result.materials))
+            part_with_compliance._add_child_specifications(_raise_if_unset(result.specifications))
+            part_with_compliance._add_child_substances(_raise_if_unset(result.substances))
             self._results.append(part_with_compliance)
 
     @property
@@ -764,7 +764,7 @@ class BomSustainabilityQueryResult(ResultBaseClass):
 
         self._transports: List[TransportWithSustainabilityResult] = [
             ItemResultFactory.create_transport_with_sustainability(result_with_sustainability=transport)
-            for transport in _cast_unset_union_to_any(self._response.transport_stages)
+            for transport in _raise_if_unset(self._response.transport_stages)
         ]
 
     @property
@@ -797,44 +797,40 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         super().__init__(messages)
         self._response = results[0]
 
-        transport_summary = _cast_unset_union_to_any(self._response.transport_summary)
+        transport_summary = _raise_if_unset(self._response.transport_summary)
         self._transport_summary = ItemResultFactory.create_phase_summary(
-            _cast_unset_union_to_any(transport_summary.phase_summary)
+            _raise_if_unset(transport_summary.phase_summary)
         )
 
         self._transport_details: List[TransportSummaryResult] = [
             ItemResultFactory.create_transport_summary(transport)
-            for transport in _cast_unset_union_to_any(transport_summary.summary)
+            for transport in _raise_if_unset(transport_summary.summary)
         ]
 
-        material_summary = _cast_unset_union_to_any(self._response.material_summary)
-        self._material_summary = ItemResultFactory.create_phase_summary(
-            _cast_unset_union_to_any(material_summary.phase_summary)
-        )
+        material_summary = _raise_if_unset(self._response.material_summary)
+        self._material_summary = ItemResultFactory.create_phase_summary(_raise_if_unset(material_summary.phase_summary))
 
         self._material_details = [
             ItemResultFactory.create_material_summary(material)
-            for material in _cast_unset_union_to_any(material_summary.summary)
+            for material in _raise_if_unset(material_summary.summary)
         ]
 
-        process_summary = _cast_unset_union_to_any(self._response.process_summary)
-        self._process_summary = ItemResultFactory.create_phase_summary(
-            _cast_unset_union_to_any(process_summary.phase_summary)
-        )
+        process_summary = _raise_if_unset(self._response.process_summary)
+        self._process_summary = ItemResultFactory.create_phase_summary(_raise_if_unset(process_summary.phase_summary))
 
         self._primary_processes_details = [
             ItemResultFactory.create_process_summary(process)
-            for process in _cast_unset_union_to_any(process_summary.primary_processes)
+            for process in _raise_if_unset(process_summary.primary_processes)
         ]
 
         self._secondary_processes_details = [
             ItemResultFactory.create_process_summary(process)
-            for process in _cast_unset_union_to_any(process_summary.secondary_processes)
+            for process in _raise_if_unset(process_summary.secondary_processes)
         ]
 
         self._joining_and_finishing_processes_details = [
             ItemResultFactory.create_process_summary(process)
-            for process in _cast_unset_union_to_any(process_summary.joining_and_finishing_processes)
+            for process in _raise_if_unset(process_summary.joining_and_finishing_processes)
         ]
 
     # High level summaries:

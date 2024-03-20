@@ -5,19 +5,18 @@ from ansys.openapi.common import Unset_Type
 T = TypeVar("T", bound=Any)
 
 
-def _cast_unset_union_to_any(value: Union[T, Unset_Type]) -> T:
-    """Cast any object that may be a union type including Unset_Type to a type not including
-    Unset_Type.
+def _raise_if_unset(value: Union[T, Unset_Type]) -> T:
+    """Raise if the value is Unset.
 
     Parameters
     ----------
     value
-        The object to cast.
+        The value to check.
 
     Returns
     -------
     Any
-        The input value with a type that does not include Unset_Type.
+        The input value if it is not Unset.
 
     Raises
     ------

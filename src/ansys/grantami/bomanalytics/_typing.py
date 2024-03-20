@@ -2,10 +2,10 @@ from typing import Any, TypeVar, Union
 
 from ansys.openapi.common import Unset_Type
 
-Any_Type = TypeVar("Any_Type", bound=Any)
+T = TypeVar("T", bound=Any)
 
 
-def _cast_unset_union_to_any(value: Union[Any_Type, Unset_Type]) -> Union[Any_Type]:
+def _cast_unset_union_to_any(value: Union[T, Unset_Type]) -> T:
     """Cast any object that may be a union type including Unset_Type to a type not including
     Unset_Type.
 
@@ -30,7 +30,7 @@ def _cast_unset_union_to_any(value: Union[Any_Type, Unset_Type]) -> Union[Any_Ty
     return new_value
 
 
-def _convert_unset_to_none(value: Union[Unset_Type, Any_Type]) -> Union[Any_Type, None]:
+def _convert_unset_to_none(value: Union[T, Unset_Type]) -> Union[T, None]:
     """Convert any object that may be a union type including Unset_Type to a union type including
     None.
 

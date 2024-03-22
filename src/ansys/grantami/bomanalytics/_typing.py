@@ -5,7 +5,7 @@ from ansys.openapi.common import Unset_Type
 T = TypeVar("T", bound=Any)
 
 
-def _raise_if_unset(value: Union[T, Unset_Type], property_name: Optional[str] = None) -> T:
+def _raise_if_unset(value: Union[T, Unset_Type]) -> T:
     """Raise if the value is Unset.
 
     Parameters

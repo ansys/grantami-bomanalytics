@@ -1,11 +1,11 @@
-from typing import Any, TypeVar, Union
+from typing import Any, Optional, TypeVar, Union
 
 from ansys.openapi.common import Unset_Type
 
 T = TypeVar("T", bound=Any)
 
 
-def _raise_if_unset(value: Union[T, Unset_Type]) -> T:
+def _raise_if_unset(value: Union[T, Unset_Type], property_name: Optional[str] = None) -> T:
     """Raise if the value is Unset.
 
     Parameters
@@ -25,7 +25,7 @@ def _raise_if_unset(value: Union[T, Unset_Type]) -> T:
     """
     new_value = _convert_unset_to_none(value)
     if new_value is None:
-        raise ValueError
+        raise ValueError("Provided value cannot be 'Unset'")
     return new_value
 
 

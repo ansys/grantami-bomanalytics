@@ -28,8 +28,8 @@ GRANTA_APPLICATION_NAME_HEADER : str
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, overload
 
-from ansys.grantami.bomanalytics_openapi import api, models  # type: ignore[import]
-from ansys.openapi.common import (  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import api, models
+from ansys.openapi.common import (
     ApiClient,
     ApiClientFactory,
     ApiException,
@@ -446,7 +446,7 @@ class BomAnalyticsClient(ApiClient):
     @property
     def _query_arguments(
         self,
-    ) -> Dict[str, Union[str, models.CommonRequestConfig, None]]:
+    ) -> Dict[str, Union[str, models.CommonRequestConfig]]:
         """Generate the connection-level arguments for a query, such as the database key and table names.
 
         Query-specific arguments (such as records and legislations) are added within the query object itself.
@@ -472,7 +472,8 @@ class BomAnalyticsClient(ApiClient):
             logger.info(f"No specification-to-specification link depth limit specified. All links will be followed")
         if any(self._table_names.values()):
             for table_type, name in self._table_names.items():
-                setattr(config, table_type, name)
+                if name is not None:
+                    setattr(config, table_type, name)
             table_mapping = [f"{n}: {v}" for n, v in self._table_names.items() if v]
             logger.info(f"Using custom table config:")
             for line in table_mapping:
@@ -485,7 +486,7 @@ class BomAnalyticsClient(ApiClient):
         else:
             logger.info(f"Using default database key ({self._db_key})")
 
-        arguments = {"config": config, "database_key": self._db_key}
+        arguments: Dict[str, Union[str, models.CommonRequestConfig]] = {"config": config, "database_key": self._db_key}
         return arguments
 
     def _get_licensing_information(self) -> "Licensing":

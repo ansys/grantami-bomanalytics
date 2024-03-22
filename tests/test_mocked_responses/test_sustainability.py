@@ -88,7 +88,6 @@ class TestBomSustainability(BaseMockTester):
             reference_type="MiRecordGuid",
             reference_value="GUID",
             parts=[],
-            specifications=[],
             materials=[],
             processes=[],
             embodied_energy=CommonValueWithUnit(value=1.0, unit="UNIT"),
@@ -114,11 +113,7 @@ class TestBomSustainabilitySummary(BaseMockTester):
 
     def test_response_processing(self, mock_connection):
         patched_response = examples_as_dicts[self.mock_key]
-        patched_response["MaterialSummary"]["Summary"][0]["LargestContributors"][0]["RecordReference"] = {
-            "Id": None,
-            "ReferenceType": None,
-            "ReferenceValue": None,
-        }
+        patched_response["MaterialSummary"]["Summary"][0]["LargestContributors"][0]["RecordReference"] = {}
         response = self.get_mocked_response(mock_connection, json.dumps(patched_response))
         assert isinstance(response, BomSustainabilitySummaryQueryResult)
 

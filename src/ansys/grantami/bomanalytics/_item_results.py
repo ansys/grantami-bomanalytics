@@ -7,7 +7,8 @@ from abc import ABC
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models
+from ansys.openapi.common import Unset, Unset_Type
 
 from ._item_definitions import (
     CoatingReferenceWithIdentifier,
@@ -25,6 +26,7 @@ from ._item_definitions import (
     TransportReference,
     TransportReferenceWithIdentifier,
 )
+from ._typing import _convert_unset_to_none, _raise_if_unset
 
 if TYPE_CHECKING:
     from .indicators import RoHSIndicator, WatchListIndicator
@@ -56,7 +58,7 @@ class ItemResultFactory:
         item_result = MaterialWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
-            legislations=result_with_impacted_substances.legislations,
+            legislations=_raise_if_unset(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
             name=result_with_impacted_substances.name,
@@ -84,7 +86,7 @@ class ItemResultFactory:
         item_result = PartWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
-            legislations=result_with_impacted_substances.legislations,
+            legislations=_raise_if_unset(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
             name=result_with_impacted_substances.name,
@@ -113,7 +115,7 @@ class ItemResultFactory:
         item_result = SpecificationWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
-            legislations=result_with_impacted_substances.legislations,
+            legislations=_raise_if_unset(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
             name=result_with_impacted_substances.name,
@@ -137,7 +139,9 @@ class ItemResultFactory:
         BoM1711WithImpactedSubstancesResult
            An object that describes the substances that impacted a bom. Substances are grouped by legislation.
         """
-        item_result = BoM1711WithImpactedSubstancesResult(legislations=result_with_impacted_substances.legislations)
+        item_result = BoM1711WithImpactedSubstancesResult(
+            legislations=_raise_if_unset(result_with_impacted_substances.legislations)
+        )
         return item_result
 
     @classmethod
@@ -306,7 +310,7 @@ class ItemResultFactory:
         item_result = SubstanceWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
-            indicator_results=result_with_compliance.indicators,
+            indicator_results=_raise_if_unset(result_with_compliance.indicators),
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
             external_identity=result_with_compliance.external_identity,
@@ -343,9 +347,9 @@ class ItemResultFactory:
             name=result_with_sustainability.name,
             input_part_number=result_with_sustainability.input_part_number,
         )
-        part_with_sustainability._add_child_parts(result_with_sustainability.parts)
-        part_with_sustainability._add_child_materials(result_with_sustainability.materials)
-        part_with_sustainability._add_child_processes(result_with_sustainability.processes)
+        part_with_sustainability._add_child_parts(_raise_if_unset(result_with_sustainability.parts))
+        part_with_sustainability._add_child_materials(_raise_if_unset(result_with_sustainability.materials))
+        part_with_sustainability._add_child_processes(_raise_if_unset(result_with_sustainability.processes))
         return part_with_sustainability
 
     @classmethod
@@ -408,7 +412,7 @@ class ItemResultFactory:
             external_identity=result_with_sustainability.external_identity,
             name=result_with_sustainability.name,
         )
-        material_with_sustainability._add_child_processes(result_with_sustainability.processes)
+        material_with_sustainability._add_child_processes(_raise_if_unset(result_with_sustainability.processes))
         return material_with_sustainability
 
     @classmethod
@@ -435,24 +439,25 @@ class ItemResultFactory:
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             identity=result_with_sustainability.id,
-            name=result_with_sustainability.stage_name,
+            name=_raise_if_unset(result_with_sustainability.stage_name),
         )
         return transport_with_sustainability
 
     @classmethod
-    def create_unitted_value(cls, result: models.CommonValueWithUnit) -> "ValueWithUnit":
+    def create_unitted_value(cls, result: Union[models.CommonValueWithUnit, Unset_Type]) -> "ValueWithUnit":
         """Returns a value with unit.
 
         Parameters
         ----------
-        result: models.CommonValueWithUnit
+        result: models.CommonValueWithUnit or Unset_Type
             Result from the REST API describing the value and unit.
 
         Returns
         -------
         ValueWithUnit
         """
-        return ValueWithUnit(value=result.value, unit=result.unit)
+        valid_result = _raise_if_unset(result)
+        return ValueWithUnit(value=valid_result.value, unit=valid_result.unit)  # type: ignore[arg-type]
 
     @classmethod
     def create_phase_summary(
@@ -470,7 +475,7 @@ class ItemResultFactory:
         SustainabilityPhaseSummaryResult
         """
         return SustainabilityPhaseSummaryResult(
-            name=result.phase,
+            name=_raise_if_unset(result.phase),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
             embodied_energy_percentage=result.embodied_energy_percentage,
             climate_change=cls.create_unitted_value(result.climate_change),
@@ -492,18 +497,19 @@ class ItemResultFactory:
         -------
         TransportSummaryResult
         """
-        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
+        record_reference = _raise_if_unset(result.record_reference)
+        reference_type = cls.parse_reference_type(record_reference.reference_type)
         return TransportSummaryResult(
             transport_reference=TransportReference(
                 reference_type=reference_type,
-                reference_value=result.record_reference.reference_value,
+                reference_value=record_reference.reference_value,
             ),
-            name=result.stage_name,
+            name=_convert_unset_to_none(result.stage_name),
             distance=cls.create_unitted_value(result.distance),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
-            embodied_energy_percentage=result.embodied_energy_percentage,
+            embodied_energy_percentage=_raise_if_unset(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
-            climate_change_percentage=result.climate_change_percentage,
+            climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
         )
 
     @classmethod
@@ -524,17 +530,18 @@ class ItemResultFactory:
         """
         # TODO one of these is a bucket for all other materials that do not contribute >2% EE. Worth separating it?
         #  It does not have a valid record reference or contributors.
-        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
+        record_reference = _raise_if_unset(result.record_reference)
+        reference_type = cls.parse_reference_type(record_reference.reference_type)
         return MaterialSummaryResult(
             material_reference=MaterialReference(
                 reference_type=reference_type,
-                reference_value=result.record_reference.reference_value,
+                reference_value=record_reference.reference_value,
             ),
-            identity=result.identity,
+            identity=_raise_if_unset(result.identity),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
-            embodied_energy_percentage=result.embodied_energy_percentage,
+            embodied_energy_percentage=_raise_if_unset(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
-            climate_change_percentage=result.climate_change_percentage,
+            climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
             mass_after_processing=cls.create_unitted_value(result.mass_after_processing),
             mass_before_processing=cls.create_unitted_value(result.mass_before_processing),
             contributors=[cls.create_contributing_component(component) for component in result.largest_contributors]
@@ -557,15 +564,16 @@ class ItemResultFactory:
         -------
         ContributingComponentResult
         """
-        reference_type = cls.parse_reference_type(result.record_reference.reference_type)
+        record_reference = _raise_if_unset(result.record_reference)
+        reference_type = cls.parse_reference_type(record_reference.reference_type)
         return ContributingComponentResult(
-            part_number=result.component_part_number,
+            part_number=_convert_unset_to_none(result.component_part_number),
             part_reference=PartReference(
                 reference_type=reference_type,
-                reference_value=result.record_reference.reference_value,
+                reference_value=record_reference.reference_value,
             ),
             material_mass_before_processing=cls.create_unitted_value(result.material_mass_before_processing),
-            name=result.component_name,
+            name=_convert_unset_to_none(result.component_name),
         )
 
     @classmethod
@@ -582,30 +590,33 @@ class ItemResultFactory:
         -------
         ProcessSummaryResult
         """
+        material_record_reference = _raise_if_unset(result.material_record_reference)
         material_reference = (
             MaterialReference(
-                reference_type=cls.parse_reference_type(result.material_record_reference.reference_type),
-                reference_value=result.material_record_reference.reference_value,
+                reference_type=cls.parse_reference_type(material_record_reference.reference_type),
+                reference_value=material_record_reference.reference_value,
             )
-            if result.material_record_reference.reference_type is not None
+            if material_record_reference.reference_type is not Unset
             else None
         )
+
+        process_record_reference = _raise_if_unset(result.process_record_reference)
         return ProcessSummaryResult(
-            material_identity=result.material_identity,
+            material_identity=_convert_unset_to_none(result.material_identity),
             material_reference=material_reference,
-            process_name=result.process_name,
+            process_name=_raise_if_unset(result.process_name),
             process_reference=ProcessReference(
-                reference_type=cls.parse_reference_type(result.process_record_reference.reference_type),
-                reference_value=result.process_record_reference.reference_value,
+                reference_type=cls.parse_reference_type(process_record_reference.reference_type),
+                reference_value=process_record_reference.reference_value,
             ),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
-            embodied_energy_percentage=result.embodied_energy_percentage,
+            embodied_energy_percentage=_convert_unset_to_none(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
-            climate_change_percentage=result.climate_change_percentage,
+            climate_change_percentage=_convert_unset_to_none(result.climate_change_percentage),
         )
 
     @staticmethod
-    def parse_reference_type(reference_type: Optional[str]) -> Optional[ReferenceType]:
+    def parse_reference_type(reference_type: Union[str, Unset_Type]) -> Optional[ReferenceType]:
         """Parse the ``reference_type`` returned by the low-level API into a ``ReferenceType``.
 
         Parameters
@@ -624,8 +635,8 @@ class ItemResultFactory:
             Error to raise if the ``reference_type`` returned by the low-level API doesn't appear in ``ReferenceType``.
         """
 
-        if reference_type is None:
-            return reference_type
+        if isinstance(reference_type, Unset_Type):
+            return None
         try:
             return ReferenceType[reference_type]
         except KeyError as e:
@@ -634,8 +645,8 @@ class ItemResultFactory:
     @staticmethod
     def create_licensing_result(result: models.GetAvailableLicensesResponse) -> "Licensing":
         return Licensing(
-            restricted_substances=result.restricted_substances,
-            sustainability=result.sustainability,
+            restricted_substances=_raise_if_unset(result.restricted_substances),
+            sustainability=_raise_if_unset(result.sustainability),
         )
 
 
@@ -681,8 +692,8 @@ class ImpactedSubstance(SubstanceReference):
             reference_type=reference_type,
             reference_value=reference_value,
         )
-        self._max_percentage_amount_in_material: Optional[float] = max_percentage_amount_in_material
-        self._legislation_threshold: Optional[float] = legislation_threshold
+        self._max_percentage_amount_in_material = max_percentage_amount_in_material
+        self._legislation_threshold = legislation_threshold
 
     @property
     def max_percentage_amount_in_material(self) -> Optional[float]:
@@ -732,9 +743,10 @@ class ImpactedSubstancesResultMixin:
 
         for legislation in legislations:
             new_substances = [
-                self._create_impacted_substance(substance) for substance in legislation.impacted_substances
+                self._create_impacted_substance(substance)
+                for substance in _raise_if_unset(legislation.impacted_substances)
             ]
-            self._substances_by_legislation[legislation.legislation_id] = new_substances
+            self._substances_by_legislation[_raise_if_unset(legislation.legislation_id)] = new_substances
 
     @staticmethod
     def _create_impacted_substance(
@@ -771,8 +783,8 @@ class ImpactedSubstancesResultMixin:
                 "of the base BoM Analytics package."
             )
         impacted_substance = ImpactedSubstance(
-            max_percentage_amount_in_material=substance.max_percentage_amount_in_material,
-            legislation_threshold=substance.legislation_threshold,
+            max_percentage_amount_in_material=_convert_unset_to_none(substance.max_percentage_amount_in_material),
+            legislation_threshold=_convert_unset_to_none(substance.legislation_threshold),
             reference_type=reference_type,
             reference_value=reference_value,
         )
@@ -965,7 +977,7 @@ class ComplianceResultMixin(HasIndicators, RecordReference):
         self._indicators: Indicator_Definitions = deepcopy(indicator_definitions)
 
         for indicator_result in indicator_results:
-            self._indicators[indicator_result.name].flag = indicator_result.flag
+            self._indicators[indicator_result.name].flag = indicator_result.flag  # type: ignore[assignment, index]
 
     @property
     def indicators(self) -> Indicator_Definitions:
@@ -1062,7 +1074,7 @@ class ChildMaterialWithComplianceMixin(HasIndicators, ABC):
                 result_with_compliance=child_material,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_material_with_compliance._add_child_substances(child_material.substances)
+            child_material_with_compliance._add_child_substances(_raise_if_unset(child_material.substances))
             self._materials.append(child_material_with_compliance)
 
 
@@ -1112,10 +1124,12 @@ class ChildSpecificationWithComplianceMixin(HasIndicators, ABC):
                 result_with_compliance=child_specification,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_specification_with_compliance._add_child_materials(child_specification.materials)
-            child_specification_with_compliance._add_child_specifications(child_specification.specifications)
-            child_specification_with_compliance._add_child_coatings(child_specification.coatings)
-            child_specification_with_compliance._add_child_substances(child_specification.substances)
+            child_specification_with_compliance._add_child_materials(_raise_if_unset(child_specification.materials))
+            child_specification_with_compliance._add_child_specifications(
+                _raise_if_unset(child_specification.specifications)
+            )
+            child_specification_with_compliance._add_child_coatings(_raise_if_unset(child_specification.coatings))
+            child_specification_with_compliance._add_child_substances(_raise_if_unset(child_specification.substances))
             self._specifications.append(child_specification_with_compliance)
 
 
@@ -1164,10 +1178,10 @@ class ChildPartWithComplianceMixin(HasIndicators, ABC):
                 result_with_compliance=child_part,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_part_with_compliance._add_child_parts(child_part.parts)
-            child_part_with_compliance._add_child_specifications(child_part.specifications)
-            child_part_with_compliance._add_child_materials(child_part.materials)
-            child_part_with_compliance._add_child_substances(child_part.substances)
+            child_part_with_compliance._add_child_parts(_raise_if_unset(child_part.parts))
+            child_part_with_compliance._add_child_specifications(_raise_if_unset(child_part.specifications))
+            child_part_with_compliance._add_child_materials(_raise_if_unset(child_part.materials))
+            child_part_with_compliance._add_child_substances(_raise_if_unset(child_part.substances))
             self._parts.append(child_part_with_compliance)
 
 
@@ -1215,7 +1229,7 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
                 result_with_compliance=child_coating,
                 indicator_definitions=self._indicator_definitions,
             )
-            child_coating_with_compliance._add_child_substances(child_coating.substances)
+            child_coating_with_compliance._add_child_substances(_raise_if_unset(child_coating.substances))
             self._coatings.append(child_coating_with_compliance)
 
 

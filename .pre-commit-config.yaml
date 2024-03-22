@@ -27,12 +27,19 @@ repos:
   hooks:
   - id: mypy-code
     name: "mypy: checks on code"
-    entry: mypy
-    language: python
+    entry: "python -m mypy"
+    language: system
     types: [python]
     require_serial: true
     files: "^(src/)"
-    additional_dependencies: ["mypy==1.5.1"]
+
+  - id: localhost-examples
+    name: "Notebook localhost URL check"
+    entry: "(?i)localhost"
+    language: "pygrep"
+    types: [text]
+    files: "^examples/.*"
+
 
 #- repo: https://github.com/pycqa/pydocstyle
 #  rev: 6.3.0

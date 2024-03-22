@@ -12,9 +12,9 @@ or part.
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
 
-from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models
 
 if TYPE_CHECKING:
     from ._query_results import MaterialComplianceQueryResult  # noqa: F401
@@ -447,13 +447,16 @@ class RoHSIndicator(_Indicator):
     @property
     def _definition(self) -> models.CommonIndicatorDefinition:
         """Generate the low-level API indicator object."""
-        return models.CommonIndicatorDefinition(
-            name=self.name,
-            legislation_ids=self.legislation_ids,
-            default_threshold_percentage=self.default_threshold_percentage,
-            type=self._indicator_type,
-            ignore_exemptions=self._ignore_exemptions,
-        )
+        kwargs: Dict[str, Any] = {
+            "name": self.name,
+            "legislation_ids": self.legislation_ids,
+            "type": self._indicator_type,
+        }
+        if self.default_threshold_percentage is not None:
+            kwargs["default_threshold_percentage"] = self.default_threshold_percentage
+        if self._ignore_exemptions is not None:
+            kwargs["ignore_exemptions"] = self._ignore_exemptions
+        return models.CommonIndicatorDefinition(**kwargs)
 
 
 class WatchListIndicator(_Indicator):
@@ -543,10 +546,13 @@ class WatchListIndicator(_Indicator):
     @property
     def _definition(self) -> models.CommonIndicatorDefinition:
         """Generate the low-level API indicator object."""
-        return models.CommonIndicatorDefinition(
-            name=self.name,
-            legislation_ids=self.legislation_ids,
-            default_threshold_percentage=self.default_threshold_percentage,
-            type=self._indicator_type,
-            ignore_process_chemicals=self._ignore_process_chemicals,
-        )
+        kwargs: Dict[str, Any] = {
+            "name": self.name,
+            "legislation_ids": self.legislation_ids,
+            "type": self._indicator_type,
+        }
+        if self.default_threshold_percentage is not None:
+            kwargs["default_threshold_percentage"] = self.default_threshold_percentage
+        if self._ignore_process_chemicals is not None:
+            kwargs["ignore_process_chemicals"] = self._ignore_process_chemicals
+        return models.CommonIndicatorDefinition(**kwargs)

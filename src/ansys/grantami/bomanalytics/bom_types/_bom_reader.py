@@ -1,7 +1,7 @@
 import inspect
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Type, cast
 
-from xmlschema import XMLSchema  # type: ignore[import]
+from xmlschema import XMLSchema
 
 from . import _bom_types as bom_types
 from ._bom_types import BaseType, HasNamespace

@@ -105,7 +105,7 @@ class _TestCompliance(BaseMockTester):
         # Top level part 1
         part_1 = response.compliance_by_part_and_indicator[1]
         pv_1 = PartValidator(part_1)
-        assert pv_0.check_reference()
+        assert pv_1.check_reference()
         part_1_result = [
             indicators.WatchListFlag.WatchListHasSubstanceAboveThreshold,
             indicators.RoHSFlag.RohsNonCompliant,

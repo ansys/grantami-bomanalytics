@@ -47,7 +47,7 @@ class TableBrowser(ServerApiClient):
     def get_table_name_guid_map(self, db_key: str) -> Mapping[str, str]:
         tables_api = api.SchemaTablesApi(self._client)
         self.logger.info(f"Getting Table Information for database '{db_key}'")
-        tables = tables_api.v1alpha_databases_database_key_tables_get(database_key=db_key)
+        tables = tables_api.get_tables(database_key=db_key)
         table_name_map = {table.name: table.guid for table in tables.tables}
         logger.info(f"Fetched {len(table_name_map)} tables")
         for name, guid in table_name_map.items():
@@ -58,9 +58,7 @@ class TableBrowser(ServerApiClient):
         tables_api = api.SchemaTablesApi(self._client)
         self.logger.info(f"Updating Table - {db_key}:{table_guid} with name '{new_table_name}'")
         patch_request = models.GrantaServerApiSchemaTablesUpdateTable(name=new_table_name)
-        tables_api.v1alpha_databases_database_key_tables_table_guid_patch(
-            database_key=db_key, table_guid=table_guid, body=patch_request
-        )
+        tables_api.update_table(database_key=db_key, table_guid=table_guid, body=patch_request)
 
 
 class TableLayoutApplier(ServerApiClient):
@@ -69,9 +67,7 @@ class TableLayoutApplier(ServerApiClient):
         self._attributes_api = api.SchemaAttributesApi(self._client)
         self._layouts_api = api.SchemaLayoutsApi(self._client)
         self._layout_sections_api = api.SchemaLayoutSectionsApi(self._client)
-        table_attributes = self._attributes_api.v1alpha_databases_database_key_tables_table_guid_attributes_get(
-            database_key=db_key, table_guid=table_guid
-        )
+        table_attributes = self._attributes_api.get_attributes(database_key=db_key, table_guid=table_guid)
         self._db_key = db_key
         self._table_guid = table_guid
         self._attribute_name_map: Mapping[str, str] = {
@@ -80,22 +76,18 @@ class TableLayoutApplier(ServerApiClient):
 
     def get_layout_name_guid_map(self) -> Mapping[str, str]:
         self.logger.info(f"Getting Layout Information for database '{self._db_key}' in table '{self._table_guid}'")
-        layouts = self._layouts_api.v1alpha_databases_database_key_tables_table_guid_layouts_get(
-            database_key=self._db_key, table_guid=self._table_guid
-        )
+        layouts = self._layouts_api.get_layouts(database_key=self._db_key, table_guid=self._table_guid)
         layouts_map = {layout.name: layout.guid for layout in layouts.layouts}
         return layouts_map
 
     def delete_layout(self, layout_guid: str) -> None:
         logger.info(f"Deleting layout '{layout_guid}'")
-        self._layouts_api.v1alpha_databases_database_key_tables_table_guid_layouts_layout_guid_delete(
-            database_key=self._db_key, table_guid=self._table_guid, layout_guid=layout_guid
-        )
+        self._layouts_api.delete_layout(database_key=self._db_key, table_guid=self._table_guid, layout_guid=layout_guid)
 
     def create_layout(self, layout_name: str) -> str:
         logger.info(f"Creating new layout '{layout_name}'")
         layout_request = models.GrantaServerApiSchemaLayoutsCreateLayout(name=layout_name)
-        layout_response = self._layouts_api.v1alpha_databases_database_key_tables_table_guid_layouts_post(
+        layout_response = self._layouts_api.create_layout(
             database_key=self._db_key, table_guid=self._table_guid, body=layout_request
         )
         return layout_response.guid
@@ -103,7 +95,7 @@ class TableLayoutApplier(ServerApiClient):
     def create_layout_section(self, layout_guid: str, section_name: str) -> str:
         logger.info(f"Creating new layout section '{section_name}' in layout '{layout_guid}'")
         section_request = models.GrantaServerApiSchemaLayoutsCreateLayoutSection(name=section_name)
-        section_response = self._layout_sections_api.v1alpha_databases_database_key_tables_table_guid_layouts_layout_guid_sections_post(  # noqa: E501
+        section_response = self._layout_sections_api.create_section(  # noqa: E501
             database_key=self._db_key, table_guid=self._table_guid, layout_guid=layout_guid, body=section_request
         )
         return section_response.guid
@@ -113,7 +105,7 @@ class TableLayoutApplier(ServerApiClient):
             f"Adding new item '{item_information['name']}' to layout section '{layout_section_guid}' in layout '{layout_guid}'"  # noqa: E501
         )
         new_section_item = self._process_layout_item(item_information)
-        self._layout_sections_api.v1alpha_databases_database_key_tables_table_guid_layouts_layout_guid_sections_section_guid_items_post(  # noqa: E501
+        self._layout_sections_api.create_layout_item(  # noqa: E501
             database_key=self._db_key,
             table_guid=self._table_guid,
             layout_guid=layout_guid,
@@ -158,10 +150,8 @@ class TableLayoutApplier(ServerApiClient):
 
         new_section_item = models.GrantaServerApiSchemaLayoutsNewLayoutAttributeItem(attribute_guid=attribute_guid)
         if layout_item["tabular_columns"] is not None:
-            detailed_attribute_info = (
-                self._attributes_api.v1alpha_databases_database_key_tables_table_guid_attributes_attribute_guid_get(
-                    database_key=self._db_key, table_guid=self._table_guid, attribute_guid=attribute_guid
-                )
+            detailed_attribute_info = self._attributes_api.get_attribute(
+                database_key=self._db_key, table_guid=self._table_guid, attribute_guid=attribute_guid
             )
             assert isinstance(detailed_attribute_info, models.GrantaServerApiSchemaAttributesTabularAttribute)
             column_map = {column.name: column for column in detailed_attribute_info.tabular_columns}
@@ -172,7 +162,7 @@ class TableLayoutApplier(ServerApiClient):
         if len(meta_names) > 0:
             logger.info("--Meta-attributes")
             metas = []
-            meta_response = self._attributes_api.v1alpha_databases_database_key_tables_table_guid_attributes_attribute_guid_meta_attributes_get(  # noqa: E501
+            meta_response = self._attributes_api.get_meta_attributes_for_attribute(  # noqa: E501
                 database_key=self._db_key, table_guid=self._table_guid, attribute_guid=attribute_guid
             )
             meta_map = {meta.name: meta.guid for meta in meta_response.attributes}
@@ -188,26 +178,20 @@ class SubsetCreator(ServerApiClient):
     def get_subset_name_guid_map(self, db_key: str, table_guid: str) -> Mapping[str, str]:
         subsets_api = api.SchemaSubsetsApi(self._client)
         self.logger.info(f"Getting Subset Information for database '{db_key}' in table '{table_guid}'")
-        subsets = subsets_api.v1alpha_databases_database_key_tables_table_guid_subsets_get(
-            database_key=db_key, table_guid=table_guid
-        )
+        subsets = subsets_api.get_subsets(database_key=db_key, table_guid=table_guid)
         subsets_map = {subset.name: subset.guid for subset in subsets.subsets}
         return subsets_map
 
     def delete_subset(self, db_key: str, table_guid: str, subset_guid: str):
         subsets_api = api.SchemaSubsetsApi(self._client)
         self.logger.info(f"Deleting subset '{subset_guid}'")
-        subsets_api.v1alpha_databases_database_key_tables_table_guid_subsets_subset_guid_delete(
-            database_key=db_key, table_guid=table_guid, subset_guid=subset_guid
-        )
+        subsets_api.delete_subset(database_key=db_key, table_guid=table_guid, subset_guid=subset_guid)
 
     def create_subset(self, db_key: str, table_guid: str, subset_name: str) -> str:
         subsets_api = api.SchemaSubsetsApi(self._client)
         self.logger.info(f"Creating new subset '{subset_name}'")
         subset_request = models.GrantaServerApiSchemaSubsetsCreateSubset(name=subset_name)
-        subset_response = subsets_api.v1alpha_databases_database_key_tables_table_guid_subsets_post(
-            database_key=db_key, table_guid=table_guid, body=subset_request
-        )
+        subset_response = subsets_api.create_subset(database_key=db_key, table_guid=table_guid, body=subset_request)
         return subset_response.guid
 
 

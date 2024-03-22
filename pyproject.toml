@@ -39,8 +39,8 @@ packages = [
 python = "^3.9.0"
 
 # Packages for core library
-ansys-openapi-common = "< 2.0.0"
-ansys-grantami-bomanalytics-openapi = "2.0.0"
+ansys-openapi-common = "^2.0.0"
+ansys-grantami-bomanalytics-openapi = "3.0.0a0"
 xmlschema = "^2.4.0"
 
 # Packages for the examples extra
@@ -64,6 +64,7 @@ requests-mock = "^1"
 ipython = "^8"
 plotly = "^5.17.0"
 ipywidgets = "^8.1.1"
+mypy = "^1.9.0"
 
 [tool.poetry.group.doc]
 optional = true
@@ -129,6 +130,10 @@ disallow_untyped_defs = true
 no_implicit_optional = true
 check_untyped_defs = true
 show_error_codes = true
+files = "src"
+explicit_package_bases = true
+mypy_path = "$MYPY_CONFIG_FILE_DIR/src"
+namespace_packages = true
 
 [tool.pytest.ini_options]
 testpaths = "./tests"

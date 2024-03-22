@@ -9,7 +9,8 @@ from enum import Enum, auto
 import numbers
 from typing import Any, Dict, Optional, Union, cast
 
-from ansys.grantami.bomanalytics_openapi import models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import models
+from ansys.openapi.common import Unset_Type
 
 
 class ReferenceType(Enum):
@@ -88,10 +89,13 @@ class RecordReference(ABC):
     def __init__(
         self,
         reference_type: Optional[ReferenceType],
-        reference_value: Union[int, str, None],
+        reference_value: Union[int, str, Unset_Type],
     ):
         self._reference_type = reference_type
-        self._reference_value = reference_value
+        if isinstance(reference_value, Unset_Type):
+            self._reference_value = None
+        else:
+            self._reference_value = reference_value
 
     @property
     def record_history_identity(self) -> Optional[int]:
@@ -115,19 +119,18 @@ class RecordReference(ABC):
         return None
 
     @property
-    def _record_reference(self) -> Dict[str, Optional[str]]:
+    def _record_reference(self) -> Dict[str, str]:
         """Converts the separate reference attributes back into a single dictionary that describes the type and value.
 
         This method is used to create the low-level API model object that references this record and is returned as-is
         as the repr for this object and subobjects.
         """
 
-        _reference_value = str(self._reference_value) if self._reference_value is not None else None
-        _reference_type = self._reference_type.name if self._reference_type is not None else None
-        result = {
-            "reference_type": _reference_type,
-            "reference_value": _reference_value,
-        }
+        result = {}
+        if self._reference_type is not None:
+            result["reference_type"] = self._reference_type.name
+        if self._reference_value is not None:
+            result["reference_value"] = str(self._reference_value)
         return result
 
     def __repr__(self) -> str:
@@ -317,7 +320,7 @@ class SubstanceDefinition(RecordDefinition, SubstanceReference):
     def __init__(
         self,
         reference_type: ReferenceType,
-        reference_value: Union[int, str, None],
+        reference_value: Union[int, str, Unset_Type],
         percentage_amount: Union[float, None] = None,
     ):
         super().__init__(

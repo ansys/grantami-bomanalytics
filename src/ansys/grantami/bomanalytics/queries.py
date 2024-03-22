@@ -25,7 +25,7 @@ from typing import (
 import warnings
 from xml.etree import ElementTree
 
-from ansys.grantami.bomanalytics_openapi import api, models  # type: ignore[import]
+from ansys.grantami.bomanalytics_openapi import api, models
 
 from ._allowed_types import validate_argument_type
 from ._exceptions import GrantaMIException
@@ -39,6 +39,7 @@ from ._item_definitions import (
 )
 from ._logger import logger
 from ._query_results import QueryResultFactory, ResultBaseClass
+from ._typing import _raise_if_unset
 from .indicators import RoHSIndicator, WatchListIndicator, _Indicator
 
 if TYPE_CHECKING:
@@ -56,6 +57,23 @@ _SpecificationQuery = TypeVar("_SpecificationQuery", bound="_SpecificationQueryB
 _SubstanceQuery = TypeVar("_SubstanceQuery", bound="_SubstanceQueryBuilder")
 
 _BomQuery = TypeVar("_BomQuery", bound="_BomQueryBuilder")
+
+_Responses = Union[
+    models.GetImpactedSubstancesForMaterialsResponse,
+    models.GetImpactedSubstancesForSpecificationsResponse,
+    models.GetImpactedSubstancesForPartsResponse,
+    models.GetImpactedSubstancesForBom1711Response,
+    models.GetImpactedSubstancesForBom2301Response,
+    models.GetComplianceForSubstancesResponse,
+    models.GetComplianceForMaterialsResponse,
+    models.GetComplianceForSpecificationsResponse,
+    models.GetComplianceForPartsResponse,
+    models.GetComplianceForBom1711Response,
+    models.GetComplianceForBom2301Response,
+    models.GetAvailableLicensesResponse,
+    models.GetSustainabilityForBom2301Response,
+    models.GetSustainabilitySummaryForBom2301Response,
+]
 
 EXCEPTION_MAP = {
     "critical-error": logger.critical,
@@ -125,7 +143,7 @@ class _BaseQueryDataManager(ABC):
         """
         return self._item_results
 
-    def append_response(self, response: models.ModelBase) -> None:
+    def append_response(self, response: _Responses) -> None:
         """Append a response from the low-level API to the object.
 
         This method extracts the results and server messages from the response object and appends
@@ -137,8 +155,9 @@ class _BaseQueryDataManager(ABC):
            Response returned by the low-level API.
         """
 
-        self._emit_log_messages(response.log_messages)
-        self._messages.extend(response.log_messages)
+        messages = _raise_if_unset(response.log_messages)
+        self._emit_log_messages(messages)
+        self._messages.extend(messages)
         results = self._extract_results_from_response(response)
         self._item_results.extend(results)
 
@@ -160,10 +179,12 @@ class _BaseQueryDataManager(ABC):
 
         exception_messages = []
         for log_msg in log_messages:
-            log_method = EXCEPTION_MAP.get(log_msg.severity, logger.warning)
+            severity = _raise_if_unset(log_msg.severity)
+            log_method = EXCEPTION_MAP.get(severity, logger.warning)
             log_method(log_msg.message)
             if log_method == logger.critical:
-                exception_messages.append(log_msg.message)
+                message = _raise_if_unset(log_msg.message)
+                exception_messages.append(message)
         if exception_messages:
             error_text = "\n".join(exception_messages)
             raise GrantaMIException(error_text)
@@ -487,7 +508,7 @@ class _ApiMixin(_BaseQueryBuilder, _BaseQuery, ABC):
     def __init__(self) -> None:
         super().__init__()
 
-    def _call_api(self, api_method: Callable[..., models.ModelBase], arguments: Dict) -> None:
+    def _call_api(self, api_method: Callable[..., _Responses], arguments: Dict) -> None:
         """Perform the actual call against the Granta MI database.
 
         This method finalizes the arguments by appending each batch of ``'item'`` arguments to the passed-in
@@ -514,7 +535,11 @@ class _ApiMixin(_BaseQueryBuilder, _BaseQuery, ABC):
     @abstractmethod
     def _run_query(
         self,
-        api_instance: Union[api.ComplianceApi, api.ImpactedSubstancesApi, api.SustainabilityApi],
+        api_instance: Union[  # type: ignore[override]
+            api.ComplianceApi,
+            api.ImpactedSubstancesApi,
+            api.SustainabilityApi,
+        ],
         static_arguments: Dict,
     ) -> ResultBaseClass:
         """
@@ -607,7 +632,11 @@ class _ComplianceMixin(_ApiMixin, ABC):
             self._indicators[value.name] = value
         return self
 
-    def _run_query(self, api_instance: api.ComplianceApi, static_arguments: Dict) -> ResultBaseClass:
+    def _run_query(
+        self,
+        api_instance: api.ComplianceApi,  # type: ignore[override]
+        static_arguments: Dict,
+    ) -> ResultBaseClass:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
         This method should not be used by an end user. The ``BomAnalyticsClient.run()`` method should
@@ -717,7 +746,11 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         self._legislations.extend(legislation_ids)
         return self
 
-    def _run_query(self, api_instance: api.ImpactedSubstancesApi, static_arguments: Dict) -> ResultBaseClass:
+    def _run_query(
+        self,
+        api_instance: api.ImpactedSubstancesApi,  # type: ignore[override]
+        static_arguments: Dict,
+    ) -> ResultBaseClass:
         """Passes the current state of the query as arguments to Granta MI and returns the results.
 
         Gets the bound method for this particular query from the ``api_instance`` parameter and passes it to the
@@ -1756,12 +1789,19 @@ class _SustainabilityMixin(_ApiMixin):
             Unit for mass.
 
         """
-        self._preferred_units.distance_unit = distance
-        self._preferred_units.energy_unit = energy
-        self._preferred_units.mass_unit = mass
+        if distance is not None:
+            self._preferred_units.distance_unit = distance
+        if energy is not None:
+            self._preferred_units.energy_unit = energy
+        if mass is not None:
+            self._preferred_units.mass_unit = mass
         return self
 
-    def _run_query(self, api_instance: api.SustainabilityApi, static_arguments: Dict) -> ResultBaseClass:
+    def _run_query(
+        self,
+        api_instance: api.SustainabilityApi,  # type: ignore[override]
+        static_arguments: Dict,
+    ) -> ResultBaseClass:
         """Implementation of abstract method _run_query for sustainability endpoints.
 
         Sets the arguments ``preferred_units`` from user inputs.

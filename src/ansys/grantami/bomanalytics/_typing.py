@@ -1,4 +1,4 @@
-from typing import Any, Optional, TypeVar, Union
+from typing import Any, TypeVar, Union
 
 from ansys.openapi.common import Unset_Type
 

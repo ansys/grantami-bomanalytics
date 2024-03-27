@@ -1,5 +1,6 @@
-ci:
-  skip: [mypy-code, localhost-examples]
+# ci:
+#   skip: [mypy-code, localhost-examples]
+
 
 repos:
 

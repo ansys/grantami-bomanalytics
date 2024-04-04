@@ -1240,7 +1240,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Parameters
         ----------
         record_history_identities_and_amounts : list[tuple[int, float]] | set[tuple[int, float]]
-            List or set of record hirstory identities and ammounts expressed as a tuple.
+            List or set of record hirstory identities and amounts expressed as a tuple.
 
         Returns
         -------
@@ -1278,7 +1278,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Parameters
         ----------
         record_history_guids_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
-            List or set of record history GUIDs and ammounts expressed as a tuple.
+            List or set of record history GUIDs and amounts expressed as a tuple.
 
         Returns
         -------
@@ -1319,7 +1319,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Parameters
         ----------
         record_guids_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
-            List or set of record GUIDs and ammounts expressed as a tuple.
+            List or set of record GUIDs and amounts expressed as a tuple.
 
         Returns
         -------
@@ -1358,7 +1358,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         Parameters
         ----------
         cas_numbers_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
-            List or set of CAS numbers and ammounts expressed as a tuple.
+            List or set of CAS numbers and amounts expressed as a tuple.
 
         Returns
         -------

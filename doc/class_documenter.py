@@ -43,7 +43,7 @@ class ClassDocumenter(DefaultClassDocumenter):
             if ancestor_kls_member_documenters:
                 # Cannot delegate to super().sort_members to sort by source, because analyzer.tagorder identifies
                 # object by `BaseClass.method`, whereas the documenters identify objects by `ConcreteClass.method`.
-                # So we re-use the `super().sort_members` logic, but substitute the class name before looking up the
+                # So we reuse the `super().sort_members` logic, but substitute the class name before looking up the
                 # member position in the source code.
 
                 # Block mostly copied from Documenter.sort_members

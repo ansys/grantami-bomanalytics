@@ -1,5 +1,16 @@
 # Changelog
 
+## grantami-bomanalytics 2.1.0, <release date>
+
+### New features
+
+* Add `percentage_amount` to `SubstanceWithComplianceResult`
+
+### Contributors
+
+* Andy Grigg (Ansys)
+* Ludovic Steinbach (Ansys)
+
 ## grantami-bomanalytics 2.0.0, 2024-01-17
 
 ### New features

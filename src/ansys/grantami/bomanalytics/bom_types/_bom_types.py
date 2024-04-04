@@ -45,11 +45,9 @@ class SupportsCustomFields(Protocol):
     """
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
-        ...
+    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]: ...
 
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
-        ...
+    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None: ...
 
 
 class BaseType(HasNamespace, SupportsCustomFields):

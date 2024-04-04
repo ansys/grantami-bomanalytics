@@ -25,6 +25,7 @@
 Defines the representations of the query results themselves, which allows them to implement pivots and summaries over
 the entire query result instead of being constrained to individual parts and materials.
 """
+
 from abc import ABC
 from collections import defaultdict, namedtuple
 from typing import Any, Callable, Dict, List, Type, Union

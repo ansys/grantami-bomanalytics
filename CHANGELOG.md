@@ -5,7 +5,7 @@
 ### New features
 
 * [Issue #454](https://github.com/ansys/grantami-bomanalytics/issues/454),
-  [Pull request TBD](https://github.com/ansys/grantami-bomanalytics/pull/TBD): Add `percentage_amount` to `SubstanceWithComplianceResult`
+  [Pull request #465](https://github.com/ansys/grantami-bomanalytics/pull/465): Add `percentage_amount` to `SubstanceWithComplianceResult`
 
 ### Contributors
 

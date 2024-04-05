@@ -813,13 +813,13 @@ dev = ["Sphinx", "coverage", "flake8", "lxml", "lxml-stubs", "memory-profiler", 
 
 [[package]]
 name = "enum-tools"
-version = "0.11.0"
+version = "0.12.0"
 description = "Tools to expand Python's enum module."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "enum_tools-0.11.0-py3-none-any.whl", hash = "sha256:9e76186ff4fd1798a64a855d334e245a7d2b67970c40029acccff06c58bf0535"},
-    {file = "enum_tools-0.11.0.tar.gz", hash = "sha256:ed10ae4c2109c52e6ca17505a3bdb173b2554f5f0449677621829023a9d8bd33"},
+    {file = "enum_tools-0.12.0-py3-none-any.whl", hash = "sha256:d69b019f193c7b850b17d9ce18440db7ed62381571409af80ccc08c5218b340a"},
+    {file = "enum_tools-0.12.0.tar.gz", hash = "sha256:13ceb9376a4c5f574a1e7c5f9c8eb7f3d3fbfbb361cc18a738df1a58dfefd460"},
 ]
 
 [package.dependencies]
@@ -3761,4 +3761,4 @@ examples = ["ipywidgets", "jupyterlab", "lxml", "pandas", "plotly", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9.0"
-content-hash = "e925b3c63d792d1b0fb4b424d4c534b256c964e899536bfa7c783dac748032ab"
+content-hash = "48289c7e9c17f6934e7e26688ba0e4527f36fab841890325310c305ca4a8a645"

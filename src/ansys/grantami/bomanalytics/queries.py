@@ -1837,6 +1837,8 @@ class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
     :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.BomSustainabilityQueryResult`.
 
+    .. versionadded:: 2.0
+
     Examples
     --------
     >>> cxn = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
@@ -1866,6 +1868,8 @@ class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
     Once the query is fully constructed, use the `cxn.`
     :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult`.
+
+    .. versionadded:: 2.0
 
     Examples
     --------

@@ -11,6 +11,8 @@
 
 * [Issue #466](https://github.com/ansys/grantami-bomanalytics/issues/466),
   [Pull request #467](https://github.com/ansys/grantami-bomanalytics/pull/467): Tidy up bulleted lists in API documentation.
+* [Issue #464](https://github.com/ansys/grantami-bomanalytics/issues/466),
+  [Pull request #467](https://github.com/ansys/grantami-bomanalytics/pull/467): Add `versionadded` directives to API documentation.
 
 ### Contributors
 

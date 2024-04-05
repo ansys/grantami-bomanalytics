@@ -18,6 +18,7 @@ BoM object model
    elements. It is still possible to deserialize an XML BoM that uses these elements, but these elements cannot be
    converted to Python objects.
 
+.. versionadded:: 2.0
 
 .. _ref_grantami_bomanalytics_api_billofmaterials:
 .. autoclass:: ansys.grantami.bomanalytics.bom_types._bom_types.BillOfMaterials

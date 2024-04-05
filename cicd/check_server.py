@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
 
 MAX_ATTEMPTS = 30
-WAIT_TIME = 5
+WAIT_TIME = 15
 
 
 def block_until_server_is_ok(func):

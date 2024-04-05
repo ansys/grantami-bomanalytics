@@ -1239,12 +1239,11 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
 
 class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWithIdentifiers):
     """Retrieves an individual substance included as part of a compliance query result.
-    This object includes two categories of attributes:
+    This object includes three categories of attributes:
 
     * The reference to the substance in Granta MI
     * The compliance status of this substance, stored in a dictionary of one or more indicator objects
-
-    This object also includes the amount of the substance present in the parent item.
+    * The amount of the substance present in the parent item
     """
 
     def __init__(self, percentage_amount: Optional[float], **kwargs: Any) -> None:

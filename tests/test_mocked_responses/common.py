@@ -36,8 +36,8 @@ class ObjValidator:
 
         return (
             not self.obj.record_history_guid
-            and self.obj.record_guid == record_guid
-            and self.obj.record_history_identity == record_history_identity
+            or (self.obj.record_guid == record_guid and record_guid is not None)
+            or (self.obj.record_history_identity == record_history_identity and record_history_identity is not None)
         )
 
     def check_indicators(self, indicator_results):
@@ -223,10 +223,10 @@ class SubstanceValidator(ObjValidator):
         """Extend base implementation to support cas_number, ec_number, and chemical_name for substances."""
 
         return (
-            self.obj.cas_number == cas_number
-            and self.obj.ec_number == ec_number
-            and self.obj.chemical_name == chemical_name
-            and super().check_reference(record_history_identity, record_guid)
+            (self.obj.cas_number == cas_number and cas_number is not None)
+            or (self.obj.ec_number == ec_number and ec_number is not None)
+            or (self.obj.chemical_name == chemical_name and chemical_name is not None)
+            or super().check_reference(record_history_identity, record_guid)
         )
 
     def check_quantities(self, amount, threshold):
@@ -255,7 +255,7 @@ class SubstanceValidator(ObjValidator):
         """There are only 4 distinct substances in the example responses. This method checks that the substance is
         one of those 4 substances."""
 
-        return (
+        assert (
             (
                 self.check_reference(cas_number="106-99-0", ec_number="203-450-8", chemical_name="1,3-Butadiene")
                 and self.check_quantities(None, 0.1)

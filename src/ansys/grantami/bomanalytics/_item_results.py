@@ -316,6 +316,7 @@ class ItemResultFactory:
             identity=result_with_compliance.id,
             external_identity=result_with_compliance.external_identity,
             name=result_with_compliance.name,
+            percentage_amount=_convert_unset_to_none(result_with_compliance.percentage_amount),
         )
         return item_result
 
@@ -1238,11 +1239,21 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
 
 class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWithIdentifiers):
     """Retrieves an individual substance included as part of a compliance query result.
-    This object includes two categories of attributes:
+    This object includes three categories of attributes:
 
-      - The reference to the substance in Granta MI
-      - The compliance status of this substance, stored in a dictionary of one or more indicator objects
+    * The reference to the substance in Granta MI
+    * The compliance status of this substance, stored in a dictionary of one or more indicator objects
+    * The amount of the substance present in the parent item
     """
+
+    def __init__(self, percentage_amount: Optional[float], **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._percentage_amount = percentage_amount
+
+    @property
+    def percentage_amount(self) -> Optional[float]:
+        """Percentage amount of this substance in the parent item."""
+        return self._percentage_amount
 
 
 class MaterialWithComplianceResult(

@@ -1252,8 +1252,7 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWit
 
     @property
     def percentage_amount(self) -> Optional[float]:
-        """
-        Percentage amount of this substance in the parent item.
+        """Percentage amount of this substance in the parent item.
 
         .. versionadded:: 2.1
         """
@@ -1328,8 +1327,7 @@ class CoatingWithComplianceResult(
 
 
 class ValueWithUnit:
-    """
-    Describes a value obtained from the API.
+    """Describes a value obtained from the API.
 
     .. versionadded:: 2.0
     """
@@ -1621,8 +1619,7 @@ class MaterialWithSustainabilityResult(
     MassResultMixin,
     MaterialReferenceWithIdentifiers,
 ):
-    """
-    Describes an individual material included as part of a sustainability query result.
+    """Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
 
     * The reference to the material in Granta MI
@@ -1641,8 +1638,7 @@ class PartWithSustainabilityResult(
     MassResultMixin,
     PartReferenceWithIdentifiers,
 ):
-    """
-    Describes an individual part included as part of a sustainability query result.
+    """Describes an individual part included as part of a sustainability query result.
     This object includes three categories of attributes:
 
     * The reference to the part in Granta MI (if the part references a record)
@@ -1657,8 +1653,7 @@ class ProcessWithSustainabilityResult(
     SustainabilityResultMixin,
     ProcessReferenceWithIdentifiers,
 ):
-    """
-    Describes a process included as part of a sustainability query result.
+    """Describes a process included as part of a sustainability query result.
     This object includes two categories of attributes:
 
     * The reference to the process record in Granta MI
@@ -1672,8 +1667,7 @@ class TransportWithSustainabilityResult(
     SustainabilityResultMixin,
     TransportReferenceWithIdentifier,
 ):
-    """
-    Describes a transport stage included as part of a sustainability query result.
+    """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:
 
     * The reference to the transport record in Granta MI
@@ -2021,8 +2015,7 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
 
 
 class Licensing:
-    """
-    Granta MI BomAnalytics Services licensing information.
+    """Granta MI BomAnalytics Services licensing information.
 
     .. versionadded:: 2.0
     """

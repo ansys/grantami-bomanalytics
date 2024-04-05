@@ -385,8 +385,7 @@ class CoatingReferenceWithIdentifier(IdentifierMixin, CoatingReference):
 class ProcessReference(RecordReference):
     # Because of ProcessSummaryResult, this is publicly documented.
     # Extends RecordReference without changes, to re-define the class name, because it appears in the repr.
-    """
-    Represents a reference to a Process record.
+    """Represents a reference to a Process record.
 
     .. versionadded:: 2.0
     """
@@ -397,8 +396,7 @@ class ProcessReferenceWithIdentifiers(CommonIdentifiersMixin, ProcessReference):
 
 
 class TransportReference(RecordReference):
-    """
-    Represents a reference to a Transport record.
+    """Represents a reference to a Transport record.
 
     .. versionadded:: 2.0
     """

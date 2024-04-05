@@ -109,24 +109,33 @@ print(f"PA66 (60% glass fiber): {pa_66.indicators['SVHC'].flag.name}")
 # compliant with the indicator, and therefore contains SVHCs above the 0.1% threshold.
 
 # To understand which substances have caused this status, we can print the substances that are not compliant with the
-# legislation. The possible states of the indicator are available on the ``Indicator.available_flags`` attribute and
-# can be compared using standard Python operators.
+# legislation and the percentage amount of that substance in the parent material. The possible states of the indicator
+# are available on the ``Indicator.available_flags`` attribute and can be compared using standard Python operators.
 #
 # For substances, the critical threshold is the state 'WatchListAboveThreshold'.
 
 # + tags=[]
+def convert_substance_to_string(substance):
+    result = f"Substance record history identity: {substance.record_history_identity}"
+    if substance.percentage_amount is None:
+        return f"{result}, Unknown concentration"
+    else:
+        return f"{result}, {substance.percentage_amount}%"
+
+
 above_threshold_flag = svhc.available_flags.WatchListAboveThreshold
 pa_66_svhcs = [sub for sub in pa_66.substances
                if sub.indicators["SVHC"] >= above_threshold_flag
                ]
 print(f"{len(pa_66_svhcs)} SVHCs")
-for sub in pa_66_svhcs:
-    print(f"Substance record history identity: {sub.record_history_identity}")
+for substance in pa_66_svhcs:
+    print(convert_substance_to_string(substance))
 # -
 
-# Note that children of items passed into the compliance query are returned with record references based on record
-# history identities only. The Granta MI Scripting Toolkit for Python can be used to translate record history identities
-# into CAS Numbers if required.
+# Substances with an unknown amount are always treated as if they have a 100% concentration. Note that children of items
+# passed into the compliance query are returned with record references based on record history identities only. The
+# Granta MI Scripting Toolkit for Python can be used to translate record history identities into CAS Numbers if
+# required.
 
 # Next, look at the state of the zinc alloy record.
 
@@ -146,9 +155,7 @@ zn_svhcs_below_threshold = [sub for sub in zn_pb_cd.substances
                             if sub.indicators["SVHC"].flag == below_threshold_flag]
 print(f"{len(zn_svhcs_below_threshold)} SVHCs below threshold")
 for substance in zn_svhcs_below_threshold:
-    print(
-        f"Substance record history identity: {substance.record_history_identity}"
-    )
+    print(convert_substance_to_string(substance))
 # -
 
 # Finally, look at the stainless steel record.
@@ -171,8 +178,8 @@ ss_not_impacted = [
     if sub.indicators["SVHC"].flag == not_impacted_flag
 ]
 print(f"{len(ss_not_impacted)} non-SVHC substances")
-for sub in ss_not_impacted:
-    print(f"Substance record history identity: {sub.record_history_identity}")
+for substance in ss_not_impacted:
+    print(convert_substance_to_string(substance))
 # -
 
 # ## Results Grouped by Indicator

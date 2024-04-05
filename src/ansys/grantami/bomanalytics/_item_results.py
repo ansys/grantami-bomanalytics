@@ -659,9 +659,9 @@ class ImpactedSubstance(SubstanceReference):
 
     This object includes two categories of attributes:
 
-      - The reference to the substance in Granta MI. These attributes are all populated if data for them exists in
-        Granta MI.
-      - The amount of the substance in the parent item and the threshold above which it is impacted.
+    * The reference to the substance in Granta MI. These attributes are all populated if data for them exists in
+      Granta MI.
+    * The amount of the substance in the parent item and the threshold above which it is impacted.
 
     Examples
     --------
@@ -820,8 +820,8 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
 
     This object includes two categories of attributes:
 
-      - The reference to the material in Granta MI
-      - The impacted substances associated with this material, both as a flat list and separated by legislation
+    * The reference to the material in Granta MI
+    * The impacted substances associated with this material, both as a flat list and separated by legislation
 
     Notes
     -----
@@ -847,8 +847,8 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
 
     This object includes two categories of attributes:
 
-      - The reference to the part in Granta MI
-      - The impacted substances associated with this part, both as a flat list and separated by legislation
+    * The reference to the part in Granta MI
+    * The impacted substances associated with this part, both as a flat list and separated by legislation
 
     Notes
     -----
@@ -876,8 +876,8 @@ class SpecificationWithImpactedSubstancesResult(
 
     This object includes two categories of attributes:
 
-      - The reference to the specification in Granta MI
-      - The impacted substances associated with this specification, both as a flat list and separated by legislation
+    * The reference to the specification in Granta MI
+    * The impacted substances associated with this specification, both as a flat list and separated by legislation
 
     Notes
     -----
@@ -1262,9 +1262,9 @@ class MaterialWithComplianceResult(
     """Retrieves an individual material included as part of a compliance query result.
     This object includes three categories of attributes:
 
-      - The reference to the material in Granta MI
-      - The compliance status of this material, stored in a dictionary of one or more indicator objects
-      - Any substance objects that are a child of this material object
+    * The reference to the material in Granta MI
+    * The compliance status of this material, stored in a dictionary of one or more indicator objects
+    * Any substance objects that are a child of this material object
     """
 
 
@@ -1279,9 +1279,9 @@ class PartWithComplianceResult(
     """Retrieves an individual part included as part of a compliance query result.
     This object includes three categories of attributes:
 
-      - The reference to the part in Granta MI (if the part references a record)
-      - The compliance status of this part, stored in a dictionary of one or more indicator objects
-      - Any part, specification, material, or substance objects which are a child of this part object
+    * The reference to the part in Granta MI (if the part references a record)
+    * The compliance status of this part, stored in a dictionary of one or more indicator objects
+    * Any part, specification, material, or substance objects which are a child of this part object
     """
 
 
@@ -1296,9 +1296,9 @@ class SpecificationWithComplianceResult(
     """Retrieves an individual specification included as part of a compliance query result.
     This object includes three categories of attributes:
 
-      - The reference to the specification in Granta MI
-      - The compliance status of this specification, stored in a dictionary of one or more indicator objects
-      - Any specification, material, coating, or substance objects which are a child of this specification object
+    * The reference to the specification in Granta MI
+    * The compliance status of this specification, stored in a dictionary of one or more indicator objects
+    * Any specification, material, coating, or substance objects which are a child of this specification object
 
     Notes
     -----
@@ -1314,9 +1314,9 @@ class CoatingWithComplianceResult(
 
     This object includes three categories of attributes:
 
-      - The reference to the coating in Granta MI
-      - The compliance status of this coating, stored in one or more indicator objects
-      - Any substance objects which are a child of this coating object
+    * The reference to the coating in Granta MI
+    * The compliance status of this coating, stored in one or more indicator objects
+    * Any substance objects which are a child of this coating object
     """
 
     record_history_identity: Optional[int]
@@ -1616,9 +1616,9 @@ class MaterialWithSustainabilityResult(
     """Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
 
-      - The reference to the material in Granta MI
-      - The sustainability information for this material
-      - Any process objects that are a child of this material object
+    * The reference to the material in Granta MI
+    * The sustainability information for this material
+    * Any process objects that are a child of this material object
     """
 
 
@@ -1633,9 +1633,9 @@ class PartWithSustainabilityResult(
     """Describes an individual part included as part of a sustainability query result.
     This object includes three categories of attributes:
 
-      - The reference to the part in Granta MI (if the part references a record)
-      - The sustainability information for this part
-      - Any part, material, or process objects which are a child of this part object
+    * The reference to the part in Granta MI (if the part references a record)
+    * The sustainability information for this part
+    * Any part, material, or process objects which are a child of this part object
     """
 
 
@@ -1646,8 +1646,8 @@ class ProcessWithSustainabilityResult(
     """Describes a process included as part of a sustainability query result.
     This object includes two categories of attributes:
 
-      - The reference to the process record in Granta MI
-      - The sustainability information for this process
+    * The reference to the process record in Granta MI
+    * The sustainability information for this process
     """
 
 
@@ -1658,8 +1658,8 @@ class TransportWithSustainabilityResult(
     """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:
 
-      - The reference to the transport record in Granta MI
-      - The sustainability information for this transport stage
+    * The reference to the transport record in Granta MI
+    * The sustainability information for this transport stage
     """
 
     def __init__(
@@ -1744,9 +1744,9 @@ class SustainabilityPhaseSummaryResult(SustainabilitySummaryBase):
 
     Phases currently include:
 
-     - ``Material``
-     - ``Processes``
-     - ``Transport``
+    * ``Material``
+    * ``Processes``
+    * ``Transport``
 
     """
 

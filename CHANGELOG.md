@@ -5,7 +5,12 @@
 ### New features
 
 * [Issue #454](https://github.com/ansys/grantami-bomanalytics/issues/454),
-  [Pull request #465](https://github.com/ansys/grantami-bomanalytics/pull/465): Add `percentage_amount` to `SubstanceWithComplianceResult`
+  [Pull request #465](https://github.com/ansys/grantami-bomanalytics/pull/465): Add `percentage_amount` to `SubstanceWithComplianceResult`.
+
+### Doc improvements
+
+* [Issue #466](https://github.com/ansys/grantami-bomanalytics/issues/466),
+  [Pull request #467](https://github.com/ansys/grantami-bomanalytics/pull/467): Tidy up bulleted lists in API documentation.
 
 ### Contributors
 

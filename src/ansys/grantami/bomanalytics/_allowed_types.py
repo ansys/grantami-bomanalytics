@@ -18,9 +18,9 @@ def validate_argument_type(*allowed_types: Any) -> Callable:
     """Validates the types of values passed into a method. This decorator function accepts one or more
     objects against which types are checked.
 
-     - If one object is provided, the value must be of that object's type.
-     - If multiple objects are provided, the value must be of at least one object's types.
-     - If a container of objects are provided, the types are validated recursively.
+    * If one object is provided, the value must be of that object's type.
+    * If multiple objects are provided, the value must be of at least one object's types.
+    * If a container of objects are provided, the types are validated recursively.
 
      Tuples and lists can be heterogeneous, where the ordering of the items in the containers is taken into account.
      Dictionaries and sets must be homogeneous. If they are not exactly one item in length, a ``ValueError`` is raised.

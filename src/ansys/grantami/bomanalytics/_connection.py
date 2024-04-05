@@ -330,15 +330,15 @@ class BomAnalyticsClient(ApiClient):
             Name of the table that implements the ``ProcessUniverse`` schema. The default
             is ``None``, in which case  ``ProcessUniverse`` is used.
         location_table_name : str, optional
-            .. versionadded:: 2.0
-
             Name of the table that implements the ``Location`` schema. The default
             is ``None``, in which case  ``Location`` is used.
-        transport_table_name : str, optional
-            .. versionadded:: 2.0
 
+            .. versionadded:: 2.0
+        transport_table_name : str, optional
             Name of the table that implements the ``Transport`` schema. The default
             is ``None``, in which case  ``Transport`` is used.
+
+            .. versionadded:: 2.0
 
         Notes
         -----

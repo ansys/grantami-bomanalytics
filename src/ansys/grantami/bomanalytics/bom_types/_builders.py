@@ -88,9 +88,9 @@ class _FinalAttributeReferenceBuilder:
 
 class AttributeReferenceBuilder:
     """
-    .. versionadded:: 2.0
-
     Create a MI Attribute Reference with a valid combination of properties.
+
+    .. versionadded:: 2.0
 
     Parameters
     ----------
@@ -158,9 +158,9 @@ class AttributeReferenceBuilder:
 
 class RecordReferenceBuilder:
     """
-    .. versionadded:: 2.0
-
     Create a MIRecordReference with a valid combination of properties.
+
+    .. versionadded:: 2.0
 
     Parameters
     ----------

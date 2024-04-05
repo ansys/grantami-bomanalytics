@@ -373,10 +373,10 @@ class RoHSIndicator(_Indicator):
     name : str
         Name of the indicator that is to identify the indicator in the query result.
     legislation_ids : list[str]
-        .. versionadded:: 2.0
-
         Legislations against which compliance will be determined. Legislations are identified based
         on their ``Legislation ID`` attribute value.
+
+        .. versionadded:: 2.0
 
         .. important::
            This argument replaces ``legislation_names``, which has been removed in version **2.0**.
@@ -471,10 +471,10 @@ class WatchListIndicator(_Indicator):
     name : str
         Name of the indicator that is used to identify the indicator in the query result.
     legislation_ids : list[str]
-        .. versionadded:: 2.0
-
         Legislations against which compliance will be determined. Legislations are identified based
         on their ``Legislation ID`` attribute value.
+
+        .. versionadded:: 2.0
 
         .. important::
            This argument replaces ``legislation_names``, which has been removed in version **2.0**.

@@ -3,8 +3,6 @@
 Sustainability API
 ==================
 
-.. versionadded:: 2.0
-
 This section provides an overview of the API for sustainability. The
 :ref:`ref_grantami_bomanalytics_api_sustainability_bom` and
 :ref:`ref_grantami_bomanalytics_api_sustainability_summary_bom` queries can be used to determine the
@@ -22,6 +20,8 @@ section of the online documentation.
   Substances feature included in your license. A
   :class:`~ansys.grantami.bomanalytics.LicensingException` will be raised if the feature is not
   available.
+
+.. versionadded:: 2.0
 
 .. toctree::
    :maxdepth: 3

@@ -3,8 +3,6 @@
 BoM helpers
 ==============
 
-.. versionadded:: 2.0
-
 This section provides an introduction to the BoM Helpers. These represent a BoM (bill of materials) in Ansys Granta
 MI 2301 XML BoM format, and support reading and writing these files.
 
@@ -17,6 +15,8 @@ the correct formation of these reference objects, depending on how you need to r
 Serialization and Deserialization of BoM objects can be performed using the :class:`~ansys.grantami.bomanalytics._bom_helper.BoMHandler`.
 This exposes methods to read a BoM from a string or a file, and to write to a string or a file. The resulting BoM can be
 passed to either a Sustainability or a Compliance query.
+
+.. versionadded:: 2.0
 
 .. toctree::
    :maxdepth: 2

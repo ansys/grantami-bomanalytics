@@ -1253,9 +1253,10 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWit
     @property
     def percentage_amount(self) -> Optional[float]:
         """
-        .. versionadded:: 2.1
+        Percentage amount of this substance in the parent item.
 
-        Percentage amount of this substance in the parent item."""
+        .. versionadded:: 2.1
+        """
         return self._percentage_amount
 
 
@@ -1327,9 +1328,10 @@ class CoatingWithComplianceResult(
 
 
 class ValueWithUnit:
-    """.. versionadded:: 2.0
-
+    """
     Describes a value obtained from the API.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1619,14 +1621,15 @@ class MaterialWithSustainabilityResult(
     MassResultMixin,
     MaterialReferenceWithIdentifiers,
 ):
-    """.. versionadded:: 2.0
-
+    """
     Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
 
     * The reference to the material in Granta MI
     * The sustainability information for this material
     * Any process objects that are a child of this material object
+
+    .. versionadded:: 2.0
     """
 
 
@@ -1638,14 +1641,15 @@ class PartWithSustainabilityResult(
     MassResultMixin,
     PartReferenceWithIdentifiers,
 ):
-    """.. versionadded:: 2.0
-
+    """
     Describes an individual part included as part of a sustainability query result.
     This object includes three categories of attributes:
 
     * The reference to the part in Granta MI (if the part references a record)
     * The sustainability information for this part
     * Any part, material, or process objects which are a child of this part object
+
+    .. versionadded:: 2.0
     """
 
 
@@ -1653,13 +1657,14 @@ class ProcessWithSustainabilityResult(
     SustainabilityResultMixin,
     ProcessReferenceWithIdentifiers,
 ):
-    """.. versionadded:: 2.0
-
+    """
     Describes a process included as part of a sustainability query result.
     This object includes two categories of attributes:
 
     * The reference to the process record in Granta MI
     * The sustainability information for this process
+
+    .. versionadded:: 2.0
     """
 
 
@@ -1667,13 +1672,14 @@ class TransportWithSustainabilityResult(
     SustainabilityResultMixin,
     TransportReferenceWithIdentifier,
 ):
-    """.. versionadded:: 2.0
-
+    """
     Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:
 
     * The reference to the transport record in Granta MI
     * The sustainability information for this transport stage
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1754,8 +1760,6 @@ class SustainabilitySummaryBase:
 
 class SustainabilityPhaseSummaryResult(SustainabilitySummaryBase):
     """
-    .. versionadded:: 2.0
-
     High-level sustainability summary for a phase.
 
     Phases currently include:
@@ -1763,6 +1767,8 @@ class SustainabilityPhaseSummaryResult(SustainabilitySummaryBase):
     * ``Material``
     * ``Processes``
     * ``Transport``
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1787,9 +1793,9 @@ class SustainabilityPhaseSummaryResult(SustainabilitySummaryBase):
 
 class TransportSummaryResult(SustainabilitySummaryBase):
     """
-    .. versionadded:: 2.0
-
     Sustainability summary for a transport stage.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1830,11 +1836,11 @@ class TransportSummaryResult(SustainabilitySummaryBase):
 
 class ContributingComponentResult:
     """
-    .. versionadded:: 2.0
-
     Describes a Part item of the BoM.
 
     Listed as :attr:`~.MaterialSummaryResult.contributors` of a :class:`~.MaterialSummaryResult`.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1886,11 +1892,11 @@ class ContributingComponentResult:
 
 class MaterialSummaryResult(SustainabilitySummaryBase):
     """
-    .. versionadded:: 2.0
-
     Aggregated sustainability summary for a material.
 
     Describes the environmental footprint of a unique material, accounting for all occurrences of the material in BoM.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1949,8 +1955,6 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
 
 class ProcessSummaryResult(SustainabilitySummaryBase):
     """
-    .. versionadded:: 2.0
-
     Aggregated sustainability summary for a process.
 
     For primary and secondary processes, this corresponds to a unique process/material combination. For joining and
@@ -1959,6 +1963,8 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
 
     Describes the environmental footprint of a process, accounting for all occurrences of the process-material pair
     found in the BoM.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -2015,9 +2021,10 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
 
 
 class Licensing:
-    """.. versionadded:: 2.0
-
+    """
     Granta MI BomAnalytics Services licensing information.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(self, restricted_substances: bool, sustainability: bool):

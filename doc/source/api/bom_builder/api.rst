@@ -3,8 +3,6 @@
 BoM object model
 ================
 
-.. versionadded:: 2.0
-
 .. note::
    The models documented below are Python bindings for the Ansys Granta MI 23/01 XML schema.
    Not all elements are required to define a valid BoM for analysis, and not all elements have an impact on all types of analysis.
@@ -20,6 +18,7 @@ BoM object model
    elements. It is still possible to deserialize an XML BoM that uses these elements, but these elements cannot be
    converted to Python objects.
 
+.. versionadded:: 2.0
 
 .. _ref_grantami_bomanalytics_api_billofmaterials:
 .. autoclass:: ansys.grantami.bomanalytics.bom_types._bom_types.BillOfMaterials

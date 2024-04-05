@@ -1827,8 +1827,7 @@ class _SustainabilityMixin(_ApiMixin):
 
 
 class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
-    """.. versionadded:: 2.0
-
+    """
     Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format, and returns metrics for each
     item in the BoM.
 
@@ -1838,6 +1837,8 @@ class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
     Once the query is fully constructed, use the `cxn.`
     :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.BomSustainabilityQueryResult`.
+
+    .. versionadded:: 2.0
 
     Examples
     --------
@@ -1860,8 +1861,6 @@ class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
 
 class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
     """
-    .. versionadded:: 2.0
-
     Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format and returns aggregated metrics.
 
     The methods used to configure units and add the BoM to this query return the query itself so that they can be
@@ -1870,6 +1869,8 @@ class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
     Once the query is fully constructed, use the `cxn.`
     :meth:`~ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run` method to return a result of type
     :class:`~ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult`.
+
+    .. versionadded:: 2.0
 
     Examples
     --------

@@ -21,6 +21,8 @@ section of the online documentation.
   :class:`~ansys.grantami.bomanalytics.LicensingException` will be raised if the feature is not
   available.
 
+.. versionadded:: 2.0
+
 .. toctree::
    :maxdepth: 3
 

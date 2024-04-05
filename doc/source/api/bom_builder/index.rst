@@ -16,6 +16,8 @@ Serialization and Deserialization of BoM objects can be performed using the :cla
 This exposes methods to read a BoM from a string or a file, and to write to a string or a file. The resulting BoM can be
 passed to either a Sustainability or a Compliance query.
 
+.. versionadded:: 2.0
+
 .. toctree::
    :maxdepth: 2
 

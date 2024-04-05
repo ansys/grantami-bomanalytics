@@ -53,6 +53,7 @@ class TestCompliance(BaseMockTester):
         substance_0 = response.compliance_by_substance_and_indicator[0]
         sv_0 = SubstanceValidator(substance_0)
         assert sv_0.check_reference(cas_number="50-00-0")
+        assert substance_0.percentage_amount == 0.05
         substance_0_result = [
             indicators.WatchListFlag.WatchListBelowThreshold,
             indicators.RoHSFlag.RohsBelowThreshold,
@@ -63,6 +64,7 @@ class TestCompliance(BaseMockTester):
         substance_1 = response.compliance_by_substance_and_indicator[1]
         sv_1 = SubstanceValidator(substance_1)
         assert sv_1.check_reference(chemical_name="1,3-Butadiene")
+        assert substance_1.percentage_amount == 20.0
         substance_1_result = [
             indicators.WatchListFlag.WatchListAboveThreshold,
             indicators.RoHSFlag.RohsAboveThreshold,

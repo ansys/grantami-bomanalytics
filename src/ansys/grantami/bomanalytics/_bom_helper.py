@@ -36,6 +36,8 @@ if TYPE_CHECKING:
 class BoMHandler:
     """
     Handler for XML formatted BoMs, supports reading from files and strings, and serializing to string format.
+
+    .. versionadded:: 2.0
     """
 
     _schema_path: Path = bom_schema_2301

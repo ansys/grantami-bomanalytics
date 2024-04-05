@@ -144,6 +144,7 @@ class TestCompliance(BaseMockTester):
         response = self.get_mocked_response(mock_connection)
 
         substance_0_0 = response.compliance_by_material_and_indicator[0].substances[0]
+        assert substance_0_0.percentage_amount == 0.1
         sv_0_0 = SubstanceValidator(substance_0_0)
         assert sv_0_0.check_reference(record_history_identity="12345")
         substance_0_0_result = [
@@ -154,6 +155,7 @@ class TestCompliance(BaseMockTester):
         assert sv_0_0.check_bom_structure()
 
         substance_1_0 = response.compliance_by_material_and_indicator[1].substances[0]
+        assert substance_1_0.percentage_amount == 0.1
         sv_1_0 = SubstanceValidator(substance_1_0)
         assert sv_1_0.check_reference(record_history_identity="12345")
         substance_1_0_result = [
@@ -164,6 +166,7 @@ class TestCompliance(BaseMockTester):
         assert sv_1_0.check_bom_structure()
 
         substance_1_1 = response.compliance_by_material_and_indicator[1].substances[1]
+        assert substance_1_1.percentage_amount == 1.1
         sv_1_1 = SubstanceValidator(substance_1_1)
         assert sv_1_1.check_reference(record_history_identity="34567")
         substance_1_1_result = [

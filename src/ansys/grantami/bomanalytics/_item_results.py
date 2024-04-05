@@ -338,6 +338,7 @@ class ItemResultFactory:
             identity=result_with_compliance.id,
             external_identity=result_with_compliance.external_identity,
             name=result_with_compliance.name,
+            percentage_amount=_convert_unset_to_none(result_with_compliance.percentage_amount),
         )
         return item_result
 
@@ -680,9 +681,9 @@ class ImpactedSubstance(SubstanceReference):
 
     This object includes two categories of attributes:
 
-      - The reference to the substance in Granta MI. These attributes are all populated if data for them exists in
-        Granta MI.
-      - The amount of the substance in the parent item and the threshold above which it is impacted.
+    * The reference to the substance in Granta MI. These attributes are all populated if data for them exists in
+      Granta MI.
+    * The amount of the substance in the parent item and the threshold above which it is impacted.
 
     Examples
     --------
@@ -841,8 +842,8 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
 
     This object includes two categories of attributes:
 
-      - The reference to the material in Granta MI
-      - The impacted substances associated with this material, both as a flat list and separated by legislation
+    * The reference to the material in Granta MI
+    * The impacted substances associated with this material, both as a flat list and separated by legislation
 
     Notes
     -----
@@ -868,8 +869,8 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
 
     This object includes two categories of attributes:
 
-      - The reference to the part in Granta MI
-      - The impacted substances associated with this part, both as a flat list and separated by legislation
+    * The reference to the part in Granta MI
+    * The impacted substances associated with this part, both as a flat list and separated by legislation
 
     Notes
     -----
@@ -897,8 +898,8 @@ class SpecificationWithImpactedSubstancesResult(
 
     This object includes two categories of attributes:
 
-      - The reference to the specification in Granta MI
-      - The impacted substances associated with this specification, both as a flat list and separated by legislation
+    * The reference to the specification in Granta MI
+    * The impacted substances associated with this specification, both as a flat list and separated by legislation
 
     Notes
     -----
@@ -1260,11 +1261,24 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
 
 class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWithIdentifiers):
     """Retrieves an individual substance included as part of a compliance query result.
-    This object includes two categories of attributes:
+    This object includes three categories of attributes:
 
-      - The reference to the substance in Granta MI
-      - The compliance status of this substance, stored in a dictionary of one or more indicator objects
+    * The reference to the substance in Granta MI
+    * The compliance status of this substance, stored in a dictionary of one or more indicator objects
+    * The amount of the substance present in the parent item
     """
+
+    def __init__(self, percentage_amount: Optional[float], **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._percentage_amount = percentage_amount
+
+    @property
+    def percentage_amount(self) -> Optional[float]:
+        """Percentage amount of this substance in the parent item.
+
+        .. versionadded:: 2.1
+        """
+        return self._percentage_amount
 
 
 class MaterialWithComplianceResult(
@@ -1273,9 +1287,9 @@ class MaterialWithComplianceResult(
     """Retrieves an individual material included as part of a compliance query result.
     This object includes three categories of attributes:
 
-      - The reference to the material in Granta MI
-      - The compliance status of this material, stored in a dictionary of one or more indicator objects
-      - Any substance objects that are a child of this material object
+    * The reference to the material in Granta MI
+    * The compliance status of this material, stored in a dictionary of one or more indicator objects
+    * Any substance objects that are a child of this material object
     """
 
 
@@ -1290,9 +1304,9 @@ class PartWithComplianceResult(
     """Retrieves an individual part included as part of a compliance query result.
     This object includes three categories of attributes:
 
-      - The reference to the part in Granta MI (if the part references a record)
-      - The compliance status of this part, stored in a dictionary of one or more indicator objects
-      - Any part, specification, material, or substance objects which are a child of this part object
+    * The reference to the part in Granta MI (if the part references a record)
+    * The compliance status of this part, stored in a dictionary of one or more indicator objects
+    * Any part, specification, material, or substance objects which are a child of this part object
     """
 
 
@@ -1307,9 +1321,9 @@ class SpecificationWithComplianceResult(
     """Retrieves an individual specification included as part of a compliance query result.
     This object includes three categories of attributes:
 
-      - The reference to the specification in Granta MI
-      - The compliance status of this specification, stored in a dictionary of one or more indicator objects
-      - Any specification, material, coating, or substance objects which are a child of this specification object
+    * The reference to the specification in Granta MI
+    * The compliance status of this specification, stored in a dictionary of one or more indicator objects
+    * Any specification, material, coating, or substance objects which are a child of this specification object
 
     Notes
     -----
@@ -1325,9 +1339,9 @@ class CoatingWithComplianceResult(
 
     This object includes three categories of attributes:
 
-      - The reference to the coating in Granta MI
-      - The compliance status of this coating, stored in one or more indicator objects
-      - Any substance objects which are a child of this coating object
+    * The reference to the coating in Granta MI
+    * The compliance status of this coating, stored in one or more indicator objects
+    * Any substance objects which are a child of this coating object
     """
 
     record_history_identity: Optional[int]
@@ -1335,7 +1349,10 @@ class CoatingWithComplianceResult(
 
 
 class ValueWithUnit:
-    """Describes a value obtained from the API."""
+    """Describes a value obtained from the API.
+
+    .. versionadded:: 2.0
+    """
 
     def __init__(
         self,
@@ -1627,9 +1644,11 @@ class MaterialWithSustainabilityResult(
     """Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
 
-      - The reference to the material in Granta MI
-      - The sustainability information for this material
-      - Any process objects that are a child of this material object
+    * The reference to the material in Granta MI
+    * The sustainability information for this material
+    * Any process objects that are a child of this material object
+
+    .. versionadded:: 2.0
     """
 
 
@@ -1644,9 +1663,11 @@ class PartWithSustainabilityResult(
     """Describes an individual part included as part of a sustainability query result.
     This object includes three categories of attributes:
 
-      - The reference to the part in Granta MI (if the part references a record)
-      - The sustainability information for this part
-      - Any part, material, or process objects which are a child of this part object
+    * The reference to the part in Granta MI (if the part references a record)
+    * The sustainability information for this part
+    * Any part, material, or process objects which are a child of this part object
+
+    .. versionadded:: 2.0
     """
 
 
@@ -1657,8 +1678,10 @@ class ProcessWithSustainabilityResult(
     """Describes a process included as part of a sustainability query result.
     This object includes two categories of attributes:
 
-      - The reference to the process record in Granta MI
-      - The sustainability information for this process
+    * The reference to the process record in Granta MI
+    * The sustainability information for this process
+
+    .. versionadded:: 2.0
     """
 
 
@@ -1669,8 +1692,10 @@ class TransportWithSustainabilityResult(
     """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:
 
-      - The reference to the transport record in Granta MI
-      - The sustainability information for this transport stage
+    * The reference to the transport record in Granta MI
+    * The sustainability information for this transport stage
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1755,10 +1780,11 @@ class SustainabilityPhaseSummaryResult(SustainabilitySummaryBase):
 
     Phases currently include:
 
-     - ``Material``
-     - ``Processes``
-     - ``Transport``
+    * ``Material``
+    * ``Processes``
+    * ``Transport``
 
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1784,6 +1810,8 @@ class SustainabilityPhaseSummaryResult(SustainabilitySummaryBase):
 class TransportSummaryResult(SustainabilitySummaryBase):
     """
     Sustainability summary for a transport stage.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1827,6 +1855,8 @@ class ContributingComponentResult:
     Describes a Part item of the BoM.
 
     Listed as :attr:`~.MaterialSummaryResult.contributors` of a :class:`~.MaterialSummaryResult`.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1881,6 +1911,8 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
     Aggregated sustainability summary for a material.
 
     Describes the environmental footprint of a unique material, accounting for all occurrences of the material in BoM.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -1947,6 +1979,8 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
 
     Describes the environmental footprint of a process, accounting for all occurrences of the process-material pair
     found in the BoM.
+
+    .. versionadded:: 2.0
     """
 
     def __init__(
@@ -2003,7 +2037,10 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
 
 
 class Licensing:
-    """Granta MI BomAnalytics Services licensing information."""
+    """Granta MI BomAnalytics Services licensing information.
+
+    .. versionadded:: 2.0
+    """
 
     def __init__(self, restricted_substances: bool, sustainability: bool):
         self._restricted_substances: bool = restricted_substances

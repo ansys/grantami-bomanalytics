@@ -183,6 +183,7 @@ class TestCompliance(BaseMockTester):
         response = self.get_mocked_response(mock_connection)
 
         coating_0_0 = response.compliance_by_specification_and_indicator[0].coatings[0]
+        assert coating_0_0.substances[0].percentage_amount == 0.0
         cv_0_0 = CoatingValidator(coating_0_0)
         assert cv_0_0.check_reference(record_history_identity="987654")
         coating_0_0_result = [
@@ -197,6 +198,7 @@ class TestCompliance(BaseMockTester):
         response = self.get_mocked_response(mock_connection)
 
         material_1_0 = response.compliance_by_specification_and_indicator[1].materials[0]
+        assert material_1_0.substances[0].percentage_amount == 0.1
         mv_1_0 = MaterialValidator(material_1_0)
         assert mv_1_0.check_reference(record_history_identity="111111")
         material_1_0_result = [
@@ -211,6 +213,7 @@ class TestCompliance(BaseMockTester):
         response = self.get_mocked_response(mock_connection)
 
         substance_0_coating_0_0 = response.compliance_by_specification_and_indicator[0].coatings[0].substances[0]
+        assert substance_0_coating_0_0.percentage_amount == 0.0
         sv_0_0_0 = SubstanceValidator(substance_0_coating_0_0)
         assert sv_0_0_0.check_reference(record_history_identity="62345")
         substance_0_0_result = [
@@ -221,6 +224,7 @@ class TestCompliance(BaseMockTester):
         assert sv_0_0_0.check_bom_structure()
 
         substance_1_0 = response.compliance_by_specification_and_indicator[1].substances[0]
+        assert substance_1_0.percentage_amount == 0.1
         sv_1_0 = SubstanceValidator(substance_1_0)
         assert sv_1_0.check_reference(record_history_identity="12345")
         substance_1_0_result = [
@@ -231,6 +235,7 @@ class TestCompliance(BaseMockTester):
         assert sv_1_0.check_bom_structure()
 
         substance_1_1 = response.compliance_by_specification_and_indicator[1].substances[1]
+        assert substance_1_1.percentage_amount is None
         sv_1_1 = SubstanceValidator(substance_1_1)
         assert sv_1_1.check_reference(record_history_identity="34567")
         substance_1_1_result = [
@@ -241,6 +246,7 @@ class TestCompliance(BaseMockTester):
         assert sv_1_1.check_bom_structure()
 
         substance_1_material_0_0 = response.compliance_by_specification_and_indicator[1].materials[0].substances[0]
+        assert substance_1_material_0_0.percentage_amount == 0.1
         sv_1_0_0 = SubstanceValidator(substance_1_material_0_0)
         assert sv_1_0_0.check_reference(record_history_identity="12345")
         substance_1_0_0_result = [
@@ -251,6 +257,7 @@ class TestCompliance(BaseMockTester):
         assert sv_1_0_0.check_bom_structure()
 
         substance_1_material_1_0 = response.compliance_by_specification_and_indicator[1].materials[1].substances[0]
+        assert substance_1_material_1_0.percentage_amount == 0.1
         sv_1_1_0 = SubstanceValidator(substance_1_material_1_0)
         assert sv_1_1_0.check_reference(record_history_identity="12345")
         substance_1_1_0_result = [
@@ -261,6 +268,7 @@ class TestCompliance(BaseMockTester):
         assert sv_1_1_0.check_bom_structure()
 
         substance_1_material_1_1 = response.compliance_by_specification_and_indicator[1].materials[1].substances[1]
+        assert substance_1_material_1_1.percentage_amount == 1.1
         sv_1_1_1 = SubstanceValidator(substance_1_material_1_1)
         assert sv_1_1_1.check_reference(record_history_identity="34567")
         substance_1_1_1_result = [

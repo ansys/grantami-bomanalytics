@@ -112,6 +112,8 @@ class AttributeReferenceBuilder:
     """
     Create a MI Attribute Reference with a valid combination of properties.
 
+    .. versionadded:: 2.0
+
     Parameters
     ----------
     db_key : str
@@ -179,6 +181,8 @@ class AttributeReferenceBuilder:
 class RecordReferenceBuilder:
     """
     Create a MIRecordReference with a valid combination of properties.
+
+    .. versionadded:: 2.0
 
     Parameters
     ----------

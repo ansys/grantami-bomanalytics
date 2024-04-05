@@ -1,5 +1,24 @@
 # Changelog
 
+## grantami-bomanalytics 2.1.0, TBD
+
+### New features
+
+* [Issue #454](https://github.com/ansys/grantami-bomanalytics/issues/454),
+  [Pull request #465](https://github.com/ansys/grantami-bomanalytics/pull/465): Add `percentage_amount` to `SubstanceWithComplianceResult`.
+
+### Doc improvements
+
+* [Issue #466](https://github.com/ansys/grantami-bomanalytics/issues/466),
+  [Pull request #467](https://github.com/ansys/grantami-bomanalytics/pull/467): Tidy up bulleted lists in API documentation.
+* [Issue #464](https://github.com/ansys/grantami-bomanalytics/issues/466),
+  [Pull request #467](https://github.com/ansys/grantami-bomanalytics/pull/467): Add `versionadded` directives to API documentation.
+
+### Contributors
+
+* Andy Grigg (Ansys)
+* Ludovic Steinbach (Ansys)
+
 ## grantami-bomanalytics 2.0.0, 2024-01-17
 
 ### New features

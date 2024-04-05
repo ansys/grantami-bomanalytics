@@ -286,6 +286,8 @@ class BomAnalyticsClient(ApiClient):
         Supported with Restricted Substances Reports 2023 R2 and newer, with older reports this parameter has
         no effect, all specification-to-specification links will be followed.
 
+        .. versionadded:: 1.2
+
         .. note::
             This limit applies to each branch of the BoM individually. This is not a global limit on the number of
             specification-to-specification links that will be traversed across the entire BoM, instead it is a limit on
@@ -352,9 +354,13 @@ class BomAnalyticsClient(ApiClient):
         location_table_name : str, optional
             Name of the table that implements the ``Location`` schema. The default
             is ``None``, in which case  ``Location`` is used.
+
+            .. versionadded:: 2.0
         transport_table_name : str, optional
             Name of the table that implements the ``Transport`` schema. The default
             is ``None``, in which case  ``Transport`` is used.
+
+            .. versionadded:: 2.0
 
         Notes
         -----

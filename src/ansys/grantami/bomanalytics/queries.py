@@ -1827,7 +1827,9 @@ class _SustainabilityMixin(_ApiMixin):
 
 
 class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
-    """Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format, and returns metrics for each
+    """.. versionadded:: 2.0
+
+    Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format, and returns metrics for each
     item in the BoM.
 
     The methods used to configure units and add the BoM to this query return the query itself so that they can be
@@ -1858,6 +1860,8 @@ class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
 
 class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
     """
+    .. versionadded:: 2.0
+
     Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format and returns aggregated metrics.
 
     The methods used to configure units and add the BoM to this query return the query itself so that they can be

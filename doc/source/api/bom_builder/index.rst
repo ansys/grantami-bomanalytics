@@ -3,6 +3,8 @@
 BoM helpers
 ==============
 
+.. versionadded:: 2.0
+
 This section provides an introduction to the BoM Helpers. These represent a BoM (bill of materials) in Ansys Granta
 MI 2301 XML BoM format, and support reading and writing these files.
 

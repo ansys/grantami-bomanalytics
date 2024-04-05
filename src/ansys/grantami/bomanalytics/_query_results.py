@@ -737,7 +737,10 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
 @QueryResultFactory.register(models.GetSustainabilityForBom2301Response)
 class BomSustainabilityQueryResult(ResultBaseClass):
-    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`."""
+    """.. versionadded:: 2.0
+
+    Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`.
+    """
 
     def __init__(
         self,
@@ -788,7 +791,10 @@ class BomSustainabilityQueryResult(ResultBaseClass):
 
 @QueryResultFactory.register(models.GetSustainabilitySummaryForBom2301Response)
 class BomSustainabilitySummaryQueryResult(ResultBaseClass):
-    """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery`."""
+    """.. versionadded:: 2.0
+
+    Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery`.
+    """
 
     def __init__(
         self,

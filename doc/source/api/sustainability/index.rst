@@ -3,6 +3,8 @@
 Sustainability API
 ==================
 
+.. versionadded:: 2.0
+
 This section provides an overview of the API for sustainability. The
 :ref:`ref_grantami_bomanalytics_api_sustainability_bom` and
 :ref:`ref_grantami_bomanalytics_api_sustainability_summary_bom` queries can be used to determine the

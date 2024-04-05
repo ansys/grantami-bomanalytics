@@ -3,6 +3,7 @@
 Defines the representations of the items (materials, parts, specifications, and substances) that are returned from
 queries. These are mostly extensions of the classes in the ``_item_definitions.py`` file.
 """
+
 from abc import ABC
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
@@ -545,9 +546,11 @@ class ItemResultFactory:
             climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
             mass_after_processing=cls.create_unitted_value(result.mass_after_processing),
             mass_before_processing=cls.create_unitted_value(result.mass_before_processing),
-            contributors=[cls.create_contributing_component(component) for component in result.largest_contributors]
-            if result.largest_contributors
-            else [],
+            contributors=(
+                [cls.create_contributing_component(component) for component in result.largest_contributors]
+                if result.largest_contributors
+                else []
+            ),
         )
 
     @classmethod

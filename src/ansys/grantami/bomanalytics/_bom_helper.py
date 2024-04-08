@@ -63,7 +63,7 @@ class BoMHandler:
         :class:`~._bom_types.BillOfMaterials`
         """
         with open(file_path, "r", encoding="utf8") as fp:
-            obj, errors = cast(Tuple, self._schema.decode(fp, validation="lax"))
+            obj, errors = cast(Tuple, self._schema.decode(fp, validation="lax", xmlns_processing="collapsed"))
 
         if len(errors) > 0:
             newline = "\n"
@@ -86,7 +86,9 @@ class BoMHandler:
         -------
         :class:`~._bom_types.BillOfMaterials`
         """
-        obj, errors = cast(Tuple, self._schema.decode(bom_text, validation="lax", keep_empty=True))
+        obj, errors = cast(
+            Tuple, self._schema.decode(bom_text, validation="lax", keep_empty=True, xmlns_processing="collapsed")
+        )
 
         if len(errors) > 0:
             newline = "\n"

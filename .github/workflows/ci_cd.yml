@@ -50,13 +50,6 @@ jobs:
     needs: integration_checks
     runs-on: ubuntu-latest
     steps:
-      - name: "Deploy stable documentation"
-        uses: ansys/actions/doc-deploy-stable@v5
-        with:
-          cname: ${{ env.DOCUMENTATION_CNAME }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          doc-artifact-name: Documentation-html
-
       - uses: actions/checkout@v4
 
       - name: Set up Python 3.9
@@ -102,3 +95,10 @@ jobs:
             dist/*.whl
             dist/documentation-html.zip
             dist/*.pdf
+
+      - name: "Deploy stable documentation"
+        uses: ansys/actions/doc-deploy-stable@v5
+        with:
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          doc-artifact-name: Documentation-html

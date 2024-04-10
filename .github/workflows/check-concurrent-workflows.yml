@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: "Get runs"
         id: check-workflow-runs
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: pwsh
         run: |
           function Check-For-Ongoing-Runs {

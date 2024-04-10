@@ -168,7 +168,7 @@ jobs:
     name: Stop Azure VM
     runs-on: ubuntu-latest
     needs: check_workflow_runs
-    if: ${{ always() && !(inputs.skip-vm-management) && !(needs.check_workflow_runs.outputs.active-runs == 'true') }}
+    if: always() && !cancelled() && !(inputs.skip-vm-management) && needs.check_workflow_runs.outputs.active-runs != 'true'
 
     steps:
       - name: Stop Azure VM

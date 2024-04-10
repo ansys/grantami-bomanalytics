@@ -171,6 +171,12 @@ jobs:
     if: always() && !cancelled() && !(inputs.skip-vm-management) && needs.check_workflow_runs.outputs.active-runs != 'true'
 
     steps:
+      - name: "Debug condition"
+        run: |
+          echo "Check 'active-runs'"
+          echo "${{ needs.check_workflow_runs.outputs.active-runs }}"
+          echo "${{ needs.check_workflow_runs.outputs.active-runs != 'true' }}"
+
       - name: Stop Azure VM
         uses: azure/CLI@v2
         with:

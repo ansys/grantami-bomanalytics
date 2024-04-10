@@ -19,6 +19,8 @@ on:
         required: true
       AZURE_VM_NAME_NEXT:
         required: true
+      CODECOV_TOKEN:
+        required: true
       TEST_SERVER_URL_NEXT:
         required: true
       TEST_SERVER_READ_USER:
@@ -97,6 +99,16 @@ jobs:
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
           TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
           TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
+
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v3
+        if: ${{ matrix.os  == 'ubuntu-latest' }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: .cov/xml
+          flags: integration
+          fail_ci_if_error: true
 
   docs:
     name: Build documentation

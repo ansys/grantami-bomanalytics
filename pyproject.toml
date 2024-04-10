@@ -111,7 +111,7 @@ python =
 whitelist_externals = poetry
 commands_pre =
     poetry install --no-root
-commands = poetry run pytest --cov=ansys.grantami.bomanalytics --cov-report=xml {posargs}
+commands = poetry run pytest --cov=ansys.grantami.bomanalytics --cov-report=xml --cov-report=xml:.cov/xml {posargs}
 passenv =
     TEST_SL_URL
     TEST_USER

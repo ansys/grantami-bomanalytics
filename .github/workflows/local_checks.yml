@@ -52,6 +52,16 @@ jobs:
       - name: Test with tox (no integration tests)
         run: tox -- -m "not integration"
 
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v3
+        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: .cov/xml
+          flags: unittests
+          fail_ci_if_error: true
+
   package:
     name: Build package
     runs-on: ubuntu-latest

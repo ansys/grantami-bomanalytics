@@ -37,10 +37,10 @@ jobs:
                 $count = gh run list -R $workflow.Repository -w $workflow.Name --json number,status -q $query
                 Write-Host $workflow.Repository $workflow.Nam: $count runs in progress
                 if ($count -gt 0){
-                    return $true
+                    return "true"
                 }
             }
-            return $false
+            return "false"
           }
           
           $result = Check-For-Ongoing-Runs

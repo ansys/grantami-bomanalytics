@@ -37,11 +37,11 @@ jobs:
                 $count = gh run list -R $workflow.Repository -w $workflow.Name --json number,status -q $query
                 Write-Host $workflow.Repository $workflow.Nam: $count runs in progress
                 if ($count -gt 0){
-                    echo "result=true" >> $GITHUB_OUTPUT
+                    echo "result=true" >> $env:GITHUB_OUTPUT
                     return "true"
                 }
             }
-            echo "result=false" >> $GITHUB_OUTPUT
+            echo "result=false" >> $env:GITHUB_OUTPUT
             return "false"
           }
           

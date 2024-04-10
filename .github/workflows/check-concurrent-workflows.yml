@@ -30,9 +30,9 @@ jobs:
           
             foreach ($workflow in $workflows) {
                 if (($workflow.Repository -eq $currentRepository) -and ($workflow.Name -eq $currentWorkflow)) {
-                  $query = '[.[] | select(.status | test(\"(in_progress)|(queued)|(requested)|(waiting)|(pending)\")) | select(.number != ' + $currentRunNumber + ')] | length'
+                  $query = '[.[] | select(.status | test("(in_progress)|(queued)|(requested)|(waiting)|(pending)")) | select(.number != ' + $currentRunNumber + ')] | length'
                 } else {
-                  $query = '[.[] | select(.status | test(\"(in_progress)|(queued)|(requested)|(waiting)|(pending)\"))] | length'
+                  $query = '[.[] | select(.status | test("(in_progress)|(queued)|(requested)|(waiting)|(pending)"))] | length'
                 }
                 $count = gh run list -R $workflow.Repository -w $workflow.Name --json number,status -q $query
                 Write-Host $workflow.Repository $workflow.Nam: $count runs in progress

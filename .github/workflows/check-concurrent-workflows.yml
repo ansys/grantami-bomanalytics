@@ -11,7 +11,7 @@ jobs:
     name: "Check current workflow runs"
     runs-on: [ ubuntu-latest ]
     outputs:
-      result: ${{ steps.check-workflow-runs.outputs.$result }}
+      result: ${{ steps.check-workflow-runs.outputs.result }}
     steps:
       - name: "Get runs"
         id: check-workflow-runs

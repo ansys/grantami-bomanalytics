@@ -18,9 +18,9 @@ jobs:
         shell: pwsh
         run: |
           function Check-For-Ongoing-Runs {
-            $currentRepository = ${{ github.repository }}
-            $currentWorkflow = ${{ github.workflow }}
-            $currentRunNumber = ${{ github.run_number }}
+            $currentRepository = "${{ github.repository }}"
+            $currentWorkflow = "${{ github.workflow }}"
+            $currentRunNumber = "${{ github.run_number }}"
           
             $workflows = 
             @{Repository='ansys/grantami-recordlists'; Name='CI'}, 

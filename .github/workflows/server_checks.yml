@@ -160,11 +160,15 @@ jobs:
           path: doc/build/latex/*.pdf
           retention-days: 7
 
+  check_workflow_runs:
+    needs: docs
+    uses: ./.github/workflows/check-concurrent-workflows.yml
+
   stop_vm:
     name: Stop Azure VM
     runs-on: ubuntu-latest
-    needs: docs
-    if: ${{ always() && !(inputs.skip-vm-management)}}
+    needs: check_workflow_runs
+    if: ${{ always() && !(inputs.skip-vm-management) && !(needs.check_workflow_runs.outputs.active-runs == 'true') }}
 
     steps:
       - name: Stop Azure VM

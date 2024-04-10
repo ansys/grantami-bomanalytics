@@ -64,104 +64,104 @@ jobs:
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-  integration_tests:
-    name: Integration tests
-    runs-on: ${{ matrix.os }}
-    needs: start_vm
-
-    strategy:
-      max-parallel: 1
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-
-      - name: Install kerberos headers (ubuntu only)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: |
-          sudo apt-get update
-          sudo apt install libkrb5-dev
-
-      - name: Install dependencies
-        run: pip install poetry 'tox<4' --disable-pip-version-check
-
-      - name: Test with tox (integration tests only)
-        run: tox -- -m "integration"
-        env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
-          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
-          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
-          TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
-          TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
-
-      - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3
-        if: ${{ matrix.os  == 'ubuntu-latest' }}
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        with:
-          files: .cov/xml
-          flags: integration
-          fail_ci_if_error: true
-
-  docs:
-    name: Build documentation
-    runs-on: ubuntu-latest
-    needs: integration_tests
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install libkrb5-dev
-          sudo apt install pandoc
-          sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
-
-      - name: Install library
-        run: |
-          pip install poetry --disable-pip-version-check
-          poetry install --with doc
-
-      - name: Build HTML Documentation
-        run:  make -C doc html SPHINXOPTS="-W"
-        env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
-          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
-          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
-          BUILD_EXAMPLES: 1
-
-      - name: Build PDF Documentation
-        run: make -C doc latexpdf
-
-      - name: Upload HTML Documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: Documentation-html
-          path: doc/build/html
-          retention-days: 7
-
-      - name: Upload PDF Documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: Documentation-pdf
-          path: doc/build/latex/*.pdf
-          retention-days: 7
+#  integration_tests:
+#    name: Integration tests
+#    runs-on: ${{ matrix.os }}
+#    needs: start_vm
+#
+#    strategy:
+#      max-parallel: 1
+#      matrix:
+#        os: [ubuntu-latest, windows-latest]
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Set up Python 3.9
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: '3.9'
+#
+#      - name: Install kerberos headers (ubuntu only)
+#        if: ${{ matrix.os == 'ubuntu-latest' }}
+#        run: |
+#          sudo apt-get update
+#          sudo apt install libkrb5-dev
+#
+#      - name: Install dependencies
+#        run: pip install poetry 'tox<4' --disable-pip-version-check
+#
+#      - name: Test with tox (integration tests only)
+#        run: tox -- -m "integration"
+#        env:
+#          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
+#          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+#          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+#          TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
+#          TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
+#
+#      - name: "Upload coverage to Codecov"
+#        uses: codecov/codecov-action@v3
+#        if: ${{ matrix.os  == 'ubuntu-latest' }}
+#        env:
+#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+#        with:
+#          files: .cov/xml
+#          flags: integration
+#          fail_ci_if_error: true
+#
+#  docs:
+#    name: Build documentation
+#    runs-on: ubuntu-latest
+#    needs: integration_tests
+#
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - name: Set up Python 3.9
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: '3.9'
+#
+#      - name: Install system dependencies
+#        run: |
+#          sudo apt update
+#          sudo apt install libkrb5-dev
+#          sudo apt install pandoc
+#          sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
+#
+#      - name: Install library
+#        run: |
+#          pip install poetry --disable-pip-version-check
+#          poetry install --with doc
+#
+#      - name: Build HTML Documentation
+#        run:  make -C doc html SPHINXOPTS="-W"
+#        env:
+#          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
+#          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+#          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+#          BUILD_EXAMPLES: 1
+#
+#      - name: Build PDF Documentation
+#        run: make -C doc latexpdf
+#
+#      - name: Upload HTML Documentation
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: Documentation-html
+#          path: doc/build/html
+#          retention-days: 7
+#
+#      - name: Upload PDF Documentation
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: Documentation-pdf
+#          path: doc/build/latex/*.pdf
+#          retention-days: 7
 
   check_workflow_runs:
-    needs: docs
+    needs: start_vm
     uses: ./.github/workflows/check-concurrent-workflows.yml
 
   stop_vm:

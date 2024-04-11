@@ -35,15 +35,14 @@ jobs:
                   $query = '[.[] | select(.status | test("(in_progress)|(queued)|(requested)|(waiting)|(pending)"))] | length'
                 }
                 $count = gh run list -R $workflow.Repository -w $workflow.Name --json number,status -q $query
-                Write-Host $workflow.Repository $workflow.Nam: $count runs in progress
+                Write-Host $workflow.Repository $workflow.Name: $count runs in progress
                 if ($count -gt 0){
-                    echo "result=true" >> $env:GITHUB_OUTPUT
                     return "true"
                 }
             }
-            echo "result=false" >> $env:GITHUB_OUTPUT
             return "false"
           }
           
           $result = Check-For-Ongoing-Runs
-          echo $result
+          echo "result=$result" >> $env:GITHUB_OUTPUT
+          echo "Active runs: $result"

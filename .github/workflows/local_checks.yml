@@ -53,7 +53,7 @@ jobs:
         run: tox -- -m "not integration"
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

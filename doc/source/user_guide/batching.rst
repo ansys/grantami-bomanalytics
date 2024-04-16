@@ -7,8 +7,6 @@ Applicability
 -------------
  .. py:currentmodule:: ansys.grantami.bomanalytics.queries
 
-.. include:: ../reusable_text/query_types.rst
-
 Record-based queries are batched if they exceed a certain size. When you perform a record-based
 query, batching is achieved by splitting the list of records into smaller lists to reduce the
 overall time it takes to obtain results.

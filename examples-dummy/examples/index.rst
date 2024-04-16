@@ -1,7 +1,7 @@
 .. _ref_grantami_bomanalytics_examples:
 
-Example Scripts
-===============
+Examples
+========
 
 Example build skipped
 

@@ -271,7 +271,7 @@ class BomAnalyticsClient(ApiClient):
             if isinstance(value, str):
                 value = f'"{value}"'
             rendered_entries.append(f"{name}={value}")
-        return f'<BomServicesClient: {", ".join(rendered_entries)}>'
+        return f'<BomAnalyticsClient: {", ".join(rendered_entries)}>'
 
     @property
     def maximum_spec_link_depth(self) -> Optional[int]:

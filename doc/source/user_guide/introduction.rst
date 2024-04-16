@@ -1,7 +1,5 @@
 Introduction
-------------
-This project is part of the larger PyAnsys effort to facilitate the use
-of Ansys technologies directly from within Python.
+============
 
 Granta MI provides a mature and feature-rich method for managing
 restricted substances and sustainability data as part of the Granta MI
@@ -21,9 +19,6 @@ The expected use cases for this package are as follows:
 - Allowing compliance and sustainability to be determined for BoMs (Bills of
   Materials) stored in third-party systems, such as PLM or ERP systems.
 
-
-Background
-----------
 This package provides access to two similar but distinct APIs:
 
 #. The Granta MI Restricted Substances API is used to determine the impacted
@@ -37,19 +32,3 @@ In both cases, this package makes the underlying REST APIs easier to use by
 providing idiomatic Python interfaces and example scripts.
 
 This package also provides a sub-package to help constructing Granta XML BoMs.
-
-
-Dependencies
-------------
-To use the ``grantami-bomanalytics`` package, you must have access
-to a Granta MI server that includes MI Restricted Substances and Sustainability Reports
-2024 R1 or later. This package also has the following Python package
-dependencies:
-
-- ``ansys-grantami-bomanalytics-openapi`` package
-- ``ansys-openapi-common`` package
-
-These package dependencies are installed automatically by
-`pip <https://github.com/pypa/pip>`_, the package installer for
-Python. For more information, see the installation information
-in :ref:`ref_getting_started_grantami_bomanalytics`.

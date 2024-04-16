@@ -3,10 +3,7 @@
 Examples
 ========
 
-The following examples demonstrate key aspects of Granta MI BoM Analytics. The basic example shows 
-how to connect to Granta MI and view logging messages returned by the Granta MI server.
-After demonstrating how to use the different types of queries, it describes more advanced functionality, 
-including how to use other Python packages such as Pandas DataFrames.
+The following examples demonstrate key aspects of Granta MI BoM Analytics.
 
 To run these examples, install dependencies with this code:
 

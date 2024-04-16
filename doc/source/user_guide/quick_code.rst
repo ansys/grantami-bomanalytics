@@ -1,5 +1,6 @@
 Quick code
-----------
+==========
+
 To show how the ``grantami-bomanalytics`` package works, this brief compliance example
 shows how to find the percentage content of all SVHCs (substances of very
 high concern) in an ABS/PVC blend:

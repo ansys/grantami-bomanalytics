@@ -1,9 +1,13 @@
-.. _ref_grantami_bomanalytics_query_type_differences:
+.. _ref_query_types:
 
-Differences between BoM-based queries and record-based queries
-==============================================================
+Differences between BoM and record queries
+==========================================
 
-.. include:: ../reusable_text/query_types.rst
+The queries supported by this package can be split into two broad groups: record-based queries and
+BoM-based queries. Whereas BoM-based queries can only be constructed with a single BoM, record-based
+queries can be constructed with any number of records. For example, a
+:class:`~ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery` could include
+any number of specification references.
 
 This page describes the differences in how BoM-based queries and record-based queries
 include additional linked items in restricted substances analyses. It also describes the ways

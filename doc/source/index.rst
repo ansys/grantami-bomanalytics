@@ -1,8 +1,8 @@
 PyGranta BoM Analytics |version|
 ================================
 
-PyGranta JobQueue, a component of the PyGranta software suite, provides a
-Python interface to the Granta JobQueue API.
+PyGranta BoM Analytics, a component of the PyGranta software suite, provides a
+Python interface to the Granta BoM Analytics Services API.
 
 .. grid:: 1 2 2 2
 

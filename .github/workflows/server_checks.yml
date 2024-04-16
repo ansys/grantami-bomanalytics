@@ -101,7 +101,7 @@ jobs:
           TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         if: ${{ matrix.os  == 'ubuntu-latest' }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

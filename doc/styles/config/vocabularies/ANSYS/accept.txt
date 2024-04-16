@@ -8,3 +8,5 @@ Granta MI
 legislations
 PyGranta BoM Analytics
 RoHS
+Makefile
+Jupytext

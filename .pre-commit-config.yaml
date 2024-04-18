@@ -62,3 +62,11 @@ repos:
   rev: 0.28.1
   hooks:
     - id: check-github-workflows
+
+- repo: https://github.com/ansys/pre-commit-hooks
+  rev: v0.3.0
+  hooks:
+    - id: add-license-headers
+      args:
+      - --start_year=2022
+      files: '(src|tests)/.*\.(py)'

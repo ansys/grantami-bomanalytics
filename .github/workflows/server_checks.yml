@@ -149,8 +149,9 @@ jobs:
           retention-days: 7
 
   check_workflow_runs:
+    name: Check if there are active workflow runs
     needs: docs
-    uses: ./.github/workflows/check-concurrent-workflows.yml
+    uses: ansys/pygranta/.github/workflows/check-concurrent-workflows.yml@main
 
   stop_vm:
     name: Stop Azure VM

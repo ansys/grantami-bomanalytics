@@ -39,7 +39,7 @@ jobs:
     needs: [ integration_checks ]
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
-      - uses: ansys/actions/doc-deploy-dev@v5
+      - uses: ansys/actions/doc-deploy-dev@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Deploy stable documentation"
-        uses: ansys/actions/doc-deploy-stable@v5
+        uses: ansys/actions/doc-deploy-stable@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}

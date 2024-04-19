@@ -21,7 +21,7 @@ Installation
 
 Verify your installation
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Check that you can start the BomServices Client from Python by running this code:
+Check that you can start the BomServices client from Python by running this code:
 
 .. code:: python
 

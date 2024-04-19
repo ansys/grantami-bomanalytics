@@ -12,7 +12,7 @@ query, batching is achieved by splitting the list of records into smaller lists 
 overall time it takes to obtain results.
 
 Both the :class:`~BomSustainabilityQuery` and :class:`~BomSustainabilitySummaryQuery` are BoM-based
-queries, and so this page is not relevant for sustainability analysis. The advice given below is
+queries, and so this page is not relevant for sustainability analysis. The following advice is
 relevant for restricted substances analysis only.
 
 When should the batch size be modified?

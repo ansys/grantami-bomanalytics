@@ -29,10 +29,9 @@ server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
-# Next, create a sustainability query. The query accepts a single BoM as argument, as well as optional
+# Next, create a sustainability query. The query accepts a single BoM as argument and an optional
 # configuration for units. If a unit is not specified, the default unit is used. Default units for the
-# analysis are:
-# `MJ` for energy, `kg` for mass, and `km` for distance.
+# analysis are ``MJ`` for energy, ``kg`` for mass, and ``km`` for distance.
 
 # +
 xml_file_path = "supporting-files/bom-2301-assembly.xml"
@@ -44,7 +43,7 @@ from ansys.grantami.bomanalytics import queries
 query = queries.BomSustainabilityQuery().with_bom(bom)
 # -
 
-# Finally, run the query. A `BomSustainabilityQueryResult` object is returned, which contains the
+# Finally, run the query. The ``BomSustainabilityQueryResult`` object that is returned contains the
 # results of the analysis.
 
 # +
@@ -58,61 +57,59 @@ result
 #
 # The structure of a BoM sustainabability query result mirrors the input BoM structure. However, each
 # item in the result objects also includes the results of the sustainability analysis for that item.
-# In addition to the properties described below, these objects also contain at least the following
-# properties which define the results of the sustainability analysis:
+# In addition to the described properties, these objects  contain at least the following
+# properties that define the results of the sustainability analysis:
 #
 # * ``.embodied_energy``
 # * ``.climate_change``
 #
-# Additional properties are also available for each ``<ItemType>WithSustainabilityResult`` object,
-# see the
-# [Sustainability API](https://bomanalytics.grantami.docs.pyansys.com/version/stable/api/sustainability/index.html) for
-# more details.
+# Additional properties are also available for each ``<ItemType>WithSustainabilityResult`` object.
+# For more information, see the
+# [Sustainability API](https://bomanalytics.grantami.docs.pyansys.com/version/stable/api/sustainability/index.html).
 
 # ### The ``BomSustainabilityQueryResult.parts`` property
 #
-# The ``BomSustainabilityQueryResult.parts`` property contains the single 'root' part in the input
+# The ``BomSustainabilityQueryResult.parts`` property contains the single *root* part in the input
 # BoM. This part in turn also has a ``.parts`` property, which contains the list of
-# ``PartWithSustainabilityResult`` objects which are children of the root part. This structure
+# ``PartWithSustainabilityResult`` objects that are children of the root part. This structure
 # continues recursively to define all parts in the input BoM. These parts can be of two types:
-# assemblies, or leaf parts.
+# assemblies or leaf parts.
 #
 # #### **Assemblies**
 #
-# Assemblies are ``PartWithSustainabilityResult`` objects that contain sub-parts. Assemblies do not
+# Assemblies are ``PartWithSustainabilityResult`` objects that contain subparts. Assemblies do not
 # contain materials directly.
 #
-# Assemblies include the following properties which describe child BoM items:
+# Assemblies include the following properties that describe child BoM items:
 #
-# - ``.parts``: the sub-parts of the assembly, defined as ``PartWithSustainabilityResult`` objects.
-# - ``.processes``: the joining and finishing processes applied to the assembly, defined as
+# - ``.parts``: Subparts of the assembly, which are defined as ``PartWithSustainabilityResult`` objects.
+# - ``.processes``: Joining and finishing processes applied to the assembly, which are defined as
 # ``ProcessWithSustainabilityResult`` objects.
 #
 # The environmental impact of an assembly includes the sum of the environmental impacts of all
-# sub-parts and processes applied to the assembly.
+# subparts and processes applied to the assembly.
 #
 # #### **Leaf parts**
 #
-# Leaf parts are ``PartWithSustainabilityResult`` objects that do not include sub-parts. Leaf parts
+# Leaf parts are ``PartWithSustainabilityResult`` objects that do not include subparts. Leaf parts
 # can contain the materials they are made of as direct children.
 #
 # Leaf parts include the following properties:
 #
-# - ``.materials``: the materials that the part is made of, defined as a list
+# - ``.materials``: Materials that the part is made of, which are defined as a list
 # ``MaterialWithSustainabilityResult`` objects.
-# - ``.processes``: the joining and finishing processes applied to the part, defined as a list of
+# - ``.processes``: Joining and finishing processes applied to the part, which are defined as a list of
 # ``ProcessWithSustainabilityResult`` objects.
 #
 # The environmental impact of a leaf part includes the sum of the environmental impacts
-# associated with the quantity of materials used in the part (see below for details), processes
+# associated with the quantity of materials used in the part, processes
 # applied to the part directly, and processes applied to materials in the part.
 
 # #### **Materials**
 #
-# Materials are ``MaterialWithSustainabilityResult`` objects. They include the following properties:
-#
-# - ``.processes``: the primary and secondary processes applied to the mass of material, defined as a
-# list of ``ProcessWithSustainabilityResult`` objects.
+# Materials are ``MaterialWithSustainabilityResult`` objects. They include the ``.processes`` property.
+# This property consists of the primary and secondary processes applied to the mass of material, which
+# are defined as a list of ``ProcessWithSustainabilityResult`` objects.
 #
 # The environmental impact of a material is calculated from database data and the mass of material used.
 # Even though processes appear as children of materials in the hierarchy, their environmental impact is
@@ -127,22 +124,22 @@ result
 # ### The `BomSustainabilityQueryResult.transport` property
 #
 # The ``BomSustainabilityQueryResult.transport`` property contains the transport stages in the input
-# BoM, defined as a list of ``TransportWithSustainabilityResult`` objects. Transport stages contain no
+# BoM, which are defined as a list of ``TransportWithSustainabilityResult`` objects. Transport stages contain no
 # BoM properties. The environmental impact of a transport stage is just the environmental
 # impact associated with the transport stage itself.
 
 # ## Process the ``BomSustainabilityQueryResult`` object
 #
-# In order to visualize the results using [plotly](https://plotly.com/python/), the results will be
-# loaded into a [pandas](https://pandas.pydata.org/) ``DataFrame``.
+# To visualize the results using [plotly](https://plotly.com/python/), the results are
+# loaded into a [pandas](https://pandas.pydata.org/) ``DataFrame`` object.
 #
-# The following cell defines functions which convert the BoM hierarchical structure into a flat list
+# The following cell defines functions that convert the BoM hierarchical structure into a flat list
 # of items. Each function also converts each item into a dictionary of common values that the
-# ``DataFrame`` can interpret.
+# ``DataFrame`` object can interpret.
 #
-# Each row in the DataFrame contains an ``id`` which uniquely identifies the item, and a ``parent_id``
-# which defines the parent item. The ``.identity`` property is used as an identifier as it is unique
-# across all BoM items, and populated even if not initially populated on the BoM items.
+# Each row in the ``DataFrame`` object contains an ``id`` that uniquely identifies the item and a ``parent_id``
+# that defines the parent item. The ``.identity`` property is used as an identifier because it is unique
+# across all BoM items. This property is populated even if not initially populated on the BoM items.
 
 # +
 def traverse_bom(query_response):
@@ -201,14 +198,14 @@ def to_dict(item, parent):
 
 # -
 
-# Now call the ``traverse_bom`` function and print the first two dictionaries, representing the root
+# Now call the ``traverse_bom`` function and print the first two dictionaries, which represent the root
 # part and the first assembly in the BoM.
 
 records = list(traverse_bom(result))
 records[:2]
 
-# Now, use the list of dictionaries to create a DataFrame. Display the first five rows of the
-# DataFrame with the ``DataFrame.head()`` method.
+# Now, use the list of dictionaries to create a pandas ``DataFrame`` object. Use the ``DataFrame.head()`` method
+# to display the first five rows of the ``DataFrame`` object.
 
 import pandas as pd
 df = pd.DataFrame.from_records(records)

@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Database-specific configuration options
+# # Configure database-specific options
 
 # Granta MI BoM Analytics work with an off-the-shelf Granta MI Restricted Substances database. However, there are
 # some situations in which additional run-time configuration changes are required:
@@ -38,7 +38,7 @@ cxn.set_database_details(database_key="ACME_SUBSTANCES_DATABASE")
 cxn
 # -
 
-# It is also possible to specify alternative names for the relevant restricted substances tables, if they
+# It is also possible to specify alternative names for the relevant restricted substances tables if they
 # have been modified from the defaults. You provide the names to the ``.set_database_details()`` method in the same way.
 
 # + tags=[]
@@ -46,10 +46,10 @@ cxn.set_database_details(in_house_materials_table_name="ACME Materials")
 cxn
 # -
 
-# ## Batch size
+# ## Change batch size
 
 # The queries that can be performed with this package are batched if they exceed a certain size. This is achieved by
-# splitting the list of parts, materials, etc. into smaller lists to reduce the overall time taken
+# splitting the list of parts, materials, and so on into smaller lists to reduce the overall time taken
 # to perform the query. Default batch sizes have been chosen based on typical tabular attribute sizes, but
 # these might need to be changed in some situations. For examples, see the relevant page in the API documentation.
 
@@ -70,20 +70,20 @@ spec_query = spec_query.with_batch_size(5)
 spec_query
 # -
 
-# ## Specification to Specification links
+# ## Set depth of specification-to-specification links
 
-# > Supported with Restricted Substances Reports 2023 R2 and newer
+# > Supported with Restricted Substances Reports 2023 R2 and later
 
 # The Restricted Substances database allows Specification records to be defined in terms of other Specification records.
 # Since this is a recursive relationship, there is in principle no limit to the complexity of these
-# Specification-to-Specification (spec-to-spec) hierarchies. By default, this package will consider every spec-to-spec
+# specification-to-specification (spec-to-spec) hierarchies. By default, this package considers every spec-to-spec
 # hierarchy completely, with no truncation imposed.
 
-# For typical databases this is the correct and desired behavior, however in some circumstances this may cause query
-# times and response sizes to become very large. In such cases you should control the maximum spec-to-spec hierarchy
+# For typical databases this is the correct and desired behavior. However, in some circumstances, this may cause query
+# times and response sizes to become very large. In such cases, you should control the maximum spec-to-spec hierarchy
 # depth followed using the ``maximum_spec_link_depth`` parameter on the ``BomAnalyticsClient`` object.
 
-# The default value is None, setting it to a positive integer will limit the depth to at most that many spec-to-spec
+# The default value is ``None``. Setting it to a positive integer limits the depth to at most that many spec-to-spec
 # links.
 
 # + tags=[]

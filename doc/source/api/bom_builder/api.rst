@@ -3,10 +3,10 @@
 BoM object model
 ================
 
-.. note::
-   The models documented below are Python bindings for the Ansys Granta MI 23/01 XML schema.
-   Not all elements are required to define a valid BoM for analysis, and not all elements have an impact on all types of analysis.
-   See :ref:`ref_grantami_bomanalytics_api_index` for details about the relevant items for each analysis type.
+The models documented in this section are Python bindings for the Ansys Granta MI 23/01 XML schema.
+Not all elements are required to define a valid BoM for analysis, and not all elements have an impact
+on all types of analysis. For information on the relevant items for each analysis type,
+see :ref:`ref_grantami_bomanalytics_api_index`.
 
 .. note::
    The following elements are defined in the 23/01 BoM schema but are not supported in this module:

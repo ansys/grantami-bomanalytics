@@ -27,7 +27,7 @@ high concern) in an ABS/PVC blend:
 The sequence of events is as follows:
 
 #. Connect to Granta MI.
-#. Create the appropriate query with the relevant parameters and references
-   (see :ref:`ref_grantami_bomanalytics_api_index` for more details).
+#. Create the appropriate query with the relevant parameters and references.
+   For more information, see :ref:`ref_grantami_bomanalytics_api_index`.
 #. Run the query.
 #. Process the results.

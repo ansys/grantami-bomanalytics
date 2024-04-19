@@ -20,14 +20,14 @@
 # with the result added to the input file.
 
 # Although it is unlikely that the data structures and processing presented here match your
-# requirements, this example is intended to demonstrate the principles behind using the Granta
+# requirements, this example demonstrates the principles behind using the Granta
 # MI BoM Analytics API within your existing processes. It shows how a BoM-like data structure
 # can be loaded from a neutral format and used as a starting point for compliance analysis.
-# The approach is applicable to data in other formats, or data loaded from other software
+# The approach is applicable to data in other formats or data loaded from other software
 # platform APIs.
 
 # You can [download](supporting-files/source_data.json) the external data source used in this
-# example .
+# example.
 
 # ## Load the external data
 
@@ -43,7 +43,7 @@ with open("supporting-files/source_data.json") as f:
 pprint(data)
 # -
 
-# The list of components is used frequently, so store it in a variable for convenience.
+# Because the list of components is used frequently, store it in a variable for convenience.
 
 # + tags=[]
 components = data["components"]
@@ -55,7 +55,7 @@ components = data["components"]
 # simplify the compliance query by get the compliance for the unique set of materials in the JSON file. You can then
 # perform some data manipulation of the results.
 
-# Because the compliance status of a material does not depend on which component it is used in, and part compliance
+# Because the compliance status of a material does not depend on which component it is used in and part compliance
 # depends only on the worst compliance status of its constituent materials, you can simplify the query by running it
 # against the set of unique materials in the JSON file. You can then rebuild the data structure from these results to
 # view the compliance by component.

@@ -275,28 +275,29 @@ class BomAnalyticsClient(ApiClient):
 
     @property
     def maximum_spec_link_depth(self) -> Optional[int]:
-        """Limits the maximum number of specification-to-specification links that will be followed when processing
-        a query. If specified, specification-to-specification links will be truncated at the specified depth, and only
-        coatings and substances identified up to and including that point will be included in the analysis.
+        """Maximum number of specification-to-specification links that are followed when processing
+        a query. If a maximum is specified, specification-to-specification links are truncated at the
+        specified depth, and only coatings and substances identified up to and including that point are
+        included in the analysis.
 
-        Defaults to None, which applies no limit to the number of specification-to-specification links. This may lead
-        to performance issues if there are large numbers of specification-to-specification links present in the
-        database.
+        The default is ``None``, in which case no limit is applied to the number of specification-to-specification
+        links. This might lead to performance issues if there are large numbers of specification-to-specification
+        links present in the database.
 
-        Supported with Restricted Substances Reports 2023 R2 and newer, with older reports this parameter has
-        no effect, all specification-to-specification links will be followed.
+        This parameter is supported with Restricted Substances Reports 2023 R2 and later. With older reports,
+        this parameter has no effect, all specification-to-specification links are followed.
 
         .. versionadded:: 1.2
 
         .. note::
             This limit applies to each branch of the BoM individually. This is not a global limit on the number of
-            specification-to-specification links that will be traversed across the entire BoM, instead it is a limit on
+            specification-to-specification links that are traversed across the entire BoM. Instead it is a limit on
             the maximum depth of specifications below any individual specification node.
 
         Returns
         -------
         Optional[int]
-            Maximum depth of specification-to-specification links that will be followed.
+            Maximum depth of specification-to-specification links that are followed.
 
         """
         return self._max_spec_depth
@@ -486,7 +487,7 @@ class BomAnalyticsClient(ApiClient):
             logger.info(f"Using maximum specification-to-specification link depth: {self._max_spec_depth}")
             config.maximum_spec_to_spec_link_depth = self._max_spec_depth + 1
         else:
-            logger.info(f"No specification-to-specification link depth limit specified. All links will be followed")
+            logger.info(f"No specification-to-specification link depth limit is specified. All links will be followed.")
         if any(self._table_names.values()):
             for table_type, name in self._table_names.items():
                 if name is not None:

@@ -64,7 +64,7 @@ file. One tox environment is provided:
 
 .. vale on
 
-Optionally, add the ``-- -m "not integration"`` suffix to the commands above to skip integration
+Optionally, add the ``-- -m "not integration"`` suffix to the preceding command to skip integration
 tests. For example, this command only runs tests that do not require a Granta MI instance::
 
      tox -e tests -- -m "not integration"
@@ -80,7 +80,7 @@ requires access to a valid Granta MI instance.
 
 External contributors may not have an instance of Granta MI at their disposal. Prior to creating a
 pull request with the desired changes, they should make sure that unit tests pass (:ref:`ref_tox`),
-static code validation and styling pass (:ref:`pre-commit <ref_precommit>`), and that the
+static code validation and styling pass (:ref:`pre-commit <ref_precommit>`), and
 documentation can be generated successfully without the examples
 (:ref:`Documenting <ref_documenting>`).
 

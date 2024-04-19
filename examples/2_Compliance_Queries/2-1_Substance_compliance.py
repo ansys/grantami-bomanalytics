@@ -13,16 +13,16 @@
 #     name: python3
 # ---
 
-# # Performing a Substance Compliance Query
+# # Perform a substance compliance query
 
-# A Substance Compliance Query determines whether one or more substances are compliant with the specified indicators.
-# This example checks several materials for substances included on two watch lists ("EU REACH - The Candidate List", and
+# A substance cmpliance query determines whether one or more substances are compliant with the specified indicators.
+# This example checks several materials for substances included on two watch lists ("EU REACH - The Candidate List" and
 # "The SIN List 2.1"), specifying substance amounts and thresholds for compliance.
 
-# ## Connecting to Granta MI
+# ## Connect to Granta MI
 
-# Import the ``Connection`` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb)
-# example for more details.
+# Import the ``Connection`` class and create the connection. For more information, see the
+# [Getting Started](../0_Getting_started.ipynb) example.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -31,16 +31,16 @@ server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
-# ## Defining an Indicator
+# ## Define an indicator
 
-# A Compliance query determines compliance against 'Indicators', as opposed to an Impacted Substances query which
+# A Compliance query determines compliance against indicators, as opposed to an Impacted Substances query which
 # determines compliance directly against legislations.
 #
-# There are two types of Indicator object (``WatchListIndicator`` and ``RohsIndicator``), and the syntax presented below
-# applies to both. The differences in the internal implementation of the two objects are described in the API
-# documentation.
+# There are two types of indicator objects (``WatchListIndicator`` and ``RohsIndicator``), and the syntax that
+# follows applies to both object types. The differences in the internal implementation of the two objects are
+# described in the API documentation.
 #
-# Generally speaking, if a substance is impacted by a legislation associated with an indicator, and in a quantity
+# Generally speaking, if a substance is impacted by a legislation associated with an indicator and in a quantity
 # above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to
 # any other items in the BoM hierarchy that directly or indirectly include that substance.
 
@@ -61,13 +61,13 @@ sin = indicators.WatchListIndicator(
 # -
 
 # + [markdown] tags=[]
-# ## Building and Running the Query
+# ## Build and run the query
 # -
 
 # Next, define the query itself. Substances can be referenced by Granta MI record reference, CAS
-# Number, EC Number, or Chemical Name.
+# number, EC number, or chemical name.
 #
-# The substance quantity is an optional argument, and defaults to 100% if not specified.
+# The substance quantity, an optional argument, defaults to 100% if no value is specified.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import queries
@@ -90,13 +90,13 @@ sub_result
 # The result object contains two properties: ``compliance_by_substance_and_indicator`` and ``compliance_by_indicator``.
 # -
 
-# ## Results Grouped by Substance
+# ## Group results by substance
 
 # + [markdown] tags=[]
 # ``compliance_by_substance_and_indicator`` contains a list of ``SubstanceWithComplianceResult`` objects that contain
 # the reference to the substance record and the compliance status in the list of indicators. To determine which
-# substances are compliant, we can loop over each one and compare the indicator to a certain threshold. For this
-# example, we will only examine the SVHC indicator.
+# substances are compliant, loop over each one and compare the indicator to a certain threshold. This
+# example examines the SVHC indicator.
 # -
 
 # The possible states of the indicator are available on the ``Indicator.available_flags`` attribute and can be compared
@@ -114,7 +114,7 @@ for substance in sub_result.compliance_by_substance_and_indicator:
         compliant_substances.append(substance)
 # -
 
-# Now print the SVHC and Non-SVHC substances.
+# Now print the SVHC and non-SVHC substances.
 
 # + tags=[]
 compliant_cas_numbers = [sub.cas_number for sub in compliant_substances]
@@ -124,21 +124,22 @@ non_compliant_cas_numbers = [sub.cas_number for sub in non_compliant_substances]
 print(f'SVHCs: {", ".join(non_compliant_cas_numbers)}')
 # -
 
-# ## Results Grouped by Indicator
+# ## Group results by indicator
 
-# Alternatively, using the ``compliance_by_indicator`` property provides a single indicator result that summarizes the
-# results across all substances in the query. This would be useful in a situation where we have a 'concept' material
-# stored outside of Granta MI, and we want to determine its compliance. We know it contains the substances specified in
-# the query above, and so using ``compliance_by_indicator`` will tell us if that concept material is compliant based on
+# Alternatively, using the ``compliance_by_indicator`` property provides a single indicator result
+# that summarizes the results across all substances in the query. This would be useful in a situation
+# where a *concept* material is stored outside of Granta MI but its compliance must be determined.
+# Because you know it contains the substances specified in the preceding query, you can use the
+# ``compliance_by_indicator`` property to tell if this concept material is compliant based on
 # the worst result of the individual substances.
 
 # + tags=[]
 if sub_result.compliance_by_indicator["SVHC"] >= threshold:
-    print("One or more substances is an SVHC in a quantity > 0.1%")
+    print("One or more substances is an SVHC with a quantity greater than 0.1%")
 else:
-    print("No SVHCs, or SVHCs are present in a quantity < 0.1%")
+    print("No SVHCs are present, or no SVHCs have a quantity less than 0.1%.")
 # -
 
-# Note that this property does not tell us which substance is responsible for the non-compliance. This would require
-# performing a more granular analysis as shown above, or importing the material into Granta MI and running a compliance
-# query on that material record.
+# Note that this property does not tell you which substance is responsible for the non-compliance. This would require
+# either performing a more granular analysis as shown earlier or importing the material into Granta MI and running
+# a compliance query on that material record.

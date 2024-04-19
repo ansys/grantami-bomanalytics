@@ -38,6 +38,7 @@ extensions = [
     "sphinx.ext.coverage",
     "enum_tools.autoenum",
     "nbsphinx",
+    "sphinx_design",
 ]
 
 # sphinx

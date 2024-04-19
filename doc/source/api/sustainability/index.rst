@@ -12,9 +12,9 @@ The BoM analysis only considers items explicitly defined in the input BoM. It do
 to other BoM items as in the record-based queries available for Impacted Substances and Compliance
 analysis.
 
-For more information about BoM item types relevant for sustainability analysis, refer to the
+For more information about BoM item types relevant for sustainability analysis, see
 :MI_docs:`BoM item types for Sustainability <rs_and_sustainability/bom_types_sustainability.html>`
-section of the online documentation.
+in the Granta MI product documentation.
 
 .. note:: The API documented in this section is only available if you have the MI Restricted
   Substances feature included in your license. A

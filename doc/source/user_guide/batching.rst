@@ -7,14 +7,12 @@ Applicability
 -------------
  .. py:currentmodule:: ansys.grantami.bomanalytics.queries
 
-.. include:: ../reusable_text/query_types.rst
-
 Record-based queries are batched if they exceed a certain size. When you perform a record-based
 query, batching is achieved by splitting the list of records into smaller lists to reduce the
 overall time it takes to obtain results.
 
 Both the :class:`~BomSustainabilityQuery` and :class:`~BomSustainabilitySummaryQuery` are BoM-based
-queries, and so this page is not relevant for sustainability analysis. The advice given below is
+queries, and so this page is not relevant for sustainability analysis. The following advice is
 relevant for restricted substances analysis only.
 
 When should the batch size be modified?

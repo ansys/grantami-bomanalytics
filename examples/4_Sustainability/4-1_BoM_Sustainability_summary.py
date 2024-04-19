@@ -28,9 +28,9 @@ from ansys.grantami.bomanalytics import Connection
 server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 
-# Next, create a sustainability summary query. The query accepts a single BoM as argument, as well as optional
-# configuration for units. If a unit is not specified, the default unit is used. Default units for the analysis are:
-# `MJ` for energy, `kg` for mass, and `km` for distance.
+# Next, create a sustainability summary query. The query accepts a single BoM as argument and an optional
+# configuration for units. If a unit is not specified, the default unit is used. Default units for the analysis are
+# ``MJ`` for energy, ``kg`` for mass, and ``km`` for distance.
 
 # +
 xml_file_path = "supporting-files/bom-2301-assembly.xml"
@@ -53,22 +53,22 @@ sustainability_summary_query = (
 sustainability_summary = cxn.run(sustainability_summary_query)
 sustainability_summary
 
-# The ``BomSustainabilitySummaryQueryResult`` object returned implements a ``messages`` property, and properties
+# The ``BomSustainabilitySummaryQueryResult`` object that is returned implements a ``messages`` property and properties
 # showing the environmental impact of the items included in the BoM.
-# Log messages are sorted by decreasing severity. The same messages are available on in the MI Service Layer log file,
-# and are logged via the standard ``logging`` module.
+# Log messages are sorted by decreasing severity. The same messages are available in the MI Service Layer log file
+# and are logged using the standard ``logging`` module.
 # The next sections show examples of visualizations for the results of the sustainability summary query.
 #
 # ## Summary per phase
-# The sustainability summary result object contains a `phases_summary` property. This property summarizes the
+# The sustainability summary result object contains a ``phases_summary`` property. This property summarizes the
 # environmental impact contributions by lifecycle phase: materials, processes, and transport phases. The results for
 # each phase include their absolute and relative contributions to the product as a whole.
 
 sustainability_summary.phases_summary
 
 # Use the [pandas](https://pandas.pydata.org/) and [plotly](https://plotly.com/python/) libraries to visualize the
-# results. The data will first be translated from the BoM Analytics ``BomSustainabilitySummaryQueryResult`` to a pandas
-# ``Dataframe``
+# results. First, the data is translated from the BoM Analytics ``BomSustainabilitySummaryQueryResult`` to a pandas
+# ``Dataframe`` object.
 
 # +
 import pandas as pd
@@ -112,9 +112,9 @@ def plot_impact(df, title, textinfo="percent+label", hoverinfo="value+name"):
 plot_impact(phases_df, "BoM sustainability summary - By phase")
 # -
 
-# ## The transport phase
+# ## Transport phase
 #
-# The environmental contribution from the transport phase is summarized in the `transport_details` property. Results
+# The environmental contribution from the transport phase is summarized in the ``transport_details`` property. Results
 # include the individual environmental impact for each transport stage included in the input BoM.
 
 sustainability_summary.transport_details
@@ -140,8 +140,8 @@ transport_df
 
 plot_impact(transport_df, "Transport stages - environmental impact")
 
-# In some situations, it may be useful to calculate the environmental impact per distance travelled and add the
-# results as new columns in the `DataFrame`.
+# In some situations, it might be useful to calculate the environmental impact per distance travelled and add the
+# results as new columns in the dataframe.
 
 EE_PER_DISTANCE = f"EE [{ENERGY_UNIT}/{DISTANCE_UNIT}]"
 CC_PER_DISTANCE = f"CC [{MASS_UNIT}/{DISTANCE_UNIT}]"
@@ -167,9 +167,9 @@ fig.update_layout(
 fig.update_traces(textposition="inside", textinfo="percent+label", hoverinfo="value+name")
 fig.show()
 
-# ## The materials phase
+# ## Materials phase
 #
-# The environmental contribution from the material phase is summarized in the `material_details` property. The results
+# The environmental contribution from the material phase is summarized in the ``material_details`` property. The results
 # are aggregated: each item in ``material_details`` represents the total environmental impact of a material summed
 # from all its occurrences in the BoM. Listed materials contribute more than 2% of the total impact for the material
 # phase. Materials that do not contribute at least 2% of the total are aggregated under the ``Other`` item.
@@ -218,15 +218,16 @@ fig = go.Figure(
 )
 fig.show()
 
-# ## The material processing phase
+# ## Material processing phase
 #
-# The environmental contributions from primary and secondary processing (applied to materials), and joining and
-# finishing processes (applied to parts) are summarized in the primary_processes_details, secondary_processes_details,
-# and joining_and_finishing_processes_details properties respectively. Each of these properties lists the unique
-# process-material pairs (for primary and secondary processing) or individual processes (for joining and finishing) that
-# contribute at least 5% of the total impact for that category of process. The percentage contributions are relative to
-# the total contribution of all processes from the same category. Processes that do not meet the contribution threshold
-# are aggregated under the Other item, with the material set to None.
+# The environmental contributions from primary and secondary processing (applied to materials) and the joining and
+# finishing processes (applied to parts) are summarized in the ``primary_processes_details``,
+# ``secondary_processes_details``, and ``joining_and_finishing_processes_details`` properties respectively.
+# Each of these properties lists the unique process-material pairs (for primary and secondary processing) or
+# individual processes (for joining and finishing) that contribute at least 5% of the total impact for that
+# category of process. The percentage contributions are relative to the total contribution of all processes
+# from the same category. Processes that do not meet the contribution threshold are aggregated under the
+# ``Other`` item, with the material set to ``None``.
 
 # ### Primary processing
 
@@ -247,7 +248,7 @@ primary_process_df = pd.DataFrame.from_records(
 )
 primary_process_df
 
-# Add a `Name` to each item that represents the process-material pair name.
+# Add a ``Name`` to each item that represents the process-material pair name.
 
 primary_process_df["Name"] = primary_process_df.apply(
     lambda row: f"{row['Process name']} - {row['Material name']}", axis=1
@@ -275,7 +276,7 @@ secondary_process_df = pd.DataFrame.from_records(
 )
 secondary_process_df
 
-# Add a `Name` to each item that represents the process-material pair name.
+# Add a ``Name`` to each item that represents the process-material pair name.
 
 secondary_process_df["Name"] = secondary_process_df.apply(
     lambda row: f"{row['Process name']} - {row['Material name']}", axis=1
@@ -311,15 +312,15 @@ plot_impact(
 
 # ## Hierarchical view
 #
-# Finally, aggregate the sustainability summary results into a single `DataFrame` and present it in a hierarchical
+# Finally, aggregate the sustainability summary results into a single dataframe and present it in a hierarchical
 # chart. This highlights the largest contributors at each level. In this example, two levels are defined:
 # first the phase and then the contributors in the phase.
 
 # First, rename the processes ``Other`` rows, so that they remain distinguishable after all processes have been
 # grouped under a general ``Processes``.
 #
-# Use `assign` to add a `parent` column to each `DataFrame` being concatenated.
-# The `join` argument value `inner` specifies that only columns common to all dataframes are kept in the result.
+# Use ``assign`` to add a ``parent`` column to each dataframe being concatenated.
+# The ``join`` argument value ``inner`` specifies that only columns common to all dataframes are kept in the result.
 
 # +
 primary_process_df.loc[(primary_process_df["Name"] == "Other - None"), "Name"] = "Other primary processes"

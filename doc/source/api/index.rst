@@ -13,11 +13,6 @@ general capabilities applicable to both restricted substances and sustainability
   returned by the Granta MI server.
 - :ref:`ref_grantami_bomanalytics_common_exceptions` lists the possible custom exceptions that
   might be raised.
-- :ref:`ref_grantami_bomanalytics_batching` explains how queries are batched if they exceed a
-  certain size.
-- :ref:`ref_grantami_bomanalytics_query_type_differences` explains some key differences between
-  record-based and BoM-based queries, including how records are identified and how additional
-  items are included in the analysis.
 - :ref:`ref_grantami_bomanalytics_bom_helpers_index` explains how to create, read, edit, and save
   BoM objects for restricted substances and sustainability analysis.
 
@@ -38,8 +33,6 @@ analysis:
    :hidden:
 
    common
-   batching
-   query_type_differences
    impacted_substances/index
    compliance/index
    sustainability/index

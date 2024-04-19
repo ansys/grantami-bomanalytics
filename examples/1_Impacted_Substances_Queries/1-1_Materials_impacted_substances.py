@@ -15,15 +15,15 @@
 
 # # Perform a material impacted substances query
 
-# A Material Impacted Substances Query is used to identify the substances associated with a material that are impacted
+# A material impacted substances query is used to identify the substances associated with a material that are impacted
 # by one or more defined legislations.
 
-# This example shows how to perform an Impacted Substance query on material records, and how to process the results.
+# This example shows how to perform an Impacted Substance query on material records and how to process the results.
 
-# ## Connecting to Granta MI
+# ## Connect to Granta MI
 
-# Import the ``Connection`` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb)
-# example for more detail.
+# Import the ``Connection`` class and create the connection. For more information, see the
+# [Getting Started](../0_Getting_started.ipynb) example.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection
@@ -32,12 +32,12 @@ server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
-# ## Building and running the query
+# ## Build and run the query
 
-# The query is assembled by providing lists of material references and legislations of interest. The query will return
+# The query is assembled by providing lists of material references and legislations of interest. The query returns
 # the substances that are present in the specified materials and are impacted by the specified legislations.
 
-# First specify some constants that contain the material and legislation references we will use.
+# First specify some constants that contain the material and legislation references to use.
 
 # + tags=[]
 PPS_ID = "plastic-pps-generalpurpose"
@@ -76,8 +76,8 @@ results
 # contains a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation or a single flat list of all
 # substances.
 
-# First, we can simplify the structure somewhat because we are only using Material IDs. The cell below creates a
-# dictionary that maps Material IDs to lists of substances impacted by the 'SIN List'.
+# First, you can simplify the structure somewhat because you are only using Material IDs. The following cell creates a
+# dictionary that maps material IDs to lists of substances impacted by the ``SIN_LIST``.
 
 # + tags=[]
 substances_by_material = {}
@@ -101,11 +101,11 @@ print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 
 # ## View results grouped by legislation
 
-# This property merges the results across all materials, resulting in a single dictionary of legislations that contain
+# This property merges the results across all materials, resulting in a single dictionary of legislations that contains
 # all impacted substances for all materials.
 
-# Again we use the ``tabulate`` package to print a table of substances, but this time we are including the substances in
-# all materials, but again limited to the SIN List only.
+# Again use the ``tabulate`` package to print a table of substances, but this time include the substances in
+# all materials, one again limited to the ``SIN_LIST`` only.
 
 # + tags=[]
 material_substances_sin = results.impacted_substances_by_legislation[SIN_LIST]
@@ -120,8 +120,8 @@ print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 # This property reduces the granularity further to produce a single flattened list of substances across all legislations
 # for all materials.
 
-# The cell below uses the ``tabulate`` package to print a table of substances. Because we are using the
-# ``impacted_substances`` property, we only have one list of ``ImpactedSubstance`` objects which covers both
+# The following cell uses the ``tabulate`` package to print a table of substances. Because you are using the
+# ``impacted_substances`` property, you only have one list of ``ImpactedSubstance`` objects, which covers both
 # legislations and both materials.
 
 # + tags=[]

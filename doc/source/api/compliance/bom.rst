@@ -3,12 +3,12 @@
 BoM compliance
 ==============
 
-For more information about BoM item types relevant for compliance analysis, refer to the
+For more information about BoM item types relevant for compliance analysis, see
 :MI_docs:`BoM item types for Restricted Substances <rs_and_sustainability/bom_items_rs.html>`
-section of the online documentation.
+in the Granta MI product documentation.
 
-Consult :ref:`ref_grantami_bomanalytics_bom_query_restrictions` for some important restrictions on
-BoM-based queries.
+For some important restrictions on BoM-based queries, see
+:ref:`ref_grantami_bomanalytics_bom_query_restrictions`.
 
 Query definition
 ~~~~~~~~~~~~~~~~

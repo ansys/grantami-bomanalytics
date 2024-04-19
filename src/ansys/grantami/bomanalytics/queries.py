@@ -1629,7 +1629,7 @@ class _BomFormatConfiguration:
 
 
 class _BomQueryBuilder(_BaseQueryBuilder, ABC):
-    """Sub-class for all queries where the items added to the query are Boms."""
+    """Subclass for all queries where the items added to the query are Boms."""
 
     _supported_bom_formats: Dict[_BomFormat, _BomFormatConfiguration]
 
@@ -1642,7 +1642,7 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
 
         See the documentation for the parent query class for supported BoM formats.
 
-        Minimal validation is performed on the provided ``bom`` to ensure the request is sent to the appropriate
+        Minimal validation is performed on the provided BoM to ensure the request is sent to the appropriate
         endpoint. XSD files are provided in :mod:`~.schemas` for full validation.
 
         Parameters
@@ -1664,7 +1664,7 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
 
         Notes
         -----
-        See the :py:mod:`ansys.grantami.bomanalytics.schemas` sub-package for Ansys Granta XML BoM Schema Definitions.
+        See the :py:mod:`ansys.grantami.bomanalytics.schemas` subpackage for Ansys Granta XML BoM Schema Definitions.
 
         """
         self._data.bom = bom
@@ -1849,7 +1849,7 @@ class _SustainabilityMixin(_ApiMixin):
 
 
 class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
-    """Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format, and returns metrics for each
+    """Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format and returns metrics for each
     item in the BoM.
 
     The methods used to configure units and add the BoM to this query return the query itself so that they can be

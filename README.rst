@@ -33,13 +33,11 @@
    :alt: pre-commit.ci status
 
 
-ansys-grantami-bomanalytics
-###########################
+PyGranta BoM Analytics
+======================
 
-Project Overview
-----------------
-PyGranta BoM Analytics is part of the larger `PyAnsys <https://docs.pyansys.com>`_
-effort to facilitate the use of Ansys technologies directly from Python.
+..
+   _after-badges
 
 The MI Restricted Substances and MI Sustainability solutions for Granta MI include REST APIs for:
 
@@ -50,69 +48,58 @@ The MI Restricted Substances and MI Sustainability solutions for Granta MI inclu
 This package abstracts automatically-generated code into an easy-to-use client library.
 
 
+Dependencies
+------------
+.. readme_software_requirements
+
+To use the ``grantami-bomanalytics`` package, you must have access
+to a Granta MI server that includes MI Restricted Substances and Sustainability Reports
+2024 R1 or later.
+
+``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately.
+Endpoints available to end users depend on the available licenses.
+
+The ``ansys.grantami.bomanalytics`` package currently supports Python version 3.9 through 3.12.
+
+.. readme_software_requirements_end
+
+
 Installation
 ------------
-Install the ``ansys-grantami-bomanalytics`` package with this code:
+.. readme_installation
+
+To install the latest PyGranta JobQueue release from `PyPI <https://pypi.org/project/ansys-grantami-bomanalytics/>`_,
+run this command:
 
 .. code::
 
-   pip install ansys-grantami-bomanalytics
+    pip install ansys-grantami-bomanalytics
 
-To install a release compatible with a specific version of Granta MI, use the
-`PyGranta <https://grantami.docs.pyansys.com/>`_ meta-package with a requirement specifier:
+To install a release compatible with a specific version of Granta MI, install the
+`PyGranta <https://grantami.docs.pyansys.com/>`_ metapackage with a requirement specifier:
 
 .. code::
 
     pip install pygranta==2023.2.0
 
-Alternatively, clone and install this package with this code:
+Alternatively, to install the latest release from the `PyGranta BoM Analytics repository <https://github.com/ansys/grantami-bomanalytics>`_,
+run this command:
 
 .. code::
 
-   git clone https://github.com/ansys/grantami-bomanalytics
-   cd grantami-bomanalytics
-   pip install .
+    pip install git:https://github.com/ansys/grantami-bomanalytics.git
 
 
-Documentation
--------------
-The `PyGranta BoM Analytics Documentation <https://bomanalytics.grantami.docs.pyansys.com>`_
-provides comprehensive installation and usage information.
+To install a local *development* version with Git and Poetry, run these commands:
+
+.. code::
+
+    git clone https://github.com/ansys/grantami-bomanalytics
+    cd grantami-bomanalytics
+    poetry install
 
 
-Usage
------
-Here's a brief example of how to use PyGranta BoM Analytics:
+The preceding commands install the package in development mode so that you can modify
+it locally. Your changes are reflected in your Python setup after restarting the Python kernel.
 
-.. code:: python
-
-    # Connect and query the Granta service.
-
-    >>> from pprint import pprint
-    >>> from ansys.grantami.bomanalytics import Connection, queries
-    >>> cxn = Connection("http://my_grantami_server/mi_servicelayer").with_autologon().connect()
-    >>> query = (
-    ...     queries.MaterialImpactedSubstancesQuery()
-    ...     .with_material_ids(['plastic-abs-pvc-flame'])
-    ...     .with_legislation_ids(['Candidate_AnnexXV'])
-    ... )
-
-    # Print out the result from the query.
-
-    >>> result = cxn.run(query)
-    >>> pprint(result.impacted_substances)
-    [<ImpactedSubstance: {"cas_number": 10108-64-2, "percent_amount": 1.9}>,
-     <ImpactedSubstance: {"cas_number": 107-06-2, "percent_amount": None}>,
-     <ImpactedSubstance: {"cas_number": 115-96-8, "percent_amount": 15.0}>,
-    ...
-
-
-Testing
--------
-For information on testing, see the ``Contributing`` section of the documentation.
-
-
-License
--------
-PyGranta BoM Analytics is provided under the terms of the MIT license. You can find
-this license in the LICENSE file at the root of the repository.
+.. readme_installation_end

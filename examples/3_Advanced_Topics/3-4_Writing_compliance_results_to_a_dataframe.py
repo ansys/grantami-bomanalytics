@@ -56,14 +56,14 @@ for part in part_result.compliance_by_part_and_indicator[0].parts:
     )
 # -
 
-# However, this structure makes it difficult to compare items at different levels. To do that, you want to flatten the
+# However, this structure makes it difficult to compare items at different levels. To do this, you want to flatten the
 # data into a tabular structure.
 
 # ## Flatten the hierarchical data structure
 
 # You want to flatten the data into a ``list`` of ``dict`` objects, where each ``dict`` object represents an item in the
-# hierarchy and each value in the ``dict`` object represents a property of this item. You can this use this structure
-# can then directly or use it to construct a ``pandas.DataFrame`` object.
+# hierarchy and each value in the ``dict`` object represents a property of this item. You can then use this structure
+# directly or use it to construct a ``pandas.DataFrame`` object.
 
 # First, define a helper function to transform a ``ComplianceQueryResult`` object into a ``dict`` object. In addition to
 # storing properties that are intrinsic to the item (such as the ID, type, and SVHC result), you want to store
@@ -100,7 +100,7 @@ schema = {
 # -
 
 
-# The function itself performs the flattening via a stack-based approach, where the children of the item currently
+# The function itself performs the flattening using a stack-based approach, where the children of the item currently
 # being processed are iteratively added to the ``items_to_process`` stack. Because this stack is being both modified and
 # iterated over, you must use a ``while`` loop and ``.pop()`` statement instead of a ``for`` loop.
 
@@ -168,9 +168,9 @@ df_full.head()
 
 # ## Postprocess the ``pandas.DataFrame`` object
 
-# Now that you have the data in a ``pandas.DataFrame`` object, you can perform operations across all levels of the
-# structure more easily. For example, you can delete all rows that are less than the 'Above Threshold' state, retaining
-# only rows that are non-compliant. (Note that this reduces the number of rows significantly.)
+# Now that you have the data in a ``pandas.DataFrame`` object, performing operations across all levels of the
+# structure is easier. For example, you can delete all rows that are less than the ``WatchListAboveThreshold``
+# state, retaining only rows that are non-compliant. (Note that this reduces the number of rows significantly.)
 
 # + tags=[]
 threshold = indicators.WatchListFlag.WatchListAboveThreshold

@@ -276,7 +276,7 @@ secondary_process_df = pd.DataFrame.from_records(
 )
 secondary_process_df
 
-# Add a ``Name``` to each item that represents the process-material pair name.
+# Add a ``Name`` to each item that represents the process-material pair name.
 
 secondary_process_df["Name"] = secondary_process_df.apply(
     lambda row: f"{row['Process name']} - {row['Material name']}", axis=1

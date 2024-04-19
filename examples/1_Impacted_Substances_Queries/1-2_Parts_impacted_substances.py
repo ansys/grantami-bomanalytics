@@ -43,7 +43,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # The query is assembled by providing lists of part references and legislations of interest. The query returns
 # the substances that are present in the specified parts and are impacted by the specified legislations.
 #
-# In this example, the ``DRILL``` part is used. In contrast to the Material version of this query shown in
+# In this example, the ``DRILL`` part is used. In contrast to the Material version of this query shown in
 # a previous example, this part does not reference any substances directly. Instead, it references
 # subcomponents, which in turn reference materials, which then reference substances. The Part Impacted Substances
 # Query flattens all these layers of complexity and aggregates them together into a single list.

@@ -33,7 +33,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 
 # ## Define an indicator
 
-# A Compliance query determines compliance against iIndicators, as opposed to an Impacted Substances query which
+# A Compliance query determines compliance against indicators, as opposed to an Impacted Substances query which
 # determines compliance directly against legislations.
 #
 # There are two types of indicator objects (``WatchListIndicator`` and ``RohsIndicator``), and the following syntax
@@ -105,7 +105,7 @@ pa_66 = mat_result.compliance_by_material_and_indicator[0]
 print(f"PA66 (60% glass fiber): {pa_66.indicators['SVHC'].flag.name}")
 # -
 
-# The reinforced PA66 record has a status of ``WatchListHasSubstanceAboveThreshold```, which tells
+# The reinforced PA66 record has a status of ``WatchListHasSubstanceAboveThreshold``, which tells
 # you that the material is not compliant with the indicator and therefore contains SVHCs above the
 # 0.1% threshold.
 
@@ -148,7 +148,7 @@ print(f"Zn-Pb-Cd low alloy: {zn_pb_cd.indicators['SVHC'].flag.name}")
 # The zinc alloy record has the status ``WatchListAllSubstancesBelowThreshold``, which means that there are
 # substances present that are impacted by the legislation but are below the 0.1% threshold.
 
-# You can print these substances using the ``WatchListBelowThreshold``` flag as the threshold.
+# You can print these substances using the ``WatchListBelowThreshold`` flag as the threshold.
 
 # + tags=[]
 below_threshold_flag = svhc.available_flags.WatchListBelowThreshold

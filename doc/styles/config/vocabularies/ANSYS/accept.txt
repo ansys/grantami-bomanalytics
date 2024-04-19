@@ -10,3 +10,4 @@ PyGranta BoM Analytics
 RoHS
 Makefile
 Jupytext
+subpackage

@@ -4,7 +4,7 @@ ci:
 repos:
 
 - repo: https://github.com/psf/black
-  rev: 24.3.0
+  rev: 24.4.2
   hooks:
   - id: black
     exclude: ^examples/|doc/|.ipython/
@@ -59,12 +59,12 @@ repos:
 
 # this validates our github workflow files
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.28.1
+  rev: 0.28.2
   hooks:
     - id: check-github-workflows
 
 - repo: https://github.com/ansys/pre-commit-hooks
-  rev: v0.3.0
+  rev: v0.3.1
   hooks:
     - id: add-license-headers
       args:

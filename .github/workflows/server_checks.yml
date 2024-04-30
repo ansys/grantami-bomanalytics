@@ -104,10 +104,10 @@ jobs:
         run: tox -e tests -- -m "integration"
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
-          TEST_ADMIN_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
-          TEST_ADMIN_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
-          TEST_READ_USER: ${{secrets.TEST_SERVER_READ_USER}}
-          TEST_READ_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+          TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
+          TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
 
       - name: "Upload coverage artifacts"
         uses: actions/upload-artifact@v4

@@ -142,7 +142,7 @@ jobs:
         with:
           check-links: false
           dependencies: "pandoc"
-          sphinxopts: "-j 1 -n -W --keep-going"
+          sphinxopts: "-n -W --keep-going"
 
   check-workflow-runs:
     name: Check if there are active workflow runs

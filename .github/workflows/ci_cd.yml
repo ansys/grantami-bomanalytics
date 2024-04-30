@@ -45,7 +45,7 @@ jobs:
       with:
         check-links: false
         dependencies: "pandoc"
-        sphinxopts: "-j 1 -n -W --keep-going"
+        sphinxopts: "-n -W --keep-going"
 
     - name: "Delete unneeded doc artifact"
       if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}

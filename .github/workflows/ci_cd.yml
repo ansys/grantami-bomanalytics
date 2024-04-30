@@ -93,7 +93,7 @@ jobs:
           python -m pip install --upgrade pip poetry tox
 
       - name: "Test with tox"
-        run: tox -e tests -- -m "not integration"
+        run: tox -e "tests" -- -m "not integration"
 
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v4

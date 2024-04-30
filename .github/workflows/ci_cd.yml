@@ -1,104 +1,168 @@
-name: Pre-merge checks
-
-# Run only on main branch. This avoids duplicated actions on PRs
+name: CI
 on:
   pull_request:
   push:
     tags:
-      - '*'
+      - "*"
     branches:
       - main
-    paths-ignore:
-      - '.github/**'
-      - 'pyproject.toml'
   workflow_dispatch:
-  merge_group:
 
 env:
+  MAIN_PYTHON_VERSION: '3.9'
   DOCUMENTATION_CNAME: 'bomanalytics.grantami.docs.pyansys.com'
+  LIBRARY_NAME: 'ansys-grantami-bomanalytics'
+  LIBRARY_NAMESPACE: 'ansys.grantami.bomanalytics'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  local_checks:
-    name: Package checks
-    uses: ./.github/workflows/local_checks.yml
-    secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  integration_checks:
-    name: Integration checks
-    needs: local_checks
+  code-style:
+    name: "Code style"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ansys/actions/code-style@v6
+        with:
+          skip-install: false
+
+  doc-style:
+    name: "Documentation style"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ansys/actions/doc-style@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  doc-build:
+    name: Documentation Build (mock examples)
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Run Ansys documentation building action"
+      uses: ansys/actions/doc-build@v6
+      with:
+        check-links: false
+        dependencies: "pandoc"
+        sphinxopts: "-j 1 -n -W --keep-going"
+
+    - name: "Delete unneeded doc artifact"
+      if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+      uses: geekyeggo/delete-artifact@v5
+      with:
+        name: |
+          documentation-html
+          documentation-pdf
+
+  smoke-tests:
+    name: "Build wheelhouse for latest Python versions"
+    runs-on: ${{ matrix.os }}
+    needs: code-style
+    strategy:
+       matrix:
+           os: [ubuntu-latest, windows-latest]
+           python-version: ['3.9', '3.10', '3.11', '3.12']
+    steps:
+      - uses: ansys/actions/build-wheelhouse@v6
+        with:
+          library-name: ${{ env.LIBRARY_NAME }}
+          operating-system: ${{ matrix.os }}
+          python-version: ${{ matrix.python-version }}
+
+  tests:
+    name: "Tests Python ${{ matrix.python-version }}, ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    needs: smoke-tests
+    strategy:
+      matrix:
+       os: [ubuntu-latest, windows-latest]
+       python-version: ['3.9', '3.10', '3.11', '3.12']
+      fail-fast: false
+    steps:
+      - name: "Checkout the repository"
+        uses: actions/checkout@v4
+
+      - name: "Set up Python ${{ matrix.python-version }}"
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: "Install Python dependencies"
+        run: |
+          python -m pip install --upgrade pip poetry tox
+
+      - name: "Test with tox"
+        run: tox -e tests -- -m "not integration"
+
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v4
+        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: .cov/xml
+          flags: unittests
+          fail_ci_if_error: true
+
+  build-library:
+    name: "Build library"
+    runs-on: ubuntu-latest
+    needs: [ doc-build, tests]
+    steps:
+      - uses: ansys/actions/build-library@v6
+        with:
+          library-name: ${{ env.LIBRARY_NAME }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+  server-checks:
+    name: "Server checks"
+    needs: [ smoke-tests ]
     if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     uses: ./.github/workflows/server_checks.yml
     with:
       skip-vm-management: ${{ vars.SKIP_VM_MANAGEMENT == 'true' }}
-    secrets: inherit
+    secrets:
+      inherit
 
   doc-deploy-dev:
     name: "Deploy development documentation"
     runs-on: ubuntu-latest
-    needs: [ integration_checks ]
+    needs: [server-checks]
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
       - uses: ansys/actions/doc-deploy-dev@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          doc-artifact-name: Documentation-html
+          doc-artifact-name: documentation-html
 
-  Release:
-    if: contains(github.ref, 'refs/tags') && github.event_name == 'push'
-    needs: integration_checks
+  release:
+    name: "Release"
     runs-on: ubuntu-latest
+    needs: [build-library, server-checks]
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:
-      - name: "Deploy stable documentation"
-        uses: ansys/actions/doc-deploy-stable@v6
+      - uses: ansys/actions/release-pypi-public@v6
+        name: "Release to public PyPI"
+        with:
+          library-name: ${{ env.LIBRARY_NAME }}
+          twine-username: "__token__"
+          twine-token: ${{ secrets.PYPI_TOKEN }}
+
+      - uses: ansys/actions/release-github@v6
+        name: "Release to GitHub"
+        with:
+          library-name: ${{ env.LIBRARY_NAME }}
+
+  doc-deploy-stable:
+    name: "Deploy stable documentation"
+    runs-on: ubuntu-latest
+    needs: release
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    steps:
+      - uses: ansys/actions/doc-deploy-stable@v6
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          doc-artifact-name: Documentation-html
-
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: ansys-grantami-bomanalytics-wheel
-          path: dist
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: Documentation-pdf
-          path: dist
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: Documentation-html
-          path: dist/documentation-html/
-
-      - name: "Compressing HTML documentation"
-        uses: vimtor/action-zip@v1.2
-        with:
-          files: dist/documentation-html/
-          dest: dist/documentation-html.zip
-
-      # note how we use the PyPI tokens
-      - name: Upload to PyPI
-        run: |
-          pip install twine
-          twine upload --non-interactive --skip-existing dist/*.whl
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          generate_release_notes: true
-          files: |
-            dist/*.whl
-            dist/documentation-html.zip
-            dist/*.pdf
+          doc-artifact-name: documentation-html

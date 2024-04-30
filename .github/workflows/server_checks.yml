@@ -136,8 +136,8 @@ jobs:
         uses: ansys/actions/doc-build@v6
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
-          TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
-          TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
+          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
           BUILD_EXAMPLES: "true"
         with:
           check-links: false

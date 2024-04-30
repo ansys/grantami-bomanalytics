@@ -73,11 +73,11 @@ jobs:
           source ./venv/bin/activate
           pip install requests --disable-pip-version-check
           pip freeze
-          python .github/scripts/check_server.py
+          python .github/cicd/check_server.py
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
-          TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
-          TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
+          TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
+          TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
   integration-tests:
     name: "Integration tests in ${{ matrix.os }}"

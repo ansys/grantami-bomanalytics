@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import os
 from pathlib import Path
 import shutil
@@ -15,18 +15,38 @@ from class_documenter import ClassDocumenter
 
 sys.path.insert(0, os.path.abspath("../../src"))
 
-
-# -- Project information -----------------------------------------------------
-
-project = "ansys.grantami.bomanalytics"
-copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
-author = "ANSYS Inc."
-html_title = f"PyGranta BoM Analytics {__version__}"
-
-# The short X.Y version
+# Project information
+project = "ansys-grantami-bomanalytics"
+now = datetime.datetime.now()
+project_copyright = f"(c) {now.year} ANSYS, Inc. All rights reserved"
+author = "ANSYS, Inc."
 release = version = __version__
 
-# -- General configuration ---------------------------------------------------
+# Select desired logo, theme, and declare the html title
+html_logo = pyansys_logo_black
+html_theme = "ansys_sphinx_theme"
+html_short_title = html_title = f"PyGranta BoM Analytics {__version__}"
+html_favicon = ansys_favicon
+
+cname = os.getenv("DOCUMENTATION_CNAME", "bomanalytics.grantami.docs.pyansys.com")
+"""The canonical name of the webpage hosting the documentation."""
+
+# specify the location of your github repo
+html_theme_options = {
+    "github_url": "https://github.com/ansys/grantami-bomanalytics",
+    "show_prev_next": False,
+    "show_breadcrumbs": True,
+    "additional_breadcrumbs": [
+        ("PyAnsys", "https://docs.pyansys.com/"),
+        ("PyGranta", "https://grantami.docs.pyansys.com/"),
+    ],
+    "switcher": {
+        "json_url": f"https://{cname}/versions.json",
+        "version_match": get_version_match(__version__),
+    },
+    "check_switcher": True,
+}
+
 extensions = [
     "sphinx.ext.autodoc",
     "numpydoc",
@@ -155,96 +175,6 @@ todo_include_todos = False
 # exclude traditional Python prompts from the copied code
 copybutton_prompt_text = r">>> ?|\.\.\. "
 copybutton_prompt_is_regexp = True
-
-
-# -- Options for HTML output -------------------------------------------------
-cname = os.getenv("DOCUMENTATION_CNAME", "bomanalytics.grantami.docs.pyansys.com")
-"""The canonical name of the webpage hosting the documentation."""
-html_theme = "ansys_sphinx_theme"
-html_favicon = ansys_favicon
-html_logo = pyansys_logo_black
-html_theme_options = {
-    "github_url": "https://github.com/ansys/grantami-bomanalytics",
-    "additional_breadcrumbs": [
-        ("PyAnsys Documentation", "https://docs.pyansys.com/"),
-        ("PyGranta", "https://grantami.docs.pyansys.com/"),
-    ],
-    "show_breadcrumbs": True,
-    "switcher": {
-        "json_url": f"https://{cname}/versions.json",
-        "version_match": get_version_match(__version__),
-    },
-    "check_switcher": True
-}
-
-# -- Options for HTMLHelp output ---------------------------------------------
-
-# Output file base name for HTML help builder.
-htmlhelp_basename = "pybomanalyticsdoc"
-
-
-# -- Options for LaTeX output ------------------------------------------------
-latex_elements = {"extraclassoptions": "openany,oneside"}
-latex_engine = "xelatex"
-
-# Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    ("latexindex", "pyansys.tex", "ansys.grantami.bomanalytics Documentation", author, "manual"),
-]
-
-
-# -- Options for manual page output ------------------------------------------
-
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [
-    (
-        master_doc,
-        "ansys.grantami.bomanalytics",
-        "ansys.grantami.bomanalytics Documentation",
-        [author],
-        1,
-    )
-]
-
-
-# -- Options for Texinfo output ----------------------------------------------
-
-# Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
-#  dir menu entry, description, category)
-texinfo_documents = [
-    (
-        master_doc,
-        "ansys.grantami.bomanalytics",
-        "ansys.grantami.bomanalytics Documentation",
-        author,
-        "ansys.grantami.bomanalytics",
-        "Python interface to the Granta MI Restricted Substances module",
-        "Engineering Software",
-    ),
-]
-
-
-# -- Options for Epub output -------------------------------------------------
-
-# Bibliographic Dublin Core info.
-epub_title = project
-
-# The unique identifier of the text. This can be a ISBN number
-# or the project homepage.
-#
-# epub_identifier = ''
-
-# A unique identification for the text.
-#
-# epub_uid = ''
-
-# A list of files that should not be packed into the epub file.
-epub_exclude_files = ["search.html"]
-
 
 # -- Example Script functions -------------------------------------------------
 

@@ -1,10 +1,16 @@
 on:
   workflow_call:
     inputs:
+      python-version:
+        description: >
+          Python version used for installing and running ``pre-commit``.
+        default: '3.10'
+        required: false
+        type: string
       skip-vm-management:
         description: >
-          Whether to skip or not the start up of the virtual machine. Default
-          value is ``false``.
+            Whether to skip or not the start up of the virtual machine. Default
+            value is ``false``.
         required: false
         default: false
         type: boolean
@@ -38,67 +44,78 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  start_vm:
-    name: Start Azure VM
+
+  start-vm:
+    name: "Start Azure VM"
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: "Checkout the repository"
+        uses: actions/checkout@v4
 
-      - name: Start VM with Azure CLI
+      - name: "Start VM with Azure CLI"
         id: azure_cli
         uses: azure/CLI@v2
-        if: ${{ !(inputs.skip-vm-management)}}
+        if:   ${{ !(inputs.skip-vm-management)}}
         with:
           azcliversion: 2.32.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
             az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME_NEXT }}
 
-      - name: Check server is ready
+      - name: "Set up Python ${{ inputs.python-version }}"
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: "Check if server is ready"
         run: |
+          python -m venv ./venv
+          source ./venv/bin/activate
           pip install requests --disable-pip-version-check
-          python cicd/check_server.py
+          pip freeze
+          python ./cicd/check_server.py
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-  integration_tests:
-    name: Integration tests
+  integration-tests:
+    name: "Integration tests in ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
-    needs: start_vm
-
+    needs: start-vm
     strategy:
       max-parallel: 1
       matrix:
         os: [ubuntu-latest, windows-latest]
-
     steps:
-      - uses: actions/checkout@v4
+      - name: "Checkout the repository"
+        uses: actions/checkout@v4
 
-      - name: Set up Python 3.9
+      - name: "Set up Python ${{ inputs.python-version }}"
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: ${{ inputs.python-version }}
 
-      - name: Install kerberos headers (ubuntu only)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - name: "Install Python dependencies"
         run: |
-          sudo apt-get update
-          sudo apt install libkrb5-dev
+          pip install poetry 'tox<4' --disable-pip-version-check
 
-      - name: Install dependencies
-        run: pip install poetry 'tox<4' --disable-pip-version-check
-
-      - name: Test with tox (integration tests only)
-        run: tox -- -m "integration"
+      - name: "Test with tox (integration tests only)"
+        run: tox -e tests -- -m "integration"
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
           TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
           TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
+
+      - name: "Upload coverage artifacts"
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+        with:
+          name: coverage-html-unittests
+          path: .cov/html
+          retention-days: 7
 
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v4
@@ -110,70 +127,35 @@ jobs:
           flags: integration
           fail_ci_if_error: true
 
-  docs:
-    name: Build documentation
+  doc-build:
+    name: "Build documentation"
     runs-on: ubuntu-latest
-    needs: integration_tests
-
+    needs: integration-tests
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-
-      - name: Install system dependencies
-        run: |
-          sudo apt update
-          sudo apt install libkrb5-dev
-          sudo apt install pandoc
-          sudo apt install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
-
-      - name: Install library
-        run: |
-          pip install poetry --disable-pip-version-check
-          poetry install --with doc
-
-      - name: Build HTML Documentation
-        run:  make -C doc html SPHINXOPTS="-W"
+      - name: "Run Ansys documentation building action"
+        uses: ansys/actions/doc-build@v6
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
-          BUILD_EXAMPLES: 1
-
-      - name: Build PDF Documentation
-        run: make -C doc latexpdf
-
-      - name: Upload HTML Documentation
-        uses: actions/upload-artifact@v4
+          BUILD_EXAMPLES: "true"
         with:
-          name: Documentation-html
-          path: doc/build/html
-          retention-days: 7
+          check-links: false
+          dependencies: "pandoc"
+          sphinxopts: "-n -W --keep-going"
 
-      - name: Upload PDF Documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: Documentation-pdf
-          path: doc/build/latex/*.pdf
-          retention-days: 7
-
-  check_workflow_runs:
+  check-workflow-runs:
     name: Check if there are active workflow runs
-    needs: docs
+    needs: doc-build
     uses: ansys/pygranta/.github/workflows/check-concurrent-workflows.yml@main
 
-  stop_vm:
-    name: Stop Azure VM
+  stop-vm:
+    name: "Stop Azure VM"
     runs-on: ubuntu-latest
-    needs: check_workflow_runs
-    if: always() && !cancelled() && !(inputs.skip-vm-management) && needs.check_workflow_runs.outputs.active-runs != 'true'
-
+    needs: check-workflow-runs
+    if: ${{ always() && !(inputs.skip-vm-management)}}
     steps:
-      - name: Stop Azure VM
-        uses: azure/CLI@v2
+      - uses: azure/CLI@v2
         with:
           azcliversion: 2.32.0
           inlineScript: |

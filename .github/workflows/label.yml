@@ -1,6 +1,7 @@
 name: Labeler
 on:
   pull_request:
+    types: [opened, reopened, synchronize, edited, labeled]
   push:
     branches: [ main ]
     paths:
@@ -40,3 +41,15 @@ jobs:
           - [documentation](https://github.com/ansys/grantami-bomanalytics/pulls?q=label%3Adocumentation+)
           - [enhancement](https://github.com/ansys/grantami-bomanalytics/pulls?q=label%3Aenhancement+)
           - [maintenance](https://github.com/ansys/grantami-bomanalytics/pulls?q=label%3Amaintenance+)
+
+  changelog-fragment:
+      name: "Create changelog fragment"
+      needs: [labeler]
+      permissions:
+        contents: write
+        pull-requests: write
+      runs-on: ubuntu-latest
+      steps:
+      - uses: ansys/actions/doc-changelog@v6
+        with:
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

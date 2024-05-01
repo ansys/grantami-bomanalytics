@@ -93,35 +93,6 @@ examples = [
   "ipywidgets",
 ]
 
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-envlist = py39,py310,py311,py312
-isolated_build = True
-requires =
-  tox-gh-actions==2.9.1
-
-[gh-actions]
-python =
-    3.9: py39
-    3.10: py310
-    3.11: py311
-    3.12: py312
-
-[testenv]
-whitelist_externals = poetry
-commands_pre =
-    poetry install --no-root
-commands = poetry run pytest --cov=ansys.grantami.bomanalytics --cov-report=xml --cov-report=xml:.cov/xml {posargs}
-passenv =
-    TEST_SL_URL
-    TEST_USER
-    TEST_PASS
-    TEST_WRITE_USER
-    TEST_WRITE_PASS
-    HOME
-"""
-
 [tool.mypy]
 warn_return_any = true
 warn_unused_configs = true

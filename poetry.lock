@@ -42,18 +42,18 @@ requests = ">=2.26.0,<3.0.0"
 
 [[package]]
 name = "ansys-openapi-common"
-version = "2.0.0"
+version = "2.0.1"
 description = "Provides a helper to create sessions for use with Ansys OpenAPI clients."
 optional = false
-python-versions = ">=3.9,<4.0"
+python-versions = "<4.0,>=3.9"
 files = [
-    {file = "ansys_openapi_common-2.0.0-py3-none-any.whl", hash = "sha256:88def777b8d394051e6674c8a16ab47c0081d70897d64aec30faecf3848a4680"},
-    {file = "ansys_openapi_common-2.0.0.tar.gz", hash = "sha256:780c22e8715d63a259eac51011f9f353f43f41fd7da16f74872b17d4d9341fb5"},
+    {file = "ansys_openapi_common-2.0.1-py3-none-any.whl", hash = "sha256:e9719eeb3ca5f3a980543ce085ab30dffc1dd46b3f571609291e2fc2933d05bf"},
+    {file = "ansys_openapi_common-2.0.1.tar.gz", hash = "sha256:9dbe0024a2d2be230d202000b9fb7689dda221a10bef15852392528c0920d98f"},
 ]
 
 [package.dependencies]
 pyparsing = ">=3.0.8,<4.0.0"
-python-dateutil = ">=2.6.1,<3.0.0"
+python-dateutil = ">=2.9,<3.0"
 requests = ">=2.26,<3.0"
 requests-negotiate-sspi = {version = ">=0.5.2,<0.6.0", markers = "sys_platform == \"win32\""}
 requests-ntlm = ">=1.1.0,<2.0.0"
@@ -2538,13 +2538,13 @@ testing = ["fields", "hunter", "process-tests", "pytest-xdist", "virtualenv"]
 
 [[package]]
 name = "python-dateutil"
-version = "2.8.2"
+version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
 files = [
-    {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
-    {file = "python_dateutil-2.8.2-py2.py3-none-any.whl", hash = "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"},
+    {file = "python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3"},
+    {file = "python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"},
 ]
 
 [package.dependencies]

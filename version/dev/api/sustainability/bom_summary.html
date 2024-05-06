@@ -1,0 +1,1199 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>BoM sustainability summary &#8212; PyGranta BoM Analytics 2.1.0.dev0</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=35e44410" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dataframe.css?v=1a040689" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=bc775645"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=36754332"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/sustainability/bom_summary';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.14.3';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://bomanalytics.grantami.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <script src="../../_static/js/add_blank.js?v=f2ece54a"></script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Common" href="common.html" />
+    <link rel="prev" title="BoM sustainability" href="bom.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://bomanalytics.grantami.docs.pyansys.com/version/stable/api/sustainability/bom_summary.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="PyGranta BoM Analytics 2.1.0.dev0 - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="PyGranta BoM Analytics 2.1.0.dev0 - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../user_guide/index.html">
+                        User guide
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../common.html">Granta MI connection</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../impacted_substances/index.html">Impacted substances API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compliance/index.html">Compliance API</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Sustainability API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="bom.html">BoM sustainability</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">BoM sustainability summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="common.html">Common</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../bom_builder/index.html">BoM helpers</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+       
+    <li class="breadcrumb-item">
+      <a href="https://grantami.docs.pyansys.com/" class="nav-link">PyGranta</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">API reference</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Sustainability API</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">BoM sustainability summary</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="bom-sustainability-summary">
+<span id="ref-grantami-bomanalytics-api-sustainability-summary-bom"></span><h1>BoM sustainability summary<a class="headerlink" href="#bom-sustainability-summary" title="Link to this heading">#</a></h1>
+<section id="query-definition">
+<h2>Query definition<a class="headerlink" href="#query-definition" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BomSustainabilitySummaryQuery</span></span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery" title="Link to this definition">#</a></dt>
+<dd><p>Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format and returns aggregated metrics.</p>
+<p>The methods used to configure units and add the BoM to this query return the query itself so that they can be
+chained together as required.</p>
+<p>Once the query is fully constructed, use the <cite>cxn.</cite>
+<a class="reference internal" href="../common.html#ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run" title="ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method to return a result of type
+<a class="reference internal" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult" title="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.0.</span></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;http://my_mi_server/mi_servicelayer&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_autologon</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bom</span> <span class="o">=</span> <span class="s2">&quot;&lt;PartsEco xmlns...&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">BomSustainabilitySummaryQuery</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">with_bom</span><span class="p">(</span><span class="n">bom</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery.with_bom">
+<span class="sig-name descname"><span class="pre">with_bom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bom</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery.with_bom" title="Link to this definition">#</a></dt>
+<dd><p>Set the BoM to use for the query.</p>
+<p>See the documentation for the parent query class for supported BoM formats.</p>
+<p>Minimal validation is performed on the provided BoM to ensure the request is sent to the appropriate
+endpoint. XSD files are provided in <a class="reference internal" href="../bom_builder/schemas.html#module-ansys.grantami.bomanalytics.schemas" title="ansys.grantami.bomanalytics.schemas"><code class="xref py py-mod docutils literal notranslate"><span class="pre">schemas</span></code></a> for full validation.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>bom</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>BoM to use for the query.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></dt><dd><p>Current query object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#TypeError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeError</span></code></a></dt><dd><p>Error raised if the method is called with values that do not match the types described earlier.</p>
+</dd>
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#ValueError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>Error raised if the bom isn’t valid XML, or isn’t in a known supported BoM format.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>See the <a class="reference internal" href="../bom_builder/schemas.html#module-ansys.grantami.bomanalytics.schemas" title="ansys.grantami.bomanalytics.schemas"><code class="xref py py-mod docutils literal notranslate"><span class="pre">ansys.grantami.bomanalytics.schemas</span></code></a> subpackage for Ansys Granta XML BoM Schema Definitions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery.with_units">
+<span class="sig-name descname"><span class="pre">with_units</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery.with_units" title="Link to this definition">#</a></dt>
+<dd><p>Specifies units to use in the response.</p>
+<p>Sets all units, overriding any previous configuration. The specified units must exist in the target database.
+Units not set will default to the API default unit:</p>
+<ul class="simple">
+<li><p>Distance: <code class="docutils literal notranslate"><span class="pre">km</span></code></p></li>
+<li><p>Energy: <code class="docutils literal notranslate"><span class="pre">MJ</span></code></p></li>
+<li><p>Mass: <code class="docutils literal notranslate"><span class="pre">kg</span></code></p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>distance</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Unit for distance.</p>
+</dd>
+<dt><strong>energy</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Unit for energy.</p>
+</dd>
+<dt><strong>mass</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Unit for mass.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="query-result">
+<h2>Query result<a class="headerlink" href="#query-result" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BomSustainabilitySummaryQueryResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult" title="Link to this definition">#</a></dt>
+<dd><p>Describes the result of running a <a class="reference internal" href="#ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery" title="ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQuery</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.0.</span></p>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.messages">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">messages</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../common.html#ansys.grantami.bomanalytics._query_results.LogMessage" title="ansys.grantami.bomanalytics._query_results.LogMessage"><span class="pre">LogMessage</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.messages" title="Link to this definition">#</a></dt>
+<dd><p>Messages generated by Granta MI when running the query. The presence of one or more messages means
+that something unexpected happened when running the query but that the query could still be completed.</p>
+<p>Messages are sorted in order of decreasing severity and are available in the Service Layer log file.</p>
+<p>Messages are also logged using the Python <code class="docutils literal notranslate"><span class="pre">logging</span></code> module to the <code class="docutils literal notranslate"><span class="pre">ansys.grantami.bomanalytics</span></code> logger. By
+default, messages with a severity of <code class="docutils literal notranslate"><span class="pre">&quot;warning&quot;</span></code> or higher are printed on stderr.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.phases_summary">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">phases_summary</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult" title="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult"><span class="pre">SustainabilityPhaseSummaryResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.phases_summary" title="Link to this definition">#</a></dt>
+<dd><p>Sustainability summary for all lifecycle phases analyzed by the query.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.transport">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transport</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult" title="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult"><span class="pre">SustainabilityPhaseSummaryResult</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.transport" title="Link to this definition">#</a></dt>
+<dd><p>Sustainability summary for the transport phase.</p>
+<p>Values in percentages express the contribution of this phase, relative to the total contribution of all phases
+analyzed by the query.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.material">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">material</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult" title="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult"><span class="pre">SustainabilityPhaseSummaryResult</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.material" title="Link to this definition">#</a></dt>
+<dd><p>Sustainability summary for the material phase.</p>
+<p>Values in percentages express the contribution of this phase, relative to the total contribution of all phases
+analyzed by the query.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.process">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult" title="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult"><span class="pre">SustainabilityPhaseSummaryResult</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.process" title="Link to this definition">#</a></dt>
+<dd><p>Sustainability summary for the process phase.</p>
+<p>Values in percentages express the contribution of this phase, relative to the total contribution of all phases
+analyzed by the query.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.transport_details">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transport_details</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult" title="ansys.grantami.bomanalytics._item_results.TransportSummaryResult"><span class="pre">TransportSummaryResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.transport_details" title="Link to this definition">#</a></dt>
+<dd><p>Summary information for all transport stages.</p>
+<p>Values in percentages express the contribution of the specific transport stage, relative to contributions of all
+transport stages.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.material_details">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">material_details</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult" title="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult"><span class="pre">MaterialSummaryResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.material_details" title="Link to this definition">#</a></dt>
+<dd><p>Summary information for materials, aggregated by <code class="docutils literal notranslate"><span class="pre">identity</span></code>.</p>
+<p>Relative and absolute contributions for materials whose relative contributions exceed 2% of the total impact
+for materials (by <a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.embodied_energy_percentage" title="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.embodied_energy_percentage"><code class="xref py py-attr docutils literal notranslate"><span class="pre">embodied_energy_percentage</span></code></a> or
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.climate_change_percentage" title="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.climate_change_percentage"><code class="xref py py-attr docutils literal notranslate"><span class="pre">climate_change_percentage</span></code></a>).</p>
+<p>All materials in the BoM that do not exceed the 2% threshold are aggregated under a virtual
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult" title="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialSummaryResult</span></code></a>, whose <a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.identity" title="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.identity"><code class="xref py py-attr docutils literal notranslate"><span class="pre">identity</span></code></a> property is equal to
+<code class="docutils literal notranslate"><span class="pre">Other</span></code>.</p>
+<p>Values in percentages express the contribution of the specific material, relative to contributions of all
+materials.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.primary_processes_details">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">primary_processes_details</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult"><span class="pre">ProcessSummaryResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.primary_processes_details" title="Link to this definition">#</a></dt>
+<dd><p>Summary information for primary processes, aggregated by <code class="docutils literal notranslate"><span class="pre">process_name</span></code> and <code class="docutils literal notranslate"><span class="pre">material_identity</span></code>.</p>
+<p>The returned list includes all unique primary process/material combinations whose relative contributions
+exceed 5% of the total impact of all primary processes (by
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy_percentage" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy_percentage"><code class="xref py py-attr docutils literal notranslate"><span class="pre">embodied_energy_percentage</span></code></a> or
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change_percentage" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change_percentage"><code class="xref py py-attr docutils literal notranslate"><span class="pre">climate_change_percentage</span></code></a>).</p>
+<p>All process/material combinations that do not exceed the 5% threshold are aggregated under a virtual
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSummaryResult</span></code></a>, whose <a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">process_name</span></code></a> is equal to <code class="docutils literal notranslate"><span class="pre">Other</span></code>.</p>
+<p>Values in percentages express the contribution of the specific process, relative to contributions of all
+primary processes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.secondary_processes_details">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">secondary_processes_details</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult"><span class="pre">ProcessSummaryResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.secondary_processes_details" title="Link to this definition">#</a></dt>
+<dd><p>Summary information for secondary processes, aggregated by <code class="docutils literal notranslate"><span class="pre">process_name</span></code> and <code class="docutils literal notranslate"><span class="pre">material_identity</span></code>.</p>
+<p>The returned list includes all unique secondary process/material combinations whose relative contributions
+exceed 5% of the total impact of all secondary processes (by
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy_percentage" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy_percentage"><code class="xref py py-attr docutils literal notranslate"><span class="pre">embodied_energy_percentage</span></code></a> or
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change_percentage" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change_percentage"><code class="xref py py-attr docutils literal notranslate"><span class="pre">climate_change_percentage</span></code></a>).</p>
+<p>All process/material combinations that do not exceed the 5% threshold are aggregated under a virtual
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSummaryResult</span></code></a>, whose <a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">process_name</span></code></a> is equal to <code class="docutils literal notranslate"><span class="pre">Other</span></code>.</p>
+<p>Values in percentages express the contribution of the specific process, relative to contributions of all
+secondary processes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.joining_and_finishing_processes_details">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">joining_and_finishing_processes_details</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult"><span class="pre">ProcessSummaryResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.joining_and_finishing_processes_details" title="Link to this definition">#</a></dt>
+<dd><p>Summary information for joining and finishing processes, , aggregated by <code class="docutils literal notranslate"><span class="pre">process_name</span></code> and
+<code class="docutils literal notranslate"><span class="pre">material_identity</span></code>.</p>
+<p>The returned list includes all joining and finishing processes whose relative contributions exceed 5% of the
+total impact of all joining and finishing processes (by
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy_percentage" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy_percentage"><code class="xref py py-attr docutils literal notranslate"><span class="pre">embodied_energy_percentage</span></code></a> or
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change_percentage" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change_percentage"><code class="xref py py-attr docutils literal notranslate"><span class="pre">climate_change_percentage</span></code></a>).</p>
+<p>All processes that do not exceed the 5% threshold are aggregated under a virtual
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSummaryResult</span></code></a>, whose <a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">process_name</span></code></a> is equal to <code class="docutils literal notranslate"><span class="pre">Other</span></code>.</p>
+<p>Values in percentages express the contribution of the specific process, relative to contributions of all
+joining and finishing processes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="phase-summary">
+<h2>Phase summary<a class="headerlink" href="#phase-summary" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SustainabilityPhaseSummaryResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult" title="Link to this definition">#</a></dt>
+<dd><p>High-level sustainability summary for a phase.</p>
+<p>Phases currently include:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Material</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Processes</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Transport</span></code></p></li>
+</ul>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.0.</span></p>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.embodied_energy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embodied_energy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.embodied_energy" title="Link to this definition">#</a></dt>
+<dd><p>Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.embodied_energy_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embodied_energy_percentage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.embodied_energy_percentage" title="Link to this definition">#</a></dt>
+<dd><p>Represents the percentage contribution of the item to total embodied energy of the parent collection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.climate_change">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">climate_change</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.climate_change" title="Link to this definition">#</a></dt>
+<dd><p>Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.climate_change_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">climate_change_percentage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.climate_change_percentage" title="Link to this definition">#</a></dt>
+<dd><p>Represents the percentage contribution of the item to total climate change of the parent collection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the phase. Supported values are <code class="docutils literal notranslate"><span class="pre">Material</span></code>, <code class="docutils literal notranslate"><span class="pre">Processes</span></code>, and <code class="docutils literal notranslate"><span class="pre">Transport</span></code>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="transport">
+<h2>Transport<a class="headerlink" href="#transport" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.TransportSummaryResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TransportSummaryResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transport_reference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult" title="Link to this definition">#</a></dt>
+<dd><p>Sustainability summary for a transport stage.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.0.</span></p>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.TransportSummaryResult.embodied_energy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embodied_energy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.embodied_energy" title="Link to this definition">#</a></dt>
+<dd><p>Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.TransportSummaryResult.embodied_energy_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embodied_energy_percentage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.embodied_energy_percentage" title="Link to this definition">#</a></dt>
+<dd><p>Represents the percentage contribution of the item to total embodied energy of the parent collection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.TransportSummaryResult.climate_change">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">climate_change</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.climate_change" title="Link to this definition">#</a></dt>
+<dd><p>Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.TransportSummaryResult.climate_change_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">climate_change_percentage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.climate_change_percentage" title="Link to this definition">#</a></dt>
+<dd><p>Represents the percentage contribution of the item to total climate change of the parent collection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.TransportSummaryResult.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the transport stage.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.TransportSummaryResult.transport_reference">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transport_reference</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_definitions.TransportReference" title="ansys.grantami.bomanalytics._item_definitions.TransportReference"><span class="pre">TransportReference</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.transport_reference" title="Link to this definition">#</a></dt>
+<dd><p>Transport record reference.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.TransportSummaryResult.distance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">distance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.distance" title="Link to this definition">#</a></dt>
+<dd><p>Distance travelled in the transport stage.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="material">
+<h2>Material<a class="headerlink" href="#material" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MaterialSummaryResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">material_reference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_before_processing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_after_processing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contributors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult" title="Link to this definition">#</a></dt>
+<dd><p>Aggregated sustainability summary for a material.</p>
+<p>Describes the environmental footprint of a unique material, accounting for all occurrences of the material in BoM.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.0.</span></p>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.embodied_energy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embodied_energy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.embodied_energy" title="Link to this definition">#</a></dt>
+<dd><p>Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.embodied_energy_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embodied_energy_percentage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.embodied_energy_percentage" title="Link to this definition">#</a></dt>
+<dd><p>Represents the percentage contribution of the item to total embodied energy of the parent collection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.climate_change">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">climate_change</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.climate_change" title="Link to this definition">#</a></dt>
+<dd><p>Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.climate_change_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">climate_change_percentage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.climate_change_percentage" title="Link to this definition">#</a></dt>
+<dd><p>Represents the percentage contribution of the item to total climate change of the parent collection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.identity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">identity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.identity" title="Link to this definition">#</a></dt>
+<dd><p>Material identity.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.material_reference">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">material_reference</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_definitions.MaterialReference" title="ansys.grantami.bomanalytics._item_definitions.MaterialReference"><span class="pre">MaterialReference</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.material_reference" title="Link to this definition">#</a></dt>
+<dd><p>Material record reference.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.mass_before_processing">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mass_before_processing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.mass_before_processing" title="Link to this definition">#</a></dt>
+<dd><p>Original mass of material prior to any subtractive processing.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.mass_after_processing">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mass_after_processing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.mass_after_processing" title="Link to this definition">#</a></dt>
+<dd><p>Mass of material after any subtractive processing.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.contributors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contributors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.List" title="(in Python v3.11)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult" title="ansys.grantami.bomanalytics._item_results.ContributingComponentResult"><span class="pre">ContributingComponentResult</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.contributors" title="Link to this definition">#</a></dt>
+<dd><p>Top three parts in the BoM that are made of this material (by <a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.mass_before_processing" title="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.mass_before_processing"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mass_before_processing</span></code></a>).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ContributingComponentResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ContributingComponentResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_number</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_reference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">material_mass_before_processing</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult" title="Link to this definition">#</a></dt>
+<dd><p>Describes a Part item of the BoM.</p>
+<p>Listed as <a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.contributors" title="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.contributors"><code class="xref py py-attr docutils literal notranslate"><span class="pre">contributors</span></code></a> of a <a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult" title="ansys.grantami.bomanalytics._item_results.MaterialSummaryResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialSummaryResult</span></code></a>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.0.</span></p>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ContributingComponentResult.part_number">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">part_number</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult.part_number" title="Link to this definition">#</a></dt>
+<dd><p>Part number.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ContributingComponentResult.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult.name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the part (if populated in the input BoM used in the query).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ContributingComponentResult.part_reference">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">part_reference</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_definitions.PartReference" title="ansys.grantami.bomanalytics._item_definitions.PartReference"><span class="pre">PartReference</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult.part_reference" title="Link to this definition">#</a></dt>
+<dd><p>Part record reference.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ContributingComponentResult.material_mass_before_processing">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">material_mass_before_processing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult.material_mass_before_processing" title="Link to this definition">#</a></dt>
+<dd><p>Original mass of parent material prior to any subtractive processing (removal of material).</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="process">
+<h2>Process<a class="headerlink" href="#process" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ProcessSummaryResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">material_identity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">material_reference</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_reference</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult" title="Link to this definition">#</a></dt>
+<dd><p>Aggregated sustainability summary for a process.</p>
+<p>For primary and secondary processes, this corresponds to a unique process/material combination. For joining and
+finishing processes, this corresponds to a unique process, and <a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_identity" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_identity"><code class="xref py py-attr docutils literal notranslate"><span class="pre">material_identity</span></code></a> and
+<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_reference" title="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_reference"><code class="xref py py-attr docutils literal notranslate"><span class="pre">material_reference</span></code></a> are <cite>None</cite>.</p>
+<p>Describes the environmental footprint of a process, accounting for all occurrences of the process-material pair
+found in the BoM.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 2.0.</span></p>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embodied_energy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy" title="Link to this definition">#</a></dt>
+<dd><p>Represents the direct and indirect energy use. Based on cumulative energy demand method developed by ecoinvent.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">embodied_energy_percentage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy_percentage" title="Link to this definition">#</a></dt>
+<dd><p>Represents the percentage contribution of the item to total embodied energy of the parent collection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">climate_change</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_results.ValueWithUnit" title="ansys.grantami.bomanalytics._item_results.ValueWithUnit"><span class="pre">ValueWithUnit</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change" title="Link to this definition">#</a></dt>
+<dd><p>Estimates global warming potential considering emissions of different gases reported as carbon dioxide
+equivalents (CO2-eq.). Based on Intergovernmental Panel on Climate Change (IPCC) method.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">climate_change_percentage</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#float" title="(in Python v3.11)"><span class="pre">float</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change_percentage" title="Link to this definition">#</a></dt>
+<dd><p>Represents the percentage contribution of the item to total climate change of the parent collection.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name" title="Link to this definition">#</a></dt>
+<dd><p>Process name.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_reference">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_reference</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_definitions.ProcessReference" title="ansys.grantami.bomanalytics._item_definitions.ProcessReference"><span class="pre">ProcessReference</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_reference" title="Link to this definition">#</a></dt>
+<dd><p>Process record reference.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_identity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">material_identity</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_identity" title="Link to this definition">#</a></dt>
+<dd><p>Material identity.</p>
+<p>Only populated for primary and secondary processes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_reference">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">material_reference</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="common.html#ansys.grantami.bomanalytics._item_definitions.MaterialReference" title="ansys.grantami.bomanalytics._item_definitions.MaterialReference"><span class="pre">MaterialReference</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_reference" title="Link to this definition">#</a></dt>
+<dd><p>Material record reference.</p>
+<p>Only populated for primary and secondary processes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#query-definition">Query definition</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQuery</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery.with_bom"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQuery.with_bom()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery.with_units"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQuery.with_units()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#query-result">Query result</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.messages"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.messages</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.phases_summary"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.phases_summary</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.transport"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.transport</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.material"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.material</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.process"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.process</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.transport_details"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.transport_details</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.material_details"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.material_details</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.primary_processes_details"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.primary_processes_details</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.secondary_processes_details"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.secondary_processes_details</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult.joining_and_finishing_processes_details"><code class="docutils literal notranslate"><span class="pre">BomSustainabilitySummaryQueryResult.joining_and_finishing_processes_details</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-summary">Phase summary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult"><code class="docutils literal notranslate"><span class="pre">SustainabilityPhaseSummaryResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.embodied_energy"><code class="docutils literal notranslate"><span class="pre">SustainabilityPhaseSummaryResult.embodied_energy</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.embodied_energy_percentage"><code class="docutils literal notranslate"><span class="pre">SustainabilityPhaseSummaryResult.embodied_energy_percentage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.climate_change"><code class="docutils literal notranslate"><span class="pre">SustainabilityPhaseSummaryResult.climate_change</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.climate_change_percentage"><code class="docutils literal notranslate"><span class="pre">SustainabilityPhaseSummaryResult.climate_change_percentage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.SustainabilityPhaseSummaryResult.name"><code class="docutils literal notranslate"><span class="pre">SustainabilityPhaseSummaryResult.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transport">Transport</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult"><code class="docutils literal notranslate"><span class="pre">TransportSummaryResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.embodied_energy"><code class="docutils literal notranslate"><span class="pre">TransportSummaryResult.embodied_energy</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.embodied_energy_percentage"><code class="docutils literal notranslate"><span class="pre">TransportSummaryResult.embodied_energy_percentage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.climate_change"><code class="docutils literal notranslate"><span class="pre">TransportSummaryResult.climate_change</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.climate_change_percentage"><code class="docutils literal notranslate"><span class="pre">TransportSummaryResult.climate_change_percentage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.name"><code class="docutils literal notranslate"><span class="pre">TransportSummaryResult.name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.transport_reference"><code class="docutils literal notranslate"><span class="pre">TransportSummaryResult.transport_reference</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.TransportSummaryResult.distance"><code class="docutils literal notranslate"><span class="pre">TransportSummaryResult.distance</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#material">Material</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.embodied_energy"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult.embodied_energy</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.embodied_energy_percentage"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult.embodied_energy_percentage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.climate_change"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult.climate_change</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.climate_change_percentage"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult.climate_change_percentage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.identity"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult.identity</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.material_reference"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult.material_reference</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.mass_before_processing"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult.mass_before_processing</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.mass_after_processing"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult.mass_after_processing</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialSummaryResult.contributors"><code class="docutils literal notranslate"><span class="pre">MaterialSummaryResult.contributors</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult"><code class="docutils literal notranslate"><span class="pre">ContributingComponentResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult.part_number"><code class="docutils literal notranslate"><span class="pre">ContributingComponentResult.part_number</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult.name"><code class="docutils literal notranslate"><span class="pre">ContributingComponentResult.name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult.part_reference"><code class="docutils literal notranslate"><span class="pre">ContributingComponentResult.part_reference</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ContributingComponentResult.material_mass_before_processing"><code class="docutils literal notranslate"><span class="pre">ContributingComponentResult.material_mass_before_processing</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#process">Process</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult"><code class="docutils literal notranslate"><span class="pre">ProcessSummaryResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy"><code class="docutils literal notranslate"><span class="pre">ProcessSummaryResult.embodied_energy</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.embodied_energy_percentage"><code class="docutils literal notranslate"><span class="pre">ProcessSummaryResult.embodied_energy_percentage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change"><code class="docutils literal notranslate"><span class="pre">ProcessSummaryResult.climate_change</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.climate_change_percentage"><code class="docutils literal notranslate"><span class="pre">ProcessSummaryResult.climate_change_percentage</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_name"><code class="docutils literal notranslate"><span class="pre">ProcessSummaryResult.process_name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.process_reference"><code class="docutils literal notranslate"><span class="pre">ProcessSummaryResult.process_reference</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_identity"><code class="docutils literal notranslate"><span class="pre">ProcessSummaryResult.material_identity</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.ProcessSummaryResult.material_reference"><code class="docutils literal notranslate"><span class="pre">ProcessSummaryResult.material_reference</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button--></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/api/sustainability/bom_summary.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2024 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.15.2. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

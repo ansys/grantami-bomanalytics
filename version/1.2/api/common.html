@@ -1,0 +1,956 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Granta MI connection &#8212; PyGranta BoM Analytics 1.2.0</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/ansys_sphinx_theme.css?v=62c9ccaa" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/dataframe.css?v=1a040689" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+ 
+<link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=ffe0d018"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/common';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://bomanalytics.grantami.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.2';
+        </script>
+    <script src="../_static/js/add_blank.js?v=f2ece54a"></script>
+    <link rel="icon" href="../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Batching requests" href="batching.html" />
+    <link rel="prev" title="API reference" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://bomanalytics.grantami.docs.pyansys.com/version/stable/api/common.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      1.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/pyansys/grantami-bomanalytics" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>   <div class="container-xl">
+  <div class="row">
+    <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+    <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="batching.html" title="Batching requests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="API reference"
+             accesskey="P">previous</a> |</li> 
+<li class="nav-item nav-item-additional-breadcrumb">
+  <a href="https://docs.pyansys.com/">PyAnsys Documentation</a> » 
+</li>
+
+<li class="nav-item nav-item-additional-breadcrumb">
+  <a href="https://grantami.docs.pyansys.com/">PyGranta</a> » 
+</li>
+ 
+<li class="nav-item nav-item-0">
+  <a href="../index.html">PyGranta BoM Analytics 1.2.0</a> » 
+</li>
+ 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">API reference</a> » </li>
+        <li class="nav-item nav-item-this"><a href="">Granta MI connection</a></li> 
+      </ul>
+    </div></div>
+  </div>
+</div>
+ 
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      1.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/pyansys/grantami-bomanalytics" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Granta MI connection</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="batching.html">Batching requests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="impacted_substances/index.html">Impacted substances API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compliance/index.html">Compliance API</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="granta-mi-connection">
+<span id="ref-grantami-bomanalytics-common-connection"></span><h1>Granta MI connection<a class="headerlink" href="#granta-mi-connection" title="Permalink to this heading">#</a></h1>
+<section id="connection-builder">
+<h2>Connection builder<a class="headerlink" href="#connection-builder" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.Connection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">api_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.Connection" title="Permalink to this definition">#</a></dt>
+<dd><p>Connects to an instance of Granta MI.</p>
+<p>This is a subclass of the <a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.ApiClientFactory.html#ansys.openapi.common.ApiClientFactory" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ansys.openapi.common.ApiClientFactory</span></code></a> class.
+All methods in this class are documented as returning <a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.ApiClientFactory.html#ansys.openapi.common.ApiClientFactory" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApiClientFactory</span></code></a>
+class instances of the <a class="reference internal" href="#ansys.grantami.bomanalytics.Connection" title="ansys.grantami.bomanalytics.Connection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ansys.grantami.bomanalytics.Connection</span></code></a> class instead.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>api_url</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Base URL of the API server.</p>
+</dd>
+<dt><strong>session_configuration</strong><span class="classifier"><a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.SessionConfiguration.html#ansys.openapi.common.SessionConfiguration" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionConfiguration</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Additional configuration settings for the requests session. The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case the
+<a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.SessionConfiguration.html#ansys.openapi.common.SessionConfiguration" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionConfiguration</span></code></a> class with default parameters is used.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>For advanced usage, including configuring session-specific properties and timeouts, see the
+<a class="reference external" href="https://openapi.docs.pyansys.com/api/index.html" title="(in ansys.openapi.common v1.2.2)"><span class="xref std std-doc">ansys-openapi-common API reference</span></a>. Specifically, see the
+documentation for the <a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.ApiClientFactory.html#ansys.openapi.common.ApiClientFactory" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApiClientFactory</span></code></a> base class and the
+<a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.SessionConfiguration.html#ansys.openapi.common.SessionConfiguration" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionConfiguration</span></code></a> class.</p>
+<p>To create the connection to Granta MI, you perform three steps:</p>
+<ol class="arabic simple">
+<li><p>Create the connection builder object and specify the server to connect to.</p></li>
+<li><p>Specify the authentication method to use for the connection and provide credentials if required.</p></li>
+<li><p>Connect to the server, which returns the connection object.</p></li>
+</ol>
+<p>The examples show this process for different authentication methods.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;http://my_mi_server/mi_servicelayer&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_autologon</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span>
+<span class="go">&lt;BomServicesClient: url=http://my_mi_server/mi_servicelayer&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;http://my_mi_server/mi_servicelayer&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">with_credentials</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="s2">&quot;my_username&quot;</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="s2">&quot;my_password&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span>
+<span class="go">&lt;BomServicesClient: url=http://my_mi_server/mi_servicelayer&gt;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.Connection.with_autologon">
+<span class="sig-name descname"><span class="pre">with_autologon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.Connection.with_autologon" title="Permalink to this definition">#</a></dt>
+<dd><p>Set up client authentication for use with Kerberos (also known as integrated Windows authentication).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.ApiClientFactory.html#ansys.openapi.common.ApiClientFactory" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApiClientFactory</span></code></a></dt><dd><p>Current client factory object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Requires the user to have a valid Kerberos Ticket-Granting-Ticket (TGT).</p>
+<ul class="simple">
+<li><p>On Windows, this is provided by default.</p></li>
+<li><p>On Linux, this requires the <code class="docutils literal notranslate"><span class="pre">[linux-kerberos]</span></code> extension to be installed and your Kerberos installation
+to be configured correctly.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.Connection.with_credentials">
+<span class="sig-name descname"><span class="pre">with_credentials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.Connection.with_credentials" title="Permalink to this definition">#</a></dt>
+<dd><p>Set up client authentication for use with provided credentials.</p>
+<p>This method will attempt to connect to the API and uses the provided <code class="docutils literal notranslate"><span class="pre">WWW-Authenticate</span></code> header to determine
+whether Negotiate, NTLM, or Basic Authentication should be used. The selected authentication method will then be
+configured for use.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>username</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Username for the connection.</p>
+</dd>
+<dt><strong>password</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Password for the connection.</p>
+</dd>
+<dt><strong>domain</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Domain to use for connection if required. The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.ApiClientFactory.html#ansys.openapi.common.ApiClientFactory" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApiClientFactory</span></code></a></dt><dd><p>Original client factory object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>NTLM authentication is not currently supported on Linux.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.Connection.with_oidc">
+<span class="sig-name descname"><span class="pre">with_oidc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idp_session_configuration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.Connection.with_oidc" title="Permalink to this definition">#</a></dt>
+<dd><p>Set up client authentication for use with OpenID Connect.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>idp_session_configuration</strong><span class="classifier"><a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.SessionConfiguration.html#ansys.openapi.common.SessionConfiguration" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">SessionConfiguration</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Additional configuration settings for the requests session when connected to the OpenID identity provider.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.OIDCSessionBuilder.html#ansys.openapi.common.OIDCSessionBuilder" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">OIDCSessionBuilder</span></code></a></dt><dd><p>Builder object to authenticate via OIDC.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>OIDC Authentication requires the <code class="docutils literal notranslate"><span class="pre">[oidc]</span></code> extra to be installed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.Connection.with_anonymous">
+<span class="sig-name descname"><span class="pre">with_anonymous</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.Connection.with_anonymous" title="Permalink to this definition">#</a></dt>
+<dd><p>Set up client authentication for anonymous use. This does not configure any authentication or
+authorization headers. Users must provide any authentication information required themselves.</p>
+<p>Clients relying on custom authentication such as client certificates or non-standard tokens should use this
+method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.ApiClientFactory.html#ansys.openapi.common.ApiClientFactory" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApiClientFactory</span></code></a></dt><dd><p>Original client factory object.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.Connection.connect">
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.Connection.connect" title="Permalink to this definition">#</a></dt>
+<dd><p>Finalize the BoM Analytics client and return it for use.</p>
+<p>Authentication must be configured for this method to succeed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.grantami.bomanalytics._connection.BomAnalyticsClient" title="ansys.grantami.bomanalytics._connection.BomAnalyticsClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">BomAnalyticsClient</span></code></a></dt><dd><p>Client object that can be used to connect to Granta MI and perform BoM Analytics operations.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#ValueError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>When the client is not fully configured.</p>
+</dd>
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#ConnectionError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConnectionError</span></code></a></dt><dd><p>If the resulting client cannot connect to the BoM Analytics service.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="bom-analytics-client">
+<h2>BoM Analytics client<a class="headerlink" href="#bom-analytics-client" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._connection.BomAnalyticsClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">BomAnalyticsClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">servicelayer_url</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._connection.BomAnalyticsClient" title="Permalink to this definition">#</a></dt>
+<dd><p>Communicates with Granta MI. This class is instantiated by the
+<a class="reference internal" href="#ansys.grantami.bomanalytics.Connection" title="ansys.grantami.bomanalytics.Connection"><code class="xref py py-class docutils literal notranslate"><span class="pre">Connection</span></code></a> class described earlier and should not be instantiated directly.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._connection.BomAnalyticsClient.maximum_spec_link_depth">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">maximum_spec_link_depth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3.11/library/constants.html#None" title="(in Python v3.11)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.bomanalytics._connection.BomAnalyticsClient.maximum_spec_link_depth" title="Permalink to this definition">#</a></dt>
+<dd><p>Limits the maximum number of specification-to-specification links that will be followed when processing
+a query. If specified, specification-to-specification links will be truncated at the specified depth, and only
+coatings and substances identified up to and including that point will be included in the analysis.</p>
+<p>Defaults to None, which applies no limit to the number of specification-to-specification links. This may lead
+to performance issues if there are large numbers of specification-to-specification links present in the
+database.</p>
+<p>Supported with Restricted Substances Reports 2023 R2 and newer, with older reports this parameter has
+no effect, all specification-to-specification links will be followed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This limit applies to each branch of the BoM individually. This is not a global limit on the number of
+specification-to-specification links that will be traversed across the entire BoM, instead it is a limit on
+the maximum depth of specifications below any individual specification node.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>]</dt><dd><p>Maximum depth of specification-to-specification links that will be followed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="impacted_substances/materials.html#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery" title="ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery"><span class="pre">MaterialImpactedSubstancesQuery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="impacted_substances/materials.html#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult" title="ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult"><span class="pre">MaterialImpactedSubstancesQueryResult</span></a></span></span><a class="headerlink" href="#ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="compliance/materials.html#ansys.grantami.bomanalytics.queries.MaterialComplianceQuery" title="ansys.grantami.bomanalytics.queries.MaterialComplianceQuery"><span class="pre">MaterialComplianceQuery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="compliance/materials.html#ansys.grantami.bomanalytics._query_results.MaterialComplianceQueryResult" title="ansys.grantami.bomanalytics._query_results.MaterialComplianceQueryResult"><span class="pre">MaterialComplianceQueryResult</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="impacted_substances/parts.html#ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery" title="ansys.grantami.bomanalytics.queries.PartImpactedSubstancesQuery"><span class="pre">PartImpactedSubstancesQuery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="impacted_substances/parts.html#ansys.grantami.bomanalytics._query_results.PartImpactedSubstancesQueryResult" title="ansys.grantami.bomanalytics._query_results.PartImpactedSubstancesQueryResult"><span class="pre">PartImpactedSubstancesQueryResult</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="compliance/parts.html#ansys.grantami.bomanalytics.queries.PartComplianceQuery" title="ansys.grantami.bomanalytics.queries.PartComplianceQuery"><span class="pre">PartComplianceQuery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="compliance/parts.html#ansys.grantami.bomanalytics._query_results.PartComplianceQueryResult" title="ansys.grantami.bomanalytics._query_results.PartComplianceQueryResult"><span class="pre">PartComplianceQueryResult</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="impacted_substances/specifications.html#ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery" title="ansys.grantami.bomanalytics.queries.SpecificationImpactedSubstancesQuery"><span class="pre">SpecificationImpactedSubstancesQuery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="impacted_substances/specifications.html#ansys.grantami.bomanalytics._query_results.SpecificationImpactedSubstancesQueryResult" title="ansys.grantami.bomanalytics._query_results.SpecificationImpactedSubstancesQueryResult"><span class="pre">SpecificationImpactedSubstancesQueryResult</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="compliance/specifications.html#ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery" title="ansys.grantami.bomanalytics.queries.SpecificationComplianceQuery"><span class="pre">SpecificationComplianceQuery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="compliance/specifications.html#ansys.grantami.bomanalytics._query_results.SpecificationComplianceQueryResult" title="ansys.grantami.bomanalytics._query_results.SpecificationComplianceQueryResult"><span class="pre">SpecificationComplianceQueryResult</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="compliance/substances.html#ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery" title="ansys.grantami.bomanalytics.queries.SubstanceComplianceQuery"><span class="pre">SubstanceComplianceQuery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="compliance/substances.html#ansys.grantami.bomanalytics._query_results.SubstanceComplianceQueryResult" title="ansys.grantami.bomanalytics._query_results.SubstanceComplianceQueryResult"><span class="pre">SubstanceComplianceQueryResult</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="impacted_substances/bom.html#ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery" title="ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery"><span class="pre">BomImpactedSubstancesQuery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="impacted_substances/bom.html#ansys.grantami.bomanalytics._query_results.BomImpactedSubstancesQueryResult" title="ansys.grantami.bomanalytics._query_results.BomImpactedSubstancesQueryResult"><span class="pre">BomImpactedSubstancesQueryResult</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="compliance/bom.html#ansys.grantami.bomanalytics.queries.BomComplianceQuery" title="ansys.grantami.bomanalytics.queries.BomComplianceQuery"><span class="pre">BomComplianceQuery</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="compliance/bom.html#ansys.grantami.bomanalytics._query_results.BomComplianceQueryResult" title="ansys.grantami.bomanalytics._query_results.BomComplianceQueryResult"><span class="pre">BomComplianceQueryResult</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Yaml</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></span></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3.11/library/typing.html#typing.Type" title="(in Python v3.11)"><span class="pre">Type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Yaml</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></span></span></dt>
+<dd><p>Run a query against the Granta MI database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>query</strong></dt><dd><p>A compliance, impacted substance, or YAML query object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">Result</span></code></dt><dd><p>Specific result object based on the provided query, which contains either the compliance or
+impacted substances results. In the case of a YAML query, a string is returned.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.grantami.bomanalytics.GrantaMIException" title="ansys.grantami.bomanalytics.GrantaMIException"><code class="xref py py-class docutils literal notranslate"><span class="pre">GrantaMIException</span></code></a></dt><dd><p>Error raised if the server encounters an error while processing the query with a severity
+of <code class="docutils literal notranslate"><span class="pre">critical</span></code>. This indicates that Granta MI is running and the BoM Analytics service
+is available, but the query could not be run, probably because of a missing database or table.</p>
+</dd>
+<dt><a class="reference external" href="https://openapi.docs.pyansys.com/api/_autosummary/ansys.openapi.common.ApiException.html#ansys.openapi.common.ApiException" title="(in ansys.openapi.common v1.2.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ApiException</span></code></a></dt><dd><p>Error raised if the Granta MI server is not able to return a response, probably
+because of an internal configuration error or the BoM Analytics service not being installed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._connection.BomAnalyticsClient.set_database_details">
+<span class="sig-name descname"><span class="pre">set_database_details</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">database_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MI_Restricted_Substances'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">material_universe_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_house_materials_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specifications_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">products_and_parts_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">substances_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coatings_table_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._connection.BomAnalyticsClient.set_database_details" title="Permalink to this definition">#</a></dt>
+<dd><p>Configure the database key and table names if different from the defaults.</p>
+<p>A database key is required if Granta MI is configured to use a value other than <code class="docutils literal notranslate"><span class="pre">MI_Restricted_Substances</span></code>.
+A table name is required for each table in the Restricted Substances database that has been renamed.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>database_key</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Database key for the Restricted Substances database. The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+in which case <code class="docutils literal notranslate"><span class="pre">MI_Restricted_Substances</span></code> is used.</p>
+</dd>
+<dt><strong>material_universe_table_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Name of the table that implements the <code class="docutils literal notranslate"><span class="pre">MaterialUniverse</span></code> schema. The
+default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case <code class="docutils literal notranslate"><span class="pre">MaterialUniverse</span></code> is used.</p>
+</dd>
+<dt><strong>in_house_materials_table_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Name of the table that implements the <code class="docutils literal notranslate"><span class="pre">Materials</span> <span class="pre">-</span> <span class="pre">in</span> <span class="pre">house</span></code> schema.
+The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case <code class="docutils literal notranslate"><span class="pre">Materials</span> <span class="pre">-</span> <span class="pre">in</span> <span class="pre">house</span></code> is used.</p>
+</dd>
+<dt><strong>specifications_table_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Name of the table that implements the <code class="docutils literal notranslate"><span class="pre">Specifications</span></code> schema. The
+default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case <code class="docutils literal notranslate"><span class="pre">Specifications</span></code> is used.</p>
+</dd>
+<dt><strong>products_and_parts_table_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Name of the table that implements the <code class="docutils literal notranslate"><span class="pre">Products</span> <span class="pre">and</span> <span class="pre">parts</span></code> schema. The
+default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case <code class="docutils literal notranslate"><span class="pre">Products</span> <span class="pre">and</span> <span class="pre">parts</span></code> is used.</p>
+</dd>
+<dt><strong>substances_table_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Name of the table that implements the <code class="docutils literal notranslate"><span class="pre">Restricted</span> <span class="pre">Substances</span></code> schema.
+The default is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case <code class="docutils literal notranslate"><span class="pre">Restricted</span> <span class="pre">Substances</span></code> is used.</p>
+</dd>
+<dt><strong>coatings_table_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Name of the table that implements the <code class="docutils literal notranslate"><span class="pre">Coatings</span></code> schema. The default
+is <code class="docutils literal notranslate"><span class="pre">None</span></code>, in which case  <code class="docutils literal notranslate"><span class="pre">Coatings</span></code> is used.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The database key and table names are configurable, but they only need to be specified if they have been modified
+from the defaults. Here are the default key and table names:</p>
+<ul class="simple">
+<li><p>Database key: MI_Restricted_Substances</p></li>
+<li><p>Table names:</p>
+<ul>
+<li><p>MaterialUniverse</p></li>
+<li><p>Materials - in house</p></li>
+<li><p>Specifications</p></li>
+<li><p>Products and parts</p></li>
+<li><p>Restricted Substances</p></li>
+<li><p>Coatings</p></li>
+</ul>
+</li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;http://my_mi_server/mi_servicelayer&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_autologon</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span><span class="o">.</span><span class="n">set_database_details</span><span class="p">(</span><span class="n">database_key</span> <span class="o">=</span> <span class="s2">&quot;MY_RS_DB&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                         <span class="n">in_house_materials_table_name</span> <span class="o">=</span> <span class="s2">&quot;My Materials&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="log-messages">
+<span id="ref-grantami-bomanalytics-common-messages"></span><h1>Log messages<a class="headerlink" href="#log-messages" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.LogMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LogMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">severity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.LogMessage" title="Permalink to this definition">#</a></dt>
+<dd><p>Message returned by Granta MI when running the query.</p>
+<p>Messages marked with the error <code class="docutils literal notranslate"><span class="pre">severity</span></code> are more likely to produce incorrect results and should be treated with
+increased caution.</p>
+<dl class="field-list">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>severity</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Level of severity. Options are <code class="docutils literal notranslate"><span class="pre">&quot;error&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;warning&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;information&quot;</span></code>.</p>
+</dd>
+<dt><strong>message</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Description of the issue.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="exceptions">
+<span id="ref-grantami-bomanalytics-common-exceptions"></span><h1>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.GrantaMIException">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GrantaMIException</span></span><a class="headerlink" href="#ansys.grantami.bomanalytics.GrantaMIException" title="Permalink to this definition">#</a></dt>
+<dd><p>Provides the critical error message to show if processing a BoM Analytics query fails.</p>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">API reference</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="batching.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Batching requests</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Granta MI connection</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connection-builder">Connection builder</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.Connection"><code class="docutils literal notranslate"><span class="pre">Connection</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.Connection.with_autologon"><code class="docutils literal notranslate"><span class="pre">Connection.with_autologon()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.Connection.with_credentials"><code class="docutils literal notranslate"><span class="pre">Connection.with_credentials()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.Connection.with_oidc"><code class="docutils literal notranslate"><span class="pre">Connection.with_oidc()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.Connection.with_anonymous"><code class="docutils literal notranslate"><span class="pre">Connection.with_anonymous()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.Connection.connect"><code class="docutils literal notranslate"><span class="pre">Connection.connect()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bom-analytics-client">BoM Analytics client</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._connection.BomAnalyticsClient"><code class="docutils literal notranslate"><span class="pre">BomAnalyticsClient</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._connection.BomAnalyticsClient.maximum_spec_link_depth"><code class="docutils literal notranslate"><span class="pre">BomAnalyticsClient.maximum_spec_link_depth</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run"><code class="docutils literal notranslate"><span class="pre">BomAnalyticsClient.run()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._connection.BomAnalyticsClient.set_database_details"><code class="docutils literal notranslate"><span class="pre">BomAnalyticsClient.set_database_details()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#log-messages">Log messages</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.LogMessage"><code class="docutils literal notranslate"><span class="pre">LogMessage</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#exceptions">Exceptions</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.GrantaMIException"><code class="docutils literal notranslate"><span class="pre">GrantaMIException</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button--></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/api/common.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.10.5. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

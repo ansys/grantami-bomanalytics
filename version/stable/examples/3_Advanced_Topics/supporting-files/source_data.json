@@ -1,0 +1,48 @@
+{
+  "components": [
+    {
+      "part_number": "FQC3RQKYE5",
+      "materials": [
+        "plastic-abs-pvc-flame"
+      ]
+    },
+    {
+      "part_number": "3FF8CXIHWJ",
+      "materials": [
+        "plastic-abs-pvc-flame",
+        "plastic-pc-10glassfiber"
+      ]
+    },
+    {
+      "part_number": "O676WZSGHA",
+      "materials": [
+        "elastomer-pvc-shorea55"
+      ]
+    },
+    {
+      "part_number": "L8NTU4BZY2",
+      "materials": [
+        "aluminum-6063-t6"
+      ]
+    },
+    {
+      "part_number": "7N9EUBALU2",
+      "materials": [
+        "aluminum-6063-t6"
+      ]
+    },
+    {
+      "part_number": "U921IQSW6K",
+      "materials": [
+        "stainless-316-annealed"
+      ]
+    },
+    {
+      "part_number": "TUSMQ1ZDFM",
+      "materials": [
+        "aluminum-6063-t6",
+        "glass-borosilicate-7050"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,669 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "34178ee9",
+   "metadata": {},
+   "source": [
+    "# Perform a BoM sustainability summary query\n",
+    "\n",
+    "The following supporting files are required for this example:\n",
+    "\n",
+    "* [bom-2301-assembly.xml](supporting-files/bom-2301-assembly.xml)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1d86b603",
+   "metadata": {},
+   "source": [
+    "## Run a BoM sustainability summary query\n",
+    "\n",
+    "First, connect to Granta MI.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "dd53f943",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import Connection"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9164ee03",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "server_url = \"http://my_grantami_server/mi_servicelayer\"\n",
+    "cxn = Connection(server_url).with_credentials(\"user_name\", \"password\").connect()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "00dfa864",
+   "metadata": {},
+   "source": [
+    "Next, create a sustainability summary query. The query accepts a single BoM as argument and an optional\n",
+    "configuration for units. If a unit is not specified, the default unit is used. Default units for the analysis are\n",
+    "``MJ`` for energy, ``kg`` for mass, and ``km`` for distance."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7fd04ccd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "xml_file_path = \"supporting-files/bom-2301-assembly.xml\"\n",
+    "with open(xml_file_path) as f:\n",
+    "    bom = f.read()\n",
+    "\n",
+    "from ansys.grantami.bomanalytics import queries\n",
+    "\n",
+    "MASS_UNIT = \"kg\"\n",
+    "ENERGY_UNIT = \"MJ\"\n",
+    "DISTANCE_UNIT = \"km\"\n",
+    "\n",
+    "sustainability_summary_query = (\n",
+    "    queries.BomSustainabilitySummaryQuery()\n",
+    "    .with_bom(bom)\n",
+    "    .with_units(mass=MASS_UNIT, energy=ENERGY_UNIT, distance=DISTANCE_UNIT)\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "76cb7693",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sustainability_summary = cxn.run(sustainability_summary_query)\n",
+    "sustainability_summary"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2c0b3d53",
+   "metadata": {},
+   "source": [
+    "The ``BomSustainabilitySummaryQueryResult`` object that is returned implements a ``messages`` property and properties\n",
+    "showing the environmental impact of the items included in the BoM.\n",
+    "Log messages are sorted by decreasing severity. The same messages are available in the MI Service Layer log file\n",
+    "and are logged using the standard ``logging`` module.\n",
+    "The next sections show examples of visualizations for the results of the sustainability summary query.\n",
+    "\n",
+    "## Summary per phase\n",
+    "The sustainability summary result object contains a ``phases_summary`` property. This property summarizes the\n",
+    "environmental impact contributions by lifecycle phase: materials, processes, and transport phases. The results for\n",
+    "each phase include their absolute and relative contributions to the product as a whole."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a287eb61",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sustainability_summary.phases_summary"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ecddf409",
+   "metadata": {},
+   "source": [
+    "Use the [pandas](https://pandas.pydata.org/) and [plotly](https://plotly.com/python/) libraries to visualize the\n",
+    "results. First, the data is translated from the BoM Analytics ``BomSustainabilitySummaryQueryResult`` to a pandas\n",
+    "``Dataframe`` object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "41f82155",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "\n",
+    "EE_HEADER = f\"EE [{ENERGY_UNIT}]\"\n",
+    "CC_HEADER = f\"CC [{MASS_UNIT}]\"\n",
+    "\n",
+    "phases_df = pd.DataFrame.from_records(\n",
+    "    [\n",
+    "        {\n",
+    "            \"Name\": item.name,\n",
+    "            \"EE%\": item.embodied_energy_percentage,\n",
+    "            EE_HEADER: item.embodied_energy.value,\n",
+    "            \"CC%\": item.climate_change_percentage,\n",
+    "            CC_HEADER: item.climate_change.value,\n",
+    "        }\n",
+    "        for item in sustainability_summary.phases_summary\n",
+    "    ]\n",
+    ")\n",
+    "phases_df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "260f4c6f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import plotly.graph_objects as go\n",
+    "from plotly.subplots import make_subplots\n",
+    "\n",
+    "\n",
+    "def plot_impact(df, title, textinfo=\"percent+label\", hoverinfo=\"value+name\"):\n",
+    "    fig = make_subplots(\n",
+    "        rows=1,\n",
+    "        cols=2,\n",
+    "        specs=[[{\"type\": \"domain\"}, {\"type\": \"domain\"}]],\n",
+    "        subplot_titles=[\"Embodied Energy\", \"Climate Change\"],\n",
+    "    )\n",
+    "    fig.add_trace(go.Pie(labels=df[\"Name\"], values=df[EE_HEADER], name=ENERGY_UNIT), 1, 1)\n",
+    "    fig.add_trace(go.Pie(labels=df[\"Name\"], values=df[CC_HEADER], name=MASS_UNIT), 1, 2)\n",
+    "    fig.update_layout(title_text=title, legend=dict(orientation=\"h\"))\n",
+    "    fig.update_traces(textposition=\"inside\", textinfo=textinfo, hoverinfo=hoverinfo)\n",
+    "    fig.show()\n",
+    "\n",
+    "\n",
+    "plot_impact(phases_df, \"BoM sustainability summary - By phase\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d269ab54",
+   "metadata": {},
+   "source": [
+    "## Transport phase\n",
+    "\n",
+    "The environmental contribution from the transport phase is summarized in the ``transport_details`` property. Results\n",
+    "include the individual environmental impact for each transport stage included in the input BoM."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6b2bb40f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sustainability_summary.transport_details"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "28727134",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "DISTANCE_HEADER = f\"Distance [{DISTANCE_UNIT}]\"\n",
+    "\n",
+    "transport_df = pd.DataFrame.from_records(\n",
+    "    [\n",
+    "        {\n",
+    "            \"Name\": item.name,\n",
+    "            DISTANCE_HEADER: item.distance.value,\n",
+    "            \"EE%\": item.embodied_energy_percentage,\n",
+    "            EE_HEADER: item.embodied_energy.value,\n",
+    "            \"CC%\": item.climate_change_percentage,\n",
+    "            CC_HEADER: item.climate_change.value,\n",
+    "        }\n",
+    "        for item in sustainability_summary.transport_details\n",
+    "    ]\n",
+    ")\n",
+    "transport_df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "27367873",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plot_impact(transport_df, \"Transport stages - environmental impact\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8dd11758",
+   "metadata": {},
+   "source": [
+    "In some situations, it might be useful to calculate the environmental impact per distance travelled and add the\n",
+    "results as new columns in the dataframe."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cf61f928",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "EE_PER_DISTANCE = f\"EE [{ENERGY_UNIT}/{DISTANCE_UNIT}]\"\n",
+    "CC_PER_DISTANCE = f\"CC [{MASS_UNIT}/{DISTANCE_UNIT}]\"\n",
+    "transport_df[EE_PER_DISTANCE] = transport_df.apply(lambda row: row[EE_HEADER] / row[DISTANCE_HEADER], axis=1)\n",
+    "transport_df[CC_PER_DISTANCE] = transport_df.apply(lambda row: row[CC_HEADER] / row[DISTANCE_HEADER], axis=1)\n",
+    "transport_df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4e4ce147",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fig = make_subplots(\n",
+    "    rows=1, cols=2, specs=[[{\"type\": \"domain\"}, {\"type\": \"domain\"}]], subplot_titles=[EE_PER_DISTANCE, CC_PER_DISTANCE]\n",
+    ")\n",
+    "fig.add_trace(\n",
+    "    go.Pie(labels=transport_df[\"Name\"], values=transport_df[EE_PER_DISTANCE], name=f\"{ENERGY_UNIT}/{DISTANCE_UNIT}\"),\n",
+    "    1,\n",
+    "    1,\n",
+    ")\n",
+    "fig.add_trace(\n",
+    "    go.Pie(labels=transport_df[\"Name\"], values=transport_df[CC_PER_DISTANCE], name=f\"{MASS_UNIT}/{DISTANCE_UNIT}\"), 1, 2\n",
+    ")\n",
+    "fig.update_layout(\n",
+    "    title_text=\"Transport stages impact - Relative to distance travelled\",\n",
+    "    legend=dict(orientation=\"h\")\n",
+    ")\n",
+    "fig.update_traces(textposition=\"inside\", textinfo=\"percent+label\", hoverinfo=\"value+name\")\n",
+    "fig.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3b962711",
+   "metadata": {},
+   "source": [
+    "## Materials phase\n",
+    "\n",
+    "The environmental contribution from the material phase is summarized in the ``material_details`` property. The results\n",
+    "are aggregated: each item in ``material_details`` represents the total environmental impact of a material summed\n",
+    "from all its occurrences in the BoM. Listed materials contribute more than 2% of the total impact for the material\n",
+    "phase. Materials that do not contribute at least 2% of the total are aggregated under the ``Other`` item."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "051bfaa7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sustainability_summary.material_details"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c1a39efe",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "materials_df = pd.DataFrame.from_records(\n",
+    "    [\n",
+    "        {\n",
+    "            \"Name\": item.identity,\n",
+    "            \"EE%\": item.embodied_energy_percentage,\n",
+    "            EE_HEADER: item.embodied_energy.value,\n",
+    "            \"CC%\": item.climate_change_percentage,\n",
+    "            CC_HEADER: item.climate_change.value,\n",
+    "            f\"Mass before processing [{MASS_UNIT}]\": item.mass_before_processing.value,\n",
+    "            f\"Mass after processing [{MASS_UNIT}]\": item.mass_after_processing.value,\n",
+    "        }\n",
+    "        for item in sustainability_summary.material_details\n",
+    "    ]\n",
+    ")\n",
+    "materials_df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9feeb9c6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plot_impact(materials_df, \"Aggregated materials impact\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "82adc3a2",
+   "metadata": {},
+   "source": [
+    "Mass before and mass after secondary processing can help determine if the material mass removed during processing\n",
+    "contributes a significant fraction of the impact of the overall material phase."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "81e1e04d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "fig = go.Figure(\n",
+    "    data=[\n",
+    "        go.Bar(\n",
+    "            name=\"Mass before secondary processing\",\n",
+    "            x=materials_df[\"Name\"],\n",
+    "            y=materials_df[f\"Mass before processing [{MASS_UNIT}]\"],\n",
+    "        ),\n",
+    "        go.Bar(\n",
+    "            name=\"Mass after secondary processing\",\n",
+    "            x=materials_df[\"Name\"],\n",
+    "            y=materials_df[f\"Mass after processing [{MASS_UNIT}]\"],\n",
+    "        ),\n",
+    "    ],\n",
+    "    layout=go.Layout(\n",
+    "        xaxis=go.layout.XAxis(title=\"Materials\"),\n",
+    "        yaxis=go.layout.YAxis(title=f\"Mass [{MASS_UNIT}]\"),\n",
+    "        legend=dict(orientation=\"h\")\n",
+    "    ),\n",
+    ")\n",
+    "fig.show()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "874383b1",
+   "metadata": {},
+   "source": [
+    "## Material processing phase\n",
+    "\n",
+    "The environmental contributions from primary and secondary processing (applied to materials) and the joining and\n",
+    "finishing processes (applied to parts) are summarized in the ``primary_processes_details``,\n",
+    "``secondary_processes_details``, and ``joining_and_finishing_processes_details`` properties respectively.\n",
+    "Each of these properties lists the unique process-material pairs (for primary and secondary processing) or\n",
+    "individual processes (for joining and finishing) that contribute at least 5% of the total impact for that\n",
+    "category of process. The percentage contributions are relative to the total contribution of all processes\n",
+    "from the same category. Processes that do not meet the contribution threshold are aggregated under the\n",
+    "``Other`` item, with the material set to ``None``."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5626c429",
+   "metadata": {},
+   "source": [
+    "### Primary processing"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "62b909b5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sustainability_summary.primary_processes_details"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "758602f1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "primary_process_df = pd.DataFrame.from_records(\n",
+    "    [\n",
+    "        {\n",
+    "            \"Process name\": item.process_name,\n",
+    "            \"Material name\": item.material_identity,\n",
+    "            \"EE%\": item.embodied_energy_percentage,\n",
+    "            EE_HEADER: item.embodied_energy.value,\n",
+    "            \"CC%\": item.climate_change_percentage,\n",
+    "            CC_HEADER: item.climate_change.value,\n",
+    "        }\n",
+    "        for item in sustainability_summary.primary_processes_details\n",
+    "    ]\n",
+    ")\n",
+    "primary_process_df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e3420bca",
+   "metadata": {},
+   "source": [
+    "Add a ``Name`` to each item that represents the process-material pair name."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7874effd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "primary_process_df[\"Name\"] = primary_process_df.apply(\n",
+    "    lambda row: f\"{row['Process name']} - {row['Material name']}\", axis=1\n",
+    ")\n",
+    "plot_impact(\n",
+    "    primary_process_df, \"Aggregated primary processes impact\", textinfo=\"percent\", hoverinfo=\"value+name+label\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b2740df9",
+   "metadata": {},
+   "source": [
+    "### Secondary processing"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "87444854",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sustainability_summary.secondary_processes_details"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1478b347",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "secondary_process_df = pd.DataFrame.from_records(\n",
+    "    [\n",
+    "        {\n",
+    "            \"Process name\": item.process_name,\n",
+    "            \"Material name\": item.material_identity,\n",
+    "            \"EE%\": item.embodied_energy_percentage,\n",
+    "            EE_HEADER: item.embodied_energy.value,\n",
+    "            \"CC%\": item.climate_change_percentage,\n",
+    "            CC_HEADER: item.climate_change.value,\n",
+    "        }\n",
+    "        for item in sustainability_summary.secondary_processes_details\n",
+    "    ]\n",
+    ")\n",
+    "secondary_process_df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6d663e96",
+   "metadata": {},
+   "source": [
+    "Add a ``Name`` to each item that represents the process-material pair name."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "687f8c70",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "secondary_process_df[\"Name\"] = secondary_process_df.apply(\n",
+    "    lambda row: f\"{row['Process name']} - {row['Material name']}\", axis=1\n",
+    ")\n",
+    "plot_impact(\n",
+    "    secondary_process_df, \"Aggregated secondary processes impact\", textinfo=\"percent\", hoverinfo=\"value+name+label\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9872df82",
+   "metadata": {},
+   "source": [
+    "### Joining and finishing\n",
+    "\n",
+    "Joining and finishing processes apply to parts or assemblies and therefore don't include a material identity."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d0d5a1f8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sustainability_summary.joining_and_finishing_processes_details"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2ef8e7c9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "joining_and_finishing_processes_df = pd.DataFrame.from_records(\n",
+    "    [\n",
+    "        {\n",
+    "            \"Name\": item.process_name,\n",
+    "            \"EE%\": item.embodied_energy_percentage,\n",
+    "            EE_HEADER: item.embodied_energy.value,\n",
+    "            \"CC%\": item.climate_change_percentage,\n",
+    "            CC_HEADER: item.climate_change.value,\n",
+    "        }\n",
+    "        for item in sustainability_summary.joining_and_finishing_processes_details\n",
+    "    ]\n",
+    ")\n",
+    "joining_and_finishing_processes_df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7b40e2a0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plot_impact(\n",
+    "    joining_and_finishing_processes_df, \"Aggregated secondary processes impact\",\n",
+    "    textinfo=\"percent\", hoverinfo=\"value+name+label\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "386d8f66",
+   "metadata": {},
+   "source": [
+    "## Hierarchical view\n",
+    "\n",
+    "Finally, aggregate the sustainability summary results into a single dataframe and present it in a hierarchical\n",
+    "chart. This highlights the largest contributors at each level. In this example, two levels are defined:\n",
+    "first the phase and then the contributors in the phase."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ddcb9485",
+   "metadata": {},
+   "source": [
+    "First, rename the processes ``Other`` rows, so that they remain distinguishable after all processes have been\n",
+    "grouped under a general ``Processes``.\n",
+    "\n",
+    "Use ``assign`` to add a ``parent`` column to each dataframe being concatenated.\n",
+    "The ``join`` argument value ``inner`` specifies that only columns common to all dataframes are kept in the result."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "00da0944",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "primary_process_df.loc[(primary_process_df[\"Name\"] == \"Other - None\"), \"Name\"] = \"Other primary processes\"\n",
+    "secondary_process_df.loc[(secondary_process_df[\"Name\"] == \"Other - None\"), \"Name\"] = \"Other secondary processes\"\n",
+    "joining_and_finishing_processes_df.loc[\n",
+    "    (joining_and_finishing_processes_df[\"Name\"] == \"Other - None\"), \"Name\"] = \"Other joining and finishing processes\"\n",
+    "\n",
+    "summary_df = pd.concat(\n",
+    "    [\n",
+    "        phases_df.assign(Parent=\"\"),\n",
+    "        transport_df.assign(Parent=\"Transport\"),\n",
+    "        materials_df.assign(Parent=\"Material\"),\n",
+    "        primary_process_df.assign(Parent=\"Processes\"),\n",
+    "        secondary_process_df.assign(Parent=\"Processes\"),\n",
+    "        joining_and_finishing_processes_df.assign(Parent=\"Processes\"),\n",
+    "    ],\n",
+    "    join=\"inner\",\n",
+    ")\n",
+    "summary_df\n",
+    "\n",
+    "# A sunburst chart presents hierarchical data radially.\n",
+    "\n",
+    "fig = go.Figure(\n",
+    "    go.Sunburst(\n",
+    "        labels=summary_df[\"Name\"],\n",
+    "        parents=summary_df[\"Parent\"],\n",
+    "        values=summary_df[EE_HEADER],\n",
+    "        branchvalues=\"total\",\n",
+    "    ),\n",
+    "    layout_title_text=f\"Embodied Energy [{ENERGY_UNIT}]\",\n",
+    ")\n",
+    "fig.show()\n",
+    "\n",
+    "# An icicle chart presents hierarchical data as rectangular sectors.\n",
+    "\n",
+    "fig = go.Figure(\n",
+    "    go.Icicle(\n",
+    "        labels=summary_df[\"Name\"],\n",
+    "        parents=summary_df[\"Parent\"],\n",
+    "        values=summary_df[EE_HEADER],\n",
+    "        branchvalues=\"total\",\n",
+    "    ),\n",
+    "    layout_title_text=f\"Embodied Energy [{ENERGY_UNIT}]\",\n",
+    ")\n",
+    "fig.show()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

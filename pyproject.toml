@@ -40,7 +40,7 @@ python = "^3.9.0"
 
 # Packages for core library
 ansys-openapi-common = "^2.0.0"
-ansys-grantami-bomanalytics-openapi = "3.0.0a1"
+ansys-grantami-bomanalytics-openapi = "3.0.0"
 xmlschema = ">=3.0.1,<4.0"
 
 # Packages for the examples extra

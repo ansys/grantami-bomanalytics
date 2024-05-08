@@ -58,6 +58,7 @@ jobs:
         contents: write
         pull-requests: write
       runs-on: ubuntu-latest
+      if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
       steps:
       - uses: ansys/actions/doc-changelog@v6
         with:

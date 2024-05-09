@@ -6,7 +6,7 @@ changes for the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
-## grantami-bomanalytics 2.1.0, TBD
+## grantami-bomanalytics 2.1.0, 2024-05-08
 
 ### New features
 
@@ -24,6 +24,7 @@ changes for the upcoming release can be found in
 
 * Andy Grigg (Ansys)
 * Ludovic Steinbach (Ansys)
+* Doug Addy (Ansys)
 
 ## grantami-bomanalytics 2.0.0, 2024-01-17
 

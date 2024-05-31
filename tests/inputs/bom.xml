@@ -24,7 +24,7 @@
                 <Part>
                     <Quantity Unit="Each">1.0</Quantity>
                     <MassPerUom Unit="kg/Part">2.0</MassPerUom>
-                    <PartNumber>3333</PartNumber>
+                    <PartNumber />
                     <Name>Part Two</Name>
                     <Materials>
                         <Material>

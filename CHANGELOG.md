@@ -10,6 +10,7 @@
 ### Contributors
 
 * Andy Grigg (Ansys)
+* Doug Addy (Ansys)
 * Ludovic Steinbach (Ansys)
 
 ## grantami-bomanalytics 2.1.0, 2024-05-08

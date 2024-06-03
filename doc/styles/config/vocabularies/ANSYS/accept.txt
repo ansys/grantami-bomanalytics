@@ -11,3 +11,4 @@ RoHS
 Makefile
 Jupytext
 subpackage
+THIRDPARTY

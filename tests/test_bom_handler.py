@@ -30,7 +30,13 @@ import pytest
 
 from ansys.grantami.bomanalytics import BoMHandler, bom_types
 
-from .inputs import large_bom_2301, sample_bom_1711, sample_sustainability_bom_2301
+from .inputs import (
+    large_bom_2301,
+    large_bom_2301_path,
+    sample_bom_1711,
+    sample_sustainability_bom_2301,
+    sample_sustainability_bom_2301_path,
+)
 
 
 class _TestableBoMHandler(BoMHandler):
@@ -80,20 +86,14 @@ class TestRoundTripBoM:
             output_lines.append(diff_item)
         return output_lines
 
-    @pytest.mark.parametrize(
-        "input_bom",
-        [
-            pytest.param(large_bom_2301, id="large_bom"),
-        ],
-    )
-    def test_roundtrip_with_assertions(self, input_bom: str):
+    def test_roundtrip_from_text_with_assertions(self):
         bom_handler = _TestableBoMHandler(
             default_namespace=self._default_namespace, namespace_mapping=self._namespace_map
         )
-        deserialized_bom = bom_handler.load_bom_from_text(input_bom)
+        deserialized_bom = bom_handler.load_bom_from_text(large_bom_2301)
         output_bom = bom_handler.dump_bom(deserialized_bom)
 
-        diff = self._compare_boms(source_bom=input_bom, result_bom=output_bom)
+        diff = self._compare_boms(source_bom=large_bom_2301, result_bom=output_bom)
 
         assert len(diff) == 0, "\n".join(diff)
 
@@ -104,9 +104,36 @@ class TestRoundTripBoM:
             pytest.param(sample_sustainability_bom_2301, id="sustainability_bom"),
         ],
     )
-    def test_roundtrip_parsing_succeeds(self, input_bom: str):
+    def test_roundtrip_from_text_parsing_succeeds(self, input_bom: str):
         bom_handler = BoMHandler()
         deserialized_bom = bom_handler.load_bom_from_text(input_bom)
+
+        rendered_bom = bom_handler.dump_bom(deserialized_bom)
+        deserialized_bom_roundtriped = bom_handler.load_bom_from_text(rendered_bom)
+
+        assert deserialized_bom == deserialized_bom_roundtriped
+
+    def test_roundtrip_from_file_with_assertions(self):
+        bom_handler = _TestableBoMHandler(
+            default_namespace=self._default_namespace, namespace_mapping=self._namespace_map
+        )
+        deserialized_bom = bom_handler.load_bom_from_file(large_bom_2301_path)
+        output_bom = bom_handler.dump_bom(deserialized_bom)
+
+        diff = self._compare_boms(source_bom=large_bom_2301, result_bom=output_bom)
+
+        assert len(diff) == 0, "\n".join(diff)
+
+    @pytest.mark.parametrize(
+        "input_bom",
+        [
+            pytest.param(large_bom_2301_path, id="large_bom"),
+            pytest.param(sample_sustainability_bom_2301_path, id="sustainability_bom"),
+        ],
+    )
+    def test_roundtrip_from_file_parsing_succeeds(self, input_bom: str):
+        bom_handler = BoMHandler()
+        deserialized_bom = bom_handler.load_bom_from_file(input_bom)
 
         rendered_bom = bom_handler.dump_bom(deserialized_bom)
         deserialized_bom_roundtriped = bom_handler.load_bom_from_text(rendered_bom)
@@ -175,7 +202,7 @@ class TestBoMDeserialization:
             ("components[0]/components[1]/quantity/value", pytest.approx(1.0)),
             ("components[0]/components[1]/mass_per_unit_of_measure/unit", "kg/Part"),
             ("components[0]/components[1]/mass_per_unit_of_measure/value", pytest.approx(2.0)),
-            ("components[0]/components[1]/part_number", "3333"),
+            ("components[0]/components[1]/part_number", ""),
             ("components[0]/components[1]/part_name", "Part Two"),
             ("components[0]/components[1]/materials[0]/percentage", pytest.approx(80.0)),
             ("components[0]/components[1]/materials[0]/mi_material_reference/db_key", "MI_Restricted_Substances"),

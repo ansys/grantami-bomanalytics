@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Tuple, cast
+from typing import TYPE_CHECKING, Any, Dict, List, TextIO, Tuple, Union, cast
 
 import xmlschema
 from xmlschema import XMLSchema
@@ -63,7 +63,7 @@ class BoMHandler:
         :class:`~._bom_types.BillOfMaterials`
         """
         with open(file_path, "r", encoding="utf8") as fp:
-            obj, errors = cast(Tuple, self._schema.decode(fp, validation="lax"))
+            obj, errors = self._deserialize_bom(fp)
 
         if len(errors) > 0:
             newline = "\n"
@@ -86,7 +86,7 @@ class BoMHandler:
         -------
         :class:`~._bom_types.BillOfMaterials`
         """
-        obj, errors = cast(Tuple, self._schema.decode(bom_text, validation="lax", keep_empty=True))
+        obj, errors = self._deserialize_bom(bom_text)
 
         if len(errors) > 0:
             newline = "\n"
@@ -95,6 +95,23 @@ class BoMHandler:
         assert isinstance(obj, dict)
 
         return self._reader.read_bom(obj)
+
+    def _deserialize_bom(self, bom: Union[TextIO, str]) -> Tuple[Dict[str, Any], List]:
+        """
+        Deserialize either a string or I/O stream BoM.
+
+        Parameters
+        ----------
+        bom : Union[TextIO, str]
+            Object containing an XML representation of a BoM, either as text or I/O stream.
+
+        Returns
+        -------
+        Tuple[Dict[str, Any], List]
+            A tuple of the deserialized dictionary and a list of errors.
+        """
+        result = self._schema.decode(bom, validation="lax", keep_empty=True, xmlns_processing="collapsed")
+        return cast(Tuple[Dict[str, Any], List], result)
 
     def dump_bom(self, bom: "BillOfMaterials") -> str:
         """

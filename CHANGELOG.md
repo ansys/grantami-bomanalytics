@@ -1,6 +1,19 @@
 # Changelog
 
-## grantami-bomanalytics 2.1.0, TBD
+## grantami-bomanalytics 2.1.1, TBD
+
+### Bug fixes
+
+* [Issue #545](https://github.com/ansys/grantami-bomanalytics/issues/545),
+  [Pull request #546](https://github.com/ansys/grantami-bomanalytics/pull/546): Empty elements are no longer removed when deserializing a BoM file
+
+### Contributors
+
+* Andy Grigg (Ansys)
+* Doug Addy (Ansys)
+* Ludovic Steinbach (Ansys)
+
+## grantami-bomanalytics 2.1.0, 2024-05-08
 
 ### New features
 

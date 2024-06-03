@@ -148,11 +148,16 @@ jobs:
           path: doc/build/latex/*.pdf
           retention-days: 7
 
+  check_workflow_runs:
+    name: Check if there are active workflow runs
+    needs: docs
+    uses: ansys/pygranta/.github/workflows/check-concurrent-workflows.yml@main
+
   stop_vm:
     name: Stop Azure VM
     runs-on: ubuntu-latest
-    needs: docs
-    if: ${{ always() && !(inputs.skip-vm-management)}}
+    needs: check_workflow_runs
+    if: always() && !cancelled() && !(inputs.skip-vm-management) && needs.check_workflow_runs.outputs.active-runs != 'true'
 
     steps:
       - name: Stop Azure VM

@@ -155,13 +155,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-library, server-checks, update-changelog]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    permissions:
+      id-token: write
+      contents: write
     steps:
       - uses: ansys/actions/release-pypi-public@v6
         name: "Release to public PyPI"
         with:
           library-name: ${{ env.LIBRARY_NAME }}
-          twine-username: "__token__"
-          twine-token: ${{ secrets.PYPI_TOKEN }}
+          use-trusted-publisher: true
 
       - uses: ansys/actions/release-github@v6
         name: "Release to GitHub"

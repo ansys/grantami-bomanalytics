@@ -58,7 +58,7 @@ jobs:
         contents: write
         pull-requests: write
       runs-on: ubuntu-latest
-      if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+      if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') && !(startsWith(github.event.pull_request.head.ref, 'pre-commit-ci-update-config')) }}
       steps:
       - uses: ansys/actions/doc-changelog@v7
         with:

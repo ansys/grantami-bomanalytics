@@ -42,13 +42,13 @@ requests = ">=2.26.0,<3.0.0"
 
 [[package]]
 name = "ansys-openapi-common"
-version = "2.0.2"
+version = "2.1.1"
 description = "Provides a helper to create sessions for use with Ansys OpenAPI clients."
 optional = false
 python-versions = "<4.0,>=3.9"
 files = [
-    {file = "ansys_openapi_common-2.0.2-py3-none-any.whl", hash = "sha256:bfd3865efbd2bfa14a2b8d3cd9f4a71e86b9a5a42857b0f1093653786a04467a"},
-    {file = "ansys_openapi_common-2.0.2.tar.gz", hash = "sha256:aef6ec8b261edcb6e6ba58fdb0695cf0de6e5a2247d4e4bf5d39c12d7c2e7614"},
+    {file = "ansys_openapi_common-2.1.1-py3-none-any.whl", hash = "sha256:bed2fc9224e7db4ced7302804526d2fbd344fd1218faed41e98e3eff615a556a"},
+    {file = "ansys_openapi_common-2.1.1.tar.gz", hash = "sha256:9d775a39ee551fb52ee969370e3a53adce6cc8620adfc036c490aad61aa0b92b"},
 ]
 
 [package.dependencies]
@@ -59,8 +59,8 @@ requests-negotiate-sspi = {version = ">=0.5.2,<0.6.0", markers = "sys_platform =
 requests-ntlm = ">=1.1.0,<2.0.0"
 
 [package.extras]
-linux-kerberos = ["requests-kerberos (>=0.13,<0.14)"]
-oidc = ["keyring (>=22,<25)", "requests_auth (>=6,<8)"]
+linux-kerberos = ["requests-kerberos (>=0.13,<0.16)"]
+oidc = ["keyring (>=22,<26)", "requests_auth (>=8.0.0,<9.0.0)"]
 
 [[package]]
 name = "ansys-sphinx-theme"

@@ -297,15 +297,16 @@ class TestSustainabilityBomQueries:
         assert beryllium_summary.mass_before_processing.value == pytest.approx(0.027)
         assert beryllium_summary.material_reference.record_guid is not None
         assert beryllium_summary.climate_change.value == pytest.approx(15.52, DEFAULT_TOLERANCE)
-        assert beryllium_summary.climate_change_percentage == pytest.approx(49.25, DEFAULT_TOLERANCE)
+        assert beryllium_summary.climate_change_percentage == pytest.approx(48.52, DEFAULT_TOLERANCE)
         assert beryllium_summary.embodied_energy.value == pytest.approx(117.55, DEFAULT_TOLERANCE)
-        assert beryllium_summary.embodied_energy_percentage == pytest.approx(36.34, DEFAULT_TOLERANCE)
+        assert beryllium_summary.embodied_energy_percentage == pytest.approx(35.28, DEFAULT_TOLERANCE)
 
         # Check expected summaries for primary processes
-        assert len(response.primary_processes_details) == 3
+        assert len(response.primary_processes_details) == 4
         expected_primary_processes = [
             ("Primary processing, Casting", "stainless-astm-cn-7ms-cast"),
             ("Primary processing, Casting", "steel-1010-annealed"),
+            ("Primary processing, Metal extrusion, hot", "steel-1010-annealed"),
             ("Other", None),
         ]
         primary_processes = [(p.process_name, p.material_identity) for p in response.primary_processes_details]
@@ -314,10 +315,10 @@ class TestSustainabilityBomQueries:
 
         # Spot check primary process
         primary_process = response.primary_processes_details[1]
-        assert primary_process.climate_change.value == pytest.approx(14.75, DEFAULT_TOLERANCE)
-        assert primary_process.embodied_energy.value == pytest.approx(210.68, DEFAULT_TOLERANCE)
-        assert primary_process.climate_change_percentage == pytest.approx(39.40, DEFAULT_TOLERANCE)
-        assert primary_process.embodied_energy_percentage == pytest.approx(39.22, DEFAULT_TOLERANCE)
+        assert primary_process.climate_change.value == pytest.approx(3.98, DEFAULT_TOLERANCE)
+        assert primary_process.embodied_energy.value == pytest.approx(54.99, DEFAULT_TOLERANCE)
+        assert primary_process.climate_change_percentage == pytest.approx(34.96, DEFAULT_TOLERANCE)
+        assert primary_process.embodied_energy_percentage == pytest.approx(34.35, DEFAULT_TOLERANCE)
         assert primary_process.material_reference.record_guid is not None
         assert primary_process.process_reference.record_guid is not None
 
@@ -389,8 +390,8 @@ class TestSustainabilityBomQueries:
         assert product.input_part_number == "Part1[ProductAssembly]"
         assert product._reference_value is None
         assert product.reported_mass.value == pytest.approx(4.114, DEFAULT_TOLERANCE)
-        assert product.climate_change.value == pytest.approx(75.04, DEFAULT_TOLERANCE)
-        assert product.embodied_energy.value == pytest.approx(951.61, DEFAULT_TOLERANCE)
+        assert product.climate_change.value == pytest.approx(49.33, DEFAULT_TOLERANCE)
+        assert product.embodied_energy.value == pytest.approx(578.29, DEFAULT_TOLERANCE)
 
         assert len(product.parts) == 5
 
@@ -403,8 +404,8 @@ class TestSustainabilityBomQueries:
         assert subassembly.input_part_number == "Part1.1[SubAssembly]"
         assert subassembly._reference_value is None
         assert subassembly.reported_mass.value == pytest.approx(1.45, DEFAULT_TOLERANCE)
-        assert subassembly.climate_change.value == pytest.approx(32.864, DEFAULT_TOLERANCE)
-        assert subassembly.embodied_energy.value == pytest.approx(453.53, DEFAULT_TOLERANCE)
+        assert subassembly.climate_change.value == pytest.approx(17.93, DEFAULT_TOLERANCE)
+        assert subassembly.embodied_energy.value == pytest.approx(235.97, DEFAULT_TOLERANCE)
 
         # JF process
         jf_process = subassembly.processes[0]
@@ -422,7 +423,7 @@ class TestSustainabilityBomQueries:
         assert leaf_part.input_part_number == "Part1.A[LeafPart]"
         assert leaf_part._reference_value is None
         assert leaf_part.climate_change.value == pytest.approx(1.75, DEFAULT_TOLERANCE)
-        assert leaf_part.embodied_energy.value == pytest.approx(24.99, DEFAULT_TOLERANCE)
+        assert leaf_part.embodied_energy.value == pytest.approx(25.37, DEFAULT_TOLERANCE)
         assert leaf_part.reported_mass.value == pytest.approx(0.61, DEFAULT_TOLERANCE)
 
         # Leaf part -> Material
@@ -432,7 +433,7 @@ class TestSustainabilityBomQueries:
 
         assert material.record_guid is not None
         assert material.climate_change.value == pytest.approx(1.06, DEFAULT_TOLERANCE)
-        assert material.embodied_energy.value == pytest.approx(14.30, DEFAULT_TOLERANCE)
+        assert material.embodied_energy.value == pytest.approx(14.68, DEFAULT_TOLERANCE)
         assert material.reported_mass.value == pytest.approx(0.61, DEFAULT_TOLERANCE)
         assert material.recyclable is True
         assert material.functional_recycle is True

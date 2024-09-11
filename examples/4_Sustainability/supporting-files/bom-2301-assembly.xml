@@ -32,7 +32,7 @@
 											<Percentage>100.0</Percentage>
 										</Process>
 										<Process>
-											<MIProcessReference >
+											<MIProcessReference>
 												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">907bda29-e800-44f6-b7ea-4eb8e7cff375</recordGUID>
 											</MIProcessReference>
@@ -41,7 +41,7 @@
 											<Quantity Unit="kg">0.0808</Quantity>
 										</Process>
 										<Process>
-											<MIProcessReference >
+											<MIProcessReference>
 												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
 											</MIProcessReference>
@@ -58,7 +58,7 @@
 							<MassPerUom Unit="kg/Part">0.175</MassPerUom>
 							<PartNumber>Part1.1.B[LeafPart]</PartNumber>
 							<Materials>
-								<Material >
+								<Material>
 									<Percentage>100.0</Percentage>
 									<MIMaterialReference>
 										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
@@ -76,7 +76,7 @@
 											<Percentage>100.0</Percentage>
 										</Process>
 										<Process>
-											<MIProcessReference >
+											<MIProcessReference>
 												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
 											</MIProcessReference>
@@ -120,7 +120,7 @@
 										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
 										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
 									</MIProcessReference>
-									<Identity>Primary processing, Metal extrusion, hot</Identity>
+									<Identity>Metal extrusion, hot</Identity>
 									<DimensionType>Mass</DimensionType>
 									<Percentage>100.0</Percentage>
 								</Process>
@@ -235,7 +235,6 @@
 						</Material>
 					</Materials>
 				</Part>
-
 			</Components>
 		</Part>
 	</Components>

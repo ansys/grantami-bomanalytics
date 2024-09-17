@@ -64,13 +64,13 @@ oidc = ["keyring (>=22,<26)", "requests_auth (>=8.0.0,<9.0.0)"]
 
 [[package]]
 name = "ansys-sphinx-theme"
-version = "1.0.8"
+version = "1.0.9"
 description = "A theme devised by ANSYS, Inc. for Sphinx documentation."
 optional = false
 python-versions = "<4,>=3.9"
 files = [
-    {file = "ansys_sphinx_theme-1.0.8-py3-none-any.whl", hash = "sha256:c212239c44691f8d5a5b09b3b5dd4322edbd5935793420b6eadbde0d18af2286"},
-    {file = "ansys_sphinx_theme-1.0.8.tar.gz", hash = "sha256:e7a6adf9072541b6e7492ea8ae399fb3228c6022612d9fc9df97c7c73ef78cc3"},
+    {file = "ansys_sphinx_theme-1.0.9-py3-none-any.whl", hash = "sha256:583769355cf8a0d779ce7388bb66792a03f5f9f4ed0d8d8998469d2d2a563ada"},
+    {file = "ansys_sphinx_theme-1.0.9.tar.gz", hash = "sha256:e5190aba2cc5dec0163d7b86d352c9d87a39f6b3e23cd7cea58cf154e0565d3f"},
 ]
 
 [package.dependencies]

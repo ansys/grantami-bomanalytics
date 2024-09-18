@@ -3831,13 +3831,13 @@ files = [
 
 [[package]]
 name = "xmlschema"
-version = "3.4.1"
+version = "3.4.2"
 description = "An XML Schema validator and decoder"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "xmlschema-3.4.1-py3-none-any.whl", hash = "sha256:7113a9dca6c48625c4ea819486bce9567f41cff1b6d064f7c32da2e03d443deb"},
-    {file = "xmlschema-3.4.1.tar.gz", hash = "sha256:4f69eca6f2c446b06c74acd958e7d6613487c253d959a3b75078dfcc880b80ff"},
+    {file = "xmlschema-3.4.2-py3-none-any.whl", hash = "sha256:c6b4de5f8aadeb45e74229f09a2129342b446456efc5e5a27388050afdfedec8"},
+    {file = "xmlschema-3.4.2.tar.gz", hash = "sha256:d35023ea504ea46127302d1297b046d023b96fec5fe4b4b690534ea85b5e9bf8"},
 ]
 
 [package.dependencies]

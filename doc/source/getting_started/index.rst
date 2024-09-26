@@ -31,6 +31,8 @@ Check that you can start the BomServices client from Python by running this code
 
     <BomServicesClient: url="my.server.name", dbkey="MI_Restricted_Substances">
 
+This example uses Windows-based autologon authentication. For all supported authentication schemes, see the :OpenAPI-Common:`OpenAPI-Common documentation <index.html#authentication-schemes>`.
+
 If you see a response from the server, congratulations. You can start using
 the BomAnalytics service. For information about available queries,
 see :ref:`ref_grantami_bomanalytics_examples`. For more in-depth descriptions,

@@ -68,7 +68,7 @@ Installation
 ------------
 .. readme_installation
 
-To install the latest PyGranta JobQueue release from `PyPI <https://pypi.org/project/ansys-grantami-bomanalytics/>`_,
+To install the latest PyGranta BoM Analytics release from `PyPI <https://pypi.org/project/ansys-grantami-bomanalytics/>`_,
 run this command:
 
 .. code::
@@ -81,6 +81,10 @@ To install a release compatible with a specific version of Granta MI, install th
 .. code::
 
     pip install pygranta==2023.2.0
+
+To see which individual PyGranta package versions are installed with each version of the PyGranta metapackage, consult
+the `Package versions <https://grantami.docs.pyansys.com/version/dev/package_versions.html>`_ section of the PyGranta
+documentation.
 
 Alternatively, to install the latest development version from the `PyGranta BoM Analytics repository <https://github.com/ansys/grantami-bomanalytics>`_,
 run this command:

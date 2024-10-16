@@ -74,11 +74,17 @@ table_information = {
 # Generally static unless the BoM Analytics Servers logic has changed, or these attributes have been added to the layout
 # Both of these scenarios are unlikely
 # dict[Table name: list[Attribute name]]
-extra_attributes = {"Coatings": ["Coating Code"], "Legislations and Lists": ["Legislation ID", "Short title"]}
+extra_attributes = {
+    "Coatings": ["Coating Code"],
+    "Legislations and Lists": ["Legislation ID", "Short title"],
+}
 
 # Will generally be different for each release, and may be empty.
-# dict[Table name: dict[Current attribute name: New attribute name]]
-renamed_attributes = {"Products and parts": {"General comments": "Comments"}}
+renamed_attributes = {
+    # "Table name": {
+    #     "Old attribute name": "New attribute name",
+    # }
+}
 
 info = {}
 logger.info(f"Reading records and attributes from database '{DB_KEY}'")
@@ -109,7 +115,7 @@ for table_name, table_details in table_information.items():
         for extra_attribute_name in relevant_attribute_names:
             attribute_info = attribute_name_map[extra_attribute_name]
             added_items.append(
-                models.GrantaServerApiSchemaLayoutsLayoutAttributeItem(
+                models.GsaLayoutAttributeItem(
                     attribute_type=attribute_info.type,
                     underlying_entity_guid=attribute_info.guid,
                     name=attribute_info.name,
@@ -121,7 +127,7 @@ for table_name, table_details in table_information.items():
                 )
             )
         layout_info.append(
-            models.GrantaServerApiSchemaLayoutsFullLayoutSection(
+            models.GsaFullLayoutSection(
                 name="Extra Attributes",
                 section_items=added_items,
                 display_names={},

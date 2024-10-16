@@ -57,7 +57,7 @@ class TableBrowser(ServerApiClient):
     def update_table_name(self, db_key: str, table_guid: str, new_table_name: str) -> None:
         tables_api = api.SchemaTablesApi(self._client)
         self.logger.info(f"Updating Table - {db_key}:{table_guid} with name '{new_table_name}'")
-        patch_request = models.GrantaServerApiSchemaTablesUpdateTable(name=new_table_name)
+        patch_request = models.GsaUpdateTable(name=new_table_name)
         tables_api.update_table(database_key=db_key, table_guid=table_guid, body=patch_request)
 
 
@@ -86,7 +86,7 @@ class TableLayoutApplier(ServerApiClient):
 
     def create_layout(self, layout_name: str) -> str:
         logger.info(f"Creating new layout '{layout_name}'")
-        layout_request = models.GrantaServerApiSchemaLayoutsCreateLayout(name=layout_name)
+        layout_request = models.GsaCreateLayout(name=layout_name)
         layout_response = self._layouts_api.create_layout(
             database_key=self._db_key, table_guid=self._table_guid, body=layout_request
         )
@@ -94,7 +94,7 @@ class TableLayoutApplier(ServerApiClient):
 
     def create_layout_section(self, layout_guid: str, section_name: str) -> str:
         logger.info(f"Creating new layout section '{section_name}' in layout '{layout_guid}'")
-        section_request = models.GrantaServerApiSchemaLayoutsCreateLayoutSection(name=section_name)
+        section_request = models.GsaCreateLayoutSection(name=section_name)
         section_response = self._layout_sections_api.create_section(  # noqa: E501
             database_key=self._db_key, table_guid=self._table_guid, layout_guid=layout_guid, body=section_request
         )
@@ -105,6 +105,8 @@ class TableLayoutApplier(ServerApiClient):
             f"Adding new item '{item_information['name']}' to layout section '{layout_section_guid}' in layout '{layout_guid}'"  # noqa: E501
         )
         new_section_item = self._process_layout_item(item_information)
+        if new_section_item is None:
+            return
         self._layout_sections_api.create_layout_item(  # noqa: E501
             database_key=self._db_key,
             table_guid=self._table_guid,
@@ -113,25 +115,25 @@ class TableLayoutApplier(ServerApiClient):
             body=new_section_item,
         )
 
-    def _process_layout_item(self, item_information: Mapping) -> models.GrantaServerApiSchemaLayoutsNewLayoutItem:
+    def _process_layout_item(self, item_information: Mapping) -> models.GsaNewLayoutItem | None:
         if item_information["item_type"] == "attribute":
             return self._process_attribute(item_information)
         elif item_information["item_type"] == "link":
             if item_information["link_type"] == "associationChain":
                 return self._process_association_chain(item_information)
+            elif item_information["link_type"] == "crossDatabaseLink":
+                return None
         raise NotImplementedError("Other layout items are not supported yet...")
 
     def _process_association_chain(self, layout_item):
         item_name = layout_item["name"]
         logger.info(f"--Association Chain - '{item_name}'")
         links = self._process_association_chain_link(layout_item)
-        return models.GrantaServerApiSchemaLayoutsNewLayoutAssociationChainItem(
-            association_chain_name=item_name, association_chain_links=links
-        )
+        return models.GsaNewLayoutAssociationChainItem(association_chain_name=item_name, association_chain_links=links)
 
     def _process_association_chain_link(self, chain_link):
         links = [
-            models.GrantaServerApiSchemaLayoutsNewLayoutAssociationChainLink(
+            models.GsaNewLayoutAssociationChainLink(
                 forwards=chain_link["forwards"],
                 tabular_attribute_guid=chain_link["underlying_entity_guid"],
                 source_database_version_guid=chain_link["target_database"],
@@ -148,12 +150,12 @@ class TableLayoutApplier(ServerApiClient):
         meta_names = [i["name"] for i in layout_item["meta_attributes"]]
         attribute_guid = self._attribute_name_map[attribute_name]
 
-        new_section_item = models.GrantaServerApiSchemaLayoutsNewLayoutAttributeItem(attribute_guid=attribute_guid)
+        new_section_item = models.GsaNewLayoutAttributeItem(attribute_guid=attribute_guid)
         if layout_item["tabular_columns"] is not None:
             detailed_attribute_info = self._attributes_api.get_attribute(
                 database_key=self._db_key, table_guid=self._table_guid, attribute_guid=attribute_guid
             )
-            assert isinstance(detailed_attribute_info, models.GrantaServerApiSchemaAttributesTabularAttribute)
+            assert isinstance(detailed_attribute_info, models.GsaTabularAttribute)
             column_map = {column.name: column for column in detailed_attribute_info.tabular_columns}
             columns = []
             for column_item in layout_item["tabular_columns"]:
@@ -169,7 +171,7 @@ class TableLayoutApplier(ServerApiClient):
             for meta_name in meta_names:
                 logger.info(f"----{meta_name}")
                 meta_item = meta_map[meta_name]
-                metas.append(models.GrantaServerApiSchemaLayoutsNewLayoutAttributeItem(attribute_guid=meta_item))
+                metas.append(models.GsaNewLayoutAttributeItem(attribute_guid=meta_item))
             new_section_item.meta_attributes = metas
         return new_section_item
 
@@ -190,7 +192,7 @@ class SubsetCreator(ServerApiClient):
     def create_subset(self, db_key: str, table_guid: str, subset_name: str) -> str:
         subsets_api = api.SchemaSubsetsApi(self._client)
         self.logger.info(f"Creating new subset '{subset_name}'")
-        subset_request = models.GrantaServerApiSchemaSubsetsCreateSubset(name=subset_name)
+        subset_request = models.GsaCreateSubset(name=subset_name)
         subset_response = subsets_api.create_subset(database_key=db_key, table_guid=table_guid, body=subset_request)
         return subset_response.guid
 

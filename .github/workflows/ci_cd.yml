@@ -10,7 +10,7 @@ on:
   merge_group:
 
 env:
-  MAIN_PYTHON_VERSION: '3.9'
+  MAIN_PYTHON_VERSION: '3.12'
   DOCUMENTATION_CNAME: 'bomanalytics.grantami.docs.pyansys.com'
   LIBRARY_NAME: 'ansys-grantami-bomanalytics'
   LIBRARY_NAMESPACE: 'ansys.grantami.bomanalytics'
@@ -63,7 +63,7 @@ jobs:
     strategy:
        matrix:
            os: [ubuntu-latest, windows-latest]
-           python-version: ['3.9', '3.10', '3.11', '3.12']
+           python-version: ['3.10', '3.11', '3.12', '3.13']
     steps:
       - uses: ansys/actions/build-wheelhouse@v8
         with:
@@ -78,7 +78,7 @@ jobs:
     strategy:
       matrix:
        os: [ubuntu-latest, windows-latest]
-       python-version: ['3.9', '3.10', '3.11', '3.12']
+       python-version: ['3.10', '3.11', '3.12', '3.13']
       fail-fast: false
     steps:
       - name: "Checkout the repository"

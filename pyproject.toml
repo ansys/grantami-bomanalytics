@@ -26,21 +26,21 @@ classifiers = [
   "Operating System :: POSIX",
   "Operating System :: MacOS",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
 packages = [
   { include = "ansys", from = "src" }
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9.0"
+python = "^3.10.0"
 
 # Packages for core library
 ansys-openapi-common = "^2.0.0"
-ansys-grantami-bomanalytics-openapi = "3.0.0"
+ansys-grantami-bomanalytics-openapi = { version = "3.1.0rc1", allow-prereleases = true }
 xmlschema = ">=3.0.1,<4.0"
 
 # Packages for the examples extra

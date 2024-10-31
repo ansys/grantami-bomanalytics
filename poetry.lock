@@ -69,13 +69,13 @@ oidc = ["keyring (>=22,<26)", "requests_auth (>=8.0.0,<9.0.0)"]
 
 [[package]]
 name = "ansys-sphinx-theme"
-version = "1.0.11"
+version = "1.1.7"
 description = "A theme devised by ANSYS, Inc. for Sphinx documentation."
 optional = false
-python-versions = "<4,>=3.9"
+python-versions = "<4,>=3.10"
 files = [
-    {file = "ansys_sphinx_theme-1.0.11-py3-none-any.whl", hash = "sha256:75c718e407a6b1e868ed5063ba3d1ac93c778195e129253dbaf2367bb87940f5"},
-    {file = "ansys_sphinx_theme-1.0.11.tar.gz", hash = "sha256:a9c3399f71fbdfee08dc97eb6821e660742b7f0c425a3a6f443254a356863ed4"},
+    {file = "ansys_sphinx_theme-1.1.7-py3-none-any.whl", hash = "sha256:fb67187650865e068d09d20a211e995a4b00e2d0dc2c67bd769811b438147663"},
+    {file = "ansys_sphinx_theme-1.1.7.tar.gz", hash = "sha256:7f0bd36482b538fa76cf9d671ca3faa8a96d35f3ebc54674a6d1db73e8e9dc1d"},
 ]
 
 [package.dependencies]
@@ -86,8 +86,8 @@ pydata-sphinx-theme = ">=0.15.4,<0.16"
 Sphinx = ">=4.2.0"
 
 [package.extras]
-autoapi = ["sphinx-autoapi (==3.2.1)", "sphinx-design (==0.6.1)", "sphinx-jinja (==2.0.2)"]
-doc = ["Pillow (>=9.0)", "PyGitHub (==2.3.0)", "Sphinx (==8.0.2)", "jupytext (==1.16.4)", "nbsphinx (==0.9.5)", "notebook (==7.2.1)", "numpydoc (==1.8.0)", "pandas (==2.2.2)", "pyvista[jupyter] (==0.44.1)", "requests (==2.32.3)", "sphinx-autoapi (==3.2.1)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.6.1)", "sphinx-gallery (==0.17.1)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==1.0.4)"]
+autoapi = ["sphinx-autoapi (==3.3.2)", "sphinx-design (==0.6.1)", "sphinx-jinja (==2.0.2)"]
+doc = ["Pillow (>=9.0)", "PyGitHub (==2.4.0)", "Sphinx (==8.0.2)", "jupytext (==1.16.4)", "nbsphinx (==0.9.5)", "notebook (==7.2.2)", "numpydoc (==1.8.0)", "pandas (==2.2.3)", "pyvista[jupyter] (==0.44.1)", "requests (==2.32.3)", "sphinx-autoapi (==3.3.2)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.6.1)", "sphinx-gallery (==0.17.1)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==1.0.4)"]
 
 [[package]]
 name = "anyio"
@@ -4033,4 +4033,4 @@ examples = ["ipywidgets", "jupyterlab", "lxml", "pandas", "plotly", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10.0"
-content-hash = "09230d8337e959b00e0b159ae5f217d7804070955726c0d18dff2e727472b4d1"
+content-hash = "a0140399a97cb8bf5ea2518644a52594422e16648258ecf222b3c271803c442f"

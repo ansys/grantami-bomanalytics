@@ -41,9 +41,9 @@ PyGranta BoM Analytics
 
 The MI Restricted Substances and MI Sustainability solutions for Granta MI include REST APIs for:
 
- - Evaluating compliance of products, assemblies, specifications, and
-   materials against legislations.
- - Evaluating the environmental performance of products, assemblies, materials and processes.
+- Evaluating compliance of products, assemblies, specifications, and
+  materials against legislations.
+- Evaluating the environmental performance of products, assemblies, materials and processes.
 
 This package abstracts automatically-generated code into an easy-to-use client library.
 

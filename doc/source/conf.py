@@ -116,7 +116,7 @@ numpydoc_validation_exclude = {
 
 extlinks = {
     'MI_docs': (
-        'https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/Granta/v241/en/RS_and_Sustainability/%s',
+        'https://ansyshelp.ansys.com/account/secured?returnurl=/Views/Secured/Granta/v251/en/RS_and_Sustainability/%s',
         None
     ),
     "OpenAPI-Common": ("https://openapi.docs.pyansys.com/version/stable/%s", None),

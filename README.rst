@@ -59,7 +59,7 @@ to a Granta MI server that includes MI Restricted Substances and Sustainability 
 ``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately.
 Endpoints available to end users depend on the available licenses.
 
-The ``ansys.grantami.bomanalytics`` package currently supports Python version 3.9 through 3.12.
+The ``ansys.grantami.bomanalytics`` package currently supports Python version 3.10 through 3.13.
 
 .. readme_software_requirements_end
 

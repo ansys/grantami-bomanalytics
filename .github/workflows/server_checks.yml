@@ -23,11 +23,11 @@ on:
         required: true
       AZURE_RESOURCE_GROUP:
         required: true
-      AZURE_VM_NAME:
+      AZURE_VM_NAME_NEXT:
         required: true
       CODECOV_TOKEN:
         required: true
-      TEST_SERVER_URL:
+      TEST_SERVER_URL_NEXT:
         required: true
       TEST_SERVER_READ_USER:
         required: true
@@ -60,7 +60,7 @@ jobs:
           azcliversion: 2.32.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
+            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME_NEXT }}
 
       - name: "Set up Python ${{ inputs.python-version }}"
         uses: actions/setup-python@v5
@@ -75,7 +75,7 @@ jobs:
           pip freeze
           python ./cicd/check_server.py
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
@@ -103,7 +103,7 @@ jobs:
       - name: "Test with tox (integration tests only)"
         run: tox -e tests -- -m "integration"
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
           TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
@@ -135,7 +135,7 @@ jobs:
       - name: "Run Ansys documentation building action"
         uses: ansys/actions/doc-build@v8
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
           BUILD_EXAMPLES: "true"
@@ -161,4 +161,4 @@ jobs:
           azcliversion: 2.32.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-            az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }} --no-wait
+            az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME_NEXT }} --no-wait

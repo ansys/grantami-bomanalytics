@@ -52,9 +52,8 @@ Dependencies
 ------------
 .. readme_software_requirements
 
-To use the ``grantami-bomanalytics`` package, you must have access
-to a Granta MI server that includes MI Restricted Substances and Sustainability Reports
-2024 R1 or later.
+To use the ``grantami-bomanalytics`` package, you must have access to a Granta MI server that
+includes MI Restricted Substances and Sustainability Reports 2024 R2 or later.
 
 ``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately.
 Endpoints available to end users depend on the available licenses.
@@ -68,15 +67,15 @@ Installation
 ------------
 .. readme_installation
 
-To install the latest PyGranta BoM Analytics release from `PyPI <https://pypi.org/project/ansys-grantami-bomanalytics/>`_,
-run this command:
+To install the latest PyGranta BoM Analytics release from
+`PyPI <https://pypi.org/project/ansys-grantami-bomanalytics/>`_, run this command:
 
 .. code::
 
     pip install ansys-grantami-bomanalytics
 
-To install a release compatible with a specific version of Granta MI, install the
-`PyGranta <https://grantami.docs.pyansys.com/>`_ metapackage with a requirement specifier:
+To install a release compatible with a specific version of Granta MI Restricted Substances and Sustainability Reports,
+install the `PyGranta <https://grantami.docs.pyansys.com/>`_ metapackage with a requirement specifier:
 
 .. code::
 
@@ -86,8 +85,8 @@ To see which individual PyGranta package versions are installed with each versio
 the `Package versions <https://grantami.docs.pyansys.com/version/dev/package_versions.html>`_ section of the PyGranta
 documentation.
 
-Alternatively, to install the latest development version from the `PyGranta BoM Analytics repository <https://github.com/ansys/grantami-bomanalytics>`_,
-run this command:
+Alternatively, to install the latest development version from the
+`PyGranta BoM Analytics repository <https://github.com/ansys/grantami-bomanalytics>`_, run this command:
 
 .. code::
 

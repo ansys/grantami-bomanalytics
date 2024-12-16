@@ -68,7 +68,7 @@ SERVICE_PATH = "/BomAnalytics/v1.svc"
 MI_AUTH_PATH = "/Health/v2.svc"
 GRANTA_APPLICATION_NAME_HEADER = "PyGranta BoM Analytics"
 
-MINIMUM_GRANTA_MI_VERSION = (24, 1)
+MINIMUM_BAS_VERSION = (24, 2)
 
 if TYPE_CHECKING:
     from ._item_results import Licensing
@@ -215,7 +215,8 @@ class Connection(ApiClientFactory):
                 raise ConnectionError(
                     "Cannot find the BoM Analytics service in Granta MI Service Layer. Ensure a compatible version of "
                     "the Restricted Substances And Sustainability Reports are available on the server and try again."
-                    f"The minimum required version is {'.'.join([str(e) for e in MINIMUM_GRANTA_MI_VERSION])}."
+                    "The minimum required Restricted Substances And Sustainability Reports version is "
+                    f"{'.'.join([str(e) for e in MINIMUM_BAS_VERSION])}."
                 )
             else:
                 raise ConnectionError(

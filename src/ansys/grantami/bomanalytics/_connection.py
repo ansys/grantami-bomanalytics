@@ -214,7 +214,7 @@ class Connection(ApiClientFactory):
             if e.status_code == 404:
                 raise ConnectionError(
                     "Cannot find the BoM Analytics service in Granta MI Service Layer. Ensure a compatible version of "
-                    "the Restricted Substances And Sustainability Reports are available on the server and try again."
+                    "the Restricted Substances And Sustainability Reports are available on the server and try again. "
                     "The minimum required Restricted Substances And Sustainability Reports version is "
                     f"{'.'.join([str(e) for e in MINIMUM_BAS_VERSION])}."
                 )

@@ -6,6 +6,71 @@ changes for the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
+## [2.2.0](https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.2.0) - 2024-12-17
+
+
+### Changed
+
+- CI - 490 - Add changelog generation [#510](https://github.com/ansys/grantami-bomanalytics/pull/510)
+- Define labels and add label sync CI [#518](https://github.com/ansys/grantami-bomanalytics/pull/518)
+- Do not run changelog-fragment for dependabot-initiated PRs [#519](https://github.com/ansys/grantami-bomanalytics/pull/519)
+- Update changelog [#529](https://github.com/ansys/grantami-bomanalytics/pull/529)
+- Use trusted publisher [#549](https://github.com/ansys/grantami-bomanalytics/pull/549)
+- Update main branch to 2.2.0dev0 [#551](https://github.com/ansys/grantami-bomanalytics/pull/551)
+- Don't create changelog fragments for pre-commit updates [#587](https://github.com/ansys/grantami-bomanalytics/pull/587)
+
+
+### Fixed
+
+- Empty elements are no longer removed when deserializing a BoM file [#546](https://github.com/ansys/grantami-bomanalytics/pull/546)
+- Update minimum required BoM Analytics Services version [#670](https://github.com/ansys/grantami-bomanalytics/pull/670)
+- Add missing space to ConnectionError text [#672](https://github.com/ansys/grantami-bomanalytics/pull/672)
+
+
+### Dependencies
+
+- Bump plotly from 5.21.0 to 5.22.0 [#511](https://github.com/ansys/grantami-bomanalytics/pull/511)
+- Bump ansys-openapi-common from 2.0.0 to 2.0.2 [#520](https://github.com/ansys/grantami-bomanalytics/pull/520)
+- Bump jinja2 from 3.1.3 to 3.1.4 [#521](https://github.com/ansys/grantami-bomanalytics/pull/521)
+- Bump jupyterlab from 4.1.8 to 4.2.0 [#522](https://github.com/ansys/grantami-bomanalytics/pull/522)
+- Bump jupytext from 1.16.1 to 1.16.2 [#523](https://github.com/ansys/grantami-bomanalytics/pull/523)
+- Bump nbsphinx from 0.9.3 to 0.9.4 [#524](https://github.com/ansys/grantami-bomanalytics/pull/524)
+- Bump ansys-grantami-bomanalytics-openapi from 3.0.0a1 to 3.0.0 [#527](https://github.com/ansys/grantami-bomanalytics/pull/527)
+- Upgrade to grantami-bomanalytics-openapi 3.1.0rc1 [#635](https://github.com/ansys/grantami-bomanalytics/pull/635)
+
+
+### Miscellaneous
+
+- Update openapi-common reference link [#513](https://github.com/ansys/grantami-bomanalytics/pull/513)
+- [pre-commit.ci] pre-commit autoupdate [#531](https://github.com/ansys/grantami-bomanalytics/pull/531), [#540](https://github.com/ansys/grantami-bomanalytics/pull/540), [#554](https://github.com/ansys/grantami-bomanalytics/pull/554), [#563](https://github.com/ansys/grantami-bomanalytics/pull/563), [#577](https://github.com/ansys/grantami-bomanalytics/pull/577)
+
+
+### Documentation
+
+- Update acceptance tests for 2025 R1 database [#607](https://github.com/ansys/grantami-bomanalytics/pull/607)
+- Update repository link in pyproject.toml [#616](https://github.com/ansys/grantami-bomanalytics/pull/616)
+- Fix installation example for git dependency [#619](https://github.com/ansys/grantami-bomanalytics/pull/619)
+- Add link to PyGranta version compatibility documentation [#620](https://github.com/ansys/grantami-bomanalytics/pull/620)
+- Add link to supported authentication schemes [#621](https://github.com/ansys/grantami-bomanalytics/pull/621)
+- maint: 2025 R1 update [#630](https://github.com/ansys/grantami-bomanalytics/pull/630)
+- Fix bulleted list in README [#643](https://github.com/ansys/grantami-bomanalytics/pull/643)
+- Update Ansys documentation links to 2025 R1 [#649](https://github.com/ansys/grantami-bomanalytics/pull/649)
+- Use 2024 R2 Ansys documentation [#654](https://github.com/ansys/grantami-bomanalytics/pull/654)
+- Update stated Python requirement [#656](https://github.com/ansys/grantami-bomanalytics/pull/656)
+- Fix BoM Analytics Services dependency [#669](https://github.com/ansys/grantami-bomanalytics/pull/669)
+
+
+### Maintenance
+
+- [pre-commit.ci] pre-commit autoupdate [#590](https://github.com/ansys/grantami-bomanalytics/pull/590)
+- Auto-approve pre-commit-ci pull requests [#602](https://github.com/ansys/grantami-bomanalytics/pull/602)
+- Configure environment for trusted publisher release [#617](https://github.com/ansys/grantami-bomanalytics/pull/617)
+- Improve VM management in CI [#622](https://github.com/ansys/grantami-bomanalytics/pull/622)
+- Update CONTRIBUTORS and AUTHORS to new format [#626](https://github.com/ansys/grantami-bomanalytics/pull/626)
+- Use Production VM for CI on release branch [#651](https://github.com/ansys/grantami-bomanalytics/pull/651)
+- Prepare 2.2.0rc0 release [#652](https://github.com/ansys/grantami-bomanalytics/pull/652)
+- Prepare v2.2.0 release [#668](https://github.com/ansys/grantami-bomanalytics/pull/668)
+
 ## grantami-bomanalytics 2.1.0, 2024-05-08
 
 ### New features

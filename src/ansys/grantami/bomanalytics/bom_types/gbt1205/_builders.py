@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from ..gbt1205 import (
+from ._bom_types import (
     MIAttributeReference,
     MIRecordReference,
     PartialTableReference,

@@ -500,6 +500,17 @@ class Process(BaseType2412):
     _props = [
         ("MIRecordReference", "mi_process_reference", "MIProcessReference"),
         ("UnittedValue", "quantity", "Quantity"),
+        ("Location", "location", "Location"),
+    ]
+
+    _list_props = [
+        (
+            "TransportStage",
+            "transport_phase",
+            "TransportPhase",
+            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "TransportStage",
+        ),
     ]
 
     mi_process_reference: MIRecordReference
@@ -528,6 +539,12 @@ class Process(BaseType2412):
     internal_id: Optional[str] = None
     """A unique identity for this object in this BoM. This identity is only for internal use, allowing other elements
     to reference this element."""
+
+    transport_phase: List[TransportStage] = field(default_factory=list)
+    """The Transports to which the material is subject before this processing step."""
+
+    location: Optional[Location] = None
+    """The Location in which the processing is done."""
 
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
@@ -646,6 +663,7 @@ class Part(BaseType2412):
         ("UnittedValue", "mass_per_unit_of_measure", "MassPerUom"),
         ("UnittedValue", "volume_per_unit_of_measure", "VolumePerUom"),
         ("MIRecordReference", "mi_part_reference", "MIPartReference"),
+        ("Location", "location", "Location"),
     ]
 
     _simple_values = [
@@ -673,6 +691,13 @@ class Part(BaseType2412):
             "EndOfLifeFates",
             "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
             "EndOfLifeFate",
+        ),
+        (
+            "TransportStage",
+            "transport_phase",
+            "TransportPhase",
+            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "TransportStage",
         ),
     ]
 
@@ -732,6 +757,12 @@ class Part(BaseType2412):
     internal_id: Optional[str] = None
     """A unique identity for this object in this BoM. This identity is only for internal use, allowing other elements
     to reference this element."""
+
+    transport_phase: List[TransportStage] = field(default_factory=list)
+    """The Transports to which the part is subject."""
+
+    location: Optional[Location] = None
+    """The Location in which the part is manufactured."""
 
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:

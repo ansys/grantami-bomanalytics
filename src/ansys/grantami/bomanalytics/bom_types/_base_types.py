@@ -22,48 +22,7 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Protocol, Tuple, Type
-
-if TYPE_CHECKING:
-    from xmlschema import XMLSchema
-
-
-class BaseBoMReader(ABC):
-    _schema: XMLSchema
-    _class_members: Dict[str, Type[BaseType]]
-
-    @abstractmethod
-    def read_bom(self, obj: Dict) -> Any: ...
-
-    @abstractmethod
-    def get_field(
-        self, instance: Type[HasNamespace], obj: Dict, field_name: str, namespace_url: Optional[str] = None
-    ) -> Any: ...
-
-    @abstractmethod
-    def create_type(self, type_name: str, obj: Dict) -> Any: ...
-
-    @property
-    def default_namespace(self) -> str | None:
-        return self._schema.default_namespace
-
-
-class BaseBoMWriter(ABC):
-    _schema: XMLSchema
-
-    @abstractmethod
-    def convert_bom_to_dict(self, obj: Any) -> Dict: ...
-
-    @abstractmethod
-    def _get_qualified_name(self, obj: HasNamespace, field_name: str) -> str: ...
-
-    @abstractmethod
-    def _convert_to_dict(self, obj: Any) -> Dict: ...
-
-    @property
-    def default_namespace(self) -> str | None:
-        return self._schema.default_namespace
+from typing import Any, Dict, Iterable, List, Protocol, Tuple
 
 
 class HasNamespace(Protocol):

@@ -29,7 +29,8 @@ from .bom_types import eco2301, eco2412
 from .schemas import bom_schema_2301, bom_schema_2412
 
 if TYPE_CHECKING:
-    from .bom_types._base_types import BaseBoMReader, BaseBoMWriter
+    from .bom_types._bom_reader import GenericBoMReader
+    from .bom_types._bom_writer import GenericBoMWriter
     from .bom_types.eco2301 import BillOfMaterials as BillOfMaterials2301
     from .bom_types.eco2412 import BillOfMaterials as BillOfMaterials2412
 
@@ -60,8 +61,8 @@ class BoMHandler:
 
     def __init__(self, bom_schema: Optional[Path] = None) -> None:
         self._schemas: list[XMLSchema] = []
-        self._readers: dict[XMLSchema, "BaseBoMReader"] = {}
-        self._writers: dict[XMLSchema, "BaseBoMWriter"] = {}
+        self._readers: dict[XMLSchema, "GenericBoMReader"] = {}
+        self._writers: dict[XMLSchema, "GenericBoMWriter"] = {}
 
         if bom_schema:
             self._initialize_schema(bom_schema)
@@ -126,7 +127,7 @@ class BoMHandler:
 
         self._modify_namespace(bom_dict, current_default_namespace, target_namespace)
         upgraded_bom = target_reader.read_bom(bom_dict)
-        return upgraded_bom
+        return cast("BillOfMaterials2412", upgraded_bom)
 
     def _modify_namespace(self, obj: dict[str, Any], current_namespace: str, new_namespace: str) -> None:
         for k, v in obj.items():

@@ -32,8 +32,6 @@ if TYPE_CHECKING:
 
 
 class BoMWriter(BaseBoMWriter):
-    _schema: XMLSchema
-
     def __init__(self, schema: XMLSchema):
         """
         Writer to convert BillOfMaterials objects into the format ready for XML serialization.

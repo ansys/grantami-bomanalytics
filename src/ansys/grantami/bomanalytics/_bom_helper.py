@@ -21,7 +21,7 @@
 # SOFTWARE.
 from pathlib import Path
 from types import ModuleType
-from typing import TYPE_CHECKING, Any, Optional, TextIO, Type, TypeAlias, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TextIO, Type, TypeAlias, TypeVar, cast
 
 import xmlschema
 from xmlschema import XMLSchema, XMLSchemaValidationError
@@ -55,27 +55,12 @@ class BoMHandler:
 
     .. versionadded:: 2.0
 
-    Parameters
-    ----------
-    bom_type : :class:`~pathlib.Path`, optional
-        The BoM schema used to validate against when reading and writing the BoM. Only the paths available in the
-        :ref:`ref_grantami_bomanalytics_api_bomschemas` submodule are permitted as values for this parameter. If not
-        provided, schemas will be used in the following order:
-
-        1. :attr:`~ansys.grantami.bomanalytics.schemas.bom_schema_2301`
-        2. :attr:`~ansys.grantami.bomanalytics.schemas.bom_schema_2412`
-
-        .. versionadded:: 2.3
     """
 
-    def __init__(self, bom_type: Optional[Type[BillOfMaterials]] = None) -> None:
+    def __init__(self) -> None:
         self._schemas: list[XMLSchema] = []
         self._readers: dict[XMLSchema, "GenericBoMReader"] = {}
         self._writers: dict[XMLSchema, "GenericBoMWriter"] = {}
-
-        if bom_type:
-            self._initialize(bom_type)
-            return
 
         for bom_type in _type_map.keys():
             self._initialize(bom_type)
@@ -101,7 +86,7 @@ class BoMHandler:
 
         Returns
         -------
-        :class:`~._bom_types.eco2301.BillOfMaterials` or :class:`~._bom_types.eco2412.BillOfMaterials`
+        :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
         """
         deserializer = _Deserializer(self._schemas)
         with open(file_path, "r", encoding="utf-8") as fp:
@@ -120,15 +105,31 @@ class BoMHandler:
 
         Returns
         -------
-        :class:`~._bom_types.eco2301.BillOfMaterials` or :class:`~._bom_types.eco2412.BillOfMaterials`
+        :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
         """
         deserializer = _Deserializer(self._schemas)
         result = deserializer.deserialize_string(bom_text)
         bom = self._readers[deserializer.selected_schema].read_bom(result)
         return cast(BillOfMaterials, bom)
 
-    def convert(self, bom: BillOfMaterials, target_bom: Type[T]) -> T:
-        if target_bom not in _type_map:
+    def convert(self, bom: BillOfMaterials, target_bom_version: Type[T]) -> T:
+        """
+        Convert a BoM from one version to another.
+
+        .. versionadded:: 2.3
+
+        Parameters
+        ----------
+        bom : :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
+            The BoM to convert.
+        target_bom_version : Type[:class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>`] or Type[:class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`]  # noqa: E501
+            The *definition* of a BoM class to convert the provided BoM to.
+
+        Returns
+        -------
+        :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
+        """
+        if target_bom_version not in _type_map:
             raise ValueError("BoM not valid target")
 
         current_eco_namespace = ""
@@ -143,7 +144,7 @@ class BoMHandler:
         if current_eco_namespace is None:
             raise ValueError("bom is not complaint with any known schema")
 
-        target_eco_namespace = target_bom._namespace
+        target_eco_namespace = target_bom_version._namespace
         self._modify_namespace(bom_dict, current_eco_namespace, target_eco_namespace)
 
         target_reader = next(r for r in self._readers.values() if r.eco_namespace == target_eco_namespace)
@@ -162,7 +163,7 @@ class BoMHandler:
 
         Parameters
         ----------
-        bom : :class:`~._bom_types.eco2301.BillOfMaterials` or :class:`~._bom_types.eco2412.BillOfMaterials`
+        bom : :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
 
         Returns
         -------

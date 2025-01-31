@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,18 +19,24 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, TextIO, Tuple, Union, cast
+from typing import TYPE_CHECKING, Any, Optional, TextIO
 
 import xmlschema
-from xmlschema import XMLSchema
+from xmlschema import XMLSchema, XMLSchemaValidationError
 
-from .bom_types import BoMReader, BoMWriter
-from .schemas import bom_schema_2301
+from .bom_types import eco2301, eco2412
+from .schemas import bom_schema_2301, bom_schema_2412
 
 if TYPE_CHECKING:
-    from .bom_types import BillOfMaterials
+    from .bom_types._base_types import BaseBoMReader, BaseBoMWriter
+    from .bom_types.eco2301 import BillOfMaterials as BillOfMaterials2301
+    from .bom_types.eco2412 import BillOfMaterials as BillOfMaterials2412
+
+type_map = {
+    bom_schema_2301: eco2301,
+    bom_schema_2412: eco2412,
+}
 
 
 class BoMHandler:
@@ -38,18 +44,40 @@ class BoMHandler:
     Handler for XML formatted BoMs, supports reading from files and strings, and serializing to string format.
 
     .. versionadded:: 2.0
+
+    Parameters
+    ----------
+    bom_schema : :class:`~pathlib.Path`, optional
+        The BoM schema used to validate against when reading and writing the BoM. Only the paths available in the
+        :ref:`ref_grantami_bomanalytics_api_bomschemas` submodule are permitted as values for this parameter. If not
+        provided, schemas will be used in the following order:
+
+        1. :attr:`~ansys.grantami.bomanalytics.schemas.bom_schema_2301`
+        2. :attr:`~ansys.grantami.bomanalytics.schemas.bom_schema_2412`
+
+        .. versionadded:: 2.3
     """
 
-    _schema_path: Path = bom_schema_2301
-    _schema: XMLSchema
+    def __init__(self, bom_schema: Optional[Path] = None) -> None:
+        self._schemas: list[XMLSchema] = []
+        self._readers: dict[XMLSchema, "BaseBoMReader"] = {}
+        self._writers: dict[XMLSchema, "BaseBoMWriter"] = {}
 
-    def __init__(self) -> None:
-        self._schema = XMLSchema(self._schema_path)
-        self._schema.namespaces[""] = self._schema.namespaces["eco"]
-        self._reader = BoMReader(self._schema)
-        self._writer = BoMWriter(self._schema)
+        if bom_schema:
+            self._initialize_schema(bom_schema)
+            return
 
-    def load_bom_from_file(self, file_path: Path) -> "BillOfMaterials":
+        for bom_schema in type_map.keys():
+            self._initialize_schema(bom_schema)
+
+    def _initialize_schema(self, bom_schema: Path) -> None:
+        schema = XMLSchema(bom_schema)
+        schema.namespaces[""] = schema.namespaces["eco"]
+        self._schemas.append(schema)
+        self._readers[schema] = type_map[bom_schema].BoMReader(schema)
+        self._writers[schema] = type_map[bom_schema].BoMWriter(schema)
+
+    def load_bom_from_file(self, file_path: Path) -> "BillOfMaterials2301 | BillOfMaterials2412":
         """
         Read a BoM from a file and return the corresponding BillOfMaterials object for use.
 
@@ -60,20 +88,22 @@ class BoMHandler:
 
         Returns
         -------
-        :class:`~._bom_types.BillOfMaterials`
+        :class:`~._bom_types.eco2301.BillOfMaterials` or :class:`~._bom_types.eco2412.BillOfMaterials`
         """
+        deserializer = _Deserializer(self._schemas)
+
         with open(file_path, "r", encoding="utf8") as fp:
-            obj, errors = self._deserialize_bom(fp)
+            deserializer._deserialize_file(fp)
 
-        if len(errors) > 0:
+        if len(deserializer.errors) > 0:
             newline = "\n"
-            raise ValueError(f"Invalid BoM:\n{newline.join([error.msg for error in errors])}")
+            raise ValueError(f"Invalid BoM:\n{newline.join([error.msg for error in deserializer.errors])}")
 
-        assert isinstance(obj, dict)
+        assert isinstance(deserializer.object, dict)
 
-        return self._reader.read_bom(obj)
+        return self._readers[deserializer.selected_schema].read_bom(deserializer.result)  # type: ignore
 
-    def load_bom_from_text(self, bom_text: str) -> "BillOfMaterials":
+    def load_bom_from_text(self, bom_text: str) -> "BillOfMaterials2301 | BillOfMaterials2412":
         """
         Read a BoM from a string and return the corresponding BillOfMaterials object for use.
 
@@ -84,57 +114,91 @@ class BoMHandler:
 
         Returns
         -------
-        :class:`~._bom_types.BillOfMaterials`
+        :class:`~._bom_types.eco2301.BillOfMaterials` or :class:`~._bom_types.eco2412.BillOfMaterials`
         """
-        obj, errors = self._deserialize_bom(bom_text)
+        deserializer = _Deserializer(self._schemas)
+        deserializer._deserialize_string(bom_text)
 
-        if len(errors) > 0:
+        if len(deserializer.errors) > 0:
             newline = "\n"
-            raise ValueError(f"Invalid BoM:\n{newline.join([error.msg for error in errors])}")
+            raise ValueError(f"Invalid BoM:\n{newline.join([error.msg for error in deserializer.errors])}")
 
-        assert isinstance(obj, dict)
+        assert isinstance(deserializer.object, dict)
 
-        return self._reader.read_bom(obj)
+        return self._readers[deserializer.selected_schema].read_bom(deserializer.result)  # type: ignore
 
-    def _deserialize_bom(self, bom: Union[TextIO, str]) -> Tuple[Dict[str, Any], List]:
-        """
-        Deserialize either a string or I/O stream BoM.
+    # def convert_bom(self, bom: "BillOfMaterials2301 | BillOfMaterials2412"):
+    #     pass
 
-        Parameters
-        ----------
-        bom : Union[TextIO, str]
-            Object containing an XML representation of a BoM, either as text or I/O stream.
-
-        Returns
-        -------
-        Tuple[Dict[str, Any], List]
-            A tuple of the deserialized dictionary and a list of errors.
-        """
-        result = self._schema.decode(bom, validation="lax", keep_empty=True, xmlns_processing="collapsed")
-        return cast(Tuple[Dict[str, Any], List], result)
-
-    def dump_bom(self, bom: "BillOfMaterials") -> str:
+    def dump_bom(self, bom: "BillOfMaterials2301 | BillOfMaterials2412") -> str:
         """
         Convert a BillOfMaterials object into a string XML representation.
 
         Parameters
         ----------
-        bom : :class:`~._bom_types.BillOfMaterials`
+        bom : :class:`~._bom_types.eco2301.BillOfMaterials` or :class:`~._bom_types.eco2412.BillOfMaterials`
 
         Returns
         -------
         str
             Serialized representation of the BoM.
         """
-        bom_dict = self._writer.convert_bom_to_dict(bom)
-        obj, errors = self._schema.encode(
-            bom_dict, validation="lax", namespaces=self._schema.namespaces, unordered=True
-        )
+        obj = None
+        errors = []
 
-        if len(errors) > 0:
+        for schema, writer in self._writers.items():
+            try:
+                bom_dict = writer.convert_bom_to_dict(bom)
+                obj, errors = schema.encode(bom_dict, validation="lax", namespaces=schema.namespaces, unordered=True)
+                break
+            except KeyError:
+                pass
+        if not obj or len(errors) > 0:
             newline = "\n"
             raise ValueError(f"Invalid BoM object:\n{newline.join([error.msg for error in errors])}")
 
         output = xmlschema.etree_tostring(obj)
         assert isinstance(output, str)
         return output
+
+
+class _Deserializer:
+    def __init__(self, schemas: list[XMLSchema]):
+        self._schemas = schemas
+        self.selected_schema: XMLSchema | None = None
+        self.object: Any = None
+        self.errors: list[XMLSchemaValidationError] = []
+
+    def _deserialize_file(self, bom: TextIO) -> None:
+        for schema in self._schemas:
+            try:
+                result = schema.decode(
+                    bom,
+                    validation="lax",
+                    keep_empty=True,
+                    xmlns_processing="collapsed",
+                )
+                self.selected_schema = schema
+                if result:
+                    self.object, self.errors = result
+                return
+            except xmlschema.exceptions.XMLSchemaKeyError:
+                bom.seek(0)
+        raise ValueError("Invalid BoM")
+
+    def _deserialize_string(self, bom: str) -> None:
+        for schema in self._schemas:
+            try:
+                result = schema.decode(
+                    bom,
+                    validation="lax",
+                    keep_empty=True,
+                    xmlns_processing="collapsed",
+                )
+                self.selected_schema = schema
+                if result:
+                    self.object, self.errors = result
+                return
+            except xmlschema.exceptions.XMLSchemaKeyError:
+                pass
+        raise ValueError("Invalid BoM")

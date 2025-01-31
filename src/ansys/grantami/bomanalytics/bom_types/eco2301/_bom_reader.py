@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -26,13 +26,14 @@ from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Type, cast
 from xmlschema import XMLSchema
 
 from . import _bom_types as bom_types
-from ._bom_types import BaseType, HasNamespace
+from .. import gbt1205
+from .._base_types import BaseBoMReader, BaseType, HasNamespace
 
 if TYPE_CHECKING:
     from . import BillOfMaterials
 
 
-class BoMReader:
+class BoMReader(BaseBoMReader):
     _schema: XMLSchema
     _class_members: Dict[str, Type[BaseType]]
 
@@ -50,6 +51,7 @@ class BoMReader:
         self._class_members: Dict[str, Type[BaseType]] = {
             k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
         }
+        self._class_members.update({k: v for k, v in inspect.getmembers(gbt1205, inspect.isclass)})
 
     def read_bom(self, obj: Dict) -> "BillOfMaterials":
         """

@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -40,4 +40,10 @@ bom_schema_2301: Path = _schemas_dir / "BillOfMaterialsEco2301.xsd"
 """Path to the Ansys Granta 23/01 BoM XML Schema definition.
 
 .. versionadded:: 2.0
+"""
+
+bom_schema_2412: Path = _schemas_dir / "BillOfMaterialsEco2412.xsd"
+"""Path to the Ansys Granta 24/12 BoM XML Schema definition.
+
+.. versionadded:: 2.3
 """

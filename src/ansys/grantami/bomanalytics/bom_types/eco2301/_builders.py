@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -24,7 +24,12 @@ from __future__ import annotations
 
 from typing import Optional
 
-from . import MIAttributeReference, MIRecordReference, PartialTableReference, PseudoAttribute
+from ..gbt1205 import (
+    MIAttributeReference,
+    MIRecordReference,
+    PartialTableReference,
+    PseudoAttribute,
+)
 
 
 class _AttributeReferenceByNameBuilder:

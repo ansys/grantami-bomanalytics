@@ -36,8 +36,8 @@ class GenericBoMReader:
     _class_members: Dict[str, Type[BaseType]]
 
     @property
-    def default_namespace(self) -> str | None:
-        return self._schema.default_namespace
+    def eco_namespace(self) -> str | None:
+        return self._schema.namespaces["eco"]
 
     def read_bom(self, obj: Dict) -> "BaseType":
         """

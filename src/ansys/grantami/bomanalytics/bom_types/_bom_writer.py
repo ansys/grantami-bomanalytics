@@ -41,8 +41,8 @@ class GenericBoMWriter:
         self._schema = schema
 
     @property
-    def default_namespace(self) -> str | None:
-        return self._schema.default_namespace
+    def eco_namespace(self) -> str | None:
+        return self._schema.namespaces["eco"]
 
     def _get_qualified_name(self, obj: "HasNamespace", field_name: str) -> str:
         namespace_prefixes = [k for k, v in self._schema.namespaces.items() if v == obj._namespace]

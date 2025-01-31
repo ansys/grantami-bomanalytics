@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional, TextIO, cast
+from types import ModuleType
+from typing import TYPE_CHECKING, Any, Optional, TextIO, Type, TypeAlias, TypeVar, cast
 
 import xmlschema
 from xmlschema import XMLSchema, XMLSchemaValidationError
@@ -34,9 +35,17 @@ if TYPE_CHECKING:
     from .bom_types.eco2301 import BillOfMaterials as BillOfMaterials2301
     from .bom_types.eco2412 import BillOfMaterials as BillOfMaterials2412
 
-type_map = {
-    bom_schema_2301: eco2301,
-    bom_schema_2412: eco2412,
+
+BillOfMaterials: TypeAlias = "BillOfMaterials2301 | BillOfMaterials2412"
+T = TypeVar("T", bound=BillOfMaterials)
+
+_type_map: dict[Type[BillOfMaterials], Path] = {
+    eco2301.BillOfMaterials: bom_schema_2301,
+    eco2412.BillOfMaterials: bom_schema_2412,
+}
+_mod_map: dict[Type[BillOfMaterials], ModuleType] = {
+    eco2301.BillOfMaterials: eco2301,
+    eco2412.BillOfMaterials: eco2412,
 }
 
 
@@ -48,7 +57,7 @@ class BoMHandler:
 
     Parameters
     ----------
-    bom_schema : :class:`~pathlib.Path`, optional
+    bom_type : :class:`~pathlib.Path`, optional
         The BoM schema used to validate against when reading and writing the BoM. Only the paths available in the
         :ref:`ref_grantami_bomanalytics_api_bomschemas` submodule are permitted as values for this parameter. If not
         provided, schemas will be used in the following order:
@@ -59,26 +68,29 @@ class BoMHandler:
         .. versionadded:: 2.3
     """
 
-    def __init__(self, bom_schema: Optional[Path] = None) -> None:
+    def __init__(self, bom_type: Optional[Type[BillOfMaterials]] = None) -> None:
         self._schemas: list[XMLSchema] = []
         self._readers: dict[XMLSchema, "GenericBoMReader"] = {}
         self._writers: dict[XMLSchema, "GenericBoMWriter"] = {}
 
-        if bom_schema:
-            self._initialize_schema(bom_schema)
+        if bom_type:
+            self._initialize(bom_type)
             return
 
-        for bom_schema in type_map.keys():
-            self._initialize_schema(bom_schema)
+        for bom_type in _type_map.keys():
+            self._initialize(bom_type)
 
-    def _initialize_schema(self, bom_schema: Path) -> None:
-        schema = XMLSchema(bom_schema)
+    def _initialize(self, bom_type: Type[BillOfMaterials]) -> None:
+        schema_file = _type_map[bom_type]
+        schema = XMLSchema(schema_file)
         schema.namespaces[""] = schema.namespaces["eco"]
         self._schemas.append(schema)
-        self._readers[schema] = type_map[bom_schema].BoMReader(schema)
-        self._writers[schema] = type_map[bom_schema].BoMWriter(schema)
 
-    def load_bom_from_file(self, file_path: Path) -> "BillOfMaterials2301 | BillOfMaterials2412":
+        mod = _mod_map[bom_type]
+        self._readers[schema] = mod.BoMReader(schema)
+        self._writers[schema] = mod.BoMWriter(schema)
+
+    def load_bom_from_file(self, file_path: Path) -> BillOfMaterials:
         """
         Read a BoM from a file and return the corresponding BillOfMaterials object for use.
 
@@ -92,12 +104,12 @@ class BoMHandler:
         :class:`~._bom_types.eco2301.BillOfMaterials` or :class:`~._bom_types.eco2412.BillOfMaterials`
         """
         deserializer = _Deserializer(self._schemas)
-        with open(file_path, "r") as fp:
+        with open(file_path, "r", encoding="utf-8") as fp:
             result = deserializer.deserialize_file(fp)
         bom = self._readers[deserializer.selected_schema].read_bom(result)
-        return cast("BillOfMaterials2301 | BillOfMaterials2412", bom)
+        return cast(BillOfMaterials, bom)
 
-    def load_bom_from_text(self, bom_text: str) -> "BillOfMaterials2301 | BillOfMaterials2412":
+    def load_bom_from_text(self, bom_text: str) -> BillOfMaterials:
         """
         Read a BoM from a string and return the corresponding BillOfMaterials object for use.
 
@@ -113,21 +125,29 @@ class BoMHandler:
         deserializer = _Deserializer(self._schemas)
         result = deserializer.deserialize_string(bom_text)
         bom = self._readers[deserializer.selected_schema].read_bom(result)
-        return cast("BillOfMaterials2301 | BillOfMaterials2412", bom)
+        return cast(BillOfMaterials, bom)
 
-    def upgrade_bom(self, bom: "BillOfMaterials2301") -> "BillOfMaterials2412":
-        source_writer = next(r for r in self._writers.values() if isinstance(r, eco2301.BoMWriter))
-        bom_dict = source_writer.convert_bom_to_dict(bom)
-        current_default_namespace = source_writer.default_namespace
-        assert current_default_namespace
+    def convert(self, bom: BillOfMaterials, target_bom: Type[T]) -> T:
+        if target_bom not in _type_map:
+            raise ValueError("BoM not valid target")
 
-        target_reader = next(r for r in self._readers.values() if isinstance(r, eco2412.BoMReader))
-        target_namespace = target_reader.default_namespace
-        assert target_namespace
+        current_eco_namespace = ""
+        bom_dict: dict[str, Any] = {}
+        for schema, writer in self._writers.items():
+            try:
+                bom_dict = writer.convert_bom_to_dict(bom)
+                current_eco_namespace = schema.namespaces["eco"]
+                break
+            except KeyError:
+                pass
+        if current_eco_namespace is None:
+            raise ValueError("bom is not complaint with any known schema")
 
-        self._modify_namespace(bom_dict, current_default_namespace, target_namespace)
-        upgraded_bom = target_reader.read_bom(bom_dict)
-        return cast("BillOfMaterials2412", upgraded_bom)
+        target_eco_namespace = target_bom._namespace
+        self._modify_namespace(bom_dict, current_eco_namespace, target_eco_namespace)
+
+        target_reader = next(r for r in self._readers.values() if r.eco_namespace == target_eco_namespace)
+        return cast(T, target_reader.read_bom(bom_dict))
 
     def _modify_namespace(self, obj: dict[str, Any], current_namespace: str, new_namespace: str) -> None:
         for k, v in obj.items():
@@ -136,7 +156,7 @@ class BoMHandler:
             elif isinstance(v, dict):
                 self._modify_namespace(v, current_namespace, new_namespace)
 
-    def dump_bom(self, bom: "BillOfMaterials2301 | BillOfMaterials2412") -> str:
+    def dump_bom(self, bom: BillOfMaterials) -> str:
         """
         Convert a BillOfMaterials object into a string XML representation.
 

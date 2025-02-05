@@ -238,7 +238,7 @@ class _Deserializer:
                 return self._postprocess_output(result)
             except xmlschema.exceptions.XMLSchemaKeyError:
                 bom.seek(0)
-        raise ValueError("Invalid BoM")
+        raise ValueError("Invalid BoM. BoM is not compliant with any supported BoM version.")
 
     def deserialize_string(self, bom: str) -> Any:
         for schema in self._schemas:
@@ -253,7 +253,7 @@ class _Deserializer:
                 return self._postprocess_output(result)
             except xmlschema.exceptions.XMLSchemaKeyError:
                 pass
-        raise ValueError("Invalid BoM")
+        raise ValueError("Invalid BoM. BoM is not compliant with any supported BoM version.")
 
     @staticmethod
     def _postprocess_output(result: tuple[Any | None, list[XMLSchemaValidationError]] | None) -> Any:

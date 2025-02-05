@@ -41,11 +41,19 @@ sample_bom_custom_db = sample_compliance_bom_1711.replace(
     "MI_Restricted_Substances", "MI_Restricted_Substances_Custom_Tables"
 )
 
-sample_sustainability_bom_2301_path = (
-    repository_root / "examples" / "4_Sustainability" / "supporting-files" / "bom-2301-assembly.xml"
+sample_sustainability_bom_2412_path = (
+    repository_root / "examples" / "4_Sustainability" / "supporting-files" / "bom-2412-assembly.xml"
 )
+with open(sample_sustainability_bom_2412_path, "r", encoding="utf8") as f:
+    sample_sustainability_bom_2412 = f.read()
+
+sample_sustainability_bom_2301_path = inputs_dir / "sustainability-bom-2301.xml"
 with open(sample_sustainability_bom_2301_path, "r", encoding="utf8") as f:
     sample_sustainability_bom_2301 = f.read()
+
+large_bom_2412_path = inputs_dir / "medium-test-bom-2412.xml"
+with open(large_bom_2412_path, "r", encoding="utf8") as f:
+    large_bom_2412 = f.read()
 
 large_bom_2301_path = inputs_dir / "medium-test-bom.xml"
 with open(large_bom_2301_path, "r", encoding="utf8") as f:

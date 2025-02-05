@@ -43,8 +43,8 @@ class BoMReader(GenericBoMReader):
         schema: XMLSchema
             Parsed XMLSchema representing the 2301 Eco BoM format
         """
+        super().__init__()
         self._schema = schema
-        self._namespaces: Dict[str, str] = {}
         self._class_members: Dict[str, Type[BaseType]] = {
             k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
         }

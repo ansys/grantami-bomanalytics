@@ -91,7 +91,9 @@ class BoMHandler:
         deserializer = _Deserializer(self._schemas)
         with open(file_path, "r", encoding="utf-8") as fp:
             result = deserializer.deserialize_file(fp)
-        bom = self._readers[deserializer.selected_schema].read_bom(result)
+        bom, undeserialized_fields = self._readers[deserializer.selected_schema].read_bom(result)
+        if undeserialized_fields:
+            self._raise_undeserialized_fields(undeserialized_fields)
         return cast(BillOfMaterials, bom)
 
     def load_bom_from_text(self, bom_text: str) -> BillOfMaterials:
@@ -109,7 +111,9 @@ class BoMHandler:
         """
         deserializer = _Deserializer(self._schemas)
         result = deserializer.deserialize_string(bom_text)
-        bom = self._readers[deserializer.selected_schema].read_bom(result)
+        bom, undeserialized_fields = self._readers[deserializer.selected_schema].read_bom(result)
+        if undeserialized_fields:
+            self._raise_undeserialized_fields(undeserialized_fields)
         return cast(BillOfMaterials, bom)
 
     def convert(self, bom: BillOfMaterials, target_bom_version: Type[T]) -> T:
@@ -123,17 +127,28 @@ class BoMHandler:
         bom : :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
             The BoM to convert.
         target_bom_version : Type[:class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>`] or Type[:class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`]  # noqa: E501
-            The *definition* of a BoM class to convert the provided BoM to.
+            The ``BillOfMaterials`` class to convert the provided BoM to. Must be a **class**, not an instance of a
+            class.
 
         Returns
         -------
         :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
+
+        Raises
+        ------
+        ValueError
+            If the provided 'target_bom_version' argument is not supported.
+        ValueError
+            If the BoM cannot be converted. This can be because the provided BoM cannot be deserialized, or because the
+            provided BoM cannot be represented in the target BoM version.
         """
         if target_bom_version not in _type_map:
-            raise ValueError("BoM not valid target")
+            raise ValueError(f"target_bom_version {target_bom_version} is not a valid BoM target.")
 
+        # Convert Python objects to dictionary
         current_eco_namespace = ""
         bom_dict: dict[str, Any] = {}
+
         for schema, writer in self._writers.items():
             try:
                 bom_dict = writer.convert_bom_to_dict(bom)
@@ -142,13 +157,23 @@ class BoMHandler:
             except KeyError:
                 pass
         if current_eco_namespace is None:
-            raise ValueError("bom is not complaint with any known schema")
+            raise ValueError("Invalid BoM. BoM is not compliant with any supported BoM version.")
 
+        # Replace namespace recursively through dictionary
         target_eco_namespace = target_bom_version._namespace
         self._modify_namespace(bom_dict, current_eco_namespace, target_eco_namespace)
 
+        # Convert dictionary to Python objects
         target_reader = next(r for r in self._readers.values() if r.eco_namespace == target_eco_namespace)
-        return cast(T, target_reader.read_bom(bom_dict))
+        converted_bom, undeserialized_fields = target_reader.read_bom(bom_dict)
+        if undeserialized_fields:
+            self._raise_undeserialized_fields(undeserialized_fields)
+        return cast(T, converted_bom)
+
+    @staticmethod
+    def _raise_undeserialized_fields(fields: list[str]) -> None:
+        formatted_fields = "  \n".join(fields)
+        raise ValueError(f"The following fields in the provided BoM could not be deserialized:\n{formatted_fields}")
 
     def _modify_namespace(self, obj: dict[str, Any], current_namespace: str, new_namespace: str) -> None:
         for k, v in obj.items():

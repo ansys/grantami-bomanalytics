@@ -22,6 +22,7 @@
 
 from abc import ABC
 from difflib import context_diff
+from itertools import product
 from pathlib import Path
 import re
 from typing import Any, Dict, Literal
@@ -324,7 +325,9 @@ class BoMFactory:
             internal_id=f"Transport{id_int}Id",
         )
 
-    def make_full_bom(self, use_phase_utility_kwarg) -> eco2301.BillOfMaterials | eco2412.BillOfMaterials:
+    def make_full_bom(
+        self, use_phase_utility_kwarg, eco2301_compatible=False
+    ) -> eco2301.BillOfMaterials | eco2412.BillOfMaterials:
         # Very invalid BoM for any query, but attempts to exercise all fields of all types
         # TODO add non mi part reference
         bom = self.bom_module.BillOfMaterials(
@@ -546,7 +549,7 @@ class BoMFactory:
             internal_id="BomId",
         )
         # Add additional eco24/12 capabilities
-        if self.bom_module == eco2412:
+        if self.bom_module == eco2412 and not eco2301_compatible:
             bom.components[0].transport_phase = [
                 self.make_transport_stage(),
                 self.make_transport_stage(),
@@ -585,3 +588,84 @@ def test_everything_bom(use_phase_utility_kwarg, bom_types):
 def test_unexpected_args_raises_error(bom_types):
     with pytest.raises(TypeError, match="unexpected keyword argument 'unexpected_kwarg'"):
         bom_types.Part(part_number="PartNumber", unexpected_kwarg="UnexpectedKwargValue")
+
+
+@pytest.mark.parametrize(
+    "use_phase_utility_kwarg",
+    [
+        "industry_average_number_of_functional_units",
+        "industry_average_duration_years",
+        "utility",
+    ],
+)
+@pytest.mark.parametrize("source_bom_types", [eco2301, eco2412])
+@pytest.mark.parametrize("target_bom_types", [eco2301, eco2412])
+class TestBoMConversion:
+    bom_handler = BoMHandler()
+
+    def rebuild_and_check_bom(self, original_bom, converted_bom, original_namespace, new_namespace):
+        if original_namespace is not new_namespace:
+            # Do the upgrade in reverse by changing namespaces in the text before rebuilding
+            # This should always work, as long as BoM changes are always additive
+            converted_bom = converted_bom.replace(new_namespace, original_namespace)
+        rebuilt_bom = self.bom_handler.load_bom_from_text(converted_bom)
+        assert rebuilt_bom == original_bom
+
+    def test_full_bom_upgrade_and_crossgrade(self, source_bom_types, target_bom_types, use_phase_utility_kwarg):
+        if source_bom_types is eco2412 and target_bom_types is eco2301:
+            pytest.skip("Full BoM downgrade raises exception")
+
+        source_bom = BoMFactory(source_bom_types).make_full_bom(use_phase_utility_kwarg)
+        target_bom = self.bom_handler.convert(source_bom, target_bom_types.BillOfMaterials)
+
+        assert isinstance(target_bom, target_bom_types.BillOfMaterials)
+        target_bom_text = self.bom_handler.dump_bom(target_bom)
+        self.rebuild_and_check_bom(
+            source_bom,
+            target_bom_text,
+            source_bom_types.BillOfMaterials._namespace,
+            target_bom_types.BillOfMaterials._namespace,
+        )
+
+    def test_partial_bom_upgrade_crossgrade_downgrade(
+        self, source_bom_types, target_bom_types, use_phase_utility_kwarg
+    ):
+        source_bom = BoMFactory(source_bom_types).make_full_bom(use_phase_utility_kwarg, eco2301_compatible=True)
+        target_bom = self.bom_handler.convert(source_bom, target_bom_types.BillOfMaterials)
+
+        assert isinstance(target_bom, target_bom_types.BillOfMaterials)
+        target_bom_text = self.bom_handler.dump_bom(target_bom)
+        self.rebuild_and_check_bom(
+            source_bom,
+            target_bom_text,
+            source_bom_types.BillOfMaterials._namespace,
+            target_bom_types.BillOfMaterials._namespace,
+        )
+
+
+@pytest.mark.parametrize(
+    "use_phase_utility_kwarg",
+    [
+        "industry_average_number_of_functional_units",
+        "industry_average_duration_years",
+        "utility",
+    ],
+)
+def test_full_bom_downgrade_raises_exception(use_phase_utility_kwarg):
+    source_bom = BoMFactory(eco2412).make_full_bom(use_phase_utility_kwarg)
+    bom_handler = BoMHandler()
+    with pytest.raises(ValueError, match="The following fields in the provided BoM could not be deserialized") as e:
+        bom_handler.convert(source_bom, eco2301.BillOfMaterials)
+    lines = set(str(e.value).splitlines())
+    assert len(lines) == 5
+
+    # Examine individual error cases
+    parent_errors = ["Process", "Part"]
+    field_errors = ["Location", "Transport"]
+    errors = product(parent_errors, field_errors)
+    for parent_error, field_error in errors:
+        for line in lines.copy():
+            if parent_error in line and field_error in line:
+                lines.remove(line)
+                break
+    assert len(lines) == 1

@@ -36,6 +36,11 @@ if TYPE_CHECKING:
 
 class BaseType2301(BaseType):
     _namespace = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
+    #
+    # _simple_values = []
+    # _props = []
+    # _list_props = []
+    # __slots__ = [sv[0] for sv in _simple_values] + [p[1] for p in _props] + [lp[1] for lp in _list_props]
 
 
 class DimensionType(Enum):

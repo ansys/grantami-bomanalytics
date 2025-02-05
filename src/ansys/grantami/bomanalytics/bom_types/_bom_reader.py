@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from abc import ABC
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Type, cast
 
 from xmlschema import XMLSchema
@@ -30,16 +31,38 @@ if TYPE_CHECKING:
     from . import BillOfMaterials
 
 
-class GenericBoMReader:
+class GenericBoMReader(ABC):
     _schema: XMLSchema
     _namespaces: dict[str, str]
     _class_members: Dict[str, Type[BaseType]]
 
+    def __init__(self) -> None:
+        """ "
+        Reader to convert a JSON formatted BoM, created by xmlschema, into populated BillOfMaterials object.
+
+        A generic class with no bound namespaces or class members. Should be subclassed with a constructor that
+        accepts a schema, and _class_members property should be set to classes to deserialize to.
+        """
+
+        self._namespaces: Dict[str, str] = {}
+
+        # Used to track fields in an object that haven't been deserialized.
+        self.__undeserialized_fields: list[str] = []
+
     @property
     def eco_namespace(self) -> str | None:
+        """The XML namespace registered to the 'eco' prefix.
+
+        Ansys Granta convention is to define the main namespace for RS and Sustainability BoMs with the
+        'eco' prefix.
+
+        Returns
+        -------
+        str | None
+        """
         return self._schema.namespaces["eco"]
 
-    def read_bom(self, obj: Dict) -> "BaseType":
+    def read_bom(self, obj: Dict) -> tuple["BaseType", list]:
         """
         Convert a BoM object from xmlschema JSON format into a BillOfMaterials object.
 
@@ -50,7 +73,9 @@ class GenericBoMReader:
 
         Returns
         -------
-        BillOfMaterials
+        tuple[BillOfMaterials, list]
+            A tuple containing the converted BillOfMaterials object, and any fields in the obj argument that could not
+            be deserialized.
         """
         namespaces = {}
         for k, v in obj.items():
@@ -62,23 +87,41 @@ class GenericBoMReader:
 
         self._namespaces = namespaces
 
-        return cast("BillOfMaterials", self.create_type("BillOfMaterials", obj))
+        bom = cast("BillOfMaterials", self.create_type("BillOfMaterials", obj))
+        return bom, self.__undeserialized_fields
 
     def create_type(self, type_name: str, obj: Dict) -> BaseType:
+        """
+        Recursively deserialize a dictionary of XML fields to a hierarchy of Python objects.
+
+        Keeps track of any fields which have not been deserialized, so they can be optionally reported to the user
+        following deserialization.
+
+        Parameters
+        ----------
+        type_name : str
+            Name of the current type to populate.
+        obj : dict
+            The data to use to populate the new type.
+        """
+        local_obj = obj.copy()
         type_ = self._class_members[type_name]
         kwargs = {}
         for target_type, target_property_name, field_name in type_._props:
-            kwargs.update(self._deserialize_single_type(type_, obj, target_type, target_property_name, field_name))
+            kwargs.update(
+                self._deserialize_single_type(type_, local_obj, target_type, target_property_name, field_name)
+            )
         for target_type, target_property_name, container_name, container_namespace, field_name in type_._list_props:
             kwargs.update(
                 self._deserialize_list_type(
-                    type_, obj, target_type, target_property_name, container_name, container_namespace, field_name
+                    type_, local_obj, target_type, target_property_name, container_name, container_namespace, field_name
                 )
             )
         for target, source in type_._simple_values:
-            field_obj = self.get_field(type_, obj, source)
+            field_obj = self.get_field(type_, local_obj, source)
             kwargs[target] = field_obj
-        kwargs.update(type_._process_custom_fields(obj, self))
+        kwargs.update(type_._process_custom_fields(local_obj, self))
+        self._append_unserialized_fields(type_name, local_obj)
         instance = self._class_members[type_name](**kwargs)
         return instance
 
@@ -107,6 +150,13 @@ class GenericBoMReader:
             return {target_property_name: self.create_type(target_type, field_obj)}
         return {}
 
+    def _append_unserialized_fields(self, type_name: str, obj: Dict) -> None:
+        for k, v in obj.items():
+            if not k.startswith("@xmlns"):
+                val = f"{str(v)[:100]}..." if len(str(v)) > 100 else str(v)
+                msg = f'Parent type "{type_name}", field "{k}" with value "{val}".'
+                self.__undeserialized_fields.append(msg)
+
     def get_field(
         self, instance: Type[HasNamespace], obj: Dict, field_name: str, namespace_url: Optional[str] = None
     ) -> Any:
@@ -134,16 +184,21 @@ class GenericBoMReader:
                 continue
 
             if k == "$" and field_name == "$":
+                del obj[k]
                 return v
 
             if k.startswith("@"):
                 is_matched = self._match_attribute(k, field_name, namespace_url)
                 if is_matched:
+                    del obj[k]
                     return v
             else:
                 is_matched = self._match_element(k, field_name, namespace_url)
                 if is_matched:
+                    del obj[k]
                     return v
+                else:
+                    pass
         return None
 
     def _match_element(self, item_name: str, field_name: str, namespace_url: str) -> bool:

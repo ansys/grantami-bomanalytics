@@ -24,7 +24,12 @@ from __future__ import annotations
 
 from typing import Optional
 
-from . import MIAttributeReference, MIRecordReference, PartialTableReference, PseudoAttribute
+from ._bom_types import (
+    MIAttributeReference,
+    MIRecordReference,
+    PartialTableReference,
+    PseudoAttribute,
+)
 
 
 class _AttributeReferenceByNameBuilder:

@@ -69,13 +69,13 @@ oidc = ["keyring (>=22,<26)", "requests_auth (>=8.0.0,<9.0.0)"]
 
 [[package]]
 name = "ansys-sphinx-theme"
-version = "1.2.6"
+version = "1.3.0"
 description = "A theme devised by ANSYS, Inc. for Sphinx documentation."
 optional = false
 python-versions = "<4,>=3.10"
 files = [
-    {file = "ansys_sphinx_theme-1.2.6-py3-none-any.whl", hash = "sha256:f87d935321b78b9a2ab3273ae87844d2e88376f440837f8125bc7ddf62a7844e"},
-    {file = "ansys_sphinx_theme-1.2.6.tar.gz", hash = "sha256:3719c0db7d944f7b96d28a23ab9d22311607d780fba12b8f1a1200154f0c6f3f"},
+    {file = "ansys_sphinx_theme-1.3.0-py3-none-any.whl", hash = "sha256:a8d7f131432d19c2e8c5394a1f7c97ed01b8b2c036bab9ebbe061fbc9ce20791"},
+    {file = "ansys_sphinx_theme-1.3.0.tar.gz", hash = "sha256:fdcb90d8b9fcb911f3a6cb3941899dee79c6e56a37d5f42f11ab82782eac1516"},
 ]
 
 [package.dependencies]
@@ -86,8 +86,9 @@ pydata-sphinx-theme = ">=0.15.4,<0.17"
 Sphinx = ">=4.2.0"
 
 [package.extras]
-autoapi = ["sphinx-autoapi (==3.3.3)", "sphinx-design (==0.6.1)", "sphinx-jinja (==2.0.2)"]
-doc = ["Pillow (>=9.0)", "PyGitHub (==2.4.0)", "Sphinx (==8.1.3)", "jupytext (==1.16.4)", "nbsphinx (==0.9.5)", "notebook (==7.2.2)", "numpydoc (==1.8.0)", "pandas (==2.2.3)", "pyvista[jupyter] (==0.44.1)", "requests (==2.32.3)", "sphinx-autoapi (==3.3.3)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.6.1)", "sphinx-gallery (==0.18.0)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==1.0.4)"]
+autoapi = ["astroid (>=3.0,<4.0)", "sphinx-autoapi (==3.4.0)", "sphinx-design (==0.6.1)", "sphinx-jinja (==2.0.2)"]
+changelog = ["PyYAML (==6.0.2)", "sphinx-design (==0.6.1)"]
+doc = ["Pillow (>=9.0)", "PyGitHub (==2.5.0)", "PyYAML (==6.0.2)", "Sphinx (==8.1.3)", "jupytext (==1.16.6)", "nbsphinx (==0.9.6)", "notebook (==7.3.2)", "numpydoc (==1.8.0)", "pandas (==2.2.3)", "pyvista[jupyter] (==0.44.2)", "requests (==2.32.3)", "sphinx-autoapi (==3.4.0)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.6.1)", "sphinx-gallery (==0.18.0)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==1.1.0)"]
 
 [[package]]
 name = "anyio"
@@ -4051,4 +4052,4 @@ examples = ["ipywidgets", "jupyterlab", "lxml", "pandas", "plotly", "tabulate"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10.0"
-content-hash = "ccd15fcd53aeb9ba499a5118df26c17feadb89414c6f77caea8d89d798f87a8f"
+content-hash = "acfbbe0d2835d580224f7c6791a33e0734ca7ade272acea7b8cb09719af900f4"

@@ -50,8 +50,10 @@ class BoMReader:
         self._class_members: Dict[str, Type[BaseType]] = {
             k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
         }
+        # Used to track fields in an object that haven't been deserialized.
+        self.__undeserialized_fields: list[str] = []
 
-    def read_bom(self, obj: Dict) -> "BillOfMaterials":
+    def read_bom(self, obj: Dict) -> tuple["BaseType", list]:
         """
         Convert a BoM object from xmlschema JSON format into a BillOfMaterials object.
 
@@ -62,7 +64,9 @@ class BoMReader:
 
         Returns
         -------
-        BillOfMaterials
+        tuple[BillOfMaterials, list]
+            A tuple containing the converted BillOfMaterials object, and any fields in the obj argument that could not
+            be deserialized.
         """
         namespaces = {}
         for k, v in obj.items():
@@ -74,23 +78,39 @@ class BoMReader:
 
         self._namespaces = namespaces
 
-        return cast("BillOfMaterials", self.create_type("BillOfMaterials", obj))
+        bom = cast("BillOfMaterials", self.create_type("BillOfMaterials", obj))
+        return bom, self.__undeserialized_fields
 
     def create_type(self, type_name: str, obj: Dict) -> BaseType:
+        """
+        Recursively deserialize a dictionary of XML fields to a hierarchy of Python objects.
+        Keeps track of any fields which have not been deserialized, so they can be optionally reported to the user
+        following deserialization.
+        Parameters
+        ----------
+        type_name : str
+            Name of the current type to populate.
+        obj : dict
+            The data to use to populate the new type.
+        """
+        local_obj = obj.copy()
         type_ = self._class_members[type_name]
         kwargs = {}
         for target_type, target_property_name, field_name in type_._props:
-            kwargs.update(self._deserialize_single_type(type_, obj, target_type, target_property_name, field_name))
+            kwargs.update(
+                self._deserialize_single_type(type_, local_obj, target_type, target_property_name, field_name)
+            )
         for target_type, target_property_name, container_name, container_namespace, field_name in type_._list_props:
             kwargs.update(
                 self._deserialize_list_type(
-                    type_, obj, target_type, target_property_name, container_name, container_namespace, field_name
+                    type_, local_obj, target_type, target_property_name, container_name, container_namespace, field_name
                 )
             )
         for target, source in type_._simple_values:
-            field_obj = self.get_field(type_, obj, source)
+            field_obj = self.get_field(type_, local_obj, source)
             kwargs[target] = field_obj
-        kwargs.update(type_._process_custom_fields(obj, self))
+        kwargs.update(type_._process_custom_fields(local_obj, self))
+        self._append_unserialized_fields(type_name, local_obj)
         instance = self._class_members[type_name](**kwargs)
         return instance
 
@@ -119,12 +139,22 @@ class BoMReader:
             return {target_property_name: self.create_type(target_type, field_obj)}
         return {}
 
+    def _append_unserialized_fields(self, type_name: str, obj: Dict) -> None:
+        for k, v in obj.items():
+            if not k.startswith("@xmlns"):
+                val = f"{str(v)[:100]}..." if len(str(v)) > 100 else str(v)
+                msg = f'Parent type "{type_name}", field "{k}" with value "{val}".'
+                self.__undeserialized_fields.append(msg)
+
     def get_field(
         self, instance: Type[HasNamespace], obj: Dict, field_name: str, namespace_url: Optional[str] = None
     ) -> Any:
         """
         Given an object and a local name, determines the qualified field name to fetch based on the document namespace
         tags.
+
+        If a field is found that matches the specified local name and namespace, the value is deleted from the
+        dictionary.
 
         Parameters
         ----------
@@ -146,15 +176,18 @@ class BoMReader:
                 continue
 
             if k == "$" and field_name == "$":
+                del obj[k]
                 return v
 
             if k.startswith("@"):
                 is_matched = self._match_attribute(k, field_name, namespace_url)
                 if is_matched:
+                    del obj[k]
                     return v
             else:
                 is_matched = self._match_element(k, field_name, namespace_url)
                 if is_matched:
+                    del obj[k]
                     return v
         return None
 

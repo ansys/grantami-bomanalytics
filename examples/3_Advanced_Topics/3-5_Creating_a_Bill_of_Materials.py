@@ -125,6 +125,9 @@ source_transports[0]
 # serialization and deserialization between the Granta 23/01 BoM XML schema and Python objects. This
 # section shows how data from the external data source is processed to create BoM Python objects,
 # which can then be serialized to an XML BoM.
+#
+# Since this example is constructing a 23/01 BoM, the ``bom_types.eco2301`` module is used. Other
+# modules are available which support different BoM versions.
 
 # If you are using a customized database, before running any queries, change the database key value
 #  in the following cell and see the
@@ -140,7 +143,7 @@ DB_KEY = "MI_Restricted_Substances"
 # the Granta MI BoM schema requires a part to define a ``Part number``. Use the external
 # ``part_identifier`` as a part number.
 #
-# First, create a ``bom_types.Part`` object for every item that maps to a BoM part and add it to a
+# First, create a ``bom_types.eco2301.Part`` object for every item that maps to a BoM part and add it to a
 # dictionary indexed by the part number. This allows you to identify the correct parent part
 # when adding materials and processes.
 
@@ -149,9 +152,9 @@ components = {}
 
 # Product
 product_id = source_product["part_identifier"]
-components[product_id] = bom_types.Part(
+components[product_id] = bom_types.eco2301.Part(
     part_number=product_id,
-    quantity=bom_types.UnittedValue(
+    quantity=bom_types.eco2301.UnittedValue(
         value=1.0,
         unit="Each"
     )
@@ -160,9 +163,9 @@ components[product_id] = bom_types.Part(
 # Assemblies
 for item in source_assemblies:
     item_id = item["part_identifier"]
-    components[item_id] = bom_types.Part(
+    components[item_id] = bom_types.eco2301.Part(
         part_number=item_id,
-        quantity=bom_types.UnittedValue(
+        quantity=bom_types.eco2301.UnittedValue(
             value=item["quantity_in_parent"],
             unit="Each",
         )
@@ -171,13 +174,13 @@ for item in source_assemblies:
 # Parts
 for item in source_parts:
     item_id = item["part_identifier"]
-    components[item_id] = bom_types.Part(
+    components[item_id] = bom_types.eco2301.Part(
         part_number=item_id,
-        quantity=bom_types.UnittedValue(
+        quantity=bom_types.eco2301.UnittedValue(
             value=item["quantity_in_parent"],
             unit="Each",
         ),
-        mass_per_unit_of_measure=bom_types.UnittedValue(
+        mass_per_unit_of_measure=bom_types.eco2301.UnittedValue(
             value=item["part_mass_in_kg"],
             unit="kg/Each"
         )
@@ -203,16 +206,19 @@ for item in source_assemblies + source_parts:
 
 # ### Materials
 #
-# Next, create ``bom_types.Material`` objects for each material and add the materials to their
+# Next, create ``bom_types.eco2301.Material`` objects for each material and add the materials to their
 # parent part object.
 #
 # There are multiple possible ways of identifying Granta MI records in the BoM. In this example, the
 # external data source holds references to Granta MI records by record GUIDs, and so the GUIDs are
 # used to instantiate the required ``MIRecordReference`` objects.
+#
+# The ``MIRecordReference`` class is defined in the ``bom_types.gbt1205`` module. The ``bom_types.gbt1205``
+# module contains generic types which are used for all BoM versions.
 
 # +
 def make_record_reference(item, db_key=DB_KEY):
-    return bom_types.MIRecordReference(
+    return bom_types.gbt1205.MIRecordReference(
         db_key=db_key,
         record_guid=item["Granta_MI_Record_GUID"]
     )
@@ -220,7 +226,7 @@ def make_record_reference(item, db_key=DB_KEY):
 
 for item in source_materials:
     parent_part_id = item["parent_part_identifier"]
-    material = bom_types.Material(
+    material = bom_types.eco2301.Material(
         mi_material_reference=make_record_reference(item),
         identity=item["name"],
         percentage=100.0,
@@ -247,10 +253,10 @@ for item in source_materials:
 # information on mass calculations, see the Granta MI documentation.
 
 for item in source_primary_processes:
-    process = bom_types.Process(
+    process = bom_types.eco2301.Process(
         mi_process_reference=make_record_reference(item),
         identity=item["name"],
-        dimension_type=bom_types.DimensionType.Mass,
+        dimension_type=bom_types.eco2301.DimensionType.Mass,
         percentage=100.0
     )
     # Use the parent part identifier to retrieve the part created earlier
@@ -268,11 +274,11 @@ for item in source_primary_processes:
 # Sort the list of secondary processes by the ``step_order`` field.
 source_secondary_processes.sort(key=lambda item: (item["parent_part_identifier"], item["step_order"]))
 for item in source_secondary_processes:
-    process = bom_types.Process(
+    process = bom_types.eco2301.Process(
         mi_process_reference=make_record_reference(item),
         identity=item["name"],
-        dimension_type=bom_types.DimensionType.MassRemoved,
-        quantity=bom_types.UnittedValue(
+        dimension_type=bom_types.eco2301.DimensionType.MassRemoved,
+        quantity=bom_types.eco2301.UnittedValue(
             value=item["mass_removed_in_kg"],
             unit="kg",
         )
@@ -289,18 +295,18 @@ for item in source_secondary_processes:
 
 # +
 unit_to_dimension_type = {
-    "m": bom_types.DimensionType.Length,
+    "m": bom_types.eco2301.DimensionType.Length,
 }
 
 source_joining_processes.sort(key=lambda item: (item["parent_part_identifier"], item["step_order"]))
 
 for item in source_joining_processes:
-    process = bom_types.Process(
+    process = bom_types.eco2301.Process(
         mi_process_reference=make_record_reference(item),
         identity=item["name"],
         # Map the unit in the input file to the DimensionType enum.
         dimension_type=unit_to_dimension_type[item["quantity_unit"]],
-        quantity=bom_types.UnittedValue(
+        quantity=bom_types.eco2301.UnittedValue(
             value=item["quantity"],
             unit=item["quantity_unit"]
         ),
@@ -325,13 +331,13 @@ print(root_component.components[0].components[1].materials[0].processes[1].ident
 # a specific component.
 
 # +
-bom = bom_types.BillOfMaterials(components=[root_component])
+bom = bom_types.eco2301.BillOfMaterials(components=[root_component])
 
 transports = [
-    bom_types.TransportStage(
+    bom_types.eco2301.TransportStage(
         name=item["name"],
         mi_transport_reference=make_record_reference(item),
-        distance=bom_types.UnittedValue(value=item["distance_in_km"], unit="km")
+        distance=bom_types.eco2301.UnittedValue(value=item["distance_in_km"], unit="km")
     )
     for item in source_transports
 ]

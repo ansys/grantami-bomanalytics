@@ -20,36 +20,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import inspect
+from abc import ABC
 from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Type, cast
 
 from xmlschema import XMLSchema
 
-from . import _bom_types as bom_types
-from ._bom_types import BaseType, HasNamespace
+from ._base_types import BaseType, HasNamespace
 
 if TYPE_CHECKING:
     from . import BillOfMaterials
 
 
-class BoMReader:
+class GenericBoMReader(ABC):
     _schema: XMLSchema
+    _namespaces: dict[str, str]
     _class_members: Dict[str, Type[BaseType]]
 
-    def __init__(self, schema: XMLSchema):
+    def __init__(self) -> None:
         """
         Reader to convert a JSON formatted BoM, created by xmlschema, into populated BillOfMaterials object.
 
-        Parameters
-        ----------
-        schema: XMLSchema
-            Parsed XMLSchema representing the 2301 Eco BoM format
+        A generic class with no bound namespaces or class members. Should be subclassed with a constructor that
+        accepts a schema, and _class_members property should be set to classes to deserialize to.
         """
-        self._schema = schema
         self._namespaces: Dict[str, str] = {}
-        self._class_members: Dict[str, Type[BaseType]] = {
-            k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
-        }
         # Used to track fields in an object that haven't been deserialized.
         self.__undeserialized_fields: list[str] = []
 
@@ -169,7 +163,7 @@ class BoMReader:
             anonymous complex type, it can be overridden here.
         """
         if namespace_url is None:
-            namespace_url = instance._namespace
+            namespace_url = instance.namespace
 
         for k, v in obj.items():
             if k.startswith("@xmlns"):

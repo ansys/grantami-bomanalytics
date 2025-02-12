@@ -20,6 +20,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ._builders import *
-from .eco2301 import *
-from .gbt1205 import *
+import inspect
+from typing import TYPE_CHECKING, Dict, Type
+
+from xmlschema import XMLSchema
+
+from . import _bom_types as bom_types
+from .. import gbt1205
+from .._bom_reader import GenericBoMReader
+
+if TYPE_CHECKING:
+    from .._base_types import BaseType
+
+
+class BoMReader(GenericBoMReader):
+    def __init__(self, schema: XMLSchema):
+        """
+        Reader to convert a JSON formatted BoM, created by xmlschema, into populated BillOfMaterials object.
+        Parameters
+        ----------
+        schema: XMLSchema
+            Parsed XMLSchema representing the 2301 Eco BoM format
+        """
+        super().__init__()
+        self._schema = schema
+        self._class_members: Dict[str, Type[BaseType]] = {
+            k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
+        }
+        self._class_members.update({k: v for k, v in inspect.getmembers(gbt1205, inspect.isclass)})

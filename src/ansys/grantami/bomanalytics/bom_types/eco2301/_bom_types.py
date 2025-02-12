@@ -24,99 +24,18 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Protocol, Tuple, cast
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
+
+from .._base_types import BaseType
+from ..gbt1205 import MIRecordReference
 
 if TYPE_CHECKING:
     from ._bom_reader import BoMReader
     from ._bom_writer import BoMWriter
 
 
-class HasNamespace(Protocol):
-    """
-    Protocol defining that an inheritor has an attribute *_namespace*.
-    """
-
-    _namespace: str
-
-
-class SupportsCustomFields(Protocol):
-    """
-    Protocol defining that an inheritor has methods to process and write custom fields.
-    """
-
-    @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]: ...
-
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None: ...
-
-
-class BaseType(HasNamespace, SupportsCustomFields):
-    """Base type from which all XML DTOs inherit.
-
-    Handles conversion from python properties to xmlschema objects.
-
-    Attributes
-    ----------
-    _props : List[Tuple[str, str, str]]
-        Properties that map to complex types in XML. The entries are the type target, the python attribute name
-        and the XML element name.
-    _list_props : List[Tuple[str, str, str, str]]
-        Properties that map to sequences of complex types in XML. The entries are the type target for each entry, the
-        python property name, the container XML element name, and the item XML element name.
-    _simple_values : List[Tuple[str, str]]
-        Properties that map to simple types in XML. The entries are the python property name and the item XML element
-        name.
-    _namespaces : Dict[str, str]
-        Mapping from XML namespace prefix to namespace URI.
-    _namespace : str
-        XML Namespace URI for the object, should exist as a value in the ``_namespaces`` map.
-    """
-
-    _props: List[Tuple[str, str, str]] = []
-    _list_props: List[Tuple[str, str, str, str, str]] = []
-    _simple_values: List[Tuple[str, str]] = []
-
-    _namespaces: Dict[str, str] = {}
-
-    _namespace = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
-
-    def __init__(self, *args: Iterable, **kwargs: Dict[str, Any]) -> None:
-        pass
-
-    @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
-        """
-        Populates any fields on the object that are in a nonstandard configuration. This can be anonymous complex types,
-        Sequences of simple types and similar. This is called after the standard deserialization occurs, and should
-        return a dictionary mapping constructor argument names to values.
-
-        Parameters
-        ----------
-        obj: Dict
-            The json representation of the source XML BoM to be parsed.
-        bom_reader: BoMReader
-            Helper object that maintains information about the global namespaces.
-
-        Returns
-        -------
-        Dict[str, Any]
-            Dictionary mapping constructor argument names to values for this type.
-        """
-        return {}
-
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
-        """
-        Writes any fields on the serialized object that are in a nonstandard configuration. This can be anonymous
-        complex types, Sequences of simple types and similar. This is called after the standard serialization occurs,
-        and should modify the ``obj`` argument in place.
-
-        Parameters
-        ----------
-        obj: Dict
-            Dictionary representing the current state of the serialization of self. Modified in place by this method.
-        bom_writer: BoMWriter
-            Helper object that maintains information about the global namespaces.
-        """
+class BaseType2301(BaseType):
+    namespace = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
 
 
 class DimensionType(Enum):
@@ -161,52 +80,6 @@ class DimensionType(Enum):
         return self.name
 
 
-class PseudoAttribute(Enum):
-    """
-    Valid values for PseudoAttribute.
-    """
-
-    Name = 0
-    ShortName = 1
-    Subsets = 2
-    ReleasedDate = 3
-    ModifiedDate = 4
-    RecordType = 5
-    RecordHistoryIdentity = 6
-    RecordColor = 7
-    LinkedRecords = 8
-    VersionState = 9
-    RecordGUID = 10
-    RecordHistoryGUID = 11
-    RecordVersionNumber = 12
-    TableName = 13
-    ChildRecords = 14
-    TableFilters = 15
-
-    @classmethod
-    def from_string(cls, value: str) -> PseudoAttribute:
-        """
-        Convert string representation of this object into an instance of this object.
-
-        Parameters
-        ----------
-        value: str
-            String representation of this object.
-        """
-        return PseudoAttribute[f"{value[0].upper()}{value[1:]}"]
-
-    def to_string(self) -> str:
-        """
-        Convert this Enum object to its string representation.
-
-        Returns
-        -------
-        str
-            String representation of this object.
-        """
-        return f"{self.name[0].lower()}{self.name[1:]}"
-
-
 class Category(Enum):
     """
     Valid values for Category.
@@ -244,192 +117,7 @@ class Category(Enum):
 
 
 @dataclass
-class PartialTableReference(BaseType):
-    """
-    A type that partially identifies a Table, but does not specify the MI Database. Usually, just one of the several
-    optional fields should be provided; where more than one is provided, the highest priority one is used, where the
-    descending priority order is: tableIdentity, tableGUID, tableName.
-    """
-
-    _simple_values = [("table_identity", "tableIdentity"), ("table_guid", "tableGUID"), ("table_name", "tableName")]
-
-    _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
-
-    table_identity: Optional[int] = None
-    """The identity of the table, this is the fastest way to reference a table."""
-
-    table_guid: Optional[str] = None
-    """The GUID of the table, this is likely to be a persistent way to refer to a table."""
-
-    table_name: Optional[str] = None
-    """The name of the table. Note that table names can vary between localisations of a database, so this may not be a
-    safe way to refer to a table if the MI Database supports multiple locales."""
-
-
-@dataclass
-class MIAttributeReference(BaseType):
-    """A type that allows identification of a particular Attribute in an MI Database. This may be done directly by
-    specifying the Identity of the Attribute, or indirectly by specifying a lookup that will match (only) the
-    Attribute.
-
-    Note: in certain cases, an MIAttributeReference may match more than one Attribute in
-    the MI Database; depending on the operation, this may be legal or may result in
-    a Fault.
-    """
-
-    _simple_values = [("db_key", "dbKey"), ("attribute_identity", "attributeIdentity")]
-
-    _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
-
-    db_key: str
-    """The key that uniquely identifies a particular Database on the MI Server."""
-
-    attribute_identity: Optional[int] = None
-    """The identity of the attribute within the MI Database."""
-
-    table_reference: Optional[PartialTableReference] = None
-    """A reference to the table hosting the attribute. Required if ``attribute_name`` is specified and
-    ``is_standard`` is not True."""
-
-    attribute_name: Optional[str] = None
-    """Name of the Attribute."""
-
-    pseudo: Optional[PseudoAttribute] = None
-    """The pseudo-attribute type if referring to a pseudo-attribute."""
-
-    is_standard: Optional[bool] = None
-    """If True indicates that the provided ``attribute_name`` is a Standard Name."""
-
-    @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
-        props = super()._process_custom_fields(obj, bom_reader)
-        name_obj = bom_reader.get_field(MIAttributeReference, obj, "name")
-        if name_obj is not None:
-            table_obj = bom_reader.get_field(MIAttributeReference, name_obj, "table")
-            if table_obj is not None:
-                props["table_reference"] = cast(
-                    PartialTableReference, bom_reader.create_type("PartialTableReference", table_obj)
-                )
-            attribute_name_obj = bom_reader.get_field(MIAttributeReference, name_obj, "attributeName")
-            if attribute_name_obj is not None:
-                props["attribute_name"] = attribute_name_obj
-            pseudo_obj = bom_reader.get_field(MIAttributeReference, name_obj, "pseudo")
-            if pseudo_obj is not None:
-                props["pseudo"] = PseudoAttribute.from_string(pseudo_obj)
-            is_standard_obj = bom_reader.get_field(MIAttributeReference, name_obj, "@isStandard")
-            if is_standard_obj is not None:
-                props["is_standard"] = is_standard_obj
-        return props
-
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
-        super()._write_custom_fields(obj, bom_writer)
-        name_dict: Dict[str, Any] = {}
-        if self.table_reference is not None:
-            name_dict[bom_writer._get_qualified_name(self, "table")] = bom_writer._convert_to_dict(self.table_reference)
-        if self.attribute_name is not None:
-            name_dict[bom_writer._get_qualified_name(self, "attributeName")] = self.attribute_name
-        if self.pseudo is not None:
-            name_dict[bom_writer._get_qualified_name(self, "pseudo")] = self.pseudo.to_string()
-        if self.is_standard is not None:
-            name_dict[bom_writer._get_qualified_name(self, "@isStandard")] = self.is_standard
-        if name_dict != {}:
-            obj[bom_writer._get_qualified_name(self, "name")] = name_dict
-
-
-@dataclass
-class MIRecordReference(BaseType):
-    """A type that allows identification of a particular Record in an
-    MI Database. This may be done directly by specifying the Identity or GUID of the Record, or
-    indirectly by specifying a lookup that will match (only) the Record.
-
-    For input, you should provide exactly one of either identity, recordGUID, recordHistoryGUID
-    or lookupValue. If more than one element identifying the record is given, only one is used; the descending
-    order of priority is: identity, recordGUID, recordHistoryGUID, lookupValue. The Service Layer does not
-    check that the several elements identifying the record are all referencing the same record, it just picks the
-    highest-priority one and uses that.
-    """
-
-    _simple_values = [
-        ("db_key", "dbKey"),
-        ("record_guid", "recordGUID"),
-        ("record_history_guid", "recordHistoryGUID"),
-        ("record_uid", "@recordUID"),
-    ]
-
-    _namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
-
-    db_key: str
-    """The key that uniquely identifies a particular Database on the MI Server."""
-
-    record_history_identity: Optional[int] = None
-    """This is the best-performing and highest-priority way to reference a record; however, identities might not
-    be suitable for long-term persistence."""
-
-    record_version_number: Optional[int] = None
-    """If omitted, this means the latest version visible to the user."""
-
-    record_guid: Optional[str] = None
-    """Identifies a particular version of a record by its GUID, this is a more persistent way to refer to a record."""
-
-    record_history_guid: Optional[str] = None
-    """Identifies a record history, the latest visible version will be returned. ``record_version_number`` has no
-    effect on references that use ``record_history_guid``."""
-
-    lookup_attribute_reference: Optional[MIAttributeReference] = None
-    """When provided in combination with ``lookup_value`` identifies a record by a unique short-text attribute.
-    Specifies the attribute to be used for the lookup operation."""
-
-    lookup_value: Optional[str] = None
-    """When provided in combination with ``lookup_attribute_reference`` identifies a record by a unique short-text
-    attribute. Specifies the value to be used for the lookup operation. If this is not unique an error will be
-    returned."""
-
-    record_uid: Optional[str] = None
-    """The recordUID may be used to identify a particular XML element representing a record. It does not represent
-    any property or attribute of an actual MI Record."""
-
-    @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
-        props = super()._process_custom_fields(obj, bom_reader)
-        identity_obj = bom_reader.get_field(MIRecordReference, obj, "identity")
-        if identity_obj is not None:
-            props["record_history_identity"] = bom_reader.get_field(
-                MIRecordReference, identity_obj, "recordHistoryIdentity"
-            )
-            version_obj = bom_reader.get_field(MIRecordReference, identity_obj, "version")
-            if version_obj is not None:
-                props["record_version_number"] = version_obj
-        lookup_obj = bom_reader.get_field(MIRecordReference, obj, "lookupValue")
-        if lookup_obj is not None:
-            attr_ref_obj = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeReference")
-            props["lookup_attribute_reference"] = bom_reader.create_type("MIAttributeReference", attr_ref_obj)
-            props["lookup_value"] = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeValue")
-        return props
-
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
-        super()._write_custom_fields(obj, bom_writer)
-        # Always write the wrapper object, even if incomplete. This way, users get an error when serializing, rather
-        # than the serialization ignoring a populated value.
-        identity_dict = {}
-        if self.record_history_identity is not None:
-            identity_dict[bom_writer._get_qualified_name(self, "recordHistoryIdentity")] = self.record_history_identity
-        if self.record_version_number is not None:
-            identity_dict[bom_writer._get_qualified_name(self, "version")] = self.record_version_number
-        if identity_dict:
-            obj[bom_writer._get_qualified_name(self, "identity")] = identity_dict
-        lookup_dict: Dict[str, Any] = {}
-        if self.lookup_value is not None:
-            lookup_dict[bom_writer._get_qualified_name(self, "attributeValue")] = self.lookup_value
-        if self.lookup_attribute_reference is not None:
-            lookup_dict[bom_writer._get_qualified_name(self, "attributeReference")] = bom_writer._convert_to_dict(
-                cast(BaseType, self.lookup_attribute_reference)
-            )
-        if lookup_dict:
-            obj[bom_writer._get_qualified_name(self, "lookupValue")] = lookup_dict
-
-
-@dataclass
-class EndOfLifeFate(BaseType):
+class EndOfLifeFate(BaseType2301):
     """
     The fate of a material at the end-of-life of the product. For example if a material can be recycled, and what
     fraction of the total mass or volume can be recycled.
@@ -447,7 +135,7 @@ class EndOfLifeFate(BaseType):
 
 
 @dataclass
-class UnittedValue(BaseType):
+class UnittedValue(BaseType2301):
     """
     A physical quantity with a unit. If provided in an input then the unit must exist within the MI database,
     otherwise an error will be raised.
@@ -464,7 +152,7 @@ class UnittedValue(BaseType):
 
 
 @dataclass
-class Location(BaseType):
+class Location(BaseType2301):
     """
     Defines the manufacturing location for the BoM for use in process calculations.
     """
@@ -495,7 +183,7 @@ class Location(BaseType):
 
 
 @dataclass
-class ElectricityMix(BaseType):
+class ElectricityMix(BaseType2301):
     """
     If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of
     fossil fuel burning power stations in the region of use.  This type lets you specify the electrical generation
@@ -514,7 +202,7 @@ class ElectricityMix(BaseType):
 
 
 @dataclass
-class MobileMode(BaseType):
+class MobileMode(BaseType2301):
     """
     If the product is transported as part of its use then this type contains details about the way in which it is
     transported.
@@ -537,7 +225,7 @@ class MobileMode(BaseType):
 
 
 @dataclass
-class StaticMode(BaseType):
+class StaticMode(BaseType2301):
     """
     Specifies the primary energy conversion that occurs during the product's use.
     """
@@ -579,7 +267,7 @@ class StaticMode(BaseType):
 
 
 @dataclass
-class UtilitySpecification(BaseType):
+class UtilitySpecification(BaseType2301):
     """
     Specifies how much use can be obtained from the product represented by this BoM in comparison to a
     representative industry average.
@@ -603,7 +291,7 @@ class UtilitySpecification(BaseType):
 
 
 @dataclass
-class ProductLifeSpan(BaseType):
+class ProductLifeSpan(BaseType2301):
     """
     Specifies the average life span for the product represented by the BoM.
     """
@@ -629,7 +317,7 @@ class ProductLifeSpan(BaseType):
 
 
 @dataclass
-class UsePhase(BaseType):
+class UsePhase(BaseType2301):
     """
     Provides information about the sustainability of the product whilst in use, including electricity use, emissions
     due to transport, emissions due to electricity consumption, and the expected life span of the product.
@@ -656,7 +344,7 @@ class UsePhase(BaseType):
 
 
 @dataclass
-class BoMDetails(BaseType):
+class BoMDetails(BaseType2301):
     """
     Explanatory information about a BoM.
     """
@@ -675,7 +363,7 @@ class BoMDetails(BaseType):
 
 
 @dataclass
-class TransportStage(BaseType):
+class TransportStage(BaseType2301):
     """
     Defines the transportation applied to an object, in terms of the generic transportation type (stored in the
     Database) and the amount of that transport used in this instance.
@@ -702,7 +390,7 @@ class TransportStage(BaseType):
 
 
 @dataclass
-class Specification(BaseType):
+class Specification(BaseType2301):
     """
     A specification for a surface treatment, part, process, or material. Refers to a record within the MI Database
     storing the details of the specification and its impact.
@@ -740,7 +428,7 @@ class Specification(BaseType):
 
 
 @dataclass
-class Substance(BaseType):
+class Substance(BaseType2301):
     """
     A substance within a part, semi-finished part, material or specification. The substance is stored in the
     Database."""
@@ -795,7 +483,7 @@ class Substance(BaseType):
 
 
 @dataclass
-class Process(BaseType):
+class Process(BaseType2301):
     """
     A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the
     Database.
@@ -857,7 +545,7 @@ class Process(BaseType):
 
 
 @dataclass
-class Material(BaseType):
+class Material(BaseType2301):
     """
     A Material within a part or semi-finished part. The material is stored in the Database.
     """
@@ -948,7 +636,7 @@ class Material(BaseType):
 
 
 @dataclass
-class Part(BaseType):
+class Part(BaseType2301):
     """
     A single part which may or may not be stored in the MI Database.
     """
@@ -1148,7 +836,7 @@ class Part(BaseType):
 
 
 @dataclass
-class BillOfMaterials(BaseType):
+class BillOfMaterials(BaseType2301):
     """
     Type representing the root Bill of Materials object.
     """

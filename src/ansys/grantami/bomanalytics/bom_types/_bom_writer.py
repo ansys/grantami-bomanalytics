@@ -20,14 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import Dict, cast
+from typing import TYPE_CHECKING, Dict, cast
 
 from xmlschema import XMLSchema
 
-from . import BaseType, BillOfMaterials, HasNamespace
+if TYPE_CHECKING:
+    from ._base_types import BaseType, HasNamespace
 
 
-class BoMWriter:
+class GenericBoMWriter:
     _schema: XMLSchema
 
     def __init__(self, schema: XMLSchema):
@@ -37,16 +38,16 @@ class BoMWriter:
         Parameters
         ----------
         schema: XMLSchema
-            Parsed XMLSchema representing the 2301 Eco BoM format
+            Parsed XMLSchema representing a valid Eco BoM format
         """
         self._schema = schema
 
-    def _get_qualified_name(self, obj: HasNamespace, field_name: str) -> str:
-        namespace_prefixes = [k for k, v in self._schema.namespaces.items() if v == obj._namespace]
+    def _get_qualified_name(self, obj: "HasNamespace", field_name: str) -> str:
+        namespace_prefixes = [k for k, v in self._schema.namespaces.items() if v == obj.namespace]
         if len(namespace_prefixes) == 1:
             namespace_prefix = namespace_prefixes[0]
         elif len(namespace_prefixes) == 0:
-            raise KeyError(f"Namespace {obj._namespace} does not exist in schema for object {type(obj)}")
+            raise KeyError(f"Namespace {obj.namespace} does not exist in schema for object {type(obj)}")
         elif "" in namespace_prefixes:
             return field_name
         else:
@@ -55,7 +56,7 @@ class BoMWriter:
             return f"@{namespace_prefix}:{field_name[1:]}"
         return f"{namespace_prefix}:{field_name}"
 
-    def _convert_to_dict(self, obj: BaseType) -> Dict:
+    def _convert_to_dict(self, obj: "BaseType") -> Dict:
         value = {}
 
         for prop, field_name in obj._simple_values:
@@ -79,13 +80,13 @@ class BoMWriter:
         obj._write_custom_fields(value, self)
         return value
 
-    def convert_bom_to_dict(self, obj: BillOfMaterials) -> Dict:
+    def convert_bom_to_dict(self, obj: "BaseType") -> Dict:
         """
         Convert a BillOfMaterials object into its xmlschema dictionary form for serialization to XML.
 
         Parameters
         ----------
-        obj: BillOfMaterials
+        obj: BaseType
 
         Returns
         -------

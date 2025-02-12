@@ -86,6 +86,7 @@ class BoMReader:
         Recursively deserialize a dictionary of XML fields to a hierarchy of Python objects.
         Keeps track of any fields which have not been deserialized, so they can be optionally reported to the user
         following deserialization.
+
         Parameters
         ----------
         type_name : str

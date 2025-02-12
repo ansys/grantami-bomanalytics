@@ -71,8 +71,8 @@ class BoMHandler:
         ValueError
             If the BoM cannot be deserialized.
         ValueError
-            If the BoM contains data that cannot be represented by the classes in the
-            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified.
+            If the BoM contains data that cannot be represented by :ref:`ref_grantami_bomanalytics_bom_eco2301` classes
+            and ``allow_unsupported_data = False`` is specified.
         """
         with open(file_path, "r", encoding="utf8") as fp:
             obj, errors = self._deserialize_bom(fp)
@@ -110,8 +110,8 @@ class BoMHandler:
         ValueError
             If the BoM cannot be deserialized.
         ValueError
-            If the BoM contains data that cannot be represented by the classes in the
-            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified.
+            If the BoM contains data that cannot be represented by :ref:`ref_grantami_bomanalytics_bom_eco2301` classes
+            and ``allow_unsupported_data = False`` is specified.
         """
         obj, errors = self._deserialize_bom(bom_text)
 

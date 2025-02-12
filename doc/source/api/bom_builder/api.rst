@@ -21,12 +21,12 @@ see :ref:`ref_grantami_bomanalytics_api_index`.
 .. versionadded:: 2.0
 
 .. _ref_grantami_bomanalytics_api_billofmaterials:
-.. autoclass:: ansys.grantami.bomanalytics.bom_types.BillOfMaterials
+.. autoclass:: ansys.grantami.bomanalytics.bom_types.eco2301._bom_types.BillOfMaterials
    :inherited-members:
    :member-order: bysource
 
 
-.. automodule:: ansys.grantami.bomanalytics.bom_types
-   :exclude-members: BillOfMaterials, BaseType2301, HasNamespace, SupportsCustomFields
+.. automodule:: ansys.grantami.bomanalytics.bom_types.eco2301._bom_types
+   :exclude-members: BillOfMaterials, BaseType, BaseType2301, HasNamespace, SupportsCustomFields
    :inherited-members:
    :member-order: bysource

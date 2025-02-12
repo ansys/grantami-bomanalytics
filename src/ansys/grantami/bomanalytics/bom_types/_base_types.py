@@ -46,7 +46,9 @@ class SupportsCustomFields(Protocol):
 
 class BaseType(HasNamespace, SupportsCustomFields):
     """Base type from which all XML DTOs inherit.
+
     Handles conversion from python properties to xmlschema objects.
+
     Attributes
     ----------
     _props : List[Tuple[str, str, str]]
@@ -79,12 +81,14 @@ class BaseType(HasNamespace, SupportsCustomFields):
         Populates any fields on the object that are in a nonstandard configuration. This can be anonymous complex types,
         Sequences of simple types and similar. This is called after the standard deserialization occurs, and should
         return a dictionary mapping constructor argument names to values.
+
         Parameters
         ----------
         obj: Dict
             The json representation of the source XML BoM to be parsed.
         bom_reader: BaseBoMReader
             Helper object that maintains information about the global namespaces.
+
         Returns
         -------
         Dict[str, Any]
@@ -97,6 +101,7 @@ class BaseType(HasNamespace, SupportsCustomFields):
         Writes any fields on the serialized object that are in a nonstandard configuration. This can be anonymous
         complex types, Sequences of simple types and similar. This is called after the standard serialization occurs,
         and should modify the ``obj`` argument in place.
+
         Parameters
         ----------
         obj: Dict

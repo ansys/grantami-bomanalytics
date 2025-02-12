@@ -37,6 +37,7 @@ class BoMReader(GenericBoMReader):
     def __init__(self, schema: XMLSchema):
         """
         Reader to convert a JSON formatted BoM, created by xmlschema, into populated BillOfMaterials object.
+
         Parameters
         ----------
         schema: XMLSchema

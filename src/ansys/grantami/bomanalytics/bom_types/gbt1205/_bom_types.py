@@ -59,6 +59,7 @@ class PseudoAttribute(Enum):
     def from_string(cls, value: str) -> PseudoAttribute:
         """
         Convert string representation of this object into an instance of this object.
+
         Parameters
         ----------
         value: str
@@ -69,6 +70,7 @@ class PseudoAttribute(Enum):
     def to_string(self) -> str:
         """
         Convert this Enum object to its string representation.
+
         Returns
         -------
         str
@@ -105,6 +107,7 @@ class MIAttributeReference(BaseType):
     """A type that allows identification of a particular Attribute in an MI Database. This may be done directly by
     specifying the Identity of the Attribute, or indirectly by specifying a lookup that will match (only) the
     Attribute.
+
     Note: in certain cases, an MIAttributeReference may match more than one Attribute in
     the MI Database; depending on the operation, this may be legal or may result in
     a Fault.
@@ -174,6 +177,7 @@ class MIRecordReference(BaseType):
     """A type that allows identification of a particular Record in an
     MI Database. This may be done directly by specifying the Identity or GUID of the Record, or
     indirectly by specifying a lookup that will match (only) the Record.
+
     For input, you should provide exactly one of either identity, recordGUID, recordHistoryGUID
     or lookupValue. If more than one element identifying the record is given, only one is used; the descending
     order of priority is: identity, recordGUID, recordHistoryGUID, lookupValue. The Service Layer does not

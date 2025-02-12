@@ -72,8 +72,7 @@ class BaseType(HasNamespace, SupportsCustomFields):
 
     _namespaces: Dict[str, str] = {}
 
-    def __init__(self, *args: Iterable, **kwargs: Dict[str, Any]) -> None:
-        pass
+    def __init__(self, *args: Iterable, **kwargs: Dict[str, Any]) -> None: ...
 
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: Any) -> Dict[str, Any]:

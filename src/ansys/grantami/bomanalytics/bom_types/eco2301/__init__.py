@@ -23,3 +23,25 @@
 from ._bom_reader import BoMReader
 from ._bom_types import *
 from ._bom_writer import BoMWriter
+
+__all__ = [
+    "BillOfMaterials",
+    "Part",
+    "Material",
+    "Process",
+    "Substance",
+    "Specification",
+    "TransportStage",
+    "BoMDetails",
+    "UsePhase",
+    "ProductLifeSpan",
+    "UtilitySpecification",
+    "StaticMode",
+    "MobileMode",
+    "ElectricityMix",
+    "Location",
+    "UnittedValue",
+    "EndOfLifeFate",
+    "Category",
+    "DimensionType",
+]

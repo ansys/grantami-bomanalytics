@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, TextIO, Tuple, Union, cast
 import xmlschema
 from xmlschema import XMLSchema
 
-from .bom_types import BoMReader, BoMWriter
+from .bom_types.eco2301 import BoMReader, BoMWriter
 from .schemas import bom_schema_2301
 
 if TYPE_CHECKING:

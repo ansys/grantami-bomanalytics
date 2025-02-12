@@ -21,3 +21,10 @@
 # SOFTWARE.
 
 from ._bom_types import *
+
+__all__ = [
+    "PseudoAttribute",
+    "PartialTableReference",
+    "MIAttributeReference",
+    "MIRecordReference",
+]

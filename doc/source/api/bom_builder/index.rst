@@ -21,8 +21,9 @@ passed to either a Sustainability or a Compliance query.
 .. toctree::
    :maxdepth: 2
 
-   api
+   eco2301
    builders
+   gbt1205
    helpers
    schemas
 

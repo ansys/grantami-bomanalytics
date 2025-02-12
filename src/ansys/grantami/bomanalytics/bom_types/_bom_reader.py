@@ -43,9 +43,24 @@ class GenericBoMReader(ABC):
         A generic class with no bound namespaces or class members. Should be subclassed with a constructor that
         accepts a schema, and _class_members property should be set to classes to deserialize to.
         """
+
         self._namespaces: Dict[str, str] = {}
+
         # Used to track fields in an object that haven't been deserialized.
         self.__undeserialized_fields: list[str] = []
+
+    @property
+    def eco_namespace(self) -> str | None:
+        """The XML namespace registered to the 'eco' prefix.
+
+        Ansys Granta convention is to define the main namespace for RS and Sustainability BoMs with the
+        'eco' prefix.
+
+        Returns
+        -------
+        str | None
+        """
+        return self._schema.namespaces["eco"]
 
     def read_bom(self, obj: Dict) -> tuple["BaseType", list]:
         """
@@ -78,6 +93,7 @@ class GenericBoMReader(ABC):
     def create_type(self, type_name: str, obj: Dict) -> BaseType:
         """
         Recursively deserialize a dictionary of XML fields to a hierarchy of Python objects.
+
         Keeps track of any fields which have not been deserialized, so they can be optionally reported to the user
         following deserialization.
 

@@ -10,3 +10,6 @@ BoM schemas
 
 .. autodata:: ansys.grantami.bomanalytics.schemas.bom_schema_2301
    :no-value:
+
+.. autodata:: ansys.grantami.bomanalytics.schemas.bom_schema_2412
+   :no-value:

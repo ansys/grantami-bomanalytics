@@ -20,30 +20,32 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Sub-package providing XML Schema Definition (XSD) files for Ansys Granta BoM formats.
+import inspect
+from typing import TYPE_CHECKING, Dict, Type
 
-XSD files can be used for validating XML files.
-"""
+from xmlschema import XMLSchema
 
-from pathlib import Path
+from . import _bom_types as bom_types
+from .. import gbt1205
+from .._bom_reader import GenericBoMReader
 
-_schemas_dir = Path(__file__).parent
+if TYPE_CHECKING:
+    from .._base_types import BaseType
 
-bom_schema_1711: Path = _schemas_dir / "BillOfMaterialsEco1711.xsd"
-"""Path to the Ansys Granta 17/11 BoM XML Schema definition.
 
-.. versionadded:: 2.0
-"""
+class BoMReader(GenericBoMReader):
+    def __init__(self, schema: XMLSchema):
+        """
+        Reader to convert a JSON formatted BoM, created by xmlschema, into populated BillOfMaterials object.
 
-bom_schema_2301: Path = _schemas_dir / "BillOfMaterialsEco2301.xsd"
-"""Path to the Ansys Granta 23/01 BoM XML Schema definition.
-
-.. versionadded:: 2.0
-"""
-
-bom_schema_2412: Path = _schemas_dir / "BillOfMaterialsEco2412.xsd"
-"""Path to the Ansys Granta 24/12 BoM XML Schema definition.
-
-.. versionadded:: 2.3
-"""
+        Parameters
+        ----------
+        schema: XMLSchema
+            Parsed XMLSchema representing the 2301 Eco BoM format
+        """
+        super().__init__()
+        self._schema = schema
+        self._class_members: Dict[str, Type[BaseType]] = {
+            k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
+        }
+        self._class_members.update({k: v for k, v in inspect.getmembers(gbt1205, inspect.isclass)})

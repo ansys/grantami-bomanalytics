@@ -33,7 +33,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # ``MJ`` for energy, ``kg`` for mass, and ``km`` for distance.
 
 # +
-xml_file_path = "supporting-files/bom-2301-assembly.xml"
+xml_file_path = "supporting-files/bom-2412-assembly.xml"
 with open(xml_file_path) as f:
     bom = f.read()
 

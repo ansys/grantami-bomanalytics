@@ -20,30 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Sub-package providing XML Schema Definition (XSD) files for Ansys Granta BoM formats.
+from typing import TYPE_CHECKING
 
-XSD files can be used for validating XML files.
-"""
+from .._bom_writer import GenericBoMWriter
 
-from pathlib import Path
+if TYPE_CHECKING:
+    from ._bom_types import BillOfMaterials
 
-_schemas_dir = Path(__file__).parent
 
-bom_schema_1711: Path = _schemas_dir / "BillOfMaterialsEco1711.xsd"
-"""Path to the Ansys Granta 17/11 BoM XML Schema definition.
-
-.. versionadded:: 2.0
-"""
-
-bom_schema_2301: Path = _schemas_dir / "BillOfMaterialsEco2301.xsd"
-"""Path to the Ansys Granta 23/01 BoM XML Schema definition.
-
-.. versionadded:: 2.0
-"""
-
-bom_schema_2412: Path = _schemas_dir / "BillOfMaterialsEco2412.xsd"
-"""Path to the Ansys Granta 24/12 BoM XML Schema definition.
-
-.. versionadded:: 2.3
-"""
+class BoMWriter(GenericBoMWriter):
+    def convert_bom_to_dict(self, obj: "BillOfMaterials") -> dict:  # type: ignore[override]
+        return super().convert_bom_to_dict(obj)

@@ -37,12 +37,12 @@ if TYPE_CHECKING:
 class BoMReader(BaseBoMReader):
     def __init__(self, schema: XMLSchema):
         """
-        Reader to convert a JSON formatted BoM, created by xmlschema, into populated BillOfMaterials object.
+        Reader to convert a JSON formatted BoM, created by xmlschema, into a populated 23/01 BillOfMaterials object.
 
         Parameters
         ----------
         schema: XMLSchema
-            Parsed XMLSchema representing the 2301 Eco BoM format
+            Parsed XMLSchema representing the 23/01 Eco BoM format
         """
         super().__init__()
         self._schema = schema
@@ -53,4 +53,4 @@ class BoMReader(BaseBoMReader):
 
     def read_bom(self, obj: Dict) -> tuple["BillOfMaterials", list[str]]:
         bom, undeserializable_fields = super().read_bom(obj)
-        return cast(BillOfMaterials, bom), undeserializable_fields
+        return cast("BillOfMaterials", bom), undeserializable_fields

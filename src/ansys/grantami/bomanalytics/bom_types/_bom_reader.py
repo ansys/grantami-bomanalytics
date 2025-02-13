@@ -44,7 +44,7 @@ class BaseBoMReader(ABC):
         # Used to track fields in an object that haven't been deserialized.
         self.__undeserialized_fields: list[str] = []
 
-    def read_bom(self, obj: Dict) -> tuple[BaseType, list[str]]:
+    def read_bom(self, obj: Dict) -> tuple[BaseType, list]:
         """
         Convert a BoM object from xmlschema JSON format into a BillOfMaterials object.
 
@@ -55,7 +55,7 @@ class BaseBoMReader(ABC):
 
         Returns
         -------
-        tuple[BillOfMaterials, list]
+        tuple[BaseType, list]
             A tuple containing the converted BillOfMaterials object, and any fields in the obj argument that could not
             be deserialized.
         """

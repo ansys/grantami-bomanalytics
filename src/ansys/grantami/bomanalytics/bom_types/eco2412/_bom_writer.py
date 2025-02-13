@@ -28,6 +28,6 @@ if TYPE_CHECKING:
     from ._bom_types import BillOfMaterials
 
 
-class BoMWriter(BaseBoMWriter):
+class _BoMWriter(BaseBoMWriter):
     def convert_bom_to_dict(self, obj: "BillOfMaterials") -> dict:  # type: ignore[override]
         return super().convert_bom_to_dict(obj)

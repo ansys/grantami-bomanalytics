@@ -20,7 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from ._bom_reader import _BoMReader
 from ._bom_types import *
+from ._bom_writer import _BoMWriter
 
 __all__ = [
     "BillOfMaterials",

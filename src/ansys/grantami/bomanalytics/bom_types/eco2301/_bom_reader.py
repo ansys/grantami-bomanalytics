@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from ._bom_types import BillOfMaterials
 
 
-class BoMReader(BaseBoMReader):
+class _BoMReader(BaseBoMReader):
     def __init__(self, schema: XMLSchema):
         """
         Reader to convert a JSON formatted BoM, created by xmlschema, into a populated 23/01 BillOfMaterials object.

@@ -75,8 +75,8 @@ class BoMHandler:
         self._schemas.append(schema)
 
         mod = _mod_map[bom_type]
-        self._readers[schema] = mod._bom_reader.BoMReader(schema)
-        self._writers[schema] = mod._bom_reader.BoMWriter(schema)
+        self._readers[schema] = mod._BoMReader(schema)
+        self._writers[schema] = mod._BoMWriter(schema)
 
     def get_xmlschema_for_bom(self, bom: BillOfMaterials) -> XMLSchema:
         try:

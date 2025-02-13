@@ -30,8 +30,8 @@ from .._base_types import BaseType
 from ..gbt1205 import MIRecordReference
 
 if TYPE_CHECKING:
-    from ._bom_reader import BoMReader
-    from ._bom_writer import BoMWriter
+    from ._bom_reader import _BoMReader
+    from ._bom_writer import _BoMWriter
 
 
 class BaseType2301(BaseType):
@@ -249,7 +249,7 @@ class StaticMode(BaseType2301):
     """The number of hours per day of use that the product will be used."""
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+    def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
         usage_obj = bom_reader.get_field(cls, obj, "Usage")
         if usage_obj is not None:
@@ -257,7 +257,7 @@ class StaticMode(BaseType2301):
             props["days_used_per_year"] = bom_reader.get_field(cls, usage_obj, "DaysUsedPerYear")
         return props
 
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+    def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
         usage_dict = {
             bom_writer._get_qualified_name(self, "DaysUsedPerYear"): self.days_used_per_year,
@@ -466,7 +466,7 @@ class Substance(BaseType2301):
     to reference this element."""
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+    def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
         category_type_obj = bom_reader.get_field(Substance, obj, "Category")
@@ -474,7 +474,7 @@ class Substance(BaseType2301):
             props["category"] = Category.from_string(category_type_obj)
         return props
 
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+    def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
 
         if self.category is not None:
@@ -530,14 +530,14 @@ class Process(BaseType2301):
     to reference this element."""
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+    def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
         dimension_type_obj = bom_reader.get_field(Process, obj, "DimensionType")
         props["dimension_type"] = DimensionType.from_string(dimension_type_obj)
         return props
 
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+    def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
 
         dimension_field_name = bom_writer._get_qualified_name(self, "DimensionType")
@@ -607,7 +607,7 @@ class Material(BaseType2301):
     to reference this element."""
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+    def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
         recycle_content_obj = bom_reader.get_field(Material, obj, "RecycleContent")
@@ -621,7 +621,7 @@ class Material(BaseType2301):
                 props["recycle_content_percentage"] = percentage_obj
         return props
 
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+    def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
         recycle_content_name = bom_writer._get_qualified_name(self, "RecycleContent")
         recycle_element = {}
@@ -734,7 +734,7 @@ class Part(BaseType2301):
     to reference this element."""
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+    def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
         # TODO support non_mi_part_reference (issue #95)
         # non_mi_part_ref_obj = bom_reader.get_field(Part, obj, "NonMIPartReference")
@@ -749,7 +749,7 @@ class Part(BaseType2301):
                 props["rohs_exemptions"] = rohs_exemption_obj
         return props
 
-    def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+    def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
         # TODO support non_mi_part_reference (issue #95)
         # if self.non_mi_part_reference is not None:
@@ -788,7 +788,7 @@ class Part(BaseType2301):
 #     to reference this element."""
 #
 #     @classmethod
-#     def _process_custom_fields(cls, obj: Dict, bom_reader: BoMReader) -> Dict[str, Any]:
+#     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
 #         props = super()._process_custom_fields(obj, bom_reader)
 #
 #         data_obj = bom_reader.get_field(AnnotationSource, obj, "Data")
@@ -796,7 +796,7 @@ class Part(BaseType2301):
 #             props["data"] = data_obj
 #         return props
 #
-#     def _write_custom_fields(self, obj: Dict, bom_writer: BoMWriter) -> None:
+#     def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
 #         if len(self.data) > 0:
 #             data_field_name = bom_writer._get_qualified_name(self, "Data")
 #             obj[data_field_name] = self.data

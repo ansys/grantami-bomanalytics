@@ -30,8 +30,8 @@ from .bom_types import eco2301, eco2412
 from .schemas import bom_schema_2301, bom_schema_2412
 
 if TYPE_CHECKING:
-    from .bom_types._bom_reader import GenericBoMReader
-    from .bom_types._bom_writer import GenericBoMWriter
+    from .bom_types._bom_reader import BaseBoMReader
+    from .bom_types._bom_writer import BaseBoMWriter
     from .bom_types.eco2301 import BillOfMaterials as BillOfMaterials2301
     from .bom_types.eco2412 import BillOfMaterials as BillOfMaterials2412
 
@@ -62,8 +62,8 @@ class BoMHandler:
 
     def __init__(self) -> None:
         self._schemas: list[XMLSchema] = []
-        self._readers: dict[XMLSchema, "GenericBoMReader"] = {}
-        self._writers: dict[XMLSchema, "GenericBoMWriter"] = {}
+        self._readers: dict[XMLSchema, "BaseBoMReader"] = {}
+        self._writers: dict[XMLSchema, "BaseBoMWriter"] = {}
 
         for bom_type in _type_map.keys():
             self._initialize(bom_type)
@@ -75,8 +75,8 @@ class BoMHandler:
         self._schemas.append(schema)
 
         mod = _mod_map[bom_type]
-        self._readers[schema] = mod.BoMReader(schema)
-        self._writers[schema] = mod.BoMWriter(schema)
+        self._readers[schema] = mod._bom_reader.BoMReader(schema)
+        self._writers[schema] = mod._bom_reader.BoMWriter(schema)
 
     def get_xmlschema_for_bom(self, bom: BillOfMaterials) -> XMLSchema:
         try:
@@ -104,10 +104,11 @@ class BoMHandler:
         Raises
         ------
         ValueError
-            If the BoM cannot be deserialized.
+            If the BoM cannot be deserialized. Additional detail is included in the exception message.
         ValueError
             If the BoM contains data that cannot be represented by :ref:`ref_grantami_bomanalytics_bom_eco2412` or
             :ref:`ref_grantami_bomanalytics_bom_eco2301` classes and ``allow_unsupported_data = False`` is specified.
+            The additional data fields are reported in the exception message.
         """
         deserializer = _Deserializer(self._schemas)
         with open(file_path, "r", encoding="utf-8") as fp:
@@ -139,6 +140,7 @@ class BoMHandler:
         ValueError
             If the BoM contains data that cannot be represented by :ref:`ref_grantami_bomanalytics_bom_eco2412` or
             :ref:`ref_grantami_bomanalytics_bom_eco2301` classes and ``allow_unsupported_data = False`` is specified.
+            The additional data fields are reported in the exception message.
         """
         deserializer = _Deserializer(self._schemas)
         result = deserializer.deserialize_string(bom_text)
@@ -173,7 +175,7 @@ class BoMHandler:
         Raises
         ------
         ValueError
-            If the BoM cannot be deserialized.
+            If the BoM cannot be deserialized. Additional detail is included in the exception message.
         ValueError
             If the BoM contains data that cannot be represented by classes in the target XML namespace and
             ``allow_unsupported_data = False`` is specified.

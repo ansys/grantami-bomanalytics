@@ -12,7 +12,10 @@ Classes on this page should be imported from the module ``ansys.grantami.bomanal
 
 Alternatively, use the :ref:`ref_grantami_bomanalytics_bom_builders`.
 
-.. versionadded:: 2.3
+.. versionchanged:: 2.3
+   The types documented on this page have moved from ``ansys.grantami.bomanalytics.bom_types`` to
+   ``ansys.grantami.bomanalytics.bom_types.gbt1205``. They are still importable from the old location for
+   compatibility.
 
 .. automodule:: ansys.grantami.bomanalytics.bom_types.gbt1205
    :inherited-members:

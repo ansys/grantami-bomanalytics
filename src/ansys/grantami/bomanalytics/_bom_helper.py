@@ -99,15 +99,15 @@ class BoMHandler:
 
         Returns
         -------
-        :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
+        :class:`.eco2412.BillOfMaterials` or :class:`.eco2301.BillOfMaterials`
 
         Raises
         ------
         ValueError
             If the BoM cannot be deserialized.
         ValueError
-            If the BoM contains data that cannot be represented by :ref:`ref_grantami_bomanalytics_bom_eco2301` or
-            :ref:`ref_grantami_bomanalytics_bom_eco2412` classes and ``allow_unsupported_data = False`` is specified.
+            If the BoM contains data that cannot be represented by :ref:`ref_grantami_bomanalytics_bom_eco2412` or
+            :ref:`ref_grantami_bomanalytics_bom_eco2301` classes and ``allow_unsupported_data = False`` is specified.
         """
         deserializer = _Deserializer(self._schemas)
         with open(file_path, "r", encoding="utf-8") as fp:
@@ -130,14 +130,15 @@ class BoMHandler:
 
         Returns
         -------
-        :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
+        :class:`.eco2412.BillOfMaterials` or :class:`.eco2301.BillOfMaterials`
 
         Raises
         ------
         ValueError
             If the BoM cannot be deserialized.
-            If the BoM contains data that cannot be represented by :ref:`ref_grantami_bomanalytics_bom_eco2301` or
-            :ref:`ref_grantami_bomanalytics_bom_eco2412` classes and ``allow_unsupported_data = False`` is specified.
+        ValueError
+            If the BoM contains data that cannot be represented by :ref:`ref_grantami_bomanalytics_bom_eco2412` or
+            :ref:`ref_grantami_bomanalytics_bom_eco2301` classes and ``allow_unsupported_data = False`` is specified.
         """
         deserializer = _Deserializer(self._schemas)
         result = deserializer.deserialize_string(bom_text)
@@ -156,9 +157,9 @@ class BoMHandler:
 
         Parameters
         ----------
-        bom : :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
+        bom : :class:`.eco2412.BillOfMaterials` or :class:`.eco2301.BillOfMaterials`
             The BoM to convert.
-        target_bom_version : Type[:class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>`] or Type[:class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`]  # noqa: E501
+        target_bom_version : Type[:class:`.eco2412.BillOfMaterials`] or Type[:class:`.eco2301.BillOfMaterials`]
             The ``BillOfMaterials`` class to convert the provided BoM to. Must be a **class**, not an instance of a
             class.
         allow_unsupported_data : bool, default: True
@@ -167,7 +168,7 @@ class BoMHandler:
 
         Returns
         -------
-        :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
+        :class:`.eco2412.BillOfMaterials` or :class:`.eco2301.BillOfMaterials`
 
         Raises
         ------
@@ -218,7 +219,7 @@ class BoMHandler:
 
         Parameters
         ----------
-        bom : :class:`eco2301.BillOfMaterials <.eco2301._bom_types.BillOfMaterials>` or :class:`eco2412.BillOfMaterials <.eco2412._bom_types.BillOfMaterials>`  # noqa: E501
+        bom : :class:`.eco2412.BillOfMaterials` or :class:`.eco2301.BillOfMaterials`
 
         Returns
         -------

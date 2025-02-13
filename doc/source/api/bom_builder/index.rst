@@ -20,11 +20,12 @@ Compliance query.
 .. versionadded:: 2.0
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   eco2301
+   eco2412
    builders
    gbt1205
    helpers
    schemas
+   eco2301
 

@@ -80,7 +80,7 @@ class BoMHandler:
 
     def get_xmlschema_for_bom(self, bom: BillOfMaterials) -> XMLSchema:
         try:
-            return next(schema for schema, writer in self._writers.items() if writer.eco_namespace == bom.namespace)
+            return next(schema for schema, writer in self._writers.items() if writer.target_namespace == bom.namespace)
         except StopIteration:
             raise ValueError("Invalid BoM. BoM is not compliant with any supported Ansys Granta BoM XML schema.")
 
@@ -197,7 +197,7 @@ class BoMHandler:
         self._modify_namespace(bom_dict, current_eco_namespace, target_eco_namespace)
 
         # Convert dictionary to Python objects
-        target_reader = next(r for r in self._readers.values() if r.eco_namespace == target_eco_namespace)
+        target_reader = next(r for r in self._readers.values() if r.target_namespace == target_eco_namespace)
         converted_bom, undeserialized_fields = target_reader.read_bom(bom_dict)
         if undeserialized_fields and not allow_unsupported_data:
             self._raise_undeserialized_fields(undeserialized_fields)

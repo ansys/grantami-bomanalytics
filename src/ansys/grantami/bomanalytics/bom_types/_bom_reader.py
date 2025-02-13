@@ -47,17 +47,14 @@ class BaseBoMReader(ABC):
         self.__undeserialized_fields: list[str] = []
 
     @property
-    def eco_namespace(self) -> str | None:
-        """The XML namespace registered to the 'eco' prefix.
-
-        Ansys Granta convention is to define the main namespace for RS and Sustainability BoMs with the
-        'eco' prefix.
+    def target_namespace(self) -> str:
+        """The target namespace of the loaded XML schema.
 
         Returns
         -------
-        str | None
+        str
         """
-        return self._schema.namespaces["eco"]
+        return self._schema.target_namespace
 
     def read_bom(self, obj: Dict) -> tuple[BaseType, list]:
         """

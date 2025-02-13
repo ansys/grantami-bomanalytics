@@ -43,8 +43,14 @@ class BaseBoMWriter:
         self._schema = schema
 
     @property
-    def eco_namespace(self) -> str | None:
-        return self._schema.namespaces["eco"]
+    def target_namespace(self) -> str:
+        """The target namespace of the loaded XML schema.
+
+        Returns
+        -------
+        str
+        """
+        return self._schema.target_namespace
 
     def _get_qualified_name(self, obj: "HasNamespace", field_name: str) -> str:
         namespace_prefixes = [k for k, v in self._schema.namespaces.items() if v == obj.namespace]

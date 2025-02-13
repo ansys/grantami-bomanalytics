@@ -69,10 +69,11 @@ class BoMHandler:
         Raises
         ------
         ValueError
-            If the BoM cannot be deserialized.
+            If the BoM cannot be deserialized. Additional detail is included in the exception message.
         ValueError
             If the BoM contains data that cannot be represented by the classes in the
-            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified.
+            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified. The additional
+            data is reported in the exception message.
         """
         with open(file_path, "r", encoding="utf8") as fp:
             obj, errors = self._deserialize_bom(fp)
@@ -86,7 +87,7 @@ class BoMHandler:
         bom, undeserialized_fields = self._reader.read_bom(obj)
         if undeserialized_fields and not allow_unsupported_data:
             self._raise_undeserialized_fields(undeserialized_fields)
-        return cast("BillOfMaterials", bom)
+        return bom
 
     def load_bom_from_text(self, bom_text: str, allow_unsupported_data: bool = True) -> "BillOfMaterials":
         """
@@ -108,10 +109,11 @@ class BoMHandler:
         Raises
         ------
         ValueError
-            If the BoM cannot be deserialized.
+            If the BoM cannot be deserialized. Additional detail is included in the exception message.
         ValueError
             If the BoM contains data that cannot be represented by the classes in the
-            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified.
+            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified. The additional
+            data is reported in the exception message.
         """
         obj, errors = self._deserialize_bom(bom_text)
 
@@ -124,7 +126,7 @@ class BoMHandler:
         bom, undeserialized_fields = self._reader.read_bom(obj)
         if undeserialized_fields and not allow_unsupported_data:
             self._raise_undeserialized_fields(undeserialized_fields)
-        return cast("BillOfMaterials", bom)
+        return bom
 
     @staticmethod
     def _raise_undeserialized_fields(fields: list[str]) -> None:

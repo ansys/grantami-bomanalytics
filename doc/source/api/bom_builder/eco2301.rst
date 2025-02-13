@@ -22,7 +22,10 @@ Classes on this page should be imported from the module ``ansys.grantami.bomanal
    elements. It is still possible to deserialize an XML BoM that uses these elements, but these elements cannot be
    converted to Python objects.
 
-.. versionadded:: 2.3
+.. versionchanged:: 2.3
+   The types documented on this page have moved from ``ansys.grantami.bomanalytics.bom_types`` to
+   ``ansys.grantami.bomanalytics.bom_types.eco2301``. They are still importable from the old location for
+   compatibility.
 
 .. automodule:: ansys.grantami.bomanalytics.bom_types.eco2301
    :inherited-members:

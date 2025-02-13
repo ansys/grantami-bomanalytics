@@ -26,7 +26,8 @@ from typing import TYPE_CHECKING, Any, Dict, List, TextIO, Tuple, Union, cast
 import xmlschema
 from xmlschema import XMLSchema
 
-from .bom_types.eco2301 import BoMReader, BoMWriter
+from .bom_types.eco2301._bom_reader import BoMReader
+from .bom_types.eco2301._bom_writer import BoMWriter
 from .schemas import bom_schema_2301
 
 if TYPE_CHECKING:
@@ -86,7 +87,7 @@ class BoMHandler:
         bom, undeserialized_fields = self._reader.read_bom(obj)
         if undeserialized_fields and not allow_unsupported_data:
             self._raise_undeserialized_fields(undeserialized_fields)
-        return cast("BillOfMaterials", bom)
+        return bom
 
     def load_bom_from_text(self, bom_text: str, allow_unsupported_data: bool = True) -> "BillOfMaterials":
         """
@@ -124,7 +125,7 @@ class BoMHandler:
         bom, undeserialized_fields = self._reader.read_bom(obj)
         if undeserialized_fields and not allow_unsupported_data:
             self._raise_undeserialized_fields(undeserialized_fields)
-        return cast("BillOfMaterials", bom)
+        return bom
 
     @staticmethod
     def _raise_undeserialized_fields(fields: list[str]) -> None:

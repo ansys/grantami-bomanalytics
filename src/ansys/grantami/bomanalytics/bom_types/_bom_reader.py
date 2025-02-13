@@ -21,17 +21,14 @@
 # SOFTWARE.
 
 from abc import ABC
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Type, cast
+from typing import Any, Dict, Iterable, Optional, Type
 
 from xmlschema import XMLSchema
 
 from ._base_types import BaseType, HasNamespace
 
-if TYPE_CHECKING:
-    from . import BillOfMaterials
 
-
-class GenericBoMReader(ABC):
+class BaseBoMReader(ABC):
     _schema: XMLSchema
     _namespaces: dict[str, str]
     _class_members: Dict[str, Type[BaseType]]
@@ -40,14 +37,14 @@ class GenericBoMReader(ABC):
         """
         Reader to convert a JSON formatted BoM, created by xmlschema, into populated BillOfMaterials object.
 
-        A generic class with no bound namespaces or class members. Should be subclassed with a constructor that
+        A base class with no bound namespaces or class members. Should be subclassed with a constructor that
         accepts a schema, and _class_members property should be set to classes to deserialize to.
         """
         self._namespaces: Dict[str, str] = {}
         # Used to track fields in an object that haven't been deserialized.
         self.__undeserialized_fields: list[str] = []
 
-    def read_bom(self, obj: Dict) -> tuple["BaseType", list]:
+    def read_bom(self, obj: Dict) -> tuple[BaseType, list[str]]:
         """
         Convert a BoM object from xmlschema JSON format into a BillOfMaterials object.
 
@@ -72,12 +69,13 @@ class GenericBoMReader(ABC):
 
         self._namespaces = namespaces
 
-        bom = cast("BillOfMaterials", self.create_type("BillOfMaterials", obj))
+        bom = self.create_type("BillOfMaterials", obj)
         return bom, self.__undeserialized_fields
 
     def create_type(self, type_name: str, obj: Dict) -> BaseType:
         """
         Recursively deserialize a dictionary of XML fields to a hierarchy of Python objects.
+
         Keeps track of any fields which have not been deserialized, so they can be optionally reported to the user
         following deserialization.
 

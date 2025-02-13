@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from ._base_types import BaseType, HasNamespace
 
 
-class GenericBoMWriter:
+class BaseBoMWriter:
     _schema: XMLSchema
 
     def __init__(self, schema: XMLSchema):

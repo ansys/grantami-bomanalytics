@@ -159,7 +159,7 @@ class BoMHandler:
         ----------
         bom : :class:`.eco2412.BillOfMaterials` or :class:`.eco2301.BillOfMaterials`
             The BoM to convert.
-        target_bom_version : Type[:class:`.eco2412.BillOfMaterials`] or Type[:class:`.eco2301.BillOfMaterials`]
+        target_bom_version : Type[:class:`.eco2412.BillOfMaterials`] | Type[:class:`.eco2301.BillOfMaterials`]
             The ``BillOfMaterials`` class to convert the provided BoM to. Must be a **class**, not an instance of a
             class.
         allow_unsupported_data : bool, default: True

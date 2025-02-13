@@ -50,3 +50,7 @@ with open(sample_sustainability_bom_2301_path, "r", encoding="utf8") as f:
 large_bom_2301_path = inputs_dir / "medium-test-bom.xml"
 with open(large_bom_2301_path, "r", encoding="utf8") as f:
     large_bom_2301 = f.read()
+
+bom_with_annotations_path = inputs_dir / "bom-with-annotations.xml"
+with open(bom_with_annotations_path, "r", encoding="utf8") as f:
+    bom_with_annotations = f.read()

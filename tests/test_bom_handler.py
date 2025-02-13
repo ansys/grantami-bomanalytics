@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 from difflib import context_diff
+from pathlib import Path
 import re
 from typing import Any, Dict
 import uuid
@@ -31,6 +32,8 @@ import pytest
 from ansys.grantami.bomanalytics import BoMHandler, bom_types
 
 from .inputs import (
+    bom_with_annotations,
+    bom_with_annotations_path,
     large_bom_2301,
     large_bom_2301_path,
     sample_bom_1711,
@@ -113,6 +116,21 @@ class TestRoundTripBoM:
 
         assert deserialized_bom == deserialized_bom_roundtriped
 
+    def test_roundtrip_from_text_parsing_succeeds_unsupported_boms_lax(self):
+        bom_handler = BoMHandler()
+        deserialized_bom = bom_handler.load_bom_from_text(bom_with_annotations, True)
+
+        rendered_bom = bom_handler.dump_bom(deserialized_bom)
+        deserialized_bom_roundtriped = bom_handler.load_bom_from_text(rendered_bom)
+
+        assert deserialized_bom == deserialized_bom_roundtriped
+
+    def test_roundtrip_from_text_parsing_fails_unsupported_boms_strict(self):
+        bom_handler = BoMHandler()
+        with pytest.raises(ValueError, match="The following fields in the provided BoM could not be deserialized") as e:
+            bom_handler.load_bom_from_text(bom_with_annotations, False)
+        assert "Annotations" in str(e.value)
+
     def test_roundtrip_from_file_with_assertions(self):
         bom_handler = _TestableBoMHandler(
             default_namespace=self._default_namespace, namespace_mapping=self._namespace_map
@@ -131,7 +149,7 @@ class TestRoundTripBoM:
             pytest.param(sample_sustainability_bom_2301_path, id="sustainability_bom"),
         ],
     )
-    def test_roundtrip_from_file_parsing_succeeds(self, input_bom: str):
+    def test_roundtrip_from_file_parsing_succeeds(self, input_bom: Path):
         bom_handler = BoMHandler()
         deserialized_bom = bom_handler.load_bom_from_file(input_bom)
 
@@ -139,6 +157,21 @@ class TestRoundTripBoM:
         deserialized_bom_roundtriped = bom_handler.load_bom_from_text(rendered_bom)
 
         assert deserialized_bom == deserialized_bom_roundtriped
+
+    def test_roundtrip_from_file_parsing_succeeds_unsupported_boms_lax(self):
+        bom_handler = BoMHandler()
+        deserialized_bom = bom_handler.load_bom_from_file(bom_with_annotations_path, True)
+
+        rendered_bom = bom_handler.dump_bom(deserialized_bom)
+        deserialized_bom_roundtriped = bom_handler.load_bom_from_text(rendered_bom)
+
+        assert deserialized_bom == deserialized_bom_roundtriped
+
+    def test_roundtrip_from_file_parsing_fails_unsupported_boms_strict(self):
+        bom_handler = BoMHandler()
+        with pytest.raises(ValueError, match="The following fields in the provided BoM could not be deserialized") as e:
+            bom_handler.load_bom_from_file(bom_with_annotations_path, False)
+        assert "Annotations" in str(e.value)
 
 
 class TestBoMDeserialization:

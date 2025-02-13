@@ -49,7 +49,7 @@ class BoMHandler:
         self._reader = BoMReader(self._schema)
         self._writer = BoMWriter(self._schema)
 
-    def load_bom_from_file(self, file_path: Path) -> "BillOfMaterials":
+    def load_bom_from_file(self, file_path: Path, allow_unsupported_data: bool = True) -> "BillOfMaterials":
         """
         Read a BoM from a file and return the corresponding BillOfMaterials object for use.
 
@@ -57,10 +57,23 @@ class BoMHandler:
         ----------
         file_path : :class:`~pathlib.Path`
             Location of the BoM XML file.
+        allow_unsupported_data : bool, default: True
+            If ``False``, an exception is raised if there is data in the BoM XML that cannot be deserialized.
+
+            .. versionadded:: 2.3
 
         Returns
         -------
         :class:`~._bom_types.BillOfMaterials`
+
+        Raises
+        ------
+        ValueError
+            If the BoM cannot be deserialized. Additional detail is included in the exception message.
+        ValueError
+            If the BoM contains data that cannot be represented by the classes in the
+            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified. The additional
+            data is reported in the exception message.
         """
         with open(file_path, "r", encoding="utf8") as fp:
             obj, errors = self._deserialize_bom(fp)
@@ -71,9 +84,12 @@ class BoMHandler:
 
         assert isinstance(obj, dict)
 
-        return self._reader.read_bom(obj)
+        bom, undeserialized_fields = self._reader.read_bom(obj)
+        if undeserialized_fields and not allow_unsupported_data:
+            self._raise_undeserialized_fields(undeserialized_fields)
+        return bom
 
-    def load_bom_from_text(self, bom_text: str) -> "BillOfMaterials":
+    def load_bom_from_text(self, bom_text: str, allow_unsupported_data: bool = True) -> "BillOfMaterials":
         """
         Read a BoM from a string and return the corresponding BillOfMaterials object for use.
 
@@ -81,10 +97,23 @@ class BoMHandler:
         ----------
         bom_text : str
             String object containing an XML representation of a BoM.
+        allow_unsupported_data : bool, default: True
+            If ``False``, an exception is raised if there is data in the BoM XML that cannot be deserialized.
+
+            .. versionadded:: 2.3
 
         Returns
         -------
         :class:`~._bom_types.BillOfMaterials`
+
+        Raises
+        ------
+        ValueError
+            If the BoM cannot be deserialized. Additional detail is included in the exception message.
+        ValueError
+            If the BoM contains data that cannot be represented by the classes in the
+            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified. The additional
+            data is reported in the exception message.
         """
         obj, errors = self._deserialize_bom(bom_text)
 
@@ -94,7 +123,15 @@ class BoMHandler:
 
         assert isinstance(obj, dict)
 
-        return self._reader.read_bom(obj)
+        bom, undeserialized_fields = self._reader.read_bom(obj)
+        if undeserialized_fields and not allow_unsupported_data:
+            self._raise_undeserialized_fields(undeserialized_fields)
+        return bom
+
+    @staticmethod
+    def _raise_undeserialized_fields(fields: list[str]) -> None:
+        formatted_fields = "  \n".join(fields)
+        raise ValueError(f"The following fields in the provided BoM could not be deserialized:\n{formatted_fields}")
 
     def _deserialize_bom(self, bom: Union[TextIO, str]) -> Tuple[Dict[str, Any], List]:
         """

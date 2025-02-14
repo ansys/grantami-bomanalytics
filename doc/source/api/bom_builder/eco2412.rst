@@ -10,7 +10,7 @@ Not all elements are required to define a valid BoM for analysis, and not all el
 on all types of analysis. For information on the relevant items for each analysis type,
 see :ref:`ref_grantami_bomanalytics_api_index`.
 
-Classes on this page should be imported from the module ``ansys.grantami.bomanalytics.bom_types.eco2412``.
+Classes on this page are available in the module ``ansys.grantami.bomanalytics.bom_types.eco2412``.
 
 .. note::
    The following elements are defined in the 24/12 BoM schema but are not supported in this module:
@@ -20,7 +20,8 @@ Classes on this page should be imported from the module ``ansys.grantami.bomanal
 
    This module does not contain classes that correspond to these types and cannot serialize a BoM that includes these
    elements. It is still possible to deserialize an XML BoM that uses these elements, but these elements cannot be
-   converted to Python objects.
+   converted to Python objects. See :meth:`~ansys.grantami.bomanalytics._bom_helper.BoMHandler.load_bom_from_file` and
+   :meth:`~ansys.grantami.bomanalytics._bom_helper.BoMHandler.load_bom_from_text` for more details.
 
 .. versionadded:: 2.3
 

@@ -31,10 +31,9 @@ from .._bom_reader import BaseBoMReader
 
 if TYPE_CHECKING:
     from .._base_types import BaseType
-    from ._bom_types import BillOfMaterials
 
 
-class BoMReader(BaseBoMReader):
+class BoMReader(BaseBoMReader[bom_types.BillOfMaterials]):
     def __init__(self, schema: XMLSchema):
         """
         Reader to convert a JSON formatted BoM, created by xmlschema, into a populated 23/01 BillOfMaterials object.
@@ -50,7 +49,7 @@ class BoMReader(BaseBoMReader):
             k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
         }
         self._class_members.update({k: v for k, v in inspect.getmembers(gbt1205, inspect.isclass)})
-
-    def read_bom(self, obj: Dict) -> tuple["BillOfMaterials", list[str]]:
-        bom, undeserializable_fields = super().read_bom(obj)
-        return cast("BillOfMaterials", bom), undeserializable_fields
+        self._bom_type = bom_types.BillOfMaterials
+    # def read_bom(self, obj: Dict) -> tuple[bom_types.BillOfMaterials, list[str]]:
+    #     bom, undeserializable_fields = super().read_bom(obj)
+    #     return  bom, undeserializable_fields

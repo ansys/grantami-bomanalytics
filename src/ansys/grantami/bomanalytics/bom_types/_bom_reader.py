@@ -21,17 +21,20 @@
 # SOFTWARE.
 
 from abc import ABC
-from typing import Any, Dict, Iterable, Optional, Type
+from typing import Any, Dict, Generic, Iterable, Optional, Type, TypeVar, cast
 
 from xmlschema import XMLSchema
 
 from ._base_types import BaseType, HasNamespace
 
+TBom = TypeVar("TBom", bound=BaseType)
+TAny = TypeVar("TAny", bound=BaseType)
 
-class BaseBoMReader(ABC):
+class BaseBoMReader(Generic[TBom], ABC):
     _schema: XMLSchema
     _namespaces: dict[str, str]
     _class_members: Dict[str, Type[BaseType]]
+    _bom_type: Type[TBom]
 
     def __init__(self) -> None:
         """
@@ -44,7 +47,7 @@ class BaseBoMReader(ABC):
         # Used to track fields in an object that haven't been deserialized.
         self.__undeserialized_fields: list[str] = []
 
-    def read_bom(self, obj: Dict) -> tuple[BaseType, list]:
+    def read_bom(self, obj: Dict) -> tuple[TBom, list]:
         """
         Convert a BoM object from xmlschema JSON format into a BillOfMaterials object.
 
@@ -55,7 +58,7 @@ class BaseBoMReader(ABC):
 
         Returns
         -------
-        tuple[BaseType, list]
+        tuple[T, list]
             A tuple containing the converted BillOfMaterials object, and any fields in the obj argument that could not
             be deserialized.
         """
@@ -69,10 +72,15 @@ class BaseBoMReader(ABC):
 
         self._namespaces = namespaces
 
-        bom = self.create_type("BillOfMaterials", obj)
+        bom = self._create_type(self._bom_type, obj)
         return bom, self.__undeserialized_fields
 
+
     def create_type(self, type_name: str, obj: Dict) -> BaseType:
+        target_type = self._class_members[type_name]
+        return self._create_type(target_type, obj)
+
+    def _create_type(self, type_: Type[TAny], obj: Dict) -> TAny:
         """
         Recursively deserialize a dictionary of XML fields to a hierarchy of Python objects.
 
@@ -87,7 +95,7 @@ class BaseBoMReader(ABC):
             The data to use to populate the new type.
         """
         local_obj = obj.copy()
-        type_ = self._class_members[type_name]
+
         kwargs = {}
         for target_type, target_property_name, field_name in type_._props:
             kwargs.update(
@@ -103,8 +111,8 @@ class BaseBoMReader(ABC):
             field_obj = self.get_field(type_, local_obj, source)
             kwargs[target] = field_obj
         kwargs.update(type_._process_custom_fields(local_obj, self))
-        self._append_unserialized_fields(type_name, local_obj)
-        instance = self._class_members[type_name](**kwargs)
+        self._append_unserialized_fields(type_.__name__, local_obj)
+        instance = type_(**kwargs)
         return instance
 
     def _deserialize_list_type(

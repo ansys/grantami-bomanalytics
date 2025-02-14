@@ -23,11 +23,11 @@
 from typing import TYPE_CHECKING
 
 from .._bom_writer import BaseBoMWriter
-
-if TYPE_CHECKING:
-    from ._bom_types import BillOfMaterials
+from . import _bom_types as bom_types
 
 
-class BoMWriter(BaseBoMWriter):
-    def convert_bom_to_dict(self, obj: "BillOfMaterials") -> dict:  # type: ignore[override]
-        return super().convert_bom_to_dict(obj)
+
+class BoMWriter(BaseBoMWriter[bom_types.BillOfMaterials]):
+    pass
+    # def convert_bom_to_dict(self, obj: "BillOfMaterials") -> dict:
+    #     return super().convert_bom_to_dict(obj)

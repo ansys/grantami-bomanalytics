@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 from abc import ABC
-from typing import Any, Dict, Generic, Iterable, Optional, Type, TypeVar, cast
+from typing import Any, Dict, Generic, Iterable, Optional, Type, TypeVar
 
 from xmlschema import XMLSchema
 
@@ -30,7 +30,8 @@ from ._base_types import BaseType, HasNamespace
 TBom = TypeVar("TBom", bound=BaseType)
 TAny = TypeVar("TAny", bound=BaseType)
 
-class BaseBoMReader(Generic[TBom], ABC):
+
+class GenericBoMReader(Generic[TBom], ABC):
     _schema: XMLSchema
     _namespaces: dict[str, str]
     _class_members: Dict[str, Type[BaseType]]
@@ -74,7 +75,6 @@ class BaseBoMReader(Generic[TBom], ABC):
 
         bom = self._create_type(self._bom_type, obj)
         return bom, self.__undeserialized_fields
-
 
     def create_type(self, type_name: str, obj: Dict) -> BaseType:
         target_type = self._class_members[type_name]

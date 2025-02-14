@@ -27,10 +27,11 @@ from xmlschema import XMLSchema
 if TYPE_CHECKING:
     from ._base_types import BaseType, HasNamespace
 from ._base_types import BaseType
+
 T = TypeVar("T", bound=BaseType)
 
 
-class BaseBoMWriter(Generic[T]):
+class GenericBoMWriter(Generic[T]):
     _schema: XMLSchema
 
     def __init__(self, schema: XMLSchema):

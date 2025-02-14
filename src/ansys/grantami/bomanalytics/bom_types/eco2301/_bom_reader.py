@@ -20,8 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ._builders import AttributeReferenceBuilder, RecordReferenceBuilder
-from .eco2301 import *
-from .eco2301._bom_reader import BoMReader
-from .eco2301._bom_writer import BoMWriter
-from .gbt1205 import *
+from . import _bom_types as bom_types
+from .. import gbt1205
+from .._bom_reader import GenericBoMReader
+
+
+class BoMReader(
+    GenericBoMReader[bom_types.BillOfMaterials],
+    xml_type_modules=[gbt1205, bom_types],
+    bom_type=bom_types.BillOfMaterials,
+):
+    pass

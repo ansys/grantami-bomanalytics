@@ -26,7 +26,8 @@ from typing import TYPE_CHECKING, Any, Dict, List, TextIO, Tuple, Union, cast
 import xmlschema
 from xmlschema import XMLSchema
 
-from .bom_types import BoMReader, BoMWriter
+from .bom_types.eco2301._bom_reader import BoMReader
+from .bom_types.eco2301._bom_writer import BoMWriter
 from .schemas import bom_schema_2301
 
 if TYPE_CHECKING:
@@ -46,7 +47,7 @@ class BoMHandler:
     def __init__(self) -> None:
         self._schema = XMLSchema(self._schema_path)
         self._schema.namespaces[""] = self._schema.namespaces["eco"]
-        self._reader = BoMReader(self._schema)
+        self._reader = BoMReader()
         self._writer = BoMWriter(self._schema)
 
     def load_bom_from_file(self, file_path: Path, allow_unsupported_data: bool = True) -> "BillOfMaterials":
@@ -72,8 +73,8 @@ class BoMHandler:
             If the BoM cannot be deserialized. Additional detail is included in the exception message.
         ValueError
             If the BoM contains data that cannot be represented by the classes in the
-            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified. The additional
-            data is reported in the exception message.
+            :ref:`ref_grantami_bomanalytics_bom_eco2301` and ``allow_unsupported_data = False`` is specified. The
+            additional data fields are reported in the exception message.
         """
         with open(file_path, "r", encoding="utf8") as fp:
             obj, errors = self._deserialize_bom(fp)
@@ -112,8 +113,8 @@ class BoMHandler:
             If the BoM cannot be deserialized. Additional detail is included in the exception message.
         ValueError
             If the BoM contains data that cannot be represented by the classes in the
-            :ref:`ref_grantami_bomanalytics_bom_api` and ``allow_unsupported_data = False`` is specified. The additional
-            data is reported in the exception message.
+            :ref:`ref_grantami_bomanalytics_bom_eco2301` and ``allow_unsupported_data = False`` is specified. The
+            additional data fields are reported in the exception message.
         """
         obj, errors = self._deserialize_bom(bom_text)
 

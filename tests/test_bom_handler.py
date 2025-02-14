@@ -30,6 +30,7 @@ from lxml import etree
 import pytest
 
 from ansys.grantami.bomanalytics import BoMHandler, bom_types
+from ansys.grantami.bomanalytics.bom_types._base_types import BaseType
 
 from .inputs import (
     bom_with_annotations,
@@ -186,7 +187,7 @@ class TestBoMDeserialization:
         bom_handler = BoMHandler()
         yield bom_handler.load_bom_from_text(input_bom)
 
-    def get_field(self, obj: bom_types.BaseType, p_path: str) -> Any:
+    def get_field(self, obj: BaseType, p_path: str) -> Any:
         tokens = p_path.split("/")
         while True:
             try:

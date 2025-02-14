@@ -20,8 +20,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ._builders import AttributeReferenceBuilder, RecordReferenceBuilder
-from .eco2301 import *
-from .eco2301._bom_reader import BoMReader
-from .eco2301._bom_writer import BoMWriter
-from .gbt1205 import *
+from ._bom_types import *
+
+__all__ = [
+    "PseudoAttribute",
+    "PartialTableReference",
+    "MIAttributeReference",
+    "MIRecordReference",
+]

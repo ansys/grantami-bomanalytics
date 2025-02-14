@@ -13,3 +13,5 @@ Jupytext
 subpackage
 THIRDPARTY
 autologon
+XML
+Granta Base Types

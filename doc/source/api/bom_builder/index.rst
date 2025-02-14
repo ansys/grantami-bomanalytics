@@ -6,7 +6,7 @@ BoM helpers
 This section provides an introduction to the BoM helpers. These represent a BoM (bill of materials) in Ansys Granta
 MI 2301 XML BoM format, and they support reading and writing these files.
 
-The :class:`~ansys.grantami.bomanalytics.bom_types._bom_types.BillOfMaterials` represents the root object in a BoM hierarchy and can
+The :class:`~ansys.grantami.bomanalytics.bom_types.eco2301._bom_types.BillOfMaterials` represents the root object in a BoM hierarchy and can
 be used to programmatically generate a BoM.
 
 To aid in manipulation of these objects, builders have been provided for Granta MI object references. These assist in
@@ -21,8 +21,9 @@ passed to either a Sustainability or a Compliance query.
 .. toctree::
    :maxdepth: 2
 
-   api
+   eco2301
    builders
+   gbt1205
    helpers
    schemas
 

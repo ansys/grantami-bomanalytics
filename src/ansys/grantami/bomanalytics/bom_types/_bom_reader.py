@@ -21,39 +21,45 @@
 # SOFTWARE.
 
 import inspect
-from typing import TYPE_CHECKING, Any, Dict, Iterable, Optional, Type, cast
+from types import ModuleType
+from typing import Any, Dict, Generic, Iterable, Optional, Type, TypeVar
 
-from xmlschema import XMLSchema
+from ._base_types import BaseType, HasNamespace
 
-from . import _bom_types as bom_types
-from ._bom_types import BaseType, HasNamespace
-
-if TYPE_CHECKING:
-    from . import BillOfMaterials
+TBom = TypeVar("TBom", bound=BaseType)
+TAny = TypeVar("TAny", bound=BaseType)
 
 
-class BoMReader:
-    _schema: XMLSchema
+class GenericBoMReader(Generic[TBom]):
+    _namespaces: dict[str, str]
     _class_members: Dict[str, Type[BaseType]]
+    _bom_type: Type[TBom]
 
-    def __init__(self, schema: XMLSchema):
+    def __init_subclass__(cls, xml_type_modules: list[ModuleType], bom_type: Type[TBom]):
         """
-        Reader to convert a JSON formatted BoM, created by xmlschema, into populated BillOfMaterials object.
+        Bind this generic class to a specific set of xml types and target BoM type.
 
-        Parameters
-        ----------
-        schema: XMLSchema
-            Parsed XMLSchema representing the 2301 Eco BoM format
+        xml_type_modules : list[ModuleType]
+            A list of modules for which the contained classes should be registered as XML types.
+        bom_type : Type[TBom]
+            The BillOfMaterials type that this class can convert dictionaries to.
         """
-        self._schema = schema
+        cls._class_members = {}
+        for xml_type_module in xml_type_modules:
+            cls._class_members.update({k: v for k, v in inspect.getmembers(xml_type_module, inspect.isclass)})
+        cls._bom_type = bom_type
+
+    def __init__(self) -> None:
+        """
+        Reader to convert a JSON formatted BoM, created by xmlschema, into a populated BillOfMaterials object.
+
+        The target BillOfMaterials type is defined by the _bom_type class attribute.
+        """
         self._namespaces: Dict[str, str] = {}
-        self._class_members: Dict[str, Type[BaseType]] = {
-            k: v for k, v in inspect.getmembers(bom_types, inspect.isclass)
-        }
         # Used to track fields in an object that haven't been deserialized.
         self.__undeserialized_fields: list[str] = []
 
-    def read_bom(self, obj: Dict) -> tuple["BillOfMaterials", list]:
+    def read_bom(self, obj: Dict) -> tuple[TBom, list]:
         """
         Convert a BoM object from xmlschema JSON format into a BillOfMaterials object.
 
@@ -64,7 +70,7 @@ class BoMReader:
 
         Returns
         -------
-        tuple[BillOfMaterials, list]
+        tuple[TBom, list]
             A tuple containing the converted BillOfMaterials object, and any fields in the obj argument that could not
             be deserialized.
         """
@@ -78,12 +84,13 @@ class BoMReader:
 
         self._namespaces = namespaces
 
-        bom = cast("BillOfMaterials", self.create_type("BillOfMaterials", obj))
+        bom = self._create_type(self._bom_type, obj)
         return bom, self.__undeserialized_fields
 
     def create_type(self, type_name: str, obj: Dict) -> BaseType:
         """
         Recursively deserialize a dictionary of XML fields to a hierarchy of Python objects.
+
         Keeps track of any fields which have not been deserialized, so they can be optionally reported to the user
         following deserialization.
 
@@ -94,8 +101,13 @@ class BoMReader:
         obj : dict
             The data to use to populate the new type.
         """
+
+        target_type = self._class_members[type_name]
+        return self._create_type(target_type, obj)
+
+    def _create_type(self, type_: Type[TAny], obj: Dict) -> TAny:
         local_obj = obj.copy()
-        type_ = self._class_members[type_name]
+
         kwargs = {}
         for target_type, target_property_name, field_name in type_._props:
             kwargs.update(
@@ -111,8 +123,8 @@ class BoMReader:
             field_obj = self.get_field(type_, local_obj, source)
             kwargs[target] = field_obj
         kwargs.update(type_._process_custom_fields(local_obj, self))
-        self._append_unserialized_fields(type_name, local_obj)
-        instance = self._class_members[type_name](**kwargs)
+        self._append_unserialized_fields(type_.__name__, local_obj)
+        instance = type_(**kwargs)
         return instance
 
     def _deserialize_list_type(
@@ -170,7 +182,7 @@ class BoMReader:
             anonymous complex type, it can be overridden here.
         """
         if namespace_url is None:
-            namespace_url = instance._namespace
+            namespace_url = instance.namespace
 
         for k, v in obj.items():
             if k.startswith("@xmlns"):

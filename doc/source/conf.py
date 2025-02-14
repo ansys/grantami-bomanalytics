@@ -111,7 +111,7 @@ numpydoc_validation_checks = {
 }
 # Ignore missing docstring warning on dataclasses parameters.
 numpydoc_validation_exclude = {
-    "^ansys\.grantami\.bomanalytics\.bom_types\._bom_types\.[\w]+\.[\w]+$"
+    r"^ansys\.grantami\.bomanalytics\.bom_types\.[\w]+\.[\w]+\.[\w]+$"
 }
 
 extlinks = {

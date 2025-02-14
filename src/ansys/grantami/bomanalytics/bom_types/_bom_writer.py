@@ -20,15 +20,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import TYPE_CHECKING, Dict, cast
+from typing import TYPE_CHECKING, Dict, Generic, TypeVar, cast
 
 from xmlschema import XMLSchema
 
 if TYPE_CHECKING:
     from ._base_types import BaseType, HasNamespace
 
+T = TypeVar("T", bound="BaseType")
 
-class BaseBoMWriter:
+
+class _GenericBoMWriter(Generic[T]):
     _schema: XMLSchema
 
     def __init__(self, schema: XMLSchema):
@@ -90,7 +92,7 @@ class BaseBoMWriter:
         obj._write_custom_fields(value, self)
         return value
 
-    def convert_bom_to_dict(self, obj: "BaseType") -> Dict:
+    def convert_bom_to_dict(self, obj: T) -> Dict:
         """
         Convert a BillOfMaterials object into its xmlschema dictionary form for serialization to XML.
 

@@ -20,14 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import TYPE_CHECKING
-
-from .._bom_writer import BaseBoMWriter
-
-if TYPE_CHECKING:
-    from ._bom_types import BillOfMaterials
+from .._bom_writer import _GenericBoMWriter
+from ._bom_types import BillOfMaterials
 
 
-class _BoMWriter(BaseBoMWriter):
-    def convert_bom_to_dict(self, obj: "BillOfMaterials") -> dict:  # type: ignore[override]
-        return super().convert_bom_to_dict(obj)
+class _BoMWriter(_GenericBoMWriter[BillOfMaterials]):
+    pass

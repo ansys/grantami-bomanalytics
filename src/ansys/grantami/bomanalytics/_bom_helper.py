@@ -30,8 +30,7 @@ from .bom_types import eco2301, eco2412
 from .schemas import bom_schema_2301, bom_schema_2412
 
 if TYPE_CHECKING:
-    from .bom_types._bom_reader import BaseBoMReader
-    from .bom_types._bom_writer import BaseBoMWriter
+    from .bom_types import _GenericBoMReader, _GenericBoMWriter
     from .bom_types.eco2301 import BillOfMaterials as BillOfMaterials2301
     from .bom_types.eco2412 import BillOfMaterials as BillOfMaterials2412
 
@@ -57,13 +56,12 @@ class BoMHandler:
     versions.
 
     .. versionadded:: 2.0
-
     """
 
     def __init__(self) -> None:
         self._schemas: list[XMLSchema] = []
-        self._readers: dict[XMLSchema, "BaseBoMReader"] = {}
-        self._writers: dict[XMLSchema, "BaseBoMWriter"] = {}
+        self._readers: dict[XMLSchema, "_GenericBoMReader"] = {}
+        self._writers: dict[XMLSchema, "_GenericBoMWriter"] = {}
 
         for bom_type in _type_map.keys():
             self._initialize(bom_type)

@@ -29,8 +29,8 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 from .._base_types import BaseType
 
 if TYPE_CHECKING:
-    from .._bom_reader import BaseBoMReader
-    from .._bom_writer import BaseBoMWriter
+    from .._bom_reader import _GenericBoMReader
+    from .._bom_writer import _GenericBoMWriter
 
 
 class PseudoAttribute(Enum):
@@ -137,7 +137,7 @@ class MIAttributeReference(BaseType):
     """If True indicates that the provided ``attribute_name`` is a Standard Name."""
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: "BaseBoMReader") -> Dict[str, Any]:
+    def _process_custom_fields(cls, obj: Dict, bom_reader: "_GenericBoMReader") -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
         name_obj = bom_reader.get_field(MIAttributeReference, obj, "name")
         if name_obj is not None:
@@ -157,7 +157,7 @@ class MIAttributeReference(BaseType):
                 props["is_standard"] = is_standard_obj
         return props
 
-    def _write_custom_fields(self, obj: Dict, bom_writer: "BaseBoMWriter") -> None:
+    def _write_custom_fields(self, obj: Dict, bom_writer: "_GenericBoMWriter") -> None:
         super()._write_custom_fields(obj, bom_writer)
         name_dict: Dict[str, Any] = {}
         if self.table_reference is not None:
@@ -225,7 +225,7 @@ class MIRecordReference(BaseType):
     any property or attribute of an actual MI Record."""
 
     @classmethod
-    def _process_custom_fields(cls, obj: Dict, bom_reader: "BaseBoMReader") -> Dict[str, Any]:
+    def _process_custom_fields(cls, obj: Dict, bom_reader: "_GenericBoMReader") -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
         identity_obj = bom_reader.get_field(MIRecordReference, obj, "identity")
         if identity_obj is not None:
@@ -242,7 +242,7 @@ class MIRecordReference(BaseType):
             props["lookup_value"] = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeValue")
         return props
 
-    def _write_custom_fields(self, obj: Dict, bom_writer: "BaseBoMWriter") -> None:
+    def _write_custom_fields(self, obj: Dict, bom_writer: "_GenericBoMWriter") -> None:
         super()._write_custom_fields(obj, bom_writer)
         # Always write the wrapper object, even if incomplete. This way, users get an error when serializing, rather
         # than the serialization ignoring a populated value.

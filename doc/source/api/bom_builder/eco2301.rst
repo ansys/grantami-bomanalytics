@@ -34,3 +34,4 @@ Classes on this page should be imported from the module ``ansys.grantami.bomanal
 .. automodule:: ansys.grantami.bomanalytics.bom_types.eco2301
    :inherited-members:
    :member-order: bysource
+   :exclude-members: BoMReader, BoMWriter

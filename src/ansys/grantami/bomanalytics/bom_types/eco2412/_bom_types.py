@@ -34,8 +34,8 @@ if TYPE_CHECKING:
     from ._bom_writer import _BoMWriter
 
 
-class BaseType2301(BaseType):
-    namespace = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
+class BaseType2412(BaseType):
+    namespace = "http://www.grantadesign.com/24/12/BillOfMaterialsEco"
 
 
 class DimensionType(Enum):
@@ -117,7 +117,7 @@ class Category(Enum):
 
 
 @dataclass
-class EndOfLifeFate(BaseType2301):
+class EndOfLifeFate(BaseType2412):
     """
     The fate of a material at the end-of-life of the product. For example if a material can be recycled, and what
     fraction of the total mass or volume can be recycled.
@@ -135,7 +135,7 @@ class EndOfLifeFate(BaseType2301):
 
 
 @dataclass
-class UnittedValue(BaseType2301):
+class UnittedValue(BaseType2412):
     """
     A physical quantity with a unit. If provided in an input then the unit must exist within the MI database,
     otherwise an error will be raised.
@@ -152,7 +152,7 @@ class UnittedValue(BaseType2301):
 
 
 @dataclass
-class Location(BaseType2301):
+class Location(BaseType2412):
     """
     Defines the manufacturing location for the BoM for use in process calculations.
     """
@@ -183,7 +183,7 @@ class Location(BaseType2301):
 
 
 @dataclass
-class ElectricityMix(BaseType2301):
+class ElectricityMix(BaseType2412):
     """
     If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of
     fossil fuel burning power stations in the region of use.  This type lets you specify the electrical generation
@@ -202,7 +202,7 @@ class ElectricityMix(BaseType2301):
 
 
 @dataclass
-class MobileMode(BaseType2301):
+class MobileMode(BaseType2412):
     """
     If the product is transported as part of its use then this type contains details about the way in which it is
     transported.
@@ -225,7 +225,7 @@ class MobileMode(BaseType2301):
 
 
 @dataclass
-class StaticMode(BaseType2301):
+class StaticMode(BaseType2412):
     """
     Specifies the primary energy conversion that occurs during the product's use.
     """
@@ -267,7 +267,7 @@ class StaticMode(BaseType2301):
 
 
 @dataclass
-class UtilitySpecification(BaseType2301):
+class UtilitySpecification(BaseType2412):
     """
     Specifies how much use can be obtained from the product represented by this BoM in comparison to a
     representative industry average.
@@ -291,7 +291,7 @@ class UtilitySpecification(BaseType2301):
 
 
 @dataclass
-class ProductLifeSpan(BaseType2301):
+class ProductLifeSpan(BaseType2412):
     """
     Specifies the average life span for the product represented by the BoM.
     """
@@ -317,7 +317,7 @@ class ProductLifeSpan(BaseType2301):
 
 
 @dataclass
-class UsePhase(BaseType2301):
+class UsePhase(BaseType2412):
     """
     Provides information about the sustainability of the product whilst in use, including electricity use, emissions
     due to transport, emissions due to electricity consumption, and the expected life span of the product.
@@ -344,7 +344,7 @@ class UsePhase(BaseType2301):
 
 
 @dataclass
-class BoMDetails(BaseType2301):
+class BoMDetails(BaseType2412):
     """
     Explanatory information about a BoM.
     """
@@ -363,7 +363,7 @@ class BoMDetails(BaseType2301):
 
 
 @dataclass
-class TransportStage(BaseType2301):
+class TransportStage(BaseType2412):
     """
     Defines the transportation applied to an object, in terms of the generic transportation type (stored in the
     Database) and the amount of that transport used in this instance.
@@ -390,7 +390,7 @@ class TransportStage(BaseType2301):
 
 
 @dataclass
-class Specification(BaseType2301):
+class Specification(BaseType2412):
     """
     A specification for a surface treatment, part, process, or material. Refers to a record within the MI Database
     storing the details of the specification and its impact.
@@ -428,7 +428,7 @@ class Specification(BaseType2301):
 
 
 @dataclass
-class Substance(BaseType2301):
+class Substance(BaseType2412):
     """
     A substance within a part, semi-finished part, material or specification. The substance is stored in the
     Database."""
@@ -483,7 +483,7 @@ class Substance(BaseType2301):
 
 
 @dataclass
-class Process(BaseType2301):
+class Process(BaseType2412):
     """
     A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the
     Database.
@@ -500,6 +500,17 @@ class Process(BaseType2301):
     _props = [
         ("MIRecordReference", "mi_process_reference", "MIProcessReference"),
         ("UnittedValue", "quantity", "Quantity"),
+        ("Location", "location", "Location"),
+    ]
+
+    _list_props = [
+        (
+            "TransportStage",
+            "transport_phase",
+            "TransportPhase",
+            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "TransportStage",
+        ),
     ]
 
     mi_process_reference: MIRecordReference
@@ -529,6 +540,12 @@ class Process(BaseType2301):
     """A unique identity for this object in this BoM. This identity is only for internal use, allowing other elements
     to reference this element."""
 
+    transport_phase: List[TransportStage] = field(default_factory=list)
+    """The Transports to which the material is subject before this processing step."""
+
+    location: Optional[Location] = None
+    """The Location in which the processing is done."""
+
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
@@ -545,7 +562,7 @@ class Process(BaseType2301):
 
 
 @dataclass
-class Material(BaseType2301):
+class Material(BaseType2412):
     """
     A Material within a part or semi-finished part. The material is stored in the Database.
     """
@@ -561,12 +578,12 @@ class Material(BaseType2301):
     _props = [("UnittedValue", "mass", "Mass"), ("MIRecordReference", "mi_material_reference", "MIMaterialReference")]
 
     _list_props = [
-        ("Process", "processes", "Processes", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Process"),
+        ("Process", "processes", "Processes", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Process"),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
             "EndOfLifeFates",
-            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
             "EndOfLifeFate",
         ),
     ]
@@ -636,7 +653,7 @@ class Material(BaseType2301):
 
 
 @dataclass
-class Part(BaseType2301):
+class Part(BaseType2412):
     """
     A single part which may or may not be stored in the MI Database.
     """
@@ -646,6 +663,7 @@ class Part(BaseType2301):
         ("UnittedValue", "mass_per_unit_of_measure", "MassPerUom"),
         ("UnittedValue", "volume_per_unit_of_measure", "VolumePerUom"),
         ("MIRecordReference", "mi_part_reference", "MIPartReference"),
+        ("Location", "location", "Location"),
     ]
 
     _simple_values = [
@@ -656,23 +674,30 @@ class Part(BaseType2301):
     ]
 
     _list_props = [
-        ("Part", "components", "Components", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Part"),
+        ("Part", "components", "Components", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Part"),
         (
             "Specification",
             "specifications",
             "Specifications",
-            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
             "Specification",
         ),
-        ("Material", "materials", "Materials", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Material"),
-        ("Substance", "substances", "Substances", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Substance"),
-        ("Process", "processes", "Processes", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Process"),
+        ("Material", "materials", "Materials", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Material"),
+        ("Substance", "substances", "Substances", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Substance"),
+        ("Process", "processes", "Processes", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Process"),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
             "EndOfLifeFates",
-            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
             "EndOfLifeFate",
+        ),
+        (
+            "TransportStage",
+            "transport_phase",
+            "TransportPhase",
+            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "TransportStage",
         ),
     ]
 
@@ -733,6 +758,12 @@ class Part(BaseType2301):
     """A unique identity for this object in this BoM. This identity is only for internal use, allowing other elements
     to reference this element."""
 
+    transport_phase: List[TransportStage] = field(default_factory=list)
+    """The Transports to which the part is subject."""
+
+    location: Optional[Location] = None
+    """The Location in which the part is manufactured."""
+
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
@@ -743,7 +774,7 @@ class Part(BaseType2301):
         rohs_exemptions_obj = bom_reader.get_field(Part, obj, "RohsExemptions")
         if rohs_exemptions_obj is not None:
             rohs_exemption_obj = bom_reader.get_field(
-                Part, rohs_exemptions_obj, "RohsExemption", "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
+                Part, rohs_exemptions_obj, "RohsExemption", "http://www.grantadesign.com/24/12/BillOfMaterialsEco"
             )
             if rohs_exemption_obj is not None:
                 props["rohs_exemptions"] = rohs_exemption_obj
@@ -763,7 +794,7 @@ class Part(BaseType2301):
 
 
 # @dataclass
-# class AnnotationSource(BaseType2301):
+# class AnnotationSource(BaseType2412):
 #     """
 #     An element indicating the source of annotations in the BoM. Each source may be
 #     referenced by zero or more annotations. The producer and consumer(s) of the BoM must agree the
@@ -803,7 +834,7 @@ class Part(BaseType2301):
 #
 #
 # @dataclass
-# class Annotation(BaseType2301):
+# class Annotation(BaseType2412):
 #     """
 #     An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
 #     between the producer and consumer(s) of the BoM.  The producer and consumer(s) must also agree whether a
@@ -836,7 +867,7 @@ class Part(BaseType2301):
 
 
 @dataclass
-class BillOfMaterials(BaseType2301):
+class BillOfMaterials(BaseType2412):
     """
     Type representing the root Bill of Materials object.
     """
@@ -848,12 +879,12 @@ class BillOfMaterials(BaseType2301):
         ("BoMDetails", "notes", "Notes"),
     ]
     _list_props = [
-        ("Part", "components", "Components", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Part"),
+        ("Part", "components", "Components", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Part"),
         (
             "TransportStage",
             "transport_phase",
             "TransportPhase",
-            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
+            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
             "TransportStage",
         ),
     ]

@@ -8,9 +8,12 @@
 The models documented in this section are Python bindings for the Granta Base Types 12/05 XML schema.
 These are typically used to define references to attributes and records in a Granta MI database.
 
-Classes on this page should be imported from the module ``ansys.grantami.bomanalytics.bom_types.gbt1205``.
+.. tip::
+   Use the :ref:`ref_grantami_bomanalytics_bom_builders` to ensure a valid combination of properties are provided for
+   the classes in this module.
 
-Alternatively, use the :ref:`ref_grantami_bomanalytics_bom_builders`.
+Classes on this page are available in the module ``ansys.grantami.bomanalytics.bom_types.gbt1205``.
+
 
 .. versionchanged:: 2.3
    The types documented on this page have moved from ``ansys.grantami.bomanalytics.bom_types`` to

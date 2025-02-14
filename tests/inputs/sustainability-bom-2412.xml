@@ -1,5 +1,5 @@
 <?xml version= "1.0"?>
-<PartsEco xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.grantadesign.com/23/01/BillOfMaterialsEco">
+<PartsEco xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.grantadesign.com/24/12/BillOfMaterialsEco">
 	<Components>
 		<Part>
 			<Quantity Unit="Each">1.0</Quantity>

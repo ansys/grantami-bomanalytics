@@ -41,3 +41,9 @@ bom_schema_2301: Path = _schemas_dir / "BillOfMaterialsEco2301.xsd"
 
 .. versionadded:: 2.0
 """
+
+bom_schema_2412: Path = _schemas_dir / "BillOfMaterialsEco2412.xsd"
+"""Path to the Ansys Granta 24/12 BoM XML Schema definition.
+
+.. versionadded:: 2.3
+"""

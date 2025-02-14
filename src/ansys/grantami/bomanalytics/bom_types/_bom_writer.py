@@ -26,12 +26,11 @@ from xmlschema import XMLSchema
 
 if TYPE_CHECKING:
     from ._base_types import BaseType, HasNamespace
-from ._base_types import BaseType
 
-T = TypeVar("T", bound=BaseType)
+T = TypeVar("T", bound="BaseType")
 
 
-class GenericBoMWriter(Generic[T]):
+class _GenericBoMWriter(Generic[T]):
     _schema: XMLSchema
 
     def __init__(self, schema: XMLSchema):
@@ -44,6 +43,16 @@ class GenericBoMWriter(Generic[T]):
             Parsed XMLSchema representing a valid Eco BoM format
         """
         self._schema = schema
+
+    @property
+    def target_namespace(self) -> str:
+        """The target namespace of the loaded XML schema.
+
+        Returns
+        -------
+        str
+        """
+        return self._schema.target_namespace
 
     def _get_qualified_name(self, obj: "HasNamespace", field_name: str) -> str:
         namespace_prefixes = [k for k, v in self._schema.namespaces.items() if v == obj.namespace]

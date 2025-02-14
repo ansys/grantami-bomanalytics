@@ -1,0 +1,56 @@
+<PartsEco xmlns="http://www.grantadesign.com/23/01/BillOfMaterialsEco" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes" id="B0">
+    <Components>
+        <Part id="A0">
+            <Quantity Unit="Each">2.0</Quantity>
+            <PartNumber>123456789</PartNumber>
+            <Name>Part One</Name>
+            <Components>
+                <Part>
+                    <Quantity Unit="Each">1.0</Quantity>
+                    <MassPerUom Unit="kg/Part">2.0</MassPerUom>
+                    <PartNumber>987654321</PartNumber>
+                    <Name>New Part One</Name>
+                    <Substances>
+                        <Substance>
+                            <Percentage>66.0</Percentage>
+                            <MISubstanceReference>
+                                <gbt:dbKey>MI_Restricted_Substances</gbt:dbKey>
+                                <gbt:recordHistoryGUID>af1cb650-6db5-49d6-b4a2-0eee9a090207</gbt:recordHistoryGUID>
+                            </MISubstanceReference>
+                            <Name>Lead oxide</Name>
+                        </Substance>
+                    </Substances>
+                </Part>
+                <Part>
+                    <Quantity Unit="Each">1.0</Quantity>
+                    <MassPerUom Unit="kg/Part">2.0</MassPerUom>
+                    <PartNumber />
+                    <Name>Part Two</Name>
+                    <Materials>
+                        <Material>
+                            <Percentage>80.0</Percentage>
+                            <MIMaterialReference>
+                                <gbt:dbKey>MI_Restricted_Substances</gbt:dbKey>
+                                <gbt:recordHistoryGUID>ab4147f6-0e97-47f0-be53-cb5d17dfa82b</gbt:recordHistoryGUID>
+                            </MIMaterialReference>
+                        </Material>
+                    </Materials>
+                </Part>
+            </Components>
+        </Part>
+    </Components>
+    <Notes>
+        <Notes>Part with substance</Notes>
+        <ProductName>Part with substance</ProductName>
+    </Notes>
+    <Annotations>
+        <Text targetId="A0" type="exampleAnnotation">
+            <Value>This is an annotation.</Value>
+        </Text>
+        <Indicator targetId="A0" type="exampleAnnotation">
+            <Value Unit="meters">
+                1.2
+            </Value>
+        </Indicator>
+    </Annotations>
+</PartsEco>

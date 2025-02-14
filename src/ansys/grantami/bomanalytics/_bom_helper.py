@@ -127,6 +127,8 @@ class BoMHandler:
         allow_unsupported_data : bool, default: True
             If ``False``, an exception is raised if there is data in the BoM XML that cannot be deserialized.
 
+            .. versionadded:: 2.3
+
         Returns
         -------
         :class:`.eco2412.BillOfMaterials` or :class:`.eco2301.BillOfMaterials`

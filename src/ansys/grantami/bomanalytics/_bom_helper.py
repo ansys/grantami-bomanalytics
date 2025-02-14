@@ -47,7 +47,7 @@ class BoMHandler:
     def __init__(self) -> None:
         self._schema = XMLSchema(self._schema_path)
         self._schema.namespaces[""] = self._schema.namespaces["eco"]
-        self._reader = BoMReader(self._schema)
+        self._reader = BoMReader()
         self._writer = BoMWriter(self._schema)
 
     def load_bom_from_file(self, file_path: Path, allow_unsupported_data: bool = True) -> "BillOfMaterials":

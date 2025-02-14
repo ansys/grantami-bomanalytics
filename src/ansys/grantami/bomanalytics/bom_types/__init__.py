@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ._builders import *
+from ._builders import AttributeReferenceBuilder, RecordReferenceBuilder
 from .eco2301 import *
 from .eco2301._bom_reader import BoMReader
 from .eco2301._bom_writer import BoMWriter

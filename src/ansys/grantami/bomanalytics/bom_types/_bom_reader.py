@@ -20,10 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from abc import ABC
+import inspect
+from types import ModuleType
 from typing import Any, Dict, Generic, Iterable, Optional, Type, TypeVar
-
-from xmlschema import XMLSchema
 
 from ._base_types import BaseType, HasNamespace
 
@@ -31,18 +30,30 @@ TBom = TypeVar("TBom", bound=BaseType)
 TAny = TypeVar("TAny", bound=BaseType)
 
 
-class GenericBoMReader(Generic[TBom], ABC):
-    _schema: XMLSchema
+class GenericBoMReader(Generic[TBom]):
     _namespaces: dict[str, str]
     _class_members: Dict[str, Type[BaseType]]
     _bom_type: Type[TBom]
 
+    def __init_subclass__(cls, xml_type_modules: list[ModuleType], bom_type: Type[TBom]):
+        """
+        Bind this generic class to a specific set of xml types and target BoM type.
+
+        xml_type_modules : list[ModuleType]
+            A list of modules for which the contained classes should be registered as XML types.
+        bom_type : Type[TBom]
+            The BillOfMaterials type that this class can convert dictionaries to.
+        """
+        cls._class_members = {}
+        for xml_type_module in xml_type_modules:
+            cls._class_members.update({k: v for k, v in inspect.getmembers(xml_type_module, inspect.isclass)})
+        cls._bom_type = bom_type
+
     def __init__(self) -> None:
         """
-        Reader to convert a JSON formatted BoM, created by xmlschema, into populated BillOfMaterials object.
+        Reader to convert a JSON formatted BoM, created by xmlschema, into a populated BillOfMaterials object.
 
-        A base class with no bound namespaces or class members. Should be subclassed with a constructor that
-        accepts a schema, and _class_members property should be set to classes to deserialize to.
+        The target BillOfMaterials type is defined by the _bom_type class attribute.
         """
         self._namespaces: Dict[str, str] = {}
         # Used to track fields in an object that haven't been deserialized.
@@ -59,7 +70,7 @@ class GenericBoMReader(Generic[TBom], ABC):
 
         Returns
         -------
-        tuple[T, list]
+        tuple[TBom, list]
             A tuple containing the converted BillOfMaterials object, and any fields in the obj argument that could not
             be deserialized.
         """
@@ -77,10 +88,6 @@ class GenericBoMReader(Generic[TBom], ABC):
         return bom, self.__undeserialized_fields
 
     def create_type(self, type_name: str, obj: Dict) -> BaseType:
-        target_type = self._class_members[type_name]
-        return self._create_type(target_type, obj)
-
-    def _create_type(self, type_: Type[TAny], obj: Dict) -> TAny:
         """
         Recursively deserialize a dictionary of XML fields to a hierarchy of Python objects.
 
@@ -94,6 +101,11 @@ class GenericBoMReader(Generic[TBom], ABC):
         obj : dict
             The data to use to populate the new type.
         """
+
+        target_type = self._class_members[type_name]
+        return self._create_type(target_type, obj)
+
+    def _create_type(self, type_: Type[TAny], obj: Dict) -> TAny:
         local_obj = obj.copy()
 
         kwargs = {}

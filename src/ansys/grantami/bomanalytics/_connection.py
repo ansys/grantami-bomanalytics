@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""" Connection to the Granta MI Service Layer.
+"""Connection to the Granta MI Service Layer.
 
 This module creates the connection object by subclassing the
 abstract ``ApiClientFactory`` class in the ``ansys-openapi-common`` package.

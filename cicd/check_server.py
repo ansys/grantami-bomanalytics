@@ -72,7 +72,8 @@ def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
     return False
 
 
-def warm_up_bas(url: str, auth_header: HTTPBasicAuth) -> None:
+@block_until_server_is_ok
+def warm_up_bas(url: str, auth_header: HTTPBasicAuth) -> bool:
     response = requests.get(
         url + "/BomAnalytics/v1.svc/yaml",
         auth=auth_header,
@@ -81,6 +82,7 @@ def warm_up_bas(url: str, auth_header: HTTPBasicAuth) -> None:
         },
     )
     logger.info(f"Received {response.status_code} response.")
+    return response.status_code == 200
 
 
 if __name__ == "__main__":

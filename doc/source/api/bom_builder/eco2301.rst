@@ -5,9 +5,6 @@
 
 .. currentmodule:: ansys.grantami.bomanalytics.bom_types.eco2301
 
-.. warning::
-   This module is included for compatibility purposes only. For all new BoMs, use
-   :ref:`ref_grantami_bomanalytics_bom_eco2412`.
 
 The models documented in this section are Python bindings for the Ansys Granta MI 23/01 XML schema.
 Not all elements are required to define a valid BoM for analysis, and not all elements have an impact
@@ -15,6 +12,14 @@ on all types of analysis. For information on the relevant items for each analysi
 see :ref:`ref_grantami_bomanalytics_api_index`.
 
 Classes on this page are available in the module ``ansys.grantami.bomanalytics.bom_types.eco2301``.
+
+The 23/01 XML schema is supported by MI Restricted Substances and Sustainability Reports 2024 R1 and later.
+
+.. tip::
+   This is not the latest version of the Granta MI BoM Schema. The
+   :ref:`24/12 XML schema <ref_grantami_bomanalytics_bom_eco2412>` is backwards compatible with the 23/01 XML schema,
+   but supports associating ``TransportStage`` and ``Location`` information with ``Part`` and ``Process`` objects. It is
+   supported by MI Restricted Substances and Sustainability Reports 2025 R2 and later.
 
 .. note::
    The following elements are defined in the 23/01 BoM schema but are not supported in this module:

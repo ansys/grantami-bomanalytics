@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from dataclasses import dataclass
 from pathlib import Path
 from types import ModuleType
 from typing import TYPE_CHECKING, Any, TextIO, Type, TypeAlias, TypeVar, cast
@@ -35,8 +36,8 @@ if TYPE_CHECKING:
     from .bom_types.eco2412 import BillOfMaterials as BillOfMaterials2412
 
 
+T = TypeVar("T", "BillOfMaterials2301", "BillOfMaterials2412")
 BillOfMaterials: TypeAlias = "BillOfMaterials2301 | BillOfMaterials2412"
-T = TypeVar("T", bound=BillOfMaterials)
 
 _type_map: dict[Type[BillOfMaterials], Path] = {
     eco2301.BillOfMaterials: bom_schema_2301,
@@ -76,7 +77,7 @@ class BoMHandler:
         self._readers[schema] = mod._BoMReader(schema)
         self._writers[schema] = mod._BoMWriter(schema)
 
-    def get_xmlschema_for_bom(self, bom: BillOfMaterials) -> XMLSchema:
+    def _get_xmlschema_for_bom(self, bom: BillOfMaterials) -> XMLSchema:
         try:
             return next(schema for schema, writer in self._writers.items() if writer.target_namespace == bom.namespace)
         except StopIteration:
@@ -111,7 +112,7 @@ class BoMHandler:
         deserializer = _Deserializer(self._schemas)
         with open(file_path, "r", encoding="utf-8") as fp:
             result = deserializer.deserialize_file(fp)
-        bom, undeserialized_fields = self._readers[deserializer.selected_schema].read_bom(result)
+        bom, undeserialized_fields = self._readers[result.selected_schema].read_bom(result.bom)
         if undeserialized_fields and not allow_unsupported_data:
             self._raise_undeserialized_fields(undeserialized_fields)
         return cast(BillOfMaterials, bom)
@@ -144,7 +145,7 @@ class BoMHandler:
         """
         deserializer = _Deserializer(self._schemas)
         result = deserializer.deserialize_string(bom_text)
-        bom, undeserialized_fields = self._readers[deserializer.selected_schema].read_bom(result)
+        bom, undeserialized_fields = self._readers[result.selected_schema].read_bom(result.bom)
         if undeserialized_fields and not allow_unsupported_data:
             self._raise_undeserialized_fields(undeserialized_fields)
         return cast(BillOfMaterials, bom)
@@ -186,7 +187,7 @@ class BoMHandler:
             raise ValueError(f'target_bom_version "{target_bom_version}" is not a valid BoM target.')
 
         # Convert Python objects to dictionary
-        schema = self.get_xmlschema_for_bom(bom)
+        schema = self._get_xmlschema_for_bom(bom)
         writer = self._writers[schema]
 
         bom_dict = writer.convert_bom_to_dict(bom)
@@ -228,10 +229,7 @@ class BoMHandler:
         str
             Serialized representation of the BoM.
         """
-        obj = None
-        errors = []
-
-        schema = self.get_xmlschema_for_bom(bom)
+        schema = self._get_xmlschema_for_bom(bom)
         writer = self._writers[schema]
 
         bom_dict = writer.convert_bom_to_dict(bom)
@@ -246,6 +244,12 @@ class BoMHandler:
         return output
 
 
+@dataclass
+class _DeserializedBoM:
+    bom: dict[str, Any]
+    selected_schema: XMLSchema
+
+
 class _Deserializer:
     def __init__(self, schemas: list[XMLSchema]):
         """
@@ -257,29 +261,8 @@ class _Deserializer:
             The valid schemas against which to validate the incoming XML BoM.
         """
         self._schemas = schemas
-        self._selected_schema: XMLSchema | None = None
 
-    @property
-    def selected_schema(self) -> XMLSchema:
-        """The XMLSchema object that was used to deserialize the XML BoM.
-
-        Only available after running either :meth:`.deserialize_file` or :meth:`.deserialize_string`.
-
-        Returns
-        -------
-        xmlschema.XMLSchema
-            The XMLSchema object that was used to deserialize the XML BoM.
-
-        Raises
-        ------
-        RuntimeError
-            If :meth:`.deserialize_file` or :meth:`.deserialize_string` have not been run.
-        """
-        if not self._selected_schema:
-            raise RuntimeError
-        return self._selected_schema
-
-    def deserialize_file(self, bom: TextIO) -> dict:
+    def deserialize_file(self, bom: TextIO) -> _DeserializedBoM:
         """
         Deserialize an XML BoM provided as a :class:`TextIO` object.
 
@@ -301,13 +284,13 @@ class _Deserializer:
                     keep_empty=True,
                     xmlns_processing="collapsed",
                 )
-                self._selected_schema = schema
-                return self._postprocess_output(result)
+                deserialized_bom = self._postprocess_output(result)
+                return _DeserializedBoM(deserialized_bom, schema)
             except xmlschema.exceptions.XMLSchemaKeyError:
                 bom.seek(0)
         raise ValueError("Invalid BoM. BoM is not compliant with any supported Ansys Granta BoM XML schema.")
 
-    def deserialize_string(self, bom: str) -> dict:
+    def deserialize_string(self, bom: str) -> _DeserializedBoM:
         """
         Deserialize an XML BoM provided as a :class:`str` object.
 
@@ -329,8 +312,8 @@ class _Deserializer:
                     keep_empty=True,
                     xmlns_processing="collapsed",
                 )
-                self._selected_schema = schema
-                return self._postprocess_output(result)
+                deserialized_bom = self._postprocess_output(result)
+                return _DeserializedBoM(deserialized_bom, schema)
             except xmlschema.exceptions.XMLSchemaKeyError:
                 pass
         raise ValueError("Invalid BoM. BoM is not compliant with any supported Ansys Granta BoM XML schema.")

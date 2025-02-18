@@ -12,6 +12,8 @@ see :ref:`ref_grantami_bomanalytics_api_index`.
 
 Classes on this page are available in the module ``ansys.grantami.bomanalytics.bom_types.eco2412``.
 
+The 24/12 XML schema is supported by MI Restricted Substances and Sustainability Reports 2025 R2 and later.
+
 .. note::
    The following elements are defined in the 24/12 BoM schema but are not supported in this module:
 
@@ -24,6 +26,10 @@ Classes on this page are available in the module ``ansys.grantami.bomanalytics.b
    :meth:`~ansys.grantami.bomanalytics._bom_helper.BoMHandler.load_bom_from_text` for more details.
 
 .. versionadded:: 2.3
+   The 24/12 XML schema is backwards compatible with the 23/01 XML schema. This version adds support for associating
+   :class:`~.eco2412.TransportStage` and :class:`~.eco2412.Location` information with :class:`~.eco2412.Part` and
+   :class:`~.eco2412.Process` objects via the ``transport_phase`` and ``location``  attributes.
+
 
 .. automodule:: ansys.grantami.bomanalytics.bom_types.eco2412
    :inherited-members:

@@ -673,24 +673,23 @@ class TestBoMConversion:
         rebuilt_bom = self.bom_handler.load_bom_from_text(converted_bom)
         assert rebuilt_bom == original_bom
 
-    @pytest.mark.parametrize("source_bom_types", [eco2301, eco2412])
-    @pytest.mark.parametrize("target_bom_types", [eco2301, eco2412])
+    @pytest.mark.parametrize(
+        "source_bom_types, target_bom_types",
+        [
+            (eco2301, eco2301),
+            (eco2301, eco2412),
+            (eco2412, eco2412),
+        ],
+    )
     @pytest.mark.parametrize("allow_unsupported_data", [True, False])
-    def test_full_bom_upgrade_and_crossgrade(
+    def test_full_bom_upgrade_and_crossgrade_succeeds(
         self, source_bom_types, target_bom_types, use_phase_utility_kwarg, allow_unsupported_data
     ):
-        is_downgrade = source_bom_types is eco2412 and target_bom_types is eco2301
-        if is_downgrade and not allow_unsupported_data:
-            pytest.skip("Full BoM downgrade with allow_unsupported_data=False mode raises exception")
-
         source_bom = BoMFactory(source_bom_types).make_full_bom(use_phase_utility_kwarg)
         target_bom = self.bom_handler.convert(source_bom, target_bom_types.BillOfMaterials, allow_unsupported_data)
 
         assert isinstance(target_bom, target_bom_types.BillOfMaterials)
         target_bom_text = self.bom_handler.dump_bom(target_bom)
-        if is_downgrade:
-            # Skip the final comparison
-            return
         self.rebuild_and_check_bom(
             source_bom,
             target_bom_text,
@@ -701,7 +700,7 @@ class TestBoMConversion:
     @pytest.mark.parametrize("source_bom_types", [eco2301, eco2412])
     @pytest.mark.parametrize("target_bom_types", [eco2301, eco2412])
     @pytest.mark.parametrize("allow_unsupported_data", [True, False])
-    def test_partial_bom_upgrade_crossgrade_downgrade(
+    def test_compatible_bom_upgrade_crossgrade_downgrade_succeeds(
         self, source_bom_types, target_bom_types, use_phase_utility_kwarg, allow_unsupported_data
     ):
         source_bom = BoMFactory(source_bom_types).make_full_bom(use_phase_utility_kwarg, eco2301_compatible=True)
@@ -715,6 +714,11 @@ class TestBoMConversion:
             source_bom_types.BillOfMaterials.namespace,
             target_bom_types.BillOfMaterials.namespace,
         )
+
+    def test_full_bom_downgrade_lax_succeeds(self, use_phase_utility_kwarg):
+        source_bom = BoMFactory(eco2412).make_full_bom(use_phase_utility_kwarg)
+        target_bom = self.bom_handler.convert(source_bom, eco2301.BillOfMaterials, allow_unsupported_data=True)
+        assert isinstance(target_bom, eco2301.BillOfMaterials)
 
     def test_full_bom_downgrade_strict_raises_exception(self, use_phase_utility_kwarg):
         source_bom = BoMFactory(eco2412).make_full_bom(use_phase_utility_kwarg)

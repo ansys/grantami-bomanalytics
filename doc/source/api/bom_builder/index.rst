@@ -23,9 +23,8 @@ Compliance query.
    :maxdepth: 1
 
    eco2412
+   eco2301
    builders
    gbt1205
    helpers
    schemas
-   eco2301
-

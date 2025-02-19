@@ -34,19 +34,22 @@ def block_until_server_is_ok(func):
     return wrapper
 
 
-@block_until_server_is_ok
-def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
+def get_user_agent():
     python_implementation = platform.python_implementation()
     python_version = platform.python_version()
     os_version = platform.platform()
     user_agent = f"check_server.py {python_implementation}/{python_version} ({os_version})"
+    return user_agent
 
+
+@block_until_server_is_ok
+def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
     try:
         response = requests.get(
             url + "/Health/v2.svc/",
             auth=auth_header,
             headers={
-                "User-Agent": user_agent,
+                "User-Agent": get_user_agent(),
             },
         )
     except requests.exceptions.RequestException as e:
@@ -69,11 +72,27 @@ def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
     return False
 
 
+@block_until_server_is_ok
+def warm_up_bas(url: str, auth_header: HTTPBasicAuth) -> bool:
+    response = requests.get(
+        url + "/BomAnalytics/v1.svc/yaml",
+        auth=auth_header,
+        headers={
+            "User-Agent": get_user_agent(),
+        },
+    )
+    logger.info(f"Received {response.status_code} response.")
+    return response.status_code == 200
+
+
 if __name__ == "__main__":
     sl_url = os.getenv("TEST_SL_URL")
     username = os.getenv("TEST_USER")
     password = os.getenv("TEST_PASS")
-
-    logger.info(f"Checking if Granta MI server is ready for requests")
     auth = HTTPBasicAuth(username, password)
+
+    logger.info("Checking Granta MI server status")
     check_status(sl_url, auth)
+
+    logger.info("Warming up BoM Analytics Services")
+    warm_up_bas(sl_url, auth)

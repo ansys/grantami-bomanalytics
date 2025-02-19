@@ -22,7 +22,7 @@ def block_until_server_is_ok(func):
         while True:
             logger.info(f"Check {check_count}")
             if func(*args, **kwargs):
-                logger.info(f"Server ready!")
+                logger.info("Check successful")
                 break
             if check_count == MAX_ATTEMPTS:
                 logger.info(f"Failed after {MAX_ATTEMPTS} attempts. Quitting...")
@@ -46,7 +46,7 @@ def get_user_agent():
 def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
     try:
         response = requests.get(
-            url + "/Health/v2.svc/",
+            f"{url}/Health/v2.svc/",
             auth=auth_header,
             headers={
                 "User-Agent": get_user_agent(),
@@ -73,13 +73,22 @@ def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
 
 
 @block_until_server_is_ok
-def warm_up_bas(url: str, auth_header: HTTPBasicAuth) -> bool:
-    response = requests.get(
-        url + "/BomAnalytics/v1.svc/yaml",
-        auth=auth_header,
-        headers={
-            "User-Agent": get_user_agent(),
+def warm_up_database(url: str, auth_header: HTTPBasicAuth, db_key: str) -> bool:
+    body = {
+        "criterion": {
+            "value": "steel",
+            "attributes": {"filterOn": "all"},
+            "localColumns": {"filterOn": "all"},
+            "type": "text",
         },
+        "sortCriteria": [{"sortDirection": "ascending", "type": "relevance"}],
+    }
+
+    response = requests.post(
+        f"{url}/proxy/v1.svc/mi/v1alpha/databases/{db_key}:search",
+        auth=auth_header,
+        headers={"User-Agent": get_user_agent(), "accept": "text/plain", "Content-Type": "text/json"},
+        json=body,
     )
     logger.info(f"Received {response.status_code} response.")
     return response.status_code == 200
@@ -94,5 +103,8 @@ if __name__ == "__main__":
     logger.info("Checking Granta MI server status")
     check_status(sl_url, auth)
 
-    logger.info("Warming up BoM Analytics Services")
-    warm_up_bas(sl_url, auth)
+    logger.info("Warming up MI_Restricted_Substances")
+    warm_up_database(sl_url, auth, "MI_Restricted_Substances")
+    logger.info("Warming up database MI_Restricted_Substances_Custom_Tables")
+    warm_up_database(sl_url, auth, "MI_Restricted_Substances_Custom_Tables")
+    logger.info(f"Server ready!")

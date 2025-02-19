@@ -20,8 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from ._bom_reader import _GenericBoMReader
+from ._bom_writer import _GenericBoMWriter
 from ._builders import AttributeReferenceBuilder, RecordReferenceBuilder
 from .eco2301 import *
-from .eco2301._bom_reader import BoMReader
-from .eco2301._bom_writer import BoMWriter
+from .eco2301._bom_reader import _BoMReader as BoMReader
+from .eco2301._bom_writer import _BoMWriter as BoMWriter
 from .gbt1205 import *

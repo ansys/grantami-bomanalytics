@@ -24,16 +24,19 @@ import inspect
 from types import ModuleType
 from typing import Any, Dict, Generic, Iterable, Optional, Type, TypeVar
 
+from xmlschema import XMLSchema
+
 from ._base_types import BaseType, HasNamespace
 
 TBom = TypeVar("TBom", bound=BaseType)
 TAny = TypeVar("TAny", bound=BaseType)
 
 
-class GenericBoMReader(Generic[TBom]):
+class _GenericBoMReader(Generic[TBom]):
     _namespaces: dict[str, str]
     _class_members: Dict[str, Type[BaseType]]
     _bom_type: Type[TBom]
+    _schema: XMLSchema
 
     def __init_subclass__(cls, xml_type_modules: list[ModuleType], bom_type: Type[TBom]):
         """
@@ -49,15 +52,31 @@ class GenericBoMReader(Generic[TBom]):
             cls._class_members.update({k: v for k, v in inspect.getmembers(xml_type_module, inspect.isclass)})
         cls._bom_type = bom_type
 
-    def __init__(self) -> None:
+    def __init__(self, schema: XMLSchema):
         """
         Reader to convert a JSON formatted BoM, created by xmlschema, into a populated BillOfMaterials object.
 
         The target BillOfMaterials type is defined by the _bom_type class attribute.
+
+        Parameters
+        ----------
+        schema: XMLSchema
+            Parsed XMLSchema representing a valid Eco BoM format
         """
         self._namespaces: Dict[str, str] = {}
         # Used to track fields in an object that haven't been deserialized.
         self.__undeserialized_fields: list[str] = []
+        self._schema = schema
+
+    @property
+    def target_namespace(self) -> str:
+        """The target namespace of the loaded XML schema.
+
+        Returns
+        -------
+        str
+        """
+        return self._schema.target_namespace
 
     def read_bom(self, obj: Dict) -> tuple[TBom, list]:
         """

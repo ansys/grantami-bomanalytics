@@ -47,7 +47,7 @@ from typing import (
 import warnings
 from xml.etree import ElementTree
 
-from ansys.grantami.bomanalytics_openapi import api, models
+from ansys.grantami.bomanalytics_openapi.v2 import api, models
 
 from ._allowed_types import validate_argument_type
 from ._exceptions import GrantaMIException
@@ -84,17 +84,15 @@ _Responses = Union[
     models.GetImpactedSubstancesForMaterialsResponse,
     models.GetImpactedSubstancesForSpecificationsResponse,
     models.GetImpactedSubstancesForPartsResponse,
-    models.GetImpactedSubstancesForBom1711Response,
-    models.GetImpactedSubstancesForBom2301Response,
+    models.GetImpactedSubstancesForBomResponse,
     models.GetComplianceForSubstancesResponse,
     models.GetComplianceForMaterialsResponse,
     models.GetComplianceForSpecificationsResponse,
     models.GetComplianceForPartsResponse,
-    models.GetComplianceForBom1711Response,
-    models.GetComplianceForBom2301Response,
+    models.GetComplianceForBomResponse,
     models.GetAvailableLicensesResponse,
-    models.GetSustainabilityForBom2301Response,
-    models.GetSustainabilitySummaryForBom2301Response,
+    models.GetSustainabilityForBomResponse,
+    models.GetSustainabilitySummaryForBomResponse,
 ]
 
 EXCEPTION_MAP = {
@@ -1531,6 +1529,7 @@ class _BomFormat(Enum):
 
     bom_xml1711 = "http://www.grantadesign.com/17/11/BillOfMaterialsEco"
     bom_xml2301 = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
+    bom_xml2412 = "http://www.grantadesign.com/24/12/BillOfMaterialsEco"
 
 
 class _BomQueryDataManager(_BaseQueryDataManager):
@@ -1545,6 +1544,7 @@ class _BomQueryDataManager(_BaseQueryDataManager):
         self._item_definitions = []
         self._item_results = []
         self._supported_bom_formats = supported_bom_formats
+        self.item_type_name = "bom_xml"
 
     def __repr__(self) -> str:
         items_repr = f' {{bom: "{self._item_definitions[0][:100]}"}}' if self._item_definitions else ""
@@ -1565,8 +1565,7 @@ class _BomQueryDataManager(_BaseQueryDataManager):
 
     @bom.setter
     def bom(self, value: str) -> None:
-        bom_format = self._validate_bom(value)
-        self.item_type_name = bom_format.name
+        self._validate_bom(value)
         self._item_definitions = [value]
 
     def _validate_bom(self, bom: str) -> _BomFormat:
@@ -1631,10 +1630,10 @@ class _BomFormatConfiguration:
 class _BomQueryBuilder(_BaseQueryBuilder, ABC):
     """Subclass for all queries where the items added to the query are Boms."""
 
-    _supported_bom_formats: Dict[_BomFormat, _BomFormatConfiguration]
+    _supported_bom_formats: List[_BomFormat]
 
     def __init__(self) -> None:
-        self._data: _BomQueryDataManager = _BomQueryDataManager(list(self._supported_bom_formats.keys()))
+        self._data: _BomQueryDataManager = _BomQueryDataManager(self._supported_bom_formats)
 
     @validate_argument_type(str)
     def with_bom(self: _BomQuery, bom: str) -> _BomQuery:
@@ -1669,21 +1668,6 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
         """
         self._data.bom = bom
         return self
-
-    @property
-    def _input_bom_format(self) -> _BomFormat:
-        """BoM format as obtained from the internal BoMDataManager."""
-        return _BomFormat[self._data.item_type_name]
-
-    @property
-    def _request_type(self) -> Type:
-        """Request model type, resolved from the input BoM format."""
-        return self._supported_bom_formats[self._input_bom_format].request_model_type
-
-    @property
-    def _api_method(self) -> str:
-        """Api method name, resolved from the input BoM format."""
-        return self._supported_bom_formats[self._input_bom_format].api_method_name
 
     def _validate_items(self) -> None:
         """Override validation method to replace error message with a more generic value, since the `item_type_name`
@@ -1730,14 +1714,9 @@ class BomComplianceQuery(_ComplianceMixin, _BomQueryBuilder):
     <BomComplianceQueryResult: 1 PartWithCompliance results>
     """
 
-    _supported_bom_formats = {
-        _BomFormat.bom_xml1711: _BomFormatConfiguration(
-            request_model_type=models.GetComplianceForBom1711Request, api_method_name="post_compliance_bom1711"
-        ),
-        _BomFormat.bom_xml2301: _BomFormatConfiguration(
-            request_model_type=models.GetComplianceForBom2301Request, api_method_name="post_compliance_bom2301"
-        ),
-    }
+    _supported_bom_formats = [_BomFormat.bom_xml1711, _BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
+    _api_method = "post_compliance_bom"
+    _request_type = models.GetComplianceForBomRequest
 
 
 class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _BomQueryBuilder):
@@ -1765,16 +1744,9 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _BomQueryBuilder):
     <BomImpactedSubstancesQueryResult: 1 Bom1711WithImpactedSubstances results>
     """
 
-    _supported_bom_formats = {
-        _BomFormat.bom_xml1711: _BomFormatConfiguration(
-            request_model_type=models.GetImpactedSubstancesForBom1711Request,
-            api_method_name="post_impactedsubstances_bom1711",
-        ),
-        _BomFormat.bom_xml2301: _BomFormatConfiguration(
-            request_model_type=models.GetImpactedSubstancesForBom2301Request,
-            api_method_name="post_impactedsubstances_bom2301",
-        ),
-    }
+    _supported_bom_formats = [_BomFormat.bom_xml1711, _BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
+    _api_method = "post_impactedsubstances_bom"
+    _request_type = models.GetImpactedSubstancesForBomRequest
 
 
 class _SustainabilityMixin(_ApiMixin):
@@ -1873,11 +1845,9 @@ class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
 
     """
 
-    _supported_bom_formats = {
-        _BomFormat.bom_xml2301: _BomFormatConfiguration(
-            request_model_type=models.GetSustainabilityForBom2301Request, api_method_name="post_sustainability_bom2301"
-        ),
-    }
+    _supported_bom_formats = [_BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
+    _api_method = "post_sustainability_bom"
+    _request_type = models.GetSustainabilityForBomRequest
 
 
 class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
@@ -1905,9 +1875,6 @@ class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
 
     """
 
-    _supported_bom_formats = {
-        _BomFormat.bom_xml2301: _BomFormatConfiguration(
-            request_model_type=models.GetSustainabilitySummaryForBom2301Request,
-            api_method_name="post_sustainabilitysummary_bom2301",
-        ),
-    }
+    _supported_bom_formats = [_BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
+    _api_method = "post_sustainabilitysummary_bom"
+    _request_type = models.GetSustainabilitySummaryForBomRequest

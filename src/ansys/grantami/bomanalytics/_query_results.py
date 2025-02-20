@@ -29,9 +29,8 @@ the entire query result instead of being constrained to individual parts and mat
 from abc import ABC
 from collections import defaultdict, namedtuple
 from typing import Any, Callable, Dict, List, Type, Union
-import warnings
 
-from ansys.grantami.bomanalytics_openapi import models
+from ansys.grantami.bomanalytics_openapi.v2 import models
 
 from ._item_results import (
     ImpactedSubstance,
@@ -665,8 +664,7 @@ class SubstanceComplianceQueryResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GetImpactedSubstancesForBom1711Response)
-@QueryResultFactory.register(models.GetImpactedSubstancesForBom2301Response)
+@QueryResultFactory.register(models.GetImpactedSubstancesForBomResponse)
 class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomImpactedSubstancesQuery`
     class.
@@ -676,7 +674,7 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
 
     def __init__(
         self,
-        results: List[models.GetImpactedSubstancesForBom1711Response],
+        results: List[models.GetImpactedSubstancesForBomResponse],
         messages: List[models.CommonLogEntry],
     ):
         """
@@ -697,8 +695,7 @@ class BomImpactedSubstancesQueryResult(ImpactedSubstancesBaseClass):
         return result
 
 
-@QueryResultFactory.register(models.GetComplianceForBom1711Response)
-@QueryResultFactory.register(models.GetComplianceForBom2301Response)
+@QueryResultFactory.register(models.GetComplianceForBomResponse)
 class BomComplianceQueryResult(ComplianceBaseClass):
     """Retrieves the result of running the :class:`~ansys.grantami.bomanalytics.queries.BomComplianceQuery`
     class.
@@ -710,7 +707,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
 
     def __init__(
         self,
-        results: List[models.GetComplianceForBom1711Response],
+        results: List[models.GetComplianceForBomResponse],
         indicator_definitions: Dict[str, Union["WatchListIndicator", "RoHSIndicator"]],
         messages: List[models.CommonLogEntry],
     ):
@@ -757,7 +754,7 @@ class BomComplianceQueryResult(ComplianceBaseClass):
         return self._results
 
 
-@QueryResultFactory.register(models.GetSustainabilityForBom2301Response)
+@QueryResultFactory.register(models.GetSustainabilityForBomResponse)
 class BomSustainabilityQueryResult(ResultBaseClass):
     """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilityQuery`.
 
@@ -766,26 +763,20 @@ class BomSustainabilityQueryResult(ResultBaseClass):
 
     def __init__(
         self,
-        results: List[models.GetSustainabilityForBom2301Response],
+        results: List[models.GetSustainabilityForBomResponse],
         messages: List[models.CommonLogEntry],
     ) -> None:
         super().__init__(messages)
         self._response = results[0]
-        if not self._response.parts:
+        if not self._response.part:
             raise ValueError(
                 "Found no part in BoM sustainability response. Ensure the request BoM defines a single root part."
-            )
-        if len(self._response.parts) > 1:
-            warnings.warn(
-                f"BomSustainabilityQuery only supports a single root part (found {len(self._response.parts)}). "
-                f"Additional root parts do not include sustainability results and are not exposed in the query result"
-                f" properties."
             )
         # Exposing only a single root part:
         # API V1 only processes the first root part but still returns part empty part objects for extra root parts.
         # API V2 will only return a single root part.
         self._part: PartWithSustainabilityResult = ItemResultFactory.create_part_with_sustainability(
-            result_with_sustainability=self._response.parts[0]
+            result_with_sustainability=self._response.part
         )
 
         self._transports: List[TransportWithSustainabilityResult] = [
@@ -811,7 +802,7 @@ class BomSustainabilityQueryResult(ResultBaseClass):
         return f"<{self.__class__.__name__}>"
 
 
-@QueryResultFactory.register(models.GetSustainabilitySummaryForBom2301Response)
+@QueryResultFactory.register(models.GetSustainabilitySummaryForBomResponse)
 class BomSustainabilitySummaryQueryResult(ResultBaseClass):
     """Describes the result of running a :class:`~ansys.grantami.bomanalytics.queries.BomSustainabilitySummaryQuery`.
 
@@ -820,7 +811,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
 
     def __init__(
         self,
-        results: List[models.GetSustainabilitySummaryForBom2301Response],
+        results: List[models.GetSustainabilitySummaryForBomResponse],
         messages: List[models.CommonLogEntry],
     ) -> None:
         super().__init__(messages)

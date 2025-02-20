@@ -23,7 +23,7 @@
 import json
 import logging
 
-from ansys.grantami.bomanalytics_openapi.models import GetImpactedSubstancesForMaterialsResponse
+from ansys.grantami.bomanalytics_openapi.v2.models import GetImpactedSubstancesForMaterialsResponse
 import pytest
 
 from ansys.grantami.bomanalytics import GrantaMIException, queries

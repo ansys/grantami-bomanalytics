@@ -30,7 +30,7 @@ from abc import ABC
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-from ansys.grantami.bomanalytics_openapi import models
+from ansys.grantami.bomanalytics_openapi.v2 import models
 from ansys.openapi.common import Unset, Unset_Type
 
 from ._item_definitions import (
@@ -147,8 +147,8 @@ class ItemResultFactory:
 
     @classmethod
     def create_bom_impacted_substances_result(
-        cls, result_with_impacted_substances: models.GetImpactedSubstancesForBom1711Response
-    ) -> "BoM1711WithImpactedSubstancesResult":
+        cls, result_with_impacted_substances: models.GetImpactedSubstancesForBomResponse
+    ) -> "BoMWithImpactedSubstancesResult":
         """
         Return a bom impacted substances result.
 
@@ -159,10 +159,10 @@ class ItemResultFactory:
 
         Returns
         -------
-        BoM1711WithImpactedSubstancesResult
+        BoMWithImpactedSubstancesResult
            An object that describes the substances that impacted a bom. Substances are grouped by legislation.
         """
-        item_result = BoM1711WithImpactedSubstancesResult(
+        item_result = BoMWithImpactedSubstancesResult(
             legislations=_raise_if_unset(result_with_impacted_substances.legislations)
         )
         return item_result
@@ -922,7 +922,7 @@ class SpecificationWithImpactedSubstancesResult(
     pass
 
 
-class BoM1711WithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
+class BoMWithImpactedSubstancesResult(ImpactedSubstancesResultMixin):
     """This class is instantiated, but since a BoM query can only return a single impacted substances result,
     this type is hidden and never seen by the user. As a result it is not documented.
 

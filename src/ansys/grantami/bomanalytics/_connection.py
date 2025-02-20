@@ -50,7 +50,7 @@ GRANTA_APPLICATION_NAME_HEADER : str
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, overload
 
-from ansys.grantami.bomanalytics_openapi import api, models
+from ansys.grantami.bomanalytics_openapi.v2 import api, models
 from ansys.openapi.common import (
     ApiClient,
     ApiClientFactory,
@@ -64,7 +64,7 @@ from ._item_results import ItemResultFactory
 from ._logger import logger
 
 DEFAULT_DBKEY = "MI_Restricted_Substances"
-SERVICE_PATH = "/BomAnalytics/v1.svc"
+SERVICE_PATH = "/BomAnalytics/v2.svc"
 MI_AUTH_PATH = "/Health/v2.svc"
 GRANTA_APPLICATION_NAME_HEADER = "PyGranta BoM Analytics"
 
@@ -486,7 +486,7 @@ class BomAnalyticsClient(ApiClient):
         config = models.CommonRequestConfig()
         if self._max_spec_depth is not None:
             logger.info(f"Using maximum specification-to-specification link depth: {self._max_spec_depth}")
-            config.maximum_spec_to_spec_link_depth = self._max_spec_depth + 1
+            config.maximum_spec_chain_node_count = self._max_spec_depth + 1
         else:
             logger.info(f"No specification-to-specification link depth limit is specified. All links will be followed.")
         if any(self._table_names.values()):

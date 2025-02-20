@@ -118,18 +118,12 @@ class TestBomArgManager:
         assert am._item_definitions == []
         assert am.__repr__() == "<_BomQueryDataManager>"
 
-    @pytest.mark.parametrize(
-        ["bom", "bom_version"],
-        [
-            (sample_bom_1711, "bom_xml1711"),
-            (sample_sustainability_bom_2301, "bom_xml2301"),
-        ],
-    )
-    def test_add_bom(self, bom, bom_version):
+    @pytest.mark.parametrize("bom", [sample_bom_1711, sample_sustainability_bom_2301])
+    def test_add_bom(self, bom):
         am = queries._BomQueryDataManager(all_bom_formats)
         am.bom = bom
         assert am._item_definitions[0] == bom
-        assert am.batched_arguments == [{bom_version: bom}]
+        assert am.batched_arguments == [{"bom_xml": bom}]
         assert am.__repr__() == f'<_BomQueryDataManager {{bom: "{bom[:100]}"}}>'
 
 
@@ -180,11 +174,11 @@ def test_add_boms_sequentially():
     bom_manager = queries._BomQueryDataManager(all_bom_formats)
     # assert query.item_type_name is None  # TODO attribute does not exist
     bom_manager.bom = sample_bom_1711
-    assert bom_manager.item_type_name == "bom_xml1711"
+    assert bom_manager.item_type_name == "bom_xml"
     assert bom_manager._item_definitions[0] == sample_bom_1711
 
     bom_manager.bom = sample_sustainability_bom_2301
-    assert bom_manager.item_type_name == "bom_xml2301"
+    assert bom_manager.item_type_name == "bom_xml"
     assert bom_manager._item_definitions[0] == sample_sustainability_bom_2301
 
 

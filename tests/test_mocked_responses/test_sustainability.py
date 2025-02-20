@@ -22,11 +22,9 @@
 
 import json
 
-from ansys.grantami.bomanalytics_openapi.models import (
-    CommonSustainabilityPartWithSustainability,
-    CommonValueWithUnit,
-    GetSustainabilityForBom2301Response,
-    GetSustainabilitySummaryForBom2301Response,
+from ansys.grantami.bomanalytics_openapi.v2.models import (
+    GetSustainabilityForBomResponse,
+    GetSustainabilitySummaryForBomResponse,
 )
 import pytest
 
@@ -43,7 +41,7 @@ from .common import BaseMockTester
 class TestBomSustainability(BaseMockTester):
     # Use sample BoM to avoid validation error
     query = queries.BomSustainabilityQuery().with_bom(sample_sustainability_bom_2301)
-    mock_key = GetSustainabilityForBom2301Response.__name__
+    mock_key = GetSustainabilityForBomResponse.__name__
 
     def test_response_processing(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
@@ -104,34 +102,11 @@ class TestBomSustainability(BaseMockTester):
         assert process.climate_change.value == pytest.approx(0.0579, 0.01)
         assert process.record_history_guid == "d986c90a-2835-45f3-8b69-d6d662dcf53a"
 
-    def test_two_root_parts_emits_warning(self, mock_connection):
-        part1 = CommonSustainabilityPartWithSustainability(
-            input_part_number="PartOne",
-            reference_type="MiRecordGuid",
-            reference_value="GUID",
-            parts=[],
-            materials=[],
-            processes=[],
-            embodied_energy=CommonValueWithUnit(value=1.0, unit="UNIT"),
-            climate_change=CommonValueWithUnit(value=1.0, unit="UNIT"),
-            reported_mass=CommonValueWithUnit(value=1.0, unit="UNIT"),
-        )
-        part2 = CommonSustainabilityPartWithSustainability(**part1.to_dict())
-        part2.input_part_number = "PartTwo"
-        two_parts_response = GetSustainabilityForBom2301Response(
-            log_messages=[],
-            parts=[part1, part2],
-            transport_stages=[],
-        )
-        mock_response = json.dumps(mock_connection.sanitize_for_serialization(two_parts_response))
-        with pytest.warns(UserWarning, match="single root part"):
-            self.get_mocked_response(mock_connection, response=mock_response)
-
 
 class TestBomSustainabilitySummary(BaseMockTester):
     # Use sample BoM to avoid validation error
     query = queries.BomSustainabilitySummaryQuery().with_bom(sample_sustainability_bom_2301)
-    mock_key = GetSustainabilitySummaryForBom2301Response.__name__
+    mock_key = GetSustainabilitySummaryForBomResponse.__name__
 
     def test_response_processing(self, mock_connection):
         patched_response = examples_as_dicts[self.mock_key]

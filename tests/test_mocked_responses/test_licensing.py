@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ansys.grantami.bomanalytics_openapi.models import GetAvailableLicensesResponse
+from ansys.grantami.bomanalytics_openapi.v2.models import GetAvailableLicensesResponse
 import requests_mock
 
 from ..inputs import examples_as_strings

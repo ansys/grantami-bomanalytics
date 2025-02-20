@@ -36,7 +36,7 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
 
-from ansys.grantami.bomanalytics_openapi import models
+from ansys.grantami.bomanalytics_openapi.v2 import models
 
 if TYPE_CHECKING:
     from ._query_results import MaterialComplianceQueryResult  # noqa: F401

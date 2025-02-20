@@ -20,12 +20,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ansys.grantami.bomanalytics_openapi import (
+from ansys.grantami.bomanalytics_openapi.v2.models import (
     GetComplianceForSubstancesSubstanceWithAmount as SubsRef,
 )
-from ansys.grantami.bomanalytics_openapi import CommonMaterialReference as MatRef
-from ansys.grantami.bomanalytics_openapi import CommonPartReference as PartRef
-from ansys.grantami.bomanalytics_openapi import CommonSpecificationReference as SpecRef
+from ansys.grantami.bomanalytics_openapi.v2.models import CommonMaterialReference as MatRef
+from ansys.grantami.bomanalytics_openapi.v2.models import CommonPartReference as PartRef
+from ansys.grantami.bomanalytics_openapi.v2.models import CommonSpecificationReference as SpecRef
 import pytest
 
 from ansys.grantami.bomanalytics._item_definitions import (

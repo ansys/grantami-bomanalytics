@@ -22,7 +22,7 @@
 
 import random
 
-from ansys.grantami.bomanalytics_openapi import CommonIndicatorDefinition
+from ansys.grantami.bomanalytics_openapi.v2.models import CommonIndicatorDefinition
 from ansys.openapi.common import Unset
 import pytest
 

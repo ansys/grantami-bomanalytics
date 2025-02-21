@@ -23,8 +23,8 @@
 import os
 import pathlib
 from typing import List, cast
-from xml.etree import ElementTree as ET
 
+from defusedxml import ElementTree
 import pytest
 import requests_mock
 
@@ -140,7 +140,7 @@ def mi_version() -> tuple[int, int] | None:
     connection = _get_connection(sl_url, read_username, read_password)
     session = connection.rest_client
     response = session.get(connection._sl_url + "/SystemInfo/v4.svc/Versions/Mi")
-    tree = ET.fromstring(response.text)
+    tree = ElementTree.fromstring(response.text)
     version = next(c.text for c in tree if c.tag.rpartition("}")[2] == "MajorMinorVersion")
     parsed_version = [int(v) for v in version.split(".")]
     assert len(parsed_version) == 2
@@ -160,8 +160,8 @@ def skip_by_release_version(request, mi_version):
         # No integration marker anywhere in the stack
         return
     if mi_version is None:
-        # We didn't get an mi version
-        # Unlikely to occur, since if we didn't get an mi version we don't have a URL, so we can't run integration
+        # We didn't get an MI version
+        # Unlikely to occur, since if we didn't get an MI version we don't have a URL, so we can't run integration
         # tests anyway
         return
     mark: pytest.Mark = request.node.get_closest_marker("integration")

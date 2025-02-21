@@ -71,8 +71,8 @@ jobs:
         server:
           - name: "AZURE_VM_NAME_DEV"
             url: "TEST_SERVER_DEV_URL"
-#          - name: "AZURE_VM_NAME_24R2"
-#            url: "TEST_SERVER_24R2_URL"
+          - name: "AZURE_VM_NAME_24R2"
+            url: "TEST_SERVER_24R2_URL"
           - name: "AZURE_VM_NAME_25R1"
             url: "TEST_SERVER_25R1_URL"
     steps:
@@ -195,7 +195,7 @@ jobs:
         server:
           - "AZURE_VM_NAME_DEV"
           - "AZURE_VM_NAME_24R1"
-#          - "AZURE_VM_NAME_24R2"
+          - "AZURE_VM_NAME_24R2"
           - "AZURE_VM_NAME_25R1"
     steps:
       - uses: azure/CLI@v2

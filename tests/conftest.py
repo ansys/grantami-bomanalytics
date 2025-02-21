@@ -32,9 +32,7 @@ from ansys.grantami.bomanalytics import Connection
 
 from .common import CUSTOM_TABLES, LICENSE_RESPONSE
 
-CI = os.getenv("CI")
-_test_sl_url_env = os.getenv("TEST_SL_URL")
-sl_url = "http://localhost/mi_servicelayer" if (not CI and not _test_sl_url_env) else _test_sl_url_env
+sl_url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
 read_username = os.getenv("TEST_USER")
 read_password = os.getenv("TEST_PASS")
 
@@ -137,7 +135,7 @@ def mi_version() -> tuple[int, int] | None:
     This fixture returns None if the ``sl_url`` variable is not available. This is typically because the tests are
     running in CI and the TEST_SL_URL environment variable was not populated.
     """
-    if not sl_url:
+    if os.getenv("CI") and not os.getenv("TEST_SL_URL"):
         return None
     connection = _get_connection(sl_url, read_username, read_password)
     session = connection.rest_client

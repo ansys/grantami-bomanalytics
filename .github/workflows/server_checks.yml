@@ -107,7 +107,7 @@ jobs:
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
   integration-tests:
-    name: "Integration tests in ${{ matrix.os }}"
+    name: "Integration tests: ${{ matrix.os }}, ${{ matrix.server }}"
     runs-on: ${{ matrix.os }}
     needs: start-vm
     strategy:

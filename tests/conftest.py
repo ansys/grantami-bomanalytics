@@ -122,7 +122,9 @@ def discover_python_scripts(example_dir: pathlib.Path) -> List[pathlib.Path]:
 
 
 @pytest.fixture(scope="session")
-def mi_version() -> tuple[int, int]:
+def mi_version() -> tuple[int, int] | None:
+    if sl_url is None:
+        return None
     connection = _get_connection(sl_url, read_username, read_password)
     session = connection.rest_client
     response = session.get(connection._sl_url + "/SystemInfo/v4.svc/Versions/Mi")
@@ -135,6 +137,8 @@ def mi_version() -> tuple[int, int]:
 
 @pytest.fixture(autouse=True)
 def skip_by_release_version(request, mi_version):
+    if mi_version is None:
+        return
     if request.node.get_closest_marker("reports_release_versions"):
         allowed_versions = request.node.get_closest_marker("reports_release_versions").args[0]
         if not isinstance(allowed_versions, list):

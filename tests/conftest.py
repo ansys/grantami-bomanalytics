@@ -22,7 +22,8 @@
 
 import os
 import pathlib
-from typing import List
+from typing import List, cast
+from xml.etree import ElementTree as ET
 
 import pytest
 import requests_mock
@@ -118,3 +119,27 @@ def discover_python_scripts(example_dir: pathlib.Path) -> List[pathlib.Path]:
             absolute_path = (root_path / file_path).absolute()
             output_files.append(absolute_path)
     return output_files
+
+
+@pytest.fixture(scope="session")
+def mi_version() -> tuple[int, int]:
+    connection = _get_connection(sl_url, read_username, read_password)
+    session = connection.rest_client
+    response = session.get(connection._sl_url + "/SystemInfo/v4.svc/Versions/Mi")
+    tree = ET.fromstring(response.text)
+    version = next(c.text for c in tree if c.tag.rpartition("}")[2] == "MajorMinorVersion")
+    parsed_version = [int(v) for v in version.split(".")]
+    assert len(parsed_version) == 2
+    return cast(tuple[int, int], tuple(parsed_version))
+
+
+@pytest.fixture(autouse=True)
+def skip_by_release_version(request, mi_version):
+    if request.node.get_closest_marker("reports_release_versions"):
+        allowed_versions = request.node.get_closest_marker("reports_release_versions").args[0]
+        if not isinstance(allowed_versions, list):
+            raise TypeError("reports_release_versions argument type must be list")
+        if mi_version not in allowed_versions:
+            formatted_version = ".".join(str(x) for x in mi_version)
+            skip_message = f'Test skipped for RS and Sustainability reports release version "{formatted_version}"'
+            pytest.skip(skip_message)

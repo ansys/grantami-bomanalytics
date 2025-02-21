@@ -125,7 +125,19 @@ def discover_python_scripts(example_dir: pathlib.Path) -> List[pathlib.Path]:
 
 @pytest.fixture(scope="session")
 def mi_version() -> tuple[int, int] | None:
-    if not _test_sl_url_env:
+    """The version of MI referenced by the test url.
+
+    Returns
+    -------
+    tuple[int, int] | None
+        A 2-tuple containing the (MAJOR, MINOR) Granta MI release version, or None if a test URL is not available.
+
+    Notes
+    -----
+    This fixture returns None if the ``sl_url`` variable is not available. This is typically because the tests are
+    running in CI and the TEST_SL_URL environment variable was not populated.
+    """
+    if not sl_url:
         return None
     connection = _get_connection(sl_url, read_username, read_password)
     session = connection.rest_client
@@ -139,6 +151,13 @@ def mi_version() -> tuple[int, int] | None:
 
 @pytest.fixture(autouse=True)
 def skip_by_release_version(request, mi_version):
+    """Checks if each test case should be executed based on the ``reports_release_versions`` marker.
+
+    The marker should be initialized with an argument of type list[tuple[int, int]], where the tuples contain compatible
+    major and minor release versions of Granta MI. If the marker is specified for a test case and the Granta MI
+    version being tested against is not in the provided list, the test case is skipped.
+    """
+
     if mi_version is None:
         return
     if request.node.get_closest_marker("reports_release_versions"):

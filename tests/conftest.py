@@ -149,20 +149,31 @@ def mi_version() -> tuple[int, int] | None:
 
 @pytest.fixture(autouse=True)
 def skip_by_release_version(request, mi_version):
-    """Checks if each test case should be executed based on the ``reports_release_versions`` marker.
+    """Checks if each test case should be executed based on the ``integration`` mark.
 
-    The marker should be initialized with an argument of type list[tuple[int, int]], where the tuples contain compatible
-    major and minor release versions of Granta MI. If the marker is specified for a test case and the Granta MI
-    version being tested against is not in the provided list, the test case is skipped.
+    If the mark is initialized with the kwarg ``mi_versions``, the value must be of type list[tuple[int, int]], where
+    the tuples contain compatible major and minor release versions of Granta MI. If the version is specified for a test
+    case and the Granta MI version being tested against is not in the provided list, the test case is skipped.
     """
 
-    if mi_version is None:
+    if not request.node.get_closest_marker("integration"):
+        # No integration marker anywhere in the stack
         return
-    if request.node.get_closest_marker("reports_release_versions"):
-        allowed_versions = request.node.get_closest_marker("reports_release_versions").args[0]
-        if not isinstance(allowed_versions, list):
-            raise TypeError("reports_release_versions argument type must be list")
-        if mi_version not in allowed_versions:
-            formatted_version = ".".join(str(x) for x in mi_version)
-            skip_message = f'Test skipped for RS and Sustainability reports release version "{formatted_version}"'
-            pytest.skip(skip_message)
+    if mi_version is None:
+        # We didn't get an mi version
+        # Unlikely to occur, since if we didn't get an mi version we don't have a URL, so we can't run integration
+        # tests anyway
+        return
+    mark: pytest.Mark = request.node.get_closest_marker("integration")
+    if not mark.kwargs:
+        # Mark not initialized with any keyword arguments
+        return
+    allowed_versions = mark.kwargs.get("mi_versions")
+    if allowed_versions is None:
+        return
+    if not isinstance(allowed_versions, list):
+        raise TypeError("mi_versions argument type must be of type 'list'")
+    if mi_version not in allowed_versions:
+        formatted_version = ".".join(str(x) for x in mi_version)
+        skip_message = f'Test skipped for Granta MI release version "{formatted_version}"'
+        pytest.skip(skip_message)

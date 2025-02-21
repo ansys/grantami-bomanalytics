@@ -110,7 +110,12 @@ namespace_packages = true
 [tool.pytest.ini_options]
 testpaths = "./tests"
 markers = [
-    """integration: test requires a real database (deselect with '-m \"not integration\"')"""
+    """integration(*, mi_versions: None | list[tuple[int, int]] = None): The test requires a real database.
+    The optional keyword-only argument \"mi_versions\" represents a MAJOR, MINOR version of Granta MI. The test will \
+    be skipped if run against an incompatible Granta MI version. Note that this package tests functionality in the \
+    RS & Sustainability reports package, which is compatible with multiple Granta MI versions. However, when testing \
+    this package, the same version of the reports package and Granta MI are always used together.
+    Deselect all integration tests with 'pytest -m \"not integration\"'""",
 ]
 
 [tool.black]

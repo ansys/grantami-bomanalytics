@@ -265,7 +265,7 @@ class TestSustainabilityBomQueries:
         assert sum(item.embodied_energy_percentage for item in items) == pytest.approx(100)
         assert sum(item.climate_change_percentage for item in items) == pytest.approx(100)
 
-    @pytest.mark.reports_release_versions([(25, 1), (25, 2)])
+    @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
     def test_sustainability_summary_query_25_1(self, connection, mi_version, request):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(sample_sustainability_bom_2301)
@@ -376,7 +376,7 @@ class TestSustainabilityBomQueries:
         assert transport.embodied_energy_percentage == pytest.approx(6.809, DEFAULT_TOLERANCE)
         assert transport.distance.value == 350.0
 
-    @pytest.mark.reports_release_versions([(25, 1), (25, 2)])
+    @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
     def test_sustainability_query_25_1(self, connection, mi_version, request):
         query = queries.BomSustainabilityQuery()
         query.with_bom(sample_sustainability_bom_2301)
@@ -462,7 +462,7 @@ class TestSustainabilityBomQueries:
         assert transport.embodied_energy.value == pytest.approx(5.23, DEFAULT_TOLERANCE)
         assert transport.record_guid is not None
 
-    @pytest.mark.reports_release_versions([(24, 2)])
+    @pytest.mark.integration(mi_versions=[(24, 2)])
     def test_sustainability_summary_query_24_2(self, connection, request, mi_version):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(sample_sustainability_bom_2301)
@@ -572,7 +572,7 @@ class TestSustainabilityBomQueries:
         assert transport.embodied_energy_percentage == pytest.approx(6.809, DEFAULT_TOLERANCE)
         assert transport.distance.value == 350.0
 
-    @pytest.mark.reports_release_versions([(24, 2)])
+    @pytest.mark.integration(mi_versions=[(24, 2)])
     def test_sustainability_query_24_2(self, connection):
         query = queries.BomSustainabilityQuery()
         query.with_bom(sample_sustainability_bom_2301)

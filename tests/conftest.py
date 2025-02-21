@@ -32,7 +32,9 @@ from ansys.grantami.bomanalytics import Connection
 
 from .common import CUSTOM_TABLES, LICENSE_RESPONSE
 
-sl_url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
+CI = os.getenv("CI")
+test_sl_url_env = os.getenv("TEST_SL_URL")
+sl_url = test_sl_url_env if test_sl_url_env else "http://localhost/mi_servicelayer"
 read_username = os.getenv("TEST_USER")
 read_password = os.getenv("TEST_PASS")
 
@@ -123,7 +125,7 @@ def discover_python_scripts(example_dir: pathlib.Path) -> List[pathlib.Path]:
 
 @pytest.fixture(scope="session")
 def mi_version() -> tuple[int, int] | None:
-    if sl_url is None:
+    if CI and test_sl_url_env is None:
         return None
     connection = _get_connection(sl_url, read_username, read_password)
     session = connection.rest_client

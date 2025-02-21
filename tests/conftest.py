@@ -32,7 +32,7 @@ from ansys.grantami.bomanalytics import Connection
 
 from .common import CUSTOM_TABLES, LICENSE_RESPONSE
 
-CI = os.getenv("GITHUB_ACTIONS")
+CI = os.getenv("CI")
 _test_sl_url_env = os.getenv("TEST_SL_URL")
 sl_url = "http://localhost/mi_servicelayer" if (not CI and not _test_sl_url_env) else _test_sl_url_env
 read_username = os.getenv("TEST_USER")

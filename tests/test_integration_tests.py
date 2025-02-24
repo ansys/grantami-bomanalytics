@@ -265,7 +265,8 @@ class TestSustainabilityBomQueries:
         assert sum(item.embodied_energy_percentage for item in items) == pytest.approx(100)
         assert sum(item.climate_change_percentage for item in items) == pytest.approx(100)
 
-    def test_sustainability_summary_query(self, connection):
+    @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
+    def test_sustainability_summary_query_25_1(self, connection, mi_version, request):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(sample_sustainability_bom_2301)
         response = connection.run(query)
@@ -375,7 +376,8 @@ class TestSustainabilityBomQueries:
         assert transport.embodied_energy_percentage == pytest.approx(6.809, DEFAULT_TOLERANCE)
         assert transport.distance.value == 350.0
 
-    def test_sustainability_query(self, connection):
+    @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
+    def test_sustainability_query_25_1(self, connection, mi_version, request):
         query = queries.BomSustainabilityQuery()
         query.with_bom(sample_sustainability_bom_2301)
         response = connection.run(query)
@@ -434,6 +436,202 @@ class TestSustainabilityBomQueries:
         assert material.record_guid is not None
         assert material.climate_change.value == pytest.approx(1.06, DEFAULT_TOLERANCE)
         assert material.embodied_energy.value == pytest.approx(14.68, DEFAULT_TOLERANCE)
+        assert material.reported_mass.value == pytest.approx(0.61, DEFAULT_TOLERANCE)
+        assert material.recyclable is True
+        assert material.functional_recycle is True
+        assert material.biodegradable is False
+
+        # Primary process
+        primary_process = material.processes[0]
+        assert primary_process.record_guid is not None
+        assert primary_process.climate_change.value == pytest.approx(0.657, DEFAULT_TOLERANCE)
+        assert primary_process.embodied_energy.value == pytest.approx(10.02, DEFAULT_TOLERANCE)
+
+        # Secondary process
+        secondary_process = material.processes[1]
+        assert secondary_process.record_guid is not None
+        assert secondary_process.climate_change.value == pytest.approx(0.044, DEFAULT_TOLERANCE)
+        assert secondary_process.embodied_energy.value == pytest.approx(0.670, DEFAULT_TOLERANCE)
+
+        # Transports
+        assert len(response.transport_stages) == 3
+
+        transport = response.transport_stages[0]
+        assert transport.name == "Port to airport by truck"
+        assert transport.climate_change.value == pytest.approx(0.352, DEFAULT_TOLERANCE)
+        assert transport.embodied_energy.value == pytest.approx(5.23, DEFAULT_TOLERANCE)
+        assert transport.record_guid is not None
+
+    @pytest.mark.integration(mi_versions=[(24, 2)])
+    def test_sustainability_summary_query_24_2(self, connection, request, mi_version):
+        query = queries.BomSustainabilitySummaryQuery()
+        query.with_bom(sample_sustainability_bom_2301)
+        response = connection.run(query)
+
+        assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
+
+        assert response.process.name == "Processes"
+        assert response.material.name == "Material"
+        assert response.transport.name == "Transport"
+        assert len(response.phases_summary) == 3
+
+        # Check overall percentages add up
+        self._check_percentages_add_up(response.phases_summary)
+
+        # Check expected summaries for materials
+        assert len(response.material_details) == 3
+        material_names = [m.identity for m in response.material_details]
+        expected_material_names = ["beryllium-beralcast191-cast", "stainless-astm-cn-7ms-cast", "steel-1010-annealed"]
+        assert all(expected_name in material_names for expected_name in expected_material_names)
+        self._check_percentages_add_up(response.material_details)
+
+        # Spot check one material summary
+        beryllium_summary = next(m for m in response.material_details if m.identity == "beryllium-beralcast191-cast")
+        assert len(beryllium_summary.contributors) == 1
+        assert beryllium_summary.contributors[0].name == "Part1.D"
+        assert beryllium_summary.contributors[0].part_number == "Part1.D[LeafPart]"
+        assert beryllium_summary.contributors[0].material_mass_before_processing.value == pytest.approx(0.027)
+        assert beryllium_summary.mass_after_processing.value == pytest.approx(0.024)
+        assert beryllium_summary.mass_before_processing.value == pytest.approx(0.027)
+        assert beryllium_summary.material_reference.record_guid is not None
+        assert beryllium_summary.climate_change.value == pytest.approx(15.52, DEFAULT_TOLERANCE)
+        assert beryllium_summary.climate_change_percentage == pytest.approx(49.25, DEFAULT_TOLERANCE)
+        assert beryllium_summary.embodied_energy.value == pytest.approx(117.55, DEFAULT_TOLERANCE)
+        assert beryllium_summary.embodied_energy_percentage == pytest.approx(36.34, DEFAULT_TOLERANCE)
+
+        # Check expected summaries for primary processes
+        assert len(response.primary_processes_details) == 3
+        expected_primary_processes = [
+            ("Primary processing, Casting", "stainless-astm-cn-7ms-cast"),
+            ("Primary processing, Casting", "steel-1010-annealed"),
+            ("Other", None),
+        ]
+        primary_processes = [(p.process_name, p.material_identity) for p in response.primary_processes_details]
+        assert primary_processes == expected_primary_processes
+        self._check_percentages_add_up(response.primary_processes_details)
+
+        # Spot check primary process
+        primary_process = response.primary_processes_details[1]
+        assert primary_process.climate_change.value == pytest.approx(14.75, DEFAULT_TOLERANCE)
+        assert primary_process.embodied_energy.value == pytest.approx(210.68, DEFAULT_TOLERANCE)
+        assert primary_process.climate_change_percentage == pytest.approx(39.40, DEFAULT_TOLERANCE)
+        assert primary_process.embodied_energy_percentage == pytest.approx(39.22, DEFAULT_TOLERANCE)
+        assert primary_process.material_reference.record_guid is not None
+        assert primary_process.process_reference.record_guid is not None
+
+        # Check expected summaries for secondary processes
+        assert len(response.secondary_processes_details) == 4
+        expected_secondary_processes = [
+            ("Secondary processing, Grinding", "steel-1010-annealed"),
+            ("Secondary processing, Machining, coarse", "stainless-astm-cn-7ms-cast"),
+            ("Machining, fine", "steel-1010-annealed"),
+            ("Other", None),
+        ]
+        secondary_processes = [(p.process_name, p.material_identity) for p in response.secondary_processes_details]
+        assert secondary_processes == expected_secondary_processes
+        self._check_percentages_add_up(response.secondary_processes_details)
+
+        # Spot check secondary process
+        secondary_process = response.secondary_processes_details[0]
+        assert secondary_process.climate_change.value == pytest.approx(0.130, DEFAULT_TOLERANCE)
+        assert secondary_process.embodied_energy.value == pytest.approx(1.99, DEFAULT_TOLERANCE)
+        assert secondary_process.climate_change_percentage == pytest.approx(44.94, DEFAULT_TOLERANCE)
+        assert secondary_process.embodied_energy_percentage == pytest.approx(44.94, DEFAULT_TOLERANCE)
+        assert secondary_process.material_reference.record_guid is not None
+        assert secondary_process.process_reference.record_guid is not None
+
+        # Check expected summaries for J&F processes
+        assert len(response.joining_and_finishing_processes_details) == 1
+        jf_process = response.joining_and_finishing_processes_details[0]
+
+        # Spot check one J&F process
+        assert jf_process.process_name == "Joining and finishing, Welding, electric"
+        assert jf_process.material_identity is None
+        assert jf_process.material_reference is None
+        assert jf_process.climate_change.value == pytest.approx(0.23, DEFAULT_TOLERANCE)
+        assert jf_process.embodied_energy.value == pytest.approx(3.21, DEFAULT_TOLERANCE)
+        assert jf_process.climate_change_percentage == 100.0
+        assert jf_process.embodied_energy_percentage == 100.0
+        assert jf_process.process_reference.record_guid is not None
+
+        # Check transports
+        assert len(response.transport_details) == 3
+        self._check_percentages_add_up(response.transport_details)
+        transports = [t.name for t in response.transport_details]
+        assert transports == [
+            "Port to airport by truck",
+            "Country 1 to country 2 by air",
+            "Airport to distributor by truck",
+        ]
+
+        # Spot check one transport
+        transport = response.transport_details[0]
+        assert transport.climate_change.value == pytest.approx(0.351, DEFAULT_TOLERANCE)
+        assert transport.embodied_energy.value == pytest.approx(5.23, DEFAULT_TOLERANCE)
+        assert transport.climate_change_percentage == pytest.approx(6.44, DEFAULT_TOLERANCE)
+        assert transport.embodied_energy_percentage == pytest.approx(6.809, DEFAULT_TOLERANCE)
+        assert transport.distance.value == 350.0
+
+    @pytest.mark.integration(mi_versions=[(24, 2)])
+    def test_sustainability_query_24_2(self, connection):
+        query = queries.BomSustainabilityQuery()
+        query.with_bom(sample_sustainability_bom_2301)
+        response = connection.run(query)
+
+        assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
+
+        # Product
+        product = response.part
+        assert not product.processes
+        assert not product.materials
+
+        assert product.input_part_number == "Part1[ProductAssembly]"
+        assert product._reference_value is None
+        assert product.reported_mass.value == pytest.approx(4.114, DEFAULT_TOLERANCE)
+        assert product.climate_change.value == pytest.approx(75.04, DEFAULT_TOLERANCE)
+        assert product.embodied_energy.value == pytest.approx(951.61, DEFAULT_TOLERANCE)
+
+        assert len(product.parts) == 5
+
+        # Subassembly
+        subassembly = product.parts[0]
+        assert len(subassembly.parts) == 2
+        assert len(subassembly.processes) == 1
+        assert not subassembly.materials
+
+        assert subassembly.input_part_number == "Part1.1[SubAssembly]"
+        assert subassembly._reference_value is None
+        assert subassembly.reported_mass.value == pytest.approx(1.45, DEFAULT_TOLERANCE)
+        assert subassembly.climate_change.value == pytest.approx(32.864, DEFAULT_TOLERANCE)
+        assert subassembly.embodied_energy.value == pytest.approx(453.53, DEFAULT_TOLERANCE)
+
+        # JF process
+        jf_process = subassembly.processes[0]
+        assert jf_process.climate_change.value == pytest.approx(0.23, DEFAULT_TOLERANCE)
+        assert jf_process.embodied_energy.value == pytest.approx(3.217, DEFAULT_TOLERANCE)
+        assert jf_process.record_guid is not None
+
+        # Leaf part
+        leaf_part = product.parts[1]
+
+        assert not leaf_part.parts
+        assert not leaf_part.processes
+        assert len(leaf_part.materials) == 1
+
+        assert leaf_part.input_part_number == "Part1.A[LeafPart]"
+        assert leaf_part._reference_value is None
+        assert leaf_part.climate_change.value == pytest.approx(1.75, DEFAULT_TOLERANCE)
+        assert leaf_part.embodied_energy.value == pytest.approx(24.99, DEFAULT_TOLERANCE)
+        assert leaf_part.reported_mass.value == pytest.approx(0.61, DEFAULT_TOLERANCE)
+
+        # Leaf part -> Material
+        material = leaf_part.materials[0]
+
+        assert len(material.processes) == 2
+
+        assert material.record_guid is not None
+        assert material.climate_change.value == pytest.approx(1.06, DEFAULT_TOLERANCE)
+        assert material.embodied_energy.value == pytest.approx(14.30, DEFAULT_TOLERANCE)
         assert material.reported_mass.value == pytest.approx(0.61, DEFAULT_TOLERANCE)
         assert material.recyclable is True
         assert material.functional_recycle is True

@@ -22,8 +22,9 @@
 
 import os
 import pathlib
-from typing import List
+from typing import List, cast
 
+from defusedxml import ElementTree
 import pytest
 import requests_mock
 
@@ -118,3 +119,61 @@ def discover_python_scripts(example_dir: pathlib.Path) -> List[pathlib.Path]:
             absolute_path = (root_path / file_path).absolute()
             output_files.append(absolute_path)
     return output_files
+
+
+@pytest.fixture(scope="session")
+def mi_version() -> tuple[int, int] | None:
+    """The version of MI referenced by the test url.
+
+    Returns
+    -------
+    tuple[int, int] | None
+        A 2-tuple containing the (MAJOR, MINOR) Granta MI release version, or None if a test URL is not available.
+
+    Notes
+    -----
+    This fixture returns None if the ``sl_url`` variable is not available. This is typically because the tests are
+    running in CI and the TEST_SL_URL environment variable was not populated.
+    """
+    if os.getenv("CI") and not os.getenv("TEST_SL_URL"):
+        return None
+    connection = _get_connection(sl_url, read_username, read_password)
+    session = connection.rest_client
+    response = session.get(connection._sl_url + "/SystemInfo/v4.svc/Versions/Mi")
+    tree = ElementTree.fromstring(response.text)
+    version = next(c.text for c in tree if c.tag.rpartition("}")[2] == "MajorMinorVersion")
+    parsed_version = [int(v) for v in version.split(".")]
+    assert len(parsed_version) == 2
+    return cast(tuple[int, int], tuple(parsed_version))
+
+
+@pytest.fixture(autouse=True)
+def skip_by_release_version(request, mi_version):
+    """Checks if each test case should be executed based on the ``integration`` mark.
+
+    If the mark is initialized with the kwarg ``mi_versions``, the value must be of type list[tuple[int, int]], where
+    the tuples contain compatible major and minor release versions of Granta MI. If the version is specified for a test
+    case and the Granta MI version being tested against is not in the provided list, the test case is skipped.
+    """
+
+    if not request.node.get_closest_marker("integration"):
+        # No integration marker anywhere in the stack
+        return
+    if mi_version is None:
+        # We didn't get an MI version
+        # Unlikely to occur, since if we didn't get an MI version we don't have a URL, so we can't run integration
+        # tests anyway
+        return
+    mark: pytest.Mark = request.node.get_closest_marker("integration")
+    if not mark.kwargs:
+        # Mark not initialized with any keyword arguments
+        return
+    allowed_versions = mark.kwargs.get("mi_versions")
+    if allowed_versions is None:
+        return
+    if not isinstance(allowed_versions, list):
+        raise TypeError("mi_versions argument type must be of type 'list'")
+    if mi_version not in allowed_versions:
+        formatted_version = ".".join(str(x) for x in mi_version)
+        skip_message = f'Test skipped for Granta MI release version "{formatted_version}"'
+        pytest.skip(skip_message)

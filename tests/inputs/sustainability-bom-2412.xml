@@ -30,6 +30,16 @@
 											<Identity>Primary processing, Casting</Identity>
 											<DimensionType>Mass</DimensionType>
 											<Percentage>100.0</Percentage>
+											<TransportPhase>
+												<TransportStage id="p11A-raw_material_transport">
+													<Name>Raw material transportation</Name>
+													<MITransportReference>
+														<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+														<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+													</MITransportReference>
+													<Distance Unit="km">1000.0</Distance>
+												</TransportStage>
+											</TransportPhase>
 										</Process>
 										<Process>
 											<MIProcessReference>
@@ -39,6 +49,16 @@
 											<Identity>Machining, coarse</Identity>
 											<DimensionType>MassRemoved</DimensionType>
 											<Quantity Unit="kg">0.0808</Quantity>
+											<TransportPhase>
+												<TransportStage id="p11A_casting_to_machining">
+													<Name>Foundry to manufacturing</Name>
+													<MITransportReference>
+														<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+														<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+													</MITransportReference>
+													<Distance Unit="km">150.0</Distance>
+												</TransportStage>
+											</TransportPhase>
 										</Process>
 										<Process>
 											<MIProcessReference>
@@ -74,6 +94,16 @@
 											<Identity>Primary processing, Casting</Identity>
 											<DimensionType>Mass</DimensionType>
 											<Percentage>100.0</Percentage>
+											<TransportPhase>
+												<TransportStage id="p11B_raw_material_transport">
+													<Name>Raw material transportation by truck</Name>
+													<MITransportReference>
+														<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+														<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+													</MITransportReference>
+													<Distance Unit="km">700.0</Distance>
+												</TransportStage>
+											</TransportPhase>
 										</Process>
 										<Process>
 											<MIProcessReference>
@@ -84,6 +114,16 @@
 											<Name>Machining, fine</Name>
 											<DimensionType>MassRemoved</DimensionType>
 											<Quantity Unit="kg">0.0035</Quantity>
+											<TransportPhase>
+												<TransportStage id="p11B_casting_to_machining">
+													<Name>Foundry to manufacturing by truck</Name>
+													<MITransportReference>
+														<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+														<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+													</MITransportReference>
+													<Distance Unit="km">50.0</Distance>
+												</TransportStage>
+											</TransportPhase>
 										</Process>
 									</Processes>
 								</Material>
@@ -99,8 +139,28 @@
 							<Identity>Joining and finishing, Welding, electric</Identity>
 							<DimensionType>Length</DimensionType>
 							<Quantity Unit="m">0.45</Quantity>
+							<TransportPhase>
+								<TransportStage id="p11_manufacturing_to_assembly">
+									<Name>Manufacturing to assembly by truck</Name>
+									<MITransportReference>
+										<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+										<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+									</MITransportReference>
+									<Distance Unit="km">150.0</Distance>
+								</TransportStage>
+							</TransportPhase>
 						</Process>
 					</Processes>
+					<TransportPhase>
+						<TransportStage id="p11_final_assembly">
+							<Name>Manufacturing to assembly by truck</Name>
+							<MITransportReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+							</MITransportReference>
+							<Distance Unit="km">150.0</Distance>
+						</TransportStage>
+					</TransportPhase>
 				</Part>
 				<Part>
 					<Quantity Unit="Each">1.0</Quantity>
@@ -123,6 +183,16 @@
 									<Identity>Metal extrusion, hot</Identity>
 									<DimensionType>Mass</DimensionType>
 									<Percentage>100.0</Percentage>
+									<TransportPhase>
+										<TransportStage id="p1A_raw_material_transport">
+											<Name>Raw material transportation</Name>
+											<MITransportReference>
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+											</MITransportReference>
+											<Distance Unit="km">1000.0</Distance>
+										</TransportStage>
+									</TransportPhase>
 								</Process>
 								<Process>
 									<MIProcessReference>
@@ -133,10 +203,30 @@
 									<Name>Machining, fine</Name>
 									<DimensionType>MassRemoved</DimensionType>
 									<Quantity Unit="kg">0.0305</Quantity>
+									<TransportPhase>
+										<TransportStage id="p1A_extrusion_to_machining">
+											<Name>Foundry to manufacturing by truck</Name>
+											<MITransportReference>
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+											</MITransportReference>
+											<Distance Unit="km">50.0</Distance>
+										</TransportStage>
+									</TransportPhase>
 								</Process>
 							</Processes>
 						</Material>
 					</Materials>
+					<TransportPhase>
+						<TransportStage id="p1A_assembly">
+							<Name>Manufacturing to assembly by truck</Name>
+							<MITransportReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+							</MITransportReference>
+							<Distance Unit="km">150.0</Distance>
+						</TransportStage>
+					</TransportPhase>
 				</Part>
 				<Part>
 					<Quantity Unit="Each">2.0</Quantity>
@@ -159,6 +249,16 @@
 									<Identity>Primary processing, Casting</Identity>
 									<DimensionType>Mass</DimensionType>
 									<Percentage>100.0</Percentage>
+									<TransportPhase>
+										<TransportStage id="p1B_raw_material_transport">
+											<Name>Raw material transportation by truck</Name>
+											<MITransportReference>
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+											</MITransportReference>
+											<Distance Unit="km">700.0</Distance>
+										</TransportStage>
+									</TransportPhase>
 								</Process>
 								<Process>
 									<MIProcessReference>
@@ -172,6 +272,16 @@
 							</Processes>
 						</Material>
 					</Materials>
+					<TransportPhase>
+						<TransportStage id="p1B_assembly">
+							<Name>Manufacturing to assembly by truck</Name>
+							<MITransportReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+							</MITransportReference>
+							<Distance Unit="km">150.0</Distance>
+						</TransportStage>
+					</TransportPhase>
 				</Part>
 				<Part>
 					<Quantity Unit="Each">2.0</Quantity>
@@ -194,10 +304,30 @@
 									<Identity>Metal extrusion, hot</Identity>
 									<DimensionType>Mass</DimensionType>
 									<Percentage>100.0</Percentage>
+									<TransportPhase>
+										<TransportStage id="p1C_raw_material_transport">
+											<Name>Raw material transportation</Name>
+											<MITransportReference>
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+											</MITransportReference>
+											<Distance Unit="km">1000.0</Distance>
+										</TransportStage>
+									</TransportPhase>
 								</Process>
 							</Processes>
 						</Material>
 					</Materials>
+					<TransportPhase>
+						<TransportStage id="p1C_assembly">
+							<Name>Casting to assembly by truck</Name>
+							<MITransportReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+							</MITransportReference>
+							<Distance Unit="km">150.0</Distance>
+						</TransportStage>
+					</TransportPhase>
 				</Part>
 				<Part>
 					<Quantity Unit="Each">2.0</Quantity>
@@ -221,6 +351,16 @@
 									<Identity>Metal extrusion, hot</Identity>
 									<DimensionType>Mass</DimensionType>
 									<Percentage>100.0</Percentage>
+									<TransportPhase>
+										<TransportStage id="p1D_raw_material_transport">
+											<Name>Raw material transportation</Name>
+											<MITransportReference>
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+											</MITransportReference>
+											<Distance Unit="km">1000.0</Distance>
+										</TransportStage>
+									</TransportPhase>
 								</Process>
 								<Process>
 									<MIProcessReference>
@@ -230,16 +370,36 @@
 									<Identity>Machining, fine</Identity>
 									<DimensionType>MassRemoved</DimensionType>
 									<Quantity Unit="kg">0.0015</Quantity>
+									<TransportPhase>
+										<TransportStage id="p1D_casting_to_machining">
+											<Name>Foundry to manufacturing by truck</Name>
+											<MITransportReference>
+												<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+												<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+											</MITransportReference>
+											<Distance Unit="km">50.0</Distance>
+										</TransportStage>
+									</TransportPhase>
 								</Process>
 							</Processes>
 						</Material>
 					</Materials>
+					<TransportPhase>
+						<TransportStage id="p1D_assembly">
+							<Name>Manufacturing to assembly by truck</Name>
+							<MITransportReference>
+								<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+								<recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+							</MITransportReference>
+							<Distance Unit="km">150.0</Distance>
+						</TransportStage>
+					</TransportPhase>
 				</Part>
 			</Components>
 		</Part>
 	</Components>
 	<TransportPhase>
-		<TransportStage id="port_to_airport_truck">
+		<TransportStage id="product_port_to_airport_by_truck">
 			<Name>Port to airport by truck</Name>
 			<MITransportReference>
 				<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
@@ -247,7 +407,7 @@
 			</MITransportReference>
 			<Distance Unit="km">350.0</Distance>
 		</TransportStage>
-		<TransportStage id="air_travel">
+		<TransportStage id="product_air_travel">
 			<Name>Country 1 to country 2 by air</Name>
 			<MITransportReference>
 				<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
@@ -255,7 +415,7 @@
 			</MITransportReference>
 			<Distance Unit="km">1500.0</Distance>
 		</TransportStage>
-		<TransportStage id="airport_to_distributor_truck">
+		<TransportStage id="product_airport_to_distributor_by_truck">
 			<Name>Airport to distributor by truck</Name>
 			<MITransportReference>
 				<dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>

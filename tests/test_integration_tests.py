@@ -264,7 +264,7 @@ class TestSustainabilityBomQueries:
         assert sum(item.climate_change_percentage for item in items) == pytest.approx(100)
 
     @pytest.mark.integration(mi_versions=[(25, 2)])
-    @pytest.mark.xfail(reason="API returning invalid response", strict=True)
+    @pytest.mark.xfail(reason="CR-1614", strict=True)
     def test_sustainability_summary_query_25_2(self, connection, mi_version):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(sample_sustainability_bom_2301)

@@ -96,22 +96,27 @@ def pytest_generate_tests(metafunc):
     'example_script' fixture.
     """
 
-    if "example_script" in metafunc.fixturenames:
-        examples_to_xfail = {"4-1_BoM_Sustainability_summary.py": "API returning invalid response"}
+    if "example_script" not in metafunc.fixturenames:
+        return
 
-        this_file = pathlib.Path(__file__).parent.resolve()
-        example_path = this_file / pathlib.Path("../examples")
-        output_files = discover_python_scripts(example_path)
-        param_sets = [
-            (
-                pytest.param(file, marks=pytest.mark.xfail(reason=examples_to_xfail[file.name], strict=True))
-                if file.name in examples_to_xfail
-                else file
-            )
-            for file in output_files
-        ]
-        file_names = [str(file) for file in output_files]
-        metafunc.parametrize("example_script", param_sets, ids=file_names)
+    # Required to only xfail a test if we are running a specific version of MI
+    # The example_script fixture is only used for integration tests, and if we are running integration tests we must
+    # have an accessible instance of Granta MI
+    mi_version = _get_mi_version()
+
+    this_file = pathlib.Path(__file__).parent.resolve()
+    example_path = this_file / pathlib.Path("../examples")
+    output_files = discover_python_scripts(example_path)
+    param_sets = [
+        (
+            pytest.param(file, marks=pytest.mark.xfail(reason="CR-1614", strict=True))
+            if file.name == "4-1_BoM_Sustainability_summary.py" and mi_version == (25, 2)
+            else file
+        )
+        for file in output_files
+    ]
+    file_names = [str(file) for file in output_files]
+    metafunc.parametrize("example_script", param_sets, ids=file_names)
 
 
 def discover_python_scripts(example_dir: pathlib.Path) -> List[pathlib.Path]:
@@ -131,8 +136,7 @@ def discover_python_scripts(example_dir: pathlib.Path) -> List[pathlib.Path]:
     return output_files
 
 
-@pytest.fixture(scope="session")
-def mi_version() -> tuple[int, int] | None:
+def _get_mi_version() -> tuple[int, int] | None:
     """The version of MI referenced by the test url.
 
     Returns
@@ -145,6 +149,7 @@ def mi_version() -> tuple[int, int] | None:
     This fixture returns None if the ``sl_url`` variable is not available. This is typically because the tests are
     running in CI and the TEST_SL_URL environment variable was not populated.
     """
+
     if os.getenv("CI") and not os.getenv("TEST_SL_URL"):
         return None
     connection = _get_connection(sl_url, read_username, read_password)
@@ -155,6 +160,11 @@ def mi_version() -> tuple[int, int] | None:
     parsed_version = [int(v) for v in version.split(".")]
     assert len(parsed_version) == 2
     return cast(tuple[int, int], tuple(parsed_version))
+
+
+@pytest.fixture(scope="session")
+def mi_version() -> tuple[int, int] | None:
+    return _get_mi_version()
 
 
 @pytest.fixture(autouse=True)

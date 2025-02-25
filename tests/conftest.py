@@ -97,16 +97,16 @@ def pytest_generate_tests(metafunc):
     """
 
     if "example_script" in metafunc.fixturenames:
-        examples_to_xfail = {"4-2_BoM_Sustainability_summary.py": "API returning invalid response"}
+        examples_to_xfail = {"4-1_BoM_Sustainability_summary.py": "API returning invalid response"}
 
         this_file = pathlib.Path(__file__).parent.resolve()
         example_path = this_file / pathlib.Path("../examples")
         output_files = discover_python_scripts(example_path)
         param_sets = [
             (
-                pytest.param(file)
+                pytest.param(file, marks=pytest.mark.xfail(reason=examples_to_xfail[file.name], strict=True))
                 if file.name in examples_to_xfail
-                else pytest.param(file, marks=pytest.mark.xfail(reason=examples_to_xfail[file.name], strict=True))
+                else file
             )
             for file in output_files
         ]

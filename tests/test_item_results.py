@@ -22,7 +22,7 @@
 
 from dataclasses import dataclass
 
-from ansys.grantami.bomanalytics_openapi import models
+from ansys.grantami.bomanalytics_openapi.v2 import models
 import pytest
 
 from ansys.grantami.bomanalytics._item_definitions import ReferenceType
@@ -131,13 +131,13 @@ class TestImpactedSubstancesResultsRepr:
         self._check_properties_repr(result)
 
     def test_impacted_substances_bom_repr(self):
-        query_result = models.GetImpactedSubstancesForBom1711Response(
+        query_result = models.GetImpactedSubstancesForBomResponse(
             legislations=legislation_results,
             log_messages=[],
         )
         result = ItemResultFactory.create_bom_impacted_substances_result(query_result)
 
-        assert repr(result) == f"<BoM1711WithImpactedSubstancesResult(), {len(legislation_results)} legislations>"
+        assert repr(result) == f"<BoMWithImpactedSubstancesResult(), {len(legislation_results)} legislations>"
         self._check_properties_repr(result)
 
 

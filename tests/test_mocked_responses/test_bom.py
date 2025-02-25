@@ -20,17 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ansys.grantami.bomanalytics_openapi.models import (
-    GetComplianceForBom1711Response,
-    GetComplianceForBom2301Response,
-    GetImpactedSubstancesForBom1711Response,
-    GetImpactedSubstancesForBom2301Response,
+from ansys.grantami.bomanalytics_openapi.v2.models import (
+    GetComplianceForBomResponse,
+    GetImpactedSubstancesForBomResponse,
 )
 import pytest
 
 from ansys.grantami.bomanalytics import indicators, queries
 
-from ..inputs import sample_bom_1711, sample_sustainability_bom_2301
+from ..inputs import sample_sustainability_bom_2301
 from .common import BaseMockTester, MaterialValidator, PartValidator, SubstanceValidator
 
 
@@ -69,16 +67,10 @@ class _TestImpactedSubstances(BaseMockTester):
         assert "ImpactedSubstance" in repr(response.impacted_substances_by_legislation)
 
 
-class TestImpactedSubstances1711(_TestImpactedSubstances):
-    # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
-    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_1711)
-    mock_key = GetImpactedSubstancesForBom1711Response.__name__
-
-
-class TestImpactedSubstances2301(_TestImpactedSubstances):
+class TestImpactedSubstances(_TestImpactedSubstances):
     # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
     query = queries.BomImpactedSubstancesQuery().with_bom(sample_sustainability_bom_2301)
-    mock_key = GetImpactedSubstancesForBom2301Response.__name__
+    mock_key = GetImpactedSubstancesForBomResponse.__name__
 
 
 class _TestCompliance(BaseMockTester):
@@ -189,22 +181,7 @@ class _TestCompliance(BaseMockTester):
         assert "PartWithComplianceResult" in repr(response.compliance_by_part_and_indicator)
 
 
-class TestCompliance1711(_TestCompliance):
-    # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
-    query = (
-        queries.BomComplianceQuery()
-        .with_indicators(
-            [
-                indicators.WatchListIndicator(name="Indicator 1", legislation_ids=["Mock"]),
-                indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
-            ]
-        )
-        .with_bom(sample_bom_1711)
-    )
-    mock_key = GetComplianceForBom1711Response.__name__
-
-
-class TestCompliance2301(_TestCompliance):
+class TestCompliance(_TestCompliance):
     # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
     query = (
         queries.BomComplianceQuery()
@@ -216,4 +193,4 @@ class TestCompliance2301(_TestCompliance):
         )
         .with_bom(sample_sustainability_bom_2301)
     )
-    mock_key = GetComplianceForBom2301Response.__name__
+    mock_key = GetComplianceForBomResponse.__name__

@@ -31,7 +31,7 @@ from enum import Enum, auto
 import numbers
 from typing import Any, Dict, Optional, Union, cast
 
-from ansys.grantami.bomanalytics_openapi import models
+from ansys.grantami.bomanalytics_openapi.v2 import models
 from ansys.openapi.common import Unset_Type
 
 

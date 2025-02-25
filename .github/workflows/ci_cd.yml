@@ -14,6 +14,9 @@ env:
   DOCUMENTATION_CNAME: 'bomanalytics.grantami.docs.pyansys.com'
   LIBRARY_NAME: 'ansys-grantami-bomanalytics'
   LIBRARY_NAMESPACE: 'ansys.grantami.bomanalytics'
+  PIP_INDEX_URL: "https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
+  POETRY_HTTP_BASIC_PRIVATE_PYPI_USERNAME: "PAT"
+  POETRY_HTTP_BASIC_PRIVATE_PYPI_PASSWORD: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -772,9 +772,6 @@ class BomSustainabilityQueryResult(ResultBaseClass):
             raise ValueError(
                 "Found no part in BoM sustainability response. Ensure the request BoM defines a single root part."
             )
-        # Exposing only a single root part:
-        # API V1 only processes the first root part but still returns part empty part objects for extra root parts.
-        # API V2 will only return a single root part.
         self._part: PartWithSustainabilityResult = ItemResultFactory.create_part_with_sustainability(
             result_with_sustainability=self._response.part
         )

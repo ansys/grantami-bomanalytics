@@ -290,6 +290,7 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
         assert product.reported_mass.value == pytest.approx(4.114, DEFAULT_TOLERANCE)
         assert product.climate_change.value == pytest.approx(57.02, DEFAULT_TOLERANCE)
         assert product.embodied_energy.value == pytest.approx(720.1, DEFAULT_TOLERANCE)
+        assert product.transport_stages == []
 
         assert len(product.parts) == 5
 
@@ -305,11 +306,31 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
         assert subassembly.climate_change.value == pytest.approx(26.52, DEFAULT_TOLERANCE)
         assert subassembly.embodied_energy.value == pytest.approx(370.6, DEFAULT_TOLERANCE)
 
+        assert len(subassembly.transport_stages) == 1
+        subassy_transport = subassembly.transport_stages[0]
+        assert subassy_transport.name == "Manufacturing to assembly by truck"
+        assert subassy_transport.climate_change.value == pytest.approx(0.053, DEFAULT_TOLERANCE)
+        assert subassy_transport.embodied_energy.value == pytest.approx(0.796, DEFAULT_TOLERANCE)
+        assert subassy_transport.record_guid is not None
+
         # JF process
         jf_process = subassembly.processes[0]
         assert jf_process.climate_change.value == pytest.approx(0.24, DEFAULT_TOLERANCE)
         assert jf_process.embodied_energy.value == pytest.approx(3.25, DEFAULT_TOLERANCE)
         assert jf_process.record_guid is not None
+        assert len(jf_process.transport_stages) == 2
+
+        jf_transport_0 = jf_process.transport_stages[0]
+        assert jf_transport_0.name == "Train, diesel"
+        assert jf_transport_0.climate_change.value == pytest.approx(0.036, DEFAULT_TOLERANCE)
+        assert jf_transport_0.embodied_energy.value == pytest.approx(0.484, DEFAULT_TOLERANCE)
+        assert jf_transport_0.record_guid is not None
+
+        jf_transport_1 = jf_process.transport_stages[1]
+        assert jf_transport_1.name == "Aircraft, long haul dedicated-freight"
+        assert jf_transport_1.climate_change.value == pytest.approx(9.28, DEFAULT_TOLERANCE)
+        assert jf_transport_1.embodied_energy.value == pytest.approx(131.1, DEFAULT_TOLERANCE)
+        assert jf_transport_1.record_guid is not None
 
         # Leaf part
         leaf_part = product.parts[1]
@@ -323,6 +344,13 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
         assert leaf_part.climate_change.value == pytest.approx(1.55, DEFAULT_TOLERANCE)
         assert leaf_part.embodied_energy.value == pytest.approx(26.9, DEFAULT_TOLERANCE)
         assert leaf_part.reported_mass.value == pytest.approx(0.61, DEFAULT_TOLERANCE)
+
+        assert len(leaf_part.transport_stages) == 1
+        leaf_part_transport = leaf_part.transport_stages[0]
+        assert leaf_part_transport.name == "Manufacturing to assembly by truck"
+        assert leaf_part_transport.climate_change.value == pytest.approx(0.0223, DEFAULT_TOLERANCE)
+        assert leaf_part_transport.embodied_energy.value == pytest.approx(0.335, DEFAULT_TOLERANCE)
+        assert leaf_part_transport.record_guid is not None
 
         # Leaf part -> Material
         material = leaf_part.materials[0]
@@ -343,13 +371,27 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
         assert primary_process.climate_change.value == pytest.approx(0.295, DEFAULT_TOLERANCE)
         assert primary_process.embodied_energy.value == pytest.approx(8.87, DEFAULT_TOLERANCE)
 
+        assert len(primary_process.transport_stages) == 1
+        primary_proc_transport = primary_process.transport_stages[0]
+        assert primary_proc_transport.name == "Raw material transportation"
+        assert primary_proc_transport.climate_change.value == pytest.approx(0.156, DEFAULT_TOLERANCE)
+        assert primary_proc_transport.embodied_energy.value == pytest.approx(2.343, DEFAULT_TOLERANCE)
+        assert primary_proc_transport.record_guid is not None
+
         # Secondary process
         secondary_process = material.processes[1]
         assert secondary_process.record_guid is not None
         assert secondary_process.climate_change.value == pytest.approx(0.0197, DEFAULT_TOLERANCE)
         assert secondary_process.embodied_energy.value == pytest.approx(0.593, DEFAULT_TOLERANCE)
 
-        # Transports
+        assert len(secondary_process.transport_stages) == 1
+        secondary_proc_transport = secondary_process.transport_stages[0]
+        assert secondary_proc_transport.name == "Foundry to manufacturing by truck"
+        assert secondary_proc_transport.climate_change.value == pytest.approx(0.00782, DEFAULT_TOLERANCE)
+        assert secondary_proc_transport.embodied_energy.value == pytest.approx(0.117, DEFAULT_TOLERANCE)
+        assert secondary_proc_transport.record_guid is not None
+
+        # BoM-level transport stages
         assert len(response.transport_stages) == 3
 
         transport = response.transport_stages[0]
@@ -503,6 +545,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
         assert product.reported_mass.value == pytest.approx(4.114, DEFAULT_TOLERANCE)
         assert product.climate_change.value == pytest.approx(49.33, DEFAULT_TOLERANCE)
         assert product.embodied_energy.value == pytest.approx(578.29, DEFAULT_TOLERANCE)
+        assert product.transport_stages == []
 
         assert len(product.parts) == 5
 
@@ -517,12 +560,14 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
         assert subassembly.reported_mass.value == pytest.approx(1.45, DEFAULT_TOLERANCE)
         assert subassembly.climate_change.value == pytest.approx(17.93, DEFAULT_TOLERANCE)
         assert subassembly.embodied_energy.value == pytest.approx(235.97, DEFAULT_TOLERANCE)
+        assert subassembly.transport_stages == []
 
         # JF process
         jf_process = subassembly.processes[0]
         assert jf_process.climate_change.value == pytest.approx(0.23, DEFAULT_TOLERANCE)
         assert jf_process.embodied_energy.value == pytest.approx(3.217, DEFAULT_TOLERANCE)
         assert jf_process.record_guid is not None
+        assert jf_process.transport_stages == []
 
         # Leaf part
         leaf_part = product.parts[1]
@@ -536,6 +581,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
         assert leaf_part.climate_change.value == pytest.approx(1.75, DEFAULT_TOLERANCE)
         assert leaf_part.embodied_energy.value == pytest.approx(25.37, DEFAULT_TOLERANCE)
         assert leaf_part.reported_mass.value == pytest.approx(0.61, DEFAULT_TOLERANCE)
+        assert leaf_part.transport_stages == []
 
         # Leaf part -> Material
         material = leaf_part.materials[0]
@@ -555,14 +601,16 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
         assert primary_process.record_guid is not None
         assert primary_process.climate_change.value == pytest.approx(0.657, DEFAULT_TOLERANCE)
         assert primary_process.embodied_energy.value == pytest.approx(10.02, DEFAULT_TOLERANCE)
+        assert primary_process.transport_stages == []
 
         # Secondary process
         secondary_process = material.processes[1]
         assert secondary_process.record_guid is not None
         assert secondary_process.climate_change.value == pytest.approx(0.044, DEFAULT_TOLERANCE)
         assert secondary_process.embodied_energy.value == pytest.approx(0.670, DEFAULT_TOLERANCE)
+        assert secondary_process.transport_stages == []
 
-        # Transports
+        # BoM-level transport stages
         assert len(response.transport_stages) == 3
 
         transport = response.transport_stages[0]

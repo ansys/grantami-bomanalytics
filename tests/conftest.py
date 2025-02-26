@@ -148,14 +148,18 @@ def mi_version() -> tuple[int, int] | None:
 
 
 @pytest.fixture(autouse=True)
-def skip_by_release_version(request, mi_version):
-    """Checks if each test case should be executed based on the ``integration`` mark.
+def process_integration_marks(request, mi_version):
+    """Processes the arguments provided to the integration mark.
 
     If the mark is initialized with the kwarg ``mi_versions``, the value must be of type list[tuple[int, int]], where
     the tuples contain compatible major and minor release versions of Granta MI. If the version is specified for a test
     case and the Granta MI version being tested against is not in the provided list, the test case is skipped.
+
+    Also handles test-specific behavior, for example if a certain Granta MI version and test are incompatible and need
+    to be skipped or xfailed.
     """
 
+    # Argument validation
     if not request.node.get_closest_marker("integration"):
         # No integration marker anywhere in the stack
         return
@@ -164,6 +168,8 @@ def skip_by_release_version(request, mi_version):
         # Unlikely to occur, since if we didn't get an MI version we don't have a URL, so we can't run integration
         # tests anyway
         return
+
+    # Process integration mark arguments
     mark: pytest.Mark = request.node.get_closest_marker("integration")
     if not mark.kwargs:
         # Mark not initialized with any keyword arguments
@@ -177,3 +183,8 @@ def skip_by_release_version(request, mi_version):
         formatted_version = ".".join(str(x) for x in mi_version)
         skip_message = f'Test skipped for Granta MI release version "{formatted_version}"'
         pytest.skip(skip_message)
+
+    # Test-specific marks
+    if request.node.name == "test_sustainability_summary_query_25_1_25_2" and mi_version == (25, 2):
+        xfail = pytest.mark.xfail(reason="CR-1614", strict=True)
+        request.applymarker(xfail)

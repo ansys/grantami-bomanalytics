@@ -374,9 +374,12 @@ class ItemResultFactory:
         part_with_sustainability._add_child_parts(_raise_if_unset(result_with_sustainability.parts))
         part_with_sustainability._add_child_materials(_raise_if_unset(result_with_sustainability.materials))
         part_with_sustainability._add_child_processes(_raise_if_unset(result_with_sustainability.processes))
-        part_with_sustainability._add_child_transport_stages(
-            _raise_if_unset(result_with_sustainability.transport_stages)
-        )
+
+        # transport_stages is optional, only returned by BAS 2025 R2 and later
+        if result_with_sustainability.transport_stages:
+            part_with_sustainability._add_child_transport_stages(
+                _raise_if_unset(result_with_sustainability.transport_stages)
+            )
         return part_with_sustainability
 
     @classmethod
@@ -406,9 +409,10 @@ class ItemResultFactory:
             external_identity=result_with_sustainability.external_identity,
             name=result_with_sustainability.name,
         )
-        process_with_sustainability._add_child_transport_stages(
-            _raise_if_unset(result_with_sustainability.transport_stages)
-        )
+
+        # transport_stages is optional, only returned by BAS 2025 R2 and later
+        if result_with_sustainability.transport_stages:
+            process_with_sustainability._add_child_transport_stages(result_with_sustainability.transport_stages)
         return process_with_sustainability
 
     @classmethod
@@ -1658,7 +1662,10 @@ class ChildTransportWithSustainabilityMixin:
 
     @property
     def transport_stages(self) -> List["TransportWithSustainabilityResult"]:
-        """``TransportWithSustainabilityResult`` objects that are direct children of this item in the BoM."""
+        """``TransportWithSustainabilityResult`` objects that are direct children of this item in the BoM.
+
+        .. versionadded:: 2.3
+        """
 
         return self._transport_stages
 

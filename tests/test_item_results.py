@@ -23,6 +23,7 @@
 from dataclasses import dataclass
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
+from ansys.openapi.common import Unset
 import pytest
 
 from ansys.grantami.bomanalytics._item_definitions import ReferenceType
@@ -281,7 +282,8 @@ class TestSustainabilityResultsRepr:
         )
         assert repr(result) == expected
 
-    def test_part_result_repr(self):
+    @pytest.mark.parametrize("transport_stages", [[], Unset])
+    def test_part_result_repr(self, transport_stages):
         model = models.CommonSustainabilityPartWithSustainability(
             **self._eco_metrics,
             **self._rec_ref_kwargs,
@@ -291,6 +293,7 @@ class TestSustainabilityResultsRepr:
             processes=[],
             parts=[],
             reported_mass=models.CommonValueWithUnit(value=45, unit="kg"),
+            transport_stages=transport_stages,
         )
         result = ItemResultFactory.create_part_with_sustainability(model)
         expected = "<PartWithSustainabilityResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
@@ -313,11 +316,13 @@ class TestSustainabilityResultsRepr:
         )
         assert repr(result) == expected
 
-    def test_process_result_repr(self):
+    @pytest.mark.parametrize("transport_stages", [[], Unset])
+    def test_process_result_repr(self, transport_stages):
         model = models.CommonSustainabilityProcessWithSustainability(
             **self._eco_metrics,
             **self._rec_ref_kwargs,
             **self._identifiers,
+            transport_stages=transport_stages,
         )
         result = ItemResultFactory.create_process_with_sustainability(model)
         expected = (

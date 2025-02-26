@@ -1,22 +1,18 @@
 <?xml version="1.0"?>
-<PartsEco xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="4"
-          xmlns="http://www.grantadesign.com/24/12/BillOfMaterialsEco">
+<PartsEco xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.grantadesign.com/24/12/BillOfMaterialsEco">
     <Components>
         <Part>
             <Quantity Unit="Each">1</Quantity>
             <PartNumber>Part1[ProductAssembly]</PartNumber>
-            <ExternalIdentity>9</ExternalIdentity>
             <Components>
                 <Part>
                     <Quantity Unit="Each">1</Quantity>
                     <PartNumber>Part1.1[SubAssembly]</PartNumber>
-                    <ExternalIdentity>10</ExternalIdentity>
                     <Components>
                         <Part>
                             <Quantity Unit="Each">1</Quantity>
                             <MassPerUom Unit="kg/Part">0.925</MassPerUom>
                             <PartNumber>Part1.1.A[LeafPart]</PartNumber>
-                            <ExternalIdentity>16</ExternalIdentity>
                             <Materials>
                                 <Material>
                                     <Percentage>100</Percentage>
@@ -25,8 +21,6 @@
                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2086f56a-4f4d-4850-9891-3d6ad155d1f9</recordGUID>
                                     </MIMaterialReference>
                                     <Identity>stainless-astm-cn-7ms-cast</Identity>
-                                    <Name>Stainless steel, austenitic, ASTM CN-7MS, cast, water quenched</Name>
-                                    <ExternalIdentity>26</ExternalIdentity>
                                     <Processes>
                                         <Process>
                                             <MIProcessReference>
@@ -34,8 +28,6 @@
                                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
                                             </MIProcessReference>
                                             <Identity>Primary processing, Casting</Identity>
-                                            <Name>Metal casting</Name>
-                                            <ExternalIdentity>45</ExternalIdentity>
                                             <DimensionType>Mass</DimensionType>
                                             <Percentage>100</Percentage>
                                             <TransportPhase>
@@ -55,8 +47,6 @@
                                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">907bda29-e800-44f6-b7ea-4eb8e7cff375</recordGUID>
                                             </MIProcessReference>
                                             <Identity>Machining, coarse</Identity>
-                                            <Name>Machining, coarse</Name>
-                                            <ExternalIdentity>39</ExternalIdentity>
                                             <DimensionType>MassRemoved</DimensionType>
                                             <Quantity Unit="kg">0.0808</Quantity>
                                             <TransportPhase>
@@ -76,8 +66,6 @@
                                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
                                             </MIProcessReference>
                                             <Identity>Machining, fine</Identity>
-                                            <Name>Machining, fine</Name>
-                                            <ExternalIdentity>43</ExternalIdentity>
                                             <DimensionType>MassRemoved</DimensionType>
                                             <Quantity Unit="kg">0.00465</Quantity>
                                         </Process>
@@ -89,7 +77,6 @@
                             <Quantity Unit="Each">3</Quantity>
                             <MassPerUom Unit="kg/Part">0.175</MassPerUom>
                             <PartNumber>Part1.1.B[LeafPart]</PartNumber>
-                            <ExternalIdentity>17</ExternalIdentity>
                             <Materials>
                                 <Material>
                                     <Percentage>100</Percentage>
@@ -98,8 +85,6 @@
                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2086f56a-4f4d-4850-9891-3d6ad155d1f9</recordGUID>
                                     </MIMaterialReference>
                                     <Identity>stainless-astm-cn-7ms-cast</Identity>
-                                    <Name>Stainless steel, austenitic, ASTM CN-7MS, cast, water quenched</Name>
-                                    <ExternalIdentity>27</ExternalIdentity>
                                     <Processes>
                                         <Process>
                                             <MIProcessReference>
@@ -107,8 +92,6 @@
                                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
                                             </MIProcessReference>
                                             <Identity>Primary processing, Casting</Identity>
-                                            <Name>Metal casting</Name>
-                                            <ExternalIdentity>46</ExternalIdentity>
                                             <DimensionType>Mass</DimensionType>
                                             <Percentage>100</Percentage>
                                             <TransportPhase>
@@ -127,7 +110,6 @@
                                                     <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">244e1b79-020f-4413-bdb1-95bddd4d60e4</recordGUID>
                                                 </MILocationReference>
                                                 <Identity>RAS</Identity>
-                                                <Name>Asia</Name>
                                                 <ExternalIdentity>137</ExternalIdentity>
                                             </Location>
                                         </Process>
@@ -137,8 +119,6 @@
                                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
                                             </MIProcessReference>
                                             <Identity>Machining, fine</Identity>
-                                            <Name>Machining, fine</Name>
-                                            <ExternalIdentity>44</ExternalIdentity>
                                             <DimensionType>MassRemoved</DimensionType>
                                             <Quantity Unit="kg">0.0035</Quantity>
                                             <TransportPhase>
@@ -157,7 +137,6 @@
                                                     <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">244e1b79-020f-4413-bdb1-95bddd4d60e4</recordGUID>
                                                 </MILocationReference>
                                                 <Identity>RAS</Identity>
-                                                <Name>Asia</Name>
                                                 <ExternalIdentity>136</ExternalIdentity>
                                             </Location>
                                         </Process>
@@ -173,8 +152,6 @@
                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">21941b5e-fdbc-47fe-8180-809bb42e5e0a</recordGUID>
                             </MIProcessReference>
                             <Identity>Joining and finishing, Welding, electric</Identity>
-                            <Name>Welding, electric</Name>
-                            <ExternalIdentity>34</ExternalIdentity>
                             <DimensionType>Length</DimensionType>
                             <Quantity Unit="m">0.45</Quantity>
                             <TransportPhase>
@@ -201,7 +178,6 @@
                                     <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">244e1b79-020f-4413-bdb1-95bddd4d60e4</recordGUID>
                                 </MILocationReference>
                                 <Identity>RAS</Identity>
-                                <Name>Asia</Name>
                                 <ExternalIdentity>128</ExternalIdentity>
                             </Location>
                         </Process>
@@ -221,17 +197,14 @@
                     <Quantity Unit="Each">1</Quantity>
                     <MassPerUom Unit="kg/Part">0.61</MassPerUom>
                     <PartNumber>Part1.A[LeafPart]</PartNumber>
-                    <ExternalIdentity>11</ExternalIdentity>
                     <Materials>
                         <Material>
                             <Percentage>100</Percentage>
                             <MIMaterialReference>
                                 <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
-                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">79f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
                             </MIMaterialReference>
                             <Identity>steel-1010-annealed</Identity>
-                            <Name>Carbon steel, AISI 1010, annealed</Name>
-                            <ExternalIdentity>19</ExternalIdentity>
                             <Processes>
                                 <Process>
                                     <MIProcessReference>
@@ -239,8 +212,6 @@
                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
                                     </MIProcessReference>
                                     <Identity>Metal extrusion, hot</Identity>
-                                    <Name>Metal extrusion, hot</Name>
-                                    <ExternalIdentity>35</ExternalIdentity>
                                     <DimensionType>Mass</DimensionType>
                                     <Percentage>100</Percentage>
                                     <TransportPhase>
@@ -259,7 +230,6 @@
                                             <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
                                         </MILocationReference>
                                         <Identity>RER</Identity>
-                                        <Name>Europe</Name>
                                         <ExternalIdentity>152</ExternalIdentity>
                                     </Location>
                                 </Process>
@@ -270,7 +240,6 @@
                                     </MIProcessReference>
                                     <Identity>Machining, fine</Identity>
                                     <Name>Machining, fine</Name>
-                                    <ExternalIdentity>36</ExternalIdentity>
                                     <DimensionType>MassRemoved</DimensionType>
                                     <Quantity Unit="kg">0.0305</Quantity>
                                     <TransportPhase>
@@ -289,7 +258,6 @@
                                             <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
                                         </MILocationReference>
                                         <Identity>RER</Identity>
-                                        <Name>Europe</Name>
                                         <ExternalIdentity>153</ExternalIdentity>
                                     </Location>
                                 </Process>
@@ -311,7 +279,6 @@
                     <Quantity Unit="Each">2</Quantity>
                     <MassPerUom Unit="kg/Part">0.495</MassPerUom>
                     <PartNumber>Part1.B[LeafPart]</PartNumber>
-                    <ExternalIdentity>12</ExternalIdentity>
                     <Materials>
                         <Material>
                             <Percentage>100</Percentage>
@@ -320,8 +287,6 @@
                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
                             </MIMaterialReference>
                             <Identity>steel-1010-annealed</Identity>
-                            <Name>Carbon steel, AISI 1010, annealed</Name>
-                            <ExternalIdentity>21</ExternalIdentity>
                             <Processes>
                                 <Process>
                                     <MIProcessReference>
@@ -329,8 +294,6 @@
                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
                                     </MIProcessReference>
                                     <Identity>Primary processing, Casting</Identity>
-                                    <Name>Metal casting</Name>
-                                    <ExternalIdentity>37</ExternalIdentity>
                                     <DimensionType>Mass</DimensionType>
                                     <Percentage>100</Percentage>
                                     <TransportPhase>
@@ -349,7 +312,6 @@
                                             <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
                                         </MILocationReference>
                                         <Identity>RER</Identity>
-                                        <Name>Europe</Name>
                                         <ExternalIdentity>154</ExternalIdentity>
                                     </Location>
                                 </Process>
@@ -359,8 +321,6 @@
                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">9b5b1824-f11e-449e-9a3f-f6a75396ac87</recordGUID>
                                     </MIProcessReference>
                                     <Identity>Secondary processing, Grinding</Identity>
-                                    <Name>Machining, grinding</Name>
-                                    <ExternalIdentity>38</ExternalIdentity>
                                     <DimensionType>MassRemoved</DimensionType>
                                     <Quantity Unit="kg">0.03762</Quantity>
                                     <TransportPhase>
@@ -368,7 +328,7 @@
                                             <Name>Raw material transportation by truck</Name>
                                             <MITransportReference>
                                                 <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
-                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8 </recordGUID>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
                                             </MITransportReference>
                                             <Distance Unit="km">400</Distance>
                                         </TransportStage>
@@ -379,7 +339,6 @@
                                             <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
                                         </MILocationReference>
                                         <Identity>RER</Identity>
-                                        <Name>Europe</Name>
                                         <ExternalIdentity>155</ExternalIdentity>
                                     </Location>
                                 </Process>
@@ -401,7 +360,6 @@
                     <Quantity Unit="Each">2</Quantity>
                     <MassPerUom Unit="kg/Part">0.52</MassPerUom>
                     <PartNumber>Part1.C[LeafPart]</PartNumber>
-                    <ExternalIdentity>13</ExternalIdentity>
                     <Materials>
                         <Material>
                             <Percentage>100</Percentage>
@@ -410,8 +368,6 @@
                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
                             </MIMaterialReference>
                             <Identity>steel-1010-annealed</Identity>
-                            <Name>Carbon steel, AISI 1010, annealed</Name>
-                            <ExternalIdentity>23</ExternalIdentity>
                             <Processes>
                                 <Process>
                                     <MIProcessReference>
@@ -419,8 +375,6 @@
                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
                                     </MIProcessReference>
                                     <Identity>Metal extrusion, hot</Identity>
-                                    <Name>Metal extrusion, hot</Name>
-                                    <ExternalIdentity>40</ExternalIdentity>
                                     <DimensionType>Mass</DimensionType>
                                     <Percentage>100</Percentage>
                                     <TransportPhase>
@@ -439,7 +393,6 @@
                                             <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">244e1b79-020f-4413-bdb1-95bddd4d60e4</recordGUID>
                                         </MILocationReference>
                                         <Identity>RAS</Identity>
-                                        <Name>Asia</Name>
                                         <ExternalIdentity>160</ExternalIdentity>
                                     </Location>
                                 </Process>
@@ -462,7 +415,6 @@
                     <MassPerUom Unit="kg/Part">0.012</MassPerUom>
                     <PartNumber>Part1.D[LeafPart]</PartNumber>
                     <Name>Part1.D</Name>
-                    <ExternalIdentity>14</ExternalIdentity>
                     <Materials>
                         <Material>
                             <Percentage>100</Percentage>
@@ -471,8 +423,6 @@
                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">a0adc9d7-69a2-494e-b6da-d588f86cc5ab</recordGUID>
                             </MIMaterialReference>
                             <Identity>beryllium-beralcast191-cast</Identity>
-                            <Name>Beryllium-aluminum alloy, Beralcast 191, cast</Name>
-                            <ExternalIdentity>25</ExternalIdentity>
                             <Processes>
                                 <Process>
                                     <MIProcessReference>
@@ -480,8 +430,6 @@
                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
                                     </MIProcessReference>
                                     <Identity>Metal extrusion, hot</Identity>
-                                    <Name>Metal extrusion, hot</Name>
-                                    <ExternalIdentity>41</ExternalIdentity>
                                     <DimensionType>Mass</DimensionType>
                                     <Percentage>100</Percentage>
                                     <TransportPhase>
@@ -500,7 +448,6 @@
                                             <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
                                         </MILocationReference>
                                         <Identity>RER</Identity>
-                                        <Name>Europe</Name>
                                         <ExternalIdentity>162</ExternalIdentity>
                                     </Location>
                                 </Process>
@@ -510,8 +457,6 @@
                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
                                     </MIProcessReference>
                                     <Identity>Machining, fine</Identity>
-                                    <Name>Machining, fine</Name>
-                                    <ExternalIdentity>42</ExternalIdentity>
                                     <DimensionType>MassRemoved</DimensionType>
                                     <Quantity Unit="kg">0.0015</Quantity>
                                     <TransportPhase>
@@ -530,7 +475,6 @@
                                             <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
                                         </MILocationReference>
                                         <Identity>RER</Identity>
-                                        <Name>Europe</Name>
                                         <ExternalIdentity>163</ExternalIdentity>
                                     </Location>
                                 </Process>
@@ -583,8 +527,5 @@
             <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
         </MILocationReference>
         <Identity>RER</Identity>
-        <Name>Europe</Name>
-        <ExternalIdentity>166</ExternalIdentity>
     </Location>
-    <Notes/>
 </PartsEco>

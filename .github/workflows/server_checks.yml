@@ -153,12 +153,11 @@ jobs:
 
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v5
-        if: ${{ matrix.os  == 'ubuntu-latest' && matrix.server == 'TEST_SERVER_DEV_URL' }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: .cov/xml
-          flags: integration
+          flags: integration-${{ matrix.os }}-${{ matrix.server }}
           fail_ci_if_error: true
 
   doc-build:

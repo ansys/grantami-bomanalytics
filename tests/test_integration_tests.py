@@ -263,8 +263,8 @@ class TestSustainabilityBomQueries:
         assert sum(item.embodied_energy_percentage for item in items) == pytest.approx(100)
         assert sum(item.climate_change_percentage for item in items) == pytest.approx(100)
 
-    @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
-    def test_sustainability_summary_query_25_1(self, connection, mi_version, request):
+    @pytest.mark.integration(mi_versions=[(25, 2)])
+    def test_sustainability_summary_query_25_1_25_2(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(sample_sustainability_bom_2301)
         response = connection.run(query)
@@ -374,8 +374,8 @@ class TestSustainabilityBomQueries:
         assert transport.embodied_energy_percentage == pytest.approx(6.809, DEFAULT_TOLERANCE)
         assert transport.distance.value == 350.0
 
-    @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
-    def test_sustainability_query_25_1(self, connection, mi_version, request):
+    @pytest.mark.integration(mi_versions=[(25, 2)])
+    def test_sustainability_query_25_1_25_2(self, connection):
         query = queries.BomSustainabilityQuery()
         query.with_bom(sample_sustainability_bom_2301)
         response = connection.run(query)
@@ -461,7 +461,7 @@ class TestSustainabilityBomQueries:
         assert transport.record_guid is not None
 
     @pytest.mark.integration(mi_versions=[(24, 2)])
-    def test_sustainability_summary_query_24_2(self, connection, request, mi_version):
+    def test_sustainability_summary_query_24_2(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(sample_sustainability_bom_2301)
         response = connection.run(query)

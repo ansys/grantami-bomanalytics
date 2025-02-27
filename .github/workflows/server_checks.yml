@@ -151,14 +151,6 @@ jobs:
           TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
           TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
 
-      - name: "Upload coverage artifacts"
-        uses: actions/upload-artifact@v4
-        if: ${{ matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-        with:
-          name: coverage-html-unittests
-          path: .cov/html
-          retention-days: 7
-
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@v5
         if: ${{ matrix.os  == 'ubuntu-latest' && matrix.server == 'TEST_SERVER_DEV_URL' }}

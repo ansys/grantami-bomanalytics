@@ -377,9 +377,7 @@ class ItemResultFactory:
 
         # transport_stages is optional, only returned by BAS 2025 R2 and later
         if result_with_sustainability.transport_stages:
-            part_with_sustainability._add_child_transport_stages(
-                _raise_if_unset(result_with_sustainability.transport_stages)
-            )
+            part_with_sustainability._add_child_transport_stages(result_with_sustainability.transport_stages)
         return part_with_sustainability
 
     @classmethod

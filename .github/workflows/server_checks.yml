@@ -71,6 +71,7 @@ jobs:
   start-vm:
     name: "Start Azure VM"
     runs-on: ubuntu-latest
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     strategy:
       matrix:
         server:
@@ -114,6 +115,7 @@ jobs:
   integration-tests:
     name: "Integration tests: ${{ matrix.os }}, ${{ matrix.server }}"
     runs-on: ${{ matrix.os }}
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     needs: start-vm
     strategy:
       matrix:
@@ -170,6 +172,7 @@ jobs:
   doc-build:
     name: "Build documentation"
     runs-on: ubuntu-latest
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     needs: integration-tests
     steps:
       - name: "Run Ansys documentation building action"
@@ -184,17 +187,26 @@ jobs:
           dependencies: "pandoc"
           sphinxopts: "-n -W --keep-going"
 
+  integration-checks-complete:
+    name: "Integration checks complete"
+    runs-on: ubuntu-latest
+    if: always() && (needs.doc-build.result == 'success' || needs.doc-build.result == 'skipped')
+    needs: doc-build
+    steps:
+      - name: "Integration checks complete"
+        run: echo "Integration checks complete"
+
   check-workflow-runs:
     name: Check if there are active workflow runs
     needs: doc-build
     uses: ansys/pygranta/.github/workflows/check-concurrent-workflows.yml@main
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
 
   stop-vm:
     name: "Stop Azure VM"
     runs-on: ubuntu-latest
     needs: check-workflow-runs
-    if: ${{ !cancelled() && !(inputs.skip-vm-management) && needs.check-workflow-runs.outputs.active-runs != 'true'}}
+    if: ${{ !cancelled() && !(inputs.skip-vm-management) && needs.check-workflow-runs.outputs.active-runs != 'true' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     strategy:
       matrix:
         server:

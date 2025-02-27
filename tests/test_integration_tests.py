@@ -521,7 +521,7 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
 
 
 class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
-    @pytest.mark.integration(mi_versions=[(25, 2)])
+    @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
     def test_sustainability_summary_query_25_1_25_2(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(sample_sustainability_bom_2301)
@@ -632,7 +632,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
         assert transport.embodied_energy_percentage == pytest.approx(6.809, DEFAULT_TOLERANCE)
         assert transport.distance.value == 350.0
 
-    @pytest.mark.integration(mi_versions=[(25, 2)])
+    @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
     def test_sustainability_query_25_1_25_2(self, connection):
         query = queries.BomSustainabilityQuery()
         query.with_bom(sample_sustainability_bom_2301)

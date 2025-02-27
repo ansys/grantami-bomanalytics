@@ -1857,10 +1857,7 @@ class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
 
 class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
     """
-    Evaluates sustainability impact for an XML BoM and returns aggregated metrics.
-
-    * 23/01 XML BoMs supported by MI Restricted Substances and Sustainability Reports 2024 R2 or later.
-    * 24/12 XML BoMs supported by MI Restricted Substances and Sustainability Reports 2025 R2 or later.
+    Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format and returns aggregated metrics.
 
     The methods used to configure units and add the BoM to this query return the query itself so that they can be
     chained together as required.
@@ -1870,9 +1867,6 @@ class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
     :class:`~ansys.grantami.bomanalytics._query_results.BomSustainabilitySummaryQueryResult`.
 
     .. versionadded:: 2.0
-
-    .. versionchanged:: 2.3
-       Added support for 24/12 XML BoMs
 
     Examples
     --------
@@ -1886,6 +1880,6 @@ class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
 
     """
 
-    _supported_bom_formats = [_BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
+    _supported_bom_formats = [_BomFormat.bom_xml2301]
     _api_method = "post_sustainabilitysummary_bom"
     _request_type = models.GetSustainabilitySummaryForBomRequest

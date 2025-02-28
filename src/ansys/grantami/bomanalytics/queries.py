@@ -1880,6 +1880,6 @@ class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
 
     """
 
-    _supported_bom_formats = [_BomFormat.bom_xml2301]
+    _supported_bom_formats = [_BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
     _api_method = "post_sustainabilitysummary_bom"
     _request_type = models.GetSustainabilitySummaryForBomRequest

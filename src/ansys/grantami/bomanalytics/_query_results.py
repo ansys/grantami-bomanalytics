@@ -46,6 +46,8 @@ from ._item_results import (
     SpecificationWithImpactedSubstancesResult,
     SubstanceWithComplianceResult,
     SustainabilityPhaseSummaryResult,
+    TransportSummaryByCategoryResult,
+    TransportSummaryByPartResult,
     TransportSummaryResult,
     TransportWithSustainabilityResult,
 )
@@ -814,6 +816,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         super().__init__(messages)
         self._response = results[0]
 
+        # Transport summary
         transport_summary = _raise_if_unset(self._response.transport_summary)
         self._transport_summary = ItemResultFactory.create_phase_summary(
             _raise_if_unset(transport_summary.phase_summary)
@@ -824,6 +827,17 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
             for transport in _raise_if_unset(transport_summary.summary)
         ]
 
+        self._transport_by_category_details: List[TransportSummaryByCategoryResult] = [
+            ItemResultFactory.create_transport_summary_by_category(transport_by_category)
+            for transport_by_category in _raise_if_unset(transport_summary.category_summary)
+        ]
+
+        self._transport_by_part_details: List[TransportSummaryByPartResult] = [
+            ItemResultFactory.create_transport_summary_by_part(transport_by_part)
+            for transport_by_part in _raise_if_unset(transport_summary.part_summary)
+        ]
+
+        # Material summary
         material_summary = _raise_if_unset(self._response.material_summary)
         self._material_summary = ItemResultFactory.create_phase_summary(_raise_if_unset(material_summary.phase_summary))
 
@@ -832,6 +846,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
             for material in _raise_if_unset(material_summary.summary)
         ]
 
+        # Process summary
         process_summary = _raise_if_unset(self._response.process_summary)
         self._process_summary = ItemResultFactory.create_phase_summary(_raise_if_unset(process_summary.phase_summary))
 
@@ -851,7 +866,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         ]
 
     # High level summaries:
-    # - provide list of all phases -> allow generic plotting/reporting of all phases indistinctively
+    # - provide list of all phases -> allow generic plotting/reporting of all phases indiscriminately
     # - provide individual phase summaries -> allow direct access without iterating through all phases
 
     @property
@@ -894,12 +909,36 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
     @property
     def transport_details(self) -> List[TransportSummaryResult]:
         """
-        Summary information for all transport stages.
+        Summary information for each transport stage described in the BoM.
 
-        Values in percentages express the contribution of the specific transport stage, relative to contributions of all
-        transport stages.
+        Values in percentages express the contribution of the specific transport stage, relative to the total
+        contribution from transportation in the BoM.
         """
         return self._transport_details
+
+    @property
+    def transport_details_grouped_by_category(self) -> List[TransportSummaryByCategoryResult]:
+        """
+        Summary information for all transport stages described in the BoM, grouped by category.
+
+        Values in percentages express the combined contribution of all transport stages in a category, relative to the
+        total contribution from transportation in the BoM.
+
+        .. versionadded:: 2.3
+        """
+        return self._transport_by_category_details
+
+    @property
+    def transport_details_grouped_by_part(self) -> List[TransportSummaryByPartResult]:
+        """
+        Summary information for all transport stages described in the BoM, grouped by part.
+
+        Values in percentages express the combined contribution of all transport stages associated with a part, relative
+        to the total contribution from transportation in the BoM.
+
+        .. versionadded:: 2.3
+        """
+        return self._transport_by_part_details
 
     @property
     def material_details(self) -> List[MaterialSummaryResult]:

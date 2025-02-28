@@ -40,6 +40,7 @@ from .common import BaseMockTester
 
 class TestBomSustainability(BaseMockTester):
     # Use sample BoM to avoid validation error
+    # The response depends only on the examples.py module, not on the provided BoM
     query = queries.BomSustainabilityQuery().with_bom(sample_sustainability_bom_2301)
     mock_key = GetSustainabilityForBomResponse.__name__
 
@@ -55,6 +56,7 @@ class TestBomSustainability(BaseMockTester):
         part_0 = response.part
         assert len(part_0.materials) == 0
         assert len(part_0.processes) == 0
+        assert len(part_0.transport_stages) == 0
 
         assert part_0.embodied_energy.unit == "MJ"
         assert part_0.embodied_energy.value == pytest.approx(490.22, 0.01)
@@ -72,6 +74,7 @@ class TestBomSustainability(BaseMockTester):
 
         assert len(part_0_0.parts) == 0
         assert len(part_0_0.processes) == 0
+        assert len(part_0_0.transport_stages) == 0
 
         assert part_0_0.embodied_energy.unit == "MJ"
         assert part_0_0.embodied_energy.value == pytest.approx(490.22, 0.01)
@@ -101,10 +104,12 @@ class TestBomSustainability(BaseMockTester):
         assert process.climate_change.unit == "kg"
         assert process.climate_change.value == pytest.approx(0.0579, 0.01)
         assert process.record_history_guid == "d986c90a-2835-45f3-8b69-d6d662dcf53a"
+        assert len(process.transport_stages) == 0
 
 
 class TestBomSustainabilitySummary(BaseMockTester):
     # Use sample BoM to avoid validation error
+    # The response depends only on the examples.py module, not on the provided BoM
     query = queries.BomSustainabilitySummaryQuery().with_bom(sample_sustainability_bom_2301)
     mock_key = GetSustainabilitySummaryForBomResponse.__name__
 

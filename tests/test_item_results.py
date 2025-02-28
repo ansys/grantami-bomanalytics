@@ -23,6 +23,7 @@
 from dataclasses import dataclass
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
+from ansys.openapi.common import Unset
 import pytest
 
 from ansys.grantami.bomanalytics._item_definitions import ReferenceType
@@ -253,11 +254,16 @@ class TestSustainabilitySummaryResultsRepr:
         assert repr(result) == expected
 
 
-class TestSustainabilityResultsRepr:
+class _SustainabilityResults:
     _rec_ref_kwargs = {"reference_type": "MiRecordGuid", "reference_value": "TEST_GUID"}
+
+    _embodied_energy = 2.3
+    _embodied_energy_unit = "KJ"
+    _climate_change = 5.1
+    _climate_change_unit = "cwt"
     _eco_metrics = {
-        "embodied_energy": models.CommonValueWithUnit(value=2.3, unit="KJ"),
-        "climate_change": models.CommonValueWithUnit(value=5.1, unit="KJ"),
+        "embodied_energy": models.CommonValueWithUnit(value=_embodied_energy, unit=_embodied_energy_unit),
+        "climate_change": models.CommonValueWithUnit(value=_climate_change, unit=_climate_change_unit),
     }
     _id = {
         "id": "TEST_ID",
@@ -268,7 +274,10 @@ class TestSustainabilityResultsRepr:
         "external_identity": "TEST_EXT_ID",
         "name": "TEST_NAME",
     }
+    _mass = models.CommonValueWithUnit(value=45, unit="kg")
 
+
+class TestSustainabilityResultsRepr(_SustainabilityResults):
     def test_transport_result_repr(self):
         model = models.CommonSustainabilityTransportWithSustainability(
             **self._eco_metrics,
@@ -290,7 +299,8 @@ class TestSustainabilityResultsRepr:
             materials=[],
             processes=[],
             parts=[],
-            reported_mass=models.CommonValueWithUnit(value=45, unit="kg"),
+            reported_mass=self._mass,
+            transport_stages=[],
         )
         result = ItemResultFactory.create_part_with_sustainability(model)
         expected = "<PartWithSustainabilityResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
@@ -305,7 +315,7 @@ class TestSustainabilityResultsRepr:
             functional_recycle=True,
             recyclable=True,
             processes=[],
-            reported_mass=models.CommonValueWithUnit(value=45, unit="kg"),
+            reported_mass=self._mass,
         )
         result = ItemResultFactory.create_material_with_sustainability(model)
         expected = (
@@ -318,12 +328,82 @@ class TestSustainabilityResultsRepr:
             **self._eco_metrics,
             **self._rec_ref_kwargs,
             **self._identifiers,
+            transport_stages=[],
         )
         result = ItemResultFactory.create_process_with_sustainability(model)
         expected = (
             "<ProcessWithSustainabilityResult({'reference_type': 'MiRecordGuid', 'reference_value': 'TEST_GUID'})>"
         )
         assert repr(result) == expected
+
+
+class TestItemResultsWithoutSwaggerExamples(_SustainabilityResults):
+    """Test item result code paths which aren't covered by the example responses in the swagger examples"""
+
+    _transport_result = models.CommonSustainabilityTransportWithSustainability(
+        **_SustainabilityResults._eco_metrics,
+        **_SustainabilityResults._id,
+    )
+
+    @pytest.mark.parametrize("transport_stages", [[], Unset])
+    def test_part_result_no_transport(self, transport_stages):
+        model = models.CommonSustainabilityPartWithSustainability(
+            **self._eco_metrics,
+            **self._rec_ref_kwargs,
+            **self._identifiers,
+            input_part_number="TEST_PN",
+            materials=[],
+            processes=[],
+            parts=[],
+            reported_mass=self._mass,
+            transport_stages=transport_stages,
+        )
+        result = ItemResultFactory.create_part_with_sustainability(model)
+        assert result.transport_stages == []
+
+    def test_part_result_with_transport(self):
+        model = models.CommonSustainabilityPartWithSustainability(
+            **self._eco_metrics,
+            **self._rec_ref_kwargs,
+            **self._identifiers,
+            input_part_number="TEST_PN",
+            materials=[],
+            processes=[],
+            parts=[],
+            reported_mass=self._mass,
+            transport_stages=[self._transport_result],
+        )
+        result = ItemResultFactory.create_part_with_sustainability(model)
+        assert len(result.transport_stages) == 1
+        assert result.transport_stages[0].climate_change.value == self._climate_change
+        assert result.transport_stages[0].climate_change.unit == self._climate_change_unit
+        assert result.transport_stages[0].embodied_energy.value == self._embodied_energy
+        assert result.transport_stages[0].embodied_energy.unit == self._embodied_energy_unit
+
+    @pytest.mark.parametrize("transport_stages", [[], Unset])
+    def test_process_result_no_transport(self, transport_stages):
+        model = models.CommonSustainabilityProcessWithSustainability(
+            **self._eco_metrics,
+            **self._rec_ref_kwargs,
+            **self._identifiers,
+            transport_stages=transport_stages,
+        )
+        result = ItemResultFactory.create_process_with_sustainability(model)
+        assert result.transport_stages == []
+
+    def test_process_result_with_transport(self):
+        model = models.CommonSustainabilityProcessWithSustainability(
+            **self._eco_metrics,
+            **self._rec_ref_kwargs,
+            **self._identifiers,
+            transport_stages=[self._transport_result],
+        )
+        result = ItemResultFactory.create_process_with_sustainability(model)
+        assert len(result.transport_stages) == 1
+        assert result.transport_stages[0].climate_change.value == self._climate_change
+        assert result.transport_stages[0].climate_change.unit == self._climate_change_unit
+        assert result.transport_stages[0].embodied_energy.value == self._embodied_energy
+        assert result.transport_stages[0].embodied_energy.unit == self._embodied_energy_unit
 
 
 class TestLicensing:

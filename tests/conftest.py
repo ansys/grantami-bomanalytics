@@ -185,6 +185,6 @@ def process_integration_marks(request, mi_version):
         pytest.skip(skip_message)
 
     # Test-specific marks
-    if request.node.name == "test_sustainability_summary_query_25_1_25_2" and mi_version == (25, 2):
+    if request.node.name.startswith("test_sustainability_summary_query") and mi_version == (25, 2):
         xfail = pytest.mark.xfail(reason="CR-1614", strict=True)
         request.applymarker(xfail)

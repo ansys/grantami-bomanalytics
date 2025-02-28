@@ -374,6 +374,10 @@ class ItemResultFactory:
         part_with_sustainability._add_child_parts(_raise_if_unset(result_with_sustainability.parts))
         part_with_sustainability._add_child_materials(_raise_if_unset(result_with_sustainability.materials))
         part_with_sustainability._add_child_processes(_raise_if_unset(result_with_sustainability.processes))
+
+        # transport_stages is optional, only returned by BAS 2025 R2 and later
+        if result_with_sustainability.transport_stages:
+            part_with_sustainability._add_child_transport_stages(result_with_sustainability.transport_stages)
         return part_with_sustainability
 
     @classmethod
@@ -403,6 +407,10 @@ class ItemResultFactory:
             external_identity=result_with_sustainability.external_identity,
             name=result_with_sustainability.name,
         )
+
+        # transport_stages is optional, only returned by BAS 2025 R2 and later
+        if result_with_sustainability.transport_stages:
+            process_with_sustainability._add_child_transport_stages(result_with_sustainability.transport_stages)
         return process_with_sustainability
 
     @classmethod
@@ -1634,6 +1642,51 @@ class ChildProcessWithSustainabilityMixin:
             self._processes.append(child_process_result)
 
 
+class ChildTransportWithSustainabilityMixin:
+    """Provides the implementation for managing child transport stages, by adding a ``transport_stages`` property to the
+    class.
+
+    Parameters
+    ----------
+    child_transport_stages
+        Transport stages returned by the low-level API that are children of this item.
+    **kwargs
+        Contains arguments handled by other mixins or base classes.
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._transport_stages: List[TransportWithSustainabilityResult] = []
+
+    @property
+    def transport_stages(self) -> List["TransportWithSustainabilityResult"]:
+        """``TransportWithSustainabilityResult`` objects that are direct children of this item in the BoM.
+
+        .. versionadded:: 2.3
+        """
+
+        return self._transport_stages
+
+    def _add_child_transport_stages(
+        self,
+        child_transport_stages: List[models.CommonSustainabilityTransportWithSustainability],
+    ) -> None:
+        """Populates the ``transport_Stages`` attribute based on a list of low-level API materials with sustainability
+        results.
+
+        Parameters
+        ----------
+        child_transport_stages
+            List of transport stages returned from the low-level API.
+        """
+
+        for child_transport_stage in child_transport_stages:
+            child_transport_stage_result = ItemResultFactory.create_transport_with_sustainability(
+                result_with_sustainability=child_transport_stage,
+            )
+            self._transport_stages.append(child_transport_stage_result)
+
+
 class MaterialWithSustainabilityResult(
     ChildProcessWithSustainabilityMixin,
     SustainabilityResultMixin,
@@ -1653,6 +1706,7 @@ class MaterialWithSustainabilityResult(
 
 
 class PartWithSustainabilityResult(
+    ChildTransportWithSustainabilityMixin,
     ChildProcessWithSustainabilityMixin,
     ChildMaterialWithSustainabilityMixin,
     ChildPartWithSustainabilityMixin,
@@ -1672,6 +1726,7 @@ class PartWithSustainabilityResult(
 
 
 class ProcessWithSustainabilityResult(
+    ChildTransportWithSustainabilityMixin,
     SustainabilityResultMixin,
     ProcessReferenceWithIdentifiers,
 ):

@@ -827,15 +827,21 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
             for transport in _raise_if_unset(transport_summary.summary)
         ]
 
-        self._transport_by_category_details: List[TransportSummaryByCategoryResult] = [
-            ItemResultFactory.create_transport_summary_by_category(transport_by_category)
-            for transport_by_category in _raise_if_unset(transport_summary.category_summary)
-        ]
+        if transport_summary.category_summary:
+            self._transport_by_category_details: List[TransportSummaryByCategoryResult] = [
+                ItemResultFactory.create_transport_summary_by_category(transport_by_category)
+                for transport_by_category in transport_summary.category_summary
+            ]
+        else:
+            self._transport_by_category_details = []
 
-        self._transport_by_part_details: List[TransportSummaryByPartResult] = [
-            ItemResultFactory.create_transport_summary_by_part(transport_by_part)
-            for transport_by_part in _raise_if_unset(transport_summary.part_summary)
-        ]
+        if transport_summary.part_summary:
+            self._transport_by_part_details: List[TransportSummaryByPartResult] = [
+                ItemResultFactory.create_transport_summary_by_part(transport_by_part)
+                for transport_by_part in _raise_if_unset(transport_summary.part_summary)
+            ]
+        else:
+            self._transport_by_category_details = []
 
         # Material summary
         material_summary = _raise_if_unset(self._response.material_summary)

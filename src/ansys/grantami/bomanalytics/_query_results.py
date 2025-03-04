@@ -841,7 +841,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
                 for transport_by_part in _raise_if_unset(transport_summary.part_summary)
             ]
         else:
-            self._transport_by_category_details = []
+            self._transport_by_part_details = []
 
         # Material summary
         material_summary = _raise_if_unset(self._response.material_summary)

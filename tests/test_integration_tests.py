@@ -631,8 +631,8 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
 
 
 class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
-    @pytest.mark.integration
-    def test_sustainability_summary_24_12_results(self, connection):
+    @pytest.mark.integration(mi_versions=[(25, 2)])
+    def test_sustainability_summary_transport_grouping_results_25_2(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(sample_sustainability_bom_2301)
         response = connection.run(query)
@@ -658,6 +658,15 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
         assert manufacturing_transport.climate_change_percentage == pytest.approx(100.0, DEFAULT_TOLERANCE)
         assert manufacturing_transport.embodied_energy_percentage == pytest.approx(100.0, DEFAULT_TOLERANCE)
         assert manufacturing_transport.distance.value != pytest.approx(0.0, DEFAULT_TOLERANCE)
+
+    @pytest.mark.integration(mi_versions=[(24, 2), (25, 1)])
+    def test_sustainability_summary_transport_grouping_results_25_1_24_2(self, connection):
+        query = queries.BomSustainabilitySummaryQuery()
+        query.with_bom(sample_sustainability_bom_2301)
+        response = connection.run(query)
+
+        assert response.transport_details_grouped_by_part == []
+        assert response.transport_details_grouped_by_category == []
 
     @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
     def test_sustainability_summary_query_25_1_25_2(self, connection):

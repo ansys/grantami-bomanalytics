@@ -536,13 +536,13 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
         assert len(jf_process.transport_stages) == 2
 
         jf_transport_0 = jf_process.transport_stages[0]
-        assert jf_transport_0.name == "Train, diesel"
+        assert jf_transport_0.name == "Subassembly manufacturing to assembly by train"
         assert jf_transport_0.climate_change.value == pytest.approx(0.036, DEFAULT_TOLERANCE)
         assert jf_transport_0.embodied_energy.value == pytest.approx(0.484, DEFAULT_TOLERANCE)
         assert jf_transport_0.record_guid is not None
 
         jf_transport_1 = jf_process.transport_stages[1]
-        assert jf_transport_1.name == "Aircraft, long haul dedicated-freight"
+        assert jf_transport_1.name == "Subassembly manufacturing to assembly by airplane"
         assert jf_transport_1.climate_change.value == pytest.approx(9.28, DEFAULT_TOLERANCE)
         assert jf_transport_1.embodied_energy.value == pytest.approx(131.1, DEFAULT_TOLERANCE)
         assert jf_transport_1.record_guid is not None

@@ -22,7 +22,7 @@
 
 import pytest
 
-from ansys.grantami.bomanalytics import GrantaMIException, queries
+from ansys.grantami.bomanalytics import GrantaMIException, TransportCategory, queries
 
 from .common import INDICATORS, LEGISLATIONS
 from .inputs import (
@@ -271,7 +271,210 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(sample_sustainability_bom_2412)
         response = connection.run(query)
-        assert response
+
+        assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
+
+        assert response.process.name == "Processes"
+        assert response.material.name == "Material"
+        assert response.transport.name == "Transport"
+        assert len(response.phases_summary) == 3
+
+        # Check overall percentages add up
+        self._check_percentages_add_up(response.phases_summary)
+
+        # Check expected summaries for materials
+        assert len(response.material_details) == 3
+        material_names = [m.identity for m in response.material_details]
+        expected_material_names = ["beryllium-beralcast191-cast", "stainless-astm-cn-7ms-cast", "steel-1010-annealed"]
+        assert all(expected_name in material_names for expected_name in expected_material_names)
+        self._check_percentages_add_up(response.material_details)
+
+        # Spot check one material summary
+        beryllium_summary = next(m for m in response.material_details if m.identity == "beryllium-beralcast191-cast")
+        assert len(beryllium_summary.contributors) == 1
+        assert beryllium_summary.contributors[0].name == "Component 1D"
+        assert beryllium_summary.contributors[0].part_number == "Part1.D[LeafPart]"
+        assert beryllium_summary.contributors[0].material_mass_before_processing.value == pytest.approx(0.027)
+        assert beryllium_summary.mass_after_processing.value == pytest.approx(0.024)
+        assert beryllium_summary.mass_before_processing.value == pytest.approx(0.027)
+        assert beryllium_summary.material_reference.record_guid is not None
+        assert beryllium_summary.climate_change.value == pytest.approx(15.52, DEFAULT_TOLERANCE)
+        assert beryllium_summary.climate_change_percentage == pytest.approx(48.52, DEFAULT_TOLERANCE)
+        assert beryllium_summary.embodied_energy.value == pytest.approx(117.55, DEFAULT_TOLERANCE)
+        assert beryllium_summary.embodied_energy_percentage == pytest.approx(35.28, DEFAULT_TOLERANCE)
+
+        # Check expected summaries for primary processes
+        assert len(response.primary_processes_details) == 4
+        expected_primary_processes = [
+            ("Primary processing, Casting", "stainless-astm-cn-7ms-cast"),
+            ("Primary processing, Casting", "steel-1010-annealed"),
+            ("Primary processing, Metal extrusion, hot", "steel-1010-annealed"),
+            ("Other", None),
+        ]
+        primary_processes = [(p.process_name, p.material_identity) for p in response.primary_processes_details]
+        assert primary_processes == expected_primary_processes
+        self._check_percentages_add_up(response.primary_processes_details)
+
+        # Spot check primary process
+        primary_process = response.primary_processes_details[1]
+        assert primary_process.climate_change.value == pytest.approx(2.486, DEFAULT_TOLERANCE)
+        assert primary_process.embodied_energy.value == pytest.approx(51.08, DEFAULT_TOLERANCE)
+        assert primary_process.climate_change_percentage == pytest.approx(28.69, DEFAULT_TOLERANCE)
+        assert primary_process.embodied_energy_percentage == pytest.approx(33.53, DEFAULT_TOLERANCE)
+        assert primary_process.material_reference.record_guid is not None
+        assert primary_process.process_reference.record_guid is not None
+
+        # Check expected summaries for secondary processes
+        assert len(response.secondary_processes_details) == 5
+        expected_secondary_processes = [
+            ("Secondary processing, Grinding", "steel-1010-annealed"),
+            ("Secondary processing, Machining, coarse", "stainless-astm-cn-7ms-cast"),
+            ("Machining, fine", "steel-1010-annealed"),
+            ("Secondary processing, Machining, fine", "stainless-astm-cn-7ms-cast"),
+            ("Other", None),
+        ]
+        secondary_processes = [(p.process_name, p.material_identity) for p in response.secondary_processes_details]
+        assert secondary_processes == expected_secondary_processes
+        self._check_percentages_add_up(response.secondary_processes_details)
+
+        # Spot check secondary process
+        secondary_process = response.secondary_processes_details[0]
+        assert secondary_process.climate_change.value == pytest.approx(0.05850, DEFAULT_TOLERANCE)
+        assert secondary_process.embodied_energy.value == pytest.approx(1.758, DEFAULT_TOLERANCE)
+        assert secondary_process.climate_change_percentage == pytest.approx(41.28, DEFAULT_TOLERANCE)
+        assert secondary_process.embodied_energy_percentage == pytest.approx(44.54, DEFAULT_TOLERANCE)
+        assert secondary_process.material_reference.record_guid is not None
+        assert secondary_process.process_reference.record_guid is not None
+
+        # Check expected summaries for J&F processes
+        assert len(response.joining_and_finishing_processes_details) == 1
+        jf_process = response.joining_and_finishing_processes_details[0]
+
+        # Spot check one J&F process
+        assert jf_process.process_name == "Joining and finishing, Welding, electric"
+        assert jf_process.material_identity is None
+        assert jf_process.material_reference is None
+        assert jf_process.climate_change.value == pytest.approx(0.2407, DEFAULT_TOLERANCE)
+        assert jf_process.embodied_energy.value == pytest.approx(3.249, DEFAULT_TOLERANCE)
+        assert jf_process.climate_change_percentage == 100.0
+        assert jf_process.embodied_energy_percentage == 100.0
+        assert jf_process.process_reference.record_guid is not None
+
+        # Check transport details
+        assert len(response.transport_details) == 22
+        self._check_percentages_add_up(response.transport_details)
+        transports = [t.name for t in response.transport_details]
+        assert transports == [
+            "Component 11A raw material transportation by truck",
+            "Component 11A foundry to manufacturing transportation by truck",
+            "Component 11A manufacturing to assembly transportation by truck",
+            "Component 11B raw material transportation by truck",
+            "Component 1B foundry to manufacturing transportation by truck",
+            "Component 11B manufacturing to assembly transportation by truck",
+            "Subassembly to final assembly transportation by truck",
+            "Subassembly to final assembly transportation by train",
+            "Component 1A raw material transportation by truck",
+            "Component 1B foundry to manufacturing transportation by truck",
+            "Component 1A manufacturing to final assembly transportation by truck",
+            "Component 1B raw material transportation by truck",
+            "Component 1B foundry to manufacturing transportation by truck",
+            "Component 1B manufacturing to final assembly transportation by truck",
+            "Component 1C raw material transportation by truck",
+            "Component 1C casting to final assembly transportation by truck",
+            "Component 1D raw material transportation by truck",
+            "Component 1D foundry to manufacturing transportation by truck",
+            "Component 1D manufacturing to final assembly transportation by truck",
+            "Transport of final product from assembly to distributor: Assembly to airport by truck",
+            "Transport of final product from assembly to distributor: Assembly country to distribution country by airplane",  # noqa: E501
+            "Transport of final product from assembly to distributor: Airport to distributor by truck",
+        ]
+        # Spot check a process transport stage
+        process_transport_name = "Component 11A raw material transportation by truck"
+        process_transport = next(t for t in response.transport_details if t.name == process_transport_name)
+        assert process_transport.climate_change.value == pytest.approx(0.247, DEFAULT_TOLERANCE)
+        assert process_transport.embodied_energy.value == pytest.approx(3.697, DEFAULT_TOLERANCE)
+        assert process_transport.climate_change_percentage == pytest.approx(3.505, DEFAULT_TOLERANCE)
+        assert process_transport.embodied_energy_percentage == pytest.approx(3.658, DEFAULT_TOLERANCE)
+        assert process_transport.distance.value == 1000.0
+        assert process_transport.transport_reference.record_guid is not None
+
+        # Sport check a component transport stage
+        comp_transport_name = "Component 11A manufacturing to assembly transportation by truck"
+        component_transport = next(t for t in response.transport_details if t.name == comp_transport_name)
+        assert component_transport.climate_change.value == pytest.approx(0.226, DEFAULT_TOLERANCE)
+        assert component_transport.embodied_energy.value == pytest.approx(3.384, DEFAULT_TOLERANCE)
+        assert component_transport.climate_change_percentage == pytest.approx(3.209, DEFAULT_TOLERANCE)
+        assert component_transport.embodied_energy_percentage == pytest.approx(3.349, DEFAULT_TOLERANCE)
+        assert component_transport.distance.value == 1000.0
+        assert component_transport.transport_reference.record_guid is not None
+
+        # Assembly transport stage
+        assy_transport_name = "Subassembly to final assembly transportation by train"
+        assembly_transport = next(t for t in response.transport_details if t.name == assy_transport_name)
+        assert assembly_transport.climate_change.value == pytest.approx(0.107, DEFAULT_TOLERANCE)
+        assert assembly_transport.embodied_energy.value == pytest.approx(1.452, DEFAULT_TOLERANCE)
+        assert assembly_transport.climate_change_percentage == pytest.approx(1.521, DEFAULT_TOLERANCE)
+        assert assembly_transport.embodied_energy_percentage == pytest.approx(1.437, DEFAULT_TOLERANCE)
+        assert assembly_transport.distance.value == 1500.0
+        assert assembly_transport.transport_reference.record_guid is not None
+
+        # Product transport stage
+        product_transport_name = (
+            "Transport of final product from assembly to distributor: "
+            "Assembly country to distribution country by airplane"
+        )
+        product_transport = next(t for t in response.transport_details if t.name == product_transport_name)
+        assert product_transport.climate_change.value == pytest.approx(4.939, DEFAULT_TOLERANCE)
+        assert product_transport.embodied_energy.value == pytest.approx(69.76, DEFAULT_TOLERANCE)
+        assert product_transport.climate_change_percentage == pytest.approx(70.18, DEFAULT_TOLERANCE)
+        assert product_transport.embodied_energy_percentage == pytest.approx(69.03, DEFAULT_TOLERANCE)
+        assert product_transport.distance.value == 1500.0
+        assert product_transport.transport_reference.record_guid is not None
+
+        # Check transport by category
+        transport_grouped_by_category = response.transport_details_grouped_by_category
+        assert len(transport_grouped_by_category) == 2
+        distribution_transport = next(
+            t for t in transport_grouped_by_category if t.category == TransportCategory.DISTRIBUTION
+        )
+        assert distribution_transport.climate_change.value == pytest.approx(5.416, DEFAULT_TOLERANCE)
+        assert distribution_transport.embodied_energy.value == pytest.approx(76.91, DEFAULT_TOLERANCE)
+        assert distribution_transport.climate_change_percentage == pytest.approx(76.96, DEFAULT_TOLERANCE)
+        assert distribution_transport.embodied_energy_percentage == pytest.approx(76.11, DEFAULT_TOLERANCE)
+        assert distribution_transport.distance.value == 1975.0
+
+        manufacturing_transport = next(
+            t for t in transport_grouped_by_category if t.category == TransportCategory.MANUFACTURING
+        )
+        assert manufacturing_transport.climate_change.value == pytest.approx(1.621, DEFAULT_TOLERANCE)
+        assert manufacturing_transport.embodied_energy.value == pytest.approx(24.14, DEFAULT_TOLERANCE)
+        assert manufacturing_transport.climate_change_percentage == pytest.approx(23.03, DEFAULT_TOLERANCE)
+        assert manufacturing_transport.embodied_energy_percentage == pytest.approx(23.89, DEFAULT_TOLERANCE)
+        assert manufacturing_transport.distance.value == 9730.0
+
+        # Check transport by part
+        transport_grouped_by_part = response.transport_details_grouped_by_part
+        assert len(transport_grouped_by_part) == 4
+
+        # Spot-check a part transport grouping
+        grouped_transport_part = transport_grouped_by_part[2]
+        assert grouped_transport_part.climate_change.value == pytest.approx(0.4316, DEFAULT_TOLERANCE)
+        assert grouped_transport_part.embodied_energy.value == pytest.approx(6.4684, DEFAULT_TOLERANCE)
+        assert grouped_transport_part.climate_change_percentage == pytest.approx(6.133, DEFAULT_TOLERANCE)
+        assert grouped_transport_part.embodied_energy_percentage == pytest.approx(6.401, DEFAULT_TOLERANCE)
+        assert grouped_transport_part.distance.value == 1700.0
+        assert grouped_transport_part.part_name == "Component 1C"
+        assert grouped_transport_part.parent_part_name == "Assembly"
+
+        # Spot check null transport group field
+        grouped_transport_assembly = transport_grouped_by_part[0]
+        assert grouped_transport_assembly.part_name == "Assembly"
+        assert grouped_transport_assembly.parent_part_name is None
+
+        # Spot check 'other' transport group field
+        grouped_transport_other = transport_grouped_by_part[3]
+        assert grouped_transport_other.part_name == "Other"
+        assert grouped_transport_other.parent_part_name is None
 
     @pytest.mark.integration(mi_versions=[(25, 2)])
     def test_sustainability_query_25_2(self, connection):

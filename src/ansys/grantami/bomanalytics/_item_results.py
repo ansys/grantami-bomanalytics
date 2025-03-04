@@ -63,6 +63,7 @@ class TransportCategory(Enum):
 
     MANUFACTURING = "Manufacturing"
     DISTRIBUTION = "Distribution"
+    NOT_APPLICABLE = "NotApplicable"
 
 
 class ItemResultFactory:
@@ -2017,8 +2018,8 @@ class TransportSummaryByPartResult(SustainabilitySummaryBase):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self._part_name = part_name
-        self._parent_part_name = parent_part_name
+        self._part_name = part_name if part_name else None
+        self._parent_part_name = parent_part_name if parent_part_name else None
         self._category = category
         self._transport_types = transport_types
         self._distance = distance

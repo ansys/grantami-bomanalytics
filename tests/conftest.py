@@ -183,8 +183,3 @@ def process_integration_marks(request, mi_version):
         formatted_version = ".".join(str(x) for x in mi_version)
         skip_message = f'Test skipped for Granta MI release version "{formatted_version}"'
         pytest.skip(skip_message)
-
-    # Test-specific marks
-    if request.node.name.startswith("test_sustainability_summary_query") and mi_version == (25, 2):
-        xfail = pytest.mark.xfail(reason="CR-1617", strict=True)
-        request.applymarker(xfail)

@@ -28,6 +28,7 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 
 from abc import ABC
 from copy import deepcopy
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
@@ -55,6 +56,13 @@ if TYPE_CHECKING:
     from .indicators import RoHSIndicator, WatchListIndicator
 
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+
+
+class TransportCategory(Enum):
+    """The stage of the product lifecycle to which a transport stage belongs."""
+
+    MANUFACTURING = "Manufacturing"
+    DISTRIBUTION = "Distribution"
 
 
 class ItemResultFactory:
@@ -542,6 +550,61 @@ class ItemResultFactory:
             embodied_energy_percentage=_raise_if_unset(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
             climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
+        )
+
+    @classmethod
+    def create_transport_summary_by_category(
+        cls, result: models.CommonSustainabilityTransportByCategorySummaryEntry
+    ) -> "TransportSummaryByCategoryResult":
+        """Returns a TransportSummaryByCategoryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityTransportByCategorySummaryEntry
+            Result from the REST API describing the sustainability metrics for all transport stages in a category.
+
+        Returns
+        -------
+        TransportSummaryByCategoryResult
+        """
+        category = TransportCategory(result.category)
+        return TransportSummaryByCategoryResult(
+            distance=cls.create_unitted_value(result.distance),
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=_raise_if_unset(result.embodied_energy_percentage),
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
+            category=category,
+        )
+
+    @classmethod
+    def create_transport_summary_by_part(
+        cls, result: models.CommonSustainabilityTransportByPartSummaryEntry
+    ) -> "TransportSummaryByPartResult":
+        """Returns a TransportSummaryByPartResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityTransportByPartSummaryEntry
+            Result from the REST API describing the sustainability metrics for all transport stages associated with a
+            part.
+
+        Returns
+        -------
+        TransportSummaryByPartResult
+        """
+
+        category = TransportCategory(result.category)
+        return TransportSummaryByPartResult(
+            distance=cls.create_unitted_value(result.distance),
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=_raise_if_unset(result.embodied_energy_percentage),
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
+            parent_part_name=_convert_unset_to_none(result.parent_part_name),
+            part_name=_convert_unset_to_none(result.part_name),
+            transport_types=_raise_if_unset(result.transport_types),
+            category=category,
         )
 
     @classmethod
@@ -1903,6 +1966,97 @@ class TransportSummaryResult(SustainabilitySummaryBase):
             f"<{self.__class__.__name__}('{self.name}',"
             f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
         )
+
+
+class TransportSummaryByCategoryResult(SustainabilitySummaryBase):
+    """
+    Sustainability summary for all transport stages in a category.
+
+    .. versionadded:: 2.3
+    """
+
+    def __init__(
+        self,
+        category: TransportCategory,
+        distance: ValueWithUnit,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._category = category
+        self._distance = distance
+
+    @property
+    def category(self) -> TransportCategory:
+        """
+        The transport category for this summary.
+        """
+        return self._category
+
+    @property
+    def distance(self) -> ValueWithUnit:
+        """
+        The total transport distance for this summary.
+        """
+        return self._distance
+
+
+class TransportSummaryByPartResult(SustainabilitySummaryBase):
+    """
+    Sustainability summary of all transport stages associated with a part.
+
+    .. versionadded:: 2.3
+    """
+
+    def __init__(
+        self,
+        part_name: Optional[str],
+        parent_part_name: Optional[str],
+        category: TransportCategory,
+        transport_types: List[str],
+        distance: ValueWithUnit,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._part_name = part_name
+        self._parent_part_name = parent_part_name
+        self._category = category
+        self._transport_types = transport_types
+        self._distance = distance
+
+    @property
+    def part_name(self) -> Optional[str]:
+        """
+        Name of the part (if populated in the input BoM used in the query).
+        """
+        return self._part_name
+
+    @property
+    def parent_part_name(self) -> Optional[str]:
+        """
+        Name of the parent part (if populated in the input BoM used in the query).
+        """
+        return self._parent_part_name
+
+    @property
+    def category(self) -> TransportCategory:
+        """
+        The transport category for this summary.
+        """
+        return self._category
+
+    @property
+    def transport_types(self) -> List[str]:
+        """
+        The transport types included in this summary.
+        """
+        return self._transport_types
+
+    @property
+    def distance(self) -> ValueWithUnit:
+        """
+        The total transport distance for this summary.
+        """
+        return self._distance
 
 
 class ContributingComponentResult:

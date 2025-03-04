@@ -267,6 +267,13 @@ class _TestSustainabilityBomQueries:
 
 class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
     @pytest.mark.integration(mi_versions=[(25, 2)])
+    def test_sustainability_summary_query_25_2(self, connection):
+        query = queries.BomSustainabilitySummaryQuery()
+        query.with_bom(sample_sustainability_bom_2412)
+        response = connection.run(query)
+        assert response
+
+    @pytest.mark.integration(mi_versions=[(25, 2)])
     def test_sustainability_query_25_2(self, connection):
         query = queries.BomSustainabilityQuery()
         query.with_bom(sample_sustainability_bom_2412)

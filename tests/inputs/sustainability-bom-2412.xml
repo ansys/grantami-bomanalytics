@@ -178,6 +178,24 @@
                             <Identity>Joining and finishing, Welding, electric</Identity>
                             <DimensionType>Length</DimensionType>
                             <Quantity Unit="m">0.45</Quantity>
+                            <TransportPhase>
+                                <TransportStage>
+                                    <Name>Subassembly manufacturing to assembly by train</Name>
+                                    <MITransportReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">c29ab353-2bd5-4964-b577-a0e4cfb4d284</recordGUID>
+                                    </MITransportReference>
+                                    <Distance Unit="km">500</Distance>
+                                </TransportStage>
+                                <TransportStage>
+                                    <Name>Subassembly manufacturing to assembly by airplane</Name>
+                                    <MITransportReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">546b90cb-1f8e-423c-a284-a25f731a13e5</recordGUID>
+                                    </MITransportReference>
+                                    <Distance Unit="km">8000</Distance>
+                                </TransportStage>
+                            </TransportPhase>
                             <Location>
                                 <MILocationReference>
                                     <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>

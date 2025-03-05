@@ -200,8 +200,9 @@ class TestBomSustainabilitySummary(BaseMockTester):
         assert unique_spmp_0.climate_change_percentage == 100
 
         assert len(response.transport_details) == 0
-        assert len(response.transport_details_grouped_by_part) == 0
-        assert len(response.transport_details_grouped_by_category) == 0
+        assert response.transport_details_aggregated_by_part == []
+        assert response.manufacturing_transport_summary is None
+        assert response.distribution_transport_summary is None
 
 
 class TestBomSustainabilitySummary2412(BaseMockTester):
@@ -235,7 +236,7 @@ class TestBomSustainabilitySummary2412(BaseMockTester):
         assert transport.transport_reference.record_history_identity is None
 
         # Transport summary by part
-        part_transport_groups = response.transport_details_grouped_by_part
+        part_transport_groups = response.transport_details_aggregated_by_part
         assert len(part_transport_groups) == 1
         part_transport_group = part_transport_groups[0]
         assert part_transport_group.category == TransportCategory.MANUFACTURING
@@ -249,14 +250,10 @@ class TestBomSustainabilitySummary2412(BaseMockTester):
         assert part_transport_group.embodied_energy_percentage == 100.0
         assert part_transport_group.parent_part_name is None
         assert part_transport_group.part_name is None
-        assert part_transport_group.transport_types == ["Aircraft, short haul, belly-freight"]
+        assert part_transport_group.transport_types == {"Aircraft, short haul, belly-freight"}
 
-        # Transport summary by category
-        category_transport_groups = response.transport_details_grouped_by_category
-        assert len(category_transport_groups) == 2
-
-        distribution_transport_group = category_transport_groups[0]
-        assert distribution_transport_group.category == TransportCategory.DISTRIBUTION
+        # Distribution transport
+        distribution_transport_group = response.distribution_transport_summary
         assert distribution_transport_group.climate_change.value == 0.0
         assert distribution_transport_group.climate_change.unit == "kg"
         assert distribution_transport_group.climate_change_percentage == 0.0
@@ -266,8 +263,8 @@ class TestBomSustainabilitySummary2412(BaseMockTester):
         assert distribution_transport_group.embodied_energy.unit == "MJ"
         assert distribution_transport_group.embodied_energy_percentage == 0.0
 
-        manufacturing_transport_group = category_transport_groups[1]
-        assert manufacturing_transport_group.category == TransportCategory.MANUFACTURING
+        # Manufacturing transport
+        manufacturing_transport_group = response.manufacturing_transport_summary
         assert manufacturing_transport_group.climate_change.value == 0.333123822320444
         assert manufacturing_transport_group.climate_change.unit == "kg"
         assert manufacturing_transport_group.climate_change_percentage == 100.0

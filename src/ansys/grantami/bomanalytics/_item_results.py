@@ -568,14 +568,12 @@ class ItemResultFactory:
         -------
         TransportSummaryByCategoryResult
         """
-        category = TransportCategory(result.category)
         return TransportSummaryByCategoryResult(
             distance=cls.create_unitted_value(result.distance),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
             embodied_energy_percentage=_raise_if_unset(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
             climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
-            category=category,
         )
 
     @classmethod
@@ -604,7 +602,7 @@ class ItemResultFactory:
             climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
             parent_part_name=_convert_unset_to_none(result.parent_part_name),
             part_name=_convert_unset_to_none(result.part_name),
-            transport_types=_raise_if_unset(result.transport_types),
+            transport_types=set(_raise_if_unset(result.transport_types)),
             category=category,
         )
 
@@ -1926,7 +1924,31 @@ class SustainabilityPhaseSummaryResult(SustainabilitySummaryBase):
         )
 
 
-class TransportSummaryResult(SustainabilitySummaryBase):
+class TransportSummaryBase(SustainabilitySummaryBase):
+    """
+    Base class for all transport summaries.
+
+    Parameters
+    ----------
+    distance : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
+        Represents the distance covered by this transport summary.
+    """
+
+    def __init__(
+        self,
+        distance: ValueWithUnit,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._distance = distance
+
+    @property
+    def distance(self) -> ValueWithUnit:
+        """Distance covered by this transport summary."""
+        return self._distance
+
+
+class TransportSummaryResult(TransportSummaryBase):
     """
     Sustainability summary for a transport stage.
 
@@ -1937,13 +1959,11 @@ class TransportSummaryResult(SustainabilitySummaryBase):
         self,
         name: Optional[str],
         transport_reference: TransportReference,
-        distance: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self._name = name
         self._transport_reference = transport_reference
-        self._distance = distance
 
     @property
     def name(self) -> Optional[str]:
@@ -1957,11 +1977,6 @@ class TransportSummaryResult(SustainabilitySummaryBase):
         """
         return self._transport_reference
 
-    @property
-    def distance(self) -> ValueWithUnit:
-        """Distance travelled in the transport stage."""
-        return self._distance
-
     def __repr__(self) -> str:
         return (
             f"<{self.__class__.__name__}('{self.name}',"
@@ -1969,41 +1984,23 @@ class TransportSummaryResult(SustainabilitySummaryBase):
         )
 
 
-class TransportSummaryByCategoryResult(SustainabilitySummaryBase):
+class TransportSummaryByCategoryResult(TransportSummaryBase):
     """
-    Sustainability summary for all transport stages in a category.
+    Aggregated sustainability summary for all transport stages in a category.
 
     .. versionadded:: 2.3
     """
 
     def __init__(
         self,
-        category: TransportCategory,
-        distance: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self._category = category
-        self._distance = distance
-
-    @property
-    def category(self) -> TransportCategory:
-        """
-        The transport category for this summary.
-        """
-        return self._category
-
-    @property
-    def distance(self) -> ValueWithUnit:
-        """
-        The total transport distance for this summary.
-        """
-        return self._distance
 
 
-class TransportSummaryByPartResult(SustainabilitySummaryBase):
+class TransportSummaryByPartResult(TransportSummaryBase):
     """
-    Sustainability summary of all transport stages associated with a part.
+    Aggregated sustainability summary for all transport stages associated with a part.
 
     .. versionadded:: 2.3
     """
@@ -2013,8 +2010,7 @@ class TransportSummaryByPartResult(SustainabilitySummaryBase):
         part_name: Optional[str],
         parent_part_name: Optional[str],
         category: TransportCategory,
-        transport_types: List[str],
-        distance: ValueWithUnit,
+        transport_types: set[str],
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -2022,7 +2018,6 @@ class TransportSummaryByPartResult(SustainabilitySummaryBase):
         self._parent_part_name = parent_part_name if parent_part_name else None
         self._category = category
         self._transport_types = transport_types
-        self._distance = distance
 
     @property
     def part_name(self) -> Optional[str]:
@@ -2046,18 +2041,11 @@ class TransportSummaryByPartResult(SustainabilitySummaryBase):
         return self._category
 
     @property
-    def transport_types(self) -> List[str]:
+    def transport_types(self) -> set[str]:
         """
         The transport types included in this summary.
         """
         return self._transport_types
-
-    @property
-    def distance(self) -> ValueWithUnit:
-        """
-        The total transport distance for this summary.
-        """
-        return self._distance
 
 
 class ContributingComponentResult:

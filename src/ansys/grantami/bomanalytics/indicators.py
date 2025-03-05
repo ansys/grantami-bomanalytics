@@ -33,30 +33,23 @@ or part.
 """
 
 from abc import ABC, abstractmethod
-from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
+
+from ._documented_enum import _DocumentedEnum
 
 if TYPE_CHECKING:
     from ._query_results import MaterialComplianceQueryResult  # noqa: F401
     from .queries import MaterialComplianceQuery  # noqa: F401
 
 
-class _Flag(Enum):
+class _Flag(_DocumentedEnum):
     """Base class for flags (result states) of indicators.
 
     This class implements `__le__` , but it relies on specific flag classes to implement other
     overloads to allow direct comparisons with the containing Indicator.
-
-    Overrides `__new__` to populate the __doc__ on an enum member.
     """
-
-    def __new__(cls, value: int, doc: str) -> "_Flag":
-        obj: _Flag = object.__new__(cls)
-        obj._value_ = value
-        obj.__doc__ = " ".join(doc.split())
-        return obj
 
     @abstractmethod
     def __lt__(self, other: "_Flag") -> bool:

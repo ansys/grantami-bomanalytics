@@ -470,11 +470,11 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
         assert grouped_transport_assembly.parent_part_name is None
         assert grouped_transport_assembly.category == TransportCategory.DISTRIBUTION
 
-        # Spot check 'Not Applicable' part
+        # Spot check 'Other' part
         grouped_transport_other = transport_grouped_by_part[4]
         assert grouped_transport_other.part_name == "Other"
         assert grouped_transport_other.parent_part_name is None
-        assert grouped_transport_other.category == TransportCategory.NOT_APPLICABLE
+        assert grouped_transport_other.category is None
 
     @pytest.mark.integration(mi_versions=[(25, 2)])
     def test_sustainability_query_25_2(self, connection):

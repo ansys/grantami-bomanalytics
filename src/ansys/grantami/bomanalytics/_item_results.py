@@ -28,12 +28,12 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 
 from abc import ABC
 from copy import deepcopy
-from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
 from ansys.openapi.common import Unset, Unset_Type
 
+from ._documented_enum import _DocumentedEnum
 from ._item_definitions import (
     CoatingReferenceWithIdentifier,
     MaterialReference,
@@ -58,12 +58,11 @@ if TYPE_CHECKING:
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
-class TransportCategory(Enum):
-    """The stage of the product lifecycle to which a transport stage belongs."""
+class TransportCategory(_DocumentedEnum):
+    """The stage of the product lifecycle to which a :class:`.TransportSummaryByPartResult` belongs."""
 
-    MANUFACTURING = "Manufacturing"
-    DISTRIBUTION = "Distribution"
-    NOT_APPLICABLE = "NotApplicable"
+    MANUFACTURING = "Manufacturing", """Transportation of individual components before the product is completed."""
+    DISTRIBUTION = "Distribution", """Transportation of the complete finished product."""
 
 
 class ItemResultFactory:
@@ -593,7 +592,12 @@ class ItemResultFactory:
         TransportSummaryByPartResult
         """
 
-        category = TransportCategory(result.category)
+        # BAS does not support nullable enums in server responses, so NotApplicable is used to indicate that
+        # the category should be null.
+        if result.category == "NotApplicable":
+            category = None
+        else:
+            TransportCategory(result.category)  # type: ignore[call-arg]
         return TransportSummaryByPartResult(
             distance=cls.create_unitted_value(result.distance),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
@@ -2009,7 +2013,7 @@ class TransportSummaryByPartResult(TransportSummaryBase):
         self,
         part_name: Optional[str],
         parent_part_name: Optional[str],
-        category: TransportCategory,
+        category: Optional[TransportCategory],
         transport_types: set[str],
         **kwargs: Any,
     ) -> None:
@@ -2034,9 +2038,12 @@ class TransportSummaryByPartResult(TransportSummaryBase):
         return self._parent_part_name
 
     @property
-    def category(self) -> TransportCategory:
+    def category(self) -> Optional[TransportCategory]:
         """
         The transport category for this summary.
+
+        Returns ``None`` if this summary represents the aggregation of parts with transport stages that do not exceed
+        the 5% threshold.
         """
         return self._category
 

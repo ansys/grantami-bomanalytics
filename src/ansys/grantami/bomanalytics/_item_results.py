@@ -597,7 +597,7 @@ class ItemResultFactory:
         if result.category == "NotApplicable":
             category = None
         else:
-            TransportCategory(result.category)  # type: ignore[call-arg]
+            category = TransportCategory(result.category)  # type: ignore[call-arg]
         return TransportSummaryByPartResult(
             distance=cls.create_unitted_value(result.distance),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),

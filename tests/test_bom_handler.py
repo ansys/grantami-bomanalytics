@@ -23,7 +23,6 @@
 from abc import ABC
 from difflib import context_diff
 from itertools import product
-from pathlib import Path
 import re
 from typing import Any, Dict, Literal
 import uuid
@@ -34,36 +33,23 @@ import pytest
 from ansys.grantami.bomanalytics import BoMHandler
 from ansys.grantami.bomanalytics.bom_types import eco2301, eco2412, gbt1205
 
-from .inputs import (
-    bom_with_annotations_2301,
-    bom_with_annotations_2301_path,
-    bom_with_annotations_2412,
-    bom_with_annotations_2412_path,
-    large_bom_2301,
-    large_bom_2301_path,
-    large_bom_2412,
-    large_bom_2412_path,
-    sample_bom_1711,
-    sample_sustainability_bom_2301,
-    sample_sustainability_bom_2301_path,
-    sample_sustainability_bom_2412,
-    sample_sustainability_bom_2412_path,
-)
+from .inputs import BoM, example_boms
 
 
 class TestRoundTripBoMs:
     @pytest.mark.parametrize(
-        "input_bom",
+        "input_bom_key",
         [
-            pytest.param(large_bom_2301, id="large_bom_2301"),
-            pytest.param(sample_sustainability_bom_2301, id="sustainability_bom_2301"),
-            pytest.param(large_bom_2412, id="large_bom_2412"),
-            pytest.param(sample_sustainability_bom_2412, id="sustainability_bom_2412"),
+            "medium-test-bom-2301",
+            "sustainability-bom-2301",
+            "medium-test-bom-2412",
+            "sustainability-bom-2412",
         ],
     )
     @pytest.mark.parametrize("allow_unsupported_data", [True, False])
-    def test_roundtrip_from_text_parsing_succeeds(self, input_bom: str, allow_unsupported_data: bool):
+    def test_roundtrip_from_text_parsing_succeeds(self, input_bom_key: str, allow_unsupported_data: bool):
         bom_handler = BoMHandler()
+        input_bom = example_boms[input_bom_key].content
         deserialized_bom = bom_handler.load_bom_from_text(input_bom, allow_unsupported_data)
 
         rendered_bom = bom_handler.dump_bom(deserialized_bom)
@@ -72,14 +58,15 @@ class TestRoundTripBoMs:
         assert deserialized_bom == deserialized_bom_roundtriped
 
     @pytest.mark.parametrize(
-        "input_bom",
+        "input_bom_key",
         [
-            pytest.param(bom_with_annotations_2301, id="annotations_2301"),
-            pytest.param(bom_with_annotations_2412, id="annotations_2412"),
+            "bom-with-annotations-2301",
+            "bom-with-annotations-2412",
         ],
     )
-    def test_roundtrip_from_text_parsing_succeeds_unsupported_boms_lax(self, input_bom: str):
+    def test_roundtrip_from_text_parsing_succeeds_unsupported_boms_lax(self, input_bom_key: str):
         bom_handler = BoMHandler()
+        input_bom = example_boms[input_bom_key].content
         deserialized_bom = bom_handler.load_bom_from_text(input_bom, True)
 
         rendered_bom = bom_handler.dump_bom(deserialized_bom)
@@ -88,29 +75,31 @@ class TestRoundTripBoMs:
         assert deserialized_bom == deserialized_bom_roundtriped
 
     @pytest.mark.parametrize(
-        "input_bom",
+        "input_bom_key",
         [
-            pytest.param(bom_with_annotations_2301, id="annotations_2301"),
-            pytest.param(bom_with_annotations_2412, id="annotations_2412"),
+            "bom-with-annotations-2301",
+            "bom-with-annotations-2412",
         ],
     )
-    def test_roundtrip_from_text_parsing_fails_unsupported_boms_strict(self, input_bom: str):
+    def test_roundtrip_from_text_parsing_fails_unsupported_boms_strict(self, input_bom_key: str):
         bom_handler = BoMHandler()
+        input_bom = example_boms[input_bom_key].content
         with pytest.raises(ValueError, match="The following fields in the provided BoM could not be deserialized"):
             bom_handler.load_bom_from_text(input_bom, False)
 
     @pytest.mark.parametrize(
-        "input_bom",
+        "input_bom_key",
         [
-            pytest.param(large_bom_2301_path, id="large_bom_2301"),
-            pytest.param(sample_sustainability_bom_2301_path, id="sustainability_bom_2301"),
-            pytest.param(large_bom_2412_path, id="large_bom_2412"),
-            pytest.param(sample_sustainability_bom_2412_path, id="sustainability_bom_2412"),
+            "medium-test-bom-2301",
+            "sustainability-bom-2301",
+            "medium-test-bom-2412",
+            "sustainability-bom-2412",
         ],
     )
     @pytest.mark.parametrize("allow_unsupported_data", [True, False])
-    def test_roundtrip_from_file_parsing_succeeds(self, input_bom: Path, allow_unsupported_data: bool):
+    def test_roundtrip_from_file_parsing_succeeds(self, input_bom_key: str, allow_unsupported_data: bool):
         bom_handler = BoMHandler()
+        input_bom = example_boms[input_bom_key].path
         deserialized_bom = bom_handler.load_bom_from_file(input_bom, allow_unsupported_data)
 
         rendered_bom = bom_handler.dump_bom(deserialized_bom)
@@ -119,14 +108,15 @@ class TestRoundTripBoMs:
         assert deserialized_bom == deserialized_bom_roundtriped
 
     @pytest.mark.parametrize(
-        "input_bom",
+        "input_bom_key",
         [
-            pytest.param(bom_with_annotations_2301_path, id="annotations_2301"),
-            pytest.param(bom_with_annotations_2412_path, id="annotations_2412"),
+            "bom-with-annotations-2301",
+            "bom-with-annotations-2412",
         ],
     )
-    def test_roundtrip_from_file_parsing_succeeds_unsupported_boms_lax(self, input_bom: Path):
+    def test_roundtrip_from_file_parsing_succeeds_unsupported_boms_lax(self, input_bom_key: str):
         bom_handler = BoMHandler()
+        input_bom = example_boms[input_bom_key].path
         deserialized_bom = bom_handler.load_bom_from_file(input_bom, True)
 
         rendered_bom = bom_handler.dump_bom(deserialized_bom)
@@ -135,14 +125,15 @@ class TestRoundTripBoMs:
         assert deserialized_bom == deserialized_bom_roundtriped
 
     @pytest.mark.parametrize(
-        "input_bom",
+        "input_bom_key",
         [
-            pytest.param(bom_with_annotations_2301_path, id="annotations_2301"),
-            pytest.param(bom_with_annotations_2412_path, id="annotations_2412"),
+            "bom-with-annotations-2301",
+            "bom-with-annotations-2412",
         ],
     )
-    def test_roundtrip_from_file_parsing_fails_unsupported_boms_strict(self, input_bom: Path):
+    def test_roundtrip_from_file_parsing_fails_unsupported_boms_strict(self, input_bom_key: str):
         bom_handler = BoMHandler()
+        input_bom = example_boms[input_bom_key].path
         with pytest.raises(ValueError, match="The following fields in the provided BoM could not be deserialized"):
             bom_handler.load_bom_from_file(input_bom, False)
 
@@ -150,8 +141,7 @@ class TestRoundTripBoMs:
 class RoundTripWithAssertionsBoMTester(ABC):
     _namespace_map: dict[str, str]
     _default_namespace: str
-    _bom: str
-    _bom_path: Path
+    _bom: BoM
 
     class _TestableBoMHandler(BoMHandler):
         def __init__(self, default_namespace: str, namespace_mapping: Dict[str, str]):
@@ -199,10 +189,10 @@ class RoundTripWithAssertionsBoMTester(ABC):
         bom_handler = type(self)._TestableBoMHandler(
             default_namespace=self._default_namespace, namespace_mapping=self._namespace_map
         )
-        deserialized_bom = bom_handler.load_bom_from_text(self._bom)
+        deserialized_bom = bom_handler.load_bom_from_text(self._bom.content)
         output_bom = bom_handler.dump_bom(deserialized_bom)
 
-        diff = self._compare_boms(source_bom=self._bom, result_bom=output_bom)
+        diff = self._compare_boms(source_bom=self._bom.content, result_bom=output_bom)
 
         assert len(diff) == 0, "\n".join(diff)
 
@@ -210,10 +200,10 @@ class RoundTripWithAssertionsBoMTester(ABC):
         bom_handler = type(self)._TestableBoMHandler(
             default_namespace=self._default_namespace, namespace_mapping=self._namespace_map
         )
-        deserialized_bom = bom_handler.load_bom_from_file(self._bom_path)
+        deserialized_bom = bom_handler.load_bom_from_file(self._bom.path)
         output_bom = bom_handler.dump_bom(deserialized_bom)
 
-        diff = self._compare_boms(source_bom=self._bom, result_bom=output_bom)
+        diff = self._compare_boms(source_bom=self._bom.content, result_bom=output_bom)
 
         assert len(diff) == 0, "\n".join(diff)
 
@@ -221,15 +211,13 @@ class RoundTripWithAssertionsBoMTester(ABC):
 class TestRoundTripBoM2301WithAssertions(RoundTripWithAssertionsBoMTester):
     _namespace_map = {"gbt": "http://www.grantadesign.com/12/05/GrantaBaseTypes"}
     _default_namespace = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
-    _bom = large_bom_2301
-    _bom_path = large_bom_2301_path
+    _bom = example_boms["medium-test-bom-2301"]
 
 
 class TestRoundTripBoM2412WithAssertions(RoundTripWithAssertionsBoMTester):
     _namespace_map = {"gbt": "http://www.grantadesign.com/12/05/GrantaBaseTypes"}
     _default_namespace = "http://www.grantadesign.com/24/12/BillOfMaterialsEco"
-    _bom = large_bom_2412
-    _bom_path = large_bom_2412_path
+    _bom = example_boms["medium-test-bom-2412"]
 
 
 class TestBoMDeserialization:
@@ -238,7 +226,8 @@ class TestBoMDeserialization:
 
     @pytest.fixture(scope="class")
     def simple_2301_bom(self):
-        input_bom = sample_bom_1711.replace(
+        bom_1711 = example_boms["bom-1711"].content
+        input_bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
             "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
         )
@@ -247,7 +236,8 @@ class TestBoMDeserialization:
 
     @pytest.fixture(scope="class")
     def simple_2412_bom(self):
-        input_bom = sample_bom_1711.replace(
+        bom_1711 = example_boms["bom-1711"].content
+        input_bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
             "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
         )

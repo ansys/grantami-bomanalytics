@@ -1,0 +1,60 @@
+Part:
+  Parts:
+    - Parts: [ ]
+      Materials:
+        - Processes:
+            - EmbodiedEnergy:
+                Value: 0.892227273922441
+                Unit: MJ
+              ClimateChange:
+                Value: 0.0579439821562209
+                Unit: kg
+              Name: Coarse Machining
+              ReferenceType: MiRecordHistoryGuid
+              ReferenceValue: d986c90a-2835-45f3-8b69-d6d662dcf53a
+              Id: P4
+          EmbodiedEnergy:
+            Value: 489.332037066857
+            Unit: MJ
+          ClimateChange:
+            Value: 18.0379615325568
+            Unit: kg
+          Recyclable: true
+          Biodegradable: false
+          FunctionalRecycle: true
+          ReportedMass:
+            Value: 2
+            Unit: kg
+          Name: 'High alloy steel, Kovar, annealed'
+          ReferenceType: MiRecordGuid
+          ReferenceValue: 8dc38bb5-eff9-4c60-9233-271a3c8f6270
+          Id: P3
+      Processes: [ ]
+      EmbodiedEnergy:
+        Value: 490.224264340779
+        Unit: MJ
+      ClimateChange:
+        Value: 18.0959055147131
+        Unit: kg
+      ReportedMass:
+        Value: 2
+        Unit: kg
+      Name: PartTwo
+      Id: P2
+  Materials: [ ]
+  Processes: [ ]
+  EmbodiedEnergy:
+    Value: 490.224264340779
+    Unit: MJ
+  ClimateChange:
+    Value: 18.0959055147131
+    Unit: kg
+  ReportedMass:
+    Value: 2
+    Unit: kg
+  Name: PartOne
+  Id: P1
+TransportStages: [ ]
+LogMessages:
+  - Severity: information
+    Message: No location information has been supplied for this BoM. The location has been set to 'The Whole World'

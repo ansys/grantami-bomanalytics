@@ -20,11 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ansys.grantami.bomanalytics_openapi.v2.models import (
-    GetComplianceForSpecificationsResponse,
-    GetImpactedSubstancesForSpecificationsResponse,
-)
-
 from ansys.grantami.bomanalytics import indicators, queries
 
 from .common import (
@@ -42,7 +37,7 @@ class TestImpactedSubstances(BaseMockTester):
         .with_legislation_ids(["Fake legislation"])
         .with_specification_ids(["Fake ID"])
     )
-    mock_key = GetImpactedSubstancesForSpecificationsResponse.__name__
+    mock_key = "GetImpactedSubstancesForSpecifications.Response"
 
     def test_impacted_substances_by_specification(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
@@ -140,7 +135,7 @@ class TestCompliance(BaseMockTester):
         )
         .with_specification_ids(["Fake ID"])
     )
-    mock_key = GetComplianceForSpecificationsResponse.__name__
+    mock_key = "GetComplianceForSpecifications.Response"
 
     def test_compliance_by_specification_and_indicator(self, mock_connection):
         response = self.get_mocked_response(mock_connection)

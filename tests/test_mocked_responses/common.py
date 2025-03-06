@@ -24,7 +24,7 @@ import requests_mock
 
 from ansys.grantami.bomanalytics import indicators, queries
 
-from ..inputs import examples_as_strings
+from ..inputs import example_payloads
 
 
 class BaseMockTester:
@@ -35,7 +35,7 @@ class BaseMockTester:
         if response:
             text = response
         else:
-            text = examples_as_strings[self.mock_key]
+            text = example_payloads[self.mock_key].to_json()
         with requests_mock.Mocker() as m:
             m.get(requests_mock.ANY, text="")
             m.post(url=requests_mock.ANY, text=text)

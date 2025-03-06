@@ -1,0 +1,95 @@
+MaterialSummary:
+  Summary:
+    - Identity: steel-kovar-annealed
+      RecordReference:
+        ReferenceType: MiRecordGuid
+        ReferenceValue: 8dc38bb5-eff9-4c60-9233-271a3c8f6270
+      EmbodiedEnergy:
+        Value: 149.186596666725
+        Unit: MJ
+      EmbodiedEnergyPercentage: 100
+      ClimateChange:
+        Value: 5.49937851602342
+        Unit: kg
+      ClimateChangePercentage: 100
+      MassBeforeProcessing:
+        Value: 0.625
+        Unit: kg
+      MassAfterProcessing:
+        Value: 0.5
+        Unit: kg
+      LargestContributors:
+        - ComponentName: PartTwo
+          ComponentPartNumber: PartTwo
+          MaterialMassBeforeProcessing:
+            Value: 0.625
+            Unit: kg
+  PhaseSummary:
+    Phase: Material
+    EmbodiedEnergy:
+      Value: 149.186596666725
+      Unit: MJ
+    EmbodiedEnergyPercentage: 54.9433431023616
+    ClimateChange:
+      Value: 5.49937851602342
+      Unit: kg
+    ClimateChangePercentage: 39.5645592037266
+ProcessSummary:
+  PrimaryProcesses:
+    - ProcessName: Metal casting
+      ProcessRecordReference:
+        ReferenceType: MiRecordGuid
+        ReferenceValue: baa6c95b-ff0e-4811-9120-92717ee15bda
+      MaterialRecordReference:
+        ReferenceType: MiRecordGuid
+        ReferenceValue: 8dc38bb5-eff9-4c60-9233-271a3c8f6270
+      MaterialIdentity: steel-kovar-annealed
+      EmbodiedEnergy:
+        Value: 120.110900684605
+        Unit: MJ
+      EmbodiedEnergyPercentage: 100
+      ClimateChange:
+        Value: 8.25552087559637
+        Unit: kg
+      ClimateChangePercentage: 100
+  SecondaryProcesses:
+    - ProcessName: 'Machining, coarse'
+      ProcessRecordReference:
+        ReferenceType: MiRecordGuid
+        ReferenceValue: 907bda29-e800-44f6-b7ea-4eb8e7cff375
+      MaterialRecordReference:
+        ReferenceType: MiRecordGuid
+        ReferenceValue: 8dc38bb5-eff9-4c60-9233-271a3c8f6270
+      MaterialIdentity: steel-kovar-annealed
+      EmbodiedEnergy:
+        Value: 2.23056818480611
+        Unit: MJ
+      EmbodiedEnergyPercentage: 100
+      ClimateChange:
+        Value: 0.144859955390553
+        Unit: kg
+      ClimateChangePercentage: 100
+  JoiningAndFinishingProcesses: [ ]
+  PhaseSummary:
+    Phase: Processes
+    EmbodiedEnergy:
+      Value: 122.341468869412
+      Unit: MJ
+    EmbodiedEnergyPercentage: 45.0566568976384
+    ClimateChange:
+      Value: 8.40038083098692
+      Unit: kg
+    ClimateChangePercentage: 60.4354407962734
+TransportSummary:
+  Summary: [ ]
+  PhaseSummary:
+    Phase: Transport
+    EmbodiedEnergy:
+      Value: 0
+      Unit: MJ
+    EmbodiedEnergyPercentage: 0
+    ClimateChange:
+      Value: 0
+      Unit: kg
+    ClimateChangePercentage: 0
+LogMessages: [ ]

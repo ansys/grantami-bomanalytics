@@ -27,7 +27,7 @@ import pytest
 
 from ansys.grantami.bomanalytics import queries
 
-from .inputs import sample_bom_1711, sample_compliance_bom_1711, sample_sustainability_bom_2301
+from .inputs import example_boms
 
 
 class MockRecordDefinition:
@@ -118,9 +118,10 @@ class TestBomArgManager:
         assert am._item_definitions == []
         assert am.__repr__() == "<_BomQueryDataManager>"
 
-    @pytest.mark.parametrize("bom", [sample_bom_1711, sample_sustainability_bom_2301])
-    def test_add_bom(self, bom):
+    @pytest.mark.parametrize("bom_key", ["bom-1711", "sustainability-bom-2301", "sustainability-bom-2412"])
+    def test_add_bom(self, bom_key: str):
         am = queries._BomQueryDataManager(all_bom_formats)
+        bom = example_boms[bom_key].content
         am.bom = bom
         assert am._item_definitions[0] == bom
         assert am.batched_arguments == [{"bom_xml": bom}]
@@ -129,31 +130,33 @@ class TestBomArgManager:
 
 class TestBomNameSpaceParsing:
     @pytest.mark.parametrize(
-        ["bom", "bom_format"],
+        ["bom_key", "bom_format"],
         [
-            (sample_sustainability_bom_2301, queries._BomFormat.bom_xml2301),
-            (sample_bom_1711, queries._BomFormat.bom_xml1711),
-            (sample_compliance_bom_1711, queries._BomFormat.bom_xml1711),
+            ("sustainability-bom-2301", queries._BomFormat.bom_xml2301),
+            ("sustainability-bom-2412", queries._BomFormat.bom_xml2412),
+            ("bom-1711", queries._BomFormat.bom_xml1711),
+            ("compliance-bom-1711", queries._BomFormat.bom_xml1711),
         ],
     )
-    def test_valid_namespace_parsing(self, bom, bom_format):
+    def test_valid_namespace_parsing(self, bom_key, bom_format):
+        bom = example_boms[bom_key].content
         parsed_format = queries._BomQueryDataManager(all_bom_formats)._validate_bom(bom)
         assert parsed_format == bom_format
 
     def test_not_valid_xml(self):
-        bom = sample_bom_1711.replace("<Components>", "<Component>")
+        bom = example_boms["bom-1711"].content.replace("<Components>", "<Component>")
         with pytest.raises(ValueError, match="BoM provided as input is not valid XML"):
             queries._BomQueryDataManager(all_bom_formats).bom = bom
 
     def test_xml_but_not_a_bom(self):
-        bom = sample_bom_1711.replace("PartsEco", "SomeOtherRoot")
+        bom = example_boms["bom-1711"].content.replace("PartsEco", "SomeOtherRoot")
         with pytest.raises(
             ValueError, match="Invalid input BoM. Ensure the document is compliant with the expected XML schema"
         ):
             queries._BomQueryDataManager(all_bom_formats).bom = bom
 
     def test_xml_bom_but_unknown_namespace(self):
-        bom = sample_sustainability_bom_2301.replace(
+        bom = example_boms["sustainability-bom-2301"].content.replace(
             "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "UnknownNamespace"
         )
         with pytest.raises(
@@ -166,20 +169,24 @@ class TestBomNameSpaceParsing:
             "bom_xml2301 (http://www.grantadesign.com/23/01/BillOfMaterialsEco) is not supported by this query."
         )
         with pytest.raises(ValueError, match=expected_error):
-            queries._BomQueryDataManager([queries._BomFormat.bom_xml1711]).bom = sample_sustainability_bom_2301
+            queries._BomQueryDataManager([queries._BomFormat.bom_xml1711]).bom = example_boms[
+                "sustainability-bom-2301"
+            ].content
 
 
 def test_add_boms_sequentially():
     # Check that properties are updated as expected when overwriting a bom with a bom from another version
     bom_manager = queries._BomQueryDataManager(all_bom_formats)
     # assert query.item_type_name is None  # TODO attribute does not exist
-    bom_manager.bom = sample_bom_1711
+    bom_1 = example_boms["bom-1711"].content
+    bom_manager.bom = bom_1
     assert bom_manager.item_type_name == "bom_xml"
-    assert bom_manager._item_definitions[0] == sample_bom_1711
+    assert bom_manager._item_definitions[0] == bom_1
 
-    bom_manager.bom = sample_sustainability_bom_2301
+    bom_2 = example_boms["sustainability-bom-2301"].content
+    bom_manager.bom = bom_2
     assert bom_manager.item_type_name == "bom_xml"
-    assert bom_manager._item_definitions[0] == sample_sustainability_bom_2301
+    assert bom_manager._item_definitions[0] == bom_2
 
 
 class TestBomFormatEnum:

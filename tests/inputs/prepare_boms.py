@@ -20,5 +20,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .prepare_boms import BoM, example_boms
-from .prepare_payloads import Payload, example_payloads
+from dataclasses import dataclass
+import pathlib
+
+_inputs_dir = pathlib.Path(__file__).parent
+_bom_dir = _inputs_dir / "boms"
+
+
+@dataclass(frozen=True)
+class BoM:
+    path: pathlib.Path
+    content: str
+
+
+example_boms: dict[str, BoM] = {}
+
+
+for file in _bom_dir.glob("*.xml"):
+    with open(file, encoding="utf-8") as f:
+        content = f.read()
+    bom = BoM(path=file, content=content)
+    example_boms[file.stem] = bom

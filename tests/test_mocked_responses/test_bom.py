@@ -19,16 +19,11 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-from ansys.grantami.bomanalytics_openapi.v2.models import (
-    GetComplianceForBomResponse,
-    GetImpactedSubstancesForBomResponse,
-)
 import pytest
 
 from ansys.grantami.bomanalytics import indicators, queries
 
-from ..inputs import sample_sustainability_bom_2301
+from ..inputs import example_boms
 from .common import BaseMockTester, MaterialValidator, PartValidator, SubstanceValidator
 
 
@@ -69,8 +64,9 @@ class _TestImpactedSubstances(BaseMockTester):
 
 class TestImpactedSubstances(_TestImpactedSubstances):
     # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
-    query = queries.BomImpactedSubstancesQuery().with_bom(sample_sustainability_bom_2301)
-    mock_key = GetImpactedSubstancesForBomResponse.__name__
+    bom = example_boms["sustainability-bom-2301"].content
+    query = queries.BomImpactedSubstancesQuery().with_bom(bom)
+    mock_key = "GetImpactedSubstancesForBom.Response"
 
 
 class _TestCompliance(BaseMockTester):
@@ -183,6 +179,7 @@ class _TestCompliance(BaseMockTester):
 
 class TestCompliance(_TestCompliance):
     # Setting the BoM is required: to pass query validation and to resolve which endpoint to call
+    bom = example_boms["sustainability-bom-2301"].content
     query = (
         queries.BomComplianceQuery()
         .with_indicators(
@@ -191,6 +188,6 @@ class TestCompliance(_TestCompliance):
                 indicators.RoHSIndicator(name="Indicator 2", legislation_ids=["Mock"]),
             ]
         )
-        .with_bom(sample_sustainability_bom_2301)
+        .with_bom(bom)
     )
-    mock_key = GetComplianceForBomResponse.__name__
+    mock_key = "GetComplianceForBom.Response"

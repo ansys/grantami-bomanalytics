@@ -22,10 +22,6 @@
 
 import json
 
-from ansys.grantami.bomanalytics_openapi.v2.models import (
-    GetSustainabilityForBomResponse,
-    GetSustainabilitySummaryForBomResponse,
-)
 import pytest
 
 from ansys.grantami.bomanalytics import TransportCategory, queries
@@ -34,15 +30,16 @@ from ansys.grantami.bomanalytics._query_results import (
     BomSustainabilitySummaryQueryResult,
 )
 
-from ..inputs import examples_as_dicts, sample_sustainability_bom_2301
+from ..inputs import example_boms, example_payloads
 from .common import BaseMockTester
 
 
 class TestBomSustainability(BaseMockTester):
     # Use sample BoM to avoid validation error
     # The response depends only on the examples.py module, not on the provided BoM
-    query = queries.BomSustainabilityQuery().with_bom(sample_sustainability_bom_2301)
-    mock_key = GetSustainabilityForBomResponse.__name__
+    bom = example_boms["sustainability-bom-2301"].content
+    query = queries.BomSustainabilityQuery().with_bom(bom)
+    mock_key = "GetSustainabilityForBom.Response"
 
     def test_response_processing(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
@@ -110,11 +107,12 @@ class TestBomSustainability(BaseMockTester):
 class TestBomSustainabilitySummary(BaseMockTester):
     # Use sample BoM to avoid validation error
     # The response depends only on the examples.py module, not on the provided BoM
-    query = queries.BomSustainabilitySummaryQuery().with_bom(sample_sustainability_bom_2301)
-    mock_key = GetSustainabilitySummaryForBomResponse.__name__
+    bom = example_boms["sustainability-bom-2301"].content
+    query = queries.BomSustainabilitySummaryQuery().with_bom(bom)
+    mock_key = "GetSustainabilitySummaryForBom.Response.2301"
 
     def test_response_processing(self, mock_connection):
-        patched_response = examples_as_dicts[self.mock_key]
+        patched_response = example_payloads[self.mock_key].data
         patched_response["MaterialSummary"]["Summary"][0]["LargestContributors"][0]["RecordReference"] = {}
         response = self.get_mocked_response(mock_connection, json.dumps(patched_response))
         assert isinstance(response, BomSustainabilitySummaryQueryResult)
@@ -208,12 +206,12 @@ class TestBomSustainabilitySummary(BaseMockTester):
 class TestBomSustainabilitySummary2412(BaseMockTester):
     # Use sample BoM to avoid validation error
     # The response depends only on the examples.py module, not on the provided BoM
-    query = queries.BomSustainabilitySummaryQuery().with_bom(sample_sustainability_bom_2301)
-    mock_key = "GetSustainabilitySummaryForBomResponse2412"
+    bom = example_boms["sustainability-bom-2412"].content
+    query = queries.BomSustainabilitySummaryQuery().with_bom(bom)
+    mock_key = "GetSustainabilitySummaryForBoM.Response.2412"
 
     def test_response_processing(self, mock_connection):
-        patched_response = examples_as_dicts[self.mock_key]
-        response = self.get_mocked_response(mock_connection, json.dumps(patched_response))
+        response = self.get_mocked_response(mock_connection)
         assert isinstance(response, BomSustainabilitySummaryQueryResult)
 
         assert len(response.messages) == 0

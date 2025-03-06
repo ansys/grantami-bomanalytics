@@ -33,18 +33,17 @@ or part.
 """
 
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, Union
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
-
-from ._documented_enum import _DocumentedEnum
 
 if TYPE_CHECKING:
     from ._query_results import MaterialComplianceQueryResult  # noqa: F401
     from .queries import MaterialComplianceQuery  # noqa: F401
 
 
-class _Flag(_DocumentedEnum):
+class _Flag(Enum):
     """Base class for flags (result states) of indicators.
 
     This class implements `__le__` , but it relies on specific flag classes to implement other

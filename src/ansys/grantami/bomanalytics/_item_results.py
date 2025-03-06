@@ -28,12 +28,12 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 
 from abc import ABC
 from copy import deepcopy
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
 from ansys.openapi.common import Unset, Unset_Type
 
-from ._documented_enum import _DocumentedEnum
 from ._item_definitions import (
     CoatingReferenceWithIdentifier,
     MaterialReference,
@@ -58,11 +58,17 @@ if TYPE_CHECKING:
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
 
 
-class TransportCategory(_DocumentedEnum):
-    """The stage of the product lifecycle to which a :class:`.TransportSummaryByPartResult` belongs."""
+class TransportCategory(Enum):
+    """The stage of the product lifecycle to which a :class:`.TransportSummaryByPartResult` belongs.
 
-    MANUFACTURING = "Manufacturing", """Transportation of individual components before the product is completed."""
-    DISTRIBUTION = "Distribution", """Transportation of the complete finished product."""
+    :class:`~enum.Enum` class.
+    """
+
+    MANUFACTURING = "Manufacturing"
+    """Transportation of individual components before the product is completed."""
+
+    DISTRIBUTION = "Distribution"
+    """Transportation of the complete finished product."""
 
 
 class ItemResultFactory:
@@ -597,7 +603,7 @@ class ItemResultFactory:
         if result.category == "NotApplicable":
             category = None
         else:
-            category = TransportCategory(result.category)  # type: ignore[call-arg]
+            category = TransportCategory(result.category)
         return TransportSummaryByPartResult(
             distance=cls.create_unitted_value(result.distance),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),

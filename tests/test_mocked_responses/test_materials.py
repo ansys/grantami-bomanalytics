@@ -19,12 +19,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
-from ansys.grantami.bomanalytics_openapi.v2.models import (
-    GetComplianceForMaterialsResponse,
-    GetImpactedSubstancesForMaterialsResponse,
-)
-
 from ansys.grantami.bomanalytics import indicators, queries
 
 from .common import BaseMockTester, MaterialValidator, SubstanceValidator
@@ -36,7 +30,7 @@ class TestImpactedSubstances(BaseMockTester):
         .with_legislation_ids(["Fake legislation"])
         .with_material_ids(["Fake ID"])
     )
-    mock_key = GetImpactedSubstancesForMaterialsResponse.__name__
+    mock_key = "GetImpactedSubstancesForMaterials.Response"
 
     def test_impacted_substances_by_material(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
@@ -114,7 +108,7 @@ class TestCompliance(BaseMockTester):
         )
         .with_material_ids(["Fake ID"])
     )
-    mock_key = GetComplianceForMaterialsResponse.__name__
+    mock_key = "GetComplianceForMaterials.Response"
 
     def test_compliance_by_material_and_indicator(self, mock_connection):
         response = self.get_mocked_response(mock_connection)

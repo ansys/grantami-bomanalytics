@@ -20,15 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ansys.grantami.bomanalytics_openapi.v2.models import GetAvailableLicensesResponse
 import requests_mock
 
-from ..inputs import examples_as_strings
+from ..inputs import example_payloads
 
 
 def test_response(mock_connection):
     with requests_mock.Mocker() as mocker:
-        mocker.get(requests_mock.ANY, text=examples_as_strings[GetAvailableLicensesResponse.__name__])
+        mocker.get(requests_mock.ANY, text=example_payloads["GetAvailableLicenses.Response"].to_json())
         response = mock_connection._get_licensing_information()
     assert response.sustainability is False
     assert response.restricted_substances is True

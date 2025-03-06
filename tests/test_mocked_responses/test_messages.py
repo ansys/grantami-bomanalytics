@@ -23,18 +23,18 @@
 import json
 import logging
 
-from ansys.grantami.bomanalytics_openapi.v2.models import GetImpactedSubstancesForMaterialsResponse
 import pytest
 
 from ansys.grantami.bomanalytics import GrantaMIException, queries
 from ansys.grantami.bomanalytics._query_results import LogMessage
 
-from ..inputs import examples_as_dicts, sample_bom_1711
+from ..inputs import example_boms, example_payloads
 from .common import BaseMockTester
 
 
 class TestMessages(BaseMockTester):
-    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_1711)
+    bom = example_boms["bom-1711"].content
+    query = queries.BomImpactedSubstancesQuery().with_bom(bom)
 
     def test_critical_error_raises_exception(self, mock_connection, caplog):
         error_message = "This is a critical message"
@@ -51,8 +51,8 @@ class TestMessages(BaseMockTester):
             .with_legislation_ids(["Fake legislation"])
             .with_material_ids(["Fake ID"])
         )
-        mock_key = GetImpactedSubstancesForMaterialsResponse.__name__
-        mock_response = examples_as_dicts[mock_key]
+        mock_key = "GetImpactedSubstancesForMaterials.Response"
+        mock_response = example_payloads[mock_key].data
 
         error_message = f"This is a non-critical {severity} message"
         messages = [{"Severity": severity, "Message": error_message}]
@@ -70,8 +70,8 @@ class TestMessages(BaseMockTester):
             .with_legislation_ids(["Fake legislation"])
             .with_material_ids(["Fake ID"])
         )
-        mock_key = GetImpactedSubstancesForMaterialsResponse.__name__
-        mock_response = examples_as_dicts[mock_key]
+        mock_key = "GetImpactedSubstancesForMaterials.Response"
+        mock_response = example_payloads[mock_key].data
 
         error_message = "This is a non-critical info message"
         messages = [{"Severity": "information", "Message": error_message}]

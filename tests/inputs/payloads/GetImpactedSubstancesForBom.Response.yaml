@@ -1,0 +1,14 @@
+Legislations:
+  - LegislationId: SINList
+    ImpactedSubstances:
+      - SubstanceName: '1,3-Butadiene'
+        CasNumber: 106-99-0
+        EcNumber: 203-450-8
+        MaxPercentageAmountInMaterial:
+        LegislationThreshold: 0.1
+      - SubstanceName: 'Butylated hydroxytoluene [BAN:NF]'
+        CasNumber: 128-37-0
+        EcNumber: 204-881-4
+        MaxPercentageAmountInMaterial:
+        LegislationThreshold: 0.1
+LogMessages: [ ]

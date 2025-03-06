@@ -48,15 +48,7 @@ class _Flag(Enum):
 
     This class implements `__le__` , but it relies on specific flag classes to implement other
     overloads to allow direct comparisons with the containing Indicator.
-
-    Overrides `__new__` to populate the __doc__ on an enum member.
     """
-
-    def __new__(cls, value: int, doc: str) -> "_Flag":
-        obj: _Flag = object.__new__(cls)
-        obj._value_ = value
-        obj.__doc__ = " ".join(doc.split())
-        return obj
 
     @abstractmethod
     def __lt__(self, other: "_Flag") -> bool:
@@ -87,7 +79,7 @@ class _Flag(Enum):
 
 
 class RoHSFlag(_Flag):
-    """Provides permitted RoHS flag states.
+    """Provides permitted RoHS flag states. :class:`~enum.Enum` class.
 
     A larger value means that the item is less compliant. The further down the list the compliance
     result appears, the worse it is.
@@ -96,40 +88,42 @@ class RoHSFlag(_Flag):
     :MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>`.
     """
 
-    RohsNotImpacted = (
-        1,
-        """This substance is not impacted by the specified legislations. *Substance is not impacted.*""",
-    )
-    RohsBelowThreshold = (
-        2,
-        """This substance is impacted by the specified legislations, but it appears in the parent item in a quantity
-        below that specified by the indicator. *Substance is below threshold.*""",
-    )
-    RohsCompliant = (
-        3,
-        """This item either does not contain any substances impacted by the specified legislations or contains no
-        substances above the specified threshold. *Item is compliant.*""",
-    )
-    RohsCompliantWithExemptions = (
-        4,
-        """This item contains substances impacted by the specified legislations, but an
-        exemption has been declared either on itself or a child item. *Item is compliant with exemptions.*""",
-    )
-    RohsAboveThreshold = (
-        5,
-        """This substance is impacted by the specified legislations and is present in a quantity
-        above that specified by the indicator. *Exemption for use required.*""",
-    )
-    RohsNonCompliant = (
-        6,
-        """This item contains one or more substances impacted by the specified legislations. *Item is
-        non-compliant.*""",
-    )
-    RohsUnknown = (
-        7,
-        """One or more declarations are missing, so there is not enough information to determine compliance.
-        *Compliance is unknown.*""",
-    )
+    RohsNotImpacted = 1
+    """This substance is not impacted by the specified legislations. *Substance is not impacted.*"""
+
+    RohsBelowThreshold = 2
+    """
+    This substance is impacted by the specified legislations, but it appears in the parent item in a quantity below that
+    specified by the indicator. *Substance is below threshold.*
+    """
+
+    RohsCompliant = 3
+    """
+    This item either does not contain any substances impacted by the specified legislations or contains no substances
+    above the specified threshold. *Item is compliant.*
+    """
+
+    RohsCompliantWithExemptions = 4
+    """
+    This item contains substances impacted by the specified legislations, but an exemption has been declared either on
+    itself or a child item. *Item is compliant with exemptions.*
+    """
+
+    RohsAboveThreshold = 5
+    """
+    This substance is impacted by the specified legislations and is present in a quantity above that specified by the
+    indicator. *Exemption for use required.*
+    """
+
+    RohsNonCompliant = 6
+    """This item contains one or more substances impacted by the specified legislations. *Item is non-compliant.*
+    """
+
+    RohsUnknown = 7
+    """
+    One or more declarations are missing, so there is not enough information to determine compliance. *Compliance is
+    unknown.*
+    """
 
     def __lt__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
@@ -166,7 +160,7 @@ class RoHSFlag(_Flag):
 
 
 class WatchListFlag(_Flag):
-    """Provides permitted watch list flag states.
+    """Provides permitted watch list flag states. :class:`~enum.Enum` class.
 
     An increasing value means less compliance. The further down the list the compliance result
     appears, the worse it is.
@@ -175,37 +169,32 @@ class WatchListFlag(_Flag):
     :MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>`.
     """
 
-    WatchListNotImpacted = (
-        1,
-        """This substance is not impacted by the specified legislations. *Substance is not impacted.*""",
-    )
-    WatchListCompliant = (
-        2,
-        """This item does not contain any substances impacted by the specified legislations. *Item is compliant.*""",
-    )
-    WatchListBelowThreshold = (
-        3,
-        """This substance is impacted by the specified legislations, but appears in the parent
-        item in a quantity below that specified by the indicator. *Substance is below threshold.*""",
-    )
-    WatchListAllSubstancesBelowThreshold = (
-        4,
-        """This item contains no substances above the specified threshold. *Item is compliant.*""",
-    )
-    WatchListAboveThreshold = (
-        5,
-        """This substance is impacted by the specified legislations and appears in the parent
-        item in a quantity above that specified by the indicator. *Substance is impacted.*""",
-    )
-    WatchListHasSubstanceAboveThreshold = (
-        6,
-        """This item contains one or more substances impacted by the specified legislations. *Item is
-        non-compliant.*""",
-    )
-    WatchListUnknown = (
-        7,
-        """There is not enough information to determine compliance. *Compliance is unknown.*""",
-    )
+    WatchListNotImpacted = 1
+    """This substance is not impacted by the specified legislations. *Substance is not impacted.*"""
+
+    WatchListCompliant = 2
+    """This item does not contain any substances impacted by the specified legislations. *Item is compliant.*"""
+
+    WatchListBelowThreshold = 3
+    """
+    This substance is impacted by the specified legislations, but appears in the parent item in a quantity below that
+    specified by the indicator. *Substance is below threshold.*
+    """
+
+    WatchListAllSubstancesBelowThreshold = 4
+    """This item contains no substances above the specified threshold. *Item is compliant.*"""
+
+    WatchListAboveThreshold = 5
+    """
+    This substance is impacted by the specified legislations and appears in the parent item in a quantity above that
+    specified by the indicator. *Substance is impacted.*
+    """
+
+    WatchListHasSubstanceAboveThreshold = 6
+    """This item contains one or more substances impacted by the specified legislations. *Item is non-compliant.*"""
+
+    WatchListUnknown = 7
+    """There is not enough information to determine compliance. *Compliance is unknown.*"""
 
     def __lt__(self, other: object) -> bool:
         if isinstance(other, self.__class__):

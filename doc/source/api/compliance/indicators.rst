@@ -22,15 +22,18 @@ RoHS indicator
 
 .. autoclass:: ansys.grantami.bomanalytics.indicators.RoHSIndicator
 
-.. autoenum:: ansys.grantami.bomanalytics.indicators.RoHSFlag
-
+.. autoclass:: ansys.grantami.bomanalytics.indicators.RoHSFlag(value)
+   :members:
+   :member-order: bysource
 
 Watch list indicator
 --------------------
 
 .. autoclass:: ansys.grantami.bomanalytics.indicators.WatchListIndicator
 
-.. autoenum:: ansys.grantami.bomanalytics.indicators.WatchListFlag
+.. autoclass:: ansys.grantami.bomanalytics.indicators.WatchListFlag(value)
+   :members:
+   :member-order: bysource
 
 
 .. [1] A substance is determined to be a process chemical if either the substance category is set as 'Used in

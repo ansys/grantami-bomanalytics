@@ -62,6 +62,8 @@ class TransportCategory(Enum):
     """The stage of the product lifecycle to which a :class:`.TransportSummaryByPartResult` belongs.
 
     :class:`~enum.Enum` class.
+
+    .. versionadded:: 2.3
     """
 
     MANUFACTURING = "Manufacturing"

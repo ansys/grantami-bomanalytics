@@ -37,6 +37,20 @@ Transport
    :inherited-members:
    :member-order: by_mro_by_source
 
+.. autoclass:: ansys.grantami.bomanalytics._item_results.TransportSummaryByCategoryResult
+   :members:
+   :inherited-members:
+   :member-order: by_mro_by_source
+
+.. autoclass:: ansys.grantami.bomanalytics._item_results.TransportSummaryByPartResult
+   :members:
+   :inherited-members:
+   :member-order: by_mro_by_source
+
+.. autoclass:: ansys.grantami.bomanalytics._item_results.TransportCategory(value)
+   :members:
+   :member-order: bysource
+
 Material
 ~~~~~~~~
 

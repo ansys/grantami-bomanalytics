@@ -28,7 +28,7 @@ from ansys.grantami.bomanalytics_openapi.v2.models import (
 )
 import pytest
 
-from ansys.grantami.bomanalytics import queries
+from ansys.grantami.bomanalytics import TransportCategory, queries
 from ansys.grantami.bomanalytics._query_results import (
     BomSustainabilityQueryResult,
     BomSustainabilitySummaryQueryResult,
@@ -200,3 +200,76 @@ class TestBomSustainabilitySummary(BaseMockTester):
         assert unique_spmp_0.climate_change_percentage == 100
 
         assert len(response.transport_details) == 0
+        assert response.transport_details_aggregated_by_part == []
+        assert response.manufacturing_transport_summary is None
+        assert response.distribution_transport_summary is None
+
+
+class TestBomSustainabilitySummary2412(BaseMockTester):
+    # Use sample BoM to avoid validation error
+    # The response depends only on the examples.py module, not on the provided BoM
+    query = queries.BomSustainabilitySummaryQuery().with_bom(sample_sustainability_bom_2301)
+    mock_key = "GetSustainabilitySummaryForBomResponse2412"
+
+    def test_response_processing(self, mock_connection):
+        patched_response = examples_as_dicts[self.mock_key]
+        response = self.get_mocked_response(mock_connection, json.dumps(patched_response))
+        assert isinstance(response, BomSustainabilitySummaryQueryResult)
+
+        assert len(response.messages) == 0
+
+        # Transport details
+        transport_details = response.transport_details
+        assert len(transport_details) == 1
+        transport = transport_details[0]
+        assert transport.climate_change.value == 0.333123822320444
+        assert transport.climate_change.unit == "kg"
+        assert transport.climate_change_percentage == 100.0
+        assert transport.distance.value == 200.0
+        assert transport.distance.unit == "km"
+        assert transport.embodied_energy.value == 4.72415244615649
+        assert transport.embodied_energy.unit == "MJ"
+        assert transport.embodied_energy_percentage == 100.0
+        assert transport.name == "Aircraft, short haul, belly-freight"
+        assert transport.transport_reference.record_guid == "b916ed6b-5e06-4343-9131-d4d562e2d12b"
+        assert transport.transport_reference.record_history_guid is None
+        assert transport.transport_reference.record_history_identity is None
+
+        # Transport summary by part
+        part_transport_groups = response.transport_details_aggregated_by_part
+        assert len(part_transport_groups) == 1
+        part_transport_group = part_transport_groups[0]
+        assert part_transport_group.category == TransportCategory.MANUFACTURING
+        assert part_transport_group.climate_change.value == 0.333123822320444
+        assert part_transport_group.climate_change.unit == "kg"
+        assert part_transport_group.climate_change_percentage == 100.0
+        assert part_transport_group.distance.value == 200.0
+        assert part_transport_group.distance.unit == "km"
+        assert part_transport_group.embodied_energy.value == 4.72415244615649
+        assert part_transport_group.embodied_energy.unit == "MJ"
+        assert part_transport_group.embodied_energy_percentage == 100.0
+        assert part_transport_group.parent_part_name is None
+        assert part_transport_group.part_name is None
+        assert part_transport_group.transport_types == {"Aircraft, short haul, belly-freight"}
+
+        # Distribution transport
+        distribution_transport_group = response.distribution_transport_summary
+        assert distribution_transport_group.climate_change.value == 0.0
+        assert distribution_transport_group.climate_change.unit == "kg"
+        assert distribution_transport_group.climate_change_percentage == 0.0
+        assert distribution_transport_group.distance.value == 0.0
+        assert distribution_transport_group.distance.unit == "km"
+        assert distribution_transport_group.embodied_energy.value == 0.0
+        assert distribution_transport_group.embodied_energy.unit == "MJ"
+        assert distribution_transport_group.embodied_energy_percentage == 0.0
+
+        # Manufacturing transport
+        manufacturing_transport_group = response.manufacturing_transport_summary
+        assert manufacturing_transport_group.climate_change.value == 0.333123822320444
+        assert manufacturing_transport_group.climate_change.unit == "kg"
+        assert manufacturing_transport_group.climate_change_percentage == 100.0
+        assert manufacturing_transport_group.distance.value == 200.0
+        assert manufacturing_transport_group.distance.unit == "km"
+        assert manufacturing_transport_group.embodied_energy.value == 4.72415244615649
+        assert manufacturing_transport_group.embodied_energy.unit == "MJ"
+        assert manufacturing_transport_group.embodied_energy_percentage == 100.0

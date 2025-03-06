@@ -28,6 +28,7 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 
 from abc import ABC
 from copy import deepcopy
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
@@ -55,6 +56,21 @@ if TYPE_CHECKING:
     from .indicators import RoHSIndicator, WatchListIndicator
 
 Indicator_Definitions = Dict[str, Union["WatchListIndicator", "RoHSIndicator"]]
+
+
+class TransportCategory(Enum):
+    """The stage of the product lifecycle to which a :class:`.TransportSummaryByPartResult` belongs.
+
+    :class:`~enum.Enum` class.
+
+    .. versionadded:: 2.3
+    """
+
+    MANUFACTURING = "Manufacturing"
+    """Transportation of individual components before the product is completed."""
+
+    DISTRIBUTION = "Distribution"
+    """Transportation of the complete finished product."""
 
 
 class ItemResultFactory:
@@ -542,6 +558,64 @@ class ItemResultFactory:
             embodied_energy_percentage=_raise_if_unset(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
             climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
+        )
+
+    @classmethod
+    def create_transport_summary_by_category(
+        cls, result: models.CommonSustainabilityTransportByCategorySummaryEntry
+    ) -> "TransportSummaryByCategoryResult":
+        """Returns a TransportSummaryByCategoryResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityTransportByCategorySummaryEntry
+            Result from the REST API describing the sustainability metrics for all transport stages in a category.
+
+        Returns
+        -------
+        TransportSummaryByCategoryResult
+        """
+        return TransportSummaryByCategoryResult(
+            distance=cls.create_unitted_value(result.distance),
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=_raise_if_unset(result.embodied_energy_percentage),
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
+        )
+
+    @classmethod
+    def create_transport_summary_by_part(
+        cls, result: models.CommonSustainabilityTransportByPartSummaryEntry
+    ) -> "TransportSummaryByPartResult":
+        """Returns a TransportSummaryByPartResult instantiated from the low-level API model.
+
+        Parameters
+        ----------
+        result: models.CommonSustainabilityTransportByPartSummaryEntry
+            Result from the REST API describing the sustainability metrics for all transport stages associated with a
+            part.
+
+        Returns
+        -------
+        TransportSummaryByPartResult
+        """
+
+        # BAS does not support nullable enums in server responses, so NotApplicable is used to indicate that
+        # the category should be null.
+        if result.category == "NotApplicable":
+            category = None
+        else:
+            category = TransportCategory(result.category)
+        return TransportSummaryByPartResult(
+            distance=cls.create_unitted_value(result.distance),
+            embodied_energy=cls.create_unitted_value(result.embodied_energy),
+            embodied_energy_percentage=_raise_if_unset(result.embodied_energy_percentage),
+            climate_change=cls.create_unitted_value(result.climate_change),
+            climate_change_percentage=_raise_if_unset(result.climate_change_percentage),
+            parent_part_name=_convert_unset_to_none(result.parent_part_name),
+            part_name=_convert_unset_to_none(result.part_name),
+            transport_types=set(_raise_if_unset(result.transport_types)),
+            category=category,
         )
 
     @classmethod
@@ -1862,7 +1936,31 @@ class SustainabilityPhaseSummaryResult(SustainabilitySummaryBase):
         )
 
 
-class TransportSummaryResult(SustainabilitySummaryBase):
+class TransportSummaryBase(SustainabilitySummaryBase):
+    """
+    Base class for all transport summaries.
+
+    Parameters
+    ----------
+    distance : :class:`~ansys.grantami.bomanalytics._item_results.ValueWithUnit`
+        Represents the distance covered by this transport summary.
+    """
+
+    def __init__(
+        self,
+        distance: ValueWithUnit,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._distance = distance
+
+    @property
+    def distance(self) -> ValueWithUnit:
+        """Distance covered by this transport summary."""
+        return self._distance
+
+
+class TransportSummaryResult(TransportSummaryBase):
     """
     Sustainability summary for a transport stage.
 
@@ -1873,13 +1971,11 @@ class TransportSummaryResult(SustainabilitySummaryBase):
         self,
         name: Optional[str],
         transport_reference: TransportReference,
-        distance: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
         self._name = name
         self._transport_reference = transport_reference
-        self._distance = distance
 
     @property
     def name(self) -> Optional[str]:
@@ -1893,16 +1989,78 @@ class TransportSummaryResult(SustainabilitySummaryBase):
         """
         return self._transport_reference
 
-    @property
-    def distance(self) -> ValueWithUnit:
-        """Distance travelled in the transport stage."""
-        return self._distance
-
     def __repr__(self) -> str:
         return (
             f"<{self.__class__.__name__}('{self.name}',"
             f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
         )
+
+
+class TransportSummaryByCategoryResult(TransportSummaryBase):
+    """
+    Aggregated sustainability summary for all transport stages in a category.
+
+    .. versionadded:: 2.3
+    """
+
+    def __init__(
+        self,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+
+
+class TransportSummaryByPartResult(TransportSummaryBase):
+    """
+    Aggregated sustainability summary for all transport stages associated with a part.
+
+    .. versionadded:: 2.3
+    """
+
+    def __init__(
+        self,
+        part_name: Optional[str],
+        parent_part_name: Optional[str],
+        category: Optional[TransportCategory],
+        transport_types: set[str],
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._part_name = part_name if part_name else None
+        self._parent_part_name = parent_part_name if parent_part_name else None
+        self._category = category
+        self._transport_types = transport_types
+
+    @property
+    def part_name(self) -> Optional[str]:
+        """
+        Name of the part (if populated in the input BoM used in the query).
+        """
+        return self._part_name
+
+    @property
+    def parent_part_name(self) -> Optional[str]:
+        """
+        Name of the parent part (if populated in the input BoM used in the query).
+        """
+        return self._parent_part_name
+
+    @property
+    def category(self) -> Optional[TransportCategory]:
+        """
+        The transport category for this summary.
+
+        Returns ``None`` if this summary represents the aggregation of parts with transport stages that do not exceed
+        the 5% threshold.
+        """
+        return self._category
+
+    @property
+    def transport_types(self) -> set[str]:
+        """
+        The transport types included in this summary.
+        """
+        return self._transport_types
 
 
 class ContributingComponentResult:

@@ -46,6 +46,9 @@ from ._item_results import (
     SpecificationWithImpactedSubstancesResult,
     SubstanceWithComplianceResult,
     SustainabilityPhaseSummaryResult,
+    TransportCategory,
+    TransportSummaryByCategoryResult,
+    TransportSummaryByPartResult,
     TransportSummaryResult,
     TransportWithSustainabilityResult,
 )
@@ -814,6 +817,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         super().__init__(messages)
         self._response = results[0]
 
+        # Transport summary
         transport_summary = _raise_if_unset(self._response.transport_summary)
         self._transport_summary = ItemResultFactory.create_phase_summary(
             _raise_if_unset(transport_summary.phase_summary)
@@ -824,6 +828,35 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
             for transport in _raise_if_unset(transport_summary.summary)
         ]
 
+        self._distribution_transport_summary: TransportSummaryByCategoryResult | None
+        self._manufacturing_transport_summary: TransportSummaryByCategoryResult | None
+
+        if transport_summary.category_summary:
+            distribution_summary = next(
+                t for t in transport_summary.category_summary if t.category == TransportCategory.DISTRIBUTION.value
+            )
+            manufacturing_summary = next(
+                t for t in transport_summary.category_summary if t.category == TransportCategory.MANUFACTURING.value
+            )
+            self._distribution_transport_summary = ItemResultFactory.create_transport_summary_by_category(
+                distribution_summary
+            )
+            self._manufacturing_transport_summary = ItemResultFactory.create_transport_summary_by_category(
+                manufacturing_summary
+            )
+        else:
+            self._distribution_transport_summary = None
+            self._manufacturing_transport_summary = None
+
+        if transport_summary.part_summary:
+            self._transport_by_part_details: List[TransportSummaryByPartResult] = [
+                ItemResultFactory.create_transport_summary_by_part(transport_by_part)
+                for transport_by_part in _raise_if_unset(transport_summary.part_summary)
+            ]
+        else:
+            self._transport_by_part_details = []
+
+        # Material summary
         material_summary = _raise_if_unset(self._response.material_summary)
         self._material_summary = ItemResultFactory.create_phase_summary(_raise_if_unset(material_summary.phase_summary))
 
@@ -832,6 +865,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
             for material in _raise_if_unset(material_summary.summary)
         ]
 
+        # Process summary
         process_summary = _raise_if_unset(self._response.process_summary)
         self._process_summary = ItemResultFactory.create_phase_summary(_raise_if_unset(process_summary.phase_summary))
 
@@ -851,7 +885,7 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         ]
 
     # High level summaries:
-    # - provide list of all phases -> allow generic plotting/reporting of all phases indistinctively
+    # - provide list of all phases -> allow generic plotting/reporting of all phases indiscriminately
     # - provide individual phase summaries -> allow direct access without iterating through all phases
 
     @property
@@ -892,14 +926,80 @@ class BomSustainabilitySummaryQueryResult(ResultBaseClass):
         return self._process_summary
 
     @property
+    def distribution_transport_summary(self) -> TransportSummaryByCategoryResult | None:
+        """
+        Aggregated information for all distribution transport stages.
+
+        Values in percentages express the contribution of all distribution transport stages relative to the total
+        contribution from transportation in the BoM.
+
+        Only available if a 24/12 XML BoM was specified for :meth:`.BomSustainabilitySummaryQuery.with_bom`.
+
+        .. versionadded:: 2.3
+
+        Notes
+        -----
+        This property is only populated if the Granta MI servers includes MI Restricted Substances and Sustainability
+        Reports 2025 R2 and later. Otherwise, this property will return ``None``.
+        """
+        return self._distribution_transport_summary
+
+    @property
+    def manufacturing_transport_summary(self) -> TransportSummaryByCategoryResult | None:
+        """
+        Aggregated information for all manufacturing transport stages.
+
+        Values in percentages express the contribution of all manufacturing transport stages relative to the total
+        contribution from transportation in the BoM.
+
+        .. versionadded:: 2.3
+
+        Notes
+        -----
+        This property is only populated if the Granta MI servers includes MI Restricted Substances and Sustainability
+        Reports 2025 R2 and later. Otherwise, this property will return ``None``.
+        """
+        return self._manufacturing_transport_summary
+
+    @property
     def transport_details(self) -> List[TransportSummaryResult]:
         """
-        Summary information for all transport stages.
+        Summary information for each transport stage described in the BoM.
 
-        Values in percentages express the contribution of the specific transport stage, relative to contributions of all
-        transport stages.
+        Values in percentages express the contribution of the specific transport stage, relative to the total
+        contribution from transportation in the BoM.
         """
         return self._transport_details
+
+    @property
+    def transport_details_aggregated_by_part(self) -> List[TransportSummaryByPartResult]:
+        """
+        Summary information for transport stages, aggregated by part.
+
+        Relative and absolute contributions for parts whose relative contributions from transport exceed 5% of the total
+        impact for parts (by :attr:`~.TransportSummaryByPartResult.embodied_energy_percentage` or
+        :attr:`~.TransportSummaryByPartResult.climate_change_percentage`).
+
+        All parts in the BoM that do not exceed the 5% threshold are aggregated under a virtual
+        :class:`.TransportSummaryByPartResult`, whose :attr:`~.TransportSummaryByPartResult.part_name` property is equal
+        to ``Other``.
+
+        Values in percentages express the combined contribution of all transport stages associated with a part, relative
+        to the total contribution from transportation in the BoM.
+
+        .. versionadded:: 2.3
+
+        Notes
+        -----
+        This property is only populated if the following conditions are all true:
+
+        #. The Granta MI server includes MI Restricted Substances and Sustainability Reports 2025 R2 and later.
+        #. A 24/12 BoM was provided to :meth:`.BomSustainabilitySummaryQuery.with_bom`.
+        #. At least one or more transport stages was defined for at least one part.
+
+        Otherwise, this property will return an empty list.
+        """
+        return self._transport_by_part_details
 
     @property
     def material_details(self) -> List[MaterialSummaryResult]:

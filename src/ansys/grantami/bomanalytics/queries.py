@@ -1641,8 +1641,8 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
 
         See the documentation for the parent query class for supported BoM formats.
 
-        Minimal validation is performed on the provided BoM to ensure the request is sent to the appropriate
-        endpoint. XSD files are provided in :mod:`~.schemas` for full validation.
+        Minimal validation is performed on the provided BoM to ensure it defines a supported XML schema. XSD files are
+        provided in :mod:`~.schemas` for full validation.
 
         Parameters
         ----------
@@ -1857,7 +1857,10 @@ class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
 
 class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
     """
-    Evaluates sustainability impact for a BoM in the Ansys Granta 2301 XML BoM format and returns aggregated metrics.
+    Evaluates sustainability impact for an XML BoM and returns aggregated metrics.
+
+    * 23/01 XML BoMs supported by MI Restricted Substances and Sustainability Reports 2024 R2 or later.
+    * 24/12 XML BoMs supported by MI Restricted Substances and Sustainability Reports 2025 R2 or later.
 
     The methods used to configure units and add the BoM to this query return the query itself so that they can be
     chained together as required.
@@ -1880,6 +1883,6 @@ class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
 
     """
 
-    _supported_bom_formats = [_BomFormat.bom_xml2301]
+    _supported_bom_formats = [_BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
     _api_method = "post_sustainabilitysummary_bom"
     _request_type = models.GetSustainabilitySummaryForBomRequest

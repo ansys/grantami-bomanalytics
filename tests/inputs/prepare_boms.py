@@ -23,9 +23,8 @@
 from dataclasses import dataclass
 import pathlib
 
-repository_root = pathlib.Path(__file__).parents[2]
-inputs_dir = pathlib.Path(__file__).parent
-bom_dir = inputs_dir / "boms"
+_inputs_dir = pathlib.Path(__file__).parent
+_bom_dir = _inputs_dir / "boms"
 
 
 @dataclass(frozen=True)
@@ -37,7 +36,7 @@ class BoM:
 example_boms: dict[str, BoM] = {}
 
 
-for file in bom_dir.glob("*.xml"):
+for file in _bom_dir.glob("*.xml"):
     with open(file, encoding="utf-8") as f:
         content = f.read()
     bom = BoM(path=file, content=content)

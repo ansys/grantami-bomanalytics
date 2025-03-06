@@ -29,8 +29,8 @@ from ruamel.yaml import YAML
 
 yaml = YAML(typ="safe")
 
-inputs_dir = pathlib.Path(__file__).parent
-payload_dir = inputs_dir / "payloads"
+_inputs_dir = pathlib.Path(__file__).parent
+_payload_dir = _inputs_dir / "payloads"
 
 
 @dataclass(frozen=True)
@@ -44,7 +44,7 @@ class Payload:
 
 example_payloads: dict[str, Payload] = {}
 
-for file in payload_dir.glob("*.yaml"):
+for file in _payload_dir.glob("*.yaml"):
     data = yaml.load(file)
     payload = Payload(name=file.stem, data=data)
     example_payloads[file.stem] = payload

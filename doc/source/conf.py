@@ -56,7 +56,6 @@ extensions = [
     "sphinx_copybutton",
     "sphinx.ext.extlinks",
     "sphinx.ext.coverage",
-    "enum_tools.autoenum",
     "nbsphinx",
     "sphinx_design",
 ]

@@ -32,7 +32,7 @@ with open(_sample_bom_1711_path, "r", encoding="utf8") as f:
     sample_bom_1711 = f.read()
 
 _sample_compliance_bom_1711_path = (
-    repository_root / "examples" / "3_Advanced_Topics" / "supporting-files" / "bom-complex.xml"
+    repository_root / "examples" / "3_Advanced_Topics" / "supporting-files" / "compliance-bom.xml"
 )
 with open(_sample_compliance_bom_1711_path, "r", encoding="utf8") as f:
     sample_compliance_bom_1711 = f.read()

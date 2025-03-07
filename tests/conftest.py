@@ -91,11 +91,16 @@ def pytest_generate_tests(metafunc):
     'example_script' fixture.
     """
 
+    mi_version = get_mi_version()
+
+    # If we don't have an MI version, we cannot contact an MI server. Example tests cannot run, so we might as well
+    # return early.
+    if mi_version is None:
+        return
+
     xfail_examples_for_version = defaultdict(set)
     xfail_examples_for_version[(25, 1)] = {"4-1_BoM_Sustainability_summary.py", "4-2_BoM_Sustainability.py"}
     xfail_examples_for_version[(24, 2)] = {"4-1_BoM_Sustainability_summary.py", "4-2_BoM_Sustainability.py"}
-
-    mi_version = get_mi_version()
 
     if "example_script" in metafunc.fixturenames:
         this_file = pathlib.Path(__file__).parent.resolve()
@@ -135,20 +140,6 @@ def discover_python_scripts(example_dir: pathlib.Path) -> List[pathlib.Path]:
 
 @pytest.fixture(scope="session")
 def mi_version() -> tuple[int, int] | None:
-    """The version of MI referenced by the test url.
-
-    Returns
-    -------
-    tuple[int, int] | None
-        A 2-tuple containing the (MAJOR, MINOR) Granta MI release version, or None if a test URL is not available.
-
-    Notes
-    -----
-    This fixture returns None if the ``sl_url`` variable is not available. This is typically because the tests are
-    running in CI and the TEST_SL_URL environment variable was not populated.
-    """
-    if os.getenv("CI") and not os.getenv("TEST_SL_URL"):
-        return None
     return get_mi_version()
 
 

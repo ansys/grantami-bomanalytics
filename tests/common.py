@@ -25,6 +25,7 @@ from typing import cast
 from defusedxml import ElementTree
 
 from ansys.grantami.bomanalytics import Connection, indicators
+from ansys.grantami.bomanalytics._connection import BomAnalyticsClient
 
 sl_url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
 read_username = os.getenv("TEST_USER")
@@ -33,6 +34,8 @@ read_password = os.getenv("TEST_PASS")
 write_username = os.getenv("TEST_WRITE_USER")
 write_password = os.getenv("TEST_WRITE_PASS")
 
+ci_unit_tests = os.getenv("CI") and not os.getenv("TEST_SL_URL")
+"""If tests are running in CI and the TEST_SL_URL environment variable is not populated, we cannot access MI."""
 
 LICENSE_RESPONSE = {"LogMessages": [], "RestrictedSubstances": True, "Sustainability": True}
 LEGISLATIONS = ["SINList", "CCC"]
@@ -64,7 +67,10 @@ CUSTOM_TABLES = [
 ]
 
 
-def _get_connection(url, username, password):
+def _get_connection(url, username, password) -> BomAnalyticsClient | None:
+    if ci_unit_tests:
+        return None
+
     if username is not None:
         connection = Connection(api_url=url).with_credentials(username, password).connect()
     else:
@@ -72,8 +78,17 @@ def _get_connection(url, username, password):
     return connection
 
 
-def get_mi_version():
+def get_mi_version() -> tuple[int, int] | None:
+    """The version of MI referenced by the test url.
+
+    Returns
+    -------
+    tuple[int, int] | None
+        A 2-tuple containing the (MAJOR, MINOR) Granta MI release version, or None if ``ci_unit_tests`` is True.
+    """
     connection = _get_connection(sl_url, read_username, read_password)
+    if connection is None:
+        return None
     session = connection.rest_client
     response = session.get(connection._sl_url + "/SystemInfo/v4.svc/Versions/Mi")
     tree = ElementTree.fromstring(response.text)

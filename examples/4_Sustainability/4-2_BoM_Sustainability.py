@@ -117,9 +117,9 @@ result
 # - ``.transport_stages``: Transportation of the part. Defined as a list of
 # ``TransportWithSustainabilityResult`` objects.
 #
-# The environmental impact of a leaf part includes the sum of the environmental impacts
-# associated with the quantity of materials used in the part, processes
-# applied to the part directly, and processes applied to materials in the part.
+# The environmental impact of a leaf part includes the sum of the environmental impacts associated with
+# the quantity of materials used in the part, processes applied to the part directly, and processes
+# applied to materials in the part.
 
 # #### **Materials**
 #
@@ -128,8 +128,9 @@ result
 # are defined as a list of ``ProcessWithSustainabilityResult`` objects.
 #
 # The environmental impact of a material is calculated from database data and the mass of material used.
-# Even though processes appear as children of materials in the hierarchy, their environmental impact is
-# not summed up in the parent material's impact, as opposed to the environmental impact of parts.
+#
+# Processes may appear as children of materials in the hierarchy, but the environmental impact of
+# processes does *not* contribute to a parent material's environmental impact.
 
 # #### **Processes**
 #
@@ -138,8 +139,11 @@ result
 # during the manufacturing process, and is defined as a list of ``TransportWithSustainabilityResult``
 # objects.
 #
-# The environmental impact of a process is calculated from database data, and masses and transport
-# details defined in the BoM.
+# The environmental impact of a process is calculated from database data and the dimensional details of
+# the process defined in the BoM.
+#
+# Processes may appear as children of processes in the hierarchy, but the environmental impact of
+# processes does *not* contribute to a parent process's environmental impact.
 
 # ### The `BomSustainabilityQueryResult.transport` property
 #

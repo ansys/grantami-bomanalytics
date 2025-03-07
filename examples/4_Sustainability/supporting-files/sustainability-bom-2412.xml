@@ -1,0 +1,550 @@
+<?xml version="1.0"?>
+<PartsEco xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.grantadesign.com/24/12/BillOfMaterialsEco">
+    <Components>
+        <Part>
+            <Quantity Unit="Each">1</Quantity>
+            <PartNumber>Part1</PartNumber>
+            <Name>Assembly</Name>
+            <Components>
+                <Part>
+                    <Quantity Unit="Each">1</Quantity>
+                    <PartNumber>Part1.1</PartNumber>
+                    <Name>Subassembly</Name>
+                    <Components>
+                        <Part>
+                            <Quantity Unit="Each">1</Quantity>
+                            <MassPerUom Unit="kg/Part">0.925</MassPerUom>
+                            <PartNumber>Part1.1.A</PartNumber>
+                            <Name>Component 11A</Name>
+                            <Materials>
+                                <Material>
+                                    <Percentage>100</Percentage>
+                                    <MIMaterialReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2086f56a-4f4d-4850-9891-3d6ad155d1f9</recordGUID>
+                                    </MIMaterialReference>
+                                    <Identity>stainless-astm-cn-7ms-cast</Identity>
+                                    <Processes>
+                                        <Process>
+                                            <MIProcessReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
+                                            </MIProcessReference>
+                                            <Identity>Primary processing, Casting</Identity>
+                                            <DimensionType>Mass</DimensionType>
+                                            <Percentage>100</Percentage>
+                                            <TransportPhase>
+                                                <TransportStage>
+                                                    <Name>Component 11A raw material</Name>
+                                                    <MITransportReference>
+                                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                                    </MITransportReference>
+                                                    <Distance Unit="km">1000</Distance>
+                                                </TransportStage>
+                                            </TransportPhase>
+                                        </Process>
+                                        <Process>
+                                            <MIProcessReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">907bda29-e800-44f6-b7ea-4eb8e7cff375</recordGUID>
+                                            </MIProcessReference>
+                                            <Identity>Machining, coarse</Identity>
+                                            <DimensionType>MassRemoved</DimensionType>
+                                            <Quantity Unit="kg">0.0808</Quantity>
+                                            <TransportPhase>
+                                                <TransportStage>
+                                                    <Name>Component 11A as-cast to machining shop</Name>
+                                                    <MITransportReference>
+                                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                                    </MITransportReference>
+                                                    <Distance Unit="km">150</Distance>
+                                                </TransportStage>
+                                            </TransportPhase>
+                                        </Process>
+                                        <Process>
+                                            <MIProcessReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
+                                            </MIProcessReference>
+                                            <Identity>Machining, fine</Identity>
+                                            <DimensionType>MassRemoved</DimensionType>
+                                            <Quantity Unit="kg">0.00465</Quantity>
+                                        </Process>
+                                    </Processes>
+                                </Material>
+                            </Materials>
+                            <TransportPhase>
+                                <TransportStage>
+                                    <Name>Finished component 11A to warehouse</Name>
+                                    <MITransportReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                    </MITransportReference>
+                                    <Distance Unit="km">500</Distance>
+                                </TransportStage>
+                            </TransportPhase>
+                        </Part>
+                        <Part>
+                            <Quantity Unit="Each">3</Quantity>
+                            <MassPerUom Unit="kg/Part">0.175</MassPerUom>
+                            <PartNumber>Part1.1.B</PartNumber>
+                            <Name>Component 11B</Name>
+                            <Materials>
+                                <Material>
+                                    <Percentage>100</Percentage>
+                                    <MIMaterialReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2086f56a-4f4d-4850-9891-3d6ad155d1f9</recordGUID>
+                                    </MIMaterialReference>
+                                    <Identity>stainless-astm-cn-7ms-cast</Identity>
+                                    <Processes>
+                                        <Process>
+                                            <MIProcessReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
+                                            </MIProcessReference>
+                                            <Identity>Primary processing, Casting</Identity>
+                                            <DimensionType>Mass</DimensionType>
+                                            <Percentage>100</Percentage>
+                                            <TransportPhase>
+                                                <TransportStage>
+                                                    <Name>Component 11B raw material</Name>
+                                                    <MITransportReference>
+                                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                                    </MITransportReference>
+                                                    <Distance Unit="km">700</Distance>
+                                                </TransportStage>
+                                            </TransportPhase>
+                                            <Location>
+                                                <MILocationReference>
+                                                    <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                    <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">244e1b79-020f-4413-bdb1-95bddd4d60e4</recordGUID>
+                                                </MILocationReference>
+                                                <Identity>RAS</Identity>
+                                                <ExternalIdentity>137</ExternalIdentity>
+                                            </Location>
+                                        </Process>
+                                        <Process>
+                                            <MIProcessReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
+                                            </MIProcessReference>
+                                            <Identity>Machining, fine</Identity>
+                                            <DimensionType>MassRemoved</DimensionType>
+                                            <Quantity Unit="kg">0.0035</Quantity>
+                                            <TransportPhase>
+                                                <TransportStage>
+                                                    <Name>Component 11B as-cast to machining shop</Name>
+                                                    <MITransportReference>
+                                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                                    </MITransportReference>
+                                                    <Distance Unit="km">50</Distance>
+                                                </TransportStage>
+                                            </TransportPhase>
+                                            <Location>
+                                                <MILocationReference>
+                                                    <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                    <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">244e1b79-020f-4413-bdb1-95bddd4d60e4</recordGUID>
+                                                </MILocationReference>
+                                                <Identity>RAS</Identity>
+                                                <ExternalIdentity>136</ExternalIdentity>
+                                            </Location>
+                                        </Process>
+                                    </Processes>
+                                </Material>
+                            </Materials>
+                            <TransportPhase>
+                                <TransportStage>
+                                    <Name>Finished component 11B to warehouse</Name>
+                                    <MITransportReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">546b90cb-1f8e-423c-a284-a25f731a13e5</recordGUID>
+                                    </MITransportReference>
+                                    <Distance Unit="km">8000</Distance>
+                                </TransportStage>
+                            </TransportPhase>
+                        </Part>
+                    </Components>
+                    <Processes>
+                        <Process>
+                            <MIProcessReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">21941b5e-fdbc-47fe-8180-809bb42e5e0a</recordGUID>
+                            </MIProcessReference>
+                            <Identity>Joining and finishing, Welding, electric</Identity>
+                            <DimensionType>Length</DimensionType>
+                            <Quantity Unit="m">0.45</Quantity>
+                            <TransportPhase>
+                                <TransportStage>
+                                    <Name>Warehouse to subassembly fabricator</Name>
+                                    <MITransportReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">c29ab353-2bd5-4964-b577-a0e4cfb4d284</recordGUID>
+                                    </MITransportReference>
+                                    <Distance Unit="km">500</Distance>
+                                </TransportStage>
+                            </TransportPhase>
+                        </Process>
+                    </Processes>
+                    <TransportPhase>
+                        <TransportStage>
+                            <Name>Subassembly to warehouse (truck)</Name>
+                            <MITransportReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                            </MITransportReference>
+                            <Distance Unit="km">150</Distance>
+                        </TransportStage>
+                        <TransportStage>
+                            <Name>Subassembly to warehouse (train)</Name>
+                            <MITransportReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">c29ab353-2bd5-4964-b577-a0e4cfb4d284</recordGUID>
+                            </MITransportReference>
+                            <Distance Unit="km">1500</Distance>
+                        </TransportStage>
+                    </TransportPhase>
+                </Part>
+                <Part>
+                    <Quantity Unit="Each">1</Quantity>
+                    <MassPerUom Unit="kg/Part">0.61</MassPerUom>
+                    <PartNumber>Part1.A</PartNumber>
+                    <Name>Component 1A</Name>
+                    <Materials>
+                        <Material>
+                            <Percentage>100</Percentage>
+                            <MIMaterialReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
+                            </MIMaterialReference>
+                            <Identity>steel-1010-annealed</Identity>
+                            <Processes>
+                                <Process>
+                                    <MIProcessReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
+                                    </MIProcessReference>
+                                    <Identity>Metal extrusion, hot</Identity>
+                                    <DimensionType>Mass</DimensionType>
+                                    <Percentage>100</Percentage>
+                                    <TransportPhase>
+                                        <TransportStage>
+                                            <Name>Component 1A raw material</Name>
+                                            <MITransportReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                            </MITransportReference>
+                                            <Distance Unit="km">1000</Distance>
+                                        </TransportStage>
+                                    </TransportPhase>
+                                    <Location>
+                                        <MILocationReference>
+                                            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
+                                        </MILocationReference>
+                                        <Identity>RER</Identity>
+                                        <ExternalIdentity>152</ExternalIdentity>
+                                    </Location>
+                                </Process>
+                                <Process>
+                                    <MIProcessReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
+                                    </MIProcessReference>
+                                    <Identity>Machining, fine</Identity>
+                                    <Name>Machining, fine</Name>
+                                    <DimensionType>MassRemoved</DimensionType>
+                                    <Quantity Unit="kg">0.0305</Quantity>
+                                    <TransportPhase>
+                                        <TransportStage>
+                                            <Name>Component 1A as-cast to machining shop</Name>
+                                            <MITransportReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                            </MITransportReference>
+                                            <Distance Unit="km">50</Distance>
+                                        </TransportStage>
+                                    </TransportPhase>
+                                    <Location>
+                                        <MILocationReference>
+                                            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
+                                        </MILocationReference>
+                                        <Identity>RER</Identity>
+                                        <ExternalIdentity>153</ExternalIdentity>
+                                    </Location>
+                                </Process>
+                            </Processes>
+                        </Material>
+                    </Materials>
+                    <TransportPhase>
+                        <TransportStage>
+                            <Name>Finished component 1A to warehouse</Name>
+                            <MITransportReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                            </MITransportReference>
+                            <Distance Unit="km">150</Distance>
+                        </TransportStage>
+                    </TransportPhase>
+                </Part>
+                <Part>
+                    <Quantity Unit="Each">2</Quantity>
+                    <MassPerUom Unit="kg/Part">0.495</MassPerUom>
+                    <PartNumber>Part1.B</PartNumber>
+                    <Name>Component 1B</Name>
+                    <Materials>
+                        <Material>
+                            <Percentage>100</Percentage>
+                            <MIMaterialReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
+                            </MIMaterialReference>
+                            <Identity>steel-1010-annealed</Identity>
+                            <Processes>
+                                <Process>
+                                    <MIProcessReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
+                                    </MIProcessReference>
+                                    <Identity>Primary processing, Casting</Identity>
+                                    <DimensionType>Mass</DimensionType>
+                                    <Percentage>100</Percentage>
+                                    <TransportPhase>
+                                        <TransportStage>
+                                            <Name>Component 1B raw material</Name>
+                                            <MITransportReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                            </MITransportReference>
+                                            <Distance Unit="km">100</Distance>
+                                        </TransportStage>
+                                    </TransportPhase>
+                                    <Location>
+                                        <MILocationReference>
+                                            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
+                                        </MILocationReference>
+                                        <Identity>RER</Identity>
+                                        <ExternalIdentity>154</ExternalIdentity>
+                                    </Location>
+                                </Process>
+                                <Process>
+                                    <MIProcessReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">9b5b1824-f11e-449e-9a3f-f6a75396ac87</recordGUID>
+                                    </MIProcessReference>
+                                    <Identity>Secondary processing, Grinding</Identity>
+                                    <DimensionType>MassRemoved</DimensionType>
+                                    <Quantity Unit="kg">0.03762</Quantity>
+                                    <TransportPhase>
+                                        <TransportStage>
+                                            <Name>Component 1B as-cast to machining shop</Name>
+                                            <MITransportReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                            </MITransportReference>
+                                            <Distance Unit="km">400</Distance>
+                                        </TransportStage>
+                                    </TransportPhase>
+                                    <Location>
+                                        <MILocationReference>
+                                            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
+                                        </MILocationReference>
+                                        <Identity>RER</Identity>
+                                        <ExternalIdentity>155</ExternalIdentity>
+                                    </Location>
+                                </Process>
+                            </Processes>
+                        </Material>
+                    </Materials>
+                    <TransportPhase>
+                        <TransportStage>
+                            <Name>Finished component 1B to warehouse</Name>
+                            <MITransportReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                            </MITransportReference>
+                            <Distance Unit="km">150</Distance>
+                        </TransportStage>
+                    </TransportPhase>
+                </Part>
+                <Part>
+                    <Quantity Unit="Each">2</Quantity>
+                    <MassPerUom Unit="kg/Part">0.52</MassPerUom>
+                    <PartNumber>Part1.C</PartNumber>
+                    <Name>Component 1C</Name>
+                    <Materials>
+                        <Material>
+                            <Percentage>100</Percentage>
+                            <MIMaterialReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">879f3268-e8b6-48c0-822a-40a010d12911</recordGUID>
+                            </MIMaterialReference>
+                            <Identity>steel-1010-annealed</Identity>
+                            <Processes>
+                                <Process>
+                                    <MIProcessReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
+                                    </MIProcessReference>
+                                    <Identity>Metal extrusion, hot</Identity>
+                                    <DimensionType>Mass</DimensionType>
+                                    <Percentage>100</Percentage>
+                                    <TransportPhase>
+                                        <TransportStage>
+                                            <Name>Component 1C raw material</Name>
+                                            <MITransportReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                            </MITransportReference>
+                                            <Distance Unit="km">1000</Distance>
+                                        </TransportStage>
+                                    </TransportPhase>
+                                    <Location>
+                                        <MILocationReference>
+                                            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">244e1b79-020f-4413-bdb1-95bddd4d60e4</recordGUID>
+                                        </MILocationReference>
+                                        <Identity>RAS</Identity>
+                                        <ExternalIdentity>160</ExternalIdentity>
+                                    </Location>
+                                </Process>
+                            </Processes>
+                        </Material>
+                    </Materials>
+                    <TransportPhase>
+                        <TransportStage>
+                            <Name>Finished component 1C to warehouse</Name>
+                            <MITransportReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                            </MITransportReference>
+                            <Distance Unit="km">700</Distance>
+                        </TransportStage>
+                    </TransportPhase>
+                </Part>
+                <Part>
+                    <Quantity Unit="Each">2</Quantity>
+                    <MassPerUom Unit="kg/Part">0.012</MassPerUom>
+                    <PartNumber>Part1.D</PartNumber>
+                    <Name>Component 1D</Name>
+                    <Materials>
+                        <Material>
+                            <Percentage>100</Percentage>
+                            <MIMaterialReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">a0adc9d7-69a2-494e-b6da-d588f86cc5ab</recordGUID>
+                            </MIMaterialReference>
+                            <Identity>beryllium-beralcast191-cast</Identity>
+                            <Processes>
+                                <Process>
+                                    <MIProcessReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">92f90382-610a-4737-a18f-b153ea88e4ad</recordGUID>
+                                    </MIProcessReference>
+                                    <Identity>Metal extrusion, hot</Identity>
+                                    <DimensionType>Mass</DimensionType>
+                                    <Percentage>100</Percentage>
+                                    <TransportPhase>
+                                        <TransportStage>
+                                            <Name>Component 1D raw material</Name>
+                                            <MITransportReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                            </MITransportReference>
+                                            <Distance Unit="km">400</Distance>
+                                        </TransportStage>
+                                    </TransportPhase>
+                                    <Location>
+                                        <MILocationReference>
+                                            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
+                                        </MILocationReference>
+                                        <Identity>RER</Identity>
+                                        <ExternalIdentity>162</ExternalIdentity>
+                                    </Location>
+                                </Process>
+                                <Process>
+                                    <MIProcessReference>
+                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">03de1a28-7dd7-4354-bbd8-c839cfa00ec7</recordGUID>
+                                    </MIProcessReference>
+                                    <Identity>Machining, fine</Identity>
+                                    <DimensionType>MassRemoved</DimensionType>
+                                    <Quantity Unit="kg">0.0015</Quantity>
+                                    <TransportPhase>
+                                        <TransportStage>
+                                            <Name>Component 1D as-cast to machining shop</Name>
+                                            <MITransportReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                            </MITransportReference>
+                                            <Distance Unit="km">600</Distance>
+                                        </TransportStage>
+                                    </TransportPhase>
+                                    <Location>
+                                        <MILocationReference>
+                                            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
+                                        </MILocationReference>
+                                        <Identity>RER</Identity>
+                                        <ExternalIdentity>163</ExternalIdentity>
+                                    </Location>
+                                </Process>
+                            </Processes>
+                        </Material>
+                    </Materials>
+                    <TransportPhase>
+                        <TransportStage>
+                            <Name>Finished component 1D to warehouse</Name>
+                            <MITransportReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                            </MITransportReference>
+                            <Distance Unit="km">150</Distance>
+                        </TransportStage>
+                    </TransportPhase>
+                </Part>
+            </Components>
+        </Part>
+    </Components>
+    <TransportPhase>
+        <TransportStage>
+            <Name>Product from warehouse to distributor (truck 1)</Name>
+            <MITransportReference>
+                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+            </MITransportReference>
+            <Distance Unit="km">350</Distance>
+        </TransportStage>
+        <TransportStage>
+            <Name>Product from warehouse to distributor (air)</Name>
+            <MITransportReference>
+                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">546b90cb-1f8e-423c-a284-a25f731a13e5</recordGUID>
+            </MITransportReference>
+            <Distance Unit="km">500</Distance>
+        </TransportStage>
+        <TransportStage>
+            <Name>Product from warehouse to distributor (truck 2)</Name>
+            <MITransportReference>
+                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+            </MITransportReference>
+            <Distance Unit="km">125</Distance>
+        </TransportStage>
+    </TransportPhase>
+    <Location>
+        <MILocationReference>
+            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">93c4de34-d7b0-4ab6-a2c1-18aeef0acd66</recordGUID>
+        </MILocationReference>
+        <Identity>RER</Identity>
+    </Location>
+</PartsEco>

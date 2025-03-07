@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.1
+#       jupytext_version: 1.16.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -16,7 +16,19 @@
 #
 # The following supporting files are required for this example:
 #
-# * [bom-2301-assembly.xml](supporting-files/bom-2301-assembly.xml)
+# * [sustainability-bom-2412.xml](supporting-files/sustainability-bom-2412.xml)
+
+# <div class="alert alert-info">
+#
+# **Info:**
+#
+# This example requires uses a 24/12 XML BoM, which requires Granta MI Restricted Substances and Sustainability Reports
+# 2025 R2 or later. Running this example as-is results in an error due to an unsupported BoM version.
+#
+# To run this example with an older version of the reports bundle, use
+# [sustainability-bom-2301.xml](supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example
+# will produce different results from the published example when this BoM is used.
+# </div>
 
 # ## Run a BoM sustainability query
 #
@@ -34,7 +46,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # analysis are ``MJ`` for energy, ``kg`` for mass, and ``km`` for distance.
 
 # +
-xml_file_path = "supporting-files/bom-2301-assembly.xml"
+xml_file_path = "supporting-files/sustainability-bom-2412.xml"
 with open(xml_file_path) as f:
     bom = f.read()
 
@@ -82,9 +94,11 @@ result
 #
 # Assemblies include the following properties that describe child BoM items:
 #
-# - ``.parts``: Subparts of the assembly, which are defined as ``PartWithSustainabilityResult`` objects.
-# - ``.processes``: Joining and finishing processes applied to the assembly, which are defined as
+# - ``.parts``: Subparts of the assembly. Defined as ``PartWithSustainabilityResult`` objects.
+# - ``.processes``: Joining and finishing processes applied to the assembly. Defined as
 # ``ProcessWithSustainabilityResult`` objects.
+# - ``.transport_stages``: Transportation of the assembly. Defined as a list of
+# ``TransportWithSustainabilityResult`` objects.
 #
 # The environmental impact of an assembly includes the sum of the environmental impacts of all
 # subparts and processes applied to the assembly.
@@ -96,10 +110,12 @@ result
 #
 # Leaf parts include the following properties:
 #
-# - ``.materials``: Materials that the part is made of, which are defined as a list
+# - ``.materials``: Materials that the part is made of. Defined as a list of
 # ``MaterialWithSustainabilityResult`` objects.
-# - ``.processes``: Joining and finishing processes applied to the part, which are defined as a list of
+# - ``.processes``: Joining and finishing processes applied to the part. Defined as a list of
 # ``ProcessWithSustainabilityResult`` objects.
+# - ``.transport_stages``: Transportation of the part. Defined as a list of
+# ``TransportWithSustainabilityResult`` objects.
 #
 # The environmental impact of a leaf part includes the sum of the environmental impacts
 # associated with the quantity of materials used in the part, processes
@@ -117,15 +133,19 @@ result
 
 # #### **Processes**
 #
-# Processes are represented by ``ProcessWithSustainabilityResult`` objects. Processes are child items
-# in the BoM and have no children themselves. The environmental impact of a process is calculated
-# from database data and masses defined in the BoM.
+# Processes are represented by ``ProcessWithSustainabilityResult`` objects. They include the
+# ``.transport_stages`` property. This property consists of the transportation of the part
+# during the manufacturing process, and is defined as a list of ``TransportWithSustainabilityResult``
+# objects.
+#
+# The environmental impact of a process is calculated from database data, and masses and transport
+# details defined in the BoM.
 
 # ### The `BomSustainabilityQueryResult.transport` property
 #
 # The ``BomSustainabilityQueryResult.transport`` property contains the transport stages in the input
-# BoM, which are defined as a list of ``TransportWithSustainabilityResult`` objects. Transport stages contain no
-# BoM properties. The environmental impact of a transport stage is just the environmental
+# BoM, which are defined as a list of ``TransportWithSustainabilityResult`` objects. Transport stages
+# contain no BoM properties. The environmental impact of a transport stage is just the environmental
 # impact associated with the transport stage itself.
 
 # ## Process the ``BomSustainabilityQueryResult`` object
@@ -161,13 +181,21 @@ def traverse_part(part, parent_id):
     for child_material in part.materials:
         yield from traverse_material(child_material, part_id)
     for child_process in part.processes:
-        yield to_dict(child_process, part_id)
+        yield from traverse_process(child_process, part_id)
+    for child_transport in part.transport_stages:
+        yield to_dict(child_transport, part_id)
 
 
 def traverse_material(material, parent_id):
     yield to_dict(material, parent_id)
     for child_process in material.processes:
-        yield to_dict(child_process, parent_id)
+        yield from traverse_process(child_process, parent_id)
+
+
+def traverse_process(process, parent_id):
+    yield to_dict(process, parent_id)
+    for child_transport in process.transport_stages:
+        yield to_dict(child_transport, parent_id)
 
 
 from ansys.grantami.bomanalytics._item_results import (
@@ -193,9 +221,9 @@ def to_dict(item, parent):
         record.update({"type": "Material", "name": item.name})
     elif isinstance(item, ProcessWithSustainabilityResult):
         record.update({"type": "Process", "name": item.name})
+    elif isinstance(item, TransportWithSustainabilityResult):
+        record.update({"type": "Transport", "name": item.name})
     return record
-
-
 # -
 
 # Now call the ``traverse_bom`` function and print the first two dictionaries, which represent the root

@@ -98,9 +98,9 @@ def pytest_generate_tests(metafunc):
     if mi_version is None:
         return
 
-    xfail_examples_for_version = defaultdict(set)
-    xfail_examples_for_version[(25, 1)] = {"4-1_BoM_Sustainability_summary.py", "4-2_BoM_Sustainability.py"}
-    xfail_examples_for_version[(24, 2)] = {"4-1_BoM_Sustainability_summary.py", "4-2_BoM_Sustainability.py"}
+    skip_examples_for_version = defaultdict(set)
+    skip_examples_for_version[(25, 1)] = {"4-1_BoM_Sustainability_summary.py", "4-2_BoM_Sustainability.py"}
+    skip_examples_for_version[(24, 2)] = {"4-1_BoM_Sustainability_summary.py", "4-2_BoM_Sustainability.py"}
 
     if "example_script" in metafunc.fixturenames:
         this_file = pathlib.Path(__file__).parent.resolve()
@@ -108,7 +108,7 @@ def pytest_generate_tests(metafunc):
         parameters = []
         example_files = discover_python_scripts(example_path)
         for example_file in example_files:
-            xfail_examples = xfail_examples_for_version[mi_version]
+            xfail_examples = skip_examples_for_version[mi_version]
             if example_file.name in xfail_examples:
                 formatted_version = ".".join(str(x) for x in mi_version)
                 mark = pytest.mark.skip(

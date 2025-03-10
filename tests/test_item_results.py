@@ -27,7 +27,11 @@ from ansys.openapi.common import Unset
 import pytest
 
 from ansys.grantami.bomanalytics._item_definitions import ReferenceType
-from ansys.grantami.bomanalytics._item_results import ImpactedSubstance, ItemResultFactory
+from ansys.grantami.bomanalytics._item_results import (
+    ImpactedSubstance,
+    ItemResultFactory,
+    TransportCategory,
+)
 
 from .common import INDICATORS
 
@@ -252,6 +256,28 @@ class TestSustainabilitySummaryResultsRepr:
         result = ItemResultFactory.create_contributing_component(model)
         expected = "<ContributingComponentResult('Engine', mass=50kg)>"
         assert repr(result) == expected
+
+    def test_transport_by_part_repr(self):
+        model = models.CommonSustainabilityTransportByPartSummaryEntry(
+            **self._eco_metrics,
+            category=TransportCategory.DISTRIBUTION.value,
+            distance=models.CommonValueWithUnit(value=45, unit="km"),
+            part_name="Part 1",
+            transport_types=["Transport1", "Transport2"],
+        )
+        transport_by_part_result = ItemResultFactory.create_transport_summary_by_part(model)
+        expected = "<TransportSummaryByPartResult('Part 1', EE%=60.0, CC%=40.0)>"
+        assert repr(transport_by_part_result) == expected
+
+    def test_transport_by_category_repr(self):
+        model = models.CommonSustainabilityTransportByCategorySummaryEntry(
+            **self._eco_metrics,
+            category=TransportCategory.DISTRIBUTION.value,
+            distance=models.CommonValueWithUnit(value=45, unit="km"),
+        )
+        transport_by_part_result = ItemResultFactory.create_transport_summary_by_category(model)
+        expected = "<TransportSummaryByCategoryResult(EE%=60.0, CC%=40.0)>"
+        assert repr(transport_by_part_result) == expected
 
 
 class _SustainabilityResults:

@@ -2009,6 +2009,12 @@ class TransportSummaryByCategoryResult(TransportSummaryBase):
     ) -> None:
         super().__init__(**kwargs)
 
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}(EE%={self.embodied_energy_percentage}, "
+            f"CC%={self.climate_change_percentage})>"
+        )
+
 
 class TransportSummaryByPartResult(TransportSummaryBase):
     """
@@ -2061,6 +2067,12 @@ class TransportSummaryByPartResult(TransportSummaryBase):
         The transport types included in this summary.
         """
         return self._transport_types
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__}('{self.part_name}',"
+            f" EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
+        )
 
 
 class ContributingComponentResult:

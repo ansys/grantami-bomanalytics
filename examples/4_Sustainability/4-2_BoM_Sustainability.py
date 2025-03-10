@@ -130,7 +130,7 @@ result
 # The environmental impact of a material is calculated from database data and the mass of material used.
 #
 # Processes may appear as children of materials in the hierarchy, but the environmental impact of
-# processes does *not* contribute to a parent material's environmental impact.
+# processes do *not* contribute to a parent material's environmental impact.
 
 # #### **Processes**
 #
@@ -142,8 +142,8 @@ result
 # The environmental impact of a process is calculated from database data and the dimensional details of
 # the process defined in the BoM.
 #
-# Processes may appear as children of processes in the hierarchy, but the environmental impact of
-# processes does *not* contribute to a parent process's environmental impact.
+# Transport stages may appear as children of processes in the hierarchy, but the environmental impact of
+# transport stages do *not* contribute to a parent process's environmental impact.
 
 # ### The `BomSustainabilityQueryResult.transport` property
 #

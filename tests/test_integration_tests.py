@@ -22,7 +22,8 @@
 
 import pytest
 
-from ansys.grantami.bomanalytics import GrantaMIException, TransportCategory, queries
+from ansys.grantami.bomanalytics import BoMHandler, GrantaMIException, TransportCategory, queries
+from ansys.grantami.bomanalytics.bom_types import eco2412
 
 from .common import INDICATORS, LEGISLATIONS
 from .inputs import example_boms
@@ -126,6 +127,16 @@ class TestBomQueries:
         )
         return _bom
 
+    @pytest.fixture
+    def bom2412(self, bom2301):
+        handler = BoMHandler()
+
+        parsed_bom = handler.load_bom_from_text(bom2301)
+        bom2412 = handler.convert(parsed_bom, eco2412.BillOfMaterials)
+        bom = handler.dump_bom(bom2412)
+
+        return bom
+
     def test_impacted_substances(self, bom, connection_with_db_variants):
         query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislation_ids(LEGISLATIONS)
         response = connection_with_db_variants.run(query)
@@ -149,6 +160,22 @@ class TestBomQueries:
 
     def test_compliance_2301(self, connection, bom2301):
         query = queries.BomComplianceQuery().with_bom(bom2301).with_indicators(indicators)
+        response = connection.run(query)
+
+        assert response.compliance_by_part_and_indicator
+        assert response.compliance_by_indicator
+
+    @pytest.mark.integration(mi_versions=[(25, 2)])
+    def test_impacted_substances_2412(self, connection, bom2412):
+        query = queries.BomImpactedSubstancesQuery().with_bom(bom2412).with_legislation_ids(LEGISLATIONS)
+        response = connection.run(query)
+
+        assert response.impacted_substances
+        assert response.impacted_substances_by_legislation
+
+    @pytest.mark.integration(mi_versions=[(25, 2)])
+    def test_compliance_2412(self, connection, bom2412):
+        query = queries.BomComplianceQuery().with_bom(bom2412).with_indicators(indicators)
         response = connection.run(query)
 
         assert response.compliance_by_part_and_indicator

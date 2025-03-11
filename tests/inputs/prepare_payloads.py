@@ -25,9 +25,7 @@ import json
 import pathlib
 from typing import Any
 
-from ruamel.yaml import YAML
-
-yaml = YAML(typ="safe")
+import yaml
 
 _inputs_dir = pathlib.Path(__file__).parent
 _payload_dir = _inputs_dir / "payloads"
@@ -45,6 +43,7 @@ class Payload:
 example_payloads: dict[str, Payload] = {}
 
 for file in _payload_dir.glob("*.yaml"):
-    data = yaml.load(file)
+    with open(file, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
     payload = Payload(name=file.stem, data=data)
     example_payloads[file.stem] = payload

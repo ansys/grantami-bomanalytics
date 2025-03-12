@@ -20,5 +20,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .prepare_boms import BoM, example_boms
-from .prepare_payloads import Payload, example_payloads
+from dataclasses import dataclass
+import json
+import pathlib
+from typing import Any
+
+import yaml
+
+_inputs_dir = pathlib.Path(__file__).parent
+_payload_dir = _inputs_dir / "payloads"
+
+
+@dataclass(frozen=True)
+class Payload:
+    name: str
+    data: dict[str, Any]
+
+    def to_json(self) -> str:
+        return json.dumps(self.data)
+
+
+example_payloads: dict[str, Payload] = {}
+
+for file in _payload_dir.glob("*.yaml"):
+    with open(file, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    payload = Payload(name=file.stem, data=data)
+    example_payloads[file.stem] = payload

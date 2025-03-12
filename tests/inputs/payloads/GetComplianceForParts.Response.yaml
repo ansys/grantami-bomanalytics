@@ -1,0 +1,118 @@
+Parts:
+  - Indicators:
+      - Name: Indicator 1
+        Flag: WatchListAllSubstancesBelowThreshold
+      - Name: Indicator 2
+        Flag: RohsCompliant
+    Parts:
+      - Indicators:
+          - Name: Indicator 1
+            Flag: WatchListAllSubstancesBelowThreshold
+          - Name: Indicator 2
+            Flag: RohsCompliant
+        Parts: [ ]
+        Specifications: [ ]
+        Materials: [ ]
+        Substances:
+          - Indicators:
+              - Name: Indicator 1
+                Flag: WatchListNotImpacted
+              - Name: Indicator 2
+                Flag: RohsNotImpacted
+            PercentageAmount: 0
+            ReferenceType: MiRecordHistoryIdentity
+            ReferenceValue: '62345'
+        ReferenceType: MiRecordHistoryIdentity
+        ReferenceValue: '987654'
+    Specifications:
+      - Indicators:
+          - Name: Indicator 1
+            Flag: WatchListAllSubstancesBelowThreshold
+          - Name: Indicator 2
+            Flag: RohsCompliant
+        Specifications: [ ]
+        Coatings: [ ]
+        Materials: [ ]
+        Substances:
+          - Indicators:
+              - Name: Indicator 1
+                Flag: WatchListBelowThreshold
+              - Name: Indicator 2
+                Flag: RohsBelowThreshold
+            PercentageAmount: 0.1
+            ReferenceType: MiRecordHistoryIdentity
+            ReferenceValue: '12345'
+        ReferenceType: MiRecordHistoryIdentity
+        ReferenceValue: '987654'
+    Materials: [ ]
+    Substances: [ ]
+    ReferenceType: PartNumber
+    ReferenceValue: FLRY33
+  - Indicators:
+      - Name: Indicator 1
+        Flag: WatchListHasSubstanceAboveThreshold
+      - Name: Indicator 2
+        Flag: RohsNonCompliant
+    Parts: [ ]
+    Specifications: [ ]
+    Materials:
+      - Indicators:
+          - Name: Indicator 1
+            Flag: WatchListAllSubstancesBelowThreshold
+          - Name: Indicator 2
+            Flag: RohsCompliant
+        Substances:
+          - Indicators:
+              - Name: Indicator 1
+                Flag: WatchListBelowThreshold
+              - Name: Indicator 2
+                Flag: RohsBelowThreshold
+            PercentageAmount: 0.1
+            ReferenceType: MiRecordHistoryIdentity
+            ReferenceValue: '12345'
+        ReferenceType: MiRecordHistoryIdentity
+        ReferenceValue: '111111'
+      - Indicators:
+          - Name: Indicator 1
+            Flag: WatchListHasSubstanceAboveThreshold
+          - Name: Indicator 2
+            Flag: RohsNonCompliant
+        Substances:
+          - Indicators:
+              - Name: Indicator 1
+                Flag: WatchListBelowThreshold
+              - Name: Indicator 2
+                Flag: RohsBelowThreshold
+            PercentageAmount: 0.1
+            ReferenceType: MiRecordHistoryIdentity
+            ReferenceValue: '12345'
+          - Indicators:
+              - Name: Indicator 1
+                Flag: WatchListAboveThreshold
+              - Name: Indicator 2
+                Flag: RohsAboveThreshold
+            PercentageAmount: 2.9
+            ReferenceType: MiRecordHistoryIdentity
+            ReferenceValue: '34567'
+        ReferenceType: MiRecordHistoryIdentity
+        ReferenceValue: '222222'
+    Substances:
+      - Indicators:
+          - Name: Indicator 1
+            Flag: WatchListBelowThreshold
+          - Name: Indicator 2
+            Flag: RohsBelowThreshold
+        PercentageAmount: 0.1
+        ReferenceType: MiRecordHistoryIdentity
+        ReferenceValue: '12345'
+      - Indicators:
+          - Name: Indicator 1
+            Flag: WatchListAboveThreshold
+          - Name: Indicator 2
+            Flag: RohsAboveThreshold
+        PercentageAmount: 1.1
+        ReferenceType: MiRecordHistoryIdentity
+        ReferenceValue: '34567'
+    ReferenceType: MiRecordGuid
+    ReferenceValue: f622cc99-158d-43eb-881e-209a08af1108
+LogMessages: [ ]

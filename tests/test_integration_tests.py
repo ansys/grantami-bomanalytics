@@ -26,13 +26,7 @@ from ansys.grantami.bomanalytics import BoMHandler, GrantaMIException, Transport
 from ansys.grantami.bomanalytics.bom_types import eco2412
 
 from .common import INDICATORS, LEGISLATIONS
-from .inputs import (
-    sample_bom_1711,
-    sample_bom_custom_db,
-    sample_compliance_bom_1711,
-    sample_sustainability_bom_2301,
-    sample_sustainability_bom_2412,
-)
+from .inputs import example_boms
 
 pytestmark = pytest.mark.integration
 
@@ -119,13 +113,15 @@ class TestBomQueries:
     @pytest.fixture
     def bom(self, connection_with_db_variants):
         if connection_with_db_variants._db_key == "MI_Restricted_Substances_Custom_Tables":
-            return sample_bom_custom_db
+            bom_key = "compliance-bom-custom-db-1711"
         else:
-            return sample_compliance_bom_1711
+            bom_key = "compliance-bom-1711"
+        return example_boms[bom_key].content
 
     @pytest.fixture
     def bom2301(self):
-        _bom = sample_bom_1711.replace(
+        bom_1711 = example_boms["bom-1711"].content
+        _bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
             "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
         )
@@ -206,7 +202,9 @@ class TestMissingDatabase:
 
 @pytest.mark.xfail(reason="Uninformative error message", strict=True)
 def test_missing_table_raises_grantami_exception(connection):
-    query = queries.BomImpactedSubstancesQuery().with_bom(sample_bom_custom_db).with_legislation_ids(LEGISLATIONS)
+    query = (
+        queries.BomImpactedSubstancesQuery().with_bom(compliance_bom_custom_db_1711).with_legislation_ids(LEGISLATIONS)
+    )
     with pytest.raises(GrantaMIException) as e:
         connection.run(query)
     assert "Table name" in str(e.value) and "not found in database" in str(e.value)
@@ -293,10 +291,12 @@ class _TestSustainabilityBomQueries:
 
 
 class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
+    bom = example_boms["sustainability-bom-2412"].content
+
     @pytest.mark.integration(mi_versions=[(25, 2)])
     def test_sustainability_summary_query_25_2(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
-        query.with_bom(sample_sustainability_bom_2412)
+        query.with_bom(self.bom)
         response = connection.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
@@ -506,7 +506,7 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
     @pytest.mark.integration(mi_versions=[(25, 2)])
     def test_sustainability_query_25_2(self, connection):
         query = queries.BomSustainabilityQuery()
-        query.with_bom(sample_sustainability_bom_2412)
+        query.with_bom(self.bom)
         response = connection.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
@@ -631,23 +631,25 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
     @pytest.mark.integration(mi_versions=[(24, 2), (25, 1)])
     def test_sustainability_query_24_2_25_1_raises_exception(self, connection):
         query = queries.BomSustainabilityQuery()
-        query.with_bom(sample_sustainability_bom_2412)
+        query.with_bom(self.bom)
         with pytest.raises(GrantaMIException, match="Unrecognised/invalid namespace in the XML"):
             connection.run(query)
 
     @pytest.mark.integration(mi_versions=[(24, 2), (25, 1)])
     def test_sustainability_summary_query_24_2_25_1_raises_exception(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
-        query.with_bom(sample_sustainability_bom_2412)
+        query.with_bom(self.bom)
         with pytest.raises(GrantaMIException, match="Unrecognised/invalid namespace in the XML"):
             connection.run(query)
 
 
 class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
+    bom = example_boms["sustainability-bom-2301"].content
+
     @pytest.mark.integration(mi_versions=[(25, 2)])
     def test_sustainability_summary_transport_aggregation_results_25_2(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
-        query.with_bom(sample_sustainability_bom_2301)
+        query.with_bom(self.bom)
         response = connection.run(query)
 
         assert len(response.transport_details_aggregated_by_part) == 1
@@ -670,7 +672,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
     @pytest.mark.integration(mi_versions=[(24, 2), (25, 1)])
     def test_sustainability_summary_transport_aggregation_results_25_1_24_2(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
-        query.with_bom(sample_sustainability_bom_2301)
+        query.with_bom(self.bom)
         response = connection.run(query)
 
         assert response.transport_details_aggregated_by_part == []
@@ -680,7 +682,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
     @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
     def test_sustainability_summary_query_25_1_25_2(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
-        query.with_bom(sample_sustainability_bom_2301)
+        query.with_bom(self.bom)
         response = connection.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
@@ -791,7 +793,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
     @pytest.mark.integration(mi_versions=[(25, 1), (25, 2)])
     def test_sustainability_query_25_1_25_2(self, connection):
         query = queries.BomSustainabilityQuery()
-        query.with_bom(sample_sustainability_bom_2301)
+        query.with_bom(self.bom)
         response = connection.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
@@ -883,7 +885,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
     @pytest.mark.integration(mi_versions=[(24, 2)])
     def test_sustainability_summary_query_24_2(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
-        query.with_bom(sample_sustainability_bom_2301)
+        query.with_bom(self.bom)
         response = connection.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
@@ -993,7 +995,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
     @pytest.mark.integration(mi_versions=[(24, 2)])
     def test_sustainability_query_24_2(self, connection):
         query = queries.BomSustainabilityQuery()
-        query.with_bom(sample_sustainability_bom_2301)
+        query.with_bom(self.bom)
         response = connection.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])

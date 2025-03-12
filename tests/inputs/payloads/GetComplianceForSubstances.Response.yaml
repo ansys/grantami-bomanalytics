@@ -1,0 +1,18 @@
+Substances:
+  - Indicators:
+      - Name: Indicator 1
+        Flag: WatchListBelowThreshold
+      - Name: Indicator 2
+        Flag: RohsBelowThreshold
+    PercentageAmount: 0.05
+    ReferenceType: CasNumber
+    ReferenceValue: 50-00-0
+  - Indicators:
+      - Name: Indicator 1
+        Flag: WatchListAboveThreshold
+      - Name: Indicator 2
+        Flag: RohsAboveThreshold
+    PercentageAmount: 20
+    ReferenceType: ChemicalName
+    ReferenceValue: '1,3-Butadiene'
+LogMessages: [ ]

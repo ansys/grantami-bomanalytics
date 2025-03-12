@@ -24,7 +24,7 @@ import pytest
 
 from ansys.grantami.bomanalytics import queries
 
-from ..inputs import sample_sustainability_bom_2301
+from ..inputs import example_boms
 
 all_bom_queries = pytest.mark.parametrize(
     "query_type",
@@ -39,9 +39,10 @@ all_bom_queries = pytest.mark.parametrize(
 
 @all_bom_queries
 def test_add_bom(query_type):
-    query = query_type().with_bom(sample_sustainability_bom_2301)
+    bom = example_boms["sustainability-bom-2301"].content
+    query = query_type().with_bom(bom)
     assert isinstance(query, query_type)
-    assert query._data.bom == sample_sustainability_bom_2301
+    assert query._data.bom == bom
 
 
 @all_bom_queries

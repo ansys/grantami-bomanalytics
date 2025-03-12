@@ -20,8 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ansys.grantami.bomanalytics_openapi.v2.models import GetComplianceForSubstancesResponse
-
 from ansys.grantami.bomanalytics import indicators, queries
 
 from .common import BaseMockTester, SubstanceValidator
@@ -44,7 +42,7 @@ class TestCompliance(BaseMockTester):
         )
         .with_cas_numbers(["Fake ID"])
     )
-    mock_key = GetComplianceForSubstancesResponse.__name__
+    mock_key = "GetComplianceForSubstances.Response"
 
     def test_compliance_by_substance_and_indicator(self, mock_connection):
         response = self.get_mocked_response(mock_connection)

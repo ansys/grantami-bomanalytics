@@ -3,8 +3,7 @@
 Sustainability API
 ==================
 
-The
-:ref:`ref_grantami_bomanalytics_api_sustainability_bom` and
+The :ref:`ref_grantami_bomanalytics_api_sustainability_bom` and
 :ref:`ref_grantami_bomanalytics_api_sustainability_summary_bom` queries can be used to determine the
 environmental performance of a BoM (bill of materials) in Ansys Granta MI 2301 XML BoM format.
 

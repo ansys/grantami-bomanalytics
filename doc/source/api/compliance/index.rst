@@ -3,8 +3,7 @@
 Compliance API
 ==============
 
-The
-:ref:`ref_grantami_bomanalytics_api_compliance_substances`,
+The :ref:`ref_grantami_bomanalytics_api_compliance_substances`,
 :ref:`ref_grantami_bomanalytics_api_compliance_materials`,
 :ref:`ref_grantami_bomanalytics_api_compliance_specifications`, and
 :ref:`ref_grantami_bomanalytics_api_compliance_parts` queries (collectively referred to as

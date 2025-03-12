@@ -5,7 +5,7 @@
 
 .. currentmodule:: ansys.grantami.bomanalytics.bom_types.gbt1205
 
-The models documented in this section are Python bindings for the Granta Base Types 12/05 XML schema.
+These models are Python bindings for the Granta Base Types 12/05 XML schema.
 These are typically used to define references to attributes and records in a Granta MI database.
 
 .. tip::

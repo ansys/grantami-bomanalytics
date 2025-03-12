@@ -3,8 +3,7 @@
 Impacted substances API
 =======================
 
-This section gives an overview of the API for impacted substances. The
-:ref:`ref_grantami_bomanalytics_api_impactedsubstances_materials`,
+The :ref:`ref_grantami_bomanalytics_api_impactedsubstances_materials`,
 :ref:`ref_grantami_bomanalytics_api_impactedsubstances_specifications`, and
 :ref:`ref_grantami_bomanalytics_api_impactedsubstances_parts` queries (collectively referred to as
 record-based impacted substances queries) accept a list of references to records in a Granta MI

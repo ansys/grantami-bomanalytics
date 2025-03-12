@@ -22,8 +22,8 @@
 #
 # **Info:**
 #
-# This example requires uses a 24/12 XML BoM, which requires Granta MI Restricted Substances and Sustainability Reports
-# 2025 R2 or later. Running this example as-is results in an error due to an unsupported BoM version.
+# This example uses an input file that is in the 24/12 XML BoM format. This structure requires Granta MI Restricted
+# Substances and Sustainability Reports 2025 R2 or later.
 #
 # To run this example with an older version of the reports bundle, use
 # [sustainability-bom-2301.xml](supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example

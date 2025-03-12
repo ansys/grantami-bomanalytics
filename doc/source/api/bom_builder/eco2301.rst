@@ -6,12 +6,12 @@
 .. currentmodule:: ansys.grantami.bomanalytics.bom_types.eco2301
 
 
-The models documented in this section are Python bindings for the Ansys Granta MI 23/01 XML schema.
+These models are Python bindings for the Ansys Granta MI 23/01 XML schema.
 Not all elements are required to define a valid BoM for analysis, and not all elements have an impact
 on all types of analysis. For information on the relevant items for each analysis type,
 see :ref:`ref_grantami_bomanalytics_api_index`.
 
-Classes on this page are available in the module ``ansys.grantami.bomanalytics.bom_types.eco2301``.
+These classes are available in the module ``ansys.grantami.bomanalytics.bom_types.eco2301``.
 
 The 23/01 XML schema is supported by MI Restricted Substances and Sustainability Reports 2024 R1 and later.
 

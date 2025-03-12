@@ -3,7 +3,7 @@
 Compliance API
 ==============
 
-This section provides an overview of the API for compliance. The
+The
 :ref:`ref_grantami_bomanalytics_api_compliance_substances`,
 :ref:`ref_grantami_bomanalytics_api_compliance_materials`,
 :ref:`ref_grantami_bomanalytics_api_compliance_specifications`, and

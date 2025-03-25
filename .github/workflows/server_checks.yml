@@ -63,7 +63,7 @@ env:
   POETRY_HTTP_BASIC_PRIVATE_PYPI_PASSWORD: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
   
 concurrency:
-  group: integration-server-${{ startsWith( github.event.pull_request.head.ref, 'dependabot/') && github.workflow-github.ref || '' }}
+  group: integration-server
   cancel-in-progress: false
 
 jobs:

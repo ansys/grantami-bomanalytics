@@ -1,17 +1,51 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
 version: 2
+registries:
+  python-pyansys-private-pypi:
+    type: python-index
+    url: https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/
+    username: dependabot@ansys.com
+    password: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
+  python-pyansys-private-pypi-guid:
+    type: python-index
+    url: https://pkgs.dev.azure.com/pyansys/_packaging/705e121a-9631-49f5-8aaf-c7142856f923/simple/
+    username: dependabot@ansys.com
+    password: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 updates:
-  - package-ecosystem: "pip" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "pip"
+    insecure-external-code-execution: allow
+    directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    registries: "*"
     labels:
       - "maintenance"
       - "dependencies"
+    versioning-strategy: increase-if-necessary
+    groups:
+      doc-deps:
+        patterns:
+        - "*sphinx*"
+        - "numpydoc"
+        - "jupytext"
+      dev-deps:
+        patterns:
+        - "pytest*"
+        - "mypy"
+        - "requests-mock"
+        - "pre-commit"
+        - "*xml"
+        - "pyyaml"
+      examples-deps:
+        patterns:
+        - "jupyterlab"
+        - "pandas"
+        - "plotly"
+        - "tabulate"
+        - "ipywidgets"
+      src-deps:
+        patterns:
+        - "ansys-openapi-common"
+        - "ansys-grantami-bomanalytics-openapi"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -20,3 +54,7 @@ updates:
     labels:
       - "maintenance"
       - "dependencies"
+    groups:
+       actions:
+          patterns:
+            - "*"

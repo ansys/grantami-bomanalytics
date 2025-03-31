@@ -111,7 +111,7 @@ class RecordReference(ABC):
     def __init__(
         self,
         reference_type: Optional[ReferenceType],
-        reference_value: Union[int, str, Unset_Type],
+        reference_value: Union[int, str, Unset_Type, None],
     ):
         self._reference_type = reference_type
         if isinstance(reference_value, Unset_Type):

@@ -27,8 +27,8 @@ from ansys.openapi.common import Unset_Type
 T = TypeVar("T", bound=Any)
 
 
-def _raise_if_unset(value: Union[T, Unset_Type]) -> T:
-    """Raise if the value is Unset.
+def _raise_if_empty(value: Union[T, Unset_Type, None]) -> T:
+    """Raise if the value is Unset or None.
 
     Parameters
     ----------
@@ -38,17 +38,18 @@ def _raise_if_unset(value: Union[T, Unset_Type]) -> T:
     Returns
     -------
     Any
-        The input value if it is not Unset.
+        The input value if it is not Unset or None.
 
     Raises
     ------
     ValueError
-        If the object is an instance of Unset_Type.
+        If the object is an instance of Unset_Type or is None.
     """
-    new_value = _convert_unset_to_none(value)
-    if new_value is None:
+    if value is None:
         raise ValueError("Provided value cannot be 'Unset'")
-    return new_value
+    elif isinstance(value, Unset_Type):
+        raise ValueError("Provided value cannot be 'None'")
+    return value
 
 
 def _convert_unset_to_none(value: Union[T, Unset_Type]) -> Union[T, None]:

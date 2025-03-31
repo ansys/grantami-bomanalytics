@@ -61,7 +61,7 @@ from ._item_definitions import (
 )
 from ._logger import logger
 from ._query_results import QueryResultFactory, ResultBaseClass
-from ._typing import _raise_if_unset
+from ._typing import _raise_if_empty
 from .indicators import RoHSIndicator, WatchListIndicator, _Indicator
 
 if TYPE_CHECKING:
@@ -175,7 +175,7 @@ class _BaseQueryDataManager(ABC):
            Response returned by the low-level API.
         """
 
-        messages = _raise_if_unset(response.log_messages)
+        messages = _raise_if_empty(response.log_messages)
         self._emit_log_messages(messages)
         self._messages.extend(messages)
         results = self._extract_results_from_response(response)
@@ -199,11 +199,11 @@ class _BaseQueryDataManager(ABC):
 
         exception_messages = []
         for log_msg in log_messages:
-            severity = _raise_if_unset(log_msg.severity)
+            severity = _raise_if_empty(log_msg.severity)
             log_method = EXCEPTION_MAP.get(severity, logger.warning)
             log_method(log_msg.message)
             if log_method == logger.critical:
-                message = _raise_if_unset(log_msg.message)
+                message = _raise_if_empty(log_msg.message)
                 exception_messages.append(message)
         if exception_messages:
             error_text = "\n".join(exception_messages)

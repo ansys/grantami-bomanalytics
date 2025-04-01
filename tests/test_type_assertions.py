@@ -20,53 +20,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import Any, TypeVar, Union
+from ansys.openapi.common import Unset
+import pytest
 
-from ansys.openapi.common import Unset_Type
-
-T = TypeVar("T", bound=Any)
-
-
-def _raise_if_empty(value: Union[T, Unset_Type, None]) -> T:
-    """Raise if the value is Unset or None.
-
-    Parameters
-    ----------
-    value
-        The value to check.
-
-    Returns
-    -------
-    Any
-        The input value if it is not Unset or None.
-
-    Raises
-    ------
-    ValueError
-        If the object is an instance of Unset_Type or is None.
-    """
-    if value is None:
-        raise ValueError("Provided value cannot be 'None'")
-    elif isinstance(value, Unset_Type):
-        raise ValueError("Provided value cannot be 'Unset'")
-    return value
+from ansys.grantami.bomanalytics._typing import _convert_unset_to_none, _raise_if_empty
 
 
-def _convert_unset_to_none(value: Union[T, Unset_Type]) -> Union[T, None]:
-    """Convert any object that may be a union type including Unset_Type to a union type including
-    None.
+class TestRaiseIfEmpty:
+    def test_does_not_raise_if_not_empty(self):
+        _raise_if_empty("value")
 
-    Parameters
-    ----------
-    value
-        The object to cast.
+    @pytest.mark.parametrize(
+        "value, message", [(Unset, "Provided value cannot be 'Unset'"), (None, "Provided value cannot be 'None'")]
+    )
+    def test_raises_if_empty(self, value, message):
+        with pytest.raises(ValueError, match=message):
+            _raise_if_empty(value)
 
-    Returns
-    -------
-    Any, optional
-        The input value with the Unset_Type substituted for None.
-    """
-    if isinstance(value, Unset_Type):
-        return None
-    else:
-        return value
+
+class TestConvertUnsetToNone:
+    @pytest.mark.parametrize("value", [None, "value"])
+    def test_value_is_unchanged(self, value):
+        converted = _convert_unset_to_none(value)
+        assert converted == value
+
+    def test_unset_is_converted_to_none(self):
+        converted = _convert_unset_to_none(Unset)
+        assert converted is None

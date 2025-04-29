@@ -24,7 +24,7 @@ import logging
 
 import GRANTA_MIScriptingToolkit as gdl
 
-from ansys.grantami.serverapi_openapi import api, models
+from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 
 from cicd.connection import Connection
 from cicd.prepare_rs_db import TableBrowser

@@ -17,7 +17,7 @@ import logging
 from pathlib import Path
 from typing import Mapping, Iterable, Tuple
 
-from ansys.grantami.serverapi_openapi import api, models
+from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 import GRANTA_MIScriptingToolkit as gdl
 from ansys.openapi.common import ApiClient
 

@@ -186,6 +186,7 @@ jobs:
         name: "Release to GitHub"
         with:
           library-name: ${{ env.LIBRARY_NAME }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   doc-deploy-stable:
     name: "Deploy stable documentation"

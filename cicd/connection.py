@@ -1,7 +1,7 @@
 from importlib.metadata import version
 from typing import Optional
 
-from ansys.grantami.serverapi_openapi import models
+from ansys.grantami.serverapi_openapi.v2025r2 import models
 from ansys.openapi.common import SessionConfiguration, ApiClientFactory, generate_user_agent, ApiClient
 
 SERVICE_PATH = "/proxy/v1.svc/mi"

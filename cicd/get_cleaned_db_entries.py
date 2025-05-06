@@ -31,7 +31,7 @@ import logging
 from pathlib import Path
 
 from GRANTA_MIScriptingToolkit import granta as mpy
-from ansys.grantami.serverapi_openapi import api, models
+from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 from ansys.openapi.common import Unset
 
 from cicd.connection import Connection

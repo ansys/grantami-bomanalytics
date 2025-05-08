@@ -4,7 +4,7 @@ BoM helpers
 ===========
 
 BoM helpers represent a BoM (bill of materials) in Ansys Granta
-MI 2301 XML BoM format, and they support reading and writing these files.
+MI 23/01 or 24/12 XML BoM format, and they support reading and writing these files.
 
 The :class:`~ansys.grantami.bomanalytics.bom_types.eco2412.BillOfMaterials` represents the root object in a 24/12 BoM
 hierarchy and can be used to programmatically generate a BoM.

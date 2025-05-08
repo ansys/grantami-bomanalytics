@@ -54,7 +54,7 @@ Dependencies
 
 This version of the ``ansys.grantami.bomanalytics`` package requires MI Restricted Substances and Sustainability Reports
 2024 R2 or later. Use
-`the PyGranta documentation <https://grantami.docs.pyansys.com/version/stable/package_versions.html/>`_ to find the
+`the PyGranta documentation <https://grantami.docs.pyansys.com/version/stable/package_versions>`_ to find the
 version of this package compatible with older MI Restricted Substances and Sustainability Reports versions.
 
 ``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately. Endpoints available to end users depend

@@ -52,11 +52,13 @@ Dependencies
 ------------
 .. readme_software_requirements
 
-To use the ``grantami-bomanalytics`` package, you must have access to a Granta MI server that
-includes MI Restricted Substances and Sustainability Reports 2024 R2 or later.
+This version of the ``ansys.grantami.bomanalytics`` package requires MI Restricted Substances and Sustainability Reports
+2024 R2 or later. Use
+`the PyGranta documentation <https://grantami.docs.pyansys.com/version/stable/package_versions>`_ to find the
+version of this package compatible with older MI Restricted Substances and Sustainability Reports versions.
 
-``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately.
-Endpoints available to end users depend on the available licenses.
+``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately. Endpoints available to end users depend
+on the available licenses.
 
 The ``ansys.grantami.bomanalytics`` package currently supports Python version 3.10 through 3.13.
 

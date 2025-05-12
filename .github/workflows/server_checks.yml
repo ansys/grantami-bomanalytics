@@ -164,7 +164,7 @@ jobs:
     needs: integration-tests
     steps:
       - name: "Run Ansys documentation building action"
-        uses: ansys/actions/doc-build@2cf9a9c43235a000d613c2b13e64c954232a4553  # v9.0.9
+        uses: ansys/actions/doc-build@9d6f811d3bd80c20de8eecee5fa57076a9e37568  # v9.0.17
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_DEV_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}

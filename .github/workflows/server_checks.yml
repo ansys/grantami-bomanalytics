@@ -28,6 +28,8 @@ on:
       # Test server names
       AZURE_VM_NAME_DEV:
         required: true
+      AZURE_VM_NAME_25R2:
+        required: true
       AZURE_VM_NAME_25R1:
         required: true
       AZURE_VM_NAME_24R2:
@@ -190,6 +192,7 @@ jobs:
       matrix:
         server:
           - "AZURE_VM_NAME_DEV"
+          - "AZURE_VM_NAME_25R2"
           - "AZURE_VM_NAME_25R1"
           - "AZURE_VM_NAME_24R2"
           - "AZURE_VM_NAME_24R1"

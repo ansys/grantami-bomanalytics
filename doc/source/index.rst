@@ -55,3 +55,4 @@ Python interface to the Granta BoM Analytics Services API.
    api/index
    examples/index
    contributing
+   changelog

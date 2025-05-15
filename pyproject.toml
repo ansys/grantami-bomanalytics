@@ -142,12 +142,11 @@ src_paths = ["src", "tests"]
 [tool.towncrier]
 package = "ansys.grantami.bomanalytics"
 directory = "doc/changelog.d"
-filename = "CHANGELOG.md"
-start_string = "<!-- towncrier release notes start -->\n"
-underlines = ["", "", ""]
+filename = "doc/source/changelog.rst"
+start_string = ".. towncrier release notes start\n"
 template = "doc/changelog.d/changelog_template.jinja"
-title_format = "## [{version}](https://github.com/ansys/grantami-bomanalytics/releases/tag/v{version}) - {project_date}"
-issue_format = "[#{issue}](https://github.com/ansys/grantami-bomanalytics/pull/{issue})"
+title_format = "`{version} <https://github.com/ansys/grantami-bomanalytics/releases/tag/v{version}>`_ - {project_date}"
+issue_format = "`#{issue} <https://github.com/ansys/grantami-bomanalytics/pull/{issue}>`_"
 
 [[tool.towncrier.type]]
 directory = "added"

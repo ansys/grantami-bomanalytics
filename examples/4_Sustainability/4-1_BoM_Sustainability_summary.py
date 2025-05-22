@@ -453,7 +453,11 @@ summary_df = pd.concat(
     ],
     join="inner",
 )
+summary_df.reset_index(inplace=True, drop=True)
 summary_df
+# -
+
+# ## Sunburst chart
 
 # A sunburst chart presents hierarchical data radially.
 
@@ -468,6 +472,8 @@ fig = go.Figure(
 )
 fig.show()
 
+# ## Icicle chart
+
 # An icicle chart presents hierarchical data as rectangular sectors.
 
 fig = go.Figure(
@@ -476,6 +482,76 @@ fig = go.Figure(
         parents=summary_df["Parent"],
         values=summary_df[EE_HEADER],
         branchvalues="total",
+    ),
+    layout_title_text=f"Embodied Energy [{ENERGY_UNIT}]",
+)
+fig.show()
+
+# ## Sankey diagram
+
+# Sankey diagrams represent the data as arrows of varying thicknesses. To plot a Sankey diagram, first add an additional
+# level to the data which represents the complete product, and compute the values for this row based on the sum of the
+# values of the child rows.
+
+# +
+sankey_df = summary_df.copy()
+sankey_df["Parent"] = sankey_df["Parent"].replace("", "Product")
+sankey_df
+
+product_row = {
+    "Name": "Product",
+
+    # Sum the EE contributions for all rows which are a child of 'Product'
+    "EE%": sum(sankey_df[sankey_df["Parent"] == "Product"]["EE%"]),
+    "EE [MJ]": sum(sankey_df[sankey_df["Parent"] == "Product"]["EE [MJ]"]),  # Same for the other result columns
+    "CC%": sum(sankey_df[sankey_df["Parent"] == "Product"]["CC%"]),
+    "CC [kg]": sum(sankey_df[sankey_df["Parent"] == "Product"]["CC [kg]"]),
+    "Parent": "",
+}
+
+sankey_df.loc[len(sankey_df)] = product_row
+# -
+
+# Plotly uses row IDs to construct the hierarchy in a Sankey diagram, so create a new "Target" column and populate
+# appropriately.
+
+sankey_df["Sankey Target"] = sankey_df["Parent"].apply(
+    lambda x: sankey_df.index[sankey_df["Name"] == x].values[0] if x else None
+)
+sankey_df.head()
+
+# Define a color for each node on the Sankey diagram by using a builtin Plotly color swatch.
+
+# +
+import plotly.express as px
+
+sankey_df["Sankey Color"] = (px.colors.qualitative.Pastel1 +
+                             px.colors.qualitative.Pastel1 +
+                             px.colors.qualitative.Pastel1[:3]
+                             )  # TODO: Fix
+sankey_df.head()
+# -
+
+# Finally, create the diagram.
+
+fig = go.Figure(
+    go.Sankey(
+        valueformat = ".0f",
+        valuesuffix = " MJ",
+        node = dict(
+            pad = 15,
+            thickness = 15,
+            line = dict(color = "black", width = 0.5),
+            label = sankey_df["Name"],
+            color = sankey_df["Sankey Color"]
+        ),
+        link = dict(
+            source = sankey_df.index,
+            target = sankey_df["Sankey Target"],
+            value = sankey_df["EE [MJ]"],
+            color = sankey_df["Sankey Color"],
+            label = sankey_df["Sankey Target"],
+        )
     ),
     layout_title_text=f"Embodied Energy [{ENERGY_UNIT}]",
 )

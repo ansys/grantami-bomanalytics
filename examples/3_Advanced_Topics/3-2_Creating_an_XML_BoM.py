@@ -13,11 +13,14 @@
 #     name: python3
 # ---
 
-# # Create an XML BoM using python
+# # Create an XML BoM using Python
 
 # The `bom_types` namespace can be used in conjunction with the `BoMHandler` class to
-# create and manipulate BoMs for analysis. This example shows how this can be done, creating
-# a BoM for a laminated glass door and running a compliance query.
+# create and manipulate BoMs for analysis. This example demonstrates creating a BoM for
+# a laminated glass door and then uses the BoM as the input to a compliance query.
+
+# The door contains two hinges and a handle, both fixed to the frame with machine screws and
+# washers, the door glass is coated with a partially reflective polymer film.
 
 # Most installations of Granta MI will use the default database key and table names:
 
@@ -27,8 +30,9 @@ TABLE_NAME = "MaterialUniverse"
 # -
 
 # The structure of an XML BoM is hierarchical, individual parts belong to assemblies which can
-# belong to larger assemblies. It is possible to construct the BoM in one object, but it is often
-# simpler to build the part up from smaller assemblies. This example uses this approach.
+# belong to larger assemblies. It is possible to construct the BoM in one statement, but this
+# example uses the recommended approach of building each part up from objects that represent
+# smaller sub-assemblies.
 
 # It is possible to have the same part in multiple places in the BoM, so we define two helper functions
 # to create a copy of a part and set the quantity.
@@ -36,68 +40,101 @@ TABLE_NAME = "MaterialUniverse"
 # +
 import copy
 
-import ansys.grantami.bomanalytics.bom_types as bom_types
+from ansys.grantami.bomanalytics.bom_types.eco2412 import BillOfMaterials, Material, Part, UnittedValue
+from ansys.grantami.bomanalytics.bom_types import MIRecordReference
 
-def add_part_to_assembly_with_count(child: bom_types.Part, count: int) -> bom_types.Part:
+def add_part_to_assembly_with_count(child: Part, count: int) -> Part:
     return add_part_to_assembly_with_quantity(child, float(count), "Each")
 
-def add_part_to_assembly_with_quantity(child: bom_types.Part, quantity: float, unit: str) -> bom_types.Part:
+def add_part_to_assembly_with_quantity(child: Part, quantity: float, unit: str) -> Part:
     assigned_part = copy.deepcopy(child)
-    assigned_part.quantity = bom_types.UnittedValue(quantity, unit=unit)
+    assigned_part.quantity = UnittedValue(quantity, unit=unit)
     return assigned_part
 # -
 
-# Material references are reused, we can define them in different ways.
-# It's common to specify materials by their Granta MI Record GUIDs, which uniquely identify
-# a record.
-# Some databases also have unique identifiers for materials. If these are Short Text attributes
-# they can be used as lookup values, in MaterialUniverse we can use the "Material ID" attribute.
+# Material references define abstract references to Granta MI records, and so can be reused.
+# Material references can be defined in different ways.
 
-# +
-material_id_reference = bom_types.MIAttributeReference(db_key=DB_KEY, attribute_name="Material ID", table_reference=bom_types.PartialTableReference(table_name=TABLE_NAME))
+# The following references are created using different types of GUID. Record GUIDs identify a
+# specific version of the record, while Record History GUIDs identify the latest accessible
+# version of the record.
 
-laminated_glass_reference = bom_types.MIRecordReference(db_key=DB_KEY, record_guid="85ed8b21-c2e6-4c43-8ec3-4c12a44c820c")
-nylon_pa6_reference = bom_types.MIRecordReference(db_key=DB_KEY, record_history_guid="1c7884dd-80ed-4661-89d6-4b6e56a08ed7")
-hardened_stainless_reference = bom_types.MIRecordReference(db_key=DB_KEY, record_guid="fcc49a93-6b92-4751-9b85-f00b7769190d")
-pet_film_reference = bom_types.MIRecordReference(db_key=DB_KEY, lookup_attribute_reference=material_id_reference, lookup_value="plastic-pet")
-annealed_stainless_reference = bom_types.MIRecordReference(db_key=DB_KEY, lookup_attribute_reference=material_id_reference, lookup_value="stainless-304-annealed")
-aluminium_319_reference = bom_types.MIRecordReference(db_key=DB_KEY, lookup_attribute_reference=material_id_reference, lookup_value="aluminum-319-0-moldcast-t6")
-steel_1015_reference = bom_types.MIRecordReference(db_key=DB_KEY, lookup_attribute_reference=material_id_reference, lookup_value="steel-1015-normalized")
 # -
 
-# Nylon washers exist in multiple parts, so define these first.
+laminated_glass_reference = MIRecordReference(db_key=DB_KEY, record_guid="85ed8b21-c2e6-4c43-8ec3-4c12a44c820c")
+hardened_stainless_reference = MIRecordReference(db_key=DB_KEY, record_guid="fcc49a93-6b92-4751-9b85-f00b7769190d")
+nylon_pa6_reference = MIRecordReference(db_key=DB_KEY, record_history_guid="1c7884dd-80ed-4661-89d6-4b6e56a08ed7")
 
 # +
-washer_part = bom_types.Part(
-    part_number="N0403.12N.2",
-    mass_per_unit_of_measure=bom_types.UnittedValue(2., "g/Part"),
-    materials=[bom_types.Material(mi_material_reference=nylon_pa6_reference, percentage=100.)]
+
+# Some databases also have unique identifiers for materials. If these are Short Text attributes
+# they can be used as lookup values, for example in MaterialUniverse we can use the "Material ID"
+# attribute.
+
+# +
+from ansys.grantami.bomanalytics.bom_types import AttributeReferenceBuilder
+
+material_id_reference = (AttributeReferenceBuilder(DB_KEY)
+                         .with_attribute_name("Material ID")
+                         .with_table_name(TABLE_NAME)
+                         .build())
+
+pet_film_reference = MIRecordReference(
+    db_key=DB_KEY,
+    lookup_attribute_reference=material_id_reference,
+    lookup_value="plastic-pet"
+)
+annealed_stainless_reference = MIRecordReference(
+    db_key=DB_KEY,
+    lookup_attribute_reference=material_id_reference,
+    lookup_value="stainless-304-annealed"
+)
+aluminium_319_reference = MIRecordReference(
+    db_key=DB_KEY,
+    lookup_attribute_reference=material_id_reference,
+    lookup_value="aluminum-319-0-moldcast-t6"
+)
+steel_1015_reference = MIRecordReference(
+    db_key=DB_KEY,
+    lookup_attribute_reference=material_id_reference,
+    lookup_value="steel-1015-normalized"
 )
 # -
 
-# Start with sub-assemblies and assemble the BoM
+# Nylon washers exist in multiple parts, so define these first. The part number has no effect
+# on the analysis and simply identifies each part in the result.
+
+# +
+washer_part = Part(
+    part_number="N0403.12N.2",
+    mass_per_unit_of_measure=UnittedValue(2., "g/Part"),
+    materials=[Material(mi_material_reference=nylon_pa6_reference, percentage=100.)]
+)
+# -
+
+# Start with sub-assemblies and assemble the BoM.
 # The hinge assembly consists of two casting parts, four washers, and two machine screws
 
 # +
-hinge_casting_a = bom_types.Part(
+hinge_casting_a = Part(
     part_number="HA-42-Al(A)",
-    mass_per_unit_of_measure=bom_types.UnittedValue(146., "g/Part"),
-    materials=[bom_types.Material(mi_material_reference=aluminium_319_reference, percentage=100.)]
+    mass_per_unit_of_measure=UnittedValue(146., "g/Part"),
+    materials=[Material(mi_material_reference=aluminium_319_reference, percentage=100.)]
 )
 
-hinge_casting_b = bom_types.Part(
+hinge_casting_b = Part(
     part_number="HA-42-Al(B)",
-    mass_per_unit_of_measure=bom_types.UnittedValue(220., "g/Part"),
-    materials=[bom_types.Material(mi_material_reference=aluminium_319_reference, percentage=100.)]
+    mass_per_unit_of_measure=UnittedValue(220., "g/Part"),
+    materials=[Material(mi_material_reference=aluminium_319_reference, percentage=100.)]
 )
 
-machine_screw_part = bom_types.Part(
+machine_screw_part = Part(
     part_number="DIN-7991-M8-20",
-    mass_per_unit_of_measure=bom_types.UnittedValue(8.6, "g/Part"),
-    materials=[bom_types.Material(mi_material_reference=hardened_stainless_reference, percentage=100.)]
+    mass_per_unit_of_measure=UnittedValue(8.6, "g/Part"),
+    materials=[Material(mi_material_reference=hardened_stainless_reference, percentage=100.)]
 )
 
-hinge_assembly = bom_types.Part(
+hinge_assembly = Part(
     part_number="HA-42-Al",
     components=[
         add_part_to_assembly_with_count(hinge_casting_a, 1),
@@ -108,36 +145,36 @@ hinge_assembly = bom_types.Part(
 )
 # -
 
-# The handle consists of two stainless steel handles, two mild steel pins, four
+# The handle assembly consists of two stainless steel handles, two mild steel pins, four
 # nylon washers and a pair of grub screws. The pin screws into part B and is retained in
 # part A with a grub screw.
 
 # +
-handle_part_a = bom_types.Part(
+handle_part_a = Part(
     part_number="H-S-BR-A",
-    mass_per_unit_of_measure=bom_types.UnittedValue(472., "g/Part"),
-    materials=[bom_types.Material(mi_material_reference=annealed_stainless_reference, percentage=100.)]
+    mass_per_unit_of_measure=UnittedValue(472., "g/Part"),
+    materials=[Material(mi_material_reference=annealed_stainless_reference, percentage=100.)]
 )
 
-handle_part_b = bom_types.Part(
+handle_part_b = Part(
     part_number="H-S-BR-B",
-    mass_per_unit_of_measure=bom_types.UnittedValue(464., "g/Part"),
-    materials=[bom_types.Material(mi_material_reference=annealed_stainless_reference, percentage=100.)]
+    mass_per_unit_of_measure=UnittedValue(464., "g/Part"),
+    materials=[Material(mi_material_reference=annealed_stainless_reference, percentage=100.)]
 )
 
-handle_pin_part = bom_types.Part(
+handle_pin_part = Part(
     part_number="H-PIN-12",
-    mass_per_unit_of_measure=bom_types.UnittedValue(46.5, "g/Part"),
-    materials=[bom_types.Material(mi_material_reference=steel_1015_reference, percentage=100.)]
+    mass_per_unit_of_measure=UnittedValue(46.5, "g/Part"),
+    materials=[Material(mi_material_reference=steel_1015_reference, percentage=100.)]
 )
 
-handle_grub_screw_part = bom_types.Part(
+handle_grub_screw_part = Part(
     part_number="SSF-M4-6-A2",
-    mass_per_unit_of_measure=bom_types.UnittedValue(1.3, "g/Part"),
-    materials=[bom_types.Material(mi_material_reference=hardened_stainless_reference, percentage=100.)]
+    mass_per_unit_of_measure=UnittedValue(1.3, "g/Part"),
+    materials=[Material(mi_material_reference=hardened_stainless_reference, percentage=100.)]
 )
 
-handle_assembly = bom_types.Part(
+handle_assembly = Part(
     part_number="H-S-BR-Dual",
     components=[
         add_part_to_assembly_with_count(handle_part_a, 1),
@@ -150,21 +187,21 @@ handle_assembly = bom_types.Part(
 # -
 
 # The glass panel consists of a laminated glass door and a layer of PET solar control
-# film
+# film.
 
 # +
-glass_panel = bom_types.Part(
+glass_panel = Part(
     part_number="321-51",
-    mass_per_unit_of_measure=bom_types.UnittedValue(19.6, "kg/m^2"),
-    materials=[bom_types.Material(mi_material_reference=laminated_glass_reference, percentage=100.)])
+    mass_per_unit_of_measure=UnittedValue(19.6, "kg/m^2"),
+    materials=[Material(mi_material_reference=laminated_glass_reference, percentage=100.)])
 
-solar_control_film = bom_types.Part(
+solar_control_film = Part(
     part_number="7000001298",
-    mass_per_unit_of_measure=bom_types.UnittedValue(340., "g/m^2"),
-    materials=[bom_types.Material(mi_material_reference=pet_film_reference, percentage=100.)]
+    mass_per_unit_of_measure=UnittedValue(340., "g/m^2"),
+    materials=[Material(mi_material_reference=pet_film_reference, percentage=100.)]
 )
 
-panel_assembly = bom_types.Part(
+panel_assembly = Part(
     part_number="P-30-L",
     components=[
         add_part_to_assembly_with_quantity(glass_panel, 1.51, "m^2"),
@@ -174,10 +211,10 @@ panel_assembly = bom_types.Part(
 # -
 
 # The whole door assembly is then a combination of two hinges, one handle assembly and one
-# door panel
+# door panel.
 
 # +
-door_assembly = bom_types.Part(
+door_assembly = Part(
     part_number="24X6-30",
     components=[
         add_part_to_assembly_with_count(hinge_assembly, 2),
@@ -187,12 +224,12 @@ door_assembly = bom_types.Part(
 )
 # -
 
-# Generate a bom from the door assembly part
+# Generate a BoM from the door assembly part, and dump the BoM to XML.
 
 # +
 from ansys.grantami.bomanalytics import BoMHandler
 
-door_assembly_bom = bom_types.BillOfMaterials(components=[door_assembly])
+door_assembly_bom = BillOfMaterials(components=[door_assembly])
 bom_handler = BoMHandler()
 
 rendered_bom = bom_handler.dump_bom(door_assembly_bom)
@@ -204,15 +241,16 @@ rendered_bom.splitlines()[0:10]
 # First, connect to Granta MI.
 
 # +
+
 from ansys.grantami.bomanalytics import Connection
 
 server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
-# The impacted substances BoM query behaves similar to other impacted substances queries. However,
-# a BoM query can only accept a single BoM at a time, and so you only ever receive a single list
-# of substances impacted by the specified legislations.
+# The compliance BoM query accepts a single XML BoM as a string and one or more indicators. In
+# this case we perform a query against the SIN list, using the RoHS indicator with a threshold
+# of 0.1%.
 
 # +
 from ansys.grantami.bomanalytics import indicators, queries
@@ -241,7 +279,3 @@ compliance_result
 root_part = compliance_result.compliance_by_part_and_indicator[0]
 print(f"BoM Compliance Status: {root_part.indicators['SINList'].flag.name}")
 # -
-
-
-
-

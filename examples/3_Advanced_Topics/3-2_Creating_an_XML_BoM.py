@@ -41,7 +41,7 @@ TABLE_NAME = "MaterialUniverse"
 import copy
 
 from ansys.grantami.bomanalytics.bom_types.eco2412 import BillOfMaterials, Material, Part, UnittedValue
-from ansys.grantami.bomanalytics.bom_types import MIRecordReference
+from ansys.grantami.bomanalytics.bom_types.gbt1205 import MIRecordReference
 
 def add_part_to_assembly_with_count(child: Part, count: int) -> Part:
     return add_part_to_assembly_with_quantity(child, float(count), "Each")
@@ -59,13 +59,13 @@ def add_part_to_assembly_with_quantity(child: Part, quantity: float, unit: str) 
 # specific version of the record, while Record History GUIDs identify the latest accessible
 # version of the record.
 
-# -
+# +
 
 laminated_glass_reference = MIRecordReference(db_key=DB_KEY, record_guid="85ed8b21-c2e6-4c43-8ec3-4c12a44c820c")
 hardened_stainless_reference = MIRecordReference(db_key=DB_KEY, record_guid="fcc49a93-6b92-4751-9b85-f00b7769190d")
 nylon_pa6_reference = MIRecordReference(db_key=DB_KEY, record_history_guid="1c7884dd-80ed-4661-89d6-4b6e56a08ed7")
 
-# +
+# -
 
 # Some databases also have unique identifiers for materials. If these are Short Text attributes
 # they can be used as lookup values, for example in MaterialUniverse we can use the "Material ID"
@@ -241,7 +241,6 @@ rendered_bom.splitlines()[0:10]
 # First, connect to Granta MI.
 
 # +
-
 from ansys.grantami.bomanalytics import Connection
 
 server_url = "http://my_grantami_server/mi_servicelayer"
@@ -255,9 +254,9 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # +
 from ansys.grantami.bomanalytics import indicators, queries
 
-sin_list = indicators.RoHSIndicator(
-    name="SINList",
-    legislation_ids=["SINList"],
+sin_list = indicators.WatchListIndicator(
+    name="EU REACH Candidate List",
+    legislation_ids=["Candidate_AnnexXV"],
     default_threshold_percentage=0.1,
 )
 
@@ -277,5 +276,5 @@ compliance_result
 
 # +
 root_part = compliance_result.compliance_by_part_and_indicator[0]
-print(f"BoM Compliance Status: {root_part.indicators['SINList'].flag.name}")
+print(f"BoM Compliance Status: {root_part.indicators['EU REACH Candidate List'].flag.name}")
 # -

@@ -1,4 +1,4 @@
-﻿# ---
+# ---
 # jupyter:
 #   jupytext:
 #     formats: ipynb,py:light

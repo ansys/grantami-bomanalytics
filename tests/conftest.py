@@ -99,8 +99,16 @@ def pytest_generate_tests(metafunc):
         return
 
     skip_examples_for_version = defaultdict(set)
-    skip_examples_for_version[(25, 1)] = {"4-1_BoM_Sustainability_summary.py", "4-2_BoM_Sustainability.py"}
-    skip_examples_for_version[(24, 2)] = {"4-1_BoM_Sustainability_summary.py", "4-2_BoM_Sustainability.py"}
+    skip_examples_for_version[(25, 1)] = {
+        "3-2_Creating_an_XML_BoM.py",
+        "4-1_BoM_Sustainability_summary.py",
+        "4-2_BoM_Sustainability.py",
+    }
+    skip_examples_for_version[(24, 2)] = {
+        "3-2_Creating_an_XML_BoM.py",
+        "4-1_BoM_Sustainability_summary.py",
+        "4-2_BoM_Sustainability.py",
+    }
 
     if "example_script" in metafunc.fixturenames:
         this_file = pathlib.Path(__file__).parent.resolve()

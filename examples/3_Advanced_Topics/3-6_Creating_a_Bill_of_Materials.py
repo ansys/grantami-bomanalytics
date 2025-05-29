@@ -131,7 +131,7 @@ source_transports[0]
 
 # If you are using a customized database, before running any queries, change the database key value
 #  in the following cell and see the
-# [Database specific configuration](3-3_Database-specific_configuration.ipynb) example to
+# [Database specific configuration](3-4_Database-specific_configuration.ipynb) example to
 # appropriately configure the connection.
 
 from ansys.grantami.bomanalytics import bom_types

@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.15.1
+#       jupytext_version: 1.16.7
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -24,10 +24,8 @@
 
 # Most installations of Granta MI will use the default database key and table names:
 
-# +
 DB_KEY = "MI_Restricted_Substances"
 TABLE_NAME = "MaterialUniverse"
-# -
 
 # The structure of an XML BoM is hierarchical, individual parts belong to assemblies which can
 # belong to larger assemblies. It is possible to construct the BoM in one statement, but this
@@ -59,13 +57,9 @@ def add_part_to_assembly_with_quantity(child: Part, quantity: float, unit: str) 
 # specific version of the record, while Record History GUIDs identify the latest accessible
 # version of the record.
 
-# +
-
 laminated_glass_reference = MIRecordReference(db_key=DB_KEY, record_guid="85ed8b21-c2e6-4c43-8ec3-4c12a44c820c")
 hardened_stainless_reference = MIRecordReference(db_key=DB_KEY, record_guid="fcc49a93-6b92-4751-9b85-f00b7769190d")
 nylon_pa6_reference = MIRecordReference(db_key=DB_KEY, record_history_guid="1c7884dd-80ed-4661-89d6-4b6e56a08ed7")
-
-# -
 
 # Some databases also have unique identifiers for materials. If these are Short Text attributes
 # they can be used as lookup values, for example in MaterialUniverse we can use the "Material ID"
@@ -104,13 +98,11 @@ steel_1015_reference = MIRecordReference(
 # Nylon washers exist in multiple parts, so define these first. The part number has no effect
 # on the analysis and simply identifies each part in the result.
 
-# +
 washer_part = Part(
     part_number="N0403.12N.2",
     mass_per_unit_of_measure=UnittedValue(2., "g/Part"),
     materials=[Material(mi_material_reference=nylon_pa6_reference, percentage=100.)]
 )
-# -
 
 # Start with sub-assemblies and assemble the BoM.
 # The hinge assembly consists of two casting parts, four washers, and two machine screws
@@ -213,7 +205,6 @@ panel_assembly = Part(
 # The whole door assembly is then a combination of two hinges, one handle assembly and one
 # door panel.
 
-# +
 door_assembly = Part(
     part_number="24X6-30",
     components=[
@@ -222,7 +213,6 @@ door_assembly = Part(
         add_part_to_assembly_with_count(panel_assembly, 1),
     ]
 )
-# -
 
 # Generate a BoM from the door assembly part, and dump the BoM to XML.
 
@@ -274,7 +264,5 @@ compliance_result
 # ``PartWithComplianceResult`` objects.
 # The following cell prints the compliance status of the BoM.
 
-# +
 root_part = compliance_result.compliance_by_part_and_indicator[0]
 print(f"BoM Compliance Status: {root_part.indicators['EU REACH Candidate List'].flag.name}")
-# -

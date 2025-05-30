@@ -12,7 +12,7 @@
 #     name: python3
 # ---
 
-# # BoM sustainability summary: messages and phase summary
+# # BoM sustainability summary: Messages and phase summary
 #
 # The following supporting files are required for this example:
 #

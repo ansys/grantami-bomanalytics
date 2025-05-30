@@ -5,14 +5,14 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.16.7
+#       jupytext_version: 1.17.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
 # ---
 
-# # Perform a BoM sustainability summary query
+# # BoM sustainability summary: Transport phase
 #
 # The following supporting files are required for this example:
 #
@@ -30,84 +30,73 @@
 # will produce different results from the published example when this BoM is used.
 # </div>
 
+# ## Example scope
+#
+# This example only shows the following sustainability summary properties:
+# * ``transport_details``
+# * ``distribution_transport_summary``
+# * ``manufacturing_transport_summary``
+# * ``transport_details_aggregated_by_part``
+#
+# For other properties, see the other examples in this section:
+#
+# * BoM sustainability summary: messages and phase summary
+#   * ``messages``
+#   * ``phase_summary``
+# * BoM sustainability summary: material
+#   * ``material_details``
+# * BoM sustainability summary: processes
+#   * ``primary_processes_details``
+#   * ``secondary_processes_details``
+#   * ``joining_and_finishing_processes_details``
+#
+# The "BoM sustainability summary: hierarchical plots" summarizes all the processed data into plots which represent
+# the hierarchy of the data.
+
 # ## Run a BoM sustainability summary query
 #
-# First, connect to Granta MI.
-#
-
-from ansys.grantami.bomanalytics import Connection
-
-server_url = "http://my_grantami_server/mi_servicelayer"
-cxn = Connection(server_url).with_autologon().connect()
-
-# Next, create a sustainability summary query. The query accepts a single BoM as argument and an optional
-# configuration for units. If a unit is not specified, the default unit is used. Default units for the analysis are
-# ``MJ`` for energy, ``kg`` for mass, and ``km`` for distance.
+# For more context around executing the sustainability summary query, see the "BoM sustainability summary: messages
+# and phase summary" example.
 
 # +
-xml_file_path = "supporting-files/sustainability-bom-2412.xml"
-with open(xml_file_path) as f:
-    bom = f.read()
-
-from ansys.grantami.bomanalytics import queries
+from ansys.grantami.bomanalytics import Connection, queries
 
 MASS_UNIT = "kg"
 ENERGY_UNIT = "MJ"
 DISTANCE_UNIT = "km"
+
+server_url = "http://my_grantami_server/mi_servicelayer"
+cxn = Connection(server_url).with_credentials("user_name", "password").connect()
+
+xml_file_path = "supporting-files/sustainability-bom-2412.xml"
+with open(xml_file_path) as f:
+    bom = f.read()
 
 sustainability_summary_query = (
     queries.BomSustainabilitySummaryQuery()
     .with_bom(bom)
     .with_units(mass=MASS_UNIT, energy=ENERGY_UNIT, distance=DISTANCE_UNIT)
 )
+sustainability_summary = cxn.run(sustainability_summary_query)
 # -
 
-sustainability_summary = cxn.run(sustainability_summary_query)
-sustainability_summary
-
-# The ``BomSustainabilitySummaryQueryResult`` object that is returned implements a ``messages`` property and properties
-# showing the environmental impact of the items included in the BoM.
-# Log messages are sorted by decreasing severity. The same messages are available in the MI Service Layer log file
-# and are logged using the standard ``logging`` module.
-# The next sections show examples of visualizations for the results of the sustainability summary query.
+# ## Transport phase
 #
+# The environmental contribution from the transport phase is summarized in the ``transport_details`` property. Results
+# include the individual environmental impact for each transport stage included in the input BoM.
+#
+# A BoM may include many transport stages, each describing transportation throughout the product lifecycle. Print the
+# first three only.
+
+sustainability_summary.transport_details[:3]
+
+# Convert all to a DataFrame. To see the distribution of results, use the `DataFrame.describe()` method.
 
 # +
 import pandas as pd
 
 EE_HEADER = f"EE [{ENERGY_UNIT}]"
 CC_HEADER = f"CC [{MASS_UNIT}]"
-
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-
-
-def plot_impact(df, title, textinfo="percent+label", hoverinfo="value+name", labels=True):
-    fig = make_subplots(
-        rows=1,
-        cols=2,
-        specs=[[{"type": "domain"}, {"type": "domain"}]],
-        subplot_titles=["Embodied Energy", "Climate Change"],
-    )
-    fig.add_trace(go.Pie(labels=df["Name"], values=df[EE_HEADER], name=ENERGY_UNIT), 1, 1)
-    fig.add_trace(go.Pie(labels=df["Name"], values=df[CC_HEADER], name=MASS_UNIT), 1, 2)
-    fig.update_layout(title_text=title, legend=dict(orientation="h"))
-    if labels:
-        fig.update_traces(textposition="inside", textinfo=textinfo, hoverinfo=hoverinfo)
-    fig.show()
-# -
-
-# ## Transport phase
-#
-# The environmental contribution from the transport phase is summarized in the ``transport_details`` property. Results
-# include the individual environmental impact for each transport stage included in the input BoM. A BoM may include
-# many transport stages, each describing transportation throughout the product lifecycle. Print the first three only.
-
-sustainability_summary.transport_details[:3]
-
-# Convert all to a DataFrame and describe the result
-
-# +
 DISTANCE_HEADER = f"Distance [{DISTANCE_UNIT}]"
 
 transport_df_full = pd.DataFrame.from_records(
@@ -145,6 +134,32 @@ transport_df_over_5_pct = transport_df_full.loc[~(criterion)].sort_values(by="EE
 transport_df = pd.concat([transport_df_over_5_pct, transport_df_below_5_pct], ignore_index=True)
 transport_df
 # -
+
+# This example produces multiple plots which all consist of a pair of pie charts representing the
+# "Embodied Energy" and "Climate Change CO<sub>2</sub> equivalent" impacts respectively. Define a
+# helper function to create these plots.
+
+# +
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+
+def plot_impact(df, title, textinfo="percent+label", hoverinfo="value+name", labels=True):
+    fig = make_subplots(
+        rows=1,
+        cols=2,
+        specs=[[{"type": "domain"}, {"type": "domain"}]],
+        subplot_titles=["Embodied Energy", "Climate Change"],
+    )
+    fig.add_trace(go.Pie(labels=df["Name"], values=df[EE_HEADER], name=ENERGY_UNIT), 1, 1)
+    fig.add_trace(go.Pie(labels=df["Name"], values=df[CC_HEADER], name=MASS_UNIT), 1, 2)
+    fig.update_layout(title_text=title, legend=dict(orientation="h"))
+    if labels:
+        fig.update_traces(textposition="inside", textinfo=textinfo, hoverinfo=hoverinfo)
+    fig.show()
+# -
+
+# Use this function to plot the environment impact for all transport stages.
 
 plot_impact(transport_df, "Transport stages - environmental impact", labels=False)
 

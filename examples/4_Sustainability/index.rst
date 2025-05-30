@@ -10,4 +10,8 @@ These examples show how to determine the environmental impact for a BoM using th
    :maxdepth: 1
 
    4-1_BoM_Sustainability.ipynb
-   4-2_BoM_Sustainability_summary.ipynb
+   4-2_BoM_Sustainability_summary_phase_summary.ipynb
+   4-3_BoM_Sustainability_summary_phase_transport.ipynb
+   4-4_BoM_Sustainability_summary_phase_material.ipynb
+   4-5_BoM_Sustainability_summary_phase_processes.ipynb
+   4-6_BoM_Sustainability_summary_phase_hierarchical_plots.ipynb

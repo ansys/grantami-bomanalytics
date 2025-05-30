@@ -12,7 +12,7 @@
 #     name: python3
 # ---
 
-# # Perform a BoM sustainability summary query
+# # BoM sustainability summary: messages and phase summary
 #
 # The following supporting files are required for this example:
 #
@@ -30,6 +30,28 @@
 # will produce different results from the published example when this BoM is used.
 # </div>
 
+# + [markdown] jp-MarkdownHeadingCollapsed=true
+# ## Example scope
+#
+# This example only shows the ``messages`` and ``phases_summary`` properties. For other properties, see the other
+# examples in this section:
+#
+# * BoM sustainability summary: transport
+#   * ``transport_details``
+#   * ``distribution_transport_summary``
+#   * ``manufacturing_transport_summary``
+#   * ``transport_details_aggregated_by_part``
+# * BoM sustainability summary: material
+#   * ``material_details``
+# * BoM sustainability summary: processes
+#   * ``primary_processes_details``
+#   * ``secondary_processes_details``
+#   * ``joining_and_finishing_processes_details``
+#
+# The "BoM sustainability summary: hierarchical plots" summarizes all the processed data into plots which represent
+# the hierarchy of the data.
+# -
+
 # ## Run a BoM sustainability summary query
 #
 # First, connect to Granta MI.
@@ -39,7 +61,7 @@
 from ansys.grantami.bomanalytics import Connection
 
 server_url = "http://my_grantami_server/mi_servicelayer"
-cxn = Connection(server_url).with_autologon().connect()
+cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
 # Next, create a sustainability summary query. The query accepts a single BoM as argument and an optional
@@ -67,16 +89,22 @@ sustainability_summary_query = (
 sustainability_summary = cxn.run(sustainability_summary_query)
 sustainability_summary
 
+# ## Messages
+#
 # The ``BomSustainabilitySummaryQueryResult`` object that is returned implements a ``messages`` property and properties
 # showing the environmental impact of the items included in the BoM.
 # Log messages are sorted by decreasing severity. The same messages are available in the MI Service Layer log file
 # and are logged using the standard ``logging`` module.
-# The next sections show examples of visualizations for the results of the sustainability summary query.
 #
-# ## Summary per phase
-# The sustainability summary result object contains a ``phases_summary`` property. This property summarizes the
-# environmental impact contributions by lifecycle phase: materials, processes, and transport phases. The results for
-# each phase include their absolute and relative contributions to the product as a whole.
+# If there are no messages, an empty list is returned. This means there were no unexpected events during BoM analysis.
+
+sustainability_summary.messages
+
+# ## Phases summary
+#
+# The ``phases_summary`` property summarizes the environmental impact contributions by lifecycle phase: materials,
+# processes, and transport phases. The results for each phase include their absolute and relative contributions to
+# the product as a whole.
 
 sustainability_summary.phases_summary
 

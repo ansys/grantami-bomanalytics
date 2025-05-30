@@ -9,5 +9,5 @@ These examples show how to determine the environmental impact for a BoM using th
 .. toctree::
    :maxdepth: 1
 
-   4-1_BoM_Sustainability_summary.ipynb
-   4-2_BoM_Sustainability.ipynb
+   4-1_BoM_Sustainability.ipynb
+   4-2_BoM_Sustainability_summary.ipynb

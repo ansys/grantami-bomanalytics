@@ -97,9 +97,7 @@ CC_HEADER = f"CC [{MASS_UNIT}]"
 def create_dataframe_record(item, parent):
     record = {
         "Parent": parent,
-        "EE%": item.embodied_energy_percentage,
         EE_HEADER: item.embodied_energy.value,
-        "CC%": item.climate_change_percentage,
         CC_HEADER: item.climate_change.value,
     }
 
@@ -146,27 +144,31 @@ records.extend(
 )
 
 df = pd.DataFrame.from_records(records)
-df
+df.head()
 # -
 
 # A lot of the rows in the dataframe are small in the context of the overall sustainability impact of the
 # product. Define a function to aggregate all rows that contribute less than 5% of their phase's
 # sustainability impact into a single row.
 
-def aggregate_small_values(df: pd.DataFrame) -> pd.DataFrame:
+def sort_and_aggregate_small_values(df: pd.DataFrame) -> pd.DataFrame:
     # Define the criterion
-    criterion = (df["EE%"] < 5.0) | (df["CC%"] < 5.0)
+    total_embodied_energy = df[EE_HEADER].sum()
+    criterion = df[EE_HEADER] / total_embodied_energy < 0.05
 
-    # Aggregate all rows that meet the criterion
-    df_below_5_pct = df.loc[criterion].sum(numeric_only=True).to_frame().T
-    df_below_5_pct["Name"] = "Other"
+    # Find rows that meet the criterion
+    small_rows = df.loc[criterion]
 
-    # Bail out if the aggregation didn't return a result
-    if df_below_5_pct.sum(numeric_only=True).sum() == 0.0:
+    # If no rows met the aggregation criterion, return the original dataframe and exit
+    if len(small_rows) == 0:
         return df
 
+    # Aggregate the rows to a new "Other" row
+    df_below_5_pct = small_rows.sum(numeric_only=True).to_frame().T
+    df_below_5_pct["Name"] = "Other"
+
     # Sort all rows that do not meet the criterion by embodied energy
-    df_over_5_pct = df.loc[~(criterion)].sort_values(by="EE%", ascending=False)
+    df_over_5_pct = df.loc[~(criterion)].sort_values(by=EE_HEADER, ascending=False)
 
     # Concatenate the rows together
     df_aggregated = pd.concat([df_over_5_pct, df_below_5_pct], ignore_index=True)
@@ -178,7 +180,7 @@ def aggregate_small_values(df: pd.DataFrame) -> pd.DataFrame:
 
 # +
 # Apply the function
-df_aggregated = df.groupby("Parent").apply(aggregate_small_values, include_groups=False)
+df_aggregated = df.groupby("Parent").apply(sort_and_aggregate_small_values, include_groups=False)
 
 # Convert the grouped dataframe back into a dataframe with a single index
 df_aggregated.reset_index(inplace=True, level="Parent", drop=False)
@@ -253,10 +255,8 @@ product_row = {
     "Name": "Product",
 
     # Sum the contributions for all rows which are a child of 'Product'
-    "EE%": sum(node_df[node_df["Parent"] == "Product"]["EE%"]),
-    "EE [MJ]": sum(node_df[node_df["Parent"] == "Product"]["EE [MJ]"]),
-    "CC%": sum(node_df[node_df["Parent"] == "Product"]["CC%"]),
-    "CC [kg]": sum(node_df[node_df["Parent"] == "Product"]["CC [kg]"]),
+    EE_HEADER: sum(node_df[node_df["Parent"] == "Product"][EE_HEADER]),
+    CC_HEADER: sum(node_df[node_df["Parent"] == "Product"][CC_HEADER]),
     "Parent": "",
 }
 

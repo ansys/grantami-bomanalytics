@@ -194,4 +194,4 @@ joining_and_finishing_processes_df = pd.DataFrame.from_records(
 )
 joining_and_finishing_processes_df
 
-plot_impact(joining_and_finishing_processes_df, "Aggregated secondary processes impact")
+plot_impact(joining_and_finishing_processes_df, "Aggregated joining and finishing processes impact")

@@ -424,10 +424,12 @@ plot_impact(
     textinfo="percent", hoverinfo="value+name+label"
 )
 
-# ## Hierarchical view
+# ## Data visualization
 #
-# Finally, aggregate the sustainability summary results into a single dataframe and present it in a hierarchical
-# chart. This highlights the largest contributors at each level. In this example, two levels are defined:
+# ### Tabulated data
+#
+# To aid with data visualization, aggregate the sustainability summary results into a single dataframe and present it in
+# a hierarchical chart. This highlights the largest contributors at each level. In this example, two levels are defined:
 # first the phase and then the contributors in the phase.
 
 # First, rename the processes ``Other`` rows, so that they remain distinguishable after all processes have been
@@ -453,7 +455,11 @@ summary_df = pd.concat(
     ],
     join="inner",
 )
+summary_df.reset_index(inplace=True, drop=True)
 summary_df
+# -
+
+# ### Sunburst chart
 
 # A sunburst chart presents hierarchical data radially.
 
@@ -468,6 +474,8 @@ fig = go.Figure(
 )
 fig.show()
 
+# ### Icicle chart
+
 # An icicle chart presents hierarchical data as rectangular sectors.
 
 fig = go.Figure(
@@ -476,6 +484,118 @@ fig = go.Figure(
         parents=summary_df["Parent"],
         values=summary_df[EE_HEADER],
         branchvalues="total",
+    ),
+    layout_title_text=f"Embodied Energy [{ENERGY_UNIT}]",
+)
+fig.show()
+
+# ### Sankey diagram
+
+# Sankey diagrams represent data as a network of nodes and links, with the relative sizes of these nodes and links
+# representing their contributions to the flow of some quantity. In plotly, Sankey diagrams require nodes and links to
+# be defined explicitly.
+#
+# First, prepare the node data. Copy the previous dataframe into a new dataframe and perform some additional processing
+# required for a Sankey diagram.
+
+node_df = summary_df.copy()
+
+# Replace empty parent cells with a reference to a new "Product" row. This new row will be created in the next cell.
+
+node_df["Parent"] = summary_df["Parent"].replace("", "Product")
+
+# Add a new row to represent the entire product. Values for this row are computed based on the sum of all nodes that are
+# direct children of this row.
+
+# +
+product_row = {
+    "Name": "Product",
+
+    # Sum the contributions for all rows which are a child of 'Product'
+    "EE%": sum(node_df[node_df["Parent"] == "Product"]["EE%"]),
+    "EE [MJ]": sum(node_df[node_df["Parent"] == "Product"]["EE [MJ]"]),
+    "CC%": sum(node_df[node_df["Parent"] == "Product"]["CC%"]),
+    "CC [kg]": sum(node_df[node_df["Parent"] == "Product"]["CC [kg]"]),
+    "Parent": "",
+}
+
+# Add the row to the end of the dataframe
+node_df.loc[len(node_df)] = product_row
+# -
+
+# Define colors for each node type in the Sankey diagram by mapping a built-in Plotly color swatch to node names. First,
+# attempt to get the color for a node based on its name. If this fails, use the name of the parent node instead.
+
+# +
+import plotly.express as px
+
+color_map = {
+    "Product": px.colors.qualitative.Pastel1[0],
+    "Material": px.colors.qualitative.Pastel1[1],
+    "Transport": px.colors.qualitative.Pastel1[2],
+    "Processes": px.colors.qualitative.Pastel1[3],
+}
+
+
+def get_node_color(x):
+    name = x["Name"]
+    parent = x["Parent"]
+
+    try:
+        return color_map[name]
+    except KeyError:
+        return color_map[parent]
+
+
+node_df["Color"] = node_df.apply(get_node_color, axis=1)
+node_df.head()
+# -
+
+# Next, create a new dataframe to store the link information. Each row in this dataframe represents a link on the Sankey
+# diagram. All links have a 'source' and a 'target', and nodes may function as a source, as a target, or as both.
+#
+# First create an empty dataframe, and then copy the row index values from the node dataframe to the "Source" column
+# in the new dataframe. Skip the "Product" row, since this node does not act as the source for any links.
+
+# +
+link_df = pd.DataFrame()
+
+# Store all nodes which act as sources in a variable for repeated use
+source_nodes = node_df[node_df["Name"] != "Product"]
+
+link_df["Source"] = source_nodes.index
+# -
+
+# Now create a "Target" column by using the node dataframe as a cross-reference to infer the hierarchy.
+
+link_df["Target"] = source_nodes["Parent"].apply(lambda x: node_df.index[node_df["Name"] == x].values[0])
+
+# The size of the link is defined as the size of the source node. The color of the link is defined as the color of the
+# target node. Take advantage of the fact that the link and node dataframes have the same index in the same order.
+
+link_df["Value"] = node_df["EE [MJ]"]
+link_df["Color"] = link_df["Target"].apply(lambda x: node_df.iloc[x]["Color"])
+link_df.head()
+
+# Finally, create the Sankey diagram.
+
+fig = go.Figure(
+    go.Sankey(
+        valueformat = ".0f",
+        valuesuffix = " MJ",
+        node = dict(
+            pad = 15,
+            thickness = 15,
+            line = dict(color = "black", width = 0.5),
+            label = node_df["Name"],
+            color = node_df["Color"]
+        ),
+        link = dict(
+            source = link_df["Source"],
+            target = link_df["Target"],
+            value = link_df["Value"],
+            color = link_df["Color"],
+        )
     ),
     layout_title_text=f"Embodied Energy [{ENERGY_UNIT}]",
 )

@@ -73,14 +73,14 @@ oidc = ["keyring (>=22,<26)", "requests_auth (>=8.0.0,<9.0.0)"]
 
 [[package]]
 name = "ansys-sphinx-theme"
-version = "1.4.4"
+version = "1.5.2"
 description = "A theme devised by ANSYS, Inc. for Sphinx documentation."
 optional = false
 python-versions = "<4,>=3.10"
 groups = ["doc"]
 files = [
-    {file = "ansys_sphinx_theme-1.4.4-py3-none-any.whl", hash = "sha256:1a07115ae1c0da0948daa2bfb24760efc87cd10558d3d4765f88a59c94de1c95"},
-    {file = "ansys_sphinx_theme-1.4.4.tar.gz", hash = "sha256:32d03b498d91654d21d00b5648171a8633438004fe30f040c6965e16e2108c47"},
+    {file = "ansys_sphinx_theme-1.5.2-py3-none-any.whl", hash = "sha256:aa19e0cb42cacc6d7e9e459f43f3f6a85c3aabbbf6481f5030d324312ad86e1b"},
+    {file = "ansys_sphinx_theme-1.5.2.tar.gz", hash = "sha256:38eb0a49655f5276a867d857eef4b4b29c2c9199ab82a2e4d3879408aa3c4918"},
 ]
 
 [package.dependencies]
@@ -88,13 +88,12 @@ importlib-metadata = ">=4.0"
 Jinja2 = ">=3.1.2"
 pdf2image = ">=1.17.0"
 pydata-sphinx-theme = ">=0.15.4,<0.17"
-snowballstemmer = "<3"
 Sphinx = ">=6.1.0"
 
 [package.extras]
 autoapi = ["astroid (>=3.0,<4.0)", "sphinx-autoapi (==3.6.0)", "sphinx-design (==0.6.1)", "sphinx-jinja (==2.0.2)"]
 changelog = ["PyYAML (==6.0.2)", "sphinx-design (==0.6.1)"]
-doc = ["Pillow (>=9.0)", "PyGitHub (==2.6.1)", "PyYAML (==6.0.2)", "jupytext (==1.17.1)", "nbsphinx (==0.9.7)", "notebook (==7.4.1)", "numpydoc (==1.8.0)", "pandas (==2.2.3)", "plotly (==6.0.1)", "pyvista[jupyter] (==0.45.0)", "requests (==2.32.3)", "sphinx-autoapi (==3.6.0)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.6.1)", "sphinx-gallery (==0.19.0)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==1.1.0)", "sphinx-theme-builder[cli] (==0.2.0b2)", "tox (==4.25.0)"]
+doc = ["Pillow (>=9.0)", "PyGitHub (==2.6.1)", "PyYAML (==6.0.2)", "jupytext (==1.17.1)", "nbsphinx (==0.9.7)", "notebook (==7.4.3)", "numpydoc (==1.8.0)", "pandas (==2.2.3)", "plotly (==6.1.2)", "pyvista[jupyter] (==0.45.2)", "requests (==2.32.3)", "sphinx-autoapi (==3.6.0)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.6.1)", "sphinx-gallery (==0.19.0)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==1.1.0)", "sphinx-theme-builder[cli] (==0.2.0b2)", "tox (==4.26.0)"]
 
 [[package]]
 name = "anyio"
@@ -1402,14 +1401,14 @@ files = [
 
 [[package]]
 name = "jupytext"
-version = "1.17.1"
+version = "1.17.2"
 description = "Jupyter notebooks as Markdown documents, Julia, Python or R scripts"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["doc"]
 files = [
-    {file = "jupytext-1.17.1-py3-none-any.whl", hash = "sha256:99145b1e1fa96520c21ba157de7d354ffa4904724dcebdcd70b8413688a312de"},
-    {file = "jupytext-1.17.1.tar.gz", hash = "sha256:c02fda8af76ffd6e064a04cf2d3cc8aae242b2f0e38c42b4cd80baf89c3325d3"},
+    {file = "jupytext-1.17.2-py3-none-any.whl", hash = "sha256:4f85dc43bb6a24b75491c5c434001ad5ef563932f68f15dd3e1c8ce12a4a426b"},
+    {file = "jupytext-1.17.2.tar.gz", hash = "sha256:772d92898ac1f2ded69106f897b34af48ce4a85c985fa043a378ff5a65455f02"},
 ]
 
 [package.dependencies]
@@ -3739,4 +3738,4 @@ examples = ["ipywidgets", "jupyterlab", "lxml", "pandas", "plotly", "tabulate"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10.0"
-content-hash = "5e37ee7eee51f52c133e2fd1431d6b7c92177e3b500193d3b712a92c0a2cb10d"
+content-hash = "2539db0350ad6194102c4806a0b9e09fa3b6c37eb768c607af0618cab800000d"

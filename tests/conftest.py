@@ -101,21 +101,21 @@ def pytest_generate_tests(metafunc):
     skip_examples_for_version = defaultdict(set)
     skip_examples_for_version[(25, 1)] = {
         "3-2_Creating_an_XML_BoM.py",
-        "4-1_BoM_Sustainability.py",
-        "4-2_BoM_Sustainability_summary_phase_summary.py",
-        "4-3_BoM_Sustainability_summary_transport.py",
-        "4-4_BoM_Sustainability_summary_material.py",
-        "4-5_BoM_Sustainability_summary_processes.py",
-        "4-6_BoM_Sustainability_summary_hierarchical_plots.py",
+        "4-1_Sustainability.py",
+        "5-1_Summary_and_messages.py",
+        "5-2_Transports.py",
+        "5-3_Materials.py",
+        "5-4_Processes.py",
+        "5-5_Hierarchical_plots.py",
     }
     skip_examples_for_version[(24, 2)] = {
         "3-2_Creating_an_XML_BoM.py",
-        "4-1_BoM_Sustainability.py",
-        "4-2_BoM_Sustainability_summary_phase_summary.py",
-        "4-3_BoM_Sustainability_summary_transport.py",
-        "4-4_BoM_Sustainability_summary_material.py",
-        "4-5_BoM_Sustainability_summary_processes.py",
-        "4-6_BoM_Sustainability_summary_hierarchical_plots.py",
+        "4-1_Sustainability.py",
+        "5-1_Summary_and_messages.py",
+        "5-2_Transports.py",
+        "5-3_Materials.py",
+        "5-4_Processes.py",
+        "5-5_Hierarchical_plots.py",
     }
 
     if "example_script" in metafunc.fixturenames:

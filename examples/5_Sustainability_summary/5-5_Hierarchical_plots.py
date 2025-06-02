@@ -12,11 +12,11 @@
 #     name: python3
 # ---
 
-# # BoM sustainability summary: Hierarchical plotting
+# # Sustainability summary: Hierarchical plotting
 #
 # The following supporting files are required for this example:
 #
-# * [sustainability-bom-2412.xml](supporting-files/sustainability-bom-2412.xml)
+# * [sustainability-bom-2412.xml](../supporting-files/sustainability-bom-2412.xml)
 
 # <div class="alert alert-info">
 #
@@ -26,37 +26,11 @@
 # Substances and Sustainability Reports 2025 R2 or later.
 #
 # To run this example with an older version of the reports bundle, use
-# [sustainability-bom-2301.xml](supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example
+# [sustainability-bom-2301.xml](../supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example
 # will produce different results from the published example when this BoM is used.
 # </div>
 
-# + [markdown] jp-MarkdownHeadingCollapsed=true
-# ## Example scope
-#
-# This example shows how to show all aspects of the sustainability summary result in single hierarchical plots.
-# For more details about the different properties included in the sustainability summary result, see the other
-# examples in this section:
-#
-# * BoM sustainability summary: messages and phase summary
-#   * ``messages``
-#   * ``phase_summary``
-# * BoM sustainability summary: transport
-#   * ``transport_details``
-#   * ``distribution_transport_summary``
-#   * ``manufacturing_transport_summary``
-#   * ``transport_details_aggregated_by_part``
-# * BoM sustainability summary: material
-#   * ``material_details``
-# * BoM sustainability summary: processes
-#   * ``primary_processes_details``
-#   * ``secondary_processes_details``
-#   * ``joining_and_finishing_processes_details``
-# -
-
-# ## Run a BoM sustainability summary query
-#
-# For more context around executing the sustainability summary query, see the "BoM sustainability summary: messages
-# and phase summary" example.
+# ## Run a sustainability summary query
 
 # +
 from ansys.grantami.bomanalytics import Connection, queries
@@ -68,7 +42,7 @@ DISTANCE_UNIT = "km"
 server_url = "http://my_grantami_server/mi_servicelayer"
 cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 
-xml_file_path = "supporting-files/sustainability-bom-2412.xml"
+xml_file_path = "../supporting-files/sustainability-bom-2412.xml"
 with open(xml_file_path) as f:
     bom = f.read()
 

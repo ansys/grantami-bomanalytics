@@ -12,11 +12,11 @@
 #     name: python3
 # ---
 
-# # BoM sustainability summary: Messages and phase summary
+# # Sustainability summary: Messages and phase summary
 #
 # The following supporting files are required for this example:
 #
-# * [sustainability-bom-2412.xml](supporting-files/sustainability-bom-2412.xml)
+# * [sustainability-bom-2412.xml](../supporting-files/sustainability-bom-2412.xml)
 
 # <div class="alert alert-info">
 #
@@ -26,33 +26,11 @@
 # Substances and Sustainability Reports 2025 R2 or later.
 #
 # To run this example with an older version of the reports bundle, use
-# [sustainability-bom-2301.xml](supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example
+# [sustainability-bom-2301.xml](../supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example
 # will produce different results from the published example when this BoM is used.
 # </div>
 
-# + [markdown] jp-MarkdownHeadingCollapsed=true
-# ## Example scope
-#
-# This example only shows the ``messages`` and ``phases_summary`` properties. For other properties, see the other
-# examples in this section:
-#
-# * BoM sustainability summary: transport
-#   * ``transport_details``
-#   * ``distribution_transport_summary``
-#   * ``manufacturing_transport_summary``
-#   * ``transport_details_aggregated_by_part``
-# * BoM sustainability summary: material
-#   * ``material_details``
-# * BoM sustainability summary: processes
-#   * ``primary_processes_details``
-#   * ``secondary_processes_details``
-#   * ``joining_and_finishing_processes_details``
-#
-# The "BoM sustainability summary: hierarchical plots" summarizes all the processed data into plots which represent
-# the hierarchy of the data.
-# -
-
-# ## Run a BoM sustainability summary query
+# ## Run a sustainability summary query
 #
 # First, connect to Granta MI.
 #
@@ -69,7 +47,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # ``MJ`` for energy, ``kg`` for mass, and ``km`` for distance.
 
 # +
-xml_file_path = "supporting-files/sustainability-bom-2412.xml"
+xml_file_path = "../supporting-files/sustainability-bom-2412.xml"
 with open(xml_file_path) as f:
     bom = f.read()
 

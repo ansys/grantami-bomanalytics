@@ -30,8 +30,8 @@
 
 # The following supporting files are required for this example:
 #
-# * [compliance-bom.xml](supporting-files/compliance-bom.xml)
-# * [invalid-bom.xml](supporting-files/invalid-bom.xml)
+# * [compliance-bom.xml](../supporting-files/compliance-bom.xml)
+# * [invalid-bom.xml](../supporting-files/invalid-bom.xml)
 
 # The XSD XML schema is included in the library in the ``schemas`` subpackage.
 
@@ -56,7 +56,7 @@ def xml_validator(xml: str, schema_file: str) -> bool:
 # +
 from ansys.grantami.bomanalytics.schemas import bom_schema_1711
 
-valid_xml_file = "supporting-files/compliance-bom.xml"
+valid_xml_file = "../supporting-files/compliance-bom.xml"
 with open(valid_xml_file) as f:
     valid_xml = f.read()
 result = xml_validator(valid_xml, bom_schema_1711)
@@ -65,7 +65,7 @@ result
 
 # You can also test a BoM that is valid XML but is not compliant with the schema.
 
-invalid_xml_file = "supporting-files/invalid-bom.xml"
+invalid_xml_file = "../supporting-files/invalid-bom.xml"
 with open(invalid_xml_file) as f:
     invalid_xml = f.read()
 result = xml_validator(invalid_xml, bom_schema_1711)

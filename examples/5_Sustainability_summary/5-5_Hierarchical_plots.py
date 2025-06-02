@@ -213,12 +213,11 @@ fig.show()
 # representing their contributions to the flow of some quantity. In plotly, Sankey diagrams require nodes and links to
 # be defined explicitly.
 #
-# First, prepare the node data. Copy the previous dataframe into a new dataframe and perform some additional processing
-# required for a Sankey diagram.
+# First, create a new dataframe to store the node data. Start from a copy of the dataframe used for the previous plots.
 
 node_df = df_aggregated.copy()
 
-# Replace empty parent cells with a reference to a new "Product" row. This new row will be created in the next cell.
+# Replace empty parent cells with a reference to a new "Product" row. The new row will be created in the next cell.
 
 node_df["Parent"] = df_aggregated["Parent"].replace("", "Product")
 
@@ -267,22 +266,26 @@ node_df["Color"] = node_df.apply(get_node_color, axis=1)
 node_df.head()
 # -
 
-# Next, create a new dataframe to store the link information. Each row in this dataframe represents a link on the Sankey
-# diagram. All links have a 'source' and a 'target', and nodes may function as a source, as a target, or as both.
+# Next, create a new dataframe to store the link information.
 #
-# First create an empty dataframe, and then copy the row index values from the node dataframe to the "Source" column
-# in the new dataframe. Skip the "Product" row, since this node does not act as the source for any links.
+# Each row in this dataframe represents a link on the Sankey diagram. All links have a 'source' and a 'target', and
+# nodes may function as a source, as a target, or as both.
 
 # +
 link_df = pd.DataFrame()
+# -
 
+# Copy the row index values from the node dataframe to the "Source" column in the new dataframe. Skip the "Product" row,
+# since this node does not act as the source for any links.
+
+# +
 # Store all nodes which act as sources in a variable for repeated use
 source_nodes = node_df[node_df["Name"] != "Product"]
 
 link_df["Source"] = source_nodes.index
 # -
 
-# Now create a "Target" column by using the node dataframe as a cross-reference to infer the hierarchy.
+# Create a "Target" column by using the node dataframe as a cross-reference to infer the hierarchy.
 
 link_df["Target"] = source_nodes["Parent"].apply(lambda x: node_df.index[node_df["Name"] == x].values[0])
 

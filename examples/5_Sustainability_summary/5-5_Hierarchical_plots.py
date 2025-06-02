@@ -213,7 +213,7 @@ fig.show()
 # representing their contributions to the flow of some quantity. In plotly, Sankey diagrams require nodes and links to
 # be defined explicitly.
 #
-# First, create a new dataframe to store the node data. Start from a copy of the dataframe used for the previous plots.
+# First, create a dataframe to store the node data. Start from a copy of the dataframe used for the previous plots.
 
 node_df = df_aggregated.copy()
 
@@ -266,7 +266,7 @@ node_df["Color"] = node_df.apply(get_node_color, axis=1)
 node_df.head()
 # -
 
-# Next, create a new dataframe to store the link information.
+# Next, create a dataframe to store the link information.
 #
 # Each row in this dataframe represents a link on the Sankey diagram. All links have a 'source' and a 'target', and
 # nodes may function as a source, as a target, or as both.

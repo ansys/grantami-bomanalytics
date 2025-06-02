@@ -14,6 +14,8 @@
 
 # # Sustainability summary: Transport phase
 #
+# This example shows how to explore the transport phase results of a sustainability summary query.
+#
 # The following supporting files are required for this example:
 #
 # * [sustainability-bom-2412.xml](../supporting-files/sustainability-bom-2412.xml)
@@ -22,12 +24,9 @@
 #
 # **Info:**
 #
-# This example uses an input file that is in the 24/12 XML BoM format. This structure requires Granta MI Restricted
-# Substances and Sustainability Reports 2025 R2 or later.
+# This example requires Granta MI Restricted Substances and Sustainability Reports 2025 R2 or later.
 #
-# To run this example with an older version of the reports bundle, use
-# [sustainability-bom-2301.xml](../supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example
-# will produce different results from the published example when this BoM is used.
+# For older version of the reports bundle, use a previous version of the documentation.
 # </div>
 
 # ## Run a sustainability summary query
@@ -167,14 +166,6 @@ fig.show()
 
 # ### Transport impact aggregated by category
 
-# <div class="alert alert-info">
-#
-# **Info:**
-#
-# This section requires Granta MI Restricted Substances and Sustainability Reports 2025 R2. Results will differ from
-# published examples if older software versions are used.
-# </div>
-
 # The environmental impacts from transportation associated with distribution and manufacturing phases are summarized in
 # the ``distribution_transport_summary`` and ``manufacturing_transport_summary`` properties.
 
@@ -208,14 +199,6 @@ transport_by_category_df
 plot_impact(transport_by_category_df, "Transport impact - grouped by category")
 
 # ### Transport impact aggregated by part
-
-# <div class="alert alert-info">
-#
-# **Info:**
-#
-# This section requires Granta MI Restricted Substances and Sustainability Reports 2025 R2. Results will differ from
-# published examples if older software versions are used.
-# </div>
 
 # The environmental contributions from transportation are summarized by the associated part in the
 # ``transport_details_aggregated_by_part`` property. This property groups parts that contribute less than 5% embodied

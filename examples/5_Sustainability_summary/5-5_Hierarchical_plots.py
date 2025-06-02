@@ -14,6 +14,9 @@
 
 # # Sustainability summary: Hierarchical plotting
 #
+# This example shows how to combine all the results of a sustainability summary query into interactive hierarchical
+# plots.
+#
 # The following supporting files are required for this example:
 #
 # * [sustainability-bom-2412.xml](../supporting-files/sustainability-bom-2412.xml)
@@ -54,9 +57,7 @@ sustainability_summary_query = (
 sustainability_summary = cxn.run(sustainability_summary_query)
 # -
 
-# ## Data visualization
-#
-# ### Tabulated data
+# ## Tabulated data
 #
 # To plot data hierarchically, first create a dataframe that aggregates all data together. See the other notebooks in
 # this section for more detail around converting these properties to dataframes.
@@ -172,7 +173,7 @@ df_aggregated.reset_index(inplace=True, drop=True)
 df_aggregated.head(10)
 # -
 
-# ### Sunburst chart
+# ## Sunburst chart
 
 # A sunburst chart presents hierarchical data radially.
 
@@ -206,7 +207,7 @@ fig = go.Figure(
 )
 fig.show()
 
-# ### Sankey diagram
+# ## Sankey diagram
 
 # Sankey diagrams represent data as a network of nodes and links, with the relative sizes of these nodes and links
 # representing their contributions to the flow of some quantity. In plotly, Sankey diagrams require nodes and links to

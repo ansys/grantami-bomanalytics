@@ -14,6 +14,8 @@
 
 # # Sustainability summary: Process phase
 #
+# This example shows how to explore the process phase results of a sustainability summary query.
+#
 # The following supporting files are required for this example:
 #
 # * [sustainability-bom-2412.xml](../supporting-files/sustainability-bom-2412.xml)

@@ -22,10 +22,12 @@
 # The door contains two hinges and a handle, both fixed to the frame with machine screws and
 # washers, the door glass is coated with a partially reflective polymer film.
 
-# Most installations of Granta MI will use the default database key and table names:
+# Most Granta MI deployments will use the default database key and table names:
 
 DB_KEY = "MI_Restricted_Substances"
 TABLE_NAME = "MaterialUniverse"
+
+# ## Create the Bill of Materials as Python objects
 
 # The structure of an XML BoM is hierarchical, individual parts belong to assemblies which can
 # belong to larger assemblies. It is possible to construct the BoM in one statement, but this
@@ -214,7 +216,9 @@ door_assembly = Part(
     ]
 )
 
-# Generate a BoM from the door assembly part, and dump the BoM to XML.
+# ## Serialize the BoM to XML
+
+# Generate a BoM from the door assembly part, and serialize the BoM to XML.
 
 # +
 from ansys.grantami.bomanalytics import BoMHandler
@@ -225,6 +229,8 @@ bom_handler = BoMHandler()
 rendered_bom = bom_handler.dump_bom(door_assembly_bom)
 rendered_bom.splitlines()[0:10]
 # -
+
+# ## Run a compliance query
 
 # Now that you have created an XML BoM, run a compliance query to determine whether the BoM complies
 # with a specific legislation.

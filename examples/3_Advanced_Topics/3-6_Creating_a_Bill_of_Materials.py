@@ -344,7 +344,7 @@ transports = [
 bom.transport_phase = transports
 # -
 
-# # Serialize the BoM
+# ## Serialize the BoM
 #
 # Use the ``BomHandler`` helper class to serialize the object to XML. The resulting string can be
 # used in a sustainability query. For more information, see the

@@ -21,7 +21,7 @@
 # a BoM from a representative JSON data source. The general approach can be applied to data
 # in other formats or provided by other APIs.
 
-# You can download the [external data source](../supporting-files/source_data_sustainability.json) used in this example.
+# You can download the [external data source](supporting-files/source_data_sustainability.json) used in this example.
 
 # The result of this example is a Granta 23/01-compliant XML BoM file that is suitable for
 # sustainability analysis with the Granta MI BoM Analytics API. For more information on the
@@ -36,7 +36,7 @@
 import json
 from pprint import pprint
 
-with open("../supporting-files/source_data_sustainability.json") as f:
+with open("supporting-files/source_data_sustainability.json") as f:
     data = json.load(f)
 pprint(data[:3])
 # -

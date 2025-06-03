@@ -44,3 +44,21 @@ import numpy as np
 df = pd.DataFrame(np.random.rand(10, 10))
 df.head()
 # -
+
+# +
+import plotly.express as px
+
+data = {
+    "color": ["Blue", "Red", "Green", "Purple"],
+    "parent": ["Purple", "Purple", "", ""],
+    "value": [7, 3, 2.5, 0],
+}
+
+fig = px.sunburst(
+    data,
+    names="color",
+    parents="parent",
+    values="value",
+)
+fig.show()
+# -

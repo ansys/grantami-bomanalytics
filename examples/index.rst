@@ -74,4 +74,4 @@ To run these examples, install dependencies with this code:
    3_Compliance_Queries/index
    4_Sustainability/index
    5_Sustainability_summary/index
-   6_Bills_of_Materials/index
+   6_Bills_of_materials/index

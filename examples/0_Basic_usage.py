@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Basic usage example
+# # Basic usage
 
 # This example shows how to connect to Granta MI and perform a basic query for impacted substances. It also
 # demonstrates how to view logging messages returned by the Granta MI server. For more information about the

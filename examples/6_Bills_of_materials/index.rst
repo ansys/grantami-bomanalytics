@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_advanced:
 
-Bills of Materials
+Bills of materials
 ==================
 
-These examples demonstrate how to work with Bills of Materials.
+These examples demonstrate how to work with Bills of materials.
 
 .. toctree::
    :maxdepth: 1

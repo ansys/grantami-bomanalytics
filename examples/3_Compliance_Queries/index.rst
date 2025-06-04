@@ -1,7 +1,7 @@
 .. _ref_grantami_bomanalytics_compliance:
 
-Compliance Examples
-===================
+Compliance
+==========
 
 These examples show how to determine compliance against one or more legislations for substances,
 materials, or parts in a Granta MI Restricted Substances database. An equivalent script can be written for

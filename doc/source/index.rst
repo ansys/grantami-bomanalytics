@@ -9,53 +9,41 @@ Python interface to the Granta BoM Analytics Services API.
 
    .. grid-item-card:: Getting started
       :padding: 2 2 2 2
-      :link: getting_started/index
+      :link: 0_Getting_started
       :link-type: doc
 
-      How to connect to Granta MI and perform a basic query
+      Learn how to install PyGranta BoM Analytics in user mode and quickly
+      begin using it.
 
-   .. grid-item-card:: Database-specific configuration
+   .. grid-item-card:: User guide :material-regular:`menu_book`
       :padding: 2 2 2 2
-      :link: 1_Database-specific_configuration
+      :link: user_guide/index
       :link-type: doc
 
-      How to configure BoM Analytics for a customized database
+      Understand key concepts for using PyGranta BoM Analytics.
 
-   .. grid-item-card:: Impacted substances queries
+   .. grid-item-card:: API reference :material-regular:`bookmark`
       :padding: 2 2 2 2
-      :link: 2_Impacted_Substances_Queries/index
+      :link: api/index
       :link-type: doc
 
-      How to perform impacted substance queries for materials, parts, and BoMs
+      Understand how to use Python to interact programmatically with
+      PyGranta BoM Analytics.
 
-   .. grid-item-card:: Compliance queries
+   .. grid-item-card:: Examples :material-regular:`play_arrow`
       :padding: 2 2 2 2
-      :link: 3_Compliance_Queries/index
+      :link: examples/index
       :link-type: doc
 
-      How to perform compliance substance queries for substances, materials, parts,
-      and with external data sources
+      Explore examples that show how to use PyGranta BoM Analytics to
+      perform many different types of operations.
 
-   .. grid-item-card:: Sustainability queries
+   .. grid-item-card:: Contribute :material-regular:`group`
       :padding: 2 2 2 2
-      :link: 4_Sustainability/index
+      :link: contributing
       :link-type: doc
 
-      How to perform sustainability queries and to analyze the results
-
-   .. grid-item-card:: Sustainability summary queries
-      :padding: 2 2 2 2
-      :link: 5_Sustainability_summary/index
-      :link-type: doc
-
-      How to perform sustainability summary queries and to analyze the results
-
-   .. grid-item-card:: Sustainability summary queries
-      :padding: 2 2 2 2
-      :link: 6_Bills_of_Materials/index
-      :link-type: doc
-
-      How to work with Bills of Materials
+      Learn how to contribute to the PyGranta BoM Analytics codebase or documentation.
 
 
 .. toctree::

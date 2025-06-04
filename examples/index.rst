@@ -16,7 +16,7 @@ To run these examples, install dependencies with this code:
 
 .. grid-item-card:: Getting started
       :padding: 2 2 2 2
-      :link: getting_started/index
+      :link: 0_Getting_started
       :link-type: doc
 
       How to connect to Granta MI and perform a basic query

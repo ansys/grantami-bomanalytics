@@ -9,7 +9,7 @@ Python interface to the Granta BoM Analytics Services API.
 
    .. grid-item-card:: Getting started
       :padding: 2 2 2 2
-      :link: 0_Getting_started
+      :link: getting_started/index
       :link-type: doc
 
       Learn how to install PyGranta BoM Analytics in user mode and quickly

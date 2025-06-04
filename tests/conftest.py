@@ -106,7 +106,7 @@ def pytest_generate_tests(metafunc):
         "5-3_Materials.py",
         "5-4_Processes.py",
         "5-5_Hierarchical_plots.py",
-        "6-2_Creating_an_XML_BoM.py",
+        "6-1_Creating_an_XML_BoM.py",
     }
     skip_examples_for_version[(24, 2)] = {
         "4-1_Sustainability.py",
@@ -115,7 +115,7 @@ def pytest_generate_tests(metafunc):
         "5-3_Materials.py",
         "5-4_Processes.py",
         "5-5_Hierarchical_plots.py",
-        "6-2_Creating_an_XML_BoM.py",
+        "6-1_Creating_an_XML_BoM.py",
     }
 
     if "example_script" in metafunc.fixturenames:

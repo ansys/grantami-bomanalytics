@@ -12,7 +12,7 @@
 #     name: python3
 # ---
 
-# # Sustainability summary: Hierarchical plotting
+# # Hierarchical plotting
 #
 # This example shows how to combine all the results of a sustainability summary query into interactive hierarchical
 # plots.

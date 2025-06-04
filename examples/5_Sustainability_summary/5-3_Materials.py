@@ -12,7 +12,7 @@
 #     name: python3
 # ---
 
-# # Sustainability summary: Material phase
+# # Material phase
 #
 # This example shows how to explore the material phase results of a sustainability summary query.
 #

@@ -12,7 +12,7 @@
 #     name: python3
 # ---
 
-# # Sustainability summary: Transport phase
+# # Transport phase
 #
 # This example shows how to explore the transport phase results of a sustainability summary query.
 #

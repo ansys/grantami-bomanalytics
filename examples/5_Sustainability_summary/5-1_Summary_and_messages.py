@@ -20,6 +20,8 @@
 # The following supporting files are required for this example:
 #
 # * [sustainability-bom-2412.xml](../supporting-files/sustainability-bom-2412.xml)
+#
+# For help on constructing an XML BoM, see [BoM examples](../6_BoMs/index.rst).
 
 # <div class="alert alert-info">
 #

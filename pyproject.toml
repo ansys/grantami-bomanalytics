@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "ansys-grantami-bomanalytics"
 description = "Perform compliance and sustainability analysis on materials data stored in Granta MI."
-version = "2.4.0dev0"
+version = "2.4.0.dev0"
 license = "MIT"
 authors = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
 maintainers = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
@@ -74,7 +74,7 @@ optional = true
 
 [tool.poetry.group.doc.dependencies]
 # Doc packages
-ansys-sphinx-theme = ">=0.12,<1.5"
+ansys-sphinx-theme = ">=0.12,<1.6"
 numpydoc = "^1.6.0"
 sphinx = ">=7.1,<9.0"
 sphinx-notfound-page = "^1.0.0"

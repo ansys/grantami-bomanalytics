@@ -56,12 +56,12 @@ To run these examples, install dependencies with this code:
 
       How to perform sustainability summary queries and to analyze the results
 
-   .. grid-item-card:: Bills of materials examples
+   .. grid-item-card:: BoM examples
       :padding: 2 2 2 2
       :link: 6_Bills_of_materials/index
       :link-type: doc
 
-      How to work with Bills of materials
+      How to create XML BoMs
 
 
 .. toctree::
@@ -74,4 +74,4 @@ To run these examples, install dependencies with this code:
    3_Compliance_Queries/index
    4_Sustainability/index
    5_Sustainability_summary/index
-   6_Bills_of_materials/index
+   6_BoMs/index

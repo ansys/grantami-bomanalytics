@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_advanced:
 
-Bills of materials examples
-===========================
+BoM examples
+============
 
-These examples demonstrate how to work with Bills of materials.
+These examples demonstrate how to create XML BoMs.
 
 .. toctree::
    :maxdepth: 1

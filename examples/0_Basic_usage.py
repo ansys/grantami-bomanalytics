@@ -17,9 +17,9 @@
 
 # This example shows how to connect to Granta MI and perform a basic query for impacted substances. It also
 # demonstrates how to view logging messages returned by the Granta MI server. For more information about the
-# results of the queries, see the examples in [Impacted Substances](2_Impacted_Substances_Queries/index.rst),
-# [Compliance](3_Compliance_Queries/index.rst), [Sustainability](4_Sustainability/index.rst), and
-# [Sustainability summary](5_Sustainability_summary/index.rst).
+# results of the queries, see the [Impacted substances examples](2_Impacted_Substances_Queries/index.rst),
+# [Compliance examples](3_Compliance_Queries/index.rst), [Sustainability examples](4_Sustainability/index.rst), and
+# [Sustainability summary examples](5_Sustainability_summary/index.rst).
 
 # ## Connect to Granta MI
 

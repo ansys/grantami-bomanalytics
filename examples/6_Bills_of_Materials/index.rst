@@ -1,9 +1,9 @@
 .. _ref_grantami_bomanalytics_advanced:
 
-Advanced examples
-=================
+Bills of Materials
+==================
 
-These examples demonstrate various advanced functionalities of Granta MI BoM Analytics.
+These examples demonstrate how to work with Bills of Materials.
 
 .. toctree::
    :maxdepth: 1

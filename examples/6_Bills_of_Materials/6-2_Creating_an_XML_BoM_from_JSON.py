@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Create a BoM from a JSON external data source
+# # Create an XML BoM from a JSON data source
 
 # This example shows how to use the ``bom_types`` subpackage to create a valid Granta MI XML
 # BoM. This subpackage can be used to help construct a Granta 23/01-compliant XML BoM file to

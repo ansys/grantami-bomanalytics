@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Perform a BoM query
+# # Perform a BoM impacted substances query
 
 # Impacted substances queries can be performed on an XML BoM instead of a list
 # of Granta MI records. The BoM must be in any valid Granta XML BoM format. This example shows how to use

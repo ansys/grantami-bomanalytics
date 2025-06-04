@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Configure database-specific options
+# # Database-specific configuration
 
 # Granta MI BoM Analytics work with an off-the-shelf Granta MI Restricted Substances database. However, there are
 # some situations in which additional run-time configuration changes are required:

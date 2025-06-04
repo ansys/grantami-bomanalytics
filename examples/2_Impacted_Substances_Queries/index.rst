@@ -12,5 +12,5 @@ by an XML BoM, see :ref:`ref_grantami_bomanalytics_advanced`.
 .. toctree::
    :maxdepth: 1
 
-   1-1_Materials_impacted_substances.ipynb
-   1-2_Parts_impacted_substances.ipynb
+   2-1_Materials_impacted_substances
+   2-2_Parts_impacted_substances

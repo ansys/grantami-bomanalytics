@@ -12,6 +12,8 @@ To determine compliance of an XML BoM, see :ref:`ref_grantami_bomanalytics_advan
 .. toctree::
    :maxdepth: 1
 
-   2-1_Substance_compliance.ipynb
-   2-2_Material_compliance.ipynb
-   2-3_Part_compliance.ipynb
+   3-1_Substance_compliance
+   3-2_Material_compliance
+   3-3_Part_compliance
+   3-4_Compliance_for_external_data
+   3-5_Writing_compliance_results_to_a_dataframe

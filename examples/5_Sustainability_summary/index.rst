@@ -35,8 +35,8 @@ The examples in this section demonstrate different aspects of the :class:`.BomSu
    :maxdepth: 1
    :hidden:
 
-   5-1_Summary_and_messages.ipynb
-   5-2_Transports.ipynb
-   5-3_Materials.ipynb
-   5-4_Processes.ipynb
-   5-5_Hierarchical_plots.ipynb
+   5-1_Summary_and_messages
+   5-2_Transports
+   5-3_Materials
+   5-4_Processes
+   5-5_Hierarchical_plots

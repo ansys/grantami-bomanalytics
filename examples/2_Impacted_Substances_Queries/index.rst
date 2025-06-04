@@ -14,3 +14,4 @@ by an XML BoM, see :ref:`ref_grantami_bomanalytics_advanced`.
 
    2-1_Materials_impacted_substances
    2-2_Parts_impacted_substances
+   2-3_BoM_impacted_substances

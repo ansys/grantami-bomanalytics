@@ -11,10 +11,9 @@ To run these examples, install dependencies with this code:
 
    pip install ansys-grantami-bomanalytics[examples]
 
-
 .. grid:: 1 2 2 2
 
-.. grid-item-card:: Getting started
+   .. grid-item-card:: Getting started
       :padding: 2 2 2 2
       :link: 0_Getting_started
       :link-type: doc

@@ -7,7 +7,7 @@ Python interface to the Granta BoM Analytics Services API.
 .. grid:: 1 2 2 2
 
 
-   .. grid-item-card:: Getting started
+   .. grid-item-card:: Getting started :material-regular:`directions_run`
       :padding: 2 2 2 2
       :link: getting_started/index
       :link-type: doc

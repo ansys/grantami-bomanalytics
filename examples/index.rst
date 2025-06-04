@@ -58,7 +58,7 @@ To run these examples, install dependencies with this code:
 
    .. grid-item-card:: BoM examples
       :padding: 2 2 2 2
-      :link: 6_Bills_of_materials/index
+      :link: 6_BoMs/index
       :link-type: doc
 
       How to create XML BoMs

@@ -1,7 +1,7 @@
 .. _ref_grantami_bomanalytics_sustainability_bom_sustainability_summary:
 
-Sustainability summary
-======================
+Sustainability summary examples
+===============================
 
 The examples in this section demonstrate different aspects of the :class:`.BomSustainabilitySummaryQueryResult` object:
 

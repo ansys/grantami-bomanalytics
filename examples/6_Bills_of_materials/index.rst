@@ -1,7 +1,7 @@
 .. _ref_grantami_bomanalytics_advanced:
 
-Bills of materials
-==================
+Bills of materials examples
+===========================
 
 These examples demonstrate how to work with Bills of materials.
 

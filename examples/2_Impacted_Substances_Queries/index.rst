@@ -1,7 +1,7 @@
 .. _ref_grantami_bomanalytics_impactedsubstances:
 
-Impacted substances
-===================
+Impacted substances examples
+============================
 
 These examples show how to perform an impacted substance query on material records or parts in a Granta MI Restricted
 Substances database, identifying any substances impacted by one or more legislations. You can write an equivalent script

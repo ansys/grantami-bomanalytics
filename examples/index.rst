@@ -13,7 +13,7 @@ To run these examples, install dependencies with this code:
 
 .. grid:: 1 2 2 2
 
-   .. grid-item-card:: Basic usage
+   .. grid-item-card:: Basic usage example
       :padding: 2 2 2 2
       :link: 0_Basic_usage
       :link-type: doc
@@ -27,14 +27,14 @@ To run these examples, install dependencies with this code:
 
       How to configure BoM Analytics for a customized database
 
-   .. grid-item-card:: Impacted substances
+   .. grid-item-card:: Impacted substances examples
       :padding: 2 2 2 2
       :link: 2_Impacted_Substances_Queries/index
       :link-type: doc
 
       How to perform impacted substance queries for materials, parts, and BoMs
 
-   .. grid-item-card:: Compliance
+   .. grid-item-card:: Compliance examples
       :padding: 2 2 2 2
       :link: 3_Compliance_Queries/index
       :link-type: doc
@@ -42,21 +42,21 @@ To run these examples, install dependencies with this code:
       How to perform compliance substance queries for substances, materials, parts,
       and with external data sources
 
-   .. grid-item-card:: Sustainability
+   .. grid-item-card:: Sustainability examples
       :padding: 2 2 2 2
       :link: 4_Sustainability/index
       :link-type: doc
 
       How to perform sustainability queries and to analyze the results
 
-   .. grid-item-card:: Sustainability summary
+   .. grid-item-card:: Sustainability summary examples
       :padding: 2 2 2 2
       :link: 5_Sustainability_summary/index
       :link-type: doc
 
       How to perform sustainability summary queries and to analyze the results
 
-   .. grid-item-card:: Bills of materials
+   .. grid-item-card:: Bills of materials examples
       :padding: 2 2 2 2
       :link: 6_Bills_of_materials/index
       :link-type: doc

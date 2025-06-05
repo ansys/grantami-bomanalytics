@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Configure database-specific options
+# # Database-specific configuration
 
 # Granta MI BoM Analytics work with an off-the-shelf Granta MI Restricted Substances database. However, there are
 # some situations in which additional run-time configuration changes are required:
@@ -21,7 +21,7 @@
 # - If the database key or table names have been modified from their default values, these must be set on the
 #   ``Connection`` object.
 # - If the number of linked records is very large, the batch sizes should be changed for each query. For more
-#   information, see [Batching requests](../../user_guide/batching.rst).
+#   information, see [Batching requests](../user_guide/batching.rst).
 
 # ## Specify a custom database key or table name
 

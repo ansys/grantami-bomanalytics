@@ -24,7 +24,7 @@
 
 # The first step is to perform a compliance query on an assembly that results in a deeply
 # nested structure. The following code is presented without explanation. For more information, see the
-# [Perform a Part Compliance Query](../2_Compliance_Queries/2-3_Part_compliance.ipynb) example.
+# [Perform a Part Compliance Query](../3_Compliance_Queries/3-3_Part_compliance.ipynb) example.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection, indicators, queries

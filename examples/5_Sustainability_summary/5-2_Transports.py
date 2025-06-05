@@ -28,7 +28,9 @@
 #
 # This example requires Granta MI Restricted Substances and Sustainability Reports 2025 R2 or later.
 #
-# For older version of the reports bundle, use a previous version of the documentation.
+# If you would like to run an example of exploring the transport phase results of a summary query for an earlier version
+# of the reports bundle, refer to the version of the documentation that corresponds to that version of the reports
+# bundle.
 # </div>
 
 # ## Run a sustainability summary query

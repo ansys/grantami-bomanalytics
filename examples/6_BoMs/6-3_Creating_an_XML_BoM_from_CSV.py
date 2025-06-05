@@ -46,9 +46,9 @@ df.head()
 # Each item has at least the following:
 #
 # - A ``Item Type`` field that identifies the type of the item.
-# - ``Quantity`` and ``Unit of measure`` fields that describe the quantity of the item. Typically, materials are described
-#   in terms of percentage of the parent part made of the material, and components are described in terms of number of
-#   occurrences of the part in the parent part.
+# - ``Quantity`` and ``Unit of measure`` fields that describe the quantity of the item. Typically, materials are
+#   described in terms of percentage of the parent part made of the material, and components are described in terms of
+#   number of occurrences of the part in the parent part.
 #
 # ### Components
 #
@@ -56,7 +56,7 @@ df.head()
 # the BoM.
 #
 # There are three types of components in the BoM:
-#  
+#
 #  - The product described by the BoM, whose ``BoM Level`` is ``1``.
 #  - Assemblies which are made of sub-parts.
 #  - Parts which are defined by their mass and the material they are made of.
@@ -86,12 +86,15 @@ bom = eco2412.BillOfMaterials(components=[])
 
 # Define a method to process a row that represents a part and create the appropriate object.
 #
-# In this example, parts are specified in two differents ways:
+# In this example, parts are specified in two different ways:
 #
-#  - Via non-mass units. For example ``HA-42-Al`` is included twice in its parent ``24X6-30``, and its mass is defined as mass per occurence of the part.
-#  - Via mass units. For example ``321-51`` is present in the BoM and specified as a surface area. Its mass is therefore defined as a mass per surface area.
+#  - Via non-mass units. For example ``HA-42-Al`` is included twice in its parent ``24X6-30``, and its mass is defined
+#    as mass per occurrence of the part.
+#  - Via mass units. For example ``321-51`` is present in the BoM and specified as a surface area. Its mass is
+#    therefore defined as a mass per surface area.
 #
-# For more information on the different options available for specifying part quantities and part masses, see the Granta MI documentation.
+# For more information on the different options available for specifying part quantities and part masses, see the
+# Granta MI documentation.
 
 def make_part(item: pandas.Series) -> eco2412.Part:
     mass = item["Measured mass (per UoM)"]
@@ -109,7 +112,8 @@ def make_part(item: pandas.Series) -> eco2412.Part:
         mass_per_unit_of_measure=mass_per_unit_of_measure,
     )
 
-# Define a method to process a row that represents a material and instantiate a ``eco2412.Material``. Materials are identified by their attribute value ``Material ID``, so the record reference is defined using a lookup value.
+# Define a method to process a row that represents a material and instantiate a ``eco2412.Material``. Materials are
+# identified by their attribute value ``Material ID``, so the record reference is defined using a lookup value.
 
 # +
 material_id_reference = gbt1205.MIAttributeReference(
@@ -138,7 +142,8 @@ def make_material(item: pandas.Series) -> eco2412.Material:
 
 # -
 
-# Iterate over the rows in the CSV file and convert to ``bom_types`` objects. Because items only ever appear after their parent, a list is used to keep track of possible parent items in the BoM.
+# Iterate over the rows in the CSV file and convert to ``bom_types`` objects. Because items only ever appear after
+# their parent, a list is used to keep track of possible parent items in the BoM.
 
 # Instantiate the hierarchy with the empty BoM object
 path = [bom]
@@ -155,7 +160,7 @@ for _, item_row in df.iterrows():
         parent.materials.append(item)
     else:
         raise ValueError(f"Unsupported 'Item Type': '{item_type}'")
-        
+
     # Update the hierarchy with the newly created item
     path = path[:item_level] + [item]
 

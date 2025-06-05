@@ -13,7 +13,7 @@
 #     name: python3
 # ---
 
-# # Create a BoM from an external data source
+# # Create an XML BoM from a JSON data source
 
 # This example shows how to use the ``bom_types`` subpackage to create a valid Granta MI XML
 # BoM. This subpackage can be used to help construct a Granta 23/01-compliant XML BoM file to
@@ -21,7 +21,7 @@
 # a BoM from a representative JSON data source. The general approach can be applied to data
 # in other formats or provided by other APIs.
 
-# You can download the [external data source](supporting-files/source_data_sustainability.json) used in this example.
+# You can download the [external data source](../supporting-files/source_data_sustainability.json) used in this example.
 
 # The result of this example is a Granta 23/01-compliant XML BoM file that is suitable for
 # sustainability analysis with the Granta MI BoM Analytics API. For more information on the
@@ -36,7 +36,7 @@
 import json
 from pprint import pprint
 
-with open("supporting-files/source_data_sustainability.json") as f:
+with open("../supporting-files/source_data_sustainability.json") as f:
     data = json.load(f)
 pprint(data[:3])
 # -
@@ -131,7 +131,7 @@ source_transports[0]
 
 # If you are using a customized database, before running any queries, change the database key value
 #  in the following cell and see the
-# [Database specific configuration](3-4_Database-specific_configuration.ipynb) example to
+# [Database specific configuration](../1_Database-specific_configuration.ipynb) example to
 # appropriately configure the connection.
 
 from ansys.grantami.bomanalytics import bom_types
@@ -344,7 +344,7 @@ transports = [
 bom.transport_phase = transports
 # -
 
-# # Serialize the BoM
+# ## Serialize the BoM
 #
 # Use the ``BomHandler`` helper class to serialize the object to XML. The resulting string can be
 # used in a sustainability query. For more information, see the

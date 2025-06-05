@@ -12,11 +12,13 @@
 #     name: python3
 # ---
 
-# # Perform a BoM sustainability query
+# # Perform a sustainability query
 #
 # The following supporting files are required for this example:
 #
-# * [sustainability-bom-2412.xml](supporting-files/sustainability-bom-2412.xml)
+# * [sustainability-bom-2412.xml](../supporting-files/sustainability-bom-2412.xml)
+#
+# For help on constructing an XML BoM, see [BoM examples](../6_BoMs/index.rst).
 
 # <div class="alert alert-info">
 #
@@ -26,7 +28,7 @@
 # Substances and Sustainability Reports 2025 R2 or later.
 #
 # To run this example with an older version of the reports bundle, use
-# [sustainability-bom-2301.xml](supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example
+# [sustainability-bom-2301.xml](../supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example
 # will produce different results from the published example when this BoM is used.
 # </div>
 
@@ -46,7 +48,7 @@ cxn = Connection(server_url).with_credentials("user_name", "password").connect()
 # analysis are ``MJ`` for energy, ``kg`` for mass, and ``km`` for distance.
 
 # +
-xml_file_path = "supporting-files/sustainability-bom-2412.xml"
+xml_file_path = "../supporting-files/sustainability-bom-2412.xml"
 with open(xml_file_path) as f:
     bom = f.read()
 

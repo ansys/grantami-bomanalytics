@@ -22,7 +22,7 @@
 # ## Connect to Granta MI
 
 # Import the ``Connection`` class and create the connection. For more information, see the
-# [Getting Started](../0_Getting_started.ipynb) example.
+# [Basic Usage](../0_Basic_usage.ipynb) example.
 
 # + tags=[]
 from ansys.grantami.bomanalytics import Connection

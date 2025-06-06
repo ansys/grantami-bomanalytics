@@ -26,7 +26,7 @@
 # The approach is applicable to data in other formats or data loaded from other software
 # platform APIs.
 
-# You can [download](supporting-files/source_data.json) the external data source used in this
+# You can [download](../supporting-files/source_data.json) the external data source used in this
 # example.
 
 # ## Load the external data
@@ -38,7 +38,7 @@
 import json
 from pprint import pprint
 
-with open("supporting-files/source_data.json") as f:
+with open("../supporting-files/source_data.json") as f:
     data = json.load(f)
 pprint(data)
 # -

@@ -10,3 +10,4 @@ These examples demonstrate how to create XML BoMs.
 
    6-1_Creating_an_XML_BoM
    6-2_Creating_an_XML_BoM_from_JSON
+   6-3_Creating_an_XML_BoM_from_CSV

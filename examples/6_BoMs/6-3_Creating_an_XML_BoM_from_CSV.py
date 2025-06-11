@@ -15,8 +15,8 @@
 
 # # Create an XML BoM from a CSV data source
 
-# This example shows how to use the ``bom_types`` subpackage to create a valid Granta MI XML
-# BoM. This subpackage can be used to help construct a Granta 24/12-compliant XML BoM file to
+# This example shows how to use the ``bom_types`` subpackage to create a Granta MI BoM.
+# This subpackage can be used to help construct a Granta 24/12-compliant XML BoM file to
 # use with the BoM queries provided by this package. The code in this example shows how to generate
 # a BoM from a representative CSV data source. The general approach can be applied to data
 # in other formats or provided by other APIs.
@@ -45,22 +45,23 @@ df.head()
 # machine screws (DIN-7991-M8-20) and washers (N0403.12N.2). The door glass (321-51) is coated with a partially
 # reflective polymer film (7000001298).
 #
-# The hierarchy of items within the BoM is defined by the order of items in the CSV and the ``BoM Level`` field. If an
+# The hierarchy of items within the BoM is defined by the order of items in the CSV and the ``BoM Level`` column. If an
 # item has the BoM level *n*, then the item's parent is the first level preceding it in the CSV with a BoM level *n-1*.
 #
-# Each item includes an ``Item Type`` field that identifies the type of the item, here only ``Part`` or ``Material``.
-# Additional fields are specific to the type of item.
+# Each item includes an ``Item Type`` column that identifies the type of the item, in this example the only values are
+# ``Part`` or ``Material``.
+# Additional columns are specific to the type of item.
 #
 # ### Part items
 #
 # Items that refer to parts only exist in the BoM and do not reference records in Granta MI. Their ``Name`` and ``ID``
 # are defined only in the BoM to identify parts.
 #
-# The ``Quantity`` and ``Unit of measure`` fields describe the quantity of part expected in the parent. This can be
+# The ``Quantity`` and ``Unit of measure`` columns describe the quantity of part expected in the parent. This can be
 # done by specifying how many occurrences of a part are in an assembly, or for example for the glass door, the surface
 # area of laminated glass.
 #
-# There are three types of components in the BoM:
+# There are three types of components in this example BoM:
 #
 #  - The product described by the BoM, whose ``BoM Level`` is ``1``.
 #  - Assemblies which are made of sub-parts.
@@ -78,9 +79,9 @@ df.head()
 # ### Material items
 #
 # Items that refer to materials correspond to records in Granta MI that contain the relevant compliance or
-# sustainability information for these items. As a result, these items contain both a human-readable ``Name`` field and
-# an ``ID`` field. In this scenario, the system that provided the data source contains the Granta MI material
-# assignments for each part based on the ``Material ID`` attribute, which is included in the ``ID`` field.
+# sustainability information for these items. As a result, these items include both a human-readable ``Name`` column and
+# an ``ID`` column. In this scenario, the system that provided the data source contains the Granta MI material
+# assignments for each part based on the ``Material ID`` attribute, which is included in the ``ID`` column.
 #
 # Materials are described in terms of percentage of the parent part made of the material.
 

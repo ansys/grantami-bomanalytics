@@ -25,25 +25,16 @@ concurrency:
 jobs:
 
   check-vulnerabilities:
-    name: Check third-party dependencies for vulnerabilities
+    name: "Check library vulnerabilities"
     runs-on: ubuntu-latest
     steps:
-      - name: PyAnsys Vulnerability Check (on PRs)
-        if: github.event_name == 'pull_request'
-        uses: ansys/actions/check-vulnerabilities@v10
+      - uses: ansys/actions/check-vulnerabilities@v10.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          python-package-name: ${{ env.LIBRARY_NAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-          dev-mode: true
-
-      - name: PyAnsys Vulnerability Check (any other case)
-        if: github.event_name != 'pull_request'
-        uses: ansys/actions/check-vulnerabilities@v10
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.LIBRARY_NAME }}
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          dev-mode: ${{ github.ref != 'refs/heads/main' }}
+          use-uv: false
 
   code-style:
     name: "Code style"

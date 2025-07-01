@@ -42,7 +42,7 @@ def validate_argument_type(*allowed_types: Any) -> Callable:
 
     * If one object is provided, the value must be of that object's type.
     * If multiple objects are provided, the value must be of at least one object's types.
-    * If a container of objects are provided, the types are validated recursively.
+    * If a container of objects is provided, the types are validated recursively.
 
      Tuples and lists can be heterogeneous, where the ordering of the items in the containers is taken into account.
      Dictionaries and sets must be homogeneous. If they are not exactly one item in length, a ``ValueError`` is raised.
@@ -132,7 +132,8 @@ def _check_type(value_obj: Any, type_obj: Any) -> None:
     """
 
     if isinstance(type_obj, (list, tuple)):
-        assert isinstance(value_obj, (list, tuple))
+        if not isinstance(value_obj, (list, tuple)):
+            raise AssertionError
         if len(type_obj) == 1:
             contained_type = type_obj[0]
             for value in value_obj:
@@ -147,7 +148,8 @@ def _check_type(value_obj: Any, type_obj: Any) -> None:
                 f"Container length: {len(type_obj)}, object length: {len(value_obj)}"
             )
     elif isinstance(type_obj, set):
-        assert isinstance(value_obj, set)
+        if not isinstance(value_obj, set):
+            raise AssertionError
         if len(type_obj) != 1:
             raise ValueError(
                 "Sets must be homogeneous: they can only contain a single object against "
@@ -157,7 +159,8 @@ def _check_type(value_obj: Any, type_obj: Any) -> None:
         for value in value_obj:
             _check_type(value, contained_type)
     elif isinstance(type_obj, dict):
-        assert isinstance(value_obj, dict)
+        if not isinstance(value_obj, dict):
+            raise AssertionError
         if len(type_obj) != 1:
             raise ValueError(
                 "Dictionaries must be homogeneous: they can only contain a single object "
@@ -170,4 +173,5 @@ def _check_type(value_obj: Any, type_obj: Any) -> None:
         for value in value_obj.values():
             _check_type(value, contained_value_type)
     else:
-        assert isinstance(value_obj, type_obj)
+        if not isinstance(value_obj, type_obj):
+            raise AssertionError

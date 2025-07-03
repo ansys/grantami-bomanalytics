@@ -45,9 +45,9 @@ from typing import (
     Union,
 )
 import warnings
-from xml.etree import ElementTree
 
 from ansys.grantami.bomanalytics_openapi.v2 import api, models
+from defusedxml import ElementTree
 
 from ._allowed_types import validate_argument_type
 from ._exceptions import GrantaMIException

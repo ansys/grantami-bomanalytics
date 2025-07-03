@@ -240,8 +240,7 @@ class BoMHandler:
             raise ValueError(f"Invalid BoM object:\n{newline.join([error.msg for error in errors])}")
 
         output = xmlschema.etree_tostring(obj)
-        assert isinstance(output, str)
-        return output
+        return cast(str, output)
 
 
 @dataclass

@@ -2,6 +2,9 @@
 
 This project uses [towncrier](https://towncrier.readthedocs.io/) to generate changelogs.
 
+Changes for releases after 2.2.0 can be found in
+<https://bomanalytics.grantami.docs.pyansys.com/version/stable/changelog.html>.
+
 The changes for the upcoming release can be found in
 <https://github.com/ansys/grantami-bomanalytics/tree/main/doc/changelog.d/>.
 

@@ -1,0 +1,1011 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Material impacted substances &#8212; PyGranta BoM Analytics 1.2.0</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=e353d410970836974a52" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=e353d410970836974a52" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=e353d410970836974a52" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=62c9ccaa" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dataframe.css?v=1a040689" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=ffe0d018"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/impacted_substances/materials';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://bomanalytics.grantami.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.2';
+        </script>
+    <script src="../../_static/js/add_blank.js?v=f2ece54a"></script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="BoM impacted substances" href="bom.html" />
+    <link rel="prev" title="Specification impacted substances" href="specifications.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://bomanalytics.grantami.docs.pyansys.com/version/stable/api/impacted_substances/materials.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="Logo image"/>
+    <script>document.write(`<img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      1.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/pyansys/grantami-bomanalytics" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>   <div class="container-xl">
+  <div class="row">
+    <div class="col-12 col-md-3" id="breadcrumbs-spacer"></div>
+    <div class="col-12 col-md-11 col-xl-9" id="breadcrumbs">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="bom.html" title="BoM impacted substances"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="specifications.html" title="Specification impacted substances"
+             accesskey="P">previous</a> |</li> 
+<li class="nav-item nav-item-additional-breadcrumb">
+  <a href="https://docs.pyansys.com/">PyAnsys Documentation</a> » 
+</li>
+
+<li class="nav-item nav-item-additional-breadcrumb">
+  <a href="https://grantami.docs.pyansys.com/">PyGranta</a> » 
+</li>
+ 
+<li class="nav-item nav-item-0">
+  <a href="../../index.html">PyGranta BoM Analytics 1.2.0</a> » 
+</li>
+ 
+          <li class="nav-item nav-item-1"><a href="../index.html" >API reference</a> » </li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Impacted substances API</a> » </li>
+        <li class="nav-item nav-item-this"><a href="">Material impacted substances</a></li> 
+      </ul>
+    </div></div>
+  </div>
+</div>
+ 
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../examples/index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button type="button" class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle" data-bs-toggle="dropdown">
+      1.2  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div class="version-switcher__menu dropdown-menu list-group-flush py-0">
+    <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/pyansys/grantami-bomanalytics" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../common.html">Granta MI connection</a></li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../batching.html">Batching requests</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Impacted substances API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="parts.html">Part impacted substances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="specifications.html">Specification impacted substances</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Material impacted substances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bom.html">BoM impacted substances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="impacted_substances.html">Impacted substances</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../compliance/index.html">Compliance API</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="material-impacted-substances">
+<span id="ref-grantami-bomanalytics-api-impactedsubstances-materials"></span><h1>Material impacted substances<a class="headerlink" href="#material-impacted-substances" title="Permalink to this heading">#</a></h1>
+<section id="query-definition">
+<h2>Query definition<a class="headerlink" href="#query-definition" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MaterialImpactedSubstancesQuery</span></span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery" title="Permalink to this definition">#</a></dt>
+<dd><p>Gets the substances impacted by a list of legislations for Granta MI material records.</p>
+<p>All methods used to add materials and legislations to this query return the query itself so that they can be chained
+together as required. Records can be added using a combination of any of the available methods.</p>
+<p>Once the query is fully constructed, use the cxn.
+<a class="reference internal" href="../common.html#ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run" title="ansys.grantami.bomanalytics._connection.BomAnalyticsClient.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method to return a result of type
+<a class="reference internal" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult" title="ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQueryResult</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="s2">&quot;http://my_mi_server/mi_servicelayer&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">with_autologon</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">MaterialImpactedSubstancesQuery</span><span class="p">()</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">with_material_ids</span><span class="p">([</span><span class="s1">&#39;elastomer-butadienerubber&#39;</span><span class="p">,</span> <span class="s1">&#39;NBR-100&#39;</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="o">.</span><span class="n">with_legislations</span><span class="p">([</span><span class="s2">&quot;EU REACH - The Candidate List&quot;</span><span class="p">])</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cxn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="go">&lt;MaterialImpactedSubstancesQueryResult: 2 MaterialWithImpactedSubstances results&gt;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_record_guids">
+<span class="sig-name descname"><span class="pre">with_record_guids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_guids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_record_guids" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a list or set of record GUIDs to a query.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>record_guids</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>] | <a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>List or set of record GUIDs.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></dt><dd><p>Current query object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#TypeError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeError</span></code></a></dt><dd><p>Error to raise if the method is called with values that do not match the types described earlier.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="n">MaterialComplianceQuery</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">with_record_guids</span><span class="p">([</span><span class="s1">&#39;bdb0b880-e6ee-4f1a-bebd-af76959ae3c8&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                 <span class="s1">&#39;a98cf4b3-f96a-4714-9f79-afe443982c69&#39;</span><span class="p">])</span>
+<span class="go">&lt;MaterialCompliance: 2 materials, batch size = 100, 0 indicators&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_record_history_guids">
+<span class="sig-name descname"><span class="pre">with_record_history_guids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_history_guids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_record_history_guids" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a list or set of record history GUIDs to a query.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>record_history_guids</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>] | <a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>List or set of record history GUIDs.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></dt><dd><p>Current query object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#TypeError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeError</span></code></a></dt><dd><p>Error to raise if the method is called with values that do not match the types described earlier.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="n">MaterialComplianceQuery</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span><span class="o">.</span><span class="n">with_record_history_guids</span><span class="p">([</span><span class="s1">&#39;41e20a88-d496-4735-a177-6266fac9b4e2&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                 <span class="s1">&#39;d117d9ad-e6a9-4ba9-8ad8-9a20b6d0b5e2&#39;</span><span class="p">])</span>
+<span class="go">&lt;MaterialCompliance: 2 materials, batch size = 100, 0 indicators&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_record_history_ids">
+<span class="sig-name descname"><span class="pre">with_record_history_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_history_identities</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_record_history_ids" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a list or set of record history identities to a query.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>record_history_identities</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>] | <a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>]</span></dt><dd><p>List or set of record history identities.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></dt><dd><p>Current query object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#TypeError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeError</span></code></a></dt><dd><p>Error to raise if the method is called with values that do not match the types described
+earlier.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MaterialComplianceQuery</span><span class="p">()</span><span class="o">.</span><span class="n">with_record_history_ids</span><span class="p">([</span><span class="mi">15321</span><span class="p">,</span> <span class="mi">17542</span><span class="p">,</span> <span class="mi">942</span><span class="p">])</span>
+<span class="go">&lt;MaterialCompliance: 3 materials, batch size = 50, 0 indicators&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_material_ids">
+<span class="sig-name descname"><span class="pre">with_material_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">material_ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_material_ids" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a list or set of materials to a material query, referenced by the material ID attribute value.</p>
+<p>Material IDs are valid for both <code class="docutils literal notranslate"><span class="pre">MaterialUniverse</span></code> and <code class="docutils literal notranslate"><span class="pre">Materials</span> <span class="pre">-</span> <span class="pre">in</span> <span class="pre">house</span></code> records.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>material_ids</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>] | <a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a>]</span></dt><dd><p>List or set of material IDs.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></dt><dd><p>Current query object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#TypeError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeError</span></code></a></dt><dd><p>Error to raise if the method is called with values that do not match the types described earlier.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="n">MaterialComplianceQuery</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span><span class="o">.</span><span class="n">with_material_ids</span><span class="p">([</span><span class="s1">&#39;elastomer-butadienerubber&#39;</span><span class="p">,</span> <span class="s1">&#39;NBR-100&#39;</span><span class="p">])</span>
+<span class="go">&lt;MaterialCompliance: 2 materials, batch size = 100, 0 indicators&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_batch_size">
+<span class="sig-name descname"><span class="pre">with_batch_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_batch_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Set the number of records to include in a single request for this query.</p>
+<p>Default values are set based on typical usage of the Restricted Substances database. This value can be changed
+to optimize performance on a query-by-query basis if required. For example, you can change it if certain
+records contain particularly large or small numbers of associated records.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>batch_size</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Number of records to include in a single request to Granta MI.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></dt><dd><p>Current query object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#ValueError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>Error to raise if the batch size is set to a number less than 1.</p>
+</dd>
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#TypeError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeError</span></code></a></dt><dd><p>Error to raise if a value of any type other than <a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a> is specified.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The Restricted Substances database makes extensive use of tabular data and associated records to store the
+complex hierarchical relationships that define compliance of products, assemblies, parts, specifications,
+and materials. As a result, it is impossible to determine the complexity of a particular query without knowing
+precisely how many records are related to the record included in the query.</p>
+<p>The default batch sizes are set for each record type and represent appropriate numbers of those records to be
+included in the same request assuming typical numbers of associated records.</p>
+<p>Even if the records are queried in multiple batches, the results are assembled into a single result object.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MaterialComplianceQuery</span><span class="p">()</span><span class="o">.</span><span class="n">with_batch_size</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+<span class="go">&lt;MaterialCompliance: 0 materials, batch size = 50, 0 indicators&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_legislations">
+<span class="sig-name descname"><span class="pre">with_legislations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">legislation_names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_legislations" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a list or set of legislations to retrieve the impacted substances for.</p>
+<p>Legislations are identified based on their <code class="docutils literal notranslate"><span class="pre">Short</span> <span class="pre">title</span></code> attribute value.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>legislation_names</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>] | <a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#set" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>List or set of legistlation names.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Query</span></code></dt><dd><p>Current query object.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/exceptions.html#TypeError" title="(in Python v3.11)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeError</span></code></a></dt><dd><p>Error to raise if the method is called with values that do not match the types described earlier.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="n">MaterialImpactedSubstancesQuery</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">with_legislations</span><span class="p">([</span><span class="s2">&quot;California Proposition 65 List&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>                                 <span class="s2">&quot;EU REACH - The Candidate List&quot;</span><span class="p">])</span>
+<span class="go">&lt;MaterialImpactedSubstances: 0 materials, batch size = 100, 2 legislations&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="query-result">
+<h2>Query result<a class="headerlink" href="#query-result" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MaterialImpactedSubstancesQueryResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">messages</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult" title="Permalink to this definition">#</a></dt>
+<dd><p>Retrieves the result of running the <a class="reference internal" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery" title="ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQuery</span></code></a>
+class.</p>
+<p>This class describes the substances in the specified materials impacted by one or more legislations.</p>
+<p class="rubric">Notes</p>
+<p>Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+directly.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.impacted_substances_by_material">
+<span class="sig-name descname"><span class="pre">impacted_substances_by_material</span></span><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.impacted_substances_by_material" title="Permalink to this definition">#</a></dt>
+<dd><p>Impacted substances for each material specified in the original query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="#ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult" title="ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialWithImpactedSubstancesResult</span></code></a>]</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">:</span> <span class="n">MaterialImpactedSubstancesQueryResult</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">impacted_substances_by_material</span>
+<span class="go">[&lt;MaterialWithImpactedSubstancesResult({MaterialId: elastomer-butadienerubber}),</span>
+<span class="go">        1 legislations&gt;,...]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.impacted_substances_by_legislation">
+<span class="sig-name descname"><span class="pre">impacted_substances_by_legislation</span></span><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.impacted_substances_by_legislation" title="Permalink to this definition">#</a></dt>
+<dd><p>View of the results for a query for impacted substances, grouped by legislation only.</p>
+<p>The substances from all items specified in the query are merged for each legislation, providing a single
+list of impacted substances grouped by legislation only. Substances are duplicated where they appear in
+multiple items for the same legislation.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>impacted_substances</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference internal" href="impacted_substances.html#ansys.grantami.bomanalytics._item_results.ImpactedSubstance" title="ansys.grantami.bomanalytics._item_results.ImpactedSubstance"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImpactedSubstance</span></code></a>]</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">:</span> <span class="n">MaterialImpactedSubstancesQueryResult</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">impacted_substances_by_legislation</span>
+<span class="go">{&#39;EU REACH - The Candidate List&#39;: [</span>
+<span class="go">    &lt;ImpactedSubstance: {&quot;cas_number&quot;: 90481-04-2}&gt;, ...]</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.impacted_substances">
+<span class="sig-name descname"><span class="pre">impacted_substances</span></span><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.impacted_substances" title="Permalink to this definition">#</a></dt>
+<dd><p>View of the results for a query for impacted substances, flattened into a single list.</p>
+<p>The substances from all items specified in the query are merged across item and legislation, providing a
+single flat list. Substances are duplicated where they appear in multiple items or legislations.</p>
+<dl class="field-list">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>impacted_substances</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="impacted_substances.html#ansys.grantami.bomanalytics._item_results.ImpactedSubstance" title="ansys.grantami.bomanalytics._item_results.ImpactedSubstance"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImpactedSubstance</span></code></a>]</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">:</span> <span class="n">MaterialImpactedSubstancesQueryResult</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">impacted_substances</span>
+<span class="go">[&lt;ImpactedSubstance: {&quot;cas_number&quot;: 90481-04-2}&gt;, ...]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.messages">
+<span class="sig-name descname"><span class="pre">messages</span></span><a class="headerlink" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.messages" title="Permalink to this definition">#</a></dt>
+<dd><p>Messages generated by Granta MI when running the query. The presence of one or more messages means
+that something unexpected happened when running the query but that the query could still be completed.</p>
+<p>Messages are sorted in order of decreasing severity and are available in the Service Layer log file.</p>
+<p>Messages are also logged using the Python <code class="docutils literal notranslate"><span class="pre">logging</span></code> module to the <code class="docutils literal notranslate"><span class="pre">ansys.grantami.bomanalytics</span></code> logger. By
+default, messages with a severity of <code class="docutils literal notranslate"><span class="pre">&quot;warning&quot;</span></code> or higher are printed on stderr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="../common.html#ansys.grantami.bomanalytics._query_results.LogMessage" title="ansys.grantami.bomanalytics._query_results.LogMessage"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogMessage</span></code></a>]</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">:</span> <span class="n">MaterialImpactedSubstancesQueryResult</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">messages</span>
+<span class="go">[LogMessage(severity=&#39;warning&#39;, message=&#39;Material &quot;ABS+PVC (flame retarded)&quot; has</span>
+<span class="go">    2 substance row(s) with missing substance links.&#39;)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="material-result">
+<h2>Material result<a class="headerlink" href="#material-result" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MaterialWithImpactedSubstancesResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">legislations</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult" title="Permalink to this definition">#</a></dt>
+<dd><p>Retrieves an individual material that is included as part of an impacted substances query result.</p>
+<p>This object includes two categories of attributes:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>The reference to the material in Granta MI</p></li>
+<li><p>The impacted substances associated with this material, both as a flat list and separated by legislation</p></li>
+</ul>
+</div></blockquote>
+<p class="rubric">Notes</p>
+<p>With the exception of the <code class="docutils literal notranslate"><span class="pre">record_history_identity</span></code> parameter, record reference parameters are only populated if
+they are specified in the original query.</p>
+<p>Objects of this class are only returned as the result of a query. The class is not intended to be instantiated
+directly.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">:</span> <span class="n">MaterialImpactedSubstancesQueryResult</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">material_result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">impacted_substances_by_material</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">material_result</span><span class="o">.</span><span class="n">substances_by_legislation</span>
+<span class="go">{&#39;California Proposition 65 List&#39;: [&lt;ImpactedSubstance: {&quot;cas_number&quot;: 90481-04-2}&gt;]}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">:</span> <span class="n">MaterialImpactedSubstancesQueryResult</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">material_result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">impacted_substances_by_material</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">material_result</span><span class="o">.</span><span class="n">substances</span>
+<span class="go">[&lt;ImpactedSubstance: {&quot;cas_number&quot;: 90481-04-2}&gt;]</span>
+</pre></div>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>record_history_identity</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/functions.html#int" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Record history identify.</p>
+</dd>
+<dt><strong>material_id</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Material ID.</p>
+</dd>
+<dt><strong>record_history_guid</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Record history GUID.</p>
+</dd>
+<dt><strong>record_guid</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">optional</span></code></span></dt><dd><p>Record GUID.</p>
+</dd>
+<dt><strong>substances_by_legislation</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#str" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="impacted_substances.html#ansys.grantami.bomanalytics._item_results.ImpactedSubstance" title="ansys.grantami.bomanalytics._item_results.ImpactedSubstance"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImpactedSubstance</span></code></a>]]</span></dt><dd><p>Substances impacted for a particular material, grouped by legislation name.</p>
+</dd>
+<dt><strong>substances</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3.11/library/stdtypes.html#list" title="(in Python v3.11)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference internal" href="impacted_substances.html#ansys.grantami.bomanalytics._item_results.ImpactedSubstance" title="ansys.grantami.bomanalytics._item_results.ImpactedSubstance"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImpactedSubstance</span></code></a>]</span></dt><dd><p>Substances impacted for a particular material as a flattened list.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  
+<div class="footer-article-items footer-article__inner">
+  
+    <div class="footer-article-item"><!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="specifications.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Specification impacted substances</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="bom.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">BoM impacted substances</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div></div>
+  
+</div>
+
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#query-definition">Query definition</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQuery</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_record_guids"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQuery.with_record_guids()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_record_history_guids"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQuery.with_record_history_guids()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_record_history_ids"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQuery.with_record_history_ids()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_material_ids"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQuery.with_material_ids()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_batch_size"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQuery.with_batch_size()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics.queries.MaterialImpactedSubstancesQuery.with_legislations"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQuery.with_legislations()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#query-result">Query result</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQueryResult</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.impacted_substances_by_material"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQueryResult.impacted_substances_by_material</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.impacted_substances_by_legislation"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQueryResult.impacted_substances_by_legislation</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.impacted_substances"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQueryResult.impacted_substances</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._query_results.MaterialImpactedSubstancesQueryResult.messages"><code class="docutils literal notranslate"><span class="pre">MaterialImpactedSubstancesQueryResult.messages</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#material-result">Material result</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.bomanalytics._item_results.MaterialWithImpactedSubstancesResult"><code class="docutils literal notranslate"><span class="pre">MaterialWithImpactedSubstancesResult</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button--></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/api/impacted_substances/materials.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=e353d410970836974a52"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2023 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.1.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.10.5. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

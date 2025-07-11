@@ -1,0 +1,390 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "4ea733d7",
+   "metadata": {},
+   "source": [
+    "# Basic usage example"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a8a47cb4",
+   "metadata": {},
+   "source": [
+    "This example shows how to connect to Granta MI and perform a basic query for impacted substances. It also\n",
+    "demonstrates how to view logging messages returned by the Granta MI server. For more information about the\n",
+    "results of the queries, see the [Impacted substances examples](2_Impacted_Substances_Queries/index.rst),\n",
+    "[Compliance examples](3_Compliance_Queries/index.rst), [Sustainability examples](4_Sustainability/index.rst), and\n",
+    "[Sustainability summary examples](5_Sustainability_summary/index.rst)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "465730e7",
+   "metadata": {},
+   "source": [
+    "## Connect to Granta MI"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "72b817d7",
+   "metadata": {},
+   "source": [
+    "First, use the ``ansys.grantami.bomanalytics.Connection`` class to connect to the Granta MI server. The ``Connection``\n",
+    "class uses a fluent interface to build the connection, which is always invoked in the following sequence:\n",
+    "\n",
+    "1. Specify your Granta MI Service Layer URL as a parameter to the ``Connection`` class.\n",
+    "2. Specify the authentication method using a ``Connection.with_*()`` method.\n",
+    "3. Use the ``Connection.connect()`` method to finalize the connection.\n",
+    "\n",
+    "This returns a connection object, which is called ``cxn`` in these examples."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1254c775",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import Connection\n",
+    "\n",
+    "server_url = \"http://my_grantami_server/mi_servicelayer\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e0a5916f",
+   "metadata": {},
+   "source": [
+    "If you are running your Python script on Windows, you are generally able to use the\n",
+    "``.with_autologon() method``."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9d94ea6b",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "cxn = Connection(server_url).with_autologon().connect()\n",
+    "cxn"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "27333922",
+   "metadata": {},
+   "source": [
+    "If the Python script is running on Linux without Kerberos enabled, or you want to use an account other than your\n",
+    "logged-in account, you can specify credentials explicitly."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "175ec729",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "cxn = Connection(server_url).with_credentials(\"my_username\", \"my_password\").connect()\n",
+    "cxn"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "126c39e0",
+   "metadata": {},
+   "source": [
+    "OIDC and anonymous authentication methods are also available, but they are beyond the scope of this example.\n",
+    "For more information, see the [ansys-openapi-common](https://github.com/pyansys/openapi-common) package\n",
+    "documentation."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b1a239d2",
+   "metadata": {},
+   "source": [
+    "## Construct a query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "118326c9",
+   "metadata": {},
+   "source": [
+    "Queries are also constructed using a fluent interface. However, the ``Query`` constructor takes no arguments. All\n",
+    "query details are specified using ``Query`` methods. To demonstrate this, this example builds a query to\n",
+    "determine all substances present in an ABS material that are impacted by the REACH Candidate List legislation."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a625b6ca",
+   "metadata": {},
+   "source": [
+    "First import the ``queries`` module and create a ``MaterialImpactedSubstancesQuery`` object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7902a1bb",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import queries\n",
+    "\n",
+    "query = queries.MaterialImpactedSubstancesQuery()\n",
+    "query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8d639c14",
+   "metadata": {},
+   "source": [
+    "Now add the material that you want to query by specifying its material ID. (Alternate methods of specifying records\n",
+    "are shown in other examples.)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3c29e8e7",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "query = query.with_material_ids([\"plastic-abs-high-impact\"])\n",
+    "query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1ffa07ac",
+   "metadata": {},
+   "source": [
+    "Note that because the ``MaterialImpactedSubstancesQuery`` object has a fluent interface, you receive the same object\n",
+    "back that you started with but with the material IDs added.\n",
+    "\n",
+    "Finally, add the legislation to the query. Legislations are identified by their ``Legislation ID`` attribute.\n",
+    "``Candidate_AnnexXV`` is the ID of the ``EU REACH - The Candidate List`` legislation."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b34908a2",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "query = query.with_legislation_ids([\"Candidate_AnnexXV\"])\n",
+    "query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9ae82ffd",
+   "metadata": {},
+   "source": [
+    "Fluent interfaces are designed to allow a complex object to be constructed in a single line of code. As such, you can\n",
+    "consolidate the cells above into a single step:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3e63c7aa",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "query = queries.MaterialImpactedSubstancesQuery().with_material_ids([\"plastic-abs-high-impact\"]).with_legislation_ids([\"Candidate_AnnexXV\"])  # noqa: E501\n",
+    "query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0a1792ba",
+   "metadata": {},
+   "source": [
+    "Because the fluent interface can produce very long lines of code, it's necessary to break your query creation code\n",
+    "into multiple lines. The following multi-line format is used throughout the examples. It is functionally equivalent to\n",
+    "the preceding cell:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4fe1168f",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "query = (\n",
+    "    queries.MaterialImpactedSubstancesQuery()\n",
+    "    .with_material_ids([\"plastic-abs-high-impact\"])\n",
+    "    .with_legislation_ids([\"Candidate_AnnexXV\"])\n",
+    ")\n",
+    "query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "afa69b2d",
+   "metadata": {},
+   "source": [
+    "The multi-line format is the recommended way of creating queries using this API."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "71e8966f",
+   "metadata": {},
+   "source": [
+    "## Run a query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "64af7cd2",
+   "metadata": {},
+   "source": [
+    "Now that you have your ``cxn`` and ``query`` objects, you can use the ``cxn.run()`` method to run the query. This\n",
+    "returns an object that contains the results of the query."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a9ce3a55",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "result = cxn.run(query)\n",
+    "result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "733548c4",
+   "metadata": {},
+   "source": [
+    "## View query results"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e10bf399",
+   "metadata": {},
+   "source": [
+    "In the case of ``MaterialImpactedSubstancesQuery``, the results object contains the list of substances present in\n",
+    "the material that are impacted by the specified legislations. Display the five first substances in the list."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "59b72cbf",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "result.impacted_substances[:5]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f6de18cf",
+   "metadata": {},
+   "source": [
+    "## View logged messages"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3fec7330",
+   "metadata": {},
+   "source": [
+    "All query results also contain a list of messages returned by the server while running the query. These are\n",
+    "sorted in order of decreasing severity. The same messages are also available in the MI Service Layer log file."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9f75408b",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "result.messages"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1cacc790",
+   "metadata": {},
+   "source": [
+    "Additionally, these messages are available via the standard ``logging`` module using the\n",
+    "``ansys.grantami.bomanalytics`` logger. Alternatively, you can omit the logger name to get the root logger, which\n",
+    "includes messages logged by all packages.\n",
+    "\n",
+    "The following code creates a log handler that outputs all ``ansys.grantami.bomanalytics`` logger messages\n",
+    "with severity INFO and above to either the terminal or the notebook."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cb6c5636",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "import logging\n",
+    "\n",
+    "logging.basicConfig(level=logging.INFO)\n",
+    "logger = logging.getLogger(\"ansys.grantami.bomanalytics\")\n",
+    "\n",
+    "result = cxn.run(query)"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:light"
+  },
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

@@ -4,7 +4,7 @@ BoM impacted substances
 =======================
 
 For more information about BoM item types relevant for impacted substances analysis, refer to the
-:MI_docs:`BoM item types for Restricted Substances <rs_and_sustainability/bom_items_rs.html>` section of the online
+:MI_docs:`Item types for Restricted Substances <one_mi/bom_items_rs.html>` section of the online
 documentation.
 
 Consult :ref:`ref_grantami_bomanalytics_bom_query_restrictions` for some important restrictions on

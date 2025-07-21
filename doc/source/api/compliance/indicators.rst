@@ -13,7 +13,7 @@ impacted by one or more legislations included in that indicator.
 
 There are two different types of indicator, and they compute compliance in slightly different ways. It is therefore
 important to understand the differences between them. For more information, see the
-:MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>` supplied with
+:MI_docs:`Restricted Substances Reports User Guide <one_mi/restricted_substances.html>` supplied with
 Granta MI Restricted Substances Reports.
 
 

@@ -12,8 +12,8 @@ to other BoM items as in the record-based queries available for Impacted Substan
 analysis.
 
 For more information about BoM item types relevant for sustainability analysis, see
-:MI_docs:`BoM item types for Sustainability <rs_and_sustainability/bom_types_sustainability.html>`
-in the Granta MI product documentation.
+:MI_docs:`Item types for Sustainability <one_mi/bom_types_sustainability.html>` in the Granta
+MI product documentation.
 
 .. note:: The API documented in this section is only available if you have the MI Restricted
   Substances feature included in your license. A

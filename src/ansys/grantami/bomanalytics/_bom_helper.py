@@ -27,25 +27,28 @@ from typing import TYPE_CHECKING, Any, TextIO, Type, TypeAlias, TypeVar, cast
 import xmlschema
 from xmlschema import XMLSchema, XMLSchemaValidationError
 
-from .bom_types import eco2301, eco2412
-from .schemas import bom_schema_2301, bom_schema_2412
+from .bom_types import eco2301, eco2412, eco2505
+from .schemas import bom_schema_2301, bom_schema_2412, bom_schema_2505
 
 if TYPE_CHECKING:
     from .bom_types import _GenericBoMReader, _GenericBoMWriter
     from .bom_types.eco2301 import BillOfMaterials as BillOfMaterials2301
     from .bom_types.eco2412 import BillOfMaterials as BillOfMaterials2412
+    from .bom_types.eco2505 import BillOfMaterials as BillOfMaterials2505
 
 
-T = TypeVar("T", "BillOfMaterials2301", "BillOfMaterials2412")
-BillOfMaterials: TypeAlias = "BillOfMaterials2301 | BillOfMaterials2412"
+T = TypeVar("T", "BillOfMaterials2301", "BillOfMaterials2412", "BillOfMaterials2505")
+BillOfMaterials: TypeAlias = "BillOfMaterials2301 | BillOfMaterials2412 | BillOfMaterials2505"
 
 _type_map: dict[Type[BillOfMaterials], Path] = {
     eco2301.BillOfMaterials: bom_schema_2301,
     eco2412.BillOfMaterials: bom_schema_2412,
+    eco2505.BillOfMaterials: bom_schema_2505,
 }
 _mod_map: dict[Type[BillOfMaterials], ModuleType] = {
     eco2301.BillOfMaterials: eco2301,
     eco2412.BillOfMaterials: eco2412,
+    eco2505.BillOfMaterials: eco2505,
 }
 
 

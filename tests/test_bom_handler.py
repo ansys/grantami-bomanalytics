@@ -31,7 +31,7 @@ from lxml import etree
 import pytest
 
 from ansys.grantami.bomanalytics import BoMHandler
-from ansys.grantami.bomanalytics.bom_types import eco2301, eco2412, gbt1205
+from ansys.grantami.bomanalytics.bom_types import eco2301, eco2412, eco2505, gbt1205
 
 from .inputs import BoM, example_boms
 
@@ -44,6 +44,8 @@ class TestRoundTripBoMs:
             "sustainability-bom-2301",
             "medium-test-bom-2412",
             "sustainability-bom-2412",
+            "medium-test-bom-2505",
+            "sustainability-bom-2505",
         ],
     )
     @pytest.mark.parametrize("allow_unsupported_data", [True, False])
@@ -62,6 +64,7 @@ class TestRoundTripBoMs:
         [
             "bom-with-annotations-2301",
             "bom-with-annotations-2412",
+            "bom-with-annotations-2505",
         ],
     )
     def test_roundtrip_from_text_parsing_succeeds_unsupported_boms_lax(self, input_bom_key: str):
@@ -79,6 +82,7 @@ class TestRoundTripBoMs:
         [
             "bom-with-annotations-2301",
             "bom-with-annotations-2412",
+            "bom-with-annotations-2505",
         ],
     )
     def test_roundtrip_from_text_parsing_fails_unsupported_boms_strict(self, input_bom_key: str):
@@ -94,6 +98,8 @@ class TestRoundTripBoMs:
             "sustainability-bom-2301",
             "medium-test-bom-2412",
             "sustainability-bom-2412",
+            "medium-test-bom-2505",
+            "sustainability-bom-2505",
         ],
     )
     @pytest.mark.parametrize("allow_unsupported_data", [True, False])
@@ -112,6 +118,7 @@ class TestRoundTripBoMs:
         [
             "bom-with-annotations-2301",
             "bom-with-annotations-2412",
+            "bom-with-annotations-2505",
         ],
     )
     def test_roundtrip_from_file_parsing_succeeds_unsupported_boms_lax(self, input_bom_key: str):
@@ -129,6 +136,7 @@ class TestRoundTripBoMs:
         [
             "bom-with-annotations-2301",
             "bom-with-annotations-2412",
+            "bom-with-annotations-2505",
         ],
     )
     def test_roundtrip_from_file_parsing_fails_unsupported_boms_strict(self, input_bom_key: str):
@@ -220,9 +228,15 @@ class TestRoundTripBoM2412WithAssertions(RoundTripWithAssertionsBoMTester):
     _bom = example_boms["medium-test-bom-2412"]
 
 
+class TestRoundTripBoM2505WithAssertions(RoundTripWithAssertionsBoMTester):
+    _namespace_map = {"gbt": "http://www.grantadesign.com/12/05/GrantaBaseTypes"}
+    _default_namespace = "http://www.grantadesign.com/25/05/BillOfMaterialsEco"
+    _bom = example_boms["medium-test-bom-2505"]
+
+
 class TestBoMDeserialization:
     # 17/11, 23/01, and 24/12 are quite similar, and in the context of this particular BoM and test, substituting
-    # the namespace is sufficient to obtain a valid 23/01 or 24/12 BoM.
+    # the namespace is sufficient to obtain a valid 23/01, 24/12, or 25/05 BoM.
 
     @pytest.fixture(scope="class")
     def simple_2301_bom(self):
@@ -240,6 +254,16 @@ class TestBoMDeserialization:
         input_bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
             "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+        )
+        bom_handler = BoMHandler()
+        yield bom_handler.load_bom_from_text(input_bom)
+
+    @pytest.fixture(scope="class")
+    def simple_2505_bom(self):
+        bom_1711 = example_boms["bom-1711"].content
+        input_bom = bom_1711.replace(
+            "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
+            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
         )
         bom_handler = BoMHandler()
         yield bom_handler.load_bom_from_text(input_bom)
@@ -303,7 +327,7 @@ class TestBoMDeserialization:
             ),
         ],
     )
-    @pytest.mark.parametrize("bom_fixture_name", ["simple_2301_bom", "simple_2412_bom"])
+    @pytest.mark.parametrize("bom_fixture_name", ["simple_2301_bom", "simple_2412_bom", "simple_2505_bom"])
     def test_simple_bom(self, request: pytest.FixtureRequest, bom_fixture_name: str, query: str, value: Any) -> None:
         bom = request.getfixturevalue(bom_fixture_name)
         deserialized_field = self.get_field(bom, query)
@@ -324,8 +348,15 @@ def empty_2412_bom():
     )
 
 
+@pytest.fixture
+def empty_2505_bom():
+    return eco2505.BillOfMaterials(
+        components=[], transport_phase=[], use_phase=None, location=None, notes=None, internal_id="BomId"
+    )
+
+
 @pytest.mark.xfail(reason="Empty BoMs can be instantiated and serialized, but not deserialized.")
-@pytest.mark.parametrize("bom_fixture_name", ["simple_2301_bom", "simple_2412_bom"])
+@pytest.mark.parametrize("bom_fixture_name", ["simple_2301_bom", "simple_2412_bom", "simple_2505_bom"])
 def test_empty_bom(request: pytest.FixtureRequest, bom_fixture_name: str):
     bom = request.getfixturevalue(bom_fixture_name)
     bom_handler = BoMHandler()
@@ -336,7 +367,7 @@ def test_empty_bom(request: pytest.FixtureRequest, bom_fixture_name: str):
 
 
 class BoMFactory:
-    def __init__(self, bom_module: Literal[eco2412] | Literal[eco2301]):
+    def __init__(self, bom_module: Literal[eco2505] | Literal[eco2412] | Literal[eco2301]):
         self.bom_module = bom_module
         self._int = 0
         self._float = 0.1
@@ -352,7 +383,7 @@ class BoMFactory:
     def get_guid(self) -> str:
         return str(uuid.uuid4())
 
-    def make_location(self) -> eco2301.Location | eco2412.Location:
+    def make_location(self) -> eco2301.Location | eco2412.Location | eco2505.Location:
         id_int = self.get_int()
         return self.bom_module.Location(
             mi_location_reference=self.bom_module.MIRecordReference(
@@ -365,7 +396,7 @@ class BoMFactory:
             internal_id=f"Location{id_int}Id",
         )
 
-    def make_transport_stage(self) -> eco2301.TransportStage | eco2412.TransportStage:
+    def make_transport_stage(self) -> eco2301.TransportStage | eco2412.TransportStage | eco2505.TransportStage:
         id_int = self.get_int()
         return self.bom_module.TransportStage(
             mi_transport_reference=self.bom_module.MIRecordReference(
@@ -379,7 +410,7 @@ class BoMFactory:
 
     def make_full_bom(
         self, use_phase_utility_kwarg, eco2301_compatible=False
-    ) -> eco2301.BillOfMaterials | eco2412.BillOfMaterials:
+    ) -> eco2301.BillOfMaterials | eco2412.BillOfMaterials | eco2505.BillOfMaterials:
         # Very invalid BoM for any query, but attempts to exercise all fields of all types
         # TODO add non mi part reference
         bom = self.bom_module.BillOfMaterials(
@@ -600,8 +631,8 @@ class BoMFactory:
             # ],
             internal_id="BomId",
         )
-        # Add additional eco24/12 capabilities
-        if self.bom_module == eco2412 and not eco2301_compatible:
+        # Add additional eco24/12+ capabilities
+        if self.bom_module in [eco2412, eco2505] and not eco2301_compatible:
             bom.components[0].transport_phase = [
                 self.make_transport_stage(),
                 self.make_transport_stage(),
@@ -636,7 +667,7 @@ def test_everything_bom(use_phase_utility_kwarg, bom_types):
     assert rebuilt == bom
 
 
-@pytest.mark.parametrize("bom_types", [eco2412, eco2301])
+@pytest.mark.parametrize("bom_types", [eco2505, eco2412, eco2301])
 def test_unexpected_args_raises_error(bom_types):
     with pytest.raises(TypeError, match="unexpected keyword argument 'unexpected_kwarg'"):
         bom_types.Part(part_number="PartNumber", unexpected_kwarg="UnexpectedKwargValue")
@@ -668,7 +699,10 @@ class TestBoMConversion:
         [
             (eco2301, eco2301),
             (eco2301, eco2412),
+            (eco2301, eco2505),
             (eco2412, eco2412),
+            (eco2412, eco2505),
+            (eco2505, eco2505),
         ],
     )
     @pytest.mark.parametrize("allow_unsupported_data", [True, False])
@@ -687,8 +721,8 @@ class TestBoMConversion:
             target_bom_types.BillOfMaterials.namespace,
         )
 
-    @pytest.mark.parametrize("source_bom_types", [eco2301, eco2412])
-    @pytest.mark.parametrize("target_bom_types", [eco2301, eco2412])
+    @pytest.mark.parametrize("source_bom_types", [eco2301, eco2412, eco2505])
+    @pytest.mark.parametrize("target_bom_types", [eco2301, eco2412, eco2505])
     @pytest.mark.parametrize("allow_unsupported_data", [True, False])
     def test_compatible_bom_upgrade_crossgrade_downgrade_succeeds(
         self, source_bom_types, target_bom_types, use_phase_utility_kwarg, allow_unsupported_data

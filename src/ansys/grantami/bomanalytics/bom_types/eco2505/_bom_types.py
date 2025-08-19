@@ -117,6 +117,17 @@ class Category(Enum):
 
 
 @dataclass
+class EquivalentReference(BaseType2505, MIRecordReference):
+
+    _simple_values = [
+        ("db_key", "http://www.grantadesign.com/12/05/GrantaBaseTypes", "dbKey"),
+        ("record_guid", "http://www.grantadesign.com/12/05/GrantaBaseTypes", "recordGUID"),
+        ("record_history_guid", "http://www.grantadesign.com/12/05/GrantaBaseTypes", "recordHistoryGUID"),
+        ("record_uid", "http://www.grantadesign.com/12/05/GrantaBaseTypes", "@recordUID"),
+    ]
+
+
+@dataclass
 class ExtendedMIRecordReference(BaseType2505, MIRecordReference):
     """
     A type extending gbt:MIRecordReference that includes an EquivalentReferences element to hold an arbitrary number
@@ -133,7 +144,7 @@ class ExtendedMIRecordReference(BaseType2505, MIRecordReference):
         )
     ]
 
-    equivalent_references: List[MIRecordReference] = field(default_factory=list)
+    equivalent_references: List[EquivalentReference] = field(default_factory=list)
     """Additional records which link to the analysis material."""
 
 
@@ -529,7 +540,7 @@ class Process(BaseType2505):
             "TransportStage",
             "transport_phase",
             "TransportPhase",
-            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
             "TransportStage",
         ),
     ]
@@ -602,12 +613,12 @@ class Material(BaseType2505):
     ]
 
     _list_props = [
-        ("Process", "processes", "Processes", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Process"),
+        ("Process", "processes", "Processes", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Process"),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
             "EndOfLifeFates",
-            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
             "EndOfLifeFate",
         ),
     ]
@@ -698,29 +709,29 @@ class Part(BaseType2505):
     ]
 
     _list_props = [
-        ("Part", "components", "Components", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Part"),
+        ("Part", "components", "Components", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Part"),
         (
             "Specification",
             "specifications",
             "Specifications",
-            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
             "Specification",
         ),
-        ("Material", "materials", "Materials", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Material"),
-        ("Substance", "substances", "Substances", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Substance"),
-        ("Process", "processes", "Processes", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Process"),
+        ("Material", "materials", "Materials", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Material"),
+        ("Substance", "substances", "Substances", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Substance"),
+        ("Process", "processes", "Processes", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Process"),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
             "EndOfLifeFates",
-            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
             "EndOfLifeFate",
         ),
         (
             "TransportStage",
             "transport_phase",
             "TransportPhase",
-            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
             "TransportStage",
         ),
     ]
@@ -798,7 +809,7 @@ class Part(BaseType2505):
         rohs_exemptions_obj = bom_reader.get_field(Part, obj, "RohsExemptions")
         if rohs_exemptions_obj is not None:
             rohs_exemption_obj = bom_reader.get_field(
-                Part, rohs_exemptions_obj, "RohsExemption", "http://www.grantadesign.com/24/12/BillOfMaterialsEco"
+                Part, rohs_exemptions_obj, "RohsExemption", "http://www.grantadesign.com/25/05/BillOfMaterialsEco"
             )
             if rohs_exemption_obj is not None:
                 props["rohs_exemptions"] = rohs_exemption_obj
@@ -818,7 +829,7 @@ class Part(BaseType2505):
 
 
 # @dataclass
-# class AnnotationSource(BaseType2412):
+# class AnnotationSource(BaseType2505):
 #     """
 #     An element indicating the source of annotations in the BoM. Each source may be
 #     referenced by zero or more annotations. The producer and consumer(s) of the BoM must agree the
@@ -858,7 +869,7 @@ class Part(BaseType2505):
 #
 #
 # @dataclass
-# class Annotation(BaseType2412):
+# class Annotation(BaseType2505):
 #     """
 #     An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
 #     between the producer and consumer(s) of the BoM.  The producer and consumer(s) must also agree whether a
@@ -903,12 +914,12 @@ class BillOfMaterials(BaseType2505):
         ("BoMDetails", "notes", "Notes"),
     ]
     _list_props = [
-        ("Part", "components", "Components", "http://www.grantadesign.com/24/12/BillOfMaterialsEco", "Part"),
+        ("Part", "components", "Components", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Part"),
         (
             "TransportStage",
             "transport_phase",
             "TransportPhase",
-            "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
+            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
             "TransportStage",
         ),
     ]

@@ -71,24 +71,24 @@ class _GenericBoMWriter(Generic[T]):
     def _convert_to_dict(self, obj: "BaseType") -> Dict:
         value = {}
 
-        for prop, field_reference in obj._simple_values:
+        for prop, field_name in obj._simple_values:
             prop_value = getattr(obj, prop)
             if prop_value is not None:
-                value[self._get_qualified_name(obj, field_reference.name)] = prop_value
-        for _, prop, field_reference in obj._props:
+                value[self._get_qualified_name(obj, field_name.local_name)] = prop_value
+        for _, prop, item_name in obj._props:
             prop_value = getattr(obj, prop)
             if prop_value is not None:
                 prop_value = self._convert_to_dict(cast("BaseType", prop_value))
-                value[self._get_qualified_name(obj, field_reference.name)] = prop_value
-        for _, prop, container_reference, field_reference in obj._list_props:
+                value[self._get_qualified_name(obj, item_name.local_name)] = prop_value
+        for _, prop, container_name, item_name in obj._list_props:
             prop_value = getattr(obj, prop)
             if prop_value is not None and len(prop_value) > 0:
                 prop_value = {
-                    self._get_qualified_name(obj, field_reference.name): [
+                    self._get_qualified_name(obj, item_name.local_name): [
                         self._convert_to_dict(item_obj) for item_obj in prop_value
                     ]
                 }
-                value[self._get_qualified_name(obj, container_reference.name)] = prop_value
+                value[self._get_qualified_name(obj, container_name.local_name)] = prop_value
         obj._write_custom_fields(value, self)
         return value
 

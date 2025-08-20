@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-from .._base_types import BaseType, _XmlReference
+from .._base_types import BaseType, QualifiedXMLName
 from ..gbt1205 import MIRecordReference
 
 if TYPE_CHECKING:
@@ -39,12 +39,12 @@ class BaseType2412(BaseType):
 
 
 @dataclass(frozen=True)
-class _XmlReferenceEco2412(_XmlReference):
+class _QualifiedEco2412Name(QualifiedXMLName):
     """
-    A fully qualified XML element. The name must be supplied, and the namespace defaults to the Eco 24/12 namespace.
+    A fully qualified XML name. The local name must be supplied, and the namespace defaults to the Eco 24/12 namespace.
     """
 
-    name: str
+    local_name: str
     namespace: str = BaseType2412.namespace
 
 
@@ -133,9 +133,9 @@ class EndOfLifeFate(BaseType2412):
     fraction of the total mass or volume can be recycled.
     """
 
-    _simple_values = [("fraction", _XmlReferenceEco2412("Fraction"))]
+    _simple_values = [("fraction", _QualifiedEco2412Name("Fraction"))]
 
-    _props = [("MIRecordReference", "mi_end_of_life_reference", _XmlReferenceEco2412("MIEndOfLifeReference"))]
+    _props = [("MIRecordReference", "mi_end_of_life_reference", _QualifiedEco2412Name("MIEndOfLifeReference"))]
 
     mi_end_of_life_reference: MIRecordReference
     """Reference identifying the applicable fate within the MI Database."""
@@ -151,7 +151,7 @@ class UnittedValue(BaseType2412):
     otherwise an error will be raised.
     """
 
-    _simple_values = [("value", _XmlReferenceEco2412("$")), ("unit", _XmlReferenceEco2412("@Unit"))]
+    _simple_values = [("value", _QualifiedEco2412Name("$")), ("unit", _QualifiedEco2412Name("@Unit"))]
 
     value: float
     """The value of the quantity in specified units."""
@@ -167,12 +167,12 @@ class Location(BaseType2412):
     Defines the manufacturing location for the BoM for use in process calculations.
     """
 
-    _props = [("MIRecordReference", "mi_location_reference", _XmlReferenceEco2412("MILocationReference"))]
+    _props = [("MIRecordReference", "mi_location_reference", _QualifiedEco2412Name("MILocationReference"))]
     _simple_values = [
-        ("identity", _XmlReferenceEco2412("Identity")),
-        ("name", _XmlReferenceEco2412("Name")),
-        ("external_identity", _XmlReferenceEco2412("ExternalIdentity")),
-        ("internal_id", _XmlReferenceEco2412("@id")),
+        ("identity", _QualifiedEco2412Name("Identity")),
+        ("name", _QualifiedEco2412Name("Name")),
+        ("external_identity", _QualifiedEco2412Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2412Name("@id")),
     ]
 
     mi_location_reference: Optional[MIRecordReference] = None  # TODO not optional though
@@ -201,8 +201,8 @@ class ElectricityMix(BaseType2412):
     fossil fuel sources.
     """
 
-    _props = [("MIRecordReference", "mi_region_reference", _XmlReferenceEco2412("MIRegionReference"))]
-    _simple_values = [("percentage_fossil_fuels", _XmlReferenceEco2412("PercentageFossilFuels"))]
+    _props = [("MIRecordReference", "mi_region_reference", _QualifiedEco2412Name("MIRegionReference"))]
+    _simple_values = [("percentage_fossil_fuels", _QualifiedEco2412Name("PercentageFossilFuels"))]
 
     mi_region_reference: Optional[MIRecordReference] = None
     """Reference to a record in the MI database representing the electricity mix for the destination country."""
@@ -219,10 +219,10 @@ class MobileMode(BaseType2412):
     """
 
     _props = [
-        ("MIRecordReference", "mi_transport_reference", _XmlReferenceEco2412("MITransportReference")),
-        ("UnittedValue", "distance_travelled_per_day", _XmlReferenceEco2412("DistanceTravelledPerDay")),
+        ("MIRecordReference", "mi_transport_reference", _QualifiedEco2412Name("MITransportReference")),
+        ("UnittedValue", "distance_travelled_per_day", _QualifiedEco2412Name("DistanceTravelledPerDay")),
     ]
-    _simple_values = [("days_used_per_year", _XmlReferenceEco2412("DaysUsedPerYear"))]
+    _simple_values = [("days_used_per_year", _QualifiedEco2412Name("DaysUsedPerYear"))]
 
     mi_transport_reference: MIRecordReference
     """Reference to a record in the MI database representing the means of transport for this product during use."""
@@ -244,9 +244,9 @@ class StaticMode(BaseType2412):
         (
             "MIRecordReference",
             "mi_energy_conversion_reference",
-            _XmlReferenceEco2412("MIEnergyConversionReference"),
+            _QualifiedEco2412Name("MIEnergyConversionReference"),
         ),
-        ("UnittedValue", "power_rating", _XmlReferenceEco2412("PowerRating")),
+        ("UnittedValue", "power_rating", _QualifiedEco2412Name("PowerRating")),
     ]
 
     mi_energy_conversion_reference: MIRecordReference
@@ -265,11 +265,11 @@ class StaticMode(BaseType2412):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        usage_ref = _XmlReferenceEco2412("Usage")
+        usage_ref = _QualifiedEco2412Name("Usage")
         usage_obj = bom_reader.get_field(obj, usage_ref)
         if usage_obj is not None:
-            hours_ref = _XmlReferenceEco2412("HoursUsedPerDay")
-            days_ref = _XmlReferenceEco2412("DaysUsedPerYear")
+            hours_ref = _QualifiedEco2412Name("HoursUsedPerDay")
+            days_ref = _QualifiedEco2412Name("DaysUsedPerYear")
             props["hours_used_per_day"] = bom_reader.get_field(usage_obj, hours_ref)
             props["days_used_per_year"] = bom_reader.get_field(usage_obj, days_ref)
         return props
@@ -291,14 +291,14 @@ class UtilitySpecification(BaseType2412):
     """
 
     _simple_values = [
-        ("industry_average_duration_years", _XmlReferenceEco2412("IndustryAverageDurationYears")),
+        ("industry_average_duration_years", _QualifiedEco2412Name("IndustryAverageDurationYears")),
         (
             "industry_average_number_of_functional_units",
-            _XmlReferenceEco2412(
+            _QualifiedEco2412Name(
                 "IndustryAverageNumberOfFunctionalUnits",
             ),
         ),
-        ("utility", _XmlReferenceEco2412("Utility")),
+        ("utility", _QualifiedEco2412Name("Utility")),
     ]
 
     industry_average_duration_years: Optional[float] = None
@@ -318,11 +318,11 @@ class ProductLifeSpan(BaseType2412):
     Specifies the average life span for the product represented by the BoM.
     """
 
-    _props = [("UtilitySpecification", "utility", _XmlReferenceEco2412("Utility"))]
+    _props = [("UtilitySpecification", "utility", _QualifiedEco2412Name("Utility"))]
     _simple_values = [
-        ("duration_years", _XmlReferenceEco2412("DurationYears")),
-        ("number_of_functional_units", _XmlReferenceEco2412("NumberOfFunctionalUnits")),
-        ("functional_unit_description", _XmlReferenceEco2412("FunctionalUnitDescription")),
+        ("duration_years", _QualifiedEco2412Name("DurationYears")),
+        ("number_of_functional_units", _QualifiedEco2412Name("NumberOfFunctionalUnits")),
+        ("functional_unit_description", _QualifiedEco2412Name("FunctionalUnitDescription")),
     ]
     duration_years: float
     """The product lifespan in years."""
@@ -346,10 +346,10 @@ class UsePhase(BaseType2412):
     """
 
     _props = [
-        ("ProductLifeSpan", "product_life_span", _XmlReferenceEco2412("ProductLifeSpan")),
-        ("ElectricityMix", "electricity_mix", _XmlReferenceEco2412("ElectricityMix")),
-        ("StaticMode", "static_mode", _XmlReferenceEco2412("StaticMode")),
-        ("MobileMode", "mobile_mode", _XmlReferenceEco2412("MobileMode")),
+        ("ProductLifeSpan", "product_life_span", _QualifiedEco2412Name("ProductLifeSpan")),
+        ("ElectricityMix", "electricity_mix", _QualifiedEco2412Name("ElectricityMix")),
+        ("StaticMode", "static_mode", _QualifiedEco2412Name("StaticMode")),
+        ("MobileMode", "mobile_mode", _QualifiedEco2412Name("MobileMode")),
     ]
 
     product_life_span: ProductLifeSpan
@@ -372,9 +372,9 @@ class BoMDetails(BaseType2412):
     """
 
     _simple_values = [
-        ("notes", _XmlReferenceEco2412("Notes")),
-        ("picture_url", _XmlReferenceEco2412("PictureUrl")),
-        ("product_name", _XmlReferenceEco2412("ProductName")),
+        ("notes", _QualifiedEco2412Name("Notes")),
+        ("picture_url", _QualifiedEco2412Name("PictureUrl")),
+        ("product_name", _QualifiedEco2412Name("ProductName")),
     ]
 
     notes: Optional[str] = None
@@ -396,10 +396,10 @@ class TransportStage(BaseType2412):
     """
 
     _props = [
-        ("MIRecordReference", "mi_transport_reference", _XmlReferenceEco2412("MITransportReference")),
-        ("UnittedValue", "distance", _XmlReferenceEco2412("Distance")),
+        ("MIRecordReference", "mi_transport_reference", _QualifiedEco2412Name("MITransportReference")),
+        ("UnittedValue", "distance", _QualifiedEco2412Name("Distance")),
     ]
-    _simple_values = [("name", _XmlReferenceEco2412("Name")), ("internal_id", _XmlReferenceEco2412("@id"))]
+    _simple_values = [("name", _QualifiedEco2412Name("Name")), ("internal_id", _QualifiedEco2412Name("@id"))]
 
     name: str
     """Name of this transportation stage, used only to identify the stage within the BoM."""
@@ -423,14 +423,14 @@ class Specification(BaseType2412):
     """
 
     _props = [
-        ("MIRecordReference", "mi_specification_reference", _XmlReferenceEco2412("MISpecificationReference")),
-        ("UnittedValue", "quantity", _XmlReferenceEco2412("Quantity")),
+        ("MIRecordReference", "mi_specification_reference", _QualifiedEco2412Name("MISpecificationReference")),
+        ("UnittedValue", "quantity", _QualifiedEco2412Name("Quantity")),
     ]
     _simple_values = [
-        ("identity", _XmlReferenceEco2412("Identity")),
-        ("name", _XmlReferenceEco2412("Name")),
-        ("external_identity", _XmlReferenceEco2412("ExternalIdentity")),
-        ("internal_id", _XmlReferenceEco2412("@id")),
+        ("identity", _QualifiedEco2412Name("Identity")),
+        ("name", _QualifiedEco2412Name("Name")),
+        ("external_identity", _QualifiedEco2412Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2412Name("@id")),
     ]
 
     mi_specification_reference: MIRecordReference
@@ -460,13 +460,13 @@ class Substance(BaseType2412):
     Database."""
 
     _simple_values = [
-        ("percentage", _XmlReferenceEco2412("Percentage")),
-        ("identity", _XmlReferenceEco2412("Identity")),
-        ("name", _XmlReferenceEco2412("Name")),
-        ("external_identity", _XmlReferenceEco2412("ExternalIdentity")),
-        ("internal_id", _XmlReferenceEco2412("@id")),
+        ("percentage", _QualifiedEco2412Name("Percentage")),
+        ("identity", _QualifiedEco2412Name("Identity")),
+        ("name", _QualifiedEco2412Name("Name")),
+        ("external_identity", _QualifiedEco2412Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2412Name("@id")),
     ]
-    _props = [("MIRecordReference", "mi_substance_reference", _XmlReferenceEco2412("MISubstanceReference"))]
+    _props = [("MIRecordReference", "mi_substance_reference", _QualifiedEco2412Name("MISubstanceReference"))]
 
     mi_substance_reference: MIRecordReference
     """Reference identifying the record representing the substance in the MI Database."""
@@ -495,7 +495,7 @@ class Substance(BaseType2412):
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        category_ref = _XmlReferenceEco2412("Category")
+        category_ref = _QualifiedEco2412Name("Category")
         category_type_obj = bom_reader.get_field(obj, category_ref)
         if category_type_obj is not None:
             props["category"] = Category.from_string(category_type_obj)
@@ -517,25 +517,25 @@ class Process(BaseType2412):
     """
 
     _simple_values = [
-        ("percentage", _XmlReferenceEco2412("Percentage")),
-        ("identity", _XmlReferenceEco2412("Identity")),
-        ("name", _XmlReferenceEco2412("Name")),
-        ("external_identity", _XmlReferenceEco2412("ExternalIdentity")),
-        ("internal_id", _XmlReferenceEco2412("@id")),
+        ("percentage", _QualifiedEco2412Name("Percentage")),
+        ("identity", _QualifiedEco2412Name("Identity")),
+        ("name", _QualifiedEco2412Name("Name")),
+        ("external_identity", _QualifiedEco2412Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2412Name("@id")),
     ]
 
     _props = [
-        ("MIRecordReference", "mi_process_reference", _XmlReferenceEco2412("MIProcessReference")),
-        ("UnittedValue", "quantity", _XmlReferenceEco2412("Quantity")),
-        ("Location", "location", _XmlReferenceEco2412("Location")),
+        ("MIRecordReference", "mi_process_reference", _QualifiedEco2412Name("MIProcessReference")),
+        ("UnittedValue", "quantity", _QualifiedEco2412Name("Quantity")),
+        ("Location", "location", _QualifiedEco2412Name("Location")),
     ]
 
     _list_props = [
         (
             "TransportStage",
             "transport_phase",
-            _XmlReferenceEco2412("TransportPhase"),
-            _XmlReferenceEco2412("TransportStage"),
+            _QualifiedEco2412Name("TransportPhase"),
+            _QualifiedEco2412Name("TransportStage"),
         ),
     ]
 
@@ -576,7 +576,7 @@ class Process(BaseType2412):
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        dimension_type_ref = _XmlReferenceEco2412("DimensionType")
+        dimension_type_ref = _QualifiedEco2412Name("DimensionType")
         dimension_type_obj = bom_reader.get_field(obj, dimension_type_ref)
         props["dimension_type"] = DimensionType.from_string(dimension_type_obj)
         return props
@@ -595,25 +595,25 @@ class Material(BaseType2412):
     """
 
     _simple_values = [
-        ("percentage", _XmlReferenceEco2412("Percentage")),
-        ("identity", _XmlReferenceEco2412("Identity")),
-        ("name", _XmlReferenceEco2412("Name")),
-        ("external_identity", _XmlReferenceEco2412("ExternalIdentity")),
-        ("internal_id", _XmlReferenceEco2412("@id")),
+        ("percentage", _QualifiedEco2412Name("Percentage")),
+        ("identity", _QualifiedEco2412Name("Identity")),
+        ("name", _QualifiedEco2412Name("Name")),
+        ("external_identity", _QualifiedEco2412Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2412Name("@id")),
     ]
 
     _props = [
-        ("MIRecordReference", "mi_material_reference", _XmlReferenceEco2412("MIMaterialReference")),
-        ("UnittedValue", "mass", _XmlReferenceEco2412("Mass")),
+        ("MIRecordReference", "mi_material_reference", _QualifiedEco2412Name("MIMaterialReference")),
+        ("UnittedValue", "mass", _QualifiedEco2412Name("Mass")),
     ]
 
     _list_props = [
-        ("Process", "processes", _XmlReferenceEco2412("Processes"), _XmlReferenceEco2412("Process")),
+        ("Process", "processes", _QualifiedEco2412Name("Processes"), _QualifiedEco2412Name("Process")),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
-            _XmlReferenceEco2412("EndOfLifeFates"),
-            _XmlReferenceEco2412("EndOfLifeFate"),
+            _QualifiedEco2412Name("EndOfLifeFates"),
+            _QualifiedEco2412Name("EndOfLifeFate"),
         ),
     ]
     mi_material_reference: MIRecordReference
@@ -656,14 +656,14 @@ class Material(BaseType2412):
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        recycle_content_ref = _XmlReferenceEco2412("RecycleContent")
+        recycle_content_ref = _QualifiedEco2412Name("RecycleContent")
         recycle_content_obj = bom_reader.get_field(obj, recycle_content_ref)
         if recycle_content_obj is not None:
             # TODO support recycle content (issue #95)
             # typical_obj = bom_reader.get_field(Material, recycle_content_obj, "Typical")
             # if typical_obj is not None:
             #     props["recycle_content_is_typical"] = typical_obj
-            percentage_ref = _XmlReferenceEco2412("Percentage")
+            percentage_ref = _QualifiedEco2412Name("Percentage")
             percentage_obj = bom_reader.get_field(recycle_content_obj, percentage_ref)
             if percentage_obj is not None:
                 props["recycle_content_percentage"] = percentage_obj
@@ -690,42 +690,42 @@ class Part(BaseType2412):
     """
 
     _props = [
-        ("UnittedValue", "quantity", _XmlReferenceEco2412("Quantity")),
-        ("UnittedValue", "mass_per_unit_of_measure", _XmlReferenceEco2412("MassPerUom")),
-        ("UnittedValue", "volume_per_unit_of_measure", _XmlReferenceEco2412("VolumePerUom")),
-        ("MIRecordReference", "mi_part_reference", _XmlReferenceEco2412("MIPartReference")),
-        ("Location", "location", _XmlReferenceEco2412("Location")),
+        ("UnittedValue", "quantity", _QualifiedEco2412Name("Quantity")),
+        ("UnittedValue", "mass_per_unit_of_measure", _QualifiedEco2412Name("MassPerUom")),
+        ("UnittedValue", "volume_per_unit_of_measure", _QualifiedEco2412Name("VolumePerUom")),
+        ("MIRecordReference", "mi_part_reference", _QualifiedEco2412Name("MIPartReference")),
+        ("Location", "location", _QualifiedEco2412Name("Location")),
     ]
 
     _simple_values = [
-        ("part_number", _XmlReferenceEco2412("PartNumber")),
-        ("part_name", _XmlReferenceEco2412("Name")),
-        ("external_identity", _XmlReferenceEco2412("ExternalIdentity")),
-        ("internal_id", _XmlReferenceEco2412("@id")),
+        ("part_number", _QualifiedEco2412Name("PartNumber")),
+        ("part_name", _QualifiedEco2412Name("Name")),
+        ("external_identity", _QualifiedEco2412Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2412Name("@id")),
     ]
 
     _list_props = [
-        ("Part", "components", _XmlReferenceEco2412("Components"), _XmlReferenceEco2412("Part")),
+        ("Part", "components", _QualifiedEco2412Name("Components"), _QualifiedEco2412Name("Part")),
         (
             "Specification",
             "specifications",
-            _XmlReferenceEco2412("Specifications"),
-            _XmlReferenceEco2412("Specification"),
+            _QualifiedEco2412Name("Specifications"),
+            _QualifiedEco2412Name("Specification"),
         ),
-        ("Material", "materials", _XmlReferenceEco2412("Materials"), _XmlReferenceEco2412("Material")),
-        ("Substance", "substances", _XmlReferenceEco2412("Substances"), _XmlReferenceEco2412("Substance")),
-        ("Process", "processes", _XmlReferenceEco2412("Processes"), _XmlReferenceEco2412("Process")),
+        ("Material", "materials", _QualifiedEco2412Name("Materials"), _QualifiedEco2412Name("Material")),
+        ("Substance", "substances", _QualifiedEco2412Name("Substances"), _QualifiedEco2412Name("Substance")),
+        ("Process", "processes", _QualifiedEco2412Name("Processes"), _QualifiedEco2412Name("Process")),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
-            _XmlReferenceEco2412("EndOfLifeFates"),
-            _XmlReferenceEco2412("EndOfLifeFate"),
+            _QualifiedEco2412Name("EndOfLifeFates"),
+            _QualifiedEco2412Name("EndOfLifeFate"),
         ),
         (
             "TransportStage",
             "transport_phase",
-            _XmlReferenceEco2412("TransportPhase"),
-            _XmlReferenceEco2412("TransportStage"),
+            _QualifiedEco2412Name("TransportPhase"),
+            _QualifiedEco2412Name("TransportStage"),
         ),
     ]
 
@@ -799,10 +799,10 @@ class Part(BaseType2412):
         # non_mi_part_ref_obj = bom_reader.get_field(Part, obj, "NonMIPartReference")
         # if non_mi_part_ref_obj is not None:
         #     props["non_mi_part_reference"] = non_mi_part_ref_obj
-        rohs_exemptions_ref = _XmlReferenceEco2412("RohsExemptions")
+        rohs_exemptions_ref = _QualifiedEco2412Name("RohsExemptions")
         rohs_exemptions_obj = bom_reader.get_field(obj, rohs_exemptions_ref)
         if rohs_exemptions_obj is not None:
-            rohs_exemption_ref = _XmlReferenceEco2412("RohsExemption")
+            rohs_exemption_ref = _QualifiedEco2412Name("RohsExemption")
             rohs_exemption_obj = bom_reader.get_field(rohs_exemptions_obj, rohs_exemption_ref)
             if rohs_exemption_obj is not None:
                 props["rohs_exemptions"] = rohs_exemption_obj
@@ -900,19 +900,19 @@ class BillOfMaterials(BaseType2412):
     Type representing the root Bill of Materials object.
     """
 
-    _simple_values = [("internal_id", _XmlReferenceEco2412("@id"))]
+    _simple_values = [("internal_id", _QualifiedEco2412Name("@id"))]
     _props = [
-        ("UsePhase", "use_phase", _XmlReferenceEco2412("UsePhase")),
-        ("Location", "location", _XmlReferenceEco2412("Location")),
-        ("BoMDetails", "notes", _XmlReferenceEco2412("Notes")),
+        ("UsePhase", "use_phase", _QualifiedEco2412Name("UsePhase")),
+        ("Location", "location", _QualifiedEco2412Name("Location")),
+        ("BoMDetails", "notes", _QualifiedEco2412Name("Notes")),
     ]
     _list_props = [
-        ("Part", "components", _XmlReferenceEco2412("Components"), _XmlReferenceEco2412("Part")),
+        ("Part", "components", _QualifiedEco2412Name("Components"), _QualifiedEco2412Name("Part")),
         (
             "TransportStage",
             "transport_phase",
-            _XmlReferenceEco2412("TransportPhase"),
-            _XmlReferenceEco2412("TransportStage"),
+            _QualifiedEco2412Name("TransportPhase"),
+            _QualifiedEco2412Name("TransportStage"),
         ),
     ]
 

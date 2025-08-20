@@ -26,7 +26,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
-from .._base_types import BaseType, _XmlReference
+from .._base_types import BaseType, QualifiedXMLName
 
 if TYPE_CHECKING:
     from .._bom_reader import _GenericBoMReader
@@ -38,13 +38,13 @@ class BaseTypeGbt1205(BaseType):
 
 
 @dataclass(frozen=True)
-class _XmlReferenceGbt1205(_XmlReference):
+class _QualifiedGbt1205Name(QualifiedXMLName):
     """
-    A fully qualified XML element. The name must be supplied, and the namespace defaults to the Granta Base Types
+    A fully qualified XML name. The name must be supplied, and the namespace defaults to the Granta Base Types
     12/05 namespace.
     """
 
-    name: str
+    local_name: str
     namespace: str = BaseTypeGbt1205.namespace
 
 
@@ -103,9 +103,9 @@ class PartialTableReference(BaseTypeGbt1205):
     """
 
     _simple_values = [
-        ("table_identity", _XmlReferenceGbt1205("tableIdentity")),
-        ("table_guid", _XmlReferenceGbt1205("tableGUID")),
-        ("table_name", _XmlReferenceGbt1205("tableName")),
+        ("table_identity", _QualifiedGbt1205Name("tableIdentity")),
+        ("table_guid", _QualifiedGbt1205Name("tableGUID")),
+        ("table_name", _QualifiedGbt1205Name("tableName")),
     ]
 
     table_identity: Optional[int] = None
@@ -131,8 +131,8 @@ class MIAttributeReference(BaseTypeGbt1205):
     """
 
     _simple_values = [
-        ("db_key", _XmlReferenceGbt1205("dbKey")),
-        ("attribute_identity", _XmlReferenceGbt1205("attributeIdentity")),
+        ("db_key", _QualifiedGbt1205Name("dbKey")),
+        ("attribute_identity", _QualifiedGbt1205Name("attributeIdentity")),
     ]
 
     db_key: str
@@ -157,24 +157,24 @@ class MIAttributeReference(BaseTypeGbt1205):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: "_GenericBoMReader") -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        name_ref = _XmlReferenceGbt1205("name")
+        name_ref = _QualifiedGbt1205Name("name")
         name_obj = bom_reader.get_field(obj, name_ref)
         if name_obj is not None:
-            table_ref = _XmlReferenceGbt1205("table")
+            table_ref = _QualifiedGbt1205Name("table")
             table_obj = bom_reader.get_field(name_obj, table_ref)
             if table_obj is not None:
                 props["table_reference"] = cast(
                     PartialTableReference, bom_reader.create_type("PartialTableReference", table_obj)
                 )
-            attribute_name_ref = _XmlReferenceGbt1205("attributeName")
+            attribute_name_ref = _QualifiedGbt1205Name("attributeName")
             attribute_name_obj = bom_reader.get_field(name_obj, attribute_name_ref)
             if attribute_name_obj is not None:
                 props["attribute_name"] = attribute_name_obj
-            pseudo_ref = _XmlReferenceGbt1205("pseudo")
+            pseudo_ref = _QualifiedGbt1205Name("pseudo")
             pseudo_obj = bom_reader.get_field(name_obj, pseudo_ref)
             if pseudo_obj is not None:
                 props["pseudo"] = PseudoAttribute.from_string(pseudo_obj)
-            is_standard_ref = _XmlReferenceGbt1205("@isStandard")
+            is_standard_ref = _QualifiedGbt1205Name("@isStandard")
             is_standard_obj = bom_reader.get_field(name_obj, is_standard_ref)
             if is_standard_obj is not None:
                 props["is_standard"] = is_standard_obj
@@ -209,10 +209,10 @@ class MIRecordReference(BaseTypeGbt1205):
     """
 
     _simple_values = [
-        ("db_key", _XmlReferenceGbt1205("dbKey")),
-        ("record_guid", _XmlReferenceGbt1205("recordGUID")),
-        ("record_history_guid", _XmlReferenceGbt1205("recordHistoryGUID")),
-        ("record_uid", _XmlReferenceGbt1205("@recordUID")),
+        ("db_key", _QualifiedGbt1205Name("dbKey")),
+        ("record_guid", _QualifiedGbt1205Name("recordGUID")),
+        ("record_history_guid", _QualifiedGbt1205Name("recordHistoryGUID")),
+        ("record_uid", _QualifiedGbt1205Name("@recordUID")),
     ]
 
     db_key: str
@@ -248,22 +248,22 @@ class MIRecordReference(BaseTypeGbt1205):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: "_GenericBoMReader") -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        identity_ref = _XmlReferenceGbt1205("identity")
+        identity_ref = _QualifiedGbt1205Name("identity")
         identity_obj = bom_reader.get_field(obj, identity_ref)
         if identity_obj is not None:
-            record_history_identity_ref = _XmlReferenceGbt1205("recordHistoryIdentity")
+            record_history_identity_ref = _QualifiedGbt1205Name("recordHistoryIdentity")
             props["record_history_identity"] = bom_reader.get_field(identity_obj, record_history_identity_ref)
-            version_ref = _XmlReferenceGbt1205("version")
+            version_ref = _QualifiedGbt1205Name("version")
             version_obj = bom_reader.get_field(identity_obj, version_ref)
             if version_obj is not None:
                 props["record_version_number"] = version_obj
-        lookup_ref = _XmlReferenceGbt1205("lookupValue")
+        lookup_ref = _QualifiedGbt1205Name("lookupValue")
         lookup_obj = bom_reader.get_field(obj, lookup_ref)
         if lookup_obj is not None:
-            attr_ref_ref = _XmlReferenceGbt1205("attributeReference")
+            attr_ref_ref = _QualifiedGbt1205Name("attributeReference")
             attr_ref_obj = bom_reader.get_field(lookup_obj, attr_ref_ref)
             props["lookup_attribute_reference"] = bom_reader.create_type("MIAttributeReference", attr_ref_obj)
-            attr_val_ref = _XmlReferenceGbt1205("attributeValue")
+            attr_val_ref = _QualifiedGbt1205Name("attributeValue")
             props["lookup_value"] = bom_reader.get_field(lookup_obj, attr_val_ref)
         return props
 

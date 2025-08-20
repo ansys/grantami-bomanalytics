@@ -26,7 +26,7 @@ from typing import Any, Dict, Generic, Iterable, Type, TypeVar
 
 from xmlschema import XMLSchema
 
-from ._base_types import BaseType, _XmlReference
+from ._base_types import BaseType, QualifiedXMLName
 
 TBom = TypeVar("TBom", bound=BaseType)
 TAny = TypeVar("TAny", bound=BaseType)
@@ -128,16 +128,14 @@ class _GenericBoMReader(Generic[TBom]):
         local_obj = obj.copy()
 
         kwargs = {}
-        for target_type, target_property_name, field_reference in type_._props:
-            kwargs.update(self._deserialize_single_type(local_obj, target_type, target_property_name, field_reference))
-        for target_type, target_property_name, container_reference, field_reference in type_._list_props:
+        for target_type, target_property_name, field_name in type_._props:
+            kwargs.update(self._deserialize_single_type(local_obj, target_type, target_property_name, field_name))
+        for target_type, target_property_name, container_name, item_name in type_._list_props:
             kwargs.update(
-                self._deserialize_list_type(
-                    local_obj, target_type, target_property_name, container_reference, field_reference
-                )
+                self._deserialize_list_type(local_obj, target_type, target_property_name, container_name, item_name)
             )
-        for target, source_reference in type_._simple_values:
-            field_obj = self.get_field(local_obj, source_reference)
+        for target, field_name in type_._simple_values:
+            field_obj = self.get_field(local_obj, field_name)
             kwargs[target] = field_obj
         kwargs.update(type_._process_custom_fields(local_obj, self))
         self._append_unserialized_fields(type_.__name__, local_obj)
@@ -149,12 +147,12 @@ class _GenericBoMReader(Generic[TBom]):
         obj: Dict,
         target_type: str,
         target_property_name: str,
-        container_reference: _XmlReference,
-        field_reference: _XmlReference,
+        container_name: QualifiedXMLName,
+        item_name: QualifiedXMLName,
     ) -> Dict[str, Iterable]:
-        container_obj = self.get_field(obj, container_reference)
+        container_obj = self.get_field(obj, container_name)
         if container_obj is not None:
-            items_obj = self.get_field(container_obj, field_reference)
+            items_obj = self.get_field(container_obj, item_name)
             if items_obj is not None and len(items_obj) > 0:
                 return {target_property_name: [self.create_type(target_type, item_dict) for item_dict in items_obj]}
         return {}
@@ -164,9 +162,9 @@ class _GenericBoMReader(Generic[TBom]):
         obj: Dict,
         target_type: str,
         target_property_name: str,
-        field_reference: _XmlReference,
+        field_name: QualifiedXMLName,
     ) -> Dict[str, Any]:
-        field_obj = self.get_field(obj, field_reference)
+        field_obj = self.get_field(obj, field_name)
         if field_obj is not None:
             return {target_property_name: self.create_type(target_type, field_obj)}
         return {}
@@ -178,10 +176,10 @@ class _GenericBoMReader(Generic[TBom]):
                 msg = f'Parent type "{type_name}", field "{k}" with value "{val}".'
                 self.__undeserialized_fields.append(msg)
 
-    def get_field(self, obj: Dict, field_reference: _XmlReference) -> Any:
+    def get_field(self, obj: Dict, field_name: QualifiedXMLName) -> Any:
         """
-        Given an object and a local name, determines the qualified field name to fetch based on the document namespace
-        tags.
+        Given an object and a qualified name, determines the qualified field name to fetch based on the document
+        namespace tags.
 
         If a field is found that matches the specified local name and namespace, the value is deleted from the
         dictionary.
@@ -190,49 +188,47 @@ class _GenericBoMReader(Generic[TBom]):
         ----------
         obj: Dict
             The source dictionary with the data to be deserialized.
-        field_reference: _XmlReference
-            Namespace and local name of the target field.
+        field_name: QualifiedXMLName
+            Fully qualified name of the target field.
         """
         for k, v in obj.items():
             if k.startswith("@xmlns"):
                 continue
 
-            if k == "$" and field_reference.name == "$":
+            if k == "$" and field_name.local_name == "$":
                 del obj[k]
                 return v
 
             if k.startswith("@"):
-                is_matched = self._match_attribute(k, field_reference.name, field_reference.namespace)
+                is_matched = self._match_attribute(k, field_name)
                 if is_matched:
                     del obj[k]
                     return v
             else:
-                is_matched = self._match_element(k, field_reference.name, field_reference.namespace)
+                is_matched = self._match_element(k, field_name)
                 if is_matched:
                     del obj[k]
                     return v
         return None
 
-    def _match_element(self, item_name: str, field_name: str, namespace_url: str) -> bool:
+    def _match_element(self, item_name: str, match_name: QualifiedXMLName) -> bool:
         if ":" not in item_name:
-            return "" in self._namespaces and namespace_url == self._namespaces[""] and item_name == field_name
+            return match_name.namespace == self._namespaces.get("", None) and item_name == match_name.local_name
         namespace_prefix, stripped_name = item_name.split(":")
         field_namespace_url = self._namespaces[namespace_prefix]
-        return namespace_url == field_namespace_url and stripped_name == field_name
+        return match_name.namespace == field_namespace_url and stripped_name == match_name.local_name
 
-    def _match_attribute(self, item_name: str, field_name: str, namespace_url: str) -> bool:
+    def _match_attribute(self, item_name: str, match_name: QualifiedXMLName) -> bool:
         if not item_name.startswith("@"):
             return False
         if ":" not in item_name:
             if "" in self._namespaces:
-                return namespace_url == self._namespaces[""] and item_name == field_name
+                return match_name.namespace == self._namespaces[""] and item_name == match_name.local_name
             else:
                 # Workaround for https://github.com/ansys/grantami-bomanalytics-private/issues/75
-                # TODO - properly check the _parent_ object's namespace and make sure that we expect a namespace
-                # if we're in a different namespace than the parent.
-                return item_name == field_name
+                return item_name == match_name.local_name
         item_name = item_name[1:]
         namespace_prefix, stripped_name = item_name.split(":")
         stripped_name = f"@{stripped_name}"
         field_namespace_url = self._namespaces[namespace_prefix]
-        return namespace_url == field_namespace_url and stripped_name == field_name
+        return match_name.namespace == field_namespace_url and stripped_name == match_name.local_name

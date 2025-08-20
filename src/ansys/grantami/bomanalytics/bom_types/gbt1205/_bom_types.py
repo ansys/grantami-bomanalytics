@@ -26,11 +26,26 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
-from .._base_types import BaseType
+from .._base_types import BaseType, _XmlReference
 
 if TYPE_CHECKING:
     from .._bom_reader import _GenericBoMReader
     from .._bom_writer import _GenericBoMWriter
+
+
+class BaseTypeGbt1205(BaseType):
+    namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
+
+
+@dataclass(frozen=True)
+class _XmlReferenceGbt1205(_XmlReference):
+    """
+    A fully qualified XML element. The name must be supplied, and the namespace defaults to the Granta Base Types
+    12/05 namespace.
+    """
+
+    name: str
+    namespace: str = BaseTypeGbt1205.namespace
 
 
 class PseudoAttribute(Enum):
@@ -80,16 +95,18 @@ class PseudoAttribute(Enum):
 
 
 @dataclass
-class PartialTableReference(BaseType):
+class PartialTableReference(BaseTypeGbt1205):
     """
     A type that partially identifies a Table, but does not specify the MI Database. Usually, just one of the several
     optional fields should be provided; where more than one is provided, the highest priority one is used, where the
     descending priority order is: tableIdentity, tableGUID, tableName.
     """
 
-    _simple_values = [("table_identity", "tableIdentity"), ("table_guid", "tableGUID"), ("table_name", "tableName")]
-
-    namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
+    _simple_values = [
+        ("table_identity", _XmlReferenceGbt1205("tableIdentity")),
+        ("table_guid", _XmlReferenceGbt1205("tableGUID")),
+        ("table_name", _XmlReferenceGbt1205("tableName")),
+    ]
 
     table_identity: Optional[int] = None
     """The identity of the table, this is the fastest way to reference a table."""
@@ -103,7 +120,7 @@ class PartialTableReference(BaseType):
 
 
 @dataclass
-class MIAttributeReference(BaseType):
+class MIAttributeReference(BaseTypeGbt1205):
     """A type that allows identification of a particular Attribute in an MI Database. This may be done directly by
     specifying the Identity of the Attribute, or indirectly by specifying a lookup that will match (only) the
     Attribute.
@@ -113,9 +130,10 @@ class MIAttributeReference(BaseType):
     a Fault.
     """
 
-    _simple_values = [("db_key", "dbKey"), ("attribute_identity", "attributeIdentity")]
-
-    namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
+    _simple_values = [
+        ("db_key", _XmlReferenceGbt1205("dbKey")),
+        ("attribute_identity", _XmlReferenceGbt1205("attributeIdentity")),
+    ]
 
     db_key: str
     """The key that uniquely identifies a particular Database on the MI Server."""
@@ -139,20 +157,25 @@ class MIAttributeReference(BaseType):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: "_GenericBoMReader") -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        name_obj = bom_reader.get_field(MIAttributeReference, obj, "name")
+        name_ref = _XmlReferenceGbt1205("name")
+        name_obj = bom_reader.get_field(obj, name_ref)
         if name_obj is not None:
-            table_obj = bom_reader.get_field(MIAttributeReference, name_obj, "table")
+            table_ref = _XmlReferenceGbt1205("table")
+            table_obj = bom_reader.get_field(name_obj, table_ref)
             if table_obj is not None:
                 props["table_reference"] = cast(
                     PartialTableReference, bom_reader.create_type("PartialTableReference", table_obj)
                 )
-            attribute_name_obj = bom_reader.get_field(MIAttributeReference, name_obj, "attributeName")
+            attribute_name_ref = _XmlReferenceGbt1205("attributeName")
+            attribute_name_obj = bom_reader.get_field(name_obj, attribute_name_ref)
             if attribute_name_obj is not None:
                 props["attribute_name"] = attribute_name_obj
-            pseudo_obj = bom_reader.get_field(MIAttributeReference, name_obj, "pseudo")
+            pseudo_ref = _XmlReferenceGbt1205("pseudo")
+            pseudo_obj = bom_reader.get_field(name_obj, pseudo_ref)
             if pseudo_obj is not None:
                 props["pseudo"] = PseudoAttribute.from_string(pseudo_obj)
-            is_standard_obj = bom_reader.get_field(MIAttributeReference, name_obj, "@isStandard")
+            is_standard_ref = _XmlReferenceGbt1205("@isStandard")
+            is_standard_obj = bom_reader.get_field(name_obj, is_standard_ref)
             if is_standard_obj is not None:
                 props["is_standard"] = is_standard_obj
         return props
@@ -173,7 +196,7 @@ class MIAttributeReference(BaseType):
 
 
 @dataclass
-class MIRecordReference(BaseType):
+class MIRecordReference(BaseTypeGbt1205):
     """A type that allows identification of a particular Record in an
     MI Database. This may be done directly by specifying the Identity or GUID of the Record, or
     indirectly by specifying a lookup that will match (only) the Record.
@@ -186,13 +209,11 @@ class MIRecordReference(BaseType):
     """
 
     _simple_values = [
-        ("db_key", "dbKey"),
-        ("record_guid", "recordGUID"),
-        ("record_history_guid", "recordHistoryGUID"),
-        ("record_uid", "@recordUID"),
+        ("db_key", _XmlReferenceGbt1205("dbKey")),
+        ("record_guid", _XmlReferenceGbt1205("recordGUID")),
+        ("record_history_guid", _XmlReferenceGbt1205("recordHistoryGUID")),
+        ("record_uid", _XmlReferenceGbt1205("@recordUID")),
     ]
-
-    namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
 
     db_key: str
     """The key that uniquely identifies a particular Database on the MI Server."""
@@ -227,19 +248,23 @@ class MIRecordReference(BaseType):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: "_GenericBoMReader") -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        identity_obj = bom_reader.get_field(MIRecordReference, obj, "identity")
+        identity_ref = _XmlReferenceGbt1205("identity")
+        identity_obj = bom_reader.get_field(obj, identity_ref)
         if identity_obj is not None:
-            props["record_history_identity"] = bom_reader.get_field(
-                MIRecordReference, identity_obj, "recordHistoryIdentity"
-            )
-            version_obj = bom_reader.get_field(MIRecordReference, identity_obj, "version")
+            record_history_identity_ref = _XmlReferenceGbt1205("recordHistoryIdentity")
+            props["record_history_identity"] = bom_reader.get_field(identity_obj, record_history_identity_ref)
+            version_ref = _XmlReferenceGbt1205("version")
+            version_obj = bom_reader.get_field(identity_obj, version_ref)
             if version_obj is not None:
                 props["record_version_number"] = version_obj
-        lookup_obj = bom_reader.get_field(MIRecordReference, obj, "lookupValue")
+        lookup_ref = _XmlReferenceGbt1205("lookupValue")
+        lookup_obj = bom_reader.get_field(obj, lookup_ref)
         if lookup_obj is not None:
-            attr_ref_obj = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeReference")
+            attr_ref_ref = _XmlReferenceGbt1205("attributeReference")
+            attr_ref_obj = bom_reader.get_field(lookup_obj, attr_ref_ref)
             props["lookup_attribute_reference"] = bom_reader.create_type("MIAttributeReference", attr_ref_obj)
-            props["lookup_value"] = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeValue")
+            attr_val_ref = _XmlReferenceGbt1205("attributeValue")
+            props["lookup_value"] = bom_reader.get_field(lookup_obj, attr_val_ref)
         return props
 
     def _write_custom_fields(self, obj: Dict, bom_writer: "_GenericBoMWriter") -> None:

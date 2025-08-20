@@ -25,8 +25,9 @@ clean:
 	rm -rf $(SOURCEDIR)/examples
 	find . -type d -name "_autosummary" -exec rm -rf {} +
 
-# Customized pdf for svg format images
+# Customized pdf to delete standalone PDF example figures before finalizing
 pdf:
 	@$(SPHINXBUILD) -M latex "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 	cd $(BUILDDIR)/latex && latexmk -r latexmkrc -pdf *.tex -interaction=nonstopmode || true
+	find $(BUILDDIR)/latex -name 'examples*.pdf' -delete
 	(test -f $(BUILDDIR)/latex/*.pdf && echo pdf exists) || exit 1

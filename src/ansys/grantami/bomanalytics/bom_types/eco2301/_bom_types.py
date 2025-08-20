@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-from .._base_types import BaseType
+from .._base_types import BaseType, _XmlReference
 from ..gbt1205 import MIRecordReference
 
 if TYPE_CHECKING:
@@ -34,8 +34,18 @@ if TYPE_CHECKING:
     from ._bom_writer import _BoMWriter
 
 
-class BaseType2301(BaseType):
+class BaseTypeEco2301(BaseType):
     namespace = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
+
+
+@dataclass(frozen=True)
+class _XmlReferenceEco2301(_XmlReference):
+    """
+    A fully qualified XML element. The name must be supplied, and the namespace defaults to the Eco 23/01 namespace.
+    """
+
+    name: str
+    namespace: str = BaseTypeEco2301.namespace
 
 
 class DimensionType(Enum):
@@ -117,15 +127,15 @@ class Category(Enum):
 
 
 @dataclass
-class EndOfLifeFate(BaseType2301):
+class EndOfLifeFate(BaseTypeEco2301):
     """
     The fate of a material at the end-of-life of the product. For example if a material can be recycled, and what
     fraction of the total mass or volume can be recycled.
     """
 
-    _simple_values = [("fraction", "Fraction")]
+    _simple_values = [("fraction", _XmlReferenceEco2301("Fraction"))]
 
-    _props = [("MIRecordReference", "mi_end_of_life_reference", "MIEndOfLifeReference")]
+    _props = [("MIRecordReference", "mi_end_of_life_reference", _XmlReferenceEco2301("MIEndOfLifeReference"))]
 
     mi_end_of_life_reference: MIRecordReference
     """Reference identifying the applicable fate within the MI Database."""
@@ -135,13 +145,13 @@ class EndOfLifeFate(BaseType2301):
 
 
 @dataclass
-class UnittedValue(BaseType2301):
+class UnittedValue(BaseTypeEco2301):
     """
     A physical quantity with a unit. If provided in an input then the unit must exist within the MI database,
     otherwise an error will be raised.
     """
 
-    _simple_values = [("value", "$"), ("unit", "@Unit")]
+    _simple_values = [("value", _XmlReferenceEco2301("$")), ("unit", _XmlReferenceEco2301("@Unit"))]
 
     value: float
     """The value of the quantity in specified units."""
@@ -152,17 +162,17 @@ class UnittedValue(BaseType2301):
 
 
 @dataclass
-class Location(BaseType2301):
+class Location(BaseTypeEco2301):
     """
     Defines the manufacturing location for the BoM for use in process calculations.
     """
 
-    _props = [("MIRecordReference", "mi_location_reference", "MILocationReference")]
+    _props = [("MIRecordReference", "mi_location_reference", _XmlReferenceEco2301("MILocationReference"))]
     _simple_values = [
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("identity", _XmlReferenceEco2301("Identity")),
+        ("name", _XmlReferenceEco2301("Name")),
+        ("external_identity", _XmlReferenceEco2301("ExternalIdentity")),
+        ("internal_id", _XmlReferenceEco2301("@id")),
     ]
 
     mi_location_reference: Optional[MIRecordReference] = None  # TODO not optional though
@@ -183,7 +193,7 @@ class Location(BaseType2301):
 
 
 @dataclass
-class ElectricityMix(BaseType2301):
+class ElectricityMix(BaseTypeEco2301):
     """
     If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of
     fossil fuel burning power stations in the region of use.  This type lets you specify the electrical generation
@@ -191,8 +201,8 @@ class ElectricityMix(BaseType2301):
     fossil fuel sources.
     """
 
-    _props = [("MIRecordReference", "mi_region_reference", "MIRegionReference")]
-    _simple_values = [("percentage_fossil_fuels", "PercentageFossilFuels")]
+    _props = [("MIRecordReference", "mi_region_reference", _XmlReferenceEco2301("MIRegionReference"))]
+    _simple_values = [("percentage_fossil_fuels", _XmlReferenceEco2301("PercentageFossilFuels"))]
 
     mi_region_reference: Optional[MIRecordReference] = None
     """Reference to a record in the MI database representing the electricity mix for the destination country."""
@@ -202,17 +212,17 @@ class ElectricityMix(BaseType2301):
 
 
 @dataclass
-class MobileMode(BaseType2301):
+class MobileMode(BaseTypeEco2301):
     """
     If the product is transported as part of its use then this type contains details about the way in which it is
     transported.
     """
 
     _props = [
-        ("MIRecordReference", "mi_transport_reference", "MITransportReference"),
-        ("UnittedValue", "distance_travelled_per_day", "DistanceTravelledPerDay"),
+        ("MIRecordReference", "mi_transport_reference", _XmlReferenceEco2301("MITransportReference")),
+        ("UnittedValue", "distance_travelled_per_day", _XmlReferenceEco2301("DistanceTravelledPerDay")),
     ]
-    _simple_values = [("days_used_per_year", "DaysUsedPerYear")]
+    _simple_values = [("days_used_per_year", _XmlReferenceEco2301("DaysUsedPerYear"))]
 
     mi_transport_reference: MIRecordReference
     """Reference to a record in the MI database representing the means of transport for this product during use."""
@@ -225,14 +235,14 @@ class MobileMode(BaseType2301):
 
 
 @dataclass
-class StaticMode(BaseType2301):
+class StaticMode(BaseTypeEco2301):
     """
     Specifies the primary energy conversion that occurs during the product's use.
     """
 
     _props = [
-        ("MIRecordReference", "mi_energy_conversion_reference", "MIEnergyConversionReference"),
-        ("UnittedValue", "power_rating", "PowerRating"),
+        ("MIRecordReference", "mi_energy_conversion_reference", _XmlReferenceEco2301("MIEnergyConversionReference")),
+        ("UnittedValue", "power_rating", _XmlReferenceEco2301("PowerRating")),
     ]
 
     mi_energy_conversion_reference: MIRecordReference
@@ -251,10 +261,13 @@ class StaticMode(BaseType2301):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        usage_obj = bom_reader.get_field(cls, obj, "Usage")
+        usage_ref = _XmlReferenceEco2301("Usage")
+        usage_obj = bom_reader.get_field(obj, usage_ref)
         if usage_obj is not None:
-            props["hours_used_per_day"] = bom_reader.get_field(cls, usage_obj, "HoursUsedPerDay")
-            props["days_used_per_year"] = bom_reader.get_field(cls, usage_obj, "DaysUsedPerYear")
+            hours_ref = _XmlReferenceEco2301("HoursUsedPerDay")
+            days_ref = _XmlReferenceEco2301("DaysUsedPerYear")
+            props["hours_used_per_day"] = bom_reader.get_field(usage_obj, hours_ref)
+            props["days_used_per_year"] = bom_reader.get_field(usage_obj, days_ref)
         return props
 
     def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
@@ -267,16 +280,16 @@ class StaticMode(BaseType2301):
 
 
 @dataclass
-class UtilitySpecification(BaseType2301):
+class UtilitySpecification(BaseTypeEco2301):
     """
     Specifies how much use can be obtained from the product represented by this BoM in comparison to a
     representative industry average.
     """
 
     _simple_values = [
-        ("industry_average_duration_years", "IndustryAverageDurationYears"),
-        ("industry_average_number_of_functional_units", "IndustryAverageNumberOfFunctionalUnits"),
-        ("utility", "Utility"),
+        ("industry_average_duration_years", _XmlReferenceEco2301("IndustryAverageDurationYears")),
+        ("industry_average_number_of_functional_units", _XmlReferenceEco2301("IndustryAverageNumberOfFunctionalUnits")),
+        ("utility", _XmlReferenceEco2301("Utility")),
     ]
 
     industry_average_duration_years: Optional[float] = None
@@ -291,16 +304,16 @@ class UtilitySpecification(BaseType2301):
 
 
 @dataclass
-class ProductLifeSpan(BaseType2301):
+class ProductLifeSpan(BaseTypeEco2301):
     """
     Specifies the average life span for the product represented by the BoM.
     """
 
-    _props = [("UtilitySpecification", "utility", "Utility")]
+    _props = [("UtilitySpecification", "utility", _XmlReferenceEco2301("Utility"))]
     _simple_values = [
-        ("duration_years", "DurationYears"),
-        ("number_of_functional_units", "NumberOfFunctionalUnits"),
-        ("functional_unit_description", "FunctionalUnitDescription"),
+        ("duration_years", _XmlReferenceEco2301("DurationYears")),
+        ("number_of_functional_units", _XmlReferenceEco2301("NumberOfFunctionalUnits")),
+        ("functional_unit_description", _XmlReferenceEco2301("FunctionalUnitDescription")),
     ]
     duration_years: float
     """The product lifespan in years."""
@@ -317,17 +330,17 @@ class ProductLifeSpan(BaseType2301):
 
 
 @dataclass
-class UsePhase(BaseType2301):
+class UsePhase(BaseTypeEco2301):
     """
     Provides information about the sustainability of the product whilst in use, including electricity use, emissions
     due to transport, emissions due to electricity consumption, and the expected life span of the product.
     """
 
     _props = [
-        ("ProductLifeSpan", "product_life_span", "ProductLifeSpan"),
-        ("ElectricityMix", "electricity_mix", "ElectricityMix"),
-        ("StaticMode", "static_mode", "StaticMode"),
-        ("MobileMode", "mobile_mode", "MobileMode"),
+        ("ProductLifeSpan", "product_life_span", _XmlReferenceEco2301("ProductLifeSpan")),
+        ("ElectricityMix", "electricity_mix", _XmlReferenceEco2301("ElectricityMix")),
+        ("StaticMode", "static_mode", _XmlReferenceEco2301("StaticMode")),
+        ("MobileMode", "mobile_mode", _XmlReferenceEco2301("MobileMode")),
     ]
 
     product_life_span: ProductLifeSpan
@@ -344,12 +357,16 @@ class UsePhase(BaseType2301):
 
 
 @dataclass
-class BoMDetails(BaseType2301):
+class BoMDetails(BaseTypeEco2301):
     """
     Explanatory information about a BoM.
     """
 
-    _simple_values = [("notes", "Notes"), ("picture_url", "PictureUrl"), ("product_name", "ProductName")]
+    _simple_values = [
+        ("notes", _XmlReferenceEco2301("Notes")),
+        ("picture_url", _XmlReferenceEco2301("PictureUrl")),
+        ("product_name", _XmlReferenceEco2301("ProductName")),
+    ]
 
     notes: Optional[str] = None
     """General notes for the BoM object."""
@@ -363,17 +380,17 @@ class BoMDetails(BaseType2301):
 
 
 @dataclass
-class TransportStage(BaseType2301):
+class TransportStage(BaseTypeEco2301):
     """
     Defines the transportation applied to an object, in terms of the generic transportation type (stored in the
     Database) and the amount of that transport used in this instance.
     """
 
     _props = [
-        ("MIRecordReference", "mi_transport_reference", "MITransportReference"),
-        ("UnittedValue", "distance", "Distance"),
+        ("MIRecordReference", "mi_transport_reference", _XmlReferenceEco2301("MITransportReference")),
+        ("UnittedValue", "distance", _XmlReferenceEco2301("Distance")),
     ]
-    _simple_values = [("name", "Name"), ("internal_id", "@id")]
+    _simple_values = [("name", _XmlReferenceEco2301("Name")), ("internal_id", _XmlReferenceEco2301("@id"))]
 
     name: str
     """Name of this transportation stage, used only to identify the stage within the BoM."""
@@ -390,21 +407,21 @@ class TransportStage(BaseType2301):
 
 
 @dataclass
-class Specification(BaseType2301):
+class Specification(BaseTypeEco2301):
     """
     A specification for a surface treatment, part, process, or material. Refers to a record within the MI Database
     storing the details of the specification and its impact.
     """
 
     _props = [
-        ("MIRecordReference", "mi_specification_reference", "MISpecificationReference"),
-        ("UnittedValue", "quantity", "Quantity"),
+        ("MIRecordReference", "mi_specification_reference", _XmlReferenceEco2301("MISpecificationReference")),
+        ("UnittedValue", "quantity", _XmlReferenceEco2301("Quantity")),
     ]
     _simple_values = [
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("identity", _XmlReferenceEco2301("Identity")),
+        ("name", _XmlReferenceEco2301("Name")),
+        ("external_identity", _XmlReferenceEco2301("ExternalIdentity")),
+        ("internal_id", _XmlReferenceEco2301("@id")),
     ]
 
     mi_specification_reference: MIRecordReference
@@ -428,19 +445,19 @@ class Specification(BaseType2301):
 
 
 @dataclass
-class Substance(BaseType2301):
+class Substance(BaseTypeEco2301):
     """
     A substance within a part, semi-finished part, material or specification. The substance is stored in the
     Database."""
 
     _simple_values = [
-        ("percentage", "Percentage"),
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("percentage", _XmlReferenceEco2301("Percentage")),
+        ("identity", _XmlReferenceEco2301("Identity")),
+        ("name", _XmlReferenceEco2301("Name")),
+        ("external_identity", _XmlReferenceEco2301("ExternalIdentity")),
+        ("internal_id", _XmlReferenceEco2301("@id")),
     ]
-    _props = [("MIRecordReference", "mi_substance_reference", "MISubstanceReference")]
+    _props = [("MIRecordReference", "mi_substance_reference", _XmlReferenceEco2301("MISubstanceReference"))]
 
     mi_substance_reference: MIRecordReference
     """Reference identifying the record representing the substance in the MI Database."""
@@ -469,7 +486,8 @@ class Substance(BaseType2301):
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        category_type_obj = bom_reader.get_field(Substance, obj, "Category")
+        category_ref = _XmlReferenceEco2301("Category")
+        category_type_obj = bom_reader.get_field(obj, category_ref)
         if category_type_obj is not None:
             props["category"] = Category.from_string(category_type_obj)
         return props
@@ -483,23 +501,23 @@ class Substance(BaseType2301):
 
 
 @dataclass
-class Process(BaseType2301):
+class Process(BaseTypeEco2301):
     """
     A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the
     Database.
     """
 
     _simple_values = [
-        ("percentage", "Percentage"),
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("percentage", _XmlReferenceEco2301("Percentage")),
+        ("identity", _XmlReferenceEco2301("Identity")),
+        ("name", _XmlReferenceEco2301("Name")),
+        ("external_identity", _XmlReferenceEco2301("ExternalIdentity")),
+        ("internal_id", _XmlReferenceEco2301("@id")),
     ]
 
     _props = [
-        ("MIRecordReference", "mi_process_reference", "MIProcessReference"),
-        ("UnittedValue", "quantity", "Quantity"),
+        ("MIRecordReference", "mi_process_reference", _XmlReferenceEco2301("MIProcessReference")),
+        ("UnittedValue", "quantity", _XmlReferenceEco2301("Quantity")),
     ]
 
     mi_process_reference: MIRecordReference
@@ -533,7 +551,8 @@ class Process(BaseType2301):
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        dimension_type_obj = bom_reader.get_field(Process, obj, "DimensionType")
+        dimension_type_ref = _XmlReferenceEco2301("DimensionType")
+        dimension_type_obj = bom_reader.get_field(obj, dimension_type_ref)
         props["dimension_type"] = DimensionType.from_string(dimension_type_obj)
         return props
 
@@ -545,29 +564,31 @@ class Process(BaseType2301):
 
 
 @dataclass
-class Material(BaseType2301):
+class Material(BaseTypeEco2301):
     """
     A Material within a part or semi-finished part. The material is stored in the Database.
     """
 
     _simple_values = [
-        ("percentage", "Percentage"),
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("percentage", _XmlReferenceEco2301("Percentage")),
+        ("identity", _XmlReferenceEco2301("Identity")),
+        ("name", _XmlReferenceEco2301("Name")),
+        ("external_identity", _XmlReferenceEco2301("ExternalIdentity")),
+        ("internal_id", _XmlReferenceEco2301("@id")),
     ]
 
-    _props = [("UnittedValue", "mass", "Mass"), ("MIRecordReference", "mi_material_reference", "MIMaterialReference")]
+    _props = [
+        ("MIRecordReference", "mi_material_reference", _XmlReferenceEco2301("MIMaterialReference")),
+        ("UnittedValue", "mass", _XmlReferenceEco2301("Mass")),
+    ]
 
     _list_props = [
-        ("Process", "processes", "Processes", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Process"),
+        ("Process", "processes", _XmlReferenceEco2301("Processes"), _XmlReferenceEco2301("Process")),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
-            "EndOfLifeFates",
-            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
-            "EndOfLifeFate",
+            _XmlReferenceEco2301("EndOfLifeFates"),
+            _XmlReferenceEco2301("EndOfLifeFate"),
         ),
     ]
     mi_material_reference: MIRecordReference
@@ -610,13 +631,15 @@ class Material(BaseType2301):
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        recycle_content_obj = bom_reader.get_field(Material, obj, "RecycleContent")
+        recycle_content_ref = _XmlReferenceEco2301("RecycleContent")
+        recycle_content_obj = bom_reader.get_field(obj, recycle_content_ref)
         if recycle_content_obj is not None:
             # TODO support recycle content (issue #95)
             # typical_obj = bom_reader.get_field(Material, recycle_content_obj, "Typical")
             # if typical_obj is not None:
             #     props["recycle_content_is_typical"] = typical_obj
-            percentage_obj = bom_reader.get_field(Material, recycle_content_obj, "Percentage")
+            percentage_ref = _XmlReferenceEco2301("Percentage")
+            percentage_obj = bom_reader.get_field(recycle_content_obj, percentage_ref)
             if percentage_obj is not None:
                 props["recycle_content_percentage"] = percentage_obj
         return props
@@ -636,43 +659,41 @@ class Material(BaseType2301):
 
 
 @dataclass
-class Part(BaseType2301):
+class Part(BaseTypeEco2301):
     """
     A single part which may or may not be stored in the MI Database.
     """
 
     _props = [
-        ("UnittedValue", "quantity", "Quantity"),
-        ("UnittedValue", "mass_per_unit_of_measure", "MassPerUom"),
-        ("UnittedValue", "volume_per_unit_of_measure", "VolumePerUom"),
-        ("MIRecordReference", "mi_part_reference", "MIPartReference"),
+        ("UnittedValue", "quantity", _XmlReferenceEco2301("Quantity")),
+        ("UnittedValue", "mass_per_unit_of_measure", _XmlReferenceEco2301("MassPerUom")),
+        ("UnittedValue", "volume_per_unit_of_measure", _XmlReferenceEco2301("VolumePerUom")),
+        ("MIRecordReference", "mi_part_reference", _XmlReferenceEco2301("MIPartReference")),
     ]
 
     _simple_values = [
-        ("part_number", "PartNumber"),
-        ("part_name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("part_number", _XmlReferenceEco2301("PartNumber")),
+        ("part_name", _XmlReferenceEco2301("Name")),
+        ("external_identity", _XmlReferenceEco2301("ExternalIdentity")),
+        ("internal_id", _XmlReferenceEco2301("@id")),
     ]
 
     _list_props = [
-        ("Part", "components", "Components", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Part"),
+        ("Part", "components", _XmlReferenceEco2301("Components"), _XmlReferenceEco2301("Part")),
         (
             "Specification",
             "specifications",
-            "Specifications",
-            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
-            "Specification",
+            _XmlReferenceEco2301("Specifications"),
+            _XmlReferenceEco2301("Specification"),
         ),
-        ("Material", "materials", "Materials", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Material"),
-        ("Substance", "substances", "Substances", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Substance"),
-        ("Process", "processes", "Processes", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Process"),
+        ("Material", "materials", _XmlReferenceEco2301("Materials"), _XmlReferenceEco2301("Material")),
+        ("Substance", "substances", _XmlReferenceEco2301("Substances"), _XmlReferenceEco2301("Substance")),
+        ("Process", "processes", _XmlReferenceEco2301("Processes"), _XmlReferenceEco2301("Process")),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
-            "EndOfLifeFates",
-            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
-            "EndOfLifeFate",
+            _XmlReferenceEco2301("EndOfLifeFates"),
+            _XmlReferenceEco2301("EndOfLifeFate"),
         ),
     ]
 
@@ -740,11 +761,11 @@ class Part(BaseType2301):
         # non_mi_part_ref_obj = bom_reader.get_field(Part, obj, "NonMIPartReference")
         # if non_mi_part_ref_obj is not None:
         #     props["non_mi_part_reference"] = non_mi_part_ref_obj
-        rohs_exemptions_obj = bom_reader.get_field(Part, obj, "RohsExemptions")
+        rohs_exemptions_ref = _XmlReferenceEco2301("RohsExemptions")
+        rohs_exemptions_obj = bom_reader.get_field(obj, rohs_exemptions_ref)
         if rohs_exemptions_obj is not None:
-            rohs_exemption_obj = bom_reader.get_field(
-                Part, rohs_exemptions_obj, "RohsExemption", "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
-            )
+            rohs_exemption_ref = _XmlReferenceEco2301("RohsExemption")
+            rohs_exemption_obj = bom_reader.get_field(rohs_exemptions_obj, rohs_exemption_ref)
             if rohs_exemption_obj is not None:
                 props["rohs_exemptions"] = rohs_exemption_obj
         return props
@@ -836,25 +857,24 @@ class Part(BaseType2301):
 
 
 @dataclass
-class BillOfMaterials(BaseType2301):
+class BillOfMaterials(BaseTypeEco2301):
     """
     Type representing the root Bill of Materials object.
     """
 
-    _simple_values = [("internal_id", "@id")]
+    _simple_values = [("internal_id", _XmlReferenceEco2301("@id"))]
     _props = [
-        ("UsePhase", "use_phase", "UsePhase"),
-        ("Location", "location", "Location"),
-        ("BoMDetails", "notes", "Notes"),
+        ("UsePhase", "use_phase", _XmlReferenceEco2301("UsePhase")),
+        ("Location", "location", _XmlReferenceEco2301("Location")),
+        ("BoMDetails", "notes", _XmlReferenceEco2301("Notes")),
     ]
     _list_props = [
-        ("Part", "components", "Components", "http://www.grantadesign.com/23/01/BillOfMaterialsEco", "Part"),
+        ("Part", "components", _XmlReferenceEco2301("Components"), _XmlReferenceEco2301("Part")),
         (
             "TransportStage",
             "transport_phase",
-            "TransportPhase",
-            "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
-            "TransportStage",
+            _XmlReferenceEco2301("TransportPhase"),
+            _XmlReferenceEco2301("TransportStage"),
         ),
     ]
 

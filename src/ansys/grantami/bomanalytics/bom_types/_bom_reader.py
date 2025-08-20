@@ -22,11 +22,11 @@
 
 import inspect
 from types import ModuleType
-from typing import Any, Dict, Generic, Iterable, Optional, Type, TypeVar
+from typing import Any, Dict, Generic, Iterable, Type, TypeVar
 
 from xmlschema import XMLSchema
 
-from ._base_types import BaseType, HasNamespace
+from ._base_types import BaseType, _XmlReference
 
 TBom = TypeVar("TBom", bound=BaseType)
 TAny = TypeVar("TAny", bound=BaseType)
@@ -128,18 +128,16 @@ class _GenericBoMReader(Generic[TBom]):
         local_obj = obj.copy()
 
         kwargs = {}
-        for target_type, target_property_name, field_name in type_._props:
-            kwargs.update(
-                self._deserialize_single_type(type_, local_obj, target_type, target_property_name, field_name)
-            )
-        for target_type, target_property_name, container_name, container_namespace, field_name in type_._list_props:
+        for target_type, target_property_name, field_reference in type_._props:
+            kwargs.update(self._deserialize_single_type(local_obj, target_type, target_property_name, field_reference))
+        for target_type, target_property_name, container_reference, field_reference in type_._list_props:
             kwargs.update(
                 self._deserialize_list_type(
-                    type_, local_obj, target_type, target_property_name, container_name, container_namespace, field_name
+                    local_obj, target_type, target_property_name, container_reference, field_reference
                 )
             )
-        for target, source in type_._simple_values:
-            field_obj = self.get_field(type_, local_obj, source)
+        for target, source_reference in type_._simple_values:
+            field_obj = self.get_field(local_obj, source_reference)
             kwargs[target] = field_obj
         kwargs.update(type_._process_custom_fields(local_obj, self))
         self._append_unserialized_fields(type_.__name__, local_obj)
@@ -148,25 +146,27 @@ class _GenericBoMReader(Generic[TBom]):
 
     def _deserialize_list_type(
         self,
-        instance: Type[BaseType],
         obj: Dict,
         target_type: str,
         target_property_name: str,
-        container_name: str,
-        container_namespace: str,
-        item_name: str,
+        container_reference: _XmlReference,
+        field_reference: _XmlReference,
     ) -> Dict[str, Iterable]:
-        container_obj = self.get_field(instance, obj, container_name)
+        container_obj = self.get_field(obj, container_reference)
         if container_obj is not None:
-            items_obj = self.get_field(instance, container_obj, item_name, container_namespace)
+            items_obj = self.get_field(container_obj, field_reference)
             if items_obj is not None and len(items_obj) > 0:
                 return {target_property_name: [self.create_type(target_type, item_dict) for item_dict in items_obj]}
         return {}
 
     def _deserialize_single_type(
-        self, instance: Type[BaseType], obj: Dict, target_type: str, target_property_name: str, field_name: str
+        self,
+        obj: Dict,
+        target_type: str,
+        target_property_name: str,
+        field_reference: _XmlReference,
     ) -> Dict[str, Any]:
-        field_obj = self.get_field(instance, obj, field_name)
+        field_obj = self.get_field(obj, field_reference)
         if field_obj is not None:
             return {target_property_name: self.create_type(target_type, field_obj)}
         return {}
@@ -178,9 +178,7 @@ class _GenericBoMReader(Generic[TBom]):
                 msg = f'Parent type "{type_name}", field "{k}" with value "{val}".'
                 self.__undeserialized_fields.append(msg)
 
-    def get_field(
-        self, instance: Type[HasNamespace], obj: Dict, field_name: str, namespace_url: Optional[str] = None
-    ) -> Any:
+    def get_field(self, obj: Dict, field_reference: _XmlReference) -> Any:
         """
         Given an object and a local name, determines the qualified field name to fetch based on the document namespace
         tags.
@@ -190,34 +188,26 @@ class _GenericBoMReader(Generic[TBom]):
 
         Parameters
         ----------
-        instance: BaseType
-            The object being deserialized into, the namespace will be used from this object by default
         obj: Dict
             The source dictionary with the data to be deserialized.
-        field_name: str
-            Local name of the target field.
-        namespace_url: Optional[str]
-            If the target namespace is different from that of the target object, for example if the type defines an
-            anonymous complex type, it can be overridden here.
+        field_reference: _XmlReference
+            Namespace and local name of the target field.
         """
-        if namespace_url is None:
-            namespace_url = instance.namespace
-
         for k, v in obj.items():
             if k.startswith("@xmlns"):
                 continue
 
-            if k == "$" and field_name == "$":
+            if k == "$" and field_reference.name == "$":
                 del obj[k]
                 return v
 
             if k.startswith("@"):
-                is_matched = self._match_attribute(k, field_name, namespace_url)
+                is_matched = self._match_attribute(k, field_reference.name, field_reference.namespace)
                 if is_matched:
                     del obj[k]
                     return v
             else:
-                is_matched = self._match_element(k, field_name, namespace_url)
+                is_matched = self._match_element(k, field_reference.name, field_reference.namespace)
                 if is_matched:
                     del obj[k]
                     return v

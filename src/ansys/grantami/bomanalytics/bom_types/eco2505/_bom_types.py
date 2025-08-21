@@ -26,7 +26,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-from .._base_types import BaseType
+from .._base_types import BaseType, QualifiedXMLName
 from ..gbt1205 import MIRecordReference
 
 if TYPE_CHECKING:
@@ -36,6 +36,16 @@ if TYPE_CHECKING:
 
 class BaseType2505(BaseType):
     namespace = "http://www.grantadesign.com/25/05/BillOfMaterialsEco"
+
+
+@dataclass(frozen=True)
+class _QualifiedEco2505Name(QualifiedXMLName):
+    """
+    A fully qualified XML name. The local name must be supplied, and the namespace defaults to the Eco 25/05 namespace.
+    """
+
+    local_name: str
+    namespace: str = BaseType2505.namespace
 
 
 class DimensionType(Enum):
@@ -116,18 +126,7 @@ class Category(Enum):
         return self.name
 
 
-@dataclass
-class EquivalentReference(BaseType2505, MIRecordReference):
-
-    _simple_values = [
-        ("db_key", "http://www.grantadesign.com/12/05/GrantaBaseTypes", "dbKey"),
-        ("record_guid", "http://www.grantadesign.com/12/05/GrantaBaseTypes", "recordGUID"),
-        ("record_history_guid", "http://www.grantadesign.com/12/05/GrantaBaseTypes", "recordHistoryGUID"),
-        ("record_uid", "http://www.grantadesign.com/12/05/GrantaBaseTypes", "@recordUID"),
-    ]
-
-
-@dataclass
+@dataclass(eq=False)
 class ExtendedMIRecordReference(BaseType2505, MIRecordReference):
     """
     A type extending gbt:MIRecordReference that includes an EquivalentReferences element to hold an arbitrary number
@@ -138,26 +137,25 @@ class ExtendedMIRecordReference(BaseType2505, MIRecordReference):
         (
             "MIRecordReference",
             "equivalent_references",
-            "EquivalentReferences",
-            "http://www.grantadesign.com/12/05/GrantaBaseTypes",
-            "MIRecordReference",
+            _QualifiedEco2505Name("EquivalentReferences"),
+            _QualifiedEco2505Name("EquivalentReference"),
         )
     ]
 
-    equivalent_references: List[EquivalentReference] = field(default_factory=list)
+    equivalent_references: List[MIRecordReference] = field(default_factory=list)
     """Additional records which link to the analysis material."""
 
 
-@dataclass
+@dataclass(eq=False)
 class EndOfLifeFate(BaseType2505):
     """
     The fate of a material at the end-of-life of the product. For example if a material can be recycled, and what
     fraction of the total mass or volume can be recycled.
     """
 
-    _simple_values = [("fraction", "Fraction")]
+    _simple_values = [("fraction", _QualifiedEco2505Name("Fraction"))]
 
-    _props = [("ExtendedMIRecordReference", "mi_end_of_life_reference", "MIEndOfLifeReference")]
+    _props = [("ExtendedMIRecordReference", "mi_end_of_life_reference", _QualifiedEco2505Name("MIEndOfLifeReference"))]
 
     mi_end_of_life_reference: ExtendedMIRecordReference
     """Reference identifying the applicable fate within the MI Database."""
@@ -166,14 +164,14 @@ class EndOfLifeFate(BaseType2505):
     """Fraction of the total mass or volume of material to which this fate applies."""
 
 
-@dataclass
+@dataclass(eq=False)
 class UnittedValue(BaseType2505):
     """
     A physical quantity with a unit. If provided in an input then the unit must exist within the MI database,
     otherwise an error will be raised.
     """
 
-    _simple_values = [("value", "$"), ("unit", "@Unit")]
+    _simple_values = [("value", _QualifiedEco2505Name("$")), ("unit", _QualifiedEco2505Name("@Unit"))]
 
     value: float
     """The value of the quantity in specified units."""
@@ -183,18 +181,18 @@ class UnittedValue(BaseType2505):
     dimensionless."""
 
 
-@dataclass
+@dataclass(eq=False)
 class Location(BaseType2505):
     """
     Defines the manufacturing location for the BoM for use in process calculations.
     """
 
-    _props = [("ExtendedMIRecordReference", "mi_location_reference", "MILocationReference")]
+    _props = [("ExtendedMIRecordReference", "mi_location_reference", _QualifiedEco2505Name("MILocationReference"))]
     _simple_values = [
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("identity", _QualifiedEco2505Name("Identity")),
+        ("name", _QualifiedEco2505Name("Name")),
+        ("external_identity", _QualifiedEco2505Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2505Name("@id")),
     ]
 
     mi_location_reference: Optional[ExtendedMIRecordReference] = None  # TODO not optional though
@@ -214,7 +212,7 @@ class Location(BaseType2505):
     to reference this element."""
 
 
-@dataclass
+@dataclass(eq=False)
 class ElectricityMix(BaseType2505):
     """
     If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of
@@ -223,8 +221,8 @@ class ElectricityMix(BaseType2505):
     fossil fuel sources.
     """
 
-    _props = [("ExtendedMIRecordReference", "mi_region_reference", "MIRegionReference")]
-    _simple_values = [("percentage_fossil_fuels", "PercentageFossilFuels")]
+    _props = [("ExtendedMIRecordReference", "mi_region_reference", _QualifiedEco2505Name("MIRegionReference"))]
+    _simple_values = [("percentage_fossil_fuels", _QualifiedEco2505Name("PercentageFossilFuels"))]
 
     mi_region_reference: Optional[ExtendedMIRecordReference] = None
     """Reference to a record in the MI database representing the electricity mix for the destination country."""
@@ -233,7 +231,7 @@ class ElectricityMix(BaseType2505):
     """The percentage of electrical power production within the destination country that comes from fossil fuels."""
 
 
-@dataclass
+@dataclass(eq=False)
 class MobileMode(BaseType2505):
     """
     If the product is transported as part of its use then this type contains details about the way in which it is
@@ -241,10 +239,10 @@ class MobileMode(BaseType2505):
     """
 
     _props = [
-        ("ExtendedMIRecordReference", "mi_transport_reference", "MITransportReference"),
-        ("UnittedValue", "distance_travelled_per_day", "DistanceTravelledPerDay"),
+        ("ExtendedMIRecordReference", "mi_transport_reference", _QualifiedEco2505Name("MITransportReference")),
+        ("UnittedValue", "distance_travelled_per_day", _QualifiedEco2505Name("DistanceTravelledPerDay")),
     ]
-    _simple_values = [("days_used_per_year", "DaysUsedPerYear")]
+    _simple_values = [("days_used_per_year", _QualifiedEco2505Name("DaysUsedPerYear"))]
 
     mi_transport_reference: ExtendedMIRecordReference
     """Reference to a record in the MI database representing the means of transport for this product during use."""
@@ -256,15 +254,19 @@ class MobileMode(BaseType2505):
     """The distance the product will be transported each day as part of its use."""
 
 
-@dataclass
+@dataclass(eq=False)
 class StaticMode(BaseType2505):
     """
     Specifies the primary energy conversion that occurs during the product's use.
     """
 
     _props = [
-        ("ExtendedMIRecordReference", "mi_energy_conversion_reference", "MIEnergyConversionReference"),
-        ("UnittedValue", "power_rating", "PowerRating"),
+        (
+            "ExtendedMIRecordReference",
+            "mi_energy_conversion_reference",
+            _QualifiedEco2505Name("MIEnergyConversionReference"),
+        ),
+        ("UnittedValue", "power_rating", _QualifiedEco2505Name("PowerRating")),
     ]
 
     mi_energy_conversion_reference: ExtendedMIRecordReference
@@ -283,22 +285,28 @@ class StaticMode(BaseType2505):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        usage_obj = bom_reader.get_field(cls, obj, "Usage")
+        usage_ref = _QualifiedEco2505Name("Usage")
+        usage_obj = bom_reader.get_field(obj, usage_ref)
         if usage_obj is not None:
-            props["hours_used_per_day"] = bom_reader.get_field(cls, usage_obj, "HoursUsedPerDay")
-            props["days_used_per_year"] = bom_reader.get_field(cls, usage_obj, "DaysUsedPerYear")
+            hours_ref = _QualifiedEco2505Name("HoursUsedPerDay")
+            days_ref = _QualifiedEco2505Name("DaysUsedPerYear")
+            props["hours_used_per_day"] = bom_reader.get_field(usage_obj, hours_ref)
+            props["days_used_per_year"] = bom_reader.get_field(usage_obj, days_ref)
         return props
 
     def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
+        hours_ref = _QualifiedEco2505Name("HoursUsedPerDay")
+        days_ref = _QualifiedEco2505Name("DaysUsedPerYear")
         usage_dict = {
-            bom_writer._get_qualified_name(self, "DaysUsedPerYear"): self.days_used_per_year,
-            bom_writer._get_qualified_name(self, "HoursUsedPerDay"): self.hours_used_per_day,
+            bom_writer._generate_contextual_qualified_name(days_ref): self.days_used_per_year,
+            bom_writer._generate_contextual_qualified_name(hours_ref): self.hours_used_per_day,
         }
-        obj[bom_writer._get_qualified_name(self, "Usage")] = usage_dict
+        usage_ref = _QualifiedEco2505Name("Usage")
+        obj[bom_writer._generate_contextual_qualified_name(usage_ref)] = usage_dict
 
 
-@dataclass
+@dataclass(eq=False)
 class UtilitySpecification(BaseType2505):
     """
     Specifies how much use can be obtained from the product represented by this BoM in comparison to a
@@ -306,9 +314,14 @@ class UtilitySpecification(BaseType2505):
     """
 
     _simple_values = [
-        ("industry_average_duration_years", "IndustryAverageDurationYears"),
-        ("industry_average_number_of_functional_units", "IndustryAverageNumberOfFunctionalUnits"),
-        ("utility", "Utility"),
+        ("industry_average_duration_years", _QualifiedEco2505Name("IndustryAverageDurationYears")),
+        (
+            "industry_average_number_of_functional_units",
+            _QualifiedEco2505Name(
+                "IndustryAverageNumberOfFunctionalUnits",
+            ),
+        ),
+        ("utility", _QualifiedEco2505Name("Utility")),
     ]
 
     industry_average_duration_years: Optional[float] = None
@@ -322,17 +335,17 @@ class UtilitySpecification(BaseType2505):
     """Directly specifies the utility."""
 
 
-@dataclass
+@dataclass(eq=False)
 class ProductLifeSpan(BaseType2505):
     """
     Specifies the average life span for the product represented by the BoM.
     """
 
-    _props = [("UtilitySpecification", "utility", "Utility")]
+    _props = [("UtilitySpecification", "utility", _QualifiedEco2505Name("Utility"))]
     _simple_values = [
-        ("duration_years", "DurationYears"),
-        ("number_of_functional_units", "NumberOfFunctionalUnits"),
-        ("functional_unit_description", "FunctionalUnitDescription"),
+        ("duration_years", _QualifiedEco2505Name("DurationYears")),
+        ("number_of_functional_units", _QualifiedEco2505Name("NumberOfFunctionalUnits")),
+        ("functional_unit_description", _QualifiedEco2505Name("FunctionalUnitDescription")),
     ]
     duration_years: float
     """The product lifespan in years."""
@@ -348,7 +361,7 @@ class ProductLifeSpan(BaseType2505):
     industry-average example."""
 
 
-@dataclass
+@dataclass(eq=False)
 class UsePhase(BaseType2505):
     """
     Provides information about the sustainability of the product whilst in use, including electricity use, emissions
@@ -356,10 +369,10 @@ class UsePhase(BaseType2505):
     """
 
     _props = [
-        ("ProductLifeSpan", "product_life_span", "ProductLifeSpan"),
-        ("ElectricityMix", "electricity_mix", "ElectricityMix"),
-        ("StaticMode", "static_mode", "StaticMode"),
-        ("MobileMode", "mobile_mode", "MobileMode"),
+        ("ProductLifeSpan", "product_life_span", _QualifiedEco2505Name("ProductLifeSpan")),
+        ("ElectricityMix", "electricity_mix", _QualifiedEco2505Name("ElectricityMix")),
+        ("StaticMode", "static_mode", _QualifiedEco2505Name("StaticMode")),
+        ("MobileMode", "mobile_mode", _QualifiedEco2505Name("MobileMode")),
     ]
 
     product_life_span: ProductLifeSpan
@@ -375,13 +388,17 @@ class UsePhase(BaseType2505):
     """Provides information about the expected mobile use of the product."""
 
 
-@dataclass
+@dataclass(eq=False)
 class BoMDetails(BaseType2505):
     """
     Explanatory information about a BoM.
     """
 
-    _simple_values = [("notes", "Notes"), ("picture_url", "PictureUrl"), ("product_name", "ProductName")]
+    _simple_values = [
+        ("notes", _QualifiedEco2505Name("Notes")),
+        ("picture_url", _QualifiedEco2505Name("PictureUrl")),
+        ("product_name", _QualifiedEco2505Name("ProductName")),
+    ]
 
     notes: Optional[str] = None
     """General notes for the BoM object."""
@@ -394,7 +411,7 @@ class BoMDetails(BaseType2505):
     """The product name."""
 
 
-@dataclass
+@dataclass(eq=False)
 class TransportStage(BaseType2505):
     """
     Defines the transportation applied to an object, in terms of the generic transportation type (stored in the
@@ -402,10 +419,10 @@ class TransportStage(BaseType2505):
     """
 
     _props = [
-        ("ExtendedMIRecordReference", "mi_transport_reference", "MITransportReference"),
-        ("UnittedValue", "distance", "Distance"),
+        ("ExtendedMIRecordReference", "mi_transport_reference", _QualifiedEco2505Name("MITransportReference")),
+        ("UnittedValue", "distance", _QualifiedEco2505Name("Distance")),
     ]
-    _simple_values = [("name", "Name"), ("internal_id", "@id")]
+    _simple_values = [("name", _QualifiedEco2505Name("Name")), ("internal_id", _QualifiedEco2505Name("@id"))]
 
     name: str
     """Name of this transportation stage, used only to identify the stage within the BoM."""
@@ -421,7 +438,7 @@ class TransportStage(BaseType2505):
     to reference this element."""
 
 
-@dataclass
+@dataclass(eq=False)
 class Specification(BaseType2505):
     """
     A specification for a surface treatment, part, process, or material. Refers to a record within the MI Database
@@ -429,14 +446,14 @@ class Specification(BaseType2505):
     """
 
     _props = [
-        ("ExtendedMIRecordReference", "mi_specification_reference", "MISpecificationReference"),
-        ("UnittedValue", "quantity", "Quantity"),
+        ("ExtendedMIRecordReference", "mi_specification_reference", _QualifiedEco2505Name("MISpecificationReference")),
+        ("UnittedValue", "quantity", _QualifiedEco2505Name("Quantity")),
     ]
     _simple_values = [
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("identity", _QualifiedEco2505Name("Identity")),
+        ("name", _QualifiedEco2505Name("Name")),
+        ("external_identity", _QualifiedEco2505Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2505Name("@id")),
     ]
 
     mi_specification_reference: ExtendedMIRecordReference
@@ -459,20 +476,20 @@ class Specification(BaseType2505):
     to reference this element."""
 
 
-@dataclass
+@dataclass(eq=False)
 class Substance(BaseType2505):
     """
     A substance within a part, semi-finished part, material or specification. The substance is stored in the
     Database."""
 
     _simple_values = [
-        ("percentage", "Percentage"),
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("percentage", _QualifiedEco2505Name("Percentage")),
+        ("identity", _QualifiedEco2505Name("Identity")),
+        ("name", _QualifiedEco2505Name("Name")),
+        ("external_identity", _QualifiedEco2505Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2505Name("@id")),
     ]
-    _props = [("ExtendedMIRecordReference", "mi_substance_reference", "MISubstanceReference")]
+    _props = [("ExtendedMIRecordReference", "mi_substance_reference", _QualifiedEco2505Name("MISubstanceReference"))]
 
     mi_substance_reference: ExtendedMIRecordReference
     """Reference identifying the record representing the substance in the MI Database."""
@@ -501,7 +518,8 @@ class Substance(BaseType2505):
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        category_type_obj = bom_reader.get_field(Substance, obj, "Category")
+        category_ref = _QualifiedEco2505Name("Category")
+        category_type_obj = bom_reader.get_field(obj, category_ref)
         if category_type_obj is not None:
             props["category"] = Category.from_string(category_type_obj)
         return props
@@ -509,12 +527,13 @@ class Substance(BaseType2505):
     def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
 
+        category_ref = _QualifiedEco2505Name("Category")
         if self.category is not None:
-            category_field_name = bom_writer._get_qualified_name(self, "Category")
+            category_field_name = bom_writer._generate_contextual_qualified_name(category_ref)
             obj[category_field_name] = self.category.to_string()
 
 
-@dataclass
+@dataclass(eq=False)
 class Process(BaseType2505):
     """
     A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the
@@ -522,26 +541,25 @@ class Process(BaseType2505):
     """
 
     _simple_values = [
-        ("percentage", "Percentage"),
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("percentage", _QualifiedEco2505Name("Percentage")),
+        ("identity", _QualifiedEco2505Name("Identity")),
+        ("name", _QualifiedEco2505Name("Name")),
+        ("external_identity", _QualifiedEco2505Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2505Name("@id")),
     ]
 
     _props = [
-        ("ExtendedMIRecordReference", "mi_process_reference", "MIProcessReference"),
-        ("UnittedValue", "quantity", "Quantity"),
-        ("Location", "location", "Location"),
+        ("ExtendedMIRecordReference", "mi_process_reference", _QualifiedEco2505Name("MIProcessReference")),
+        ("UnittedValue", "quantity", _QualifiedEco2505Name("Quantity")),
+        ("Location", "location", _QualifiedEco2505Name("Location")),
     ]
 
     _list_props = [
         (
             "TransportStage",
             "transport_phase",
-            "TransportPhase",
-            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
-            "TransportStage",
+            _QualifiedEco2505Name("TransportPhase"),
+            _QualifiedEco2505Name("TransportStage"),
         ),
     ]
 
@@ -582,44 +600,45 @@ class Process(BaseType2505):
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        dimension_type_obj = bom_reader.get_field(Process, obj, "DimensionType")
+        dimension_type_ref = _QualifiedEco2505Name("DimensionType")
+        dimension_type_obj = bom_reader.get_field(obj, dimension_type_ref)
         props["dimension_type"] = DimensionType.from_string(dimension_type_obj)
         return props
 
     def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
 
-        dimension_field_name = bom_writer._get_qualified_name(self, "DimensionType")
+        dimension_type_ref = _QualifiedEco2505Name("DimensionType")
+        dimension_field_name = bom_writer._generate_contextual_qualified_name(dimension_type_ref)
         obj[dimension_field_name] = self.dimension_type.to_string()
 
 
-@dataclass
+@dataclass(eq=False)
 class Material(BaseType2505):
     """
     A Material within a part or semi-finished part. The material is stored in the Database.
     """
 
     _simple_values = [
-        ("percentage", "Percentage"),
-        ("identity", "Identity"),
-        ("name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("percentage", _QualifiedEco2505Name("Percentage")),
+        ("identity", _QualifiedEco2505Name("Identity")),
+        ("name", _QualifiedEco2505Name("Name")),
+        ("external_identity", _QualifiedEco2505Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2505Name("@id")),
     ]
 
     _props = [
-        ("UnittedValue", "mass", "Mass"),
-        ("ExtendedMIRecordReference", "mi_material_reference", "MIMaterialReference"),
+        ("ExtendedMIRecordReference", "mi_material_reference", _QualifiedEco2505Name("MIMaterialReference")),
+        ("UnittedValue", "mass", _QualifiedEco2505Name("Mass")),
     ]
 
     _list_props = [
-        ("Process", "processes", "Processes", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Process"),
+        ("Process", "processes", _QualifiedEco2505Name("Processes"), _QualifiedEco2505Name("Process")),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
-            "EndOfLifeFates",
-            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
-            "EndOfLifeFate",
+            _QualifiedEco2505Name("EndOfLifeFates"),
+            _QualifiedEco2505Name("EndOfLifeFate"),
         ),
     ]
     mi_material_reference: ExtendedMIRecordReference
@@ -662,77 +681,78 @@ class Material(BaseType2505):
     def _process_custom_fields(cls, obj: Dict, bom_reader: _BoMReader) -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
 
-        recycle_content_obj = bom_reader.get_field(Material, obj, "RecycleContent")
+        recycle_content_ref = _QualifiedEco2505Name("RecycleContent")
+        recycle_content_obj = bom_reader.get_field(obj, recycle_content_ref)
         if recycle_content_obj is not None:
             # TODO support recycle content (issue #95)
             # typical_obj = bom_reader.get_field(Material, recycle_content_obj, "Typical")
             # if typical_obj is not None:
             #     props["recycle_content_is_typical"] = typical_obj
-            percentage_obj = bom_reader.get_field(Material, recycle_content_obj, "Percentage")
+            percentage_ref = _QualifiedEco2505Name("Percentage")
+            percentage_obj = bom_reader.get_field(recycle_content_obj, percentage_ref)
             if percentage_obj is not None:
                 props["recycle_content_percentage"] = percentage_obj
         return props
 
     def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
-        recycle_content_name = bom_writer._get_qualified_name(self, "RecycleContent")
+        recycle_content_ref = _QualifiedEco2505Name("RecycleContent")
+        recycle_content_name = bom_writer._generate_contextual_qualified_name(recycle_content_ref)
         recycle_element = {}
         # TODO support recycle content (issue #95)
         # if self.recycle_content_is_typical is not None:
         #     typical_name = bom_writer._get_qualified_name(self, "Typical")
         #     recycle_element[typical_name] = self.recycle_content_is_typical
         if self.recycle_content_percentage is not None:
-            percentage_name = bom_writer._get_qualified_name(self, "Percentage")
+            percentage_ref = _QualifiedEco2505Name("Percentage")
+            percentage_name = bom_writer._generate_contextual_qualified_name(percentage_ref)
             recycle_element[percentage_name] = self.recycle_content_percentage
             obj[recycle_content_name] = recycle_element
 
 
-@dataclass
+@dataclass(eq=False)
 class Part(BaseType2505):
     """
     A single part which may or may not be stored in the MI Database.
     """
 
     _props = [
-        ("UnittedValue", "quantity", "Quantity"),
-        ("UnittedValue", "mass_per_unit_of_measure", "MassPerUom"),
-        ("UnittedValue", "volume_per_unit_of_measure", "VolumePerUom"),
-        ("ExtendedMIRecordReference", "mi_part_reference", "MIPartReference"),
-        ("Location", "location", "Location"),
+        ("UnittedValue", "quantity", _QualifiedEco2505Name("Quantity")),
+        ("UnittedValue", "mass_per_unit_of_measure", _QualifiedEco2505Name("MassPerUom")),
+        ("UnittedValue", "volume_per_unit_of_measure", _QualifiedEco2505Name("VolumePerUom")),
+        ("ExtendedMIRecordReference", "mi_part_reference", _QualifiedEco2505Name("MIPartReference")),
+        ("Location", "location", _QualifiedEco2505Name("Location")),
     ]
 
     _simple_values = [
-        ("part_number", "PartNumber"),
-        ("part_name", "Name"),
-        ("external_identity", "ExternalIdentity"),
-        ("internal_id", "@id"),
+        ("part_number", _QualifiedEco2505Name("PartNumber")),
+        ("part_name", _QualifiedEco2505Name("Name")),
+        ("external_identity", _QualifiedEco2505Name("ExternalIdentity")),
+        ("internal_id", _QualifiedEco2505Name("@id")),
     ]
 
     _list_props = [
-        ("Part", "components", "Components", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Part"),
+        ("Part", "components", _QualifiedEco2505Name("Components"), _QualifiedEco2505Name("Part")),
         (
             "Specification",
             "specifications",
-            "Specifications",
-            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
-            "Specification",
+            _QualifiedEco2505Name("Specifications"),
+            _QualifiedEco2505Name("Specification"),
         ),
-        ("Material", "materials", "Materials", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Material"),
-        ("Substance", "substances", "Substances", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Substance"),
-        ("Process", "processes", "Processes", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Process"),
+        ("Material", "materials", _QualifiedEco2505Name("Materials"), _QualifiedEco2505Name("Material")),
+        ("Substance", "substances", _QualifiedEco2505Name("Substances"), _QualifiedEco2505Name("Substance")),
+        ("Process", "processes", _QualifiedEco2505Name("Processes"), _QualifiedEco2505Name("Process")),
         (
             "EndOfLifeFate",
             "end_of_life_fates",
-            "EndOfLifeFates",
-            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
-            "EndOfLifeFate",
+            _QualifiedEco2505Name("EndOfLifeFates"),
+            _QualifiedEco2505Name("EndOfLifeFate"),
         ),
         (
             "TransportStage",
             "transport_phase",
-            "TransportPhase",
-            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
-            "TransportStage",
+            _QualifiedEco2505Name("TransportPhase"),
+            _QualifiedEco2505Name("TransportStage"),
         ),
     ]
 
@@ -806,11 +826,11 @@ class Part(BaseType2505):
         # non_mi_part_ref_obj = bom_reader.get_field(Part, obj, "NonMIPartReference")
         # if non_mi_part_ref_obj is not None:
         #     props["non_mi_part_reference"] = non_mi_part_ref_obj
-        rohs_exemptions_obj = bom_reader.get_field(Part, obj, "RohsExemptions")
+        rohs_exemptions_ref = _QualifiedEco2505Name("RohsExemptions")
+        rohs_exemptions_obj = bom_reader.get_field(obj, rohs_exemptions_ref)
         if rohs_exemptions_obj is not None:
-            rohs_exemption_obj = bom_reader.get_field(
-                Part, rohs_exemptions_obj, "RohsExemption", "http://www.grantadesign.com/25/05/BillOfMaterialsEco"
-            )
+            rohs_exemption_ref = _QualifiedEco2505Name("RohsExemption")
+            rohs_exemption_obj = bom_reader.get_field(rohs_exemptions_obj, rohs_exemption_ref)
             if rohs_exemption_obj is not None:
                 props["rohs_exemptions"] = rohs_exemption_obj
         return props
@@ -822,13 +842,15 @@ class Part(BaseType2505):
         #     non_mi_field_name = bom_writer._get_qualified_name(self, "NonMIPartReference")
         #     obj[non_mi_field_name] = self.non_mi_part_reference
         if len(self.rohs_exemptions) > 0:
-            rohs_exemptions_field_name = bom_writer._get_qualified_name(self, "RohsExemptions")
-            rohs_exemption_field_name = bom_writer._get_qualified_name(self, "RohsExemption")
+            rohs_exemptions_ref = _QualifiedEco2505Name("RohsExemptions")
+            rohs_exemptions_field_name = bom_writer._generate_contextual_qualified_name(rohs_exemptions_ref)
+            rohs_exemption_ref = _QualifiedEco2505Name("RohsExemption")
+            rohs_exemption_field_name = bom_writer._generate_contextual_qualified_name(rohs_exemption_ref)
             rohs_exemptions = {rohs_exemption_field_name: self.rohs_exemptions}
             obj[rohs_exemptions_field_name] = rohs_exemptions
 
 
-# @dataclass
+# @dataclass(eq=False)
 # class AnnotationSource(BaseType2505):
 #     """
 #     An element indicating the source of annotations in the BoM. Each source may be
@@ -868,7 +890,7 @@ class Part(BaseType2505):
 #             obj[data_field_name] = self.data
 #
 #
-# @dataclass
+# @dataclass(eq=False)
 # class Annotation(BaseType2505):
 #     """
 #     An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
@@ -901,26 +923,25 @@ class Part(BaseType2505):
 #     of the annotation. If absent, no source information is provided."""
 
 
-@dataclass
+@dataclass(eq=False)
 class BillOfMaterials(BaseType2505):
     """
     Type representing the root Bill of Materials object.
     """
 
-    _simple_values = [("internal_id", "@id")]
+    _simple_values = [("internal_id", _QualifiedEco2505Name("@id"))]
     _props = [
-        ("UsePhase", "use_phase", "UsePhase"),
-        ("Location", "location", "Location"),
-        ("BoMDetails", "notes", "Notes"),
+        ("UsePhase", "use_phase", _QualifiedEco2505Name("UsePhase")),
+        ("Location", "location", _QualifiedEco2505Name("Location")),
+        ("BoMDetails", "notes", _QualifiedEco2505Name("Notes")),
     ]
     _list_props = [
-        ("Part", "components", "Components", "http://www.grantadesign.com/25/05/BillOfMaterialsEco", "Part"),
+        ("Part", "components", _QualifiedEco2505Name("Components"), _QualifiedEco2505Name("Part")),
         (
             "TransportStage",
             "transport_phase",
-            "TransportPhase",
-            "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
-            "TransportStage",
+            _QualifiedEco2505Name("TransportPhase"),
+            _QualifiedEco2505Name("TransportStage"),
         ),
     ]
 

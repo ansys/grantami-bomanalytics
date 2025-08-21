@@ -184,15 +184,22 @@ class MIAttributeReference(BaseTypeGbt1205):
         super()._write_custom_fields(obj, bom_writer)
         name_dict: Dict[str, Any] = {}
         if self.table_reference is not None:
-            name_dict[bom_writer._get_qualified_name(self, "table")] = bom_writer._convert_to_dict(self.table_reference)
+            table_ref = _QualifiedGbt1205Name("table")
+            name_dict[bom_writer._generate_contextual_qualified_name(table_ref)] = bom_writer._convert_to_dict(
+                self.table_reference
+            )
         if self.attribute_name is not None:
-            name_dict[bom_writer._get_qualified_name(self, "attributeName")] = self.attribute_name
+            attribute_name_ref = _QualifiedGbt1205Name("attributeName")
+            name_dict[bom_writer._generate_contextual_qualified_name(attribute_name_ref)] = self.attribute_name
         if self.pseudo is not None:
-            name_dict[bom_writer._get_qualified_name(self, "pseudo")] = self.pseudo.to_string()
+            pseudo_ref = _QualifiedGbt1205Name("pseudo")
+            name_dict[bom_writer._generate_contextual_qualified_name(pseudo_ref)] = self.pseudo.to_string()
         if self.is_standard is not None:
-            name_dict[bom_writer._get_qualified_name(self, "@isStandard")] = self.is_standard
+            is_standard_ref = _QualifiedGbt1205Name("@isStandard")
+            name_dict[bom_writer._generate_contextual_qualified_name(is_standard_ref)] = self.is_standard
         if name_dict != {}:
-            obj[bom_writer._get_qualified_name(self, "name")] = name_dict
+            name_ref = _QualifiedGbt1205Name("name")
+            obj[bom_writer._generate_contextual_qualified_name(name_ref)] = name_dict
 
 
 @dataclass
@@ -273,17 +280,25 @@ class MIRecordReference(BaseTypeGbt1205):
         # than the serialization ignoring a populated value.
         identity_dict = {}
         if self.record_history_identity is not None:
-            identity_dict[bom_writer._get_qualified_name(self, "recordHistoryIdentity")] = self.record_history_identity
+            record_history_identity_ref = _QualifiedGbt1205Name("recordHistoryIdentity")
+            identity_dict[bom_writer._generate_contextual_qualified_name(record_history_identity_ref)] = (
+                self.record_history_identity
+            )
         if self.record_version_number is not None:
-            identity_dict[bom_writer._get_qualified_name(self, "version")] = self.record_version_number
+            version_ref = _QualifiedGbt1205Name("version")
+            identity_dict[bom_writer._generate_contextual_qualified_name(version_ref)] = self.record_version_number
         if identity_dict:
-            obj[bom_writer._get_qualified_name(self, "identity")] = identity_dict
+            identity_ref = _QualifiedGbt1205Name("identity")
+            obj[bom_writer._generate_contextual_qualified_name(identity_ref)] = identity_dict
         lookup_dict: Dict[str, Any] = {}
         if self.lookup_value is not None:
-            lookup_dict[bom_writer._get_qualified_name(self, "attributeValue")] = self.lookup_value
+            attr_val_ref = _QualifiedGbt1205Name("attributeValue")
+            lookup_dict[bom_writer._generate_contextual_qualified_name(attr_val_ref)] = self.lookup_value
         if self.lookup_attribute_reference is not None:
-            lookup_dict[bom_writer._get_qualified_name(self, "attributeReference")] = bom_writer._convert_to_dict(
+            attr_ref_ref = _QualifiedGbt1205Name("attributeReference")
+            lookup_dict[bom_writer._generate_contextual_qualified_name(attr_ref_ref)] = bom_writer._convert_to_dict(
                 cast(BaseType, self.lookup_attribute_reference)
             )
         if lookup_dict:
-            obj[bom_writer._get_qualified_name(self, "lookupValue")] = lookup_dict
+            lookup_ref = _QualifiedGbt1205Name("lookupValue")
+            obj[bom_writer._generate_contextual_qualified_name(lookup_ref)] = lookup_dict

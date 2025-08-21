@@ -276,11 +276,14 @@ class StaticMode(BaseType2412):
 
     def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
+        hours_ref = _QualifiedEco2412Name("HoursUsedPerDay")
+        days_ref = _QualifiedEco2412Name("DaysUsedPerYear")
         usage_dict = {
-            bom_writer._get_qualified_name(self, "DaysUsedPerYear"): self.days_used_per_year,
-            bom_writer._get_qualified_name(self, "HoursUsedPerDay"): self.hours_used_per_day,
+            bom_writer._generate_contextual_qualified_name(days_ref): self.days_used_per_year,
+            bom_writer._generate_contextual_qualified_name(hours_ref): self.hours_used_per_day,
         }
-        obj[bom_writer._get_qualified_name(self, "Usage")] = usage_dict
+        usage_ref = _QualifiedEco2412Name("Usage")
+        obj[bom_writer._generate_contextual_qualified_name(usage_ref)] = usage_dict
 
 
 @dataclass
@@ -505,7 +508,8 @@ class Substance(BaseType2412):
         super()._write_custom_fields(obj, bom_writer)
 
         if self.category is not None:
-            category_field_name = bom_writer._get_qualified_name(self, "Category")
+            category_ref = _QualifiedEco2412Name("Category")
+            category_field_name = bom_writer._generate_contextual_qualified_name(category_ref)
             obj[category_field_name] = self.category.to_string()
 
 
@@ -584,7 +588,8 @@ class Process(BaseType2412):
     def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
 
-        dimension_field_name = bom_writer._get_qualified_name(self, "DimensionType")
+        dimension_type_ref = _QualifiedEco2412Name("DimensionType")
+        dimension_field_name = bom_writer._generate_contextual_qualified_name(dimension_type_ref)
         obj[dimension_field_name] = self.dimension_type.to_string()
 
 
@@ -671,14 +676,16 @@ class Material(BaseType2412):
 
     def _write_custom_fields(self, obj: Dict, bom_writer: _BoMWriter) -> None:
         super()._write_custom_fields(obj, bom_writer)
-        recycle_content_name = bom_writer._get_qualified_name(self, "RecycleContent")
+        recycle_content_ref = _QualifiedEco2412Name("RecycleContent")
+        recycle_content_name = bom_writer._generate_contextual_qualified_name(recycle_content_ref)
         recycle_element = {}
         # TODO support recycle content (issue #95)
         # if self.recycle_content_is_typical is not None:
         #     typical_name = bom_writer._get_qualified_name(self, "Typical")
         #     recycle_element[typical_name] = self.recycle_content_is_typical
         if self.recycle_content_percentage is not None:
-            percentage_name = bom_writer._get_qualified_name(self, "Percentage")
+            percentage_ref = _QualifiedEco2412Name("Percentage")
+            percentage_name = bom_writer._generate_contextual_qualified_name(percentage_ref)
             recycle_element[percentage_name] = self.recycle_content_percentage
             obj[recycle_content_name] = recycle_element
 
@@ -815,8 +822,10 @@ class Part(BaseType2412):
         #     non_mi_field_name = bom_writer._get_qualified_name(self, "NonMIPartReference")
         #     obj[non_mi_field_name] = self.non_mi_part_reference
         if len(self.rohs_exemptions) > 0:
-            rohs_exemptions_field_name = bom_writer._get_qualified_name(self, "RohsExemptions")
-            rohs_exemption_field_name = bom_writer._get_qualified_name(self, "RohsExemption")
+            rohs_exemptions_ref = _QualifiedEco2412Name("RohsExemptions")
+            rohs_exemptions_field_name = bom_writer._generate_contextual_qualified_name(rohs_exemptions_ref)
+            rohs_exemption_ref = _QualifiedEco2412Name("RohsExemption")
+            rohs_exemption_field_name = bom_writer._generate_contextual_qualified_name(rohs_exemption_ref)
             rohs_exemptions = {rohs_exemption_field_name: self.rohs_exemptions}
             obj[rohs_exemptions_field_name] = rohs_exemptions
 

@@ -24,7 +24,7 @@ from abc import ABC
 from difflib import context_diff
 from itertools import product
 import re
-from typing import Any, Dict, Literal
+from typing import Any, Dict, Literal, Optional
 import uuid
 
 from lxml import etree
@@ -55,9 +55,9 @@ class TestRoundTripBoMs:
         deserialized_bom = bom_handler.load_bom_from_text(input_bom, allow_unsupported_data)
 
         rendered_bom = bom_handler.dump_bom(deserialized_bom)
-        deserialized_bom_roundtriped = bom_handler.load_bom_from_text(rendered_bom)
+        deserialized_bom_roundtripped = bom_handler.load_bom_from_text(rendered_bom)
 
-        assert deserialized_bom == deserialized_bom_roundtriped
+        assert deserialized_bom == deserialized_bom_roundtripped
 
     @pytest.mark.parametrize(
         "input_bom_key",
@@ -73,9 +73,9 @@ class TestRoundTripBoMs:
         deserialized_bom = bom_handler.load_bom_from_text(input_bom, True)
 
         rendered_bom = bom_handler.dump_bom(deserialized_bom)
-        deserialized_bom_roundtriped = bom_handler.load_bom_from_text(rendered_bom)
+        deserialized_bom_roundtripped = bom_handler.load_bom_from_text(rendered_bom)
 
-        assert deserialized_bom == deserialized_bom_roundtriped
+        assert deserialized_bom == deserialized_bom_roundtripped
 
     @pytest.mark.parametrize(
         "input_bom_key",
@@ -367,8 +367,20 @@ def test_empty_bom(request: pytest.FixtureRequest, bom_fixture_name: str):
 
 
 class BoMFactory:
-    def __init__(self, bom_module: Literal[eco2505] | Literal[eco2412] | Literal[eco2301]):
+    def __init__(
+        self,
+        bom_module: Literal[eco2505] | Literal[eco2412] | Literal[eco2301],
+        compatibility_level: Optional[Literal[eco2505] | Literal[eco2412] | Literal[eco2301]] = None,
+    ):
         self.bom_module = bom_module
+        self.compatibility_level = compatibility_level if compatibility_level else bom_module
+
+        self._include_2505_extended_references = self.bom_module == eco2505 and self.compatibility_level == eco2505
+        self._include_2412_transport_and_location = self.bom_module in [
+            eco2412,
+            eco2505,
+        ] and self.compatibility_level in [eco2412, eco2505]
+
         self._int = 0
         self._float = 0.1
 
@@ -386,9 +398,10 @@ class BoMFactory:
     def make_location(self) -> eco2301.Location | eco2412.Location | eco2505.Location:
         id_int = self.get_int()
         return self.bom_module.Location(
-            mi_location_reference=self.bom_module.MIRecordReference(
-                db_key=f"Location{id_int}RefDbKey",
-                record_guid=self.get_guid(),
+            mi_location_reference=(
+                self.make_record_reference(f"Location{id_int}Ref")
+                if not self._include_2505_extended_references
+                else self.make_extended_reference(f"Location{id_int}Ref")
             ),
             identity=f"Location{id_int}Identity",
             name=f"Location{id_int}Name",
@@ -399,17 +412,59 @@ class BoMFactory:
     def make_transport_stage(self) -> eco2301.TransportStage | eco2412.TransportStage | eco2505.TransportStage:
         id_int = self.get_int()
         return self.bom_module.TransportStage(
-            mi_transport_reference=self.bom_module.MIRecordReference(
-                db_key=f"Transport{id_int}RefDbKey",
-                record_guid=self.get_guid(),
+            mi_transport_reference=(
+                self.make_record_reference(f"Transport{id_int}Ref")
+                if not self._include_2505_extended_references
+                else self.make_extended_reference(f"Transport{id_int}Ref")
             ),
             name=f"Transport{id_int}Name",
             distance=self.bom_module.UnittedValue(self.get_float(), f"Transport{id_int}DistanceUnit"),
             internal_id=f"Transport{id_int}Id",
         )
 
+    def make_record_reference_kwargs(
+        self,
+        identifier_stem: str,
+    ) -> dict[str, str | int | float | gbt1205.MIAttributeReference]:
+        return dict(
+            db_key=f"{identifier_stem}DbKey",
+            record_guid=self.get_guid(),
+            record_history_guid=self.get_guid(),
+            record_version_number=self.get_int(),
+            record_history_identity=self.get_int(),
+            record_uid=f"{identifier_stem}RecordUID",
+            lookup_value=f"{identifier_stem}LookupValue",
+            lookup_attribute_reference=gbt1205.MIAttributeReference(
+                db_key=f"{identifier_stem}LookupRefDbKey",
+                # Choice attribute_name | attribute_identity | pseudo
+                attribute_name=f"{identifier_stem}LookupRefAttributeName",
+                table_reference=gbt1205.PartialTableReference(
+                    table_identity=self.get_int(),
+                    table_guid=self.get_guid(),
+                    table_name=f"{identifier_stem}LookupRefTableRefName",
+                ),
+                is_standard=False,
+            ),
+        )
+
+    def make_record_reference(self, identifier_stem: str = "") -> gbt1205.MIRecordReference:
+        return self.bom_module.MIRecordReference(
+            **self.make_record_reference_kwargs(identifier_stem),
+        )
+
+    def make_extended_reference(self, identifier_stem: str = "") -> eco2505.ExtendedMIRecordReference:
+        assert self.bom_module == eco2505
+        return self.bom_module.ExtendedMIRecordReference(
+            **self.make_record_reference_kwargs(identifier_stem),
+            equivalent_references=[
+                self.make_record_reference(f"{identifier_stem}ForeignRecord1"),
+                self.make_record_reference(f"{identifier_stem}ForeignRecord2"),
+            ],
+        )
+
     def make_full_bom(
-        self, use_phase_utility_kwarg, eco2301_compatible=False
+        self,
+        use_phase_utility_kwarg,
     ) -> eco2301.BillOfMaterials | eco2412.BillOfMaterials | eco2505.BillOfMaterials:
         # Very invalid BoM for any query, but attempts to exercise all fields of all types
         # TODO add non mi part reference
@@ -432,36 +487,17 @@ class BoMFactory:
                         self.get_float(), "RootPartVolumePerUnitOfMeasure"
                     ),
                     # Exercise as many attributes as possible for references
-                    mi_part_reference=self.bom_module.MIRecordReference(
-                        db_key="RootPartRefDbKey",
-                        record_guid=self.get_guid(),
-                        record_history_guid=self.get_guid(),
-                        record_version_number=self.get_int(),
-                        record_history_identity=self.get_int(),
-                        record_uid="RootPartRefRecordUID",
-                        lookup_value="RootPartRefLookupValue",
-                        lookup_attribute_reference=gbt1205.MIAttributeReference(
-                            db_key="RootPartRefLookupRefDbKey",
-                            # Choice attribute_name | attribute_identity | pseudo
-                            attribute_name="RootPartRefLookupRefAttributeName",
-                            table_reference=gbt1205.PartialTableReference(
-                                table_identity=self.get_int(),
-                                table_guid=self.get_guid(),
-                                table_name="RootPartRefLookupRefTableRefName",
-                            ),
-                            is_standard=False,
-                        ),
+                    mi_part_reference=(
+                        self.make_record_reference("RootPartRef")
+                        if not self._include_2505_extended_references
+                        else self.make_extended_reference("RootPartRef")
                     ),
                     materials=[
                         self.bom_module.Material(
-                            mi_material_reference=self.bom_module.MIRecordReference(
-                                db_key="RootPartMaterial0RefDbKey",
-                                lookup_value="RootPartMaterial0RefLookupValue",
-                                lookup_attribute_reference=gbt1205.MIAttributeReference(
-                                    db_key="RootPartMaterial0RefDbKey",
-                                    # Choice attribute_name | attribute_identity | pseudo
-                                    attribute_identity=self.get_int(),
-                                ),
+                            mi_material_reference=(
+                                self.make_record_reference("RootPartMaterial0")
+                                if not self._include_2505_extended_references
+                                else self.make_extended_reference("RootPartMaterial0")
                             ),
                             # Choice percentage | mass
                             percentage=self.get_float(),
@@ -469,9 +505,10 @@ class BoMFactory:
                             recycle_content_percentage=self.get_float(),
                             end_of_life_fates=[
                                 self.bom_module.EndOfLifeFate(
-                                    mi_end_of_life_reference=self.bom_module.MIRecordReference(
-                                        db_key="RootPartMaterial0EOLFRefDbKey",
-                                        record_guid=self.get_guid(),
+                                    mi_end_of_life_reference=(
+                                        self.make_record_reference("RootPartMaterial0EOLFRef")
+                                        if not self._include_2505_extended_references
+                                        else self.make_extended_reference("RootPartMaterial0EOLFRef")
                                     ),
                                     fraction=self.get_float(),
                                 )
@@ -482,9 +519,10 @@ class BoMFactory:
                             name="RootPartMaterial0Name",
                             processes=[
                                 self.bom_module.Process(  # Process with all fields
-                                    mi_process_reference=self.bom_module.MIRecordReference(
-                                        db_key="RootPartMaterial0Process0RefDbKey",
-                                        record_guid=self.get_guid(),
+                                    mi_process_reference=(
+                                        self.make_record_reference("RootPartMaterial0Process0Ref")
+                                        if not self._include_2505_extended_references
+                                        else self.make_extended_reference("RootPartMaterial0Process0Ref")
                                     ),
                                     identity="RootPartMaterial0Process0Identity",
                                     external_identity="RootPartMaterial0Process0ExternalIdentity",
@@ -500,14 +538,10 @@ class BoMFactory:
                             ],
                         ),
                         self.bom_module.Material(
-                            mi_material_reference=self.bom_module.MIRecordReference(
-                                db_key="RootPartMaterial1RefDbKey",
-                                lookup_value="RootPartMaterial1RefLookupValue",
-                                lookup_attribute_reference=gbt1205.MIAttributeReference(
-                                    db_key="RootPartMaterial0RefDbKey",
-                                    # Choice attribute_name | attribute_identity | pseudo
-                                    pseudo=gbt1205.PseudoAttribute.Name,
-                                ),
+                            mi_material_reference=(
+                                self.make_record_reference("RootPartMaterial1Ref")
+                                if not self._include_2505_extended_references
+                                else self.make_extended_reference("RootPartMaterial1Ref")
                             ),
                             # Choice percentage | mass
                             mass=self.bom_module.UnittedValue(self.get_float(), "RootPartMaterial1MassUnit"),
@@ -517,9 +551,10 @@ class BoMFactory:
                     ],
                     processes=[
                         self.bom_module.Process(  # Minimal process
-                            mi_process_reference=self.bom_module.MIRecordReference(
-                                db_key="RootPartProcess0RefDbKey",
-                                record_guid=self.get_guid(),
+                            mi_process_reference=(
+                                self.make_record_reference("RootPartProcess0Ref")
+                                if not self._include_2505_extended_references
+                                else self.make_extended_reference("RootPartProcess0Ref")
                             ),
                             dimension_type=self.bom_module.DimensionType.Mass,
                             # Choice quantity|percentage: another process defines quantity.
@@ -528,9 +563,10 @@ class BoMFactory:
                     ],
                     specifications=[
                         self.bom_module.Specification(
-                            mi_specification_reference=self.bom_module.MIRecordReference(
-                                db_key="RootPartSpec0RefDbKey",
-                                record_guid=self.get_guid(),
+                            mi_specification_reference=(
+                                self.make_record_reference("RootPartSpec0Ref")
+                                if not self._include_2505_extended_references
+                                else self.make_extended_reference("RootPartSpec0Ref")
                             ),
                             quantity=self.bom_module.UnittedValue(self.get_float(), "RootPartSpec0QuantityUnit"),
                             identity="RootPartSpec0Identity",
@@ -541,9 +577,10 @@ class BoMFactory:
                     ],
                     substances=[
                         self.bom_module.Substance(
-                            mi_substance_reference=self.bom_module.MIRecordReference(
-                                db_key="RootPartSubstance0RefDbKey",
-                                record_guid=self.get_guid(),
+                            mi_substance_reference=(
+                                self.make_record_reference("RootPartSubstance0Ref")
+                                if not self._include_2505_extended_references
+                                else self.make_extended_reference("RootPartSubstance0Ref")
                             ),
                             percentage=self.get_float(),
                             category=self.bom_module.Category.Incorporated,
@@ -556,9 +593,10 @@ class BoMFactory:
                     rohs_exemptions=["RootPartRohsExemption0" "RootPartRohsExemption1"],
                     end_of_life_fates=[
                         self.bom_module.EndOfLifeFate(
-                            mi_end_of_life_reference=self.bom_module.MIRecordReference(
-                                db_key="RootPartEOLFRefDbKey",
-                                record_guid=self.get_guid(),
+                            mi_end_of_life_reference=(
+                                self.make_record_reference("RootPartEOLFRef")
+                                if not self._include_2505_extended_references
+                                else self.make_extended_reference("RootPartEOLFRef")
                             ),
                             fraction=self.get_float(),
                         )
@@ -579,15 +617,17 @@ class BoMFactory:
                     ),
                 ),
                 electricity_mix=self.bom_module.ElectricityMix(
-                    mi_region_reference=self.bom_module.MIRecordReference(
-                        db_key="UsePhaseElectricityMixRefDbKey",
-                        record_guid=self.get_guid(),
-                    )
+                    mi_region_reference=(
+                        self.make_record_reference("UsePhaseElectricityMixRef")
+                        if not self._include_2505_extended_references
+                        else self.make_extended_reference("UsePhaseElectricityMixRef")
+                    ),
                 ),
                 mobile_mode=self.bom_module.MobileMode(
-                    mi_transport_reference=self.bom_module.MIRecordReference(
-                        db_key="UsePhaseMobileModeRefDbKey",
-                        record_guid=self.get_guid(),
+                    mi_transport_reference=(
+                        self.make_record_reference("UsePhaseMobileModeRef")
+                        if not self._include_2505_extended_references
+                        else self.make_extended_reference("UsePhaseMobileModeRef")
                     ),
                     days_used_per_year=self.get_float(),
                     distance_travelled_per_day=self.bom_module.UnittedValue(
@@ -596,9 +636,10 @@ class BoMFactory:
                     ),
                 ),
                 static_mode=self.bom_module.StaticMode(
-                    mi_energy_conversion_reference=self.bom_module.MIRecordReference(
-                        db_key="UsePhaseStaticModeRefDbKey",
-                        record_guid=self.get_guid(),
+                    mi_energy_conversion_reference=(
+                        self.make_record_reference("UsePhaseStaticModeRef")
+                        if not self._include_2505_extended_references
+                        else self.make_extended_reference("UsePhaseStaticModeRef")
                     ),
                     days_used_per_year=self.get_float(),
                     hours_used_per_day=self.get_float(),
@@ -631,8 +672,7 @@ class BoMFactory:
             # ],
             internal_id="BomId",
         )
-        # Add additional eco24/12+ capabilities
-        if self.bom_module in [eco2412, eco2505] and not eco2301_compatible:
+        if self._include_2412_transport_and_location:
             bom.components[0].transport_phase = [
                 self.make_transport_stage(),
                 self.make_transport_stage(),
@@ -727,7 +767,9 @@ class TestBoMConversion:
     def test_compatible_bom_upgrade_crossgrade_downgrade_succeeds(
         self, source_bom_types, target_bom_types, use_phase_utility_kwarg, allow_unsupported_data
     ):
-        source_bom = BoMFactory(source_bom_types).make_full_bom(use_phase_utility_kwarg, eco2301_compatible=True)
+        source_bom = BoMFactory(source_bom_types, compatibility_level=target_bom_types).make_full_bom(
+            use_phase_utility_kwarg
+        )
         target_bom = self.bom_handler.convert(source_bom, target_bom_types.BillOfMaterials, allow_unsupported_data)
 
         assert isinstance(target_bom, target_bom_types.BillOfMaterials)
@@ -739,20 +781,53 @@ class TestBoMConversion:
             target_bom_types.BillOfMaterials.namespace,
         )
 
-    def test_full_bom_downgrade_lax_succeeds(self, use_phase_utility_kwarg):
-        source_bom = BoMFactory(eco2412).make_full_bom(use_phase_utility_kwarg)
-        target_bom = self.bom_handler.convert(source_bom, eco2301.BillOfMaterials, allow_unsupported_data=True)
-        assert isinstance(target_bom, eco2301.BillOfMaterials)
+    @pytest.mark.parametrize(
+        "bom_pairs",
+        [
+            (eco2505, eco2301),
+            (eco2505, eco2412),
+            (eco2412, eco2301),
+        ],
+    )
+    def test_full_bom_downgrade_lax_succeeds(self, bom_pairs, use_phase_utility_kwarg):
+        source_bom_types, target_bom_types = bom_pairs
+        source_bom = BoMFactory(source_bom_types).make_full_bom(use_phase_utility_kwarg)
+        target_bom = self.bom_handler.convert(source_bom, target_bom_types.BillOfMaterials, allow_unsupported_data=True)
+        assert isinstance(target_bom, target_bom_types.BillOfMaterials)
 
-    def test_full_bom_downgrade_strict_raises_exception(self, use_phase_utility_kwarg):
-        source_bom = BoMFactory(eco2412).make_full_bom(use_phase_utility_kwarg)
+    # The numbers may seem illogical because not all failures are always reported. The comparison will 'give up' if it
+    # encounters a failure, and won't check to see if there are any further failures
+    # For example, the downgrade to 23/01 fails at the 'Part' element, because it contains transport and location
+    # information which cannot be deserialized.
+    # However, the downgrade to 24/12 fails at each individual record reference within the part, because it's an
+    # ExtendedMIRecordReference object which cannot be deserialized.
+    # As a result, there are more failures for the 24/12 because all the failures that would have occurred for 23/01
+    # were not enumerated.
+    @pytest.mark.parametrize(
+        ["bom_pairs", "total_error_count"],
+        [
+            ((eco2505, eco2301), 20),
+            ((eco2505, eco2412), 22),
+            ((eco2412, eco2301), 5),
+        ],
+    )
+    def test_full_bom_downgrade_strict_raises_exception(self, bom_pairs, total_error_count, use_phase_utility_kwarg):
+        source_bom_types, target_bom_types = bom_pairs
+        source_bom = BoMFactory(source_bom_types).make_full_bom(use_phase_utility_kwarg)
         bom_handler = BoMHandler()
         with pytest.raises(ValueError, match="The following fields in the provided BoM could not be deserialized") as e:
-            bom_handler.convert(source_bom, eco2301.BillOfMaterials, allow_unsupported_data=False)
+            bom_handler.convert(source_bom, target_bom_types.BillOfMaterials, allow_unsupported_data=False)
         lines = set(str(e.value).splitlines())
-        assert len(lines) == 5
+        assert len(lines) == total_error_count
 
-        # Examine individual error cases
+        # Example individual error cases for downgrade to 24/12
+        parent_error = "MIRecordReference"
+        field_error = "EquivalentReferences"
+        for line in lines.copy():
+            if parent_error in line and field_error in line:
+                lines.remove(line)
+
+        # Examine individual error cases for downgrade to 23/01
         parent_errors = ["Process", "Part"]
         field_errors = ["Location", "Transport"]
         errors = product(parent_errors, field_errors)
@@ -760,7 +835,7 @@ class TestBoMConversion:
             for line in lines.copy():
                 if parent_error in line and field_error in line:
                     lines.remove(line)
-                    break
+
         assert len(lines) == 1
 
     def test_invalid_target_raises_exception(self, use_phase_utility_kwarg):

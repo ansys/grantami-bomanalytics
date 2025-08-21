@@ -22,7 +22,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, fields, is_dataclass
 from typing import Any, Dict, Iterable, List, Protocol, Tuple
 
 
@@ -117,3 +117,36 @@ class BaseType(HasNamespace, SupportsCustomFields):
         bom_writer: BaseBoMWriter
             Helper object that maintains information about the global namespaces.
         """
+
+    def __eq__(self, other: object) -> bool:
+        """
+        Custom __eq__ implementation that performs an XML type compatible equality comparison.
+
+        * If other is not an instance of BaseType or is not a dataclass, return False
+        * If this and other are not related, return False
+        * If there are fields on this that aren't on other, check they are all false-y
+        * If there are fields on other that aren't on this, check they are all false-y
+        * Check the intersection of the fields are equal (recursively calls this method)
+        """
+        if not isinstance(other, BaseType) or not is_dataclass(other):
+            return False
+
+        # Basic check for some kind of shared class parent
+        # TODO This will produce false negatives for complex type hierarchies
+        if not isinstance(self, type(other)) and not isinstance(other, type(self)):
+            return False
+
+        this_fields = {f.name for f in fields(self)}
+        other_fields = {f.name for f in fields(other)}
+
+        additional_this_fields = this_fields - other_fields
+        if any(getattr(self, field) for field in additional_this_fields):
+            return False
+
+        additional_other_fields = other_fields - this_fields
+        if any(getattr(self, field) for field in additional_other_fields):
+            return False
+
+        # Compare the union of the fields between the two classes and return what's left
+        common_fields = this_fields.intersection(other_fields)
+        return all(getattr(self, field) == getattr(other, field) for field in common_fields)

@@ -94,7 +94,7 @@ class PseudoAttribute(Enum):
         return f"{self.name[0].lower()}{self.name[1:]}"
 
 
-@dataclass(eq=False)
+@dataclass
 class PartialTableReference(BaseTypeGbt1205):
     """
     A type that partially identifies a Table, but does not specify the MI Database. Usually, just one of the several
@@ -119,7 +119,7 @@ class PartialTableReference(BaseTypeGbt1205):
     safe way to refer to a table if the MI Database supports multiple locales."""
 
 
-@dataclass(eq=False)
+@dataclass
 class MIAttributeReference(BaseTypeGbt1205):
     """A type that allows identification of a particular Attribute in an MI Database. This may be done directly by
     specifying the Identity of the Attribute, or indirectly by specifying a lookup that will match (only) the
@@ -202,7 +202,7 @@ class MIAttributeReference(BaseTypeGbt1205):
             obj[bom_writer._generate_contextual_qualified_name(name_ref)] = name_dict
 
 
-@dataclass(eq=False)
+@dataclass
 class MIRecordReference(BaseTypeGbt1205):
     """A type that allows identification of a particular Record in an
     MI Database. This may be done directly by specifying the Identity or GUID of the Record, or

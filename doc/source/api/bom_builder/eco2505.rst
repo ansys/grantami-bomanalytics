@@ -1,4 +1,4 @@
-.. _ref_grantami_bomanalytics_bom_eco2412:
+.. _ref_grantami_bomanalytics_bom_eco2505:
 
 25/05 XML BoM types
 ===================

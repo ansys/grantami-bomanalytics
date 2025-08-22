@@ -241,34 +241,34 @@ class TestBoMDeserialization:
     # the namespace is sufficient to obtain a valid 23/01, 24/12, or 25/05 BoM.
 
     @pytest.fixture(scope="class")
-    def simple_2301_bom(self):
+    def simple_2301_bom(self) -> eco2301.BillOfMaterials:
         bom_1711 = example_boms["bom-1711"].content
         input_bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
             "http://www.grantadesign.com/23/01/BillOfMaterialsEco",
         )
         bom_handler = BoMHandler()
-        yield bom_handler.load_bom_from_text(input_bom)
+        return bom_handler.load_bom_from_text(input_bom)
 
     @pytest.fixture(scope="class")
-    def simple_2412_bom(self):
+    def simple_2412_bom(self) -> eco2412.BillOfMaterials:
         bom_1711 = example_boms["bom-1711"].content
         input_bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
             "http://www.grantadesign.com/24/12/BillOfMaterialsEco",
         )
         bom_handler = BoMHandler()
-        yield bom_handler.load_bom_from_text(input_bom)
+        return bom_handler.load_bom_from_text(input_bom)
 
     @pytest.fixture(scope="class")
-    def simple_2505_bom(self):
+    def simple_2505_bom(self) -> eco2505.BillOfMaterials:
         bom_1711 = example_boms["bom-1711"].content
         input_bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
             "http://www.grantadesign.com/25/05/BillOfMaterialsEco",
         )
         bom_handler = BoMHandler()
-        yield bom_handler.load_bom_from_text(input_bom)
+        return bom_handler.load_bom_from_text(input_bom)
 
     def get_field(self, obj: eco2301.BaseType, p_path: str) -> Any:
         tokens = p_path.split("/")
@@ -337,21 +337,21 @@ class TestBoMDeserialization:
 
 
 @pytest.fixture
-def empty_2301_bom():
+def empty_2301_bom() -> eco2301.BillOfMaterials:
     return eco2301.BillOfMaterials(
         components=[], transport_phase=[], use_phase=None, location=None, notes=None, internal_id="BomId"
     )
 
 
 @pytest.fixture
-def empty_2412_bom():
+def empty_2412_bom() -> eco2412.BillOfMaterials:
     return eco2412.BillOfMaterials(
         components=[], transport_phase=[], use_phase=None, location=None, notes=None, internal_id="BomId"
     )
 
 
 @pytest.fixture
-def empty_2505_bom():
+def empty_2505_bom() -> eco2505.BillOfMaterials:
     return eco2505.BillOfMaterials(
         components=[], transport_phase=[], use_phase=None, location=None, notes=None, internal_id="BomId"
     )
@@ -472,7 +472,7 @@ class BoMFactory:
 
     def make_bom(
         self,
-        use_phase_utility_kwarg,
+        use_phase_utility_kwarg: str,
     ) -> eco2301.BillOfMaterials | eco2412.BillOfMaterials | eco2505.BillOfMaterials:
         # Very invalid BoM for any query, but attempts to exercise all fields of all types
         # TODO add non mi part reference
@@ -686,7 +686,7 @@ class TestBoMConversion:
     def _bom_handler(self):
         self.bom_handler = BoMHandler()
 
-    def check_object_equality(self, original_obj, converted_obj) -> None:
+    def check_object_equality(self, original_obj: object, converted_obj: object) -> None:
         """
         This method is the equivalent of serializing a BoM to XML and manually switching the namespaces,
         except that instead of relying on the XML element names being invariant across namespaces, we are relying on

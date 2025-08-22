@@ -1,4 +1,4 @@
-<PartsEco xmlns="http://www.grantadesign.com/24/12/BillOfMaterialsEco" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes" id="B0">
+<PartsEco xmlns="http://www.grantadesign.com/25/05/BillOfMaterialsEco" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes" id="B0">
     <Components>
         <Part id="A0">
             <Quantity Unit="Each">2.0</Quantity>
@@ -16,6 +16,16 @@
                             <MISubstanceReference>
                                 <gbt:dbKey>MI_Restricted_Substances</gbt:dbKey>
                                 <gbt:recordHistoryGUID>af1cb650-6db5-49d6-b4a2-0eee9a090207</gbt:recordHistoryGUID>
+                                <EquivalentReferences>
+                                    <EquivalentReference>
+                                        <gbt:dbKey>MI_Other_Database</gbt:dbKey>
+                                        <gbt:recordHistoryGUID>dc31a90e-777b-4ce2-9757-77ef4434d751</gbt:recordHistoryGUID>
+                                    </EquivalentReference>
+                                    <EquivalentReference>
+                                        <gbt:dbKey>MI_Other_Database</gbt:dbKey>
+                                        <gbt:recordHistoryGUID>af2bce24-8d0d-43b7-b966-758a92dd4487</gbt:recordHistoryGUID>
+                                    </EquivalentReference>
+                                </EquivalentReferences>
                             </MISubstanceReference>
                             <Name>Lead oxide</Name>
                         </Substance>

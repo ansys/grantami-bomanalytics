@@ -126,7 +126,7 @@ class Category(Enum):
         return self.name
 
 
-@dataclass(eq=False)
+@dataclass
 class ExtendedMIRecordReference(BaseType2505, MIRecordReference):
     """
     A type extending gbt:MIRecordReference that includes an EquivalentReferences element to hold an arbitrary number
@@ -146,7 +146,7 @@ class ExtendedMIRecordReference(BaseType2505, MIRecordReference):
     """Additional records which link to the analysis material."""
 
 
-@dataclass(eq=False)
+@dataclass
 class EndOfLifeFate(BaseType2505):
     """
     The fate of a material at the end-of-life of the product. For example if a material can be recycled, and what
@@ -164,7 +164,7 @@ class EndOfLifeFate(BaseType2505):
     """Fraction of the total mass or volume of material to which this fate applies."""
 
 
-@dataclass(eq=False)
+@dataclass
 class UnittedValue(BaseType2505):
     """
     A physical quantity with a unit. If provided in an input then the unit must exist within the MI database,
@@ -181,7 +181,7 @@ class UnittedValue(BaseType2505):
     dimensionless."""
 
 
-@dataclass(eq=False)
+@dataclass
 class Location(BaseType2505):
     """
     Defines the manufacturing location for the BoM for use in process calculations.
@@ -212,7 +212,7 @@ class Location(BaseType2505):
     to reference this element."""
 
 
-@dataclass(eq=False)
+@dataclass
 class ElectricityMix(BaseType2505):
     """
     If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of
@@ -231,7 +231,7 @@ class ElectricityMix(BaseType2505):
     """The percentage of electrical power production within the destination country that comes from fossil fuels."""
 
 
-@dataclass(eq=False)
+@dataclass
 class MobileMode(BaseType2505):
     """
     If the product is transported as part of its use then this type contains details about the way in which it is
@@ -254,7 +254,7 @@ class MobileMode(BaseType2505):
     """The distance the product will be transported each day as part of its use."""
 
 
-@dataclass(eq=False)
+@dataclass
 class StaticMode(BaseType2505):
     """
     Specifies the primary energy conversion that occurs during the product's use.
@@ -306,7 +306,7 @@ class StaticMode(BaseType2505):
         obj[bom_writer._generate_contextual_qualified_name(usage_ref)] = usage_dict
 
 
-@dataclass(eq=False)
+@dataclass
 class UtilitySpecification(BaseType2505):
     """
     Specifies how much use can be obtained from the product represented by this BoM in comparison to a
@@ -335,7 +335,7 @@ class UtilitySpecification(BaseType2505):
     """Directly specifies the utility."""
 
 
-@dataclass(eq=False)
+@dataclass
 class ProductLifeSpan(BaseType2505):
     """
     Specifies the average life span for the product represented by the BoM.
@@ -361,7 +361,7 @@ class ProductLifeSpan(BaseType2505):
     industry-average example."""
 
 
-@dataclass(eq=False)
+@dataclass
 class UsePhase(BaseType2505):
     """
     Provides information about the sustainability of the product whilst in use, including electricity use, emissions
@@ -388,7 +388,7 @@ class UsePhase(BaseType2505):
     """Provides information about the expected mobile use of the product."""
 
 
-@dataclass(eq=False)
+@dataclass
 class BoMDetails(BaseType2505):
     """
     Explanatory information about a BoM.
@@ -411,7 +411,7 @@ class BoMDetails(BaseType2505):
     """The product name."""
 
 
-@dataclass(eq=False)
+@dataclass
 class TransportStage(BaseType2505):
     """
     Defines the transportation applied to an object, in terms of the generic transportation type (stored in the
@@ -438,7 +438,7 @@ class TransportStage(BaseType2505):
     to reference this element."""
 
 
-@dataclass(eq=False)
+@dataclass
 class Specification(BaseType2505):
     """
     A specification for a surface treatment, part, process, or material. Refers to a record within the MI Database
@@ -476,7 +476,7 @@ class Specification(BaseType2505):
     to reference this element."""
 
 
-@dataclass(eq=False)
+@dataclass
 class Substance(BaseType2505):
     """
     A substance within a part, semi-finished part, material or specification. The substance is stored in the
@@ -533,7 +533,7 @@ class Substance(BaseType2505):
             obj[category_field_name] = self.category.to_string()
 
 
-@dataclass(eq=False)
+@dataclass
 class Process(BaseType2505):
     """
     A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the
@@ -613,7 +613,7 @@ class Process(BaseType2505):
         obj[dimension_field_name] = self.dimension_type.to_string()
 
 
-@dataclass(eq=False)
+@dataclass
 class Material(BaseType2505):
     """
     A Material within a part or semi-finished part. The material is stored in the Database.
@@ -710,7 +710,7 @@ class Material(BaseType2505):
             obj[recycle_content_name] = recycle_element
 
 
-@dataclass(eq=False)
+@dataclass
 class Part(BaseType2505):
     """
     A single part which may or may not be stored in the MI Database.
@@ -850,7 +850,7 @@ class Part(BaseType2505):
             obj[rohs_exemptions_field_name] = rohs_exemptions
 
 
-# @dataclass(eq=False)
+# @dataclass
 # class AnnotationSource(BaseType2505):
 #     """
 #     An element indicating the source of annotations in the BoM. Each source may be
@@ -890,7 +890,7 @@ class Part(BaseType2505):
 #             obj[data_field_name] = self.data
 #
 #
-# @dataclass(eq=False)
+# @dataclass
 # class Annotation(BaseType2505):
 #     """
 #     An annotation that can be attached to objects within a BoM. The understood annotation types must be agreed
@@ -923,7 +923,7 @@ class Part(BaseType2505):
 #     of the annotation. If absent, no source information is provided."""
 
 
-@dataclass(eq=False)
+@dataclass
 class BillOfMaterials(BaseType2505):
     """
     Type representing the root Bill of Materials object.

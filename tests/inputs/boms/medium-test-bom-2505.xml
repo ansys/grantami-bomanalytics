@@ -33,6 +33,16 @@
                                             <MIMaterialReference gbt:recordUID="064e366e-d6a5-46c9-879f-c9a410ede6dc">
                                                 <gbt:dbKey>MI_Restricted_Substances</gbt:dbKey>
                                                 <gbt:recordGUID>71a3cd24-5128-46e5-8ef8-9ca8b5ed9892</gbt:recordGUID>
+                                                <EquivalentReferences>
+                                                    <EquivalentReference>
+                                                        <gbt:dbKey>MI_Other_Database</gbt:dbKey>
+                                                        <gbt:recordGUID>e01a39b2-eee2-47aa-a8e9-e202df196f80</gbt:recordGUID>
+                                                    </EquivalentReference>
+                                                    <EquivalentReference>
+                                                        <gbt:dbKey>MI_Other_Database</gbt:dbKey>
+                                                        <gbt:recordGUID>356f4444-d1ed-4c5d-93b3-3c1bcc0de622</gbt:recordGUID>
+                                                    </EquivalentReference>
+                                                </EquivalentReferences>
                                             </MIMaterialReference>
                                             <Identity>50% glass and mineral filled</Identity>
                                             <Name>PA46 (50% glass and mineral filled)</Name>

@@ -22,6 +22,16 @@
                                     <MIMaterialReference>
                                         <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2086f56a-4f4d-4850-9891-3d6ad155d1f9</recordGUID>
+                                        <EquivalentReferences>
+                                            <EquivalentReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Other_Database</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">7a9b5360-9d3d-41f9-a7ab-a0a732e9cc80</recordGUID>
+                                            </EquivalentReference>
+                                            <EquivalentReference>
+                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Other_Database</dbKey>
+                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">c3d420eb-fb29-4e6b-b61c-df061b030304</recordGUID>
+                                            </EquivalentReference>
+                                        </EquivalentReferences>
                                     </MIMaterialReference>
                                     <Identity>stainless-astm-cn-7ms-cast</Identity>
                                     <Processes>
@@ -29,6 +39,16 @@
                                             <MIProcessReference>
                                                 <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
                                                 <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">baa6c95b-ff0e-4811-9120-92717ee15bda</recordGUID>
+                                                <EquivalentReferences>
+                                                    <EquivalentReference>
+                                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Other_Database</dbKey>
+                                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">b862cc3e-eaac-4523-af0e-cadb261f120c</recordGUID>
+                                                    </EquivalentReference>
+                                                    <EquivalentReference>
+                                                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Other_Database</dbKey>
+                                                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">d9318225-1be6-461f-a5fc-701c7ce600b1</recordGUID>
+                                                    </EquivalentReference>
+                                                </EquivalentReferences>
                                             </MIProcessReference>
                                             <Identity>Primary processing, Casting</Identity>
                                             <DimensionType>Mass</DimensionType>
@@ -39,6 +59,16 @@
                                                     <MITransportReference>
                                                         <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
                                                         <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8d37ee4c-41ca-4cb5-9e8e-264646fcafa8</recordGUID>
+                                                        <EquivalentReferences>
+                                                            <EquivalentReference>
+                                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Other_Database</dbKey>
+                                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">069d9b2d-38e9-423e-a80b-2e90a709acf2</recordGUID>
+                                                            </EquivalentReference>
+                                                            <EquivalentReference>
+                                                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Other_Database</dbKey>
+                                                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">999b829d-44a6-49af-8222-c5699b160c54</recordGUID>
+                                                            </EquivalentReference>
+                                                        </EquivalentReferences>
                                                     </MITransportReference>
                                                     <Distance Unit="km">1000</Distance>
                                                 </TransportStage>
@@ -122,6 +152,16 @@
                                                 <MILocationReference>
                                                     <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
                                                     <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">244e1b79-020f-4413-bdb1-95bddd4d60e4</recordGUID>
+                                                    <EquivalentReferences>
+                                                        <EquivalentReference>
+                                                            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Other_Database</dbKey>
+                                                            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">46ebd158-b61a-42ea-b431-4b6d2df0ffec</recordGUID>
+                                                        </EquivalentReference>
+                                                        <EquivalentReference>
+                                                            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Other_Database</dbKey>
+                                                            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">8954456e-5ad0-4731-843c-744701920dd1</recordGUID>
+                                                        </EquivalentReference>
+                                                    </EquivalentReferences>
                                                 </MILocationReference>
                                                 <Identity>RAS</Identity>
                                                 <ExternalIdentity>137</ExternalIdentity>

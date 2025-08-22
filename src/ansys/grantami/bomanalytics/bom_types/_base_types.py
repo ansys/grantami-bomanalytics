@@ -120,33 +120,37 @@ class BaseType(HasNamespace, SupportsCustomFields):
 
     def __eq__(self, other: object) -> bool:
         """
-        Custom __eq__ implementation that performs an XML type compatible equality comparison.
+        Custom __eq__-style implementation that performs an XML type compatible equality comparison.
 
         * If other is not an instance of BaseType or is not a dataclass, return False
-        * If this and other are not related, return False
-        * If there are fields on this that aren't on other, check they are all false-y
-        * If there are fields on other that aren't on this, check they are all false-y
-        * Check the intersection of the fields are equal (recursively calls this method)
+        * If this and other are not related, apart from being descended from this class, return False
+        * If there are fields on this that aren't on the shared ancestor, check they are all false-y
+        * If there are fields on other that aren't on the shared ancestor, check they are all false-y
+        * Check the ancestor fields are equal (recursively calls this method)
         """
         if not isinstance(other, BaseType) or not is_dataclass(other):
             return False
 
-        # Basic check for some kind of shared class parent
-        # TODO This will produce false negatives for complex type hierarchies
-        if not isinstance(self, type(other)) and not isinstance(other, type(self)):
+        latest_common_ancestor = None
+        for this_ancestor in type(self).__mro__:
+            if this_ancestor in type(other).__mro__:
+                latest_common_ancestor = this_ancestor
+                break
+
+        if latest_common_ancestor == BaseType:
             return False
 
         this_fields = {f.name for f in fields(self)}
         other_fields = {f.name for f in fields(other)}
+        ancestor_fields = {f.name for f in fields(latest_common_ancestor)}
 
-        additional_this_fields = this_fields - other_fields
+        additional_this_fields = this_fields - ancestor_fields
         if any(getattr(self, field) for field in additional_this_fields):
             return False
 
-        additional_other_fields = other_fields - this_fields
+        additional_other_fields = other_fields - ancestor_fields
         if any(getattr(self, field) for field in additional_other_fields):
             return False
 
         # Compare the union of the fields between the two classes and return what's left
-        common_fields = this_fields.intersection(other_fields)
-        return all(getattr(self, field) == getattr(other, field) for field in common_fields)
+        return all(getattr(self, field) == getattr(other, field) for field in ancestor_fields)

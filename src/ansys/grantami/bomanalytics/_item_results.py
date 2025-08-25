@@ -97,6 +97,7 @@ class ItemResultFactory:
         item_result = MaterialWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
+            database_key=result_with_impacted_substances.database_key,
             legislations=_raise_if_empty(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
@@ -125,6 +126,7 @@ class ItemResultFactory:
         item_result = PartWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
+            database_key=result_with_impacted_substances.database_key,
             legislations=_raise_if_empty(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
@@ -154,6 +156,7 @@ class ItemResultFactory:
         item_result = SpecificationWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
+            database_key=result_with_impacted_substances.database_key,
             legislations=_raise_if_empty(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
@@ -210,6 +213,7 @@ class ItemResultFactory:
         item_result = MaterialWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
+            database_key=result_with_compliance.database_key,
             indicator_results=result_with_compliance.indicators,
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
@@ -245,6 +249,7 @@ class ItemResultFactory:
         item_result = PartWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
+            database_key=result_with_compliance.database_key,
             indicator_results=result_with_compliance.indicators,
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
@@ -281,6 +286,7 @@ class ItemResultFactory:
         item_result = SpecificationWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
+            database_key=result_with_compliance.database_key,
             indicator_results=result_with_compliance.indicators,
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
@@ -316,6 +322,7 @@ class ItemResultFactory:
         item_result = CoatingWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
+            database_key=result_with_compliance.database_key,
             indicator_results=result_with_compliance.indicators,
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
@@ -349,6 +356,7 @@ class ItemResultFactory:
         item_result = SubstanceWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
+            database_key=result_with_compliance.database_key,
             indicator_results=_raise_if_empty(result_with_compliance.indicators),
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
@@ -379,6 +387,7 @@ class ItemResultFactory:
         part_with_sustainability = PartWithSustainabilityResult(
             reference_type=reference_type,
             reference_value=result_with_sustainability.reference_value,
+            database_key=result_with_sustainability.database_key,
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
@@ -417,6 +426,7 @@ class ItemResultFactory:
         process_with_sustainability = ProcessWithSustainabilityResult(
             reference_type=reference_type,
             reference_value=result_with_sustainability.reference_value,
+            database_key=result_with_sustainability.database_key,
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             identity=result_with_sustainability.id,
@@ -450,6 +460,7 @@ class ItemResultFactory:
         material_with_sustainability = MaterialWithSustainabilityResult(
             reference_type=reference_type,
             reference_value=result_with_sustainability.reference_value,
+            database_key=result_with_sustainability.database_key,
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
@@ -484,6 +495,7 @@ class ItemResultFactory:
         transport_with_sustainability = TransportWithSustainabilityResult(
             reference_type=reference_type,
             reference_value=result_with_sustainability.reference_value,
+            database_key=result_with_sustainability.database_key,
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             identity=result_with_sustainability.id,
@@ -551,6 +563,7 @@ class ItemResultFactory:
             transport_reference=TransportReference(
                 reference_type=reference_type,
                 reference_value=record_reference.reference_value,
+                database_key=_convert_unset_to_none(record_reference.database_key),
             ),
             name=_convert_unset_to_none(result.stage_name),
             distance=cls.create_unitted_value(result.distance),
@@ -642,6 +655,7 @@ class ItemResultFactory:
             material_reference=MaterialReference(
                 reference_type=reference_type,
                 reference_value=record_reference.reference_value,
+                database_key=_convert_unset_to_none(record_reference.database_key),
             ),
             identity=_raise_if_empty(result.identity),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
@@ -679,6 +693,7 @@ class ItemResultFactory:
             part_reference=PartReference(
                 reference_type=reference_type,
                 reference_value=record_reference.reference_value,
+                database_key=_convert_unset_to_none(record_reference.database_key),
             ),
             material_mass_before_processing=cls.create_unitted_value(result.material_mass_before_processing),
             name=_convert_unset_to_none(result.component_name),
@@ -703,6 +718,7 @@ class ItemResultFactory:
             MaterialReference(
                 reference_type=cls.parse_reference_type(material_record_reference.reference_type),
                 reference_value=material_record_reference.reference_value,
+                database_key=_convert_unset_to_none(material_record_reference.database_key),
             )
             if material_record_reference.reference_type is not Unset
             else None
@@ -716,6 +732,7 @@ class ItemResultFactory:
             process_reference=ProcessReference(
                 reference_type=cls.parse_reference_type(process_record_reference.reference_type),
                 reference_value=process_record_reference.reference_value,
+                database_key=_convert_unset_to_none(process_record_reference.database_key),
             ),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
             embodied_energy_percentage=_convert_unset_to_none(result.embodied_energy_percentage),

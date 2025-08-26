@@ -422,15 +422,17 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         record_history_identities: List[int],
         database_key: Optional[str] = None,
     ) -> _RecordQuery:
-        """Add a list or set of record history identities to a query.
+        """
+        Add a list or set of record history identities to a query.
+
+        If the records are stored in a linked database, provide the database key.
 
         Parameters
         ----------
         record_history_identities : list[int] | set[int]
            List or set of record history identities.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -464,15 +466,17 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         record_history_guids: List[str],
         database_key: Optional[str] = None,
     ) -> _RecordQuery:
-        """Add a list or set of record history GUIDs to a query.
+        """
+        Add a list or set of record history GUIDs to a query.
+
+        If the records are stored in a linked database, provide the database key.
 
         Parameters
         ----------
         record_history_guids : list[str] | set[str]
             List or set of record history GUIDs.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -507,15 +511,17 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         record_guids: List[str],
         database_key: Optional[str] = None,
     ) -> _RecordQuery:
-        """Add a list or set of record GUIDs to a query.
+        """
+        Add a list or set of record GUIDs to a query.
+
+        If the records are stored in a linked database, provide the database key.
 
         Parameters
         ----------
         record_guids : list[str] | set[str]
             List or set of record GUIDs.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -865,7 +871,8 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
     def with_material_ids(
         self: _MaterialQuery, material_ids: List[str], database_key: Optional[str] = None
     ) -> _MaterialQuery:
-        """Add a list or set of materials to a material query, referenced by the material ID attribute value.
+        """
+        Add a list or set of materials to a material query, referenced by the material ID attribute value.
 
         Material IDs are valid for both ``MaterialUniverse`` and ``Materials - in house`` records. If the records are
         stored in a linked database, provide the database key.
@@ -875,8 +882,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         material_ids : list[str] | set[set]
             List or set of material IDs.
         database_key : str, optional
-           The database key that contains the material records, if different to the Restricted Substances and
-            Sustainability database.
+            The database key that contains the records.
 
         Returns
         -------
@@ -980,16 +986,17 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
     @validate_argument_type("part_numbers", [str], {str})
     @validate_argument_type("database_key", str, NoneType)
     def with_part_numbers(self: _PartQuery, part_numbers: List[str], database_key: Optional[str] = None) -> _PartQuery:
-        """Add a list or set of parts to a part query, referenced by part number. If the records are stored in a
-        linked database, provide the database key.
+        """
+        Add a list or set of parts to a part query, referenced by part number.
+
+        If the records are stored in a linked database, provide the database key.
 
         Parameters
         ----------
         part_numbers : list[str] | set[str]
             List or set of part numbers.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1107,8 +1114,7 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
         specification_ids : list[str] | set[str]
             List or set of specification IDs.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1230,8 +1236,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         cas_numbers : list[str] | set[str]
             List or set of CAS numbers.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1273,8 +1278,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         ec_numbers : list[str] | set[str]
             List or set of EC numbers.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1315,8 +1319,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         chemical_names : list[str] | set[str]
             List or set of chemical names.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1359,8 +1362,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         record_history_identities_and_amounts : list[tuple[int, float]] | set[tuple[int, float]]
             List or set of record hirstory identities and amounts expressed as a tuple.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1406,8 +1408,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         record_history_guids_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             List or set of record history GUIDs and amounts expressed as a tuple.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1456,8 +1457,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         record_guids_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             List or set of record GUIDs and amounts expressed as a tuple.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1505,8 +1505,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         cas_numbers_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             List or set of CAS numbers and amounts expressed as a tuple.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1551,8 +1550,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         ec_numbers_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             Listor set of EC numbers and amounts expressed as a tuple.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------
@@ -1598,8 +1596,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         chemical_names_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             List or set of chemical names and amounts expressed as a tuple.
         database_key : str, optional
-            The database key for the database that contains the records. If not provided, records are assumed to be
-            available in the database specified in :class:`.BomAnalyticsClient.set_database_details`.
+            The database key that contains the records.
 
         Returns
         -------

@@ -90,14 +90,11 @@ class TestInitialization:
         [
             (
                 ({int, str},),
-                r"<class 'set'> must contain exactly 1 item\. '{<class 'int'>, <class 'str'>}' has length 2",
+                r"<class 'set'> must contain exactly 1 item.+has length 2",
             ),
             (
                 ({int: str, str: str},),
-                (
-                    r"<class 'dict'> must contain exactly 1 item\. '{<class 'int'>: <class 'str'>, <class 'str'>: "
-                    r"<class 'str'>}' has length 2"
-                ),
+                (r"<class 'dict'> must contain exactly 1 item.+has length 2"),
             ),
         ],
     )

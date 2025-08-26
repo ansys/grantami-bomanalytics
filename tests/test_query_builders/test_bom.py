@@ -49,10 +49,10 @@ def test_add_bom(query_type):
 def test_add_bom_wrong_type(query_type):
     with pytest.raises(TypeError) as e:
         query_type().with_bom(12345)
-    assert "Incorrect type for value" in str(e.value)
+    assert "Incorrect type for argument 'bom'" in str(e.value)
     with pytest.raises(TypeError) as e:
         query_type().with_bom(bom=12345)
-    assert "Incorrect type for value" in str(e.value)
+    assert "Incorrect type for argument 'bom'" in str(e.value)
 
 
 @all_bom_queries

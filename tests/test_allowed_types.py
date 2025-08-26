@@ -88,14 +88,8 @@ class TestInitialization:
     @pytest.mark.parametrize(
         ["allowed_types", "msg"],
         [
-            (
-                ({int, str},),
-                r"<class 'set'> must contain exactly 1 item.+has length 2",
-            ),
-            (
-                ({int: str, str: str},),
-                (r"<class 'dict'> must contain exactly 1 item.+has length 2"),
-            ),
+            (({int, str},), r"<class 'set'> must contain exactly 1 item.+has length 2"),
+            (({int: str, str: str},), r"<class 'dict'> must contain exactly 1 item.+has length 2"),
         ],
     )
     def test_invalid_types_raise(self, allowed_types, msg):

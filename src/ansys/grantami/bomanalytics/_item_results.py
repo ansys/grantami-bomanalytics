@@ -29,25 +29,21 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 from abc import ABC
 from copy import deepcopy
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, TypeVar, Union
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
 from ansys.openapi.common import Unset, Unset_Type
 
 from ._item_definitions import (
     CoatingReferenceWithIdentifier,
-    MaterialReference,
     MaterialReferenceWithIdentifiers,
-    PartReference,
     PartReferenceWithIdentifiers,
-    ProcessReference,
     ProcessReferenceWithIdentifiers,
     RecordReference,
     ReferenceType,
     SpecificationReferenceWithIdentifiers,
     SubstanceReference,
     SubstanceReferenceWithIdentifiers,
-    TransportReference,
     TransportReferenceWithIdentifier,
 )
 from ._typing import _convert_unset_to_none, _raise_if_empty
@@ -94,14 +90,31 @@ class ItemResultFactory:
            An object that describes the substances that impacted a material. Substances are grouped by legislation.
         """
         reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        equivalent_references = (
+            [
+                MaterialReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_impacted_substances.equivalent_references
+            ]
+            if result_with_impacted_substances.equivalent_references
+            else None
+        )
+
         item_result = MaterialWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
-            database_key=result_with_impacted_substances.database_key,
+            database_key=_convert_unset_to_none(result_with_impacted_substances.database_key),
             legislations=_raise_if_empty(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
             name=result_with_impacted_substances.name,
+            equivalent_references=equivalent_references,
         )
         return item_result
 
@@ -123,15 +136,32 @@ class ItemResultFactory:
            An object that describes the substances that impacted a part. Substances are grouped by legislation.
         """
         reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        equivalent_references = (
+            [
+                PartReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_impacted_substances.equivalent_references
+            ]
+            if result_with_impacted_substances.equivalent_references
+            else None
+        )
+
         item_result = PartWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
-            database_key=result_with_impacted_substances.database_key,
+            database_key=_convert_unset_to_none(result_with_impacted_substances.database_key),
             legislations=_raise_if_empty(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
             name=result_with_impacted_substances.name,
             input_part_number=result_with_impacted_substances.input_part_number,
+            equivalent_references=equivalent_references,
         )
         return item_result
 
@@ -153,14 +183,31 @@ class ItemResultFactory:
            An object that describes the substances that impacted a specification. Substances are grouped by legislation.
         """
         reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
+        equivalent_references = (
+            [
+                SpecificationReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_impacted_substances.equivalent_references
+            ]
+            if result_with_impacted_substances.equivalent_references
+            else None
+        )
+
         item_result = SpecificationWithImpactedSubstancesResult(
             reference_type=reference_type,
             reference_value=result_with_impacted_substances.reference_value,
-            database_key=result_with_impacted_substances.database_key,
+            database_key=_convert_unset_to_none(result_with_impacted_substances.database_key),
             legislations=_raise_if_empty(result_with_impacted_substances.legislations),
             identity=result_with_impacted_substances.id,
             external_identity=result_with_impacted_substances.external_identity,
             name=result_with_impacted_substances.name,
+            equivalent_references=equivalent_references,
         )
         return item_result
 
@@ -210,15 +257,32 @@ class ItemResultFactory:
             status for each indicator.
         """
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        equivalent_references = (
+            [
+                MaterialReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_compliance.equivalent_references
+            ]
+            if result_with_compliance.equivalent_references
+            else None
+        )
+
         item_result = MaterialWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
-            database_key=result_with_compliance.database_key,
+            database_key=_convert_unset_to_none(result_with_compliance.database_key),
             indicator_results=result_with_compliance.indicators,
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
             external_identity=result_with_compliance.external_identity,
             name=result_with_compliance.name,
+            equivalent_references=equivalent_references,
         )
         return item_result
 
@@ -246,16 +310,33 @@ class ItemResultFactory:
             status for each indicator.
         """
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        equivalent_references = (
+            [
+                PartReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_compliance.equivalent_references
+            ]
+            if result_with_compliance.equivalent_references
+            else None
+        )
+
         item_result = PartWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
-            database_key=result_with_compliance.database_key,
+            database_key=_convert_unset_to_none(result_with_compliance.database_key),
             indicator_results=result_with_compliance.indicators,
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
             external_identity=result_with_compliance.external_identity,
             name=result_with_compliance.name,
             input_part_number=result_with_compliance.input_part_number,
+            equivalent_references=equivalent_references,
         )
         return item_result
 
@@ -283,15 +364,32 @@ class ItemResultFactory:
             status for each indicator.
         """
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        equivalent_references = (
+            [
+                SpecificationReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_compliance.equivalent_references
+            ]
+            if result_with_compliance.equivalent_references
+            else None
+        )
+
         item_result = SpecificationWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
-            database_key=result_with_compliance.database_key,
+            database_key=_convert_unset_to_none(result_with_compliance.database_key),
             indicator_results=result_with_compliance.indicators,
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
             external_identity=result_with_compliance.external_identity,
             name=result_with_compliance.name,
+            equivalent_references=equivalent_references,
         )
         return item_result
 
@@ -319,13 +417,28 @@ class ItemResultFactory:
             status for each indicator.
         """
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        equivalent_references = (
+            [
+                CoatingReferenceWithIdentifier(
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=_convert_unset_to_none(ref.id),
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_compliance.equivalent_references
+            ]
+            if result_with_compliance.equivalent_references
+            else None
+        )
+
         item_result = CoatingWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
-            database_key=result_with_compliance.database_key,
+            database_key=_convert_unset_to_none(result_with_compliance.database_key),
             indicator_results=result_with_compliance.indicators,
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
+            equivalent_references=equivalent_references,
         )
         return item_result
 
@@ -353,16 +466,33 @@ class ItemResultFactory:
             status for each indicator.
         """
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
+        equivalent_references = (
+            [
+                SubstanceReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_compliance.equivalent_references
+            ]
+            if result_with_compliance.equivalent_references
+            else None
+        )
+
         item_result = SubstanceWithComplianceResult(
             reference_type=reference_type,
             reference_value=result_with_compliance.reference_value,
-            database_key=result_with_compliance.database_key,
+            database_key=_convert_unset_to_none(result_with_compliance.database_key),
             indicator_results=_raise_if_empty(result_with_compliance.indicators),
             indicator_definitions=indicator_definitions,
             identity=result_with_compliance.id,
             external_identity=result_with_compliance.external_identity,
             name=result_with_compliance.name,
             percentage_amount=_convert_unset_to_none(result_with_compliance.percentage_amount),
+            equivalent_references=equivalent_references,
         )
         return item_result
 
@@ -384,10 +514,26 @@ class ItemResultFactory:
         """
 
         reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        equivalent_references = (
+            [
+                PartReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_sustainability.equivalent_references
+            ]
+            if result_with_sustainability.equivalent_references
+            else None
+        )
+
         part_with_sustainability = PartWithSustainabilityResult(
             reference_type=reference_type,
             reference_value=result_with_sustainability.reference_value,
-            database_key=result_with_sustainability.database_key,
+            database_key=_convert_unset_to_none(result_with_sustainability.database_key),
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
@@ -395,6 +541,7 @@ class ItemResultFactory:
             external_identity=result_with_sustainability.external_identity,
             name=result_with_sustainability.name,
             input_part_number=result_with_sustainability.input_part_number,
+            equivalent_references=equivalent_references,
         )
         part_with_sustainability._add_child_parts(_raise_if_empty(result_with_sustainability.parts))
         part_with_sustainability._add_child_materials(_raise_if_empty(result_with_sustainability.materials))
@@ -423,15 +570,32 @@ class ItemResultFactory:
         """
 
         reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        equivalent_references = (
+            [
+                ProcessReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_sustainability.equivalent_references
+            ]
+            if result_with_sustainability.equivalent_references
+            else None
+        )
+
         process_with_sustainability = ProcessWithSustainabilityResult(
             reference_type=reference_type,
             reference_value=result_with_sustainability.reference_value,
-            database_key=result_with_sustainability.database_key,
+            database_key=_convert_unset_to_none(result_with_sustainability.database_key),
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             identity=result_with_sustainability.id,
             external_identity=result_with_sustainability.external_identity,
             name=result_with_sustainability.name,
+            equivalent_references=equivalent_references,
         )
 
         # transport_stages is optional, only returned by BAS 2025 R2 and later
@@ -457,10 +621,26 @@ class ItemResultFactory:
         """
 
         reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        equivalent_references = (
+            [
+                MaterialReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_sustainability.equivalent_references
+            ]
+            if result_with_sustainability.equivalent_references
+            else None
+        )
+
         material_with_sustainability = MaterialWithSustainabilityResult(
             reference_type=reference_type,
             reference_value=result_with_sustainability.reference_value,
-            database_key=result_with_sustainability.database_key,
+            database_key=_convert_unset_to_none(result_with_sustainability.database_key),
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             reported_mass=cls.create_unitted_value(result_with_sustainability.reported_mass),
@@ -470,6 +650,7 @@ class ItemResultFactory:
             identity=result_with_sustainability.id,
             external_identity=result_with_sustainability.external_identity,
             name=result_with_sustainability.name,
+            equivalent_references=equivalent_references,
         )
         material_with_sustainability._add_child_processes(_raise_if_empty(result_with_sustainability.processes))
         return material_with_sustainability
@@ -492,14 +673,29 @@ class ItemResultFactory:
         """
 
         reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
+        equivalent_references = (
+            [
+                TransportReferenceWithIdentifier(
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=_convert_unset_to_none(ref.id),
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in result_with_sustainability.equivalent_references
+            ]
+            if result_with_sustainability.equivalent_references
+            else None
+        )
+
         transport_with_sustainability = TransportWithSustainabilityResult(
             reference_type=reference_type,
             reference_value=result_with_sustainability.reference_value,
-            database_key=result_with_sustainability.database_key,
+            database_key=_convert_unset_to_none(result_with_sustainability.database_key),
             embodied_energy=cls.create_unitted_value(result_with_sustainability.embodied_energy),
             climate_change=cls.create_unitted_value(result_with_sustainability.climate_change),
             identity=result_with_sustainability.id,
             name=_raise_if_empty(result_with_sustainability.stage_name),
+            equivalent_references=equivalent_references,
         )
         return transport_with_sustainability
 
@@ -559,11 +755,27 @@ class ItemResultFactory:
         """
         record_reference = _raise_if_empty(result.record_reference)
         reference_type = cls.parse_reference_type(record_reference.reference_type)
+        equivalent_references = (
+            [
+                TransportReferenceWithIdentifier(
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                    identity=_convert_unset_to_none(ref.id),
+                )
+                for ref in record_reference.equivalent_references
+            ]
+            if record_reference.equivalent_references
+            else None
+        )
+
         return TransportSummaryResult(
-            transport_reference=TransportReference(
+            transport_reference=TransportReferenceWithEquivalents(
                 reference_type=reference_type,
                 reference_value=record_reference.reference_value,
+                identity=record_reference.id,
                 database_key=_convert_unset_to_none(record_reference.database_key),
+                equivalent_references=equivalent_references,
             ),
             name=_convert_unset_to_none(result.stage_name),
             distance=cls.create_unitted_value(result.distance),
@@ -651,11 +863,31 @@ class ItemResultFactory:
         #  It does not have a valid record reference or contributors.
         record_reference = _raise_if_empty(result.record_reference)
         reference_type = cls.parse_reference_type(record_reference.reference_type)
+        equivalent_references = (
+            [
+                MaterialReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in record_reference.equivalent_references
+            ]
+            if record_reference.equivalent_references
+            else None
+        )
+
         return MaterialSummaryResult(
-            material_reference=MaterialReference(
+            material_reference=MaterialReferenceWithEquivalents(
+                external_identity=_convert_unset_to_none(record_reference.external_identity),
+                name=_convert_unset_to_none(record_reference.name),
                 reference_type=reference_type,
                 reference_value=record_reference.reference_value,
+                identity=record_reference.id,
                 database_key=_convert_unset_to_none(record_reference.database_key),
+                equivalent_references=equivalent_references,
             ),
             identity=_raise_if_empty(result.identity),
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
@@ -688,12 +920,32 @@ class ItemResultFactory:
         """
         record_reference = _raise_if_empty(result.record_reference)
         reference_type = cls.parse_reference_type(record_reference.reference_type)
+        equivalent_references = (
+            [
+                PartReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in record_reference.equivalent_references
+            ]
+            if record_reference.equivalent_references
+            else None
+        )
+
         return ContributingComponentResult(
             part_number=_convert_unset_to_none(result.component_part_number),
-            part_reference=PartReference(
+            part_reference=PartReferenceWithEquivalents(
+                external_identity=_convert_unset_to_none(record_reference.external_identity),
+                name=_convert_unset_to_none(record_reference.name),
                 reference_type=reference_type,
                 reference_value=record_reference.reference_value,
+                identity=record_reference.id,
                 database_key=_convert_unset_to_none(record_reference.database_key),
+                equivalent_references=equivalent_references,
             ),
             material_mass_before_processing=cls.create_unitted_value(result.material_mass_before_processing),
             name=_convert_unset_to_none(result.component_name),
@@ -715,25 +967,57 @@ class ItemResultFactory:
         """
         material_record_reference = _raise_if_empty(result.material_record_reference)
         material_reference = (
-            MaterialReference(
+            MaterialReferenceWithEquivalents(
+                external_identity=_convert_unset_to_none(material_record_reference.external_identity),
+                name=_convert_unset_to_none(material_record_reference.name),
                 reference_type=cls.parse_reference_type(material_record_reference.reference_type),
                 reference_value=material_record_reference.reference_value,
+                identity=material_record_reference.id,
                 database_key=_convert_unset_to_none(material_record_reference.database_key),
             )
             if material_record_reference.reference_type is not Unset
             else None
         )
+        if material_reference and material_record_reference.equivalent_references:
+            material_reference._equivalent_references = [
+                MaterialReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in material_record_reference.equivalent_references
+            ]
 
         process_record_reference = _raise_if_empty(result.process_record_reference)
+        process_reference = ProcessReferenceWithEquivalents(
+            external_identity=_convert_unset_to_none(process_record_reference.external_identity),
+            name=_convert_unset_to_none(process_record_reference.name),
+            reference_type=cls.parse_reference_type(process_record_reference.reference_type),
+            reference_value=process_record_reference.reference_value,
+            identity=process_record_reference.id,
+            database_key=_convert_unset_to_none(process_record_reference.database_key),
+        )
+        if process_reference and process_record_reference.equivalent_references:
+            process_reference._equivalent_references = [
+                ProcessReferenceWithIdentifiers(
+                    external_identity=_convert_unset_to_none(ref.external_identity),
+                    name=_convert_unset_to_none(ref.name),
+                    reference_type=cls.parse_reference_type(ref.reference_type),
+                    reference_value=ref.reference_value,
+                    identity=ref.id,
+                    database_key=_convert_unset_to_none(ref.database_key),
+                )
+                for ref in process_record_reference.equivalent_references
+            ]
+
         return ProcessSummaryResult(
             material_identity=_convert_unset_to_none(result.material_identity),
             material_reference=material_reference,
             process_name=_raise_if_empty(result.process_name),
-            process_reference=ProcessReference(
-                reference_type=cls.parse_reference_type(process_record_reference.reference_type),
-                reference_value=process_record_reference.reference_value,
-                database_key=_convert_unset_to_none(process_record_reference.database_key),
-            ),
+            process_reference=process_reference,
             embodied_energy=cls.create_unitted_value(result.embodied_energy),
             embodied_energy_percentage=_convert_unset_to_none(result.embodied_energy_percentage),
             climate_change=cls.create_unitted_value(result.climate_change),
@@ -773,6 +1057,69 @@ class ItemResultFactory:
             restricted_substances=_raise_if_empty(result.restricted_substances),
             sustainability=_raise_if_empty(result.sustainability),
         )
+
+
+Record_Reference = TypeVar("Record_Reference")
+
+
+class EquivalentReferenceMixin(Generic[Record_Reference]):
+    def __init__(self, equivalent_references: Optional[list[Record_Reference]] = None, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references if equivalent_references else []
+
+    @property
+    def equivalent_references(self) -> list[Record_Reference]:
+        """The references which are equivalent to this record"""
+        return self._equivalent_references
+
+
+class SubstanceReferenceWithEquivalents(
+    EquivalentReferenceMixin[SubstanceReferenceWithIdentifiers],
+    SubstanceReferenceWithIdentifiers,
+):
+    pass
+
+
+class CoatingReferenceWithEquivalents(
+    EquivalentReferenceMixin[CoatingReferenceWithIdentifier],
+    CoatingReferenceWithIdentifier,
+):
+    pass
+
+
+class MaterialReferenceWithEquivalents(
+    EquivalentReferenceMixin[MaterialReferenceWithIdentifiers],
+    MaterialReferenceWithIdentifiers,
+):
+    pass
+
+
+class SpecificationReferenceWithEquivalents(
+    EquivalentReferenceMixin[SpecificationReferenceWithIdentifiers],
+    SpecificationReferenceWithIdentifiers,
+):
+    pass
+
+
+class PartReferenceWithEquivalents(
+    EquivalentReferenceMixin[PartReferenceWithIdentifiers],
+    PartReferenceWithIdentifiers,
+):
+    pass
+
+
+class TransportReferenceWithEquivalents(
+    EquivalentReferenceMixin[TransportReferenceWithIdentifier],
+    TransportReferenceWithIdentifier,
+):
+    pass
+
+
+class ProcessReferenceWithEquivalents(
+    EquivalentReferenceMixin[ProcessReferenceWithIdentifiers],
+    ProcessReferenceWithIdentifiers,
+):
+    pass
 
 
 class ImpactedSubstance(SubstanceReference):
@@ -936,7 +1283,7 @@ class RecordWithImpactedSubstancesResultMixin(ImpactedSubstancesResultMixin, Rec
         )
 
 
-class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialReferenceWithIdentifiers):
+class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialReferenceWithEquivalents):
     """Retrieves an individual material that is included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -963,7 +1310,7 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
     """
 
 
-class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartReferenceWithIdentifiers):
+class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartReferenceWithEquivalents):
     """Retrieves an individual part included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -991,7 +1338,8 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
 
 
 class SpecificationWithImpactedSubstancesResult(
-    RecordWithImpactedSubstancesResultMixin, SpecificationReferenceWithIdentifiers
+    RecordWithImpactedSubstancesResultMixin,
+    SpecificationReferenceWithEquivalents,
 ):
     """Retrieves an individual specification included as part of an impacted substances query result.
 
@@ -1358,7 +1706,7 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
             self._coatings.append(child_coating_with_compliance)
 
 
-class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWithIdentifiers):
+class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWithEquivalents):
     """Retrieves an individual substance included as part of a compliance query result.
     This object includes three categories of attributes:
 
@@ -1381,7 +1729,7 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWit
 
 
 class MaterialWithComplianceResult(
-    ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialReferenceWithIdentifiers
+    ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialReferenceWithEquivalents
 ):
     """Retrieves an individual material included as part of a compliance query result.
     This object includes three categories of attributes:
@@ -1398,7 +1746,7 @@ class PartWithComplianceResult(
     ChildSpecificationWithComplianceMixin,
     ChildPartWithComplianceMixin,
     ComplianceResultMixin,
-    PartReferenceWithIdentifiers,
+    PartReferenceWithEquivalents,
 ):
     """Retrieves an individual part included as part of a compliance query result.
     This object includes three categories of attributes:
@@ -1415,7 +1763,7 @@ class SpecificationWithComplianceResult(
     ChildMaterialWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,
     ComplianceResultMixin,
-    SpecificationReferenceWithIdentifiers,
+    SpecificationReferenceWithEquivalents,
 ):
     """Retrieves an individual specification included as part of a compliance query result.
     This object includes three categories of attributes:
@@ -1432,7 +1780,7 @@ class SpecificationWithComplianceResult(
 
 
 class CoatingWithComplianceResult(
-    ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReferenceWithIdentifier
+    ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReferenceWithEquivalents
 ):
     """Provides an individual coating included as part of a compliance query result.
 
@@ -1783,7 +2131,7 @@ class MaterialWithSustainabilityResult(
     SustainabilityResultMixin,
     ReusabilityResultMixin,
     MassResultMixin,
-    MaterialReferenceWithIdentifiers,
+    MaterialReferenceWithEquivalents,
 ):
     """Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -1803,7 +2151,7 @@ class PartWithSustainabilityResult(
     ChildPartWithSustainabilityMixin,
     SustainabilityResultMixin,
     MassResultMixin,
-    PartReferenceWithIdentifiers,
+    PartReferenceWithEquivalents,
 ):
     """Describes an individual part included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -1819,7 +2167,7 @@ class PartWithSustainabilityResult(
 class ProcessWithSustainabilityResult(
     ChildTransportWithSustainabilityMixin,
     SustainabilityResultMixin,
-    ProcessReferenceWithIdentifiers,
+    ProcessReferenceWithEquivalents,
 ):
     """Describes a process included as part of a sustainability query result.
     This object includes two categories of attributes:
@@ -1833,7 +2181,7 @@ class ProcessWithSustainabilityResult(
 
 class TransportWithSustainabilityResult(
     SustainabilityResultMixin,
-    TransportReferenceWithIdentifier,
+    TransportReferenceWithEquivalents,
 ):
     """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:
@@ -1987,7 +2335,7 @@ class TransportSummaryResult(TransportSummaryBase):
     def __init__(
         self,
         name: Optional[str],
-        transport_reference: TransportReference,
+        transport_reference: TransportReferenceWithEquivalents,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -2000,7 +2348,7 @@ class TransportSummaryResult(TransportSummaryBase):
         return self._name
 
     @property
-    def transport_reference(self) -> TransportReference:
+    def transport_reference(self) -> TransportReferenceWithIdentifier:
         """
         Transport record reference.
         """
@@ -2105,7 +2453,7 @@ class ContributingComponentResult:
         self,
         name: Optional[str],
         part_number: Optional[str],
-        part_reference: PartReference,
+        part_reference: PartReferenceWithEquivalents,
         material_mass_before_processing: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
@@ -2130,7 +2478,7 @@ class ContributingComponentResult:
         return self._name
 
     @property
-    def part_reference(self) -> PartReference:
+    def part_reference(self) -> PartReferenceWithIdentifiers:
         """
         Part record reference.
         """
@@ -2160,7 +2508,7 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
     def __init__(
         self,
         identity: str,
-        material_reference: MaterialReference,
+        material_reference: MaterialReferenceWithEquivalents,
         mass_before_processing: ValueWithUnit,
         mass_after_processing: ValueWithUnit,
         contributors: List[ContributingComponentResult],
@@ -2181,7 +2529,7 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
         return self._identity
 
     @property
-    def material_reference(self) -> MaterialReference:
+    def material_reference(self) -> MaterialReferenceWithIdentifiers:
         """
         Material record reference.
         """
@@ -2228,9 +2576,9 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
     def __init__(
         self,
         material_identity: Optional[str],
-        material_reference: Optional[MaterialReference],
+        material_reference: Optional[MaterialReferenceWithEquivalents],
         process_name: str,
-        process_reference: ProcessReference,
+        process_reference: ProcessReferenceWithEquivalents,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -2247,7 +2595,7 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
         return self._process_name
 
     @property
-    def process_reference(self) -> ProcessReference:
+    def process_reference(self) -> ProcessReferenceWithEquivalents:
         """
         Process record reference.
         """
@@ -2263,7 +2611,7 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
         return self._material_identity
 
     @property
-    def material_reference(self) -> Optional[MaterialReference]:
+    def material_reference(self) -> Optional[MaterialReferenceWithEquivalents]:
         """
         Material record reference.
 

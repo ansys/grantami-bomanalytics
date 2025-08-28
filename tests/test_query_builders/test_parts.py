@@ -44,7 +44,7 @@ def test_add_part_numbers(query_type, part_numbers):
 def test_add_part_numbers_wrong_type(query_type):
     with pytest.raises(TypeError) as e:
         query_type().with_part_numbers("Strings are not allowed")
-    assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)
+    assert "Incorrect type for argument 'part_numbers' value 'Strings are not allowed'" in str(e.value)
     with pytest.raises(TypeError) as e:
         query_type().with_part_numbers(part_numbers="Strings are not allowed")
-    assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)
+    assert "Incorrect type for argument 'part_numbers' value 'Strings are not allowed'" in str(e.value)

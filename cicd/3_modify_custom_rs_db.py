@@ -2,12 +2,12 @@
 modify_custom_rs_db.py
 -------------------------
 
-This script is the last step in creating new test databases. It modifies a cut down database, changing the name,
+This script is the third step in creating new test databases. It modifies a cut down database, changing the name,
 renaming tables, and adding any extra records required for specific tests.
 
 Set the URL as appropriate for your database server.
 
-The first operation is to rename the database, this has no practical purpose, but it makes it easier to see which which
+The first operation is to rename the database, this has no practical purpose, but it makes it easier to see which
 database is which in log files.
 
 Secondly the tables are renamed, this is required to test that the custom table name feature of the API works as
@@ -26,8 +26,9 @@ import GRANTA_MIScriptingToolkit as gdl
 
 from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 
-from cicd.connection import Connection
-from cicd.prepare_rs_db import TableBrowser
+from cicd._connection import Connection
+from cicd._utils import TableBrowser
+from cicd._config import MI_URL, CUSTOM_DB_KEY, RS_CUSTOM_TABLE_NAME_MAPPING
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -37,25 +38,12 @@ formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-CUSTOM_DB_KEY = "MI_Restricted_Substances_Custom_Tables"
 
 if __name__ == "__main__":
     logger.info("Renaming tables")
-    table_name_remapping = {
-        "MaterialUniverse": "My Material Universe",
-        "Materials - in house": "My Materials",
-        "Specifications": "specs",
-        "Products and parts": "Parts 'n' Products",
-        "Restricted Substances": "Chemicals",
-        "Coatings": "Coverings",
-        "Locations": "Places",
-        "ProcessUniverse": "Methods",
-        "Transport": "Locomotion",
-    }
 
-    URL = "http://localhost/mi_servicelayer"
-    api_client = Connection(api_url=URL).with_autologon().connect()
-    gdl_session = gdl.GRANTA_MISession(url=URL, autoLogon=True)
+    api_client = Connection(api_url=MI_URL).with_autologon().connect()
+    gdl_session = gdl.GRANTA_MISession(url=MI_URL, autoLogon=True)
 
     database_client = api.SchemaDatabasesApi(api_client)
 
@@ -70,7 +58,7 @@ if __name__ == "__main__":
     table_browser = TableBrowser(api_client, logger)
     custom_table_name_map = table_browser.get_table_name_guid_map(CUSTOM_DB_KEY)
 
-    for old_name, new_name in table_name_remapping.items():
+    for old_name, new_name in RS_CUSTOM_TABLE_NAME_MAPPING.items():
         table_guid = custom_table_name_map[old_name]
         table_browser.update_table_name(db_key=CUSTOM_DB_KEY, table_guid=table_guid, new_table_name=new_name)
 

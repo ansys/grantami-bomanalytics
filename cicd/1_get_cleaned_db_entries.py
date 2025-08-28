@@ -34,7 +34,8 @@ from GRANTA_MIScriptingToolkit import granta as mpy
 from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 from ansys.openapi.common import Unset
 
-from cicd.connection import Connection
+from cicd._connection import Connection
+from cicd._config import MI_URL, DB_KEY, DATA_FILENAME
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -43,10 +44,6 @@ ch.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
-
-MI_URL = "http://localhost/mi_servicelayer"
-DB_KEY = "MI_Restricted_Substances"
-OUTPUT_FILE_NAME = Path("./rs_data.json").resolve()
 
 logger.info(f"Connecting to MI at {MI_URL} with AutoLogon")
 s = mpy.Session(MI_URL, autologon=True)
@@ -163,6 +160,8 @@ def serialize_unset(obj):
         return None
 
 
+OUTPUT_FILE_NAME = Path(__file__).parent / DATA_FILENAME
+OUTPUT_FILE_NAME.resolve()
 logger.info(f"Finished processing data, writing to {OUTPUT_FILE_NAME}")
 with open(OUTPUT_FILE_NAME, "w", encoding="utf8") as fp:
     json.dump(info, fp, default=serialize_unset)

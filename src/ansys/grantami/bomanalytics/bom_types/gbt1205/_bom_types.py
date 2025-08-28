@@ -26,11 +26,26 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, Optional, cast
 
-from .._base_types import BaseType
+from .._base_types import BaseType, QualifiedXMLName
 
 if TYPE_CHECKING:
     from .._bom_reader import _GenericBoMReader
     from .._bom_writer import _GenericBoMWriter
+
+
+class BaseTypeGbt1205(BaseType):
+    namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
+
+
+@dataclass(frozen=True)
+class _QualifiedGbt1205Name(QualifiedXMLName):
+    """
+    A fully qualified XML name. The name must be supplied, and the namespace defaults to the Granta Base Types
+    12/05 namespace.
+    """
+
+    local_name: str
+    namespace: str = BaseTypeGbt1205.namespace
 
 
 class PseudoAttribute(Enum):
@@ -80,16 +95,18 @@ class PseudoAttribute(Enum):
 
 
 @dataclass
-class PartialTableReference(BaseType):
+class PartialTableReference(BaseTypeGbt1205):
     """
     A type that partially identifies a Table, but does not specify the MI Database. Usually, just one of the several
     optional fields should be provided; where more than one is provided, the highest priority one is used, where the
     descending priority order is: tableIdentity, tableGUID, tableName.
     """
 
-    _simple_values = [("table_identity", "tableIdentity"), ("table_guid", "tableGUID"), ("table_name", "tableName")]
-
-    namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
+    _simple_values = [
+        ("table_identity", _QualifiedGbt1205Name("tableIdentity")),
+        ("table_guid", _QualifiedGbt1205Name("tableGUID")),
+        ("table_name", _QualifiedGbt1205Name("tableName")),
+    ]
 
     table_identity: Optional[int] = None
     """The identity of the table, this is the fastest way to reference a table."""
@@ -103,7 +120,7 @@ class PartialTableReference(BaseType):
 
 
 @dataclass
-class MIAttributeReference(BaseType):
+class MIAttributeReference(BaseTypeGbt1205):
     """A type that allows identification of a particular Attribute in an MI Database. This may be done directly by
     specifying the Identity of the Attribute, or indirectly by specifying a lookup that will match (only) the
     Attribute.
@@ -113,9 +130,10 @@ class MIAttributeReference(BaseType):
     a Fault.
     """
 
-    _simple_values = [("db_key", "dbKey"), ("attribute_identity", "attributeIdentity")]
-
-    namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
+    _simple_values = [
+        ("db_key", _QualifiedGbt1205Name("dbKey")),
+        ("attribute_identity", _QualifiedGbt1205Name("attributeIdentity")),
+    ]
 
     db_key: str
     """The key that uniquely identifies a particular Database on the MI Server."""
@@ -139,20 +157,25 @@ class MIAttributeReference(BaseType):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: "_GenericBoMReader") -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        name_obj = bom_reader.get_field(MIAttributeReference, obj, "name")
+        name_ref = _QualifiedGbt1205Name("name")
+        name_obj = bom_reader.get_field(obj, name_ref)
         if name_obj is not None:
-            table_obj = bom_reader.get_field(MIAttributeReference, name_obj, "table")
+            table_ref = _QualifiedGbt1205Name("table")
+            table_obj = bom_reader.get_field(name_obj, table_ref)
             if table_obj is not None:
                 props["table_reference"] = cast(
                     PartialTableReference, bom_reader.create_type("PartialTableReference", table_obj)
                 )
-            attribute_name_obj = bom_reader.get_field(MIAttributeReference, name_obj, "attributeName")
+            attribute_name_ref = _QualifiedGbt1205Name("attributeName")
+            attribute_name_obj = bom_reader.get_field(name_obj, attribute_name_ref)
             if attribute_name_obj is not None:
                 props["attribute_name"] = attribute_name_obj
-            pseudo_obj = bom_reader.get_field(MIAttributeReference, name_obj, "pseudo")
+            pseudo_ref = _QualifiedGbt1205Name("pseudo")
+            pseudo_obj = bom_reader.get_field(name_obj, pseudo_ref)
             if pseudo_obj is not None:
                 props["pseudo"] = PseudoAttribute.from_string(pseudo_obj)
-            is_standard_obj = bom_reader.get_field(MIAttributeReference, name_obj, "@isStandard")
+            is_standard_ref = _QualifiedGbt1205Name("@isStandard")
+            is_standard_obj = bom_reader.get_field(name_obj, is_standard_ref)
             if is_standard_obj is not None:
                 props["is_standard"] = is_standard_obj
         return props
@@ -161,19 +184,26 @@ class MIAttributeReference(BaseType):
         super()._write_custom_fields(obj, bom_writer)
         name_dict: Dict[str, Any] = {}
         if self.table_reference is not None:
-            name_dict[bom_writer._get_qualified_name(self, "table")] = bom_writer._convert_to_dict(self.table_reference)
+            table_ref = _QualifiedGbt1205Name("table")
+            name_dict[bom_writer._generate_contextual_qualified_name(table_ref)] = bom_writer._convert_to_dict(
+                self.table_reference
+            )
         if self.attribute_name is not None:
-            name_dict[bom_writer._get_qualified_name(self, "attributeName")] = self.attribute_name
+            attribute_name_ref = _QualifiedGbt1205Name("attributeName")
+            name_dict[bom_writer._generate_contextual_qualified_name(attribute_name_ref)] = self.attribute_name
         if self.pseudo is not None:
-            name_dict[bom_writer._get_qualified_name(self, "pseudo")] = self.pseudo.to_string()
+            pseudo_ref = _QualifiedGbt1205Name("pseudo")
+            name_dict[bom_writer._generate_contextual_qualified_name(pseudo_ref)] = self.pseudo.to_string()
         if self.is_standard is not None:
-            name_dict[bom_writer._get_qualified_name(self, "@isStandard")] = self.is_standard
+            is_standard_ref = _QualifiedGbt1205Name("@isStandard")
+            name_dict[bom_writer._generate_contextual_qualified_name(is_standard_ref)] = self.is_standard
         if name_dict != {}:
-            obj[bom_writer._get_qualified_name(self, "name")] = name_dict
+            name_ref = _QualifiedGbt1205Name("name")
+            obj[bom_writer._generate_contextual_qualified_name(name_ref)] = name_dict
 
 
 @dataclass
-class MIRecordReference(BaseType):
+class MIRecordReference(BaseTypeGbt1205):
     """A type that allows identification of a particular Record in an
     MI Database. This may be done directly by specifying the Identity or GUID of the Record, or
     indirectly by specifying a lookup that will match (only) the Record.
@@ -186,13 +216,11 @@ class MIRecordReference(BaseType):
     """
 
     _simple_values = [
-        ("db_key", "dbKey"),
-        ("record_guid", "recordGUID"),
-        ("record_history_guid", "recordHistoryGUID"),
-        ("record_uid", "@recordUID"),
+        ("db_key", _QualifiedGbt1205Name("dbKey")),
+        ("record_guid", _QualifiedGbt1205Name("recordGUID")),
+        ("record_history_guid", _QualifiedGbt1205Name("recordHistoryGUID")),
+        ("record_uid", _QualifiedGbt1205Name("@recordUID")),
     ]
-
-    namespace = "http://www.grantadesign.com/12/05/GrantaBaseTypes"
 
     db_key: str
     """The key that uniquely identifies a particular Database on the MI Server."""
@@ -227,19 +255,23 @@ class MIRecordReference(BaseType):
     @classmethod
     def _process_custom_fields(cls, obj: Dict, bom_reader: "_GenericBoMReader") -> Dict[str, Any]:
         props = super()._process_custom_fields(obj, bom_reader)
-        identity_obj = bom_reader.get_field(MIRecordReference, obj, "identity")
+        identity_ref = _QualifiedGbt1205Name("identity")
+        identity_obj = bom_reader.get_field(obj, identity_ref)
         if identity_obj is not None:
-            props["record_history_identity"] = bom_reader.get_field(
-                MIRecordReference, identity_obj, "recordHistoryIdentity"
-            )
-            version_obj = bom_reader.get_field(MIRecordReference, identity_obj, "version")
+            record_history_identity_ref = _QualifiedGbt1205Name("recordHistoryIdentity")
+            props["record_history_identity"] = bom_reader.get_field(identity_obj, record_history_identity_ref)
+            version_ref = _QualifiedGbt1205Name("version")
+            version_obj = bom_reader.get_field(identity_obj, version_ref)
             if version_obj is not None:
                 props["record_version_number"] = version_obj
-        lookup_obj = bom_reader.get_field(MIRecordReference, obj, "lookupValue")
+        lookup_ref = _QualifiedGbt1205Name("lookupValue")
+        lookup_obj = bom_reader.get_field(obj, lookup_ref)
         if lookup_obj is not None:
-            attr_ref_obj = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeReference")
+            attr_ref_ref = _QualifiedGbt1205Name("attributeReference")
+            attr_ref_obj = bom_reader.get_field(lookup_obj, attr_ref_ref)
             props["lookup_attribute_reference"] = bom_reader.create_type("MIAttributeReference", attr_ref_obj)
-            props["lookup_value"] = bom_reader.get_field(MIRecordReference, lookup_obj, "attributeValue")
+            attr_val_ref = _QualifiedGbt1205Name("attributeValue")
+            props["lookup_value"] = bom_reader.get_field(lookup_obj, attr_val_ref)
         return props
 
     def _write_custom_fields(self, obj: Dict, bom_writer: "_GenericBoMWriter") -> None:
@@ -248,17 +280,25 @@ class MIRecordReference(BaseType):
         # than the serialization ignoring a populated value.
         identity_dict = {}
         if self.record_history_identity is not None:
-            identity_dict[bom_writer._get_qualified_name(self, "recordHistoryIdentity")] = self.record_history_identity
+            record_history_identity_ref = _QualifiedGbt1205Name("recordHistoryIdentity")
+            identity_dict[bom_writer._generate_contextual_qualified_name(record_history_identity_ref)] = (
+                self.record_history_identity
+            )
         if self.record_version_number is not None:
-            identity_dict[bom_writer._get_qualified_name(self, "version")] = self.record_version_number
+            version_ref = _QualifiedGbt1205Name("version")
+            identity_dict[bom_writer._generate_contextual_qualified_name(version_ref)] = self.record_version_number
         if identity_dict:
-            obj[bom_writer._get_qualified_name(self, "identity")] = identity_dict
+            identity_ref = _QualifiedGbt1205Name("identity")
+            obj[bom_writer._generate_contextual_qualified_name(identity_ref)] = identity_dict
         lookup_dict: Dict[str, Any] = {}
         if self.lookup_value is not None:
-            lookup_dict[bom_writer._get_qualified_name(self, "attributeValue")] = self.lookup_value
+            attr_val_ref = _QualifiedGbt1205Name("attributeValue")
+            lookup_dict[bom_writer._generate_contextual_qualified_name(attr_val_ref)] = self.lookup_value
         if self.lookup_attribute_reference is not None:
-            lookup_dict[bom_writer._get_qualified_name(self, "attributeReference")] = bom_writer._convert_to_dict(
+            attr_ref_ref = _QualifiedGbt1205Name("attributeReference")
+            lookup_dict[bom_writer._generate_contextual_qualified_name(attr_ref_ref)] = bom_writer._convert_to_dict(
                 cast(BaseType, self.lookup_attribute_reference)
             )
         if lookup_dict:
-            obj[bom_writer._get_qualified_name(self, "lookupValue")] = lookup_dict
+            lookup_ref = _QualifiedGbt1205Name("lookupValue")
+            obj[bom_writer._generate_contextual_qualified_name(lookup_ref)] = lookup_dict

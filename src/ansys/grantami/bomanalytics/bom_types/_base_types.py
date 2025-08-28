@@ -22,7 +22,16 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any, Dict, Iterable, List, Protocol, Tuple
+
+
+@dataclass(frozen=True)
+class QualifiedXMLName:
+    """A fully qualified XML element, including both namespace and local name."""
+
+    local_name: str
+    namespace: str
 
 
 class HasNamespace(Protocol):
@@ -51,24 +60,24 @@ class BaseType(HasNamespace, SupportsCustomFields):
 
     Attributes
     ----------
-    _props : List[Tuple[str, str, str]]
+    _props : List[Tuple[str, str, QualifiedXMLName]]
         Properties that map to complex types in XML. The entries are the type target, the python attribute name
-        and the XML element name.
-    _list_props : List[Tuple[str, str, str, str]]
+        and the element QualifiedXMLName.
+    _list_props : List[Tuple[str, str, QualifiedXMLName, QualifiedXMLName]]
         Properties that map to sequences of complex types in XML. The entries are the type target for each entry, the
-        python property name, the container XML element name, and the item XML element name.
-    _simple_values : List[Tuple[str, str]]
-        Properties that map to simple types in XML. The entries are the python property name and the item XML element
-        name.
+        python property name, the container QualifiedXMLName, and the item QualifiedXMLName.
+    _simple_values : List[Tuple[str, QualifiedXMLName]]
+        Properties that map to simple types in XML. The entries are the python property name and the element
+        QualifiedXMLName.
     _namespaces : Dict[str, str]
         Mapping from XML namespace prefix to namespace URI.
     namespace : str
         XML Namespace URI for the object, should exist as a value in the ``_namespaces`` map.
     """
 
-    _props: List[Tuple[str, str, str]] = []
-    _list_props: List[Tuple[str, str, str, str, str]] = []
-    _simple_values: List[Tuple[str, str]] = []
+    _props: List[Tuple[str, str, QualifiedXMLName]] = []
+    _list_props: List[Tuple[str, str, QualifiedXMLName, QualifiedXMLName]] = []
+    _simple_values: List[Tuple[str, QualifiedXMLName]] = []
 
     _namespaces: Dict[str, str] = {}
 

@@ -24,8 +24,10 @@ from typing import TYPE_CHECKING, Dict, Generic, TypeVar, cast
 
 from xmlschema import XMLSchema
 
+from ._base_types import QualifiedXMLName
+
 if TYPE_CHECKING:
-    from ._base_types import BaseType, HasNamespace
+    from ._base_types import BaseType
 
 T = TypeVar("T", bound="BaseType")
 
@@ -54,19 +56,25 @@ class _GenericBoMWriter(Generic[T]):
         """
         return self._schema.target_namespace
 
-    def _get_qualified_name(self, obj: "HasNamespace", field_name: str) -> str:
-        namespace_prefixes = [k for k, v in self._schema.namespaces.items() if v == obj.namespace]
+    def _generate_contextual_qualified_name(self, field_name: QualifiedXMLName) -> str:
+        """
+        Convert a QualifiedXMLName object into a qualified name, including the relevant prefix for the current
+        serialization operation.
+        """
+        namespace_prefixes = [k for k, v in self._schema.namespaces.items() if v == field_name.namespace]
         if len(namespace_prefixes) == 1:
             namespace_prefix = namespace_prefixes[0]
         elif len(namespace_prefixes) == 0:
-            raise KeyError(f"Namespace {obj.namespace} does not exist in schema for object {type(obj)}")
+            raise KeyError(
+                f"Namespace {field_name.namespace} does not exist in schema for field {type(field_name.local_name)}"
+            )
         elif "" in namespace_prefixes:
-            return field_name
+            return field_name.local_name
         else:
             namespace_prefix = namespace_prefixes[0]
-        if field_name[0] == "@":
-            return f"@{namespace_prefix}:{field_name[1:]}"
-        return f"{namespace_prefix}:{field_name}"
+        if field_name.local_name[0] == "@":
+            return f"@{namespace_prefix}:{field_name.local_name[1:]}"
+        return f"{namespace_prefix}:{field_name.local_name}"
 
     def _convert_to_dict(self, obj: "BaseType") -> Dict:
         value = {}
@@ -74,21 +82,21 @@ class _GenericBoMWriter(Generic[T]):
         for prop, field_name in obj._simple_values:
             prop_value = getattr(obj, prop)
             if prop_value is not None:
-                value[self._get_qualified_name(obj, field_name)] = prop_value
-        for _, prop, field_name in obj._props:
+                value[self._generate_contextual_qualified_name(field_name)] = prop_value
+        for _, prop, item_name in obj._props:
             prop_value = getattr(obj, prop)
             if prop_value is not None:
                 prop_value = self._convert_to_dict(cast("BaseType", prop_value))
-                value[self._get_qualified_name(obj, field_name)] = prop_value
-        for _, prop, container_name, _, field_name in obj._list_props:
+                value[self._generate_contextual_qualified_name(item_name)] = prop_value
+        for _, prop, container_name, item_name in obj._list_props:
             prop_value = getattr(obj, prop)
             if prop_value is not None and len(prop_value) > 0:
                 prop_value = {
-                    self._get_qualified_name(obj, field_name): [
+                    self._generate_contextual_qualified_name(item_name): [
                         self._convert_to_dict(item_obj) for item_obj in prop_value
                     ]
                 }
-                value[self._get_qualified_name(obj, container_name)] = prop_value
+                value[self._generate_contextual_qualified_name(container_name)] = prop_value
         obj._write_custom_fields(value, self)
         return value
 

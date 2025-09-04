@@ -27,7 +27,7 @@ import GRANTA_MIScriptingToolkit as gdl
 from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 
 from cicd._connection import Connection
-from cicd._utils import TableBrowser
+from cicd._utils import DatabaseBrowser
 from cicd._config import MI_URL, CUSTOM_DB_KEY, RS_CUSTOM_TABLE_NAME_MAPPING
 
 logger = logging.getLogger(__name__)
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     database_client.update_database(database_key=CUSTOM_DB_KEY, body=rename_request)
 
-    table_browser = TableBrowser(api_client, logger)
+    table_browser = DatabaseBrowser(api_client, logger)
     custom_table_name_map = table_browser.get_table_name_guid_map(CUSTOM_DB_KEY)
 
     for old_name, new_name in RS_CUSTOM_TABLE_NAME_MAPPING.items():

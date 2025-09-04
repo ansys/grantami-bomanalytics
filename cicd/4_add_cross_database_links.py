@@ -1,17 +1,22 @@
 import logging
 from collections import defaultdict
+from typing import Mapping, Sequence
 
 from ansys.grantami.serverapi_openapi.v2025r2 import api, models
+from GRANTA_MIScriptingToolkit import granta as mpy
 
 from cicd._connection import Connection
 from cicd._config import (
     MI_URL,
     RS_DB_KEY,
     FOREIGN_DB_KEY,
-    FOREIGN_RS_LINK_GROUPS,
-    RS_UNIQUE_ID_STANDARD_NAMES,
-    FOREIGN_RS_LINKS,
+    FOREIGN_XDB_LINK_GROUPS,
+    FOREIGN_ATTRIBUTE_STANDARD_NAMES,
+    FOREIGN_SCHEMA,
+    LINKING_CRITERIA,
+    FOREIGN_DB_NAME,
 )
+from cicd._utils import DatabaseBrowser
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -21,189 +26,238 @@ formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
-if __name__ == "__main__":
-    api_client = Connection(api_url=MI_URL).with_autologon().connect()
 
-    database_client = api.SchemaDatabasesApi(api_client)
+def ensure_table_exists_with_attributes(
+    db_key: str,
+    table_name: str,
+    attribute_names: Sequence[str],
+) -> Mapping[str, str]:
+    """
+    Check if the provided table name exists within the database, and if the attribute names provided exist in that
+    table.
+
+    If the table does not exist, create it.
+
+    If the attributes do not exist, create them as short-text attributes.
+
+    Return a mapping of attribute names to attribute GUIDs.
+    """
+
+    _database_browser = DatabaseBrowser(api_client, logger)
+    table_name_to_guid_map = _database_browser.get_table_name_guid_map(db_key)
+
     table_client = api.SchemaTablesApi(api_client)
     attribute_client = api.SchemaAttributesApi(api_client)
-    rlg_client = api.SchemaRecordLinkGroupsApi(api_client)
-    std_name_client = api.SchemaStandardNamesApi(api_client)
-    record_client = api.RecordsRecordHistoriesApi(api_client)
-    data_client = api.DataApi(api_client)
 
-    logger.info("Setting foreign database name")
-    database_client.update_database(
-        database_key=FOREIGN_DB_KEY,
-        body=models.GsaUpdateDatabase(
-            name="Restricted Substances Foreign Database",
-        ),
+    logger.info(f"  Checking {table_name}...")
+    if table_name in table_name_to_guid_map:
+        table_guid = table_name_to_guid_map[table_name]
+        logger.info(f"  {table_name} already exists with guid {table_guid}")
+    else:
+        logger.info(f"  {table_name} does not exist. Creating...")
+        resp = table_client.create_table(
+            database_key=db_key,
+            body=models.GsaCreateTable(
+                name=table_name,
+                is_hidden_from_browse=False,
+                is_hidden_from_search=False,
+            ),
+        )
+        table_guid = resp.guid
+        logger.info(f"  Created {table_name} with GUID {table_guid}")
+
+    logger.info(f"  Ensuring attributes exist for table {table_name}")
+    attribute_resp = attribute_client.get_attributes(
+        database_key=db_key,
+        table_guid=table_guid,
     )
+    guid_map = {a.name: a.guid for a in attribute_resp.attributes}
 
-    logger.info("Deleting existing standard names in foreign database")
-    std_name_resp = std_name_client.get_standard_names(database_key=FOREIGN_DB_KEY)
-    for standard_name in std_name_resp.standard_names:
-        std_name_client.delete_standard_name(
-            database_key=FOREIGN_DB_KEY,
-            standard_name_guid=standard_name.guid,
-        )
-
-    logger.info("Ensuring tables exist in the foreign database")
-    foreign_db_guid = database_client.get_database(database_key=FOREIGN_DB_KEY).guid
-    foreign_tables = table_client.get_tables(database_key=FOREIGN_DB_KEY)
-    foreign_tables = {t.name: t.guid for t in foreign_tables.tables}
-
-    attribute_guids = defaultdict(dict)
-
-    std_names_to_create = defaultdict(list)
-
-    for rs_table_name, foreign_table_name in FOREIGN_RS_LINK_GROUPS.values():
-        logger.info(f"  Checking {foreign_table_name}...")
-        if foreign_table_name in foreign_tables:
-            logger.info(f"  {foreign_table_name} exists with GUID {foreign_tables[foreign_table_name]}")
-
+    for attribute_name in attribute_names:
+        if attribute_name in guid_map:
+            logger.info(f"    Attribute {attribute_name} found with guid {guid_map[attribute_name]}")
         else:
-            logger.info(f"  {foreign_table_name} does not exist.")
-            resp = table_client.create_table(
-                database_key=FOREIGN_DB_KEY,
-                body=models.GsaCreateTable(
-                    name=foreign_table_name,
-                    is_hidden_from_browse=False,
-                    is_hidden_from_search=False,
-                ),
-            )
-            foreign_tables[foreign_table_name] = resp.guid
-            logger.info(f"  Created {foreign_table_name} with GUID {foreign_tables[foreign_table_name]}")
-
-        table_guid = foreign_tables[foreign_table_name]
-
-        logger.info(f"  Ensuring attributes exist for table {foreign_table_name}")
-        attribute_resp = attribute_client.get_attributes(
-            database_key=FOREIGN_DB_KEY,
-            table_guid=table_guid,
-        )
-        attribute_guids[foreign_table_name] = {a.name: a.guid for a in attribute_resp.attributes}
-
-        foreign_unique_id_attr_name = f"{foreign_table_name} standalone unique attribute"
-        if foreign_unique_id_attr_name not in attribute_guids[foreign_table_name]:
-            logger.info(f"    Attribute {foreign_unique_id_attr_name} not found. Creating...")
+            logger.info(f"    Attribute {attribute_name} not found. Creating...")
             resp = attribute_client.create_attribute(
-                database_key=FOREIGN_DB_KEY,
+                database_key=db_key,
                 table_guid=table_guid,
                 body=models.GsaCreateAttribute(
-                    name=foreign_unique_id_attr_name,
+                    name=attribute_name,
                     type=models.GsaAttributeType.SHORTTEXT,
                 ),
             )
-            attribute_guids[foreign_table_name][foreign_unique_id_attr_name] = resp.guid
+            guid_map[attribute_name] = resp.guid
+    return guid_map
 
-        for rs_attribute in RS_UNIQUE_ID_STANDARD_NAMES.get(rs_table_name, []):
-            if rs_attribute not in attribute_guids[foreign_table_name]:
-                logger.info(f"    Attribute {rs_attribute} not found. Creating...")
-                create_attr_resp = attribute_client.create_attribute(
-                    database_key=FOREIGN_DB_KEY,
-                    table_guid=table_guid,
-                    body=models.GsaCreateAttribute(
-                        name=f"{rs_attribute}",
-                        type=models.GsaAttributeType.SHORTTEXT,
-                    ),
-                )
-                attribute_guids[foreign_table_name][rs_attribute] = create_attr_resp.guid
-                std_names_to_create[rs_attribute].append(attribute_guids[foreign_table_name][rs_attribute])
 
-    logger.info(f"Creating missing standard names...")
-    for std_name, guids in std_names_to_create.items():
-        logger.info(f"  Creating {std_name}")
-        std_name_client.create_standard_name(
-            database_key=FOREIGN_DB_KEY,
-            body=models.GsaCreateStandardName(
-                name=std_name, mapped_attributes=[models.GsaSlimEntity(guid=guid) for guid in guids]
+def ensure_link_group_exists(
+    name: str,
+    db_key: str,
+    source_table_guid: str,
+    target_db_key: str,
+    target_table_guid: str,
+) -> str:
+    """
+    Check if the provided record link group name exists within the database with the provided table name as the source
+    table.
+
+    If the link group does not exist, create it as a cross-database record link group between the source table and
+    destination table, and return the GUID.
+    """
+    logger.info(f"  Checking {name}")
+
+    _database_browser = DatabaseBrowser(api_client, logger)
+
+    rlg_client = api.SchemaRecordLinkGroupsApi(api_client)
+
+    rlgs = rlg_client.get_record_link_groups(database_key=db_key, table_guid=source_table_guid)
+    for rlg in rlgs.record_link_groups:
+        if rlg.name == name:
+            logger.info(f"  Link group already exists")
+            return rlg.guid
+
+    logger.info(f"  Link group not found. Creating.")
+    target_db_guid = _database_browser.get_database_guid(target_db_key)
+    create_response = rlg_client.create_record_link_group(
+        database_key=db_key,
+        table_guid=source_table_guid,
+        body=models.GsaCreateRecordLinkGroup(
+            link_target=models.GsaLinkTarget(
+                database_guid=target_db_guid,
+                table_guid=target_table_guid,
             ),
-        )
-
-    logger.info("Ensuring record link groups exist between primary and foreign databases")
-    rs_tables = table_client.get_tables(database_key=RS_DB_KEY)
-    rs_table_guids = {t.name: t.guid for t in rs_tables.tables}
-
-    link_mapping = {}
-
-    for link_name, (source_table_name, dest_table_name) in FOREIGN_RS_LINK_GROUPS.items():
-        logger.info(f"  Checking {link_name}")
-
-        source_table_guid = rs_table_guids[source_table_name]
-        dest_table_guid = foreign_tables[dest_table_name]
-
-        rlgs = rlg_client.get_record_link_groups(
-            database_key=RS_DB_KEY,
-            table_guid=source_table_guid,
-        )
-        for rlg in rlgs.record_link_groups:
-            if rlg.name == link_name:
-                logger.info(f"  Link already exists")
-                link_mapping[rlg.name] = rlg.guid
-                break
-
-        if link_name in link_mapping:
-            continue
-
-        logger.info(f"  Link not found. Creating.")
-        create_response = rlg_client.create_record_link_group(
-            database_key=RS_DB_KEY,
-            table_guid=source_table_guid,
-            body=models.GsaCreateRecordLinkGroup(
-                link_target=models.GsaLinkTarget(
-                    database_guid=foreign_db_guid,
-                    table_guid=dest_table_guid,
-                ),
-                name=link_name,
-                reverse_name=f"{link_name} (reverse)",
-                type=models.GsaRecordLinkGroupType.CROSSDATABASE,
-            ),
-        )
-        link_mapping[link_name] = create_response.guid
-
-    logger.info("Deleting existing xdb standard name")
-    std_name_resp = std_name_client.get_standard_names(database_key=RS_DB_KEY)
-    try:
-        xdb_std_name_guid = next(
-            n.guid for n in std_name_resp.standard_names if n.name == "Granta record for analysis 1"
-        )
-        std_name_client.delete_standard_name(
-            database_key=RS_DB_KEY,
-            standard_name_guid=xdb_std_name_guid,
-        )
-    except StopIteration:
-        pass
-
-    logger.info("Creating new xdb standard name")
-    std_name_client.create_standard_name(
-        database_key=RS_DB_KEY,
-        body=models.GsaCreateStandardName(
-            name="Granta record for analysis 1",
-            mapped_cross_database_record_link_groups=[
-                models.GsaSlimEntity(guid=guid) for guid in link_mapping.values()
-            ],
+            name=link_name,
+            reverse_name=f"{link_name} (reverse)",
+            type=models.GsaRecordLinkGroupType.CROSSDATABASE,
         ),
     )
+    return create_response.guid
 
-    logger.info("Creating and linking foreign records")
-    for link_group_name, (attribute_name, unique_id) in FOREIGN_RS_LINKS.items():
-        source_table_name, dest_table_name = FOREIGN_RS_LINK_GROUPS[link_group_name]
 
-        logger.info(f"  Creating record {unique_id}")
+def add_attribute_value_to_record(record: mpy.Record, attribute_name: str, attribute_value: str) -> None:
+    """Populate a streamlined layer attribute."""
+    logger.info(f"    Setting attribute '{attribute_name}' to value '{attribute_value}'")
+    attribute = record.attributes[attribute_name]
+    attribute.value = attribute_value
+    record.set_attributes([attribute])
 
-        create_resp = record_client.create_record_history(
-            database_key=FOREIGN_DB_KEY,
-            table_guid=foreign_tables[dest_table_name],
-            body=models.GsaCreateRecordHistory(name=unique_id, record_type=models.GsaRecordType.RECORD),
+
+def add_links_to_record(record: mpy.Record, link_group_name: str, link_records: list[mpy.Record]) -> None:
+    """Add links to a record link group."""
+    logger.info(f"    Adding links to record link group {link_group_name}")
+    record.set_links(link_name=link_group_name, records=link_records)
+
+
+if __name__ == "__main__":
+    api_client = Connection(api_url=MI_URL).with_autologon().connect()
+    database_browser = DatabaseBrowser(api_client, logger)
+
+    # ----------------- Clean up ------------------------------------------------------
+
+    database_browser.delete_all_standard_names(FOREIGN_DB_KEY)
+
+    # ------------------ Set database name --------------------------
+
+    database_browser.update_database_name(FOREIGN_DB_KEY, FOREIGN_DB_NAME)
+
+    # ------------------ Create tables and unique ID attributes --------------------------
+
+    logger.info("Ensuring tables exist in the foreign database")
+    foreign_table_name_to_attribute_name_to_guid_map: dict[str, Mapping[str, str]] = defaultdict(dict)
+    for foreign_table_name, foreign_attribute_names in FOREIGN_SCHEMA.items():
+        attribute_name_to_guid_map = ensure_table_exists_with_attributes(
+            db_key=FOREIGN_DB_KEY,
+            table_name=foreign_table_name,
+            attribute_names=foreign_attribute_names,
         )
-        history_guid = create_resp.guid
+        foreign_table_name_to_attribute_name_to_guid_map[foreign_table_name] = attribute_name_to_guid_map
 
-        logger.info(f"    Setting attribute {attribute_name} value {unique_id}")
-        data_client.set_datum_for_attribute(
-            database_key=FOREIGN_DB_KEY,
-            record_history_guid=history_guid,
-            attribute_guid=attribute_guids[dest_table_name][attribute_name],
+    # ------------------ Create attribute standard names --------------------------
+
+    logger.info(f"Creating attribute standard names...")
+    for foreign_standard_name, mappings in FOREIGN_ATTRIBUTE_STANDARD_NAMES.items():
+        attribute_guids = [
+            foreign_table_name_to_attribute_name_to_guid_map[table_name][attribute_name]
+            for (table_name, attribute_name) in mappings
+        ]
+        database_browser.create_standard_name(
+            db_key=FOREIGN_DB_KEY,
+            name=foreign_standard_name,
+            mapped_attribute_guids=attribute_guids,
         )
 
-        logger.info(f"    Creating cross-database link")
+    # ------------------ Record link groups --------------------------
+
+    logger.info("Ensuring record link groups exist between primary and foreign databases")
+    xdb_link_group_guids = []
+
+    foreign_table_guids = database_browser.get_table_name_guid_map(FOREIGN_DB_KEY)
+    rs_table_guids = database_browser.get_table_name_guid_map(RS_DB_KEY)
+
+    for link_name, (foreign_table_name, rs_table_name) in FOREIGN_XDB_LINK_GROUPS.items():
+        new_guid = ensure_link_group_exists(
+            name=link_name,
+            db_key=FOREIGN_DB_KEY,
+            source_table_guid=foreign_table_guids[foreign_table_name],
+            target_db_key=RS_DB_KEY,
+            target_table_guid=rs_table_guids[rs_table_name],
+        )
+        xdb_link_group_guids.append(new_guid)
+
+    logger.info("Creating new cross-database record link group standard name")
+    database_browser.create_standard_name(
+        db_key=FOREIGN_DB_KEY,
+        name="Granta record for analysis 1",
+        mapped_cross_database_record_link_group_guids=xdb_link_group_guids,
+    )
+
+    # ------------------ Foreign record creation and population --------------------------
+
+    streamlined_session = mpy.Session(service_layer_url=MI_URL, autologon=True)
+
+    logger.info("Creating and link foreign records")
+    records_to_update = []
+
+    for xdb_rlg_name, (attribute_name, unique_ids) in LINKING_CRITERIA.items():
+        foreign_table_name, rs_table_name = FOREIGN_XDB_LINK_GROUPS[xdb_rlg_name]
+
+        for unique_id in unique_ids:
+            foreign_guid = database_browser.ensure_record_exists_with_name(
+                db_key=FOREIGN_DB_KEY,
+                table_name=foreign_table_name,
+                record_name=unique_id,
+            )
+            foreign_record = streamlined_session.get_db(db_key=FOREIGN_DB_KEY).get_record_by_id(hguid=foreign_guid)
+            rs_record = (
+                streamlined_session.get_db(db_key=RS_DB_KEY)
+                .get_table(name=rs_table_name)
+                .get_record_by_lookup_value(
+                    attribute_name=attribute_name,
+                    lookup_value=unique_id,
+                )
+            )
+
+            add_attribute_value_to_record(
+                record=foreign_record,
+                attribute_name=attribute_name,
+                attribute_value=unique_id,
+            )
+            standalone_attribute_name = f"{foreign_table_name}, foreign unique attribute"
+            standalone_attribute_value = f"{unique_id}-foreign"
+            add_attribute_value_to_record(
+                record=foreign_record,
+                attribute_name=standalone_attribute_name,
+                attribute_value=standalone_attribute_value,
+            )
+            add_links_to_record(
+                record=foreign_record,
+                link_group_name=xdb_rlg_name,
+                link_records=[rs_record],
+            )
+            records_to_update.append(foreign_record)
+
+    streamlined_session.update(
+        records_to_update,
+        update_attributes=True,
+        update_links=True,
+    )

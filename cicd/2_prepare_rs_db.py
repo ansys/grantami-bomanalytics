@@ -21,7 +21,7 @@ from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 import GRANTA_MIScriptingToolkit as gdl
 
 from cicd._connection import Connection
-from cicd._utils import TableBrowser, ServerApiClient
+from cicd._utils import DatabaseBrowser, ServerApiClient
 from cicd._config import LAYOUT_TO_PRESERVE, SUBSET_TO_PRESERVE, MI_URL, DATA_FILENAME, RS_DB_KEY, CUSTOM_DB_KEY
 
 if TYPE_CHECKING:
@@ -310,7 +310,7 @@ if __name__ == "__main__":
     with open(INPUT_FILE_NAME, "r", encoding="utf8") as fp:
         input_data = json.load(fp)
 
-    table_browser = TableBrowser(api_client, logger)
+    table_browser = DatabaseBrowser(api_client, logger)
     logger.info("Getting Table Information")
 
     vanilla_table_name_map = table_browser.get_table_name_guid_map(RS_DB_KEY)

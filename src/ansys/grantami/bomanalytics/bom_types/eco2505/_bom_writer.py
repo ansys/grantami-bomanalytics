@@ -20,37 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""
-Sub-package providing XML Schema Definition (XSD) files for Ansys Granta BoM formats.
-
-XSD files can be used for validating XML files.
-"""
-
-from pathlib import Path
-
-_schemas_dir = Path(__file__).parent
-
-bom_schema_1711: Path = _schemas_dir / "BillOfMaterialsEco1711.xsd"
-"""Path to the Ansys Granta 17/11 BoM XML Schema definition.
-
-.. versionadded:: 2.0
-"""
-
-bom_schema_2301: Path = _schemas_dir / "BillOfMaterialsEco2301.xsd"
-"""Path to the Ansys Granta 23/01 BoM XML Schema definition.
-
-.. versionadded:: 2.0
-"""
-
-bom_schema_2412: Path = _schemas_dir / "BillOfMaterialsEco2412.xsd"
-"""Path to the Ansys Granta 24/12 BoM XML Schema definition.
-
-.. versionadded:: 2.3
-"""
+from .._bom_writer import _GenericBoMWriter
+from ._bom_types import BillOfMaterials
 
 
-bom_schema_2505: Path = _schemas_dir / "BillOfMaterialsEco2505.xsd"
-"""Path to the Ansys Granta 25/05 BoM XML Schema definition.
-
-.. versionadded:: 2.4
-"""
+class _BoMWriter(_GenericBoMWriter[BillOfMaterials]):
+    pass

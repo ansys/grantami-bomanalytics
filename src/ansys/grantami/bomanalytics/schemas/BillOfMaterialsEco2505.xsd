@@ -1,0 +1,800 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://www.grantadesign.com/25/05/BillOfMaterialsEco"
+  elementFormDefault="qualified"
+  xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes"
+  xmlns:eco="http://www.grantadesign.com/25/05/BillOfMaterialsEco"
+>
+
+  <!-- Import the Service Layer Interface version 12/05 MIRecordReference type, and types used by that type. -->
+  <xsd:import namespace="http://www.grantadesign.com/12/05/GrantaBaseTypes" schemaLocation="grantarecord1205.xsd" />
+
+  <xsd:element name="PartsEco" type="eco:BillOfMaterials">
+    <xsd:annotation>
+      <xsd:documentation>Root node of an Eco Bill of Materials (BoM).</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="BillOfMaterials">
+    <xsd:annotation>
+      <xsd:documentation>Type for the root node of an Eco Bill of Materials (BoM).</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Components" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Part" type="eco:Part" minOccurs="0" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="TransportPhase" type="eco:TransportChain" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The Transports to which the contained Parts are subject.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="UsePhase" type="eco:UsePhase" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The Use to which the contained Parts are subject.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="Location" type="eco:Location" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The Location in which the BoM is manufactured.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="Notes" type="eco:BOMDetails" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>This defines optional notes about the BoM.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="Annotations" minOccurs="0" type="eco:AnnotationList">
+        <xsd:annotation>
+          <xsd:documentation>Optional annotations to the BoM.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="AnnotationSources" minOccurs="0" type="eco:AnnotationSourceList">
+        <xsd:annotation>
+          <xsd:documentation>
+            Information about the sources of annotations to the BoM. Only useful when there are
+            some annotations. Even when annotations are present, it is optional whether to provide information about their sources.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attributeGroup ref="eco:InternalIdentification"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Part">
+    <xsd:annotation>
+      <xsd:documentation>A single part which may or may not be stored in the MI Database.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="Quantity" type="eco:UnittedValueType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            The quantity of part(s) used in the parent part.
+
+            For discrete parts, this will be the part count - an integer with a blank unit (or "Each").
+
+            For continuous parts, it will be a mass, length, area or volume - a decimal value with an appropriate units.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="MassPerUom" type="eco:UnittedValueType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            The mass of the part, after processing, relative to the unit that Quantity is given in.
+
+            If MassPerUom is specified and VolumePerUom is not, then specifying materials within this part is interpreted to be
+            percentage by mass.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="VolumePerUom" type="eco:UnittedValueType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            The volume of the part, after processing, relative to the unit that Quantity is given in.
+
+            If VolumePerUom is specified and MassPerUom is not, then specifying materials within this part is interpreted to be
+            percentage by volume.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:choice minOccurs="0">
+        <xsd:element name="MIPartReference" type="eco:ExtendedMIRecordReference">
+          <xsd:annotation>
+            <xsd:documentation>A reference to a part stored in MI.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+
+        <xsd:element name="NonMIPartReference">
+          <xsd:annotation>
+            <xsd:documentation>A reference to a part stored in another system, for informational purposes only.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:any />
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:choice>
+
+      <xsd:element name="PartNumber" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>The Part Number associated with this part. External applications may treat this analogously to Identity from the CommonIdentifiers group.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="Name" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>See CommonIdentifiers group.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="ExternalIdentity" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>See CommonIdentifiers group.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="Components" minOccurs="0">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Part" type="eco:Part" minOccurs="0" maxOccurs="unbounded" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="Specifications" type="eco:Specifications" minOccurs="0" />
+      <xsd:element name="Materials" type="eco:Materials" minOccurs="0" />
+      <xsd:element name="Substances" type="eco:Substances" minOccurs="0" />
+      <xsd:element name="Processes" type="eco:ProcessChain" minOccurs="0" />
+      <xsd:element name="RohsExemptions" type="eco:RohsExemptions" minOccurs="0" />
+
+      <xsd:element name="EndOfLifeFates" type="eco:EndOfLifeFates" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Specify the fate(s) of the part, at end-of-life of the product.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="TransportPhase" type="eco:TransportChain" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The Transports to which the part is subject.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="Location" type="eco:Location" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The Location in which the part is manufactured.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+
+    <xsd:attributeGroup ref="eco:InternalIdentification"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Materials">
+    <xsd:annotation>
+      <xsd:documentation>
+        The list of materials within a part or semi-finished part. Materials can also be part of a specification.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Material" type="eco:Material" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Material">
+    <xsd:annotation>
+      <xsd:documentation>A Material within a part or semi-finished part. The material is stored in the Database.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:choice minOccurs="0">
+        <xsd:element name="Percentage" type="xsd:double" />
+        <xsd:element name="Mass" type="eco:UnittedValueType" />
+      </xsd:choice>
+      <xsd:element name="MIMaterialReference" type="eco:ExtendedMIRecordReference" />
+
+      <xsd:group ref="eco:CommonIdentifiers" />
+
+      <xsd:element name="RecycleContent" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The recycle content of Parts. That is, Mc/(Mc + Mv), where Mc is the mass of recycled material in Parts, and Mv is the mass of virgin material in Parts. If omitted then 0% is assumed.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:choice>
+            <xsd:element name="Typical">
+              <xsd:annotation>
+                <xsd:documentation>Indicates that the recycle content is to be obtained from the materials datasheet.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="Percentage" type="xsd:double">
+              <xsd:annotation>
+                <xsd:documentation>The actual content, as a percentage.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:choice>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="Processes" type="eco:ProcessChain" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Specify processes that are applied to the material.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="EndOfLifeFates" type="eco:EndOfLifeFates" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Specify the fate(s) of the material, at end-of-life of the product.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+
+    <xsd:attributeGroup ref="eco:InternalIdentification"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="ProcessChain">
+    <xsd:annotation>
+      <xsd:documentation>All the processes that are applied to a subassembly, part, semi-finished part or material. A process chain may also be part of a specification.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="Process" type="eco:Process" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Process">
+    <xsd:annotation>
+      <xsd:documentation>A process that is applied to a subassembly, part, semi-finished part or material. The process is stored in the Database.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="MIProcessReference" type="eco:ExtendedMIRecordReference" />
+
+      <xsd:group ref="eco:CommonIdentifiers" />
+
+      <xsd:element name="DimensionType">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Mass">
+              <xsd:annotation>
+                <xsd:documentation>If the process affects the bulk of the material or part (e.g. it is a shaping process) then the amount of material affected by the process should be specified. The amount may be specified as a percentage by weight or an absolute value.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="MassRemoved">
+              <xsd:annotation>
+                <xsd:documentation>Specifying the mass in this way allows one to specify processes that may have removed material (e.g. milling or turning).</xsd:documentation>
+              </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Volume" />
+            <xsd:enumeration value="Area">
+              <xsd:annotation>
+                <xsd:documentation>Some joining processes can have an associated area.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Length">
+              <xsd:annotation>
+                <xsd:documentation>If the process is an edge joining process (e.g. welding) then the BOM must specify the length of material affected by the process.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Count">
+              <xsd:annotation>
+                <xsd:documentation>Certain fastening processes are quantified by the number of fasteners (e.g. the number of hot rivets holding two plates together).</xsd:documentation>
+              </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="Time" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+
+      <xsd:choice>
+        <xsd:element name="Percentage" type="xsd:double">
+          <xsd:annotation>
+            <xsd:documentation>
+              The percentage of the material mass in this part affected by the process.  Specifying a percentage may be useful in scenarios where we do not know the actual material mass
+              but we know that the process affects all the material.
+
+              Percentage is only supported for dimension types "Mass" and "Mass removed".
+            </xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="Quantity" type="eco:UnittedValueType">
+          <xsd:annotation>
+            <xsd:documentation>A quantification of the process according to its dimension type.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:element>
+      </xsd:choice>
+
+      <xsd:element name="TransportPhase" type="eco:TransportChain" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The Transports to which the material is subject before this processing step.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="Location" type="eco:Location" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The Location in which the processing is done.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+
+    <xsd:attributeGroup ref="eco:InternalIdentification"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Substances">
+    <xsd:sequence>
+      <xsd:element name="Substance" type="eco:Substance" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Substance">
+    <xsd:annotation>
+      <xsd:documentation>A substance within a part, semi-finished part, material or specification. The substance is stored in the Database.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="Percentage" type="xsd:double" minOccurs="0" />
+      <xsd:element name="Category" minOccurs="0">
+        <xsd:simpleType>
+          <xsd:annotation>
+            <xsd:documentation>Represents whether the substance remains present in the material after production</xsd:documentation>
+          </xsd:annotation>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="Null" />
+            <xsd:enumeration value="Incorporated" />
+            <xsd:enumeration value="MayBeIncorporated" />
+            <xsd:enumeration value="UsedInProduction" />
+            <xsd:enumeration value="MayBeUsedInProduction" />
+            <xsd:enumeration value="UsedInCoating" />
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="MISubstanceReference" type="eco:ExtendedMIRecordReference" />
+
+      <xsd:group ref="eco:CommonIdentifiers" />
+    </xsd:sequence>
+
+    <xsd:attributeGroup ref="eco:InternalIdentification"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="Specifications">
+    <xsd:sequence>
+      <xsd:element name="Specification" type="eco:Specification" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="Specification">
+    <xsd:sequence>
+      <xsd:element name="MISpecificationReference" type="eco:ExtendedMIRecordReference" />
+
+      <xsd:group ref="eco:CommonIdentifiers" />
+
+      <xsd:element name="Quantity" type="eco:UnittedValueType" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>A quantification of the specification, if applicable.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attributeGroup ref="eco:InternalIdentification"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="RohsExemptions">
+    <xsd:sequence>
+      <xsd:element name="RohsExemption" type="eco:RohsExemption" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="RohsExemption">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string" />
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="TransportStage">
+    <xsd:annotation>
+      <xsd:documentation>Defines the transportation applied to a BoM node, in terms of the generic transportation type (stored in the Database) and the amount of that transport used in this instance.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="Name" type="xsd:string" />
+      <xsd:element name="MITransportReference" type="eco:ExtendedMIRecordReference" />
+      <xsd:element name="Distance">
+        <xsd:complexType>
+          <xsd:simpleContent>
+            <xsd:extension base="eco:UnittedValueType" />
+          </xsd:simpleContent>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+	 <xsd:attributeGroup ref="eco:InternalIdentification"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="TransportChain">
+    <xsd:annotation>
+      <xsd:documentation>All the the transportation applied to a BoM node.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="TransportStage" type="eco:TransportStage" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="BOMDetails">
+    <xsd:annotation>
+      <xsd:documentation>Explanatory information about a BoM.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="Notes" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Add any notes about the bill of materials here.  These notes will be included in the report.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PictureUrl" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The URL of an image to include at the top of the report.  This URL must be accessible from the reporting services server.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="ProductName" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The product name</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="UsePhase">
+    <xsd:annotation>
+      <xsd:documentation>Defines the usage of Parts in the BoM.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="ProductLifeSpan" type="eco:ProductLifeSpan" minOccurs="1"/>
+      <xsd:element name="ElectricityMix" type="eco:ElectricityMix" minOccurs="0" />
+      <xsd:element name="StaticMode" type="eco:StaticMode" minOccurs="0" />
+      <xsd:element name="MobileMode" type="eco:MobileMode" minOccurs="0" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="ProductLifeSpan">
+    <xsd:sequence>
+      <xsd:element name="DurationYears" type="xsd:double" minOccurs="1">
+        <xsd:annotation>
+          <xsd:documentation>The product lifetime in years. Must be strictly positive.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="NumberOfFunctionalUnits" type="xsd:double" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>The number of functional units delivered, in the lifespan of the product described herein. If provided, must be strictly positive.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="FunctionalUnitDescription" type="xsd:normalizedString" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>A very short (ideally one-word) description of a single functional unit. E.g. "trips", "cups", "cuts", "metres".</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Utility" minOccurs="0" type="eco:UtilitySpecification">
+        <xsd:annotation>
+          <xsd:documentation>Indicates how much use can be obtained from the product described herein, compared to an industry-average example. If this element is absent, utility is assume to be unity.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="UtilitySpecification">
+    <xsd:choice>
+      <xsd:element name="IndustryAverageDurationYears" type="xsd:double">
+        <xsd:annotation>
+          <xsd:documentation>The average lifespan of all examples, throughout the industry, of the kind of product described herein.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IndustryAverageNumberOfFunctionalUnits" type="xsd:double">
+        <xsd:annotation>
+          <xsd:documentation>The average number of functional units delivered, in their lifespan, by all examples, throughout the industry, of the kind of product described herein. Must be strictly positive.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Utility" type="xsd:double">
+        <xsd:annotation>
+          <xsd:documentation>Directly specifies the utility.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:complexType name="StaticMode">
+    <xsd:sequence>
+      <xsd:element name="MIEnergyConversionReference" type="eco:ExtendedMIRecordReference">
+        <xsd:annotation>
+          <xsd:documentation>This record specifies the primary energy conversion that occurs during the product's use.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PowerRating" type="eco:UnittedValueType" />
+      <xsd:element name="Usage">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="DaysUsedPerYear" type="xsd:double" />
+            <xsd:element name="HoursUsedPerDay" type="xsd:double" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="MobileMode">
+    <xsd:annotation>
+      <xsd:documentation>If the product is transported as part of its use then this type contains details about the way in which it is transported.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:annotation>
+        <xsd:documentation>We can specify the mode of transport here</xsd:documentation>
+      </xsd:annotation>
+      <xsd:element name="MITransportReference" type="eco:ExtendedMIRecordReference">
+        <xsd:annotation>
+          <xsd:documentation>The mode of transport.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="DaysUsedPerYear" type="xsd:double" />
+      <xsd:element name="DistanceTravelledPerDay" type="eco:UnittedValueType" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="ElectricityMix">
+    <xsd:annotation>
+      <xsd:documentation>If the product consumes electrical power, then the amount of CO2 produced to generate depends upon the mix of fossil fuel burning power stations in the region of use.  This type lets you specify the electrical generation mix by either specifying the region or country of use or by specifying the percentage of power that comes from fossil fuel sources.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:choice>
+      <xsd:element name="MIRegionReference" type="eco:ExtendedMIRecordReference">
+        <xsd:annotation>
+          <xsd:documentation>This record reference will point to a record in some electricity mix table.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="PercentageFossilFuels" type="xsd:double">
+        <xsd:annotation>
+          <xsd:documentation>If a specific country is not specified, then the proportion of electricity generated by fossil fuels can be given instead.  </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:complexType name="Location">
+    <xsd:annotation>
+      <xsd:documentation>Defines the manufacturing location for the BoM for use in process calculations</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="MILocationReference" type="eco:ExtendedMIRecordReference"/>
+      <xsd:group ref="eco:CommonIdentifiers" />
+    </xsd:sequence>
+    <xsd:attributeGroup ref="eco:InternalIdentification"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="UnittedValueType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:double">
+        <xsd:attribute name="Unit" type="xsd:normalizedString" use="optional" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="EndOfLifeFate">
+    <xsd:sequence>
+      <xsd:element name="MIEndOfLifeReference" type="eco:ExtendedMIRecordReference" minOccurs="1" maxOccurs="1" />
+      <xsd:element name="Fraction" type="xsd:double" minOccurs="1" maxOccurs="1" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="EndOfLifeFates">
+    <xsd:sequence>
+      <xsd:element name="EndOfLifeFate" type="eco:EndOfLifeFate" minOccurs="0" maxOccurs="unbounded" />
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:attributeGroup name="InternalIdentification">
+    <xsd:attribute name="id" type="xsd:ID">
+      <xsd:annotation>
+        <xsd:documentation>
+          A unique identity for this XML element in a document of this schema. This identity is
+          ONLY for internal use within the document, allowing other elements to reference this element. Consumers
+          of this document should not assume any other semantics for this identity.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:attributeGroup>
+
+  <xsd:simpleType name="InternalIdentificationReference">
+    <xsd:annotation>
+      <xsd:documentation>
+        A value corresponding to some InternalIdentification ID within this XML document, used
+        only to indicate a one-way link between XML elements.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:IDREF"/>
+  </xsd:simpleType>
+
+  <xsd:complexType name="AnnotationList">
+    <xsd:sequence>
+      <xsd:choice maxOccurs="unbounded" minOccurs="0">
+        <xsd:element name="Text" type="eco:TextAnnotation"/>
+        <xsd:element name="Indicator" type="eco:IndicatorAnnotation"/>
+      </xsd:choice>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="AnnotationBase" abstract="true">
+    <xsd:annotation>
+      <xsd:documentation>
+        Base type for all BoM annotations, which are pieces of information that
+        can be indirectly attached, via XML attributes of ID and IDREF types, to specific XML elements within
+        the main body of the BoM. The understood annotation types must be agreed between the producer and consumer(s)
+        of the BoM.  The producer and consumer(s) must also agree whether a particular type of annotation is allowed
+        to have multiple instances assigned to a single element, or whether only a single annotation
+        of that type per element is allowed. When a tool consumes and re-produces BoMs, it should generally retain
+        any annotations that it does not understand (of course, it can also decide whether to keep, modify or discard
+        those annotations that it does understand).
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="targetId" type="eco:InternalIdentificationReference" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          The XML element identity of the exactly one element, in this BoM document, to which this annotation applies. No
+          further meaning should be applied to this identity.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="sourceId" type="eco:InternalIdentificationReference" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>
+          If specified, this is the XML element identity of the exactly one element, in this BoM document, that
+          describes the source of this annotation. If no value is specified, it means that there is no information about the source
+          of this annotation. No further meaning should be applied to this identity, or to its absence.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="type" use="required" type="xsd:token">
+      <xsd:annotation>
+        <xsd:documentation>
+          A textual value that identifies the type of this annotation. It is suggested that types
+          should comprise camel-cased English strings, with optional use of period (.) as a separator.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="TextAnnotation">
+    <xsd:annotation>
+      <xsd:documentation>An annotation that is purely textual data.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="eco:AnnotationBase">
+        <xsd:sequence>
+          <xsd:element name="Value" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="IndicatorAnnotation">
+    <xsd:annotation>
+      <xsd:documentation>
+        An annotation that gives the value of an indicator for the target. The understood indicators
+        need to be agreed between the producer and consumer(s) of the BoM, but examples might include embodied energy
+        of production or cost of raw materials.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="eco:AnnotationBase">
+        <xsd:sequence>
+          <xsd:element name="Value" type="eco:UnittedValueType"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="AnnotationSourceList">
+    <xsd:sequence>
+      <xsd:element name="Source" minOccurs="0" maxOccurs="unbounded" type="eco:AnnotationSource"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="AnnotationSource">
+    <xsd:annotation>
+      <xsd:documentation>
+        An element indicating the source of annotations in the BoM. Each source may be
+        referenced by zero or more annotations. The producer and consumer(s) of the BoM must agree the
+        understood annotation source semantics, particularly regarding the untyped data therein. When a tool consumes and
+        re-produces BoMs, it should generally retain any annotation sources that it does not understand (of course, it
+        can also decide whether to keep, modify or discard those annotation sources that it does understand).
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Name" type="xsd:normalizedString">
+        <xsd:annotation>
+          <xsd:documentation>
+            Producer and consumer(s) must agree the semantics of this element, but it is
+            suggested that it should identify the software package that generated the annotation.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Method" type="xsd:normalizedString" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>
+            Producer and consumer(s) must agree the semantics of this optional element, but it is
+            suggested that it should identify the calculation method used, for numeric annotations.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="Data" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Optional untyped data that some consumer(s) of the BoM will find useful in understanding the annotation.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:any processContents="lax"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attributeGroup ref="eco:InternalIdentification"/>
+  </xsd:complexType>
+
+  <xsd:group name="CommonIdentifiers">
+    <xsd:annotation>
+      <xsd:documentation>A set of identifiers used by external applications to reference and display parts of the BoM.</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:sequence>
+      <xsd:element name="Identity" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>A display identity for the item.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="Name" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>A display name for the item.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+
+      <xsd:element name="ExternalIdentity" type="xsd:string" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>A temporary reference populated and used by applications to refer to the item within the BoM.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:group>
+
+  <xsd:complexType name="ExtendedMIRecordReference">
+    <xsd:annotation>
+      <xsd:documentation>
+        A type extending gbt:MIRecordReference that includes an EquivalentReferences element
+        to hold an arbitrary number of additional gbt:MIRecordReference entries.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="gbt:MIRecordReference">
+        <xsd:sequence>
+          <xsd:element name="EquivalentReferences" minOccurs="0" maxOccurs="1">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="EquivalentReference" type="gbt:MIRecordReference" minOccurs="0" maxOccurs="unbounded" />
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+</xsd:schema>

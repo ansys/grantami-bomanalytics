@@ -226,6 +226,7 @@ class _GenericBoMReader(Generic[TBom]):
                 return match_name.namespace == self._namespaces[""] and item_name == match_name.local_name
             else:
                 # Workaround for https://github.com/ansys/grantami-bomanalytics-private/issues/75
+                # TODO - check item_name's parent item namespace against match_name.namespace
                 return item_name == match_name.local_name
         item_name = item_name[1:]
         namespace_prefix, stripped_name = item_name.split(":")

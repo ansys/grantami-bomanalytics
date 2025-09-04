@@ -5,7 +5,7 @@ modify_custom_rs_db.py
 This script is the third step in creating new test databases. It modifies a cut down database, changing the name,
 renaming tables, and adding any extra records required for specific tests.
 
-Set the URL as appropriate for your database server.
+Configuration is stored in _config.py.
 
 The first operation is to rename the database, this has no practical purpose, but it makes it easier to see which
 database is which in log files.

@@ -1,3 +1,21 @@
+"""
+create_foreign_database.py
+-------------------------
+
+This script is the fourth step in creating new test databases. It populates a blank database to serve as a foreign
+database, which references records in a main RS database.
+
+It performs the following steps:
+
+1. Sets the database name
+2. Creates tables and attributes
+3. Creates standard names for attributes
+4. Creates cross-database record link groups, and adds rlg standard names
+5. Creates records, populates attributes, and creates links
+
+Configuration is stored in _config.py.
+"""
+
 import logging
 from collections import defaultdict
 from typing import Mapping, Sequence
@@ -160,7 +178,7 @@ if __name__ == "__main__":
 
     database_browser.update_database_name(FOREIGN_DB_KEY, FOREIGN_DB_NAME)
 
-    # ------------------ Create tables and unique ID attributes --------------------------
+    # ------------------ Create tables and attributes --------------------------
 
     logger.info("Ensuring tables exist in the foreign database")
     foreign_table_name_to_attribute_name_to_guid_map: dict[str, Mapping[str, str]] = defaultdict(dict)

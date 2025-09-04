@@ -1,16 +1,50 @@
+# General configuration
+
 MI_URL = "http://localhost/mi_servicelayer"
-DB_KEY = "MI_Restricted_Substances"
-
-DATA_FILENAME = "rs_data.json"
-
-LAYOUT_TO_PRESERVE = "AttributesToKeep"
-SUBSET_TO_PRESERVE = "RecordsToKeep"
-
 RS_DB_KEY = "MI_Restricted_Substances"
 CUSTOM_DB_KEY = "MI_Restricted_Substances_Custom_Tables"
 FOREIGN_DB_KEY = "MI_Restricted_Substances_Foreign"
 
-FOREIGN_DB_NAME = "Restricted Substances Foreign Database"
+DATA_FILENAME = "rs_data.json"
+
+# 1_get_cleaned_db_entries.py
+
+TABLE_INFORMATION = {
+    "MaterialUniverse": {"layout": "All attributes", "subset": "All materials"},
+    "Materials - in house": {"layout": "All attributes", "subset": "All materials"},
+    "Products and parts": {"layout": "All attributes", "subset": "All products and parts"},
+    "Specifications": {"layout": "All properties", "subset": "All specifications"},
+    "Coatings": {"layout": "All properties", "subset": "All coatings"},
+    "Restricted Substances": {"layout": "Restricted substances", "subset": "All substances"},
+    "Legislations and Lists": {"layout": "Legislations", "subset": "All legislations"},
+    "Locations": {"layout": "All locations", "subset": "All locations"},
+    "ProcessUniverse": {"layout": "All processes", "subset": "All processes"},
+    "Transport": {"layout": "All transport", "subset": "All transport"},
+}
+
+# Generally static unless the BoM Analytics Servers logic has changed, or these attributes have been added to the layout
+# Both of these scenarios are unlikely
+# dict[Table name: list[Attribute name]]
+EXTRA_ATTRIBUTES = {
+    "Coatings": ["Coating Code"],
+    "Legislations and Lists": ["Legislation ID", "Short title"],
+}
+
+# Will generally be different for each release, and may be empty.
+RENAMED_ATTRIBUTES = {
+    # "Table name": {
+    #     "Old attribute name": "New attribute name",
+    # }
+}
+
+# 2_prepare_rs_db.py
+
+# The layout and subset name must be consistent with the cleaner template
+LAYOUT_TO_PRESERVE = "AttributesToKeep"
+SUBSET_TO_PRESERVE = "RecordsToKeep"
+
+
+# 3_modify_custom_rs_db.py
 
 RS_CUSTOM_TABLE_NAME_MAPPING = {
     "MaterialUniverse": "My Material Universe",
@@ -23,6 +57,11 @@ RS_CUSTOM_TABLE_NAME_MAPPING = {
     "ProcessUniverse": "Methods",
     "Transport": "Locomotion",
 }
+
+
+# 4_create_foreign_database.py
+
+FOREIGN_DB_NAME = "Restricted Substances Foreign Database"
 
 FOREIGN_SCHEMA = {
     # Table name: [Attribute name 1, Attribute name 2, ...]

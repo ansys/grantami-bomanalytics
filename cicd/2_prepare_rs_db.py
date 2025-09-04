@@ -8,8 +8,9 @@ get_cleaned_db_entries.py and creates a new layout and subset with the required 
 It uses both the Ansys Granta MI Scripting Toolkit and the ansys-grantami-serverapi-openapi package to manipulate the
 schema and records in the database.
 
-Set the URL appropriately for your system and restore two copies of the released Restricted Substances database, change
-one database key to `MI_Restricted_Substances_Custom_Tables`, then run this script.
+Configuration is stored in _config.py. Set the URL appropriately for your system and restore two copies of the released
+Restricted Substances database, change one database key to `MI_Restricted_Substances_Custom_Tables`, then run this
+script.
 """
 
 import json

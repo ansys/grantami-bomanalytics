@@ -8,6 +8,8 @@ schema and records in the database.
 Configuration is stored in _config.py. Set MI_URL appropriately for your system. Modify RS_DB_KEY and CUSTOM_DB_KEY if
 required. For this script, RS_DB_KEY and CUSTOM_DB_KEY should refer to two separate instances of the latest vanilla
 Restricted Substances & Sustainability database.
+
+The database GUID of RS_DB_KEY **must** be unaltered to allow foreign links to persist to the database.
 """
 
 import json

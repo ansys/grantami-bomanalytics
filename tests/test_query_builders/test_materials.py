@@ -44,7 +44,7 @@ def test_add_material_ids(query_type, material_ids):
 def test_add_material_ids_wrong_type(query_type):
     with pytest.raises(TypeError) as e:
         query_type().with_material_ids("Strings are not allowed")
-    assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)
+    assert "Incorrect type for argument 'material_ids' value 'Strings are not allowed'" in str(e.value)
     with pytest.raises(TypeError) as e:
         query_type().with_material_ids(material_ids="Strings are not allowed")
-    assert 'Incorrect type for value "Strings are not allowed"' in str(e.value)
+    assert "Incorrect type for argument 'material_ids' value 'Strings are not allowed'" in str(e.value)

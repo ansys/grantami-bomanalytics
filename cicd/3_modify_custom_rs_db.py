@@ -1,11 +1,8 @@
 """
-modify_custom_rs_db.py
--------------------------
-
 This script is the third step in creating new test databases. It modifies a cut down database, changing the name,
 renaming tables, and adding any extra records required for specific tests.
 
-Configuration is stored in _config.py.
+Configuration is stored in _config.py. Set MI_URL appropriately for your system. Modify CUSTOM_DB_KEY if required.
 
 The first operation is to rename the database, this has no practical purpose, but it makes it easier to see which
 database is which in log files.
@@ -28,7 +25,7 @@ from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 
 from cicd._connection import Connection
 from cicd._utils import DatabaseBrowser
-from cicd._config import MI_URL, CUSTOM_DB_KEY, RS_CUSTOM_TABLE_NAME_MAPPING
+from cicd._config import MI_URL, CUSTOM_DB_KEY, RS_CUSTOM_TABLE_NAME_MAPPING, CUSTOM_DB_NAME
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -50,8 +47,7 @@ if __name__ == "__main__":
     logger.info("Renaming Database")
     database_info: models.GsaDatabase = database_client.get_database(database_key=CUSTOM_DB_KEY)
     guid = database_info.guid
-    new_name = "Restricted Substances Custom Tables"
-    rename_request = models.GsaUpdateDatabase(name=new_name)
+    rename_request = models.GsaUpdateDatabase(name=CUSTOM_DB_NAME)
 
     database_client.update_database(database_key=CUSTOM_DB_KEY, body=rename_request)
 

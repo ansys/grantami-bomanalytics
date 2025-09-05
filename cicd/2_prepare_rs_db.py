@@ -1,16 +1,13 @@
 """
-prepare_rs_db.py
--------------------------
-
 This script is the second step in the process of creating a new test database. It takes the json file output from
 get_cleaned_db_entries.py and creates a new layout and subset with the required attributes and records.
 
 It uses both the Ansys Granta MI Scripting Toolkit and the ansys-grantami-serverapi-openapi package to manipulate the
 schema and records in the database.
 
-Configuration is stored in _config.py. Set the URL appropriately for your system and restore two copies of the released
-Restricted Substances database, change one database key to `MI_Restricted_Substances_Custom_Tables`, then run this
-script.
+Configuration is stored in _config.py. Set MI_URL appropriately for your system. Modify RS_DB_KEY and CUSTOM_DB_KEY if
+required. For this script, RS_DB_KEY and CUSTOM_DB_KEY should refer to two separate instances of the latest vanilla
+Restricted Substances & Sustainability database.
 """
 
 import json

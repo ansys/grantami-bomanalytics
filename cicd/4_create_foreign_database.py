@@ -1,9 +1,6 @@
 """
-create_foreign_database.py
--------------------------
-
 This script is the fourth step in creating new test databases. It populates a blank database to serve as a foreign
-database, which references records in a main RS database.
+database, which references records in a primary RS database.
 
 It performs the following steps:
 
@@ -13,7 +10,8 @@ It performs the following steps:
 4. Creates cross-database record link groups, and adds rlg standard names
 5. Creates records, populates attributes, and creates links
 
-Configuration is stored in _config.py.
+Configuration is stored in _config.py. Set MI_URL appropriately for your system. Modify FOREIGN_DB_KEY if required to
+refer to a fresh copy of MI_Blank.
 """
 
 import logging
@@ -246,7 +244,7 @@ if __name__ == "__main__":
                 record_name=unique_id,
             )
             foreign_record = streamlined_session.get_db(db_key=FOREIGN_DB_KEY).get_record_by_id(hguid=foreign_guid)
-            rs_record = (
+            primary_record = (
                 streamlined_session.get_db(db_key=RS_DB_KEY)
                 .get_table(name=rs_table_name)
                 .get_record_by_lookup_value(
@@ -270,7 +268,7 @@ if __name__ == "__main__":
             add_links_to_record(
                 record=foreign_record,
                 link_group_name=xdb_rlg_name,
-                link_records=[rs_record],
+                link_records=[primary_record],
             )
             records_to_update.append(foreign_record)
 

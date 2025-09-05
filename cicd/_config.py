@@ -1,15 +1,30 @@
-# General configuration
+# ------------------ General configuration ------------------
 
 MI_URL = "http://localhost/mi_servicelayer"
+"""Granta MI Service Layer URL"""
+
 RS_DB_KEY = "MI_Restricted_Substances"
+"""Restricted Substances & Sustainability database key"""
+
 CUSTOM_DB_KEY = "MI_Restricted_Substances_Custom_Tables"
+"""Restricted Substances & Sustainability database key for the 'custom tables' variant."""
+
 FOREIGN_DB_KEY = "MI_Restricted_Substances_Foreign"
 
 DATA_FILENAME = "rs_data.json"
+"""
+Filename of the data interchange file defining the reduced set of data to be preserved in a Restricted Substances &
+Sustainability database.
 
-# 1_get_cleaned_db_entries.py
+Created during step 1 (1_get_cleaned_db_entries.py) by extracting data from the current PyGranta BoM Analytics test
+database, and consumed during step 2 (2_prepare_rs_db.py) by creating the relevant schema objects in a vanilla
+Restricted Substances & Sustainability database.
+"""
+
+# ------------------ 1_get_cleaned_db_entries.py ------------------
 
 TABLE_INFORMATION = {
+    # Table name: {"layout": Layout name, "subset": Subset name}
     "MaterialUniverse": {"layout": "All attributes", "subset": "All materials"},
     "Materials - in house": {"layout": "All attributes", "subset": "All materials"},
     "Products and parts": {"layout": "All attributes", "subset": "All products and parts"},
@@ -21,32 +36,61 @@ TABLE_INFORMATION = {
     "ProcessUniverse": {"layout": "All processes", "subset": "All processes"},
     "Transport": {"layout": "All transport", "subset": "All transport"},
 }
+"""
+Contains the name of the subset and the layout to be used for each table.
 
-# Generally static unless the BoM Analytics Servers logic has changed, or these attributes have been added to the layout
-# Both of these scenarios are unlikely
-# dict[Table name: list[Attribute name]]
+Only attributes in the specified layout and records in the specified subset will be exported into the json data file
+provided in DATA_FILENAME.
+"""
+
 EXTRA_ATTRIBUTES = {
+    # Table name: list[Attribute name]
     "Coatings": ["Coating Code"],
     "Legislations and Lists": ["Legislation ID", "Short title"],
 }
+"""
+Contains additional attributes to be written to DATA_FILENAME if they do not exist within the layout specified in
+TABLE_INFORMATION.
 
-# Will generally be different for each release, and may be empty.
+This would need to be modified if the BoM Analytics Service requires additional attributes not in a standard layout, or
+if an attribute has been added to the default layout. Both scenarios are unlikely.
+"""
+
 RENAMED_ATTRIBUTES = {
     # "Table name": {
     #     "Old attribute name": "New attribute name",
     # }
 }
+"""
+Maps old attribute names to new names.
 
-# 2_prepare_rs_db.py
+Required if attributes have changed name between database versions. Will generally be different for each release, and
+may be empty if no attributes have been renamed.
+"""
 
-# The layout and subset name must be consistent with the cleaner template
+# ------------------ 2_prepare_rs_db.py ------------------
+
 LAYOUT_TO_PRESERVE = "AttributesToKeep"
+"""
+Layout which contains the attributes to retain when cleaning the database.
+
+This layout name is referenced in the cleaner XML template.
+"""
+
 SUBSET_TO_PRESERVE = "RecordsToKeep"
+"""
+Subset which contains the records to retain when cleaning the database.
 
+This subset name is referenced in the cleaner XML template.
+"""
 
-# 3_modify_custom_rs_db.py
+# ------------------ 3_modify_custom_rs_db.py ------------------
+
+CUSTOM_DB_NAME = "Restricted Substances Custom Tables"
+"""Database name for the 'custom table' variant of the Restricted Substances & Sustainability database."""
 
 RS_CUSTOM_TABLE_NAME_MAPPING = {
+    # Vanilla table name: Custom table name
     "MaterialUniverse": "My Material Universe",
     "Materials - in house": "My Materials",
     "Specifications": "specs",
@@ -57,11 +101,12 @@ RS_CUSTOM_TABLE_NAME_MAPPING = {
     "ProcessUniverse": "Methods",
     "Transport": "Locomotion",
 }
+"""Table renaming map for creating the 'custom table' variant of the Restricted Substances & Sustainability database."""
 
-
-# 4_create_foreign_database.py
+# ------------------ 4_create_foreign_database.py ------------------
 
 FOREIGN_DB_NAME = "Restricted Substances Foreign Database"
+"""Database name for the foreign database."""
 
 FOREIGN_SCHEMA = {
     # Table name: [Attribute name 1, Attribute name 2, ...]
@@ -100,6 +145,11 @@ FOREIGN_SCHEMA = {
         "Transport, foreign table, foreign unique attribute",
     ],
 }
+"""
+New tables and attributes to create in the foreign database.
+
+All attributes are assumed to be STXT.
+"""
 
 FOREIGN_ATTRIBUTE_STANDARD_NAMES = {
     # Standard name: [(Table name 1: attribute name 1), (Table name 2: attribute name 2), ...]
@@ -134,7 +184,7 @@ FOREIGN_ATTRIBUTE_STANDARD_NAMES = {
         ("Transport, foreign table", "Transport ID"),
     ],
 }
-
+"""Attribute standard naming mapping to create in the foreign database."""
 
 FOREIGN_XDB_LINK_GROUPS = {
     # Link group name: (Source table, Destination table)
@@ -148,6 +198,12 @@ FOREIGN_XDB_LINK_GROUPS = {
     "SpecificationsLinkGroup": ("Specifications, foreign table", "Specifications"),
     "ProductsAndPartsLinkGroup": ("Products and parts, foreign table", "Products and parts"),
 }
+"""
+Cross-database record link groups to create between the foreign database and the primary Restricted Substances &
+Sustainability database.
+
+Link groups are created with an automatically generated reverse name of "<Link group name> (reverse)".
+"""
 
 
 LINKING_CRITERIA = {
@@ -224,3 +280,9 @@ LINKING_CRITERIA = {
         ],
     ),
 }
+"""
+Link creation definitions with which to link foreign and primary records.
+
+The primary record is identified by finding the record with the attribute value populated for the specified attribute
+name.
+"""

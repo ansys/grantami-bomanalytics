@@ -9,7 +9,8 @@ RS_DB_KEY = "MI_Restricted_Substances"
 CUSTOM_DB_KEY = "MI_Restricted_Substances_Custom_Tables"
 """Restricted Substances & Sustainability database key for the 'custom tables' variant."""
 
-FOREIGN_DB_KEY = "MI_Restricted_Substances_Foreign"
+FOREIGN_DB_KEY = "MI_Restricted_Substances_Foreign_Test"
+"""Restricted Substances & Sustainability database key for the foreign test database."""
 
 DATA_FILENAME = "rs_data.json"
 """

@@ -32,7 +32,7 @@ T
 
 import functools
 import inspect
-from typing import Any, Callable, Type, TypeVar
+from typing import Any, Callable, TypeVar
 
 T = TypeVar("T")
 
@@ -93,7 +93,7 @@ def validate_argument_type(argument_name: str, *allowed_types: Any) -> Callable:
                     f"{type(allowed_type)} must contain exactly 1 item. '{allowed_type}' has length {len(allowed_type)}"
                 )
 
-    def decorator(callable_: Type[T]) -> Callable[[Any, Any], T]:
+    def decorator(callable_: Callable[..., T]) -> Callable[..., T]:
         callable_params = inspect.signature(callable_).parameters
 
         if argument_name not in callable_params:

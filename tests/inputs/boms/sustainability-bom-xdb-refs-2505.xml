@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<PartsEco xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.grantadesign.com/25/05/BillOfMaterialsEco">
+    <Components>
+        <Part>
+            <Quantity Unit="Each">1</Quantity>
+            <MassPerUom Unit="kg/Part">0.925</MassPerUom>
+            <PartNumber>Part1.1.A</PartNumber>
+            <Name>Component 11A</Name>
+            <Materials>
+                <Material>
+                    <Percentage>100</Percentage>
+                    <MIMaterialReference>
+                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances_Foreign_Test</dbKey>
+                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">0c78d769-d5b1-439c-987d-4b503755964b</recordGUID>
+                    </MIMaterialReference>
+                    <Identity>steel-1010-annealed</Identity>
+                    <Processes>
+                        <Process>
+                            <MIProcessReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances_Foreign_Test</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">da7d5c31-8f66-4e84-9ffc-8bd1b1593e65</recordGUID>
+                            </MIProcessReference>
+                            <Identity>Primary processing, Casting</Identity>
+                            <DimensionType>Mass</DimensionType>
+                            <Percentage>100</Percentage>
+                        </Process>
+                        <Process>
+                            <MIProcessReference>
+                                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances_Foreign_Test</dbKey>
+                                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">72bf7f76-56ae-4638-94dd-75ee13248d6c</recordGUID>
+                            </MIProcessReference>
+                            <Identity>Secondary processing, Machining, fine</Identity>
+                            <DimensionType>MassRemoved</DimensionType>
+                            <Quantity Unit="kg">0.00465</Quantity>
+                        </Process>
+                    </Processes>
+                </Material>
+            </Materials>
+            <Processes>
+                <Process>
+                    <MIProcessReference>
+                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances_Foreign_Test</dbKey>
+                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">84a05a25-ae3d-48d8-ad32-8d0cb7a36e66</recordGUID>
+                    </MIProcessReference>
+                    <Identity>Joining and finishing, Welding, electric</Identity>
+                    <DimensionType>Length</DimensionType>
+                    <Quantity Unit="m">0.45</Quantity>
+                </Process>
+            </Processes>
+        </Part>
+    </Components>
+    <TransportPhase>
+        <TransportStage>
+            <Name>Product from warehouse to distributor (truck 1)</Name>
+            <MITransportReference>
+                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances_Foreign_Test</dbKey>
+                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">aa9d0b73-c2f7-4870-81a0-357bf408be3a</recordGUID>
+            </MITransportReference>
+            <Distance Unit="km">350</Distance>
+        </TransportStage>
+    </TransportPhase>
+    <Location>
+        <MILocationReference>
+            <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances_Foreign_Test</dbKey>
+            <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">9300ab25-8c4a-4bcd-8336-5fc5d1788047</recordGUID>
+        </MILocationReference>
+        <Identity>RER</Identity>
+    </Location>
+</PartsEco>

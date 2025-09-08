@@ -1678,6 +1678,7 @@ class _BomFormat(Enum):
     bom_xml1711 = "http://www.grantadesign.com/17/11/BillOfMaterialsEco"
     bom_xml2301 = "http://www.grantadesign.com/23/01/BillOfMaterialsEco"
     bom_xml2412 = "http://www.grantadesign.com/24/12/BillOfMaterialsEco"
+    bom_xml2505 = "http://www.grantadesign.com/25/05/BillOfMaterialsEco"
 
 
 class _BomQueryDataManager(_BaseQueryDataManager):
@@ -1862,7 +1863,12 @@ class BomComplianceQuery(_ComplianceMixin, _BomQueryBuilder):
     <BomComplianceQueryResult: 1 PartWithCompliance results>
     """
 
-    _supported_bom_formats = [_BomFormat.bom_xml1711, _BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
+    _supported_bom_formats = [
+        _BomFormat.bom_xml1711,
+        _BomFormat.bom_xml2301,
+        _BomFormat.bom_xml2412,
+        _BomFormat.bom_xml2505,
+    ]
     _api_method = "post_compliance_bom"
     _request_type = models.GetComplianceForBomRequest
 
@@ -1892,7 +1898,12 @@ class BomImpactedSubstancesQuery(_ImpactedSubstanceMixin, _BomQueryBuilder):
     <BomImpactedSubstancesQueryResult: 1 Bom1711WithImpactedSubstances results>
     """
 
-    _supported_bom_formats = [_BomFormat.bom_xml1711, _BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
+    _supported_bom_formats = [
+        _BomFormat.bom_xml1711,
+        _BomFormat.bom_xml2301,
+        _BomFormat.bom_xml2412,
+        _BomFormat.bom_xml2505,
+    ]
     _api_method = "post_impactedsubstances_bom"
     _request_type = models.GetImpactedSubstancesForBomRequest
 
@@ -1998,7 +2009,7 @@ class BomSustainabilityQuery(_SustainabilityMixin, _BomQueryBuilder):
 
     """
 
-    _supported_bom_formats = [_BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
+    _supported_bom_formats = [_BomFormat.bom_xml2301, _BomFormat.bom_xml2412, _BomFormat.bom_xml2505]
     _api_method = "post_sustainability_bom"
     _request_type = models.GetSustainabilityForBomRequest
 
@@ -2031,6 +2042,6 @@ class BomSustainabilitySummaryQuery(_SustainabilityMixin, _BomQueryBuilder):
 
     """
 
-    _supported_bom_formats = [_BomFormat.bom_xml2301, _BomFormat.bom_xml2412]
+    _supported_bom_formats = [_BomFormat.bom_xml2301, _BomFormat.bom_xml2412, _BomFormat.bom_xml2505]
     _api_method = "post_sustainabilitysummary_bom"
     _request_type = models.GetSustainabilitySummaryForBomRequest

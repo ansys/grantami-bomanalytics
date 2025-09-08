@@ -1,0 +1,157 @@
+MaterialSummary:
+  Summary:
+    - Identity: S200
+      RecordReference:
+        ReferenceType: MiRecordGuid
+        ReferenceValue: cebc4725-623e-4507-818f-06e8a734c681
+        EquivalentReferences:
+          - ReferenceType: MiRecordGuid
+            ReferenceValue: cebc4725-623e-4507-818f-06e8a734c682
+            DatabaseKey: MI_Other_Database
+      EmbodiedEnergy:
+        Value: 15956.1900214306
+        Unit: MJ
+      EmbodiedEnergyPercentage: 100
+      ClimateChange:
+        Value: 2154.94344473353
+        Unit: kg
+      ClimateChangePercentage: 100
+      MassBeforeProcessing:
+        Value: 2.5
+        Unit: kg
+      MassAfterProcessing:
+        Value: 2
+        Unit: kg
+      LargestContributors:
+        - ComponentName: ''
+          ComponentPartNumber: Sub Part
+          RecordReference:
+            ExternalIdentity: '6'
+            Name: ''
+            Id: P2
+          MaterialMassBeforeProcessing:
+            Value: 2.5
+            Unit: kg
+  PhaseSummary:
+    Phase: Material
+    EmbodiedEnergy:
+      Value: 15956.1900214306
+      Unit: MJ
+    EmbodiedEnergyPercentage: 99.8581138422999
+    ClimateChange:
+      Value: 2154.94344473353
+      Unit: kg
+    ClimateChangePercentage: 99.9810563388397
+ProcessSummary:
+  PrimaryProcesses: [ ]
+  SecondaryProcesses:
+    - ProcessName: 'Machining, fine'
+      ProcessRecordReference:
+        ReferenceType: MiRecordGuid
+        ReferenceValue: 03de1a28-7dd7-4354-bbd8-c839cfa00ec7
+        EquivalentReferences:
+          - ReferenceType: MiRecordGuid
+            ReferenceValue: 03de1a28-7dd7-4354-bbd8-c839cfa00ec8
+            DatabaseKey: MI_Other_Database
+      MaterialRecordReference:
+        ReferenceType: MiRecordGuid
+        ReferenceValue: cebc4725-623e-4507-818f-06e8a734c681
+        EquivalentReferences:
+          - ReferenceType: MiRecordGuid
+            ReferenceValue: cebc4725-623e-4507-818f-06e8a734c682
+            DatabaseKey: MI_Other_Database
+      MaterialIdentity: S200
+      EmbodiedEnergy:
+        Value: 17.9476406266453
+        Unit: MJ
+      EmbodiedEnergyPercentage: 100
+      ClimateChange:
+        Value: 0.0751787094942408
+        Unit: kg
+      ClimateChangePercentage: 100
+  JoiningAndFinishingProcesses: [ ]
+  PhaseSummary:
+    Phase: Processes
+    EmbodiedEnergy:
+      Value: 17.9476406266453
+      Unit: MJ
+    EmbodiedEnergyPercentage: 0.112321145492071
+    ClimateChange:
+      Value: 0.0751787094942408
+      Unit: kg
+    ClimateChangePercentage: 0.00348800188134608
+TransportSummary:
+  Summary:
+    - StageName: 'Aircraft, short haul, belly-freight'
+      RecordReference:
+        ReferenceType: MiRecordGuid
+        ReferenceValue: b916ed6b-5e06-4343-9131-d4d562e2d12b
+        EquivalentReferences:
+          - ReferenceType: MiRecordGuid
+            ReferenceValue: b916ed6b-5e06-4343-9131-d4d562e2d12c
+            DatabaseKey: MI_Other_Database
+        Id: P6
+      Distance:
+        Value: 200
+        Unit: km
+      EmbodiedEnergy:
+        Value: 4.72415244615649
+        Unit: MJ
+      EmbodiedEnergyPercentage: 100
+      ClimateChange:
+        Value: 0.333123822320444
+        Unit: kg
+      ClimateChangePercentage: 100
+  PartSummary:
+    - ParentPartName: ''
+      PartName: ''
+      Category: Manufacturing
+      TransportTypes:
+        - 'Aircraft, short haul, belly-freight'
+      Distance:
+        Value: 200
+        Unit: km
+      EmbodiedEnergy:
+        Value: 4.72415244615649
+        Unit: MJ
+      EmbodiedEnergyPercentage: 100
+      ClimateChange:
+        Value: 0.333123822320444
+        Unit: kg
+      ClimateChangePercentage: 100
+  CategorySummary:
+    - Category: Distribution
+      Distance:
+        Value: 0
+        Unit: km
+      EmbodiedEnergy:
+        Value: 0
+        Unit: MJ
+      EmbodiedEnergyPercentage: 0
+      ClimateChange:
+        Value: 0
+        Unit: kg
+      ClimateChangePercentage: 0
+    - Category: Manufacturing
+      Distance:
+        Value: 200
+        Unit: km
+      EmbodiedEnergy:
+        Value: 4.72415244615649
+        Unit: MJ
+      EmbodiedEnergyPercentage: 100
+      ClimateChange:
+        Value: 0.333123822320444
+        Unit: kg
+      ClimateChangePercentage: 100
+  PhaseSummary:
+    Phase: Transport
+    EmbodiedEnergy:
+      Value: 4.72415244615649
+      Unit: MJ
+    EmbodiedEnergyPercentage: 0.0295650122079945
+    ClimateChange:
+      Value: 0.333123822320444
+      Unit: kg
+    ClimateChangePercentage: 0.0154556592789601
+LogMessages: [ ]

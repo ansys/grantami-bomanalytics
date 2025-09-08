@@ -23,9 +23,9 @@
 import pytest
 
 from ansys.grantami.bomanalytics import BoMHandler, GrantaMIException, TransportCategory, queries
-from ansys.grantami.bomanalytics.bom_types import eco2412
+from ansys.grantami.bomanalytics.bom_types import eco2412, eco2505
 
-from .common import INDICATORS, LEGISLATIONS
+from .common import FOREIGN_DB_KEY, INDICATORS, LEGISLATIONS
 from .inputs import example_boms
 
 pytestmark = pytest.mark.integration
@@ -33,51 +33,76 @@ pytestmark = pytest.mark.integration
 indicators = list(INDICATORS.values())
 
 
+@pytest.mark.parametrize("db_key", [None, FOREIGN_DB_KEY])
 class TestMaterialQueries:
     ids = ["plastic-abs-pvc-flame", "plastic-pmma-pc"]
 
-    def test_impacted_substances(self, connection_with_db_variants):
-        query = queries.MaterialImpactedSubstancesQuery().with_material_ids(self.ids).with_legislation_ids(LEGISLATIONS)
+    def test_impacted_substances(self, connection_with_db_variants, db_key):
+        query = (
+            queries.MaterialImpactedSubstancesQuery()
+            .with_material_ids(self.ids, db_key)
+            .with_legislation_ids(LEGISLATIONS)
+        )
         response = connection_with_db_variants.run(query)
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
         assert response.impacted_substances_by_material[0].substances
         assert response.impacted_substances_by_material[0].substances_by_legislation
+        if db_key:
+            assert response.impacted_substances_by_material[0].equivalent_references
+            assert response.impacted_substances_by_material[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
 
-    def test_compliance(self, connection_with_db_variants):
-        query = queries.MaterialComplianceQuery().with_material_ids(self.ids).with_indicators(indicators)
+    def test_compliance(self, connection_with_db_variants, db_key):
+        query = queries.MaterialComplianceQuery().with_material_ids(self.ids, db_key).with_indicators(indicators)
         response = connection_with_db_variants.run(query)
         assert response.compliance_by_indicator
         assert response.compliance_by_material_and_indicator
+        if db_key:
+            assert response.compliance_by_material_and_indicator[0].equivalent_references
+            assert (
+                response.compliance_by_material_and_indicator[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
+            )
 
 
+@pytest.mark.parametrize("db_key", [None, FOREIGN_DB_KEY])
 class TestPartQueries:
     ids = ["DRILL", "asm_flap_mating"]
 
-    def test_impacted_substances(self, connection_with_db_variants):
-        query = queries.PartImpactedSubstancesQuery().with_part_numbers(self.ids).with_legislation_ids(LEGISLATIONS)
-        response = connection_with_db_variants.run(query)
+    # TODO: Missing table name. Missing results (IS only)"
 
+    def test_impacted_substances(self, connection_with_db_variants, db_key):
+        query = (
+            queries.PartImpactedSubstancesQuery().with_part_numbers(self.ids, db_key).with_legislation_ids(LEGISLATIONS)
+        )
+        response = connection_with_db_variants.run(query)
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
         assert response.impacted_substances_by_part[0].substances
         assert response.impacted_substances_by_part[0].substances_by_legislation
+        if db_key:
+            assert response.impacted_substances_by_part[0].equivalent_references
+            assert response.impacted_substances_by_part[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
 
-    def test_compliance(self, connection_with_db_variants):
-        query = queries.PartComplianceQuery().with_part_numbers(self.ids).with_indicators(indicators)
+    def test_compliance(self, connection_with_db_variants, db_key):
+        query = queries.PartComplianceQuery().with_part_numbers(self.ids, db_key).with_indicators(indicators)
         response = connection_with_db_variants.run(query)
-
         assert response.compliance_by_indicator
         assert response.compliance_by_part_and_indicator
+        if db_key:
+            assert response.compliance_by_part_and_indicator[0].equivalent_references
+            assert response.compliance_by_part_and_indicator[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
 
 
+@pytest.mark.parametrize("db_key", [None, FOREIGN_DB_KEY])
 class TestSpecificationQueries:
     ids = ["MIL-DTL-53039,TypeI", "AMS2404,Class1"]
 
-    def test_impacted_substances(self, connection_with_db_variants):
+    # TODO: None of the record references resolved to relevant Granta MI records.
+
+    def test_impacted_substances(self, connection_with_db_variants, db_key):
         query = (
             queries.SpecificationImpactedSubstancesQuery()
-            .with_specification_ids(self.ids)
+            .with_specification_ids(self.ids, db_key)
             .with_legislation_ids(LEGISLATIONS)
         )
         response = connection_with_db_variants.run(query)
@@ -86,30 +111,52 @@ class TestSpecificationQueries:
         assert response.impacted_substances_by_legislation
         assert response.impacted_substances_by_specification[0].substances
         assert response.impacted_substances_by_specification[0].substances_by_legislation
+        if db_key:
+            assert response.impacted_substances_by_specification[0].equivalent_references
+            assert (
+                response.impacted_substances_by_specification[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
+            )
 
-    def test_compliance(self, connection_with_db_variants):
-        query = queries.SpecificationComplianceQuery().with_specification_ids(self.ids).with_indicators(indicators)
+    def test_compliance(self, connection_with_db_variants, db_key):
+        query = (
+            queries.SpecificationComplianceQuery().with_specification_ids(self.ids, db_key).with_indicators(indicators)
+        )
         response = connection_with_db_variants.run(query)
 
         assert response.compliance_by_specification_and_indicator
         assert response.compliance_by_indicator
+        if db_key:
+            assert response.compliance_by_specification_and_indicator[0].equivalent_references
+            assert (
+                response.compliance_by_specification_and_indicator[0].equivalent_references[0].database_key
+                == FOREIGN_DB_KEY
+            )
 
 
+@pytest.mark.parametrize("db_key", [None, FOREIGN_DB_KEY])
 class TestSubstancesQueries:
-    def test_compliance(self, connection_with_db_variants):
+    # TODO: None of the record references resolved to relevant Granta MI records.
+
+    def test_compliance(self, connection_with_db_variants, db_key):
         query = (
             queries.SubstanceComplianceQuery()
-            .with_cas_numbers(["50-00-0", "57-24-9"])
-            .with_cas_numbers_and_amounts([("1333-86-4", 25), ("75-74-1", 50)])
+            .with_cas_numbers(["50-00-0", "57-24-9"], db_key)
+            .with_cas_numbers_and_amounts([("1333-86-4", 25), ("75-74-1", 50)], db_key)
             .with_indicators(indicators)
         )
         response = connection_with_db_variants.run(query)
 
         assert response.compliance_by_substance_and_indicator
         assert response.compliance_by_indicator
+        if db_key:
+            assert response.compliance_by_substance_and_indicator[0].equivalent_references
+            assert (
+                response.compliance_by_substance_and_indicator[0].equivalent_references[0].database_key
+                == FOREIGN_DB_KEY
+            )
 
 
-class TestBomQueries:
+class TestBomRSQueries:
     @pytest.fixture
     def bom(self, connection_with_db_variants):
         if connection_with_db_variants._db_key == "MI_Restricted_Substances_Custom_Tables":
@@ -134,6 +181,16 @@ class TestBomQueries:
         parsed_bom = handler.load_bom_from_text(bom2301)
         bom2412 = handler.convert(parsed_bom, eco2412.BillOfMaterials)
         bom = handler.dump_bom(bom2412)
+
+        return bom
+
+    @pytest.fixture
+    def bom2505(self, bom2412):
+        handler = BoMHandler()
+
+        parsed_bom = handler.load_bom_from_text(bom2412)
+        bom2505 = handler.convert(parsed_bom, eco2505.BillOfMaterials)
+        bom = handler.dump_bom(bom2505)
 
         return bom
 
@@ -176,6 +233,22 @@ class TestBomQueries:
     @pytest.mark.integration(mi_versions=[(25, 2)])
     def test_compliance_2412(self, connection, bom2412):
         query = queries.BomComplianceQuery().with_bom(bom2412).with_indicators(indicators)
+        response = connection.run(query)
+
+        assert response.compliance_by_part_and_indicator
+        assert response.compliance_by_indicator
+
+    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+    def test_impacted_substances_2505(self, connection, bom2505):
+        query = queries.BomImpactedSubstancesQuery().with_bom(bom2505).with_legislation_ids(LEGISLATIONS)
+        response = connection.run(query)
+
+        assert response.impacted_substances
+        assert response.impacted_substances_by_legislation
+
+    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+    def test_compliance_2505(self, connection, bom2505):
+        query = queries.BomComplianceQuery().with_bom(bom2505).with_indicators(indicators)
         response = connection.run(query)
 
         assert response.compliance_by_part_and_indicator
@@ -1083,3 +1156,160 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
         assert transport.climate_change.value == pytest.approx(0.352, DEFAULT_TOLERANCE)
         assert transport.embodied_energy.value == pytest.approx(5.23, DEFAULT_TOLERANCE)
         assert transport.record_guid is not None
+
+
+@pytest.mark.integration(mi_versions=[(26, 1)])
+class TestCrossDatabaseBomReferences:
+    sus_bom = example_boms["sustainability-bom-xdb-refs-2505"].content
+    rs_bom = example_boms["compliance-bom-xdb-refs-2505"].content
+
+    @staticmethod
+    def _validate_equivalent_references(obj_with_equivalent_references):
+        assert len(obj_with_equivalent_references.equivalent_references) == 1
+        assert obj_with_equivalent_references.equivalent_references[0].database_key == FOREIGN_DB_KEY
+        assert obj_with_equivalent_references.equivalent_references[0].record_guid is not None
+        assert (
+            obj_with_equivalent_references.record_guid
+            != obj_with_equivalent_references.equivalent_references[0].record_guid
+        )
+
+    def test_impacted_substances(self, connection_with_db_variants):
+        query = queries.BomImpactedSubstancesQuery().with_bom(self.rs_bom).with_legislation_ids(LEGISLATIONS)
+        response = connection_with_db_variants.run(query)
+
+        assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
+        # TODO: Various messages to check
+
+        assert response.impacted_substances_by_legislation
+        assert response.impacted_substances
+
+    def test_compliance(self, connection_with_db_variants):
+        primary_db_key = connection_with_db_variants._db_key
+
+        query = queries.BomComplianceQuery().with_bom(self.rs_bom).with_indicators(indicators)
+        response = connection_with_db_variants.run(query)
+
+        assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
+        # TODO: Various messages to check
+
+        product = response.compliance_by_part_and_indicator[0]
+        assert len(product.parts) == 2
+
+        part_0 = product.parts[0]
+        assert len(part_0.parts) == 2
+
+        part_0_0 = part_0.parts[0]
+        assert part_0_0.database_key == primary_db_key
+        assert part_0_0.record_guid is not None
+        self._validate_equivalent_references(part_0_0)
+
+        assert len(part_0_0.specifications) == 1
+        spec_0_0_0 = part_0_0.specifications[0]
+        assert spec_0_0_0.database_key is None
+        assert spec_0_0_0.record_guid is not None
+        self._validate_equivalent_references(spec_0_0_0)
+
+        part_0_1 = part_0.parts[1]
+        substance_0_1_0 = part_0_1.substances[0]
+        assert substance_0_1_0.database_key == primary_db_key
+        assert substance_0_1_0.record_guid is not None
+        self._validate_equivalent_references(substance_0_1_0)
+
+        part_1 = product.parts[1]
+        assert len(part_1.parts) == 1
+
+        part_1_0 = part_1.parts[0]
+        material_1_0_0 = part_1_0.materials[0]
+        assert material_1_0_0.database_key == primary_db_key
+        assert material_1_0_0.record_guid is not None
+        self._validate_equivalent_references(material_1_0_0)
+
+    def test_sustainability_summary_query(self, connection_with_db_variants):
+        primary_db_key = connection_with_db_variants._db_key
+
+        query = queries.BomSustainabilitySummaryQuery()
+        query.with_bom(self.sus_bom)
+        response = connection_with_db_variants.run(query)
+
+        assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
+        # TODO: Record reference for location node with name 'Europe' did not resolve to the expected table.
+        # TODO: Expected table name 'Locations', but record in 'Places'
+
+        assert response.process.name == "Processes"
+        assert response.material.name == "Material"
+        assert response.transport.name == "Transport"
+        assert len(response.phases_summary) == 3
+
+        # Check expected summaries for materials
+        assert len(response.material_details) == 1
+        assert response.material_details[0].identity == "steel-1010-annealed"
+        material_reference = response.material_details[0].material_reference
+        assert material_reference.database_key == primary_db_key
+        assert material_reference.record_guid is not None
+        self._validate_equivalent_references(material_reference)
+
+        # Check expected summaries for primary processes
+        assert len(response.primary_processes_details) == 1
+        assert response.primary_processes_details[0].process_name == "Primary processing, Casting"
+        primary_process_reference = response.primary_processes_details[0].process_reference
+        assert primary_process_reference.database_key == primary_db_key
+        assert primary_process_reference.record_guid is not None
+        self._validate_equivalent_references(primary_process_reference)
+
+        # Check expected summaries for secondary processes
+        assert len(response.secondary_processes_details) == 1
+        assert response.secondary_processes_details[0].process_name == "Secondary processing, Machining, fine"
+        secondary_process_reference = response.secondary_processes_details[0].process_reference
+        assert secondary_process_reference.database_key == primary_db_key
+        assert secondary_process_reference.record_guid is not None
+        self._validate_equivalent_references(secondary_process_reference)
+
+        # Check expected summaries for J&F processes
+        assert len(response.joining_and_finishing_processes_details) == 1
+        assert (
+            response.joining_and_finishing_processes_details[0].process_name
+            == "Joining and finishing, Welding, electric"
+        )
+        j_f_process_reference = response.secondary_processes_details[0].process_reference
+        assert j_f_process_reference.database_key == primary_db_key
+        assert j_f_process_reference.record_guid is not None
+        self._validate_equivalent_references(j_f_process_reference)
+
+        # Check expected summaries for transports
+        assert len(response.transport_details) == 1
+        assert response.transport_details[0].name == "Product from warehouse to distributor (truck 1)"
+        transport_reference = response.transport_details[0].transport_reference
+        assert transport_reference.database_key == primary_db_key
+        assert transport_reference.record_guid is not None
+        self._validate_equivalent_references(transport_reference)
+
+    def test_sustainability_query(self, connection_with_db_variants):
+        query = queries.BomSustainabilityQuery()
+        query.with_bom(self.sus_bom)
+        response = connection_with_db_variants.run(query)
+
+        assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
+        # TODO: Record reference for location node with name 'Europe' did not resolve to the expected table.
+        # TODO: Expected table name 'Locations', but record in 'Places'
+
+        # Product
+        product = response.part
+        assert not product.equivalent_references
+
+        # Material
+        material = product.materials[0]
+        assert material.database_key is None
+        assert material.record_guid is not None
+        self._validate_equivalent_references(material)
+
+        # Primary process
+        process = material.processes[0]
+        assert process.database_key is None
+        assert process.record_guid is not None
+        self._validate_equivalent_references(process)
+
+        # Transport
+        transport = response.transport_stages[0]
+        assert transport.database_key is None
+        assert transport.record_guid is not None
+        self._validate_equivalent_references(transport)

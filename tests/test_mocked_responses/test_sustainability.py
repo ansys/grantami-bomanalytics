@@ -39,7 +39,7 @@ class TestBomSustainability(BaseMockTesterWithConfigTests):
     # The response depends only on the examples.py module, not on the provided BoM
     bom = example_boms["sustainability-bom-2301"].content
     query = queries.BomSustainabilityQuery().with_bom(bom)
-    mock_key = "GetSustainabilityForBom.Response"
+    mock_key = "GetSustainabilityForBom.Response.2301"
 
     def test_response_processing(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
@@ -104,7 +104,145 @@ class TestBomSustainability(BaseMockTesterWithConfigTests):
         assert len(process.transport_stages) == 0
 
 
-class TestBomSustainabilitySummary(BaseMockTesterWithConfigTests):
+class TestBomSustainability2412(BaseMockTesterWithConfigTests):
+    # Use sample BoM to avoid validation error
+    # The response depends only on the examples.py module, not on the provided BoM
+    bom = example_boms["sustainability-bom-2412"].content
+    query = queries.BomSustainabilityQuery().with_bom(bom)
+    mock_key = "GetSustainabilityForBom.Response.2412"
+
+    def test_response_processing(self, mock_connection):
+        response = self.get_mocked_response(mock_connection)
+
+        assert isinstance(response, BomSustainabilityQueryResult)
+
+        assert len(response.transport_stages) == 2
+        transport_0 = response.transport_stages[0]
+        assert transport_0.name == "Transport 0"
+        assert transport_0.database_key is None
+        assert transport_0.record_guid == "ebb56666-dca1-467e-bee7-9a2a498aa3fa"
+        assert transport_0.record_history_guid is None
+        assert transport_0.record_history_identity is None
+        assert transport_0.embodied_energy.value == pytest.approx(1.2345, 0.01)
+        assert transport_0.embodied_energy.unit == "MJ"
+        assert transport_0.climate_change.value == pytest.approx(2.3456, 0.01)
+        assert transport_0.climate_change.unit == "kg"
+
+        transport_1 = response.transport_stages[1]
+        assert transport_1.name == "Transport 1"
+        assert transport_1.database_key is None
+        assert transport_1.record_guid is None
+        assert transport_1.record_history_guid == "b4ab65c7-2191-449d-9f1f-5ee9717b544f"
+        assert transport_1.record_history_identity is None
+        assert transport_1.embodied_energy.value == pytest.approx(3.4567, 0.01)
+        assert transport_1.embodied_energy.unit == "MJ"
+        assert transport_1.climate_change.value == pytest.approx(4.5678, 0.01)
+        assert transport_1.climate_change.unit == "kg"
+
+        # Top-level
+        part_0 = response.part
+        assert len(part_0.materials) == 0
+        assert len(part_0.processes) == 0
+        assert len(part_0.transport_stages) == 0
+
+        # Level 1
+        assert len(part_0.parts) == 1
+        part_0_0 = part_0.parts[0]
+
+        assert len(part_0_0.parts) == 0
+        assert len(part_0_0.processes) == 0
+
+        assert len(part_0_0.transport_stages) == 1
+        part_0_transport_0 = part_0_0.transport_stages[0]
+        assert part_0_transport_0.name == "Transport Part"
+        assert part_0_transport_0.database_key is None
+        assert part_0_transport_0.record_guid is None
+        assert part_0_transport_0.record_history_guid == "f34fc627-d353-44ad-b591-a10b6fd33e85"
+        assert part_0_transport_0.record_history_identity is None
+        assert part_0_transport_0.embodied_energy.value == pytest.approx(1.111, 0.01)
+        assert part_0_transport_0.embodied_energy.unit == "MJ"
+        assert part_0_transport_0.climate_change.value == pytest.approx(2.222, 0.01)
+        assert part_0_transport_0.climate_change.unit == "kg"
+
+        assert len(part_0_0.materials) == 1
+        part_0_0_material_0 = part_0_0.materials[0]
+
+        assert len(part_0_0_material_0.processes) == 1
+        process = part_0_0_material_0.processes[0]
+        assert len(process.transport_stages) == 1
+        process_transport = process.transport_stages[0]
+        assert process_transport.name == "Transport Process"
+        assert process_transport.database_key is None
+        assert process_transport.record_guid is None
+        assert process_transport.record_history_guid == "8235fa41-be93-47af-81ea-151843f65add"
+        assert process_transport.record_history_identity is None
+        assert process_transport.embodied_energy.value == pytest.approx(3.333, 0.01)
+        assert process_transport.embodied_energy.unit == "MJ"
+        assert process_transport.climate_change.value == pytest.approx(4.444, 0.01)
+        assert process_transport.climate_change.unit == "kg"
+
+
+class TestBomSustainability2505(BaseMockTesterWithConfigTests):
+    # Use sample BoM to avoid validation error
+    # The response depends only on the examples.py module, not on the provided BoM
+    bom = example_boms["sustainability-bom-2505"].content
+    query = queries.BomSustainabilityQuery().with_bom(bom)
+    mock_key = "GetSustainabilityForBom.Response.2505"
+
+    def test_response_processing(self, mock_connection):
+        response = self.get_mocked_response(mock_connection)
+
+        assert isinstance(response, BomSustainabilityQueryResult)
+
+        assert len(response.messages) == 1
+
+        # Material references
+        material = response.part.parts[0].materials[0]
+        assert material.database_key is None
+        assert material.record_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6270"
+        assert material.record_history_guid is None
+        assert material.record_history_identity is None
+
+        assert material.equivalent_references[0].database_key == "MI_Other_Database"
+        assert material.equivalent_references[0].record_guid is None
+        assert material.equivalent_references[0].record_history_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6271"
+        assert material.equivalent_references[0].record_history_identity is None
+
+        process = response.part.parts[0].materials[0].processes[0]
+        assert process.database_key is None
+        assert process.record_guid is None
+        assert process.record_history_guid == "d986c90a-2835-45f3-8b69-d6d662dcf53a"
+        assert process.record_history_identity is None
+
+        assert process.equivalent_references[0].database_key == "MI_Other_Database"
+        assert process.equivalent_references[0].record_guid == "d986c90a-2835-45f3-8b69-d6d662dcf53b"
+        assert process.equivalent_references[0].record_history_guid is None
+        assert process.equivalent_references[0].record_history_identity is None
+
+        transport_0 = response.transport_stages[0]
+        assert transport_0.database_key is None
+        assert transport_0.record_guid == "ebb56666-dca1-467e-bee7-9a2a498aa3fa"
+        assert transport_0.record_history_guid is None
+        assert transport_0.record_history_identity is None
+
+        assert transport_0.equivalent_references[0].database_key == "MI_Other_Database"
+        assert transport_0.equivalent_references[0].record_guid == "ebb56666-dca1-467e-bee7-9a2a498aa3fb"
+        assert transport_0.equivalent_references[0].record_history_guid is None
+        assert transport_0.equivalent_references[0].record_history_identity is None
+
+        transport_1 = response.transport_stages[1]
+        assert transport_1.database_key is None
+        assert transport_1.record_guid is None
+        assert transport_1.record_history_guid == "b4ab65c7-2191-449d-9f1f-5ee9717b544f"
+        assert transport_1.record_history_identity is None
+
+        assert transport_1.equivalent_references[0].database_key == "MI_Other_Database"
+        assert transport_1.equivalent_references[0].record_guid is None
+        assert transport_1.equivalent_references[0].record_history_guid == "b4ab65c7-2191-449d-9f1f-5ee9717b5450"
+        assert transport_1.equivalent_references[0].record_history_identity is None
+
+
+class TestBomSustainabilitySummary2301(BaseMockTesterWithConfigTests):
     # Use sample BoM to avoid validation error
     # The response depends only on the examples.py module, not on the provided BoM
     bom = example_boms["sustainability-bom-2301"].content
@@ -270,3 +408,76 @@ class TestBomSustainabilitySummary2412(BaseMockTesterWithConfigTests):
         assert manufacturing_transport_group.embodied_energy.value == 4.72415244615649
         assert manufacturing_transport_group.embodied_energy.unit == "MJ"
         assert manufacturing_transport_group.embodied_energy_percentage == 100.0
+
+
+class TestBomSustainabilitySummary2505(BaseMockTester):
+    # Use sample BoM to avoid validation error
+    # The response depends only on the examples.py module, not on the provided BoM
+    bom = example_boms["sustainability-bom-2505"].content
+    query = queries.BomSustainabilitySummaryQuery().with_bom(bom)
+    mock_key = "GetSustainabilitySummaryForBoM.Response.2505"
+
+    def test_response_processing(self, mock_connection):
+        response = self.get_mocked_response(mock_connection)
+        assert isinstance(response, BomSustainabilitySummaryQueryResult)
+
+        assert len(response.messages) == 0
+
+        # Material details
+        material_details = response.material_details
+        assert len(material_details) == 1
+        material = material_details[0]
+        assert material.identity == "S200"
+        assert material.material_reference.database_key is None
+        assert material.material_reference.record_guid == "cebc4725-623e-4507-818f-06e8a734c681"
+        assert material.material_reference.record_history_guid is None
+        assert material.material_reference.record_history_identity is None
+        assert len(material.material_reference.equivalent_references) == 1
+        material_equivalent_reference = material.material_reference.equivalent_references[0]
+        assert material_equivalent_reference.database_key == "MI_Other_Database"
+        assert material_equivalent_reference.record_guid == "cebc4725-623e-4507-818f-06e8a734c682"
+        assert material_equivalent_reference.record_history_guid is None
+        assert material_equivalent_reference.record_history_identity is None
+
+        # Process details
+        process_details = response.secondary_processes_details
+        assert len(process_details) == 1
+        process = process_details[0]
+        assert process.process_name == "Machining, fine"
+        assert process.process_reference.database_key is None
+        assert process.process_reference.record_guid == "03de1a28-7dd7-4354-bbd8-c839cfa00ec7"
+        assert process.process_reference.record_history_guid is None
+        assert process.process_reference.record_history_identity is None
+        assert len(process.process_reference.equivalent_references) == 1
+        process_equivalent_reference = process.process_reference.equivalent_references[0]
+        assert process_equivalent_reference.database_key == "MI_Other_Database"
+        assert process_equivalent_reference.record_guid == "03de1a28-7dd7-4354-bbd8-c839cfa00ec8"
+        assert process_equivalent_reference.record_history_guid is None
+        assert process_equivalent_reference.record_history_identity is None
+
+        assert process.material_reference.database_key is None
+        assert process.material_reference.record_guid == "cebc4725-623e-4507-818f-06e8a734c681"
+        assert process.material_reference.record_history_guid is None
+        assert process.material_reference.record_history_identity is None
+        assert len(process.material_reference.equivalent_references) == 1
+        process_material_equivalent_reference = process.material_reference.equivalent_references[0]
+        assert process_material_equivalent_reference.database_key == "MI_Other_Database"
+        assert process_material_equivalent_reference.record_guid == "cebc4725-623e-4507-818f-06e8a734c682"
+        assert process_material_equivalent_reference.record_history_guid is None
+        assert process_material_equivalent_reference.record_history_identity is None
+
+        # Transport details
+        transport_details = response.transport_details
+        assert len(transport_details) == 1
+        transport = transport_details[0]
+        assert transport.name == "Aircraft, short haul, belly-freight"
+        assert transport.transport_reference.database_key is None
+        assert transport.transport_reference.record_guid == "b916ed6b-5e06-4343-9131-d4d562e2d12b"
+        assert transport.transport_reference.record_history_guid is None
+        assert transport.transport_reference.record_history_identity is None
+        assert len(transport.transport_reference.equivalent_references) == 1
+        transport_equivalent_reference = transport.transport_reference.equivalent_references[0]
+        assert transport_equivalent_reference.database_key == "MI_Other_Database"
+        assert transport_equivalent_reference.record_guid == "b916ed6b-5e06-4343-9131-d4d562e2d12c"
+        assert transport_equivalent_reference.record_history_guid is None
+        assert transport_equivalent_reference.record_history_identity is None

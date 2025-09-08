@@ -1,0 +1,102 @@
+Part:
+  Parts:
+    - Parts: [ ]
+      Materials:
+        - Processes:
+            - EmbodiedEnergy:
+                Value: 0.892227273922441
+                Unit: MJ
+              ClimateChange:
+                Value: 0.0579439821562209
+                Unit: kg
+              Name: Coarse Machining
+              ReferenceType: MiRecordHistoryGuid
+              ReferenceValue: d986c90a-2835-45f3-8b69-d6d662dcf53a
+              Id: P4
+              TransportStages:
+                - StageName: 'Transport Process'
+                  ReferenceType: MiRecordHistoryGuid
+                  ReferenceValue: 8235fa41-be93-47af-81ea-151843f65add
+                  Id: T1
+                  EmbodiedEnergy:
+                    Value: 3.333
+                    Unit: MJ
+                  ClimateChange:
+                    Value: 4.444
+                    Unit: kg
+          EmbodiedEnergy:
+            Value: 489.332037066857
+            Unit: MJ
+          ClimateChange:
+            Value: 18.0379615325568
+            Unit: kg
+          Recyclable: true
+          Biodegradable: false
+          FunctionalRecycle: true
+          ReportedMass:
+            Value: 2
+            Unit: kg
+          Name: 'High alloy steel, Kovar, annealed'
+          ReferenceType: MiRecordGuid
+          ReferenceValue: 8dc38bb5-eff9-4c60-9233-271a3c8f6270
+          Id: P3
+      Processes: [ ]
+      TransportStages:
+        - StageName: 'Transport Part'
+          ReferenceType: MiRecordHistoryGuid
+          ReferenceValue: f34fc627-d353-44ad-b591-a10b6fd33e85
+          Id: T1
+          EmbodiedEnergy:
+            Value: 1.111
+            Unit: MJ
+          ClimateChange:
+            Value: 2.222
+            Unit: kg
+      EmbodiedEnergy:
+        Value: 490.224264340779
+        Unit: MJ
+      ClimateChange:
+        Value: 18.0959055147131
+        Unit: kg
+      ReportedMass:
+        Value: 2
+        Unit: kg
+      Name: PartTwo
+      Id: P2
+  Materials: [ ]
+  Processes: [ ]
+  EmbodiedEnergy:
+    Value: 490.224264340779
+    Unit: MJ
+  ClimateChange:
+    Value: 18.0959055147131
+    Unit: kg
+  ReportedMass:
+    Value: 2
+    Unit: kg
+  Name: PartOne
+  Id: P1
+TransportStages:
+  - StageName: 'Transport 0'
+    ReferenceType: MiRecordGuid
+    ReferenceValue: ebb56666-dca1-467e-bee7-9a2a498aa3fa
+    Id: T0
+    EmbodiedEnergy:
+      Value: 1.2345
+      Unit: MJ
+    ClimateChange:
+      Value: 2.3456
+      Unit: kg
+  - StageName: 'Transport 1'
+    ReferenceType: MiRecordHistoryGuid
+    ReferenceValue: b4ab65c7-2191-449d-9f1f-5ee9717b544f
+    Id: T1
+    EmbodiedEnergy:
+      Value: 3.4567
+      Unit: MJ
+    ClimateChange:
+      Value: 4.5678
+      Unit: kg
+LogMessages:
+  - Severity: information
+    Message: No location information has been supplied for this BoM. The location has been set to 'The Whole World'

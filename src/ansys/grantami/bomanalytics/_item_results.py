@@ -2348,7 +2348,7 @@ class TransportSummaryResult(TransportSummaryBase):
         return self._name
 
     @property
-    def transport_reference(self) -> TransportReferenceWithIdentifier:
+    def transport_reference(self) -> TransportReferenceWithEquivalents:
         """
         Transport record reference.
         """
@@ -2478,7 +2478,7 @@ class ContributingComponentResult:
         return self._name
 
     @property
-    def part_reference(self) -> PartReferenceWithIdentifiers:
+    def part_reference(self) -> PartReferenceWithEquivalents:
         """
         Part record reference.
         """
@@ -2529,7 +2529,7 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
         return self._identity
 
     @property
-    def material_reference(self) -> MaterialReferenceWithIdentifiers:
+    def material_reference(self) -> MaterialReferenceWithEquivalents:
         """
         Material record reference.
         """

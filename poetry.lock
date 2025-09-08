@@ -510,14 +510,14 @@ files = [
 
 [[package]]
 name = "choreographer"
-version = "1.0.9"
+version = "1.0.10"
 description = "Devtools Protocol implementation for chrome."
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 files = [
-    {file = "choreographer-1.0.9-py3-none-any.whl", hash = "sha256:b3277e30953843a83d3d730e49958a6be82013885d2a4f54b3950a3715191d7f"},
-    {file = "choreographer-1.0.9.tar.gz", hash = "sha256:36423b4b049cf2ec2a68fa4024bdd22d0c417d5421913ef62b6c0e89595b6895"},
+    {file = "choreographer-1.0.10-py3-none-any.whl", hash = "sha256:b23ec2409f38ec89a544558eadeb19688746bab9a0f47e7115477d6e80a14a41"},
+    {file = "choreographer-1.0.10.tar.gz", hash = "sha256:7adf84a0d6a6054386d5cce013fdcadb2426479e49c9b0cb06af7d3712ed263c"},
 ]
 
 [package.dependencies]

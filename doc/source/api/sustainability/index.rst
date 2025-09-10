@@ -27,5 +27,3 @@ MI product documentation.
 
    bom
    bom_summary
-   common
-

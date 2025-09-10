@@ -155,11 +155,11 @@ All attributes are assumed to be STXT.
 FOREIGN_ATTRIBUTE_STANDARD_NAMES = {
     # Standard name: [(Table name 1: attribute name 1), (Table name 2: attribute name 2), ...]
     "Material ID": [
-        ("MaterialUniverse, foreign table", "Material ID"),
-        ("Materials - in house, foreign table", "Material ID"),
+        ("MaterialUniverse, foreign table", "MaterialUniverse, foreign table, foreign unique attribute"),
+        ("Materials - in house, foreign table", "Materials - in house, foreign table, foreign unique attribute"),
     ],
     "Legislation ID": [
-        ("Legislations and Lists, foreign table", "Legislation ID"),
+        ("Legislations and Lists, foreign table", "Legislations and Lists, foreign table, foreign unique attribute"),
     ],
     "CAS number": [
         ("Restricted Substances, foreign table", "CAS number"),
@@ -168,21 +168,21 @@ FOREIGN_ATTRIBUTE_STANDARD_NAMES = {
         ("Restricted Substances, foreign table", "EC number"),
     ],
     "Specifications ID": [
-        ("Specifications, foreign table", "Specification ID"),
+        ("Specifications, foreign table", "Specifications, foreign table, foreign unique attribute"),
     ],
     "Part number": [
-        ("Products and parts, foreign table", "Part number"),
+        ("Products and parts, foreign table", "Products and parts, foreign table, foreign unique attribute"),
     ],
     "Identity": [
-        ("MaterialUniverse, foreign table", "Material ID"),
-        ("Materials - in house, foreign table", "Material ID"),
-        ("ProcessUniverse, foreign table", "Process ID"),
-        ("Legislations and Lists, foreign table", "Legislation ID"),
+        ("MaterialUniverse, foreign table", "MaterialUniverse, foreign table, foreign unique attribute"),
+        ("Materials - in house, foreign table", "Materials - in house, foreign table, foreign unique attribute"),
+        ("ProcessUniverse, foreign table", "ProcessUniverse, foreign table, foreign unique attribute"),
+        ("Legislations and Lists, foreign table", "Legislations and Lists, foreign table, foreign unique attribute"),
         ("Restricted Substances, foreign table", "CAS number"),
-        ("Specifications, foreign table", "Specification ID"),
-        ("Products and parts, foreign table", "Part number"),
-        ("Locations, foreign table", "Location ID"),
-        ("Transport, foreign table", "Transport ID"),
+        ("Specifications, foreign table", "Specifications, foreign table, foreign unique attribute"),
+        ("Products and parts, foreign table", "Products and parts, foreign table, foreign unique attribute"),
+        ("Locations, foreign table", "Locations, foreign table, foreign unique attribute"),
+        ("Transport, foreign table", "Transport, foreign table, foreign unique attribute"),
     ],
 }
 """Attribute standard naming mapping to create in the foreign database."""
@@ -215,6 +215,7 @@ LINKING_CRITERIA = {
             "plastic-abs-pvc-flame",
             "glass-borosilicate-7050",
             "steel-1010-annealed",
+            "plastic-pmma-pc",
         ],
     ),
     "MaterialInHouseLinkGroup": (

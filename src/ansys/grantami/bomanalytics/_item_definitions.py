@@ -187,11 +187,21 @@ class RecordDefinition(RecordReference):
         pass
 
 
-class PartReference(RecordReference):
-    """Represents a reference to a Part record.
+class PartReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a part record.
 
     This class extends the base class to also support part numbers.
     """
+
+    def __init__(
+        self,
+        input_part_number: Optional[str] = None,
+        equivalent_references: Optional[list["PartReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._input_part_number: Optional[str] = input_part_number
+        self._equivalent_references = equivalent_references if equivalent_references else []
 
     @property
     def part_number(self) -> Optional[str]:
@@ -199,12 +209,6 @@ class PartReference(RecordReference):
         if self._reference_type == ReferenceType.PartNumber:
             return cast(str, self._reference_value)
         return None
-
-
-class PartReferenceWithIdentifiers(CommonIdentifiersMixin, PartReference):
-    def __init__(self, input_part_number: Optional[str] = None, **kwargs: Any):
-        super().__init__(**kwargs)
-        self._input_part_number: Optional[str] = input_part_number
 
     @property
     def input_part_number(self) -> Optional[str]:
@@ -214,6 +218,15 @@ class PartReferenceWithIdentifiers(CommonIdentifiersMixin, PartReference):
         the corresponding input BoM item.
         """
         return self._input_part_number
+
+    @property
+    def equivalent_references(self) -> list["PartReference"]:
+        """
+        Other part records which are defined as being equivalent to this record.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class PartDefinition(RecordDefinition, PartReference):
@@ -232,12 +245,19 @@ class PartDefinition(RecordDefinition, PartReference):
         return result
 
 
-class MaterialReference(RecordReference):
-    # Because of ProcessSummaryResult, this is publicly documented.
-    """Represents a reference to a Material record.
+class MaterialReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a material record.
 
     This class extends the base class to also support material IDs.
     """
+
+    def __init__(
+        self,
+        equivalent_references: Optional[list["MaterialReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references if equivalent_references else []
 
     @property
     def material_id(self) -> Optional[str]:
@@ -246,9 +266,14 @@ class MaterialReference(RecordReference):
             return cast(str, self._reference_value)
         return None
 
+    @property
+    def equivalent_references(self) -> list["MaterialReference"]:
+        """
+        Other material records which are defined as being equivalent to this record.
 
-class MaterialReferenceWithIdentifiers(CommonIdentifiersMixin, MaterialReference):
-    pass
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class MaterialDefinition(RecordDefinition, MaterialReference):
@@ -267,11 +292,19 @@ class MaterialDefinition(RecordDefinition, MaterialReference):
         return result
 
 
-class SpecificationReference(RecordReference):
-    """Represents a reference to a specification record from the concrete :class:`RecordReference` subclass.
+class SpecificationReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a specification record.
 
     This class extends the base class to also support specification IDs.
     """
+
+    def __init__(
+        self,
+        equivalent_references: Optional[list["SpecificationReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references if equivalent_references else []
 
     @property
     def specification_id(self) -> Optional[str]:
@@ -280,9 +313,14 @@ class SpecificationReference(RecordReference):
             return cast(str, self._reference_value)
         return None
 
+    @property
+    def equivalent_references(self) -> list["SpecificationReference"]:
+        """
+        Other specification records which are defined as being equivalent to this record.
 
-class SpecificationReferenceWithIdentifiers(CommonIdentifiersMixin, SpecificationReference):
-    pass
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class SpecificationDefinition(RecordDefinition, SpecificationReference):
@@ -301,8 +339,8 @@ class SpecificationDefinition(RecordDefinition, SpecificationReference):
         return result
 
 
-class SubstanceReference(RecordReference):
-    """Represents a reference to a substance record from the abstract ``RecordReference`` subclass.
+class SubstanceReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a substance record.
 
     This class extends the base constructor to also support CAS numbers, EC numbers, and chemical names.
 
@@ -310,6 +348,14 @@ class SubstanceReference(RecordReference):
     substances in slightly different ways. This class implements the reference aspects of the substance record only.
     The quantifications are implemented in the subclasses.
     """
+
+    def __init__(
+        self,
+        equivalent_references: Optional[list["SubstanceReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references if equivalent_references else []
 
     @property
     def cas_number(self) -> Optional[str]:
@@ -332,9 +378,14 @@ class SubstanceReference(RecordReference):
             return cast(str, self._reference_value)
         return None
 
+    @property
+    def equivalent_references(self) -> list["SubstanceReference"]:
+        """
+        Other substance records which are defined as being equivalent to this record.
 
-class SubstanceReferenceWithIdentifiers(CommonIdentifiersMixin, SubstanceReference):
-    pass
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class SubstanceDefinition(RecordDefinition, SubstanceReference):
@@ -416,38 +467,73 @@ class SubstanceDefinition(RecordDefinition, SubstanceReference):
         return definition
 
 
-class CoatingReference(RecordReference):
-    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
+class CoatingReference(IdentifierMixin, RecordReference):
+    """Represents a reference to a coating record."""
+
+    def __init__(
+        self,
+        equivalent_references: Optional[list["CoatingReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references if equivalent_references else []
+
+    @property
+    def equivalent_references(self) -> list["CoatingReference"]:
+        """
+        Other coating records which are defined as being equivalent to this record.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
-class CoatingReferenceWithIdentifier(IdentifierMixin, CoatingReference):
-    pass
-
-
-class ProcessReference(RecordReference):
-    # Because of ProcessSummaryResult, this is publicly documented.
-    # Extends RecordReference without changes, to re-define the class name, because it appears in the repr.
-    """Represents a reference to a Process record.
+class ProcessReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a process record.
 
     .. versionadded:: 2.0
     """
 
+    def __init__(
+        self,
+        equivalent_references: Optional[list["ProcessReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references if equivalent_references else []
 
-class ProcessReferenceWithIdentifiers(CommonIdentifiersMixin, ProcessReference):
-    pass
+    @property
+    def equivalent_references(self) -> list["ProcessReference"]:
+        """
+        Other process records which defined as being equivalent to this record.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
-class TransportReference(RecordReference):
-    """Represents a reference to a Transport record.
+class TransportReference(IdentifierMixin, RecordReference):
+    """Represents a reference to a transport record.
 
     .. versionadded:: 2.0
     """
 
-    # Extends RecordReference without changes, to re-define the class name, because it appears in the repr
+    def __init__(
+        self,
+        equivalent_references: Optional[list["TransportReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references if equivalent_references else []
 
+    @property
+    def equivalent_references(self) -> list["TransportReference"]:
+        """
+        Other transport records which are defined as being equivalent to this record.
 
-class TransportReferenceWithIdentifier(IdentifierMixin, TransportReference):
-    pass
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class BomItemDefinitionFactory(ABC):

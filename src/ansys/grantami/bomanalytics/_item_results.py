@@ -29,22 +29,21 @@ queries. These are mostly extensions of the classes in the ``_item_definitions.p
 from abc import ABC
 from copy import deepcopy
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, Generic, List, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from ansys.grantami.bomanalytics_openapi.v2 import models
 from ansys.openapi.common import Unset, Unset_Type
 
 from ._item_definitions import (
-    CoatingReferenceWithIdentifier,
-    MaterialReferenceWithIdentifiers,
-    PartReferenceWithIdentifiers,
-    ProcessReferenceWithIdentifiers,
+    CoatingReference,
+    MaterialReference,
+    PartReference,
+    ProcessReference,
     RecordReference,
     ReferenceType,
-    SpecificationReferenceWithIdentifiers,
+    SpecificationReference,
     SubstanceReference,
-    SubstanceReferenceWithIdentifiers,
-    TransportReferenceWithIdentifier,
+    TransportReference,
 )
 from ._typing import _convert_unset_to_none, _raise_if_empty
 
@@ -92,7 +91,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
         equivalent_references = (
             [
-                MaterialReferenceWithIdentifiers(
+                MaterialReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -138,7 +137,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
         equivalent_references = (
             [
-                PartReferenceWithIdentifiers(
+                PartReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -185,7 +184,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_impacted_substances.reference_type)
         equivalent_references = (
             [
-                SpecificationReferenceWithIdentifiers(
+                SpecificationReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -259,7 +258,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
         equivalent_references = (
             [
-                MaterialReferenceWithIdentifiers(
+                MaterialReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -312,7 +311,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
         equivalent_references = (
             [
-                PartReferenceWithIdentifiers(
+                PartReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -366,7 +365,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
         equivalent_references = (
             [
-                SpecificationReferenceWithIdentifiers(
+                SpecificationReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -419,7 +418,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
         equivalent_references = (
             [
-                CoatingReferenceWithIdentifier(
+                CoatingReference(
                     reference_type=cls.parse_reference_type(ref.reference_type),
                     reference_value=ref.reference_value,
                     identity=_convert_unset_to_none(ref.id),
@@ -468,7 +467,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_compliance.reference_type)
         equivalent_references = (
             [
-                SubstanceReferenceWithIdentifiers(
+                SubstanceReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -516,7 +515,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
         equivalent_references = (
             [
-                PartReferenceWithIdentifiers(
+                PartReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -572,7 +571,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
         equivalent_references = (
             [
-                ProcessReferenceWithIdentifiers(
+                ProcessReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -623,7 +622,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
         equivalent_references = (
             [
-                MaterialReferenceWithIdentifiers(
+                MaterialReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -675,7 +674,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(result_with_sustainability.reference_type)
         equivalent_references = (
             [
-                TransportReferenceWithIdentifier(
+                TransportReference(
                     reference_type=cls.parse_reference_type(ref.reference_type),
                     reference_value=ref.reference_value,
                     identity=_convert_unset_to_none(ref.id),
@@ -757,7 +756,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(record_reference.reference_type)
         equivalent_references = (
             [
-                TransportReferenceWithIdentifier(
+                TransportReference(
                     reference_type=cls.parse_reference_type(ref.reference_type),
                     reference_value=ref.reference_value,
                     database_key=_convert_unset_to_none(ref.database_key),
@@ -770,7 +769,7 @@ class ItemResultFactory:
         )
 
         return TransportSummaryResult(
-            transport_reference=TransportReferenceWithEquivalents(
+            transport_reference=TransportReference(
                 reference_type=reference_type,
                 reference_value=record_reference.reference_value,
                 identity=record_reference.id,
@@ -865,7 +864,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(record_reference.reference_type)
         equivalent_references = (
             [
-                MaterialReferenceWithIdentifiers(
+                MaterialReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -880,7 +879,7 @@ class ItemResultFactory:
         )
 
         return MaterialSummaryResult(
-            material_reference=MaterialReferenceWithEquivalents(
+            material_reference=MaterialReference(
                 external_identity=_convert_unset_to_none(record_reference.external_identity),
                 name=_convert_unset_to_none(record_reference.name),
                 reference_type=reference_type,
@@ -922,7 +921,7 @@ class ItemResultFactory:
         reference_type = cls.parse_reference_type(record_reference.reference_type)
         equivalent_references = (
             [
-                PartReferenceWithIdentifiers(
+                PartReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -938,7 +937,7 @@ class ItemResultFactory:
 
         return ContributingComponentResult(
             part_number=_convert_unset_to_none(result.component_part_number),
-            part_reference=PartReferenceWithEquivalents(
+            part_reference=PartReference(
                 external_identity=_convert_unset_to_none(record_reference.external_identity),
                 name=_convert_unset_to_none(record_reference.name),
                 reference_type=reference_type,
@@ -967,7 +966,7 @@ class ItemResultFactory:
         """
         material_record_reference = _raise_if_empty(result.material_record_reference)
         material_reference = (
-            MaterialReferenceWithEquivalents(
+            MaterialReference(
                 external_identity=_convert_unset_to_none(material_record_reference.external_identity),
                 name=_convert_unset_to_none(material_record_reference.name),
                 reference_type=cls.parse_reference_type(material_record_reference.reference_type),
@@ -980,7 +979,7 @@ class ItemResultFactory:
         )
         if material_reference and material_record_reference.equivalent_references:
             material_reference._equivalent_references = [
-                MaterialReferenceWithIdentifiers(
+                MaterialReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -992,7 +991,7 @@ class ItemResultFactory:
             ]
 
         process_record_reference = _raise_if_empty(result.process_record_reference)
-        process_reference = ProcessReferenceWithEquivalents(
+        process_reference = ProcessReference(
             external_identity=_convert_unset_to_none(process_record_reference.external_identity),
             name=_convert_unset_to_none(process_record_reference.name),
             reference_type=cls.parse_reference_type(process_record_reference.reference_type),
@@ -1002,7 +1001,7 @@ class ItemResultFactory:
         )
         if process_reference and process_record_reference.equivalent_references:
             process_reference._equivalent_references = [
-                ProcessReferenceWithIdentifiers(
+                ProcessReference(
                     external_identity=_convert_unset_to_none(ref.external_identity),
                     name=_convert_unset_to_none(ref.name),
                     reference_type=cls.parse_reference_type(ref.reference_type),
@@ -1057,69 +1056,6 @@ class ItemResultFactory:
             restricted_substances=_raise_if_empty(result.restricted_substances),
             sustainability=_raise_if_empty(result.sustainability),
         )
-
-
-Record_Reference = TypeVar("Record_Reference")
-
-
-class EquivalentReferenceMixin(Generic[Record_Reference]):
-    def __init__(self, equivalent_references: Optional[list[Record_Reference]] = None, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self._equivalent_references = equivalent_references if equivalent_references else []
-
-    @property
-    def equivalent_references(self) -> list[Record_Reference]:
-        """The references which are equivalent to this record"""
-        return self._equivalent_references
-
-
-class SubstanceReferenceWithEquivalents(
-    EquivalentReferenceMixin[SubstanceReferenceWithIdentifiers],
-    SubstanceReferenceWithIdentifiers,
-):
-    pass
-
-
-class CoatingReferenceWithEquivalents(
-    EquivalentReferenceMixin[CoatingReferenceWithIdentifier],
-    CoatingReferenceWithIdentifier,
-):
-    pass
-
-
-class MaterialReferenceWithEquivalents(
-    EquivalentReferenceMixin[MaterialReferenceWithIdentifiers],
-    MaterialReferenceWithIdentifiers,
-):
-    pass
-
-
-class SpecificationReferenceWithEquivalents(
-    EquivalentReferenceMixin[SpecificationReferenceWithIdentifiers],
-    SpecificationReferenceWithIdentifiers,
-):
-    pass
-
-
-class PartReferenceWithEquivalents(
-    EquivalentReferenceMixin[PartReferenceWithIdentifiers],
-    PartReferenceWithIdentifiers,
-):
-    pass
-
-
-class TransportReferenceWithEquivalents(
-    EquivalentReferenceMixin[TransportReferenceWithIdentifier],
-    TransportReferenceWithIdentifier,
-):
-    pass
-
-
-class ProcessReferenceWithEquivalents(
-    EquivalentReferenceMixin[ProcessReferenceWithIdentifiers],
-    ProcessReferenceWithIdentifiers,
-):
-    pass
 
 
 class ImpactedSubstance(SubstanceReference):
@@ -1283,7 +1219,7 @@ class RecordWithImpactedSubstancesResultMixin(ImpactedSubstancesResultMixin, Rec
         )
 
 
-class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialReferenceWithEquivalents):
+class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, MaterialReference):
     """Retrieves an individual material that is included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -1310,7 +1246,7 @@ class MaterialWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMix
     """
 
 
-class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartReferenceWithEquivalents):
+class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, PartReference):
     """Retrieves an individual part included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -1337,10 +1273,7 @@ class PartWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, 
     """
 
 
-class SpecificationWithImpactedSubstancesResult(
-    RecordWithImpactedSubstancesResultMixin,
-    SpecificationReferenceWithEquivalents,
-):
+class SpecificationWithImpactedSubstancesResult(RecordWithImpactedSubstancesResultMixin, SpecificationReference):
     """Retrieves an individual specification included as part of an impacted substances query result.
 
     This object includes two categories of attributes:
@@ -1706,7 +1639,7 @@ class ChildCoatingWithComplianceMixin(HasIndicators, ABC):
             self._coatings.append(child_coating_with_compliance)
 
 
-class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWithEquivalents):
+class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReference):
     """Retrieves an individual substance included as part of a compliance query result.
     This object includes three categories of attributes:
 
@@ -1728,9 +1661,7 @@ class SubstanceWithComplianceResult(ComplianceResultMixin, SubstanceReferenceWit
         return self._percentage_amount
 
 
-class MaterialWithComplianceResult(
-    ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialReferenceWithEquivalents
-):
+class MaterialWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, MaterialReference):
     """Retrieves an individual material included as part of a compliance query result.
     This object includes three categories of attributes:
 
@@ -1746,7 +1677,7 @@ class PartWithComplianceResult(
     ChildSpecificationWithComplianceMixin,
     ChildPartWithComplianceMixin,
     ComplianceResultMixin,
-    PartReferenceWithEquivalents,
+    PartReference,
 ):
     """Retrieves an individual part included as part of a compliance query result.
     This object includes three categories of attributes:
@@ -1763,7 +1694,7 @@ class SpecificationWithComplianceResult(
     ChildMaterialWithComplianceMixin,
     ChildSpecificationWithComplianceMixin,
     ComplianceResultMixin,
-    SpecificationReferenceWithEquivalents,
+    SpecificationReference,
 ):
     """Retrieves an individual specification included as part of a compliance query result.
     This object includes three categories of attributes:
@@ -1779,9 +1710,7 @@ class SpecificationWithComplianceResult(
     """
 
 
-class CoatingWithComplianceResult(
-    ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReferenceWithEquivalents
-):
+class CoatingWithComplianceResult(ChildSubstanceWithComplianceMixin, ComplianceResultMixin, CoatingReference):
     """Provides an individual coating included as part of a compliance query result.
 
     This object includes three categories of attributes:
@@ -2131,7 +2060,7 @@ class MaterialWithSustainabilityResult(
     SustainabilityResultMixin,
     ReusabilityResultMixin,
     MassResultMixin,
-    MaterialReferenceWithEquivalents,
+    MaterialReference,
 ):
     """Describes an individual material included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -2151,7 +2080,7 @@ class PartWithSustainabilityResult(
     ChildPartWithSustainabilityMixin,
     SustainabilityResultMixin,
     MassResultMixin,
-    PartReferenceWithEquivalents,
+    PartReference,
 ):
     """Describes an individual part included as part of a sustainability query result.
     This object includes three categories of attributes:
@@ -2167,7 +2096,7 @@ class PartWithSustainabilityResult(
 class ProcessWithSustainabilityResult(
     ChildTransportWithSustainabilityMixin,
     SustainabilityResultMixin,
-    ProcessReferenceWithEquivalents,
+    ProcessReference,
 ):
     """Describes a process included as part of a sustainability query result.
     This object includes two categories of attributes:
@@ -2179,10 +2108,7 @@ class ProcessWithSustainabilityResult(
     """
 
 
-class TransportWithSustainabilityResult(
-    SustainabilityResultMixin,
-    TransportReferenceWithEquivalents,
-):
+class TransportWithSustainabilityResult(SustainabilityResultMixin, TransportReference):
     """Describes a transport stage included as part of a sustainability query result.
     This object includes two categories of attributes:
 
@@ -2335,7 +2261,7 @@ class TransportSummaryResult(TransportSummaryBase):
     def __init__(
         self,
         name: Optional[str],
-        transport_reference: TransportReferenceWithEquivalents,
+        transport_reference: TransportReference,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -2348,7 +2274,7 @@ class TransportSummaryResult(TransportSummaryBase):
         return self._name
 
     @property
-    def transport_reference(self) -> TransportReferenceWithEquivalents:
+    def transport_reference(self) -> TransportReference:
         """
         Transport record reference.
         """
@@ -2453,7 +2379,7 @@ class ContributingComponentResult:
         self,
         name: Optional[str],
         part_number: Optional[str],
-        part_reference: PartReferenceWithEquivalents,
+        part_reference: PartReference,
         material_mass_before_processing: ValueWithUnit,
         **kwargs: Any,
     ) -> None:
@@ -2478,7 +2404,7 @@ class ContributingComponentResult:
         return self._name
 
     @property
-    def part_reference(self) -> PartReferenceWithEquivalents:
+    def part_reference(self) -> PartReference:
         """
         Part record reference.
         """
@@ -2508,7 +2434,7 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
     def __init__(
         self,
         identity: str,
-        material_reference: MaterialReferenceWithEquivalents,
+        material_reference: MaterialReference,
         mass_before_processing: ValueWithUnit,
         mass_after_processing: ValueWithUnit,
         contributors: List[ContributingComponentResult],
@@ -2529,7 +2455,7 @@ class MaterialSummaryResult(SustainabilitySummaryBase):
         return self._identity
 
     @property
-    def material_reference(self) -> MaterialReferenceWithEquivalents:
+    def material_reference(self) -> MaterialReference:
         """
         Material record reference.
         """
@@ -2576,9 +2502,9 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
     def __init__(
         self,
         material_identity: Optional[str],
-        material_reference: Optional[MaterialReferenceWithEquivalents],
+        material_reference: Optional[MaterialReference],
         process_name: str,
-        process_reference: ProcessReferenceWithEquivalents,
+        process_reference: ProcessReference,
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
@@ -2595,7 +2521,7 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
         return self._process_name
 
     @property
-    def process_reference(self) -> ProcessReferenceWithEquivalents:
+    def process_reference(self) -> ProcessReference:
         """
         Process record reference.
         """
@@ -2611,7 +2537,7 @@ class ProcessSummaryResult(SustainabilitySummaryBase):
         return self._material_identity
 
     @property
-    def material_reference(self) -> Optional[MaterialReferenceWithEquivalents]:
+    def material_reference(self) -> Optional[MaterialReference]:
         """
         Material record reference.
 

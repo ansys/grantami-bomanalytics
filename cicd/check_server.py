@@ -4,6 +4,7 @@ import logging
 import os
 import platform
 import time
+from json import JSONDecodeError
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -63,7 +64,11 @@ def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
     if response.status_code != 200:
         return False
 
-    content = json.loads(response.content)
+    try:
+        content = json.loads(response.content)
+    except JSONDecodeError as e:
+        logger.info(f"JSONDecodeError: {str(e)}")
+        return False
     for check in content["HealthChecks"]:
         if check["Name"] == "Database Check" and check["Status"] == "Ok":
             logger.info(f"All databases loaded.")

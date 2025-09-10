@@ -68,6 +68,7 @@ def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
         content = json.loads(response.content)
     except JSONDecodeError as e:
         logger.info(f"JSONDecodeError: {str(e)}")
+        logger.info(response.content)
         return False
     for check in content["HealthChecks"]:
         if check["Name"] == "Database Check" and check["Status"] == "Ok":

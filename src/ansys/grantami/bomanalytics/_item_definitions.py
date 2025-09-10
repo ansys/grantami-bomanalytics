@@ -108,7 +108,8 @@ class RecordReference(ABC):
         Value of the record reference. All are string values except for record history identities,
         which are integers.
     database_key : str, optional
-        The database key that contains the record. Supported by BoM Analytics Services 2026 R1 or later.
+        The database key that contains the record, if different to the database specified in
+        :meth:`BomAnalyticsClient.set_database_details`. Supported by BoM Analytics Services 2026 R1 or later.
 
         .. versionadded:: 2.4
     """

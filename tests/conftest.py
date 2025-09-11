@@ -25,11 +25,11 @@ import os
 import pathlib
 from typing import List
 
-from bomanalytics._connection import BomAnalyticsClient
 import pytest
 import requests_mock
 
 from ansys.grantami.bomanalytics import Connection
+from ansys.grantami.bomanalytics._connection import BomAnalyticsClient
 
 from .common import (
     CUSTOM_TABLES,

@@ -4,7 +4,6 @@ import logging
 import os
 import platform
 import time
-from json import JSONDecodeError
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -45,9 +44,11 @@ def get_user_agent():
 
 @block_until_server_is_ok
 def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
+    request_url = f"{url}/Health/v2.svc/"
+    logger.info(f"Sending GET request to {request_url}")
     try:
         response = requests.get(
-            f"{url}/Health/v2.svc/",
+            request_url,
             auth=auth_header,
             headers={
                 "User-Agent": get_user_agent(),
@@ -64,12 +65,7 @@ def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
     if response.status_code != 200:
         return False
 
-    try:
-        content = json.loads(response.content)
-    except JSONDecodeError as e:
-        logger.info(f"JSONDecodeError: {str(e)}")
-        logger.info(response.content)
-        return False
+    content = json.loads(response.content)
     for check in content["HealthChecks"]:
         if check["Name"] == "Database Check" and check["Status"] == "Ok":
             logger.info(f"All databases loaded.")

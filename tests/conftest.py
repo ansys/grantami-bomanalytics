@@ -80,7 +80,7 @@ def connection_write_custom_db():
 
 
 @pytest.fixture
-def mock_connection(monkeypatch):
+def mock_connection():
     with requests_mock.Mocker() as m:
         m.get(requests_mock.ANY, json=LICENSE_RESPONSE)
         connection = Connection(api_url=sl_url).with_anonymous().connect()
@@ -88,7 +88,7 @@ def mock_connection(monkeypatch):
 
 
 @pytest.fixture
-def mock_connection_with_custom_db(monkeypatch) -> BomAnalyticsClient:
+def mock_connection_with_custom_db() -> BomAnalyticsClient:
     with requests_mock.Mocker() as m:
         m.get(requests_mock.ANY, json=LICENSE_RESPONSE)
         connection = Connection(api_url=sl_url).with_anonymous().connect()

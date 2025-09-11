@@ -24,7 +24,7 @@ from typing import Any, Optional
 import requests_mock
 
 from ansys.grantami.bomanalytics import indicators, queries
-from ansys.grantami.bomanalytics._connection import DEFAULT_DBKEY
+from ansys.grantami.bomanalytics._connection import DEFAULT_DBKEY, BomAnalyticsClient
 
 from ..inputs import example_payloads
 
@@ -50,14 +50,14 @@ class BaseMockTester:
 class BaseMockTesterWithConfigTests(BaseMockTester):
     mock_key: str
 
-    def test_default_database_args(self, mock_connection):
+    def test_default_database_args(self, mock_connection: BomAnalyticsClient) -> None:
         self.get_mocked_response(mock_connection)
         assert self.mocker.called_once
 
         request = self.mocker.request_history[0]
         self.validate_default_database_args(request.json())
 
-    def test_custom_database_args(self, mock_connection_with_custom_db):
+    def test_custom_database_args(self, mock_connection_with_custom_db: BomAnalyticsClient) -> None:
         self.get_mocked_response(mock_connection_with_custom_db)
         assert self.mocker.called_once
 
@@ -65,12 +65,12 @@ class BaseMockTesterWithConfigTests(BaseMockTester):
         self.validate_custom_database_args(request.json())
 
     @staticmethod
-    def validate_default_database_args(request: dict[str, Any]):
+    def validate_default_database_args(request: dict[str, Any]) -> None:
         assert request["DatabaseKey"] == DEFAULT_DBKEY
         assert request["Config"] == {}
 
     @staticmethod
-    def validate_custom_database_args(request: dict[str, Any]):
+    def validate_custom_database_args(request: dict[str, Any]) -> None:
         assert request["DatabaseKey"] == "MI_Restricted_Substances_Custom_Tables"
         assert request["Config"] == example_payloads["Config"].data
 

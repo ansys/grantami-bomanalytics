@@ -354,8 +354,8 @@ class BomAnalyticsClient(ApiClient):
             Name of the table that implements the ``ProcessUniverse`` schema. The default
             is ``None``, in which case  ``ProcessUniverse`` is used.
         location_table_name : str, optional
-            Name of the table that implements the ``Location`` schema. The default
-            is ``None``, in which case  ``Location`` is used.
+            Name of the table that implements the ``Locations`` schema. The default
+            is ``None``, in which case  ``Locations`` is used.
 
             .. versionadded:: 2.0
         transport_table_name : str, optional
@@ -379,7 +379,7 @@ class BomAnalyticsClient(ApiClient):
           - Restricted Substances
           - Coatings
           - ProcessUniverse
-          - Location
+          - Locations
           - Transport
 
         Examples
@@ -397,7 +397,7 @@ class BomAnalyticsClient(ApiClient):
         self._table_names["substances_table_name"] = substances_table_name
         self._table_names["coatings_table_name"] = coatings_table_name
         self._table_names["process_universe_table_name"] = process_universe_table_name
-        self._table_names["location_table_name"] = location_table_name
+        self._table_names["locations_table_name"] = location_table_name
         self._table_names["transport_table_name"] = transport_table_name
 
     @overload

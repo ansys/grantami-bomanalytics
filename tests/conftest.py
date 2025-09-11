@@ -86,6 +86,15 @@ def mock_connection(monkeypatch):
     return connection
 
 
+@pytest.fixture
+def mock_connection_with_custom_db(monkeypatch):
+    with requests_mock.Mocker() as m:
+        m.get(requests_mock.ANY, json=LICENSE_RESPONSE)
+        connection = Connection(api_url=sl_url).with_anonymous().connect()
+    _configure_connection_for_custom_db(connection)
+    return connection
+
+
 def pytest_generate_tests(metafunc):
     """Dynamically discover all example .py files and add to the set of parameters for a test if that test uses the
     'example_script' fixture.

@@ -22,7 +22,7 @@
 from ansys.grantami.bomanalytics import indicators, queries
 
 from .common import (
-    BaseMockTester,
+    BaseMockTesterWithConfigTests,
     MaterialValidator,
     PartValidator,
     SpecificationValidator,
@@ -30,7 +30,7 @@ from .common import (
 )
 
 
-class TestImpactedSubstances(BaseMockTester):
+class TestImpactedSubstances(BaseMockTesterWithConfigTests):
     query = (
         queries.PartImpactedSubstancesQuery()
         .with_legislation_ids(["Fake legislation"])
@@ -112,7 +112,7 @@ class TestImpactedSubstances(BaseMockTester):
         assert "ImpactedSubstance" in repr(response.impacted_substances_by_legislation)
 
 
-class TestCompliance(BaseMockTester):
+class TestCompliance(BaseMockTesterWithConfigTests):
     """Check that each mocked result has the correct record references, indicator results, child objects, and bom
     relationships.
 

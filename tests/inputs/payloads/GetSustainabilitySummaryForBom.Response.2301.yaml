@@ -24,6 +24,9 @@ MaterialSummary:
           MaterialMassBeforeProcessing:
             Value: 0.625
             Unit: kg
+          RecordReference:
+            ReferenceType: MiRecordGuid
+            ReferenceValue: 8dc38bb5-eff9-4c60-9233-271a3c8f6271
   PhaseSummary:
     Phase: Material
     EmbodiedEnergy:

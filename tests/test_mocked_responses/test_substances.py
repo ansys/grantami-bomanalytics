@@ -22,10 +22,10 @@
 
 from ansys.grantami.bomanalytics import indicators, queries
 
-from .common import BaseMockTester, SubstanceValidator
+from .common import BaseMockTesterWithConfigTests, SubstanceValidator
 
 
-class TestCompliance(BaseMockTester):
+class TestCompliance(BaseMockTesterWithConfigTests):
     """Check that each mocked result has the correct record references, indicator results, child objects, and bom
     relationships.
 

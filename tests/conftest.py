@@ -80,7 +80,7 @@ def connection_write_custom_db():
 
 
 @pytest.fixture
-def mock_connection():
+def mock_connection() -> BomAnalyticsClient:
     with requests_mock.Mocker() as m:
         m.get(requests_mock.ANY, json=LICENSE_RESPONSE)
         connection = Connection(api_url=sl_url).with_anonymous().connect()

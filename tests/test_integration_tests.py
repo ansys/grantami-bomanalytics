@@ -536,8 +536,6 @@ class TestSustainabilityBomQueries2505:
         response = connection_with_db_variants.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
-        # TODO: Record reference for location node with name 'Europe' did not resolve to the expected table.
-        # TODO: Expected table name 'Locations', but record in 'Places'
 
         assert response.process.name == "Processes"
         assert response.material.name == "Material"
@@ -593,8 +591,6 @@ class TestSustainabilityBomQueries2505:
         response = connection_with_db_variants.run(query)
 
         assert not response.messages, "\n".join([f"{m.severity}: {m.message}" for m in response.messages])
-        # TODO: Record reference for location node with name 'Europe' did not resolve to the expected table.
-        # TODO: Expected table name 'Locations', but record in 'Places'
 
         # Product
         product = response.part

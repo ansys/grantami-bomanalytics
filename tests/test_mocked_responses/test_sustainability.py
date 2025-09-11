@@ -410,7 +410,7 @@ class TestBomSustainabilitySummary2412(BaseMockTesterWithConfigTests):
         assert manufacturing_transport_group.embodied_energy_percentage == 100.0
 
 
-class TestBomSustainabilitySummary2505(BaseMockTester):
+class TestBomSustainabilitySummary2505(BaseMockTesterWithConfigTests):
     # Use sample BoM to avoid validation error
     # The response depends only on the examples.py module, not on the provided BoM
     bom = example_boms["sustainability-bom-2505"].content

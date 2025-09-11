@@ -44,11 +44,9 @@ def get_user_agent():
 
 @block_until_server_is_ok
 def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
-    request_url = f"{url}/Health/v2.svc/"
-    logger.info(f"Sending GET request to {request_url}")
     try:
         response = requests.get(
-            request_url,
+            f"{url}/Health/v2.svc/",
             auth=auth_header,
             headers={
                 "User-Agent": get_user_agent(),

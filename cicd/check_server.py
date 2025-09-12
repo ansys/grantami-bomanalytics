@@ -95,7 +95,7 @@ def warm_up_database(url: str, auth_header: HTTPBasicAuth, db_key: str) -> bool:
 
 
 if __name__ == "__main__":
-    sl_url = os.getenv("TEST_SL_URL")
+    sl_url = os.getenv("TEST_SL_URL").strip("/")
     username = os.getenv("TEST_USER")
     password = os.getenv("TEST_PASS")
     auth = HTTPBasicAuth(username, password)

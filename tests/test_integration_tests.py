@@ -33,7 +33,16 @@ pytestmark = pytest.mark.integration
 indicators = list(INDICATORS.values())
 
 
-@pytest.mark.parametrize("foreign_records", [False, True])
+foreign_records_parametrization = pytest.mark.parametrize(
+    "foreign_records",
+    [
+        pytest.param(False, marks=pytest.mark.integration(mi_versions=[(24, 2), (25, 1), (25, 2), (26, 1)])),
+        pytest.param(True, marks=pytest.mark.integration(mi_versions=[(26, 1)])),
+    ],
+)
+
+
+@foreign_records_parametrization
 class TestMaterialQueries:
     ids = ["plastic-abs-pvc-flame", "plastic-pmma-pc"]
     foreign_ids = ["plastic-abs-pvc-flame-foreign", "plastic-pmma-pc-foreign"]
@@ -87,7 +96,7 @@ class TestMaterialQueries:
             assert not response.compliance_by_material_and_indicator[0].equivalent_references
 
 
-@pytest.mark.parametrize("foreign_records", [False, True])
+@foreign_records_parametrization
 class TestPartQueries:
     ids = ["DRILL", "asm_flap_mating"]
     foreign_ids = ["DRILL-foreign", "asm_flap_mating-foreign"]
@@ -141,7 +150,7 @@ class TestPartQueries:
             assert not response.compliance_by_part_and_indicator[0].equivalent_references
 
 
-@pytest.mark.parametrize("foreign_records", [False])
+@foreign_records_parametrization
 class TestSpecificationQueries:
     ids = ["MIL-DTL-53039,TypeI", "AMS2404,Class1"]
     foreign_ids = ["MIL-DTL-53039,TypeI-foreign", "AMS2404,Class1-foreign"]
@@ -201,7 +210,7 @@ class TestSpecificationQueries:
             assert not response.compliance_by_specification_and_indicator[0].equivalent_references
 
 
-@pytest.mark.parametrize("foreign_records", [False])
+@foreign_records_parametrization
 class TestSubstancesQueries:
     def test_compliance(self, connection_with_db_variants, foreign_records):
         query = queries.SubstanceComplianceQuery().with_indicators(indicators)
@@ -300,7 +309,7 @@ class TestBomRSQueries:
         assert response.compliance_by_part_and_indicator
         assert response.compliance_by_indicator
 
-    @pytest.mark.integration(mi_versions=[(25, 2)])
+    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
     def test_impacted_substances_2412(self, connection, bom2412):
         query = queries.BomImpactedSubstancesQuery().with_bom(bom2412).with_legislation_ids(LEGISLATIONS)
         response = connection.run(query)
@@ -308,7 +317,7 @@ class TestBomRSQueries:
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
 
-    @pytest.mark.integration(mi_versions=[(25, 2)])
+    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
     def test_compliance_2412(self, connection, bom2412):
         query = queries.BomComplianceQuery().with_bom(bom2412).with_indicators(indicators)
         response = connection.run(query)
@@ -316,7 +325,7 @@ class TestBomRSQueries:
         assert response.compliance_by_part_and_indicator
         assert response.compliance_by_indicator
 
-    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1)])
     def test_impacted_substances_2505(self, connection, bom2505):
         query = queries.BomImpactedSubstancesQuery().with_bom(bom2505).with_legislation_ids(LEGISLATIONS)
         response = connection.run(query)
@@ -324,7 +333,7 @@ class TestBomRSQueries:
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
 
-    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1)])
     def test_compliance_2505(self, connection, bom2505):
         query = queries.BomComplianceQuery().with_bom(bom2505).with_indicators(indicators)
         response = connection.run(query)

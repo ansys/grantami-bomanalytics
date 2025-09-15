@@ -24,10 +24,15 @@ import pytest
 from ansys.grantami.bomanalytics import indicators, queries
 
 from ..inputs import example_boms
-from .common import BaseMockTester, MaterialValidator, PartValidator, SubstanceValidator
+from .common import (
+    BaseMockTesterWithConfigTests,
+    MaterialValidator,
+    PartValidator,
+    SubstanceValidator,
+)
 
 
-class _TestImpactedSubstances(BaseMockTester):
+class _TestImpactedSubstances(BaseMockTesterWithConfigTests):
     def get_mocked_response(self, *args, **kwargs):
         with pytest.warns(RuntimeWarning, match="No legislations"):
             return super().get_mocked_response(*args, **kwargs)
@@ -69,7 +74,7 @@ class TestImpactedSubstances(_TestImpactedSubstances):
     mock_key = "GetImpactedSubstancesForBom.Response"
 
 
-class _TestCompliance(BaseMockTester):
+class _TestCompliance(BaseMockTesterWithConfigTests):
     """Check that each mocked result has the correct record references, indicator results, child objects, and bom
     relationships.
 

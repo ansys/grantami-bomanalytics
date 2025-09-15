@@ -1,0 +1,9 @@
+MaterialUniverseTableName: My Material Universe
+InhouseMaterialsTableName: My Materials
+SpecificationsTableName: specs
+ProductsAndPartsTableName: Parts 'n' Products
+SubstancesTableName: Chemicals
+CoatingsTableName: Coverings
+ProcessUniverseTableName: Methods
+LocationsTableName: Places
+TransportTableName: Locomotion

@@ -29,6 +29,7 @@ import pytest
 import requests_mock
 
 from ansys.grantami.bomanalytics import Connection
+from ansys.grantami.bomanalytics._connection import BomAnalyticsClient
 
 from .common import (
     CUSTOM_TABLES,
@@ -79,10 +80,19 @@ def connection_write_custom_db():
 
 
 @pytest.fixture
-def mock_connection(monkeypatch):
+def mock_connection() -> BomAnalyticsClient:
     with requests_mock.Mocker() as m:
         m.get(requests_mock.ANY, json=LICENSE_RESPONSE)
         connection = Connection(api_url=sl_url).with_anonymous().connect()
+    return connection
+
+
+@pytest.fixture
+def mock_connection_with_custom_db() -> BomAnalyticsClient:
+    with requests_mock.Mocker() as m:
+        m.get(requests_mock.ANY, json=LICENSE_RESPONSE)
+        connection = Connection(api_url=sl_url).with_anonymous().connect()
+    _configure_connection_for_custom_db(connection)
     return connection
 
 

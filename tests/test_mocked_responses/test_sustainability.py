@@ -31,10 +31,10 @@ from ansys.grantami.bomanalytics._query_results import (
 )
 
 from ..inputs import example_boms, example_payloads
-from .common import BaseMockTester
+from .common import BaseMockTesterWithConfigTests
 
 
-class TestBomSustainability(BaseMockTester):
+class TestBomSustainability(BaseMockTesterWithConfigTests):
     # Use sample BoM to avoid validation error
     # The response depends only on the examples.py module, not on the provided BoM
     bom = example_boms["sustainability-bom-2301"].content
@@ -104,7 +104,7 @@ class TestBomSustainability(BaseMockTester):
         assert len(process.transport_stages) == 0
 
 
-class TestBomSustainabilitySummary(BaseMockTester):
+class TestBomSustainabilitySummary(BaseMockTesterWithConfigTests):
     # Use sample BoM to avoid validation error
     # The response depends only on the examples.py module, not on the provided BoM
     bom = example_boms["sustainability-bom-2301"].content
@@ -113,7 +113,6 @@ class TestBomSustainabilitySummary(BaseMockTester):
 
     def test_response_processing(self, mock_connection):
         patched_response = example_payloads[self.mock_key].data
-        patched_response["MaterialSummary"]["Summary"][0]["LargestContributors"][0]["RecordReference"] = {}
         response = self.get_mocked_response(mock_connection, json.dumps(patched_response))
         assert isinstance(response, BomSustainabilitySummaryQueryResult)
 
@@ -203,7 +202,7 @@ class TestBomSustainabilitySummary(BaseMockTester):
         assert response.distribution_transport_summary is None
 
 
-class TestBomSustainabilitySummary2412(BaseMockTester):
+class TestBomSustainabilitySummary2412(BaseMockTesterWithConfigTests):
     # Use sample BoM to avoid validation error
     # The response depends only on the examples.py module, not on the provided BoM
     bom = example_boms["sustainability-bom-2412"].content

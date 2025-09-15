@@ -19,28 +19,60 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from typing import Any, Optional
 
 import requests_mock
 
 from ansys.grantami.bomanalytics import indicators, queries
+from ansys.grantami.bomanalytics._connection import DEFAULT_DBKEY, BomAnalyticsClient
 
 from ..inputs import example_payloads
 
 
 class BaseMockTester:
-    mock_key: str
+    mock_key: Optional[str] = None
     query: queries._BaseQueryBuilder
 
     def get_mocked_response(self, connection, response=None):
         if response:
             text = response
-        else:
+        elif self.mock_key:
             text = example_payloads[self.mock_key].to_json()
-        with requests_mock.Mocker() as m:
-            m.get(requests_mock.ANY, text="")
-            m.post(url=requests_mock.ANY, text=text)
+        else:
+            raise ValueError("Either 'response' argument or 'mock_key' class attribute must be provided.")
+        with requests_mock.Mocker() as self.mocker:
+            self.mocker.get(requests_mock.ANY, text="")
+            self.mocker.post(url=requests_mock.ANY, text=text)
             response = connection.run(self.query)
         return response
+
+
+class BaseMockTesterWithConfigTests(BaseMockTester):
+    mock_key: str
+
+    def test_default_database_args(self, mock_connection: BomAnalyticsClient) -> None:
+        self.get_mocked_response(mock_connection)
+        assert self.mocker.called_once
+
+        request = self.mocker.request_history[0]
+        self.validate_default_database_args(request.json())
+
+    def test_custom_database_args(self, mock_connection_with_custom_db: BomAnalyticsClient) -> None:
+        self.get_mocked_response(mock_connection_with_custom_db)
+        assert self.mocker.called_once
+
+        request = self.mocker.request_history[0]
+        self.validate_custom_database_args(request.json())
+
+    @staticmethod
+    def validate_default_database_args(request: dict[str, Any]) -> None:
+        assert request["DatabaseKey"] == DEFAULT_DBKEY
+        assert request["Config"] == {}
+
+    @staticmethod
+    def validate_custom_database_args(request: dict[str, Any]) -> None:
+        assert request["DatabaseKey"] == "MI_Restricted_Substances_Custom_Tables"
+        assert request["Config"] == example_payloads["Config"].data
 
 
 class ObjValidator:

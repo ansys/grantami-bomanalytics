@@ -366,7 +366,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}: {self._data}>"
 
-    @validate_argument_type(int)
+    @validate_argument_type("batch_size", int)
     def with_batch_size(self: _RecordQuery, batch_size: int) -> _RecordQuery:
         """Set the number of records to include in a single request for this query.
 
@@ -414,7 +414,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         self._data.batch_size = batch_size
         return self
 
-    @validate_argument_type([int], {int})
+    @validate_argument_type("record_history_identities", [int], {int})
     def with_record_history_ids(self: _RecordQuery, record_history_identities: List[int]) -> _RecordQuery:
         """Add a list or set of record history identities to a query.
 
@@ -447,7 +447,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([str], {str})
+    @validate_argument_type("record_history_guids", [str], {str})
     def with_record_history_guids(self: _RecordQuery, record_history_guids: List[str]) -> _RecordQuery:
         """Add a list or set of record history GUIDs to a query.
 
@@ -481,7 +481,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([str], {str})
+    @validate_argument_type("record_guids", [str], {str})
     def with_record_guids(self: _RecordQuery, record_guids: List[str]) -> _RecordQuery:
         """Add a list or set of record GUIDs to a query.
 
@@ -616,7 +616,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         result = f"<{self.__class__.__name__}: {self._data}," f" {len(self._indicators)} indicators>"
         return result
 
-    @validate_argument_type([_Indicator], {_Indicator})
+    @validate_argument_type("indicators", [_Indicator], {_Indicator})
     def with_indicators(
         self: _ComplianceQuery, indicators: List[Union[WatchListIndicator, RoHSIndicator]]
     ) -> _ComplianceQuery:
@@ -741,7 +741,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         result = f"<{self.__class__.__name__}: {self._data}, " f"{len(self._legislations)} legislations>"
         return result
 
-    @validate_argument_type([str], {str})
+    @validate_argument_type("legislation_ids", [str], {str})
     def with_legislation_ids(self: _ImpactedSubstanceQuery, legislation_ids: List[str]) -> _ImpactedSubstanceQuery:
         """Add a list or set of legislations to retrieve the impacted substances for.
 
@@ -830,7 +830,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._data.item_type_name = "materials"
         self._data.batch_size = 100
 
-    @validate_argument_type([str], {str})
+    @validate_argument_type("material_ids", [str], {str})
     def with_material_ids(self: _MaterialQuery, material_ids: List[str]) -> _MaterialQuery:
         """Add a list or set of materials to a material query, referenced by the material ID attribute value.
 
@@ -937,7 +937,7 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._data.item_type_name = "parts"
         self._data.batch_size = 10
 
-    @validate_argument_type([str], {str})
+    @validate_argument_type("part_numbers", [str], {str})
     def with_part_numbers(self: _PartQuery, part_numbers: List[str]) -> _PartQuery:
         """Add a list or set of parts to a part query, referenced by part number.
 
@@ -1043,7 +1043,7 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._data.item_type_name = "specifications"
         self._data.batch_size = 10
 
-    @validate_argument_type([str], {str})
+    @validate_argument_type("specification_ids", [str], {str})
     def with_specification_ids(self: _SpecificationQuery, specification_ids: List[str]) -> _SpecificationQuery:
         """Add a list or set of specifications to a specification query, referenced by specification ID.
 
@@ -1153,7 +1153,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._data.item_type_name = "substances"
         self._data.batch_size = 500
 
-    @validate_argument_type([str], {str})
+    @validate_argument_type("cas_numbers", [str], {str})
     def with_cas_numbers(self: _SubstanceQuery, cas_numbers: List[str]) -> _SubstanceQuery:
         """Add a list or set of CAS numbers to a substance query.
 
@@ -1185,7 +1185,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([str], {str})
+    @validate_argument_type("ec_numbers", [str], {str})
     def with_ec_numbers(self: "_SubstanceQueryBuilder", ec_numbers: List[str]) -> "_SubstanceQueryBuilder":
         """Add a list or set of EC numbers to a substance query.
 
@@ -1217,7 +1217,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([str], {str})
+    @validate_argument_type("chemical_names", [str], {str})
     def with_chemical_names(self: "_SubstanceQueryBuilder", chemical_names: List[str]) -> "_SubstanceQueryBuilder":
         """Add a list or set of chemical names to a substance query.
 
@@ -1249,7 +1249,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([(int, Number)], {(int, Number)})
+    @validate_argument_type("record_history_identities_and_amounts", [(int, Number)], {(int, Number)})
     def with_record_history_ids_and_amounts(
         self: "_SubstanceQueryBuilder", record_history_identities_and_amounts: List[Tuple[int, float]]
     ) -> "_SubstanceQueryBuilder":
@@ -1287,7 +1287,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([(str, Number)], {(str, Number)})
+    @validate_argument_type("record_history_guids_and_amounts", [(str, Number)], {(str, Number)})
     def with_record_history_guids_and_amounts(
         self: "_SubstanceQueryBuilder", record_history_guids_and_amounts: List[Tuple[str, float]]
     ) -> "_SubstanceQueryBuilder":
@@ -1328,7 +1328,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([(str, Number)], {(str, Number)})
+    @validate_argument_type("record_guids_and_amounts", [(str, Number)], {(str, Number)})
     def with_record_guids_and_amounts(
         self: "_SubstanceQueryBuilder", record_guids_and_amounts: List[Tuple[str, float]]
     ) -> "_SubstanceQueryBuilder":
@@ -1367,7 +1367,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([(str, Number)], {(str, Number)})
+    @validate_argument_type("cas_numbers_and_amounts", [(str, Number)], {(str, Number)})
     def with_cas_numbers_and_amounts(
         self: "_SubstanceQueryBuilder", cas_numbers_and_amounts: List[Tuple[str, float]]
     ) -> "_SubstanceQueryBuilder":
@@ -1403,7 +1403,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([(str, Number)], {(str, Number)})
+    @validate_argument_type("ec_numbers_and_amounts", [(str, Number)], {(str, Number)})
     def with_ec_numbers_and_amounts(
         self: "_SubstanceQueryBuilder", ec_numbers_and_amounts: List[Tuple[str, float]]
     ) -> "_SubstanceQueryBuilder":
@@ -1440,7 +1440,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
             self._data.append_record_definition(item_reference)
         return self
 
-    @validate_argument_type([(str, Number)], {(str, Number)})
+    @validate_argument_type("chemical_names_and_amounts", [(str, Number)], {(str, Number)})
     def with_chemical_names_and_amounts(
         self: "_SubstanceQueryBuilder", chemical_names_and_amounts: List[Tuple[str, float]]
     ) -> "_SubstanceQueryBuilder":
@@ -1635,7 +1635,7 @@ class _BomQueryBuilder(_BaseQueryBuilder, ABC):
     def __init__(self) -> None:
         self._data: _BomQueryDataManager = _BomQueryDataManager(self._supported_bom_formats)
 
-    @validate_argument_type(str)
+    @validate_argument_type("bom", str)
     def with_bom(self: _BomQuery, bom: str) -> _BomQuery:
         """Set the BoM to use for the query.
 

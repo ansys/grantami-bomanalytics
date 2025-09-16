@@ -120,10 +120,6 @@ FOREIGN_SCHEMA = {
         "Process ID",
         "ProcessUniverse, foreign table, foreign unique attribute",
     ],
-    "Legislations and Lists, foreign table": [
-        "Legislation ID",
-        "Legislations and Lists, foreign table, foreign unique attribute",
-    ],
     "Restricted Substances, foreign table": [
         "CAS number",
         "EC number",
@@ -158,9 +154,6 @@ FOREIGN_ATTRIBUTE_STANDARD_NAMES = {
         ("MaterialUniverse, foreign table", "MaterialUniverse, foreign table, foreign unique attribute"),
         ("Materials - in house, foreign table", "Materials - in house, foreign table, foreign unique attribute"),
     ],
-    "Legislation ID": [
-        ("Legislations and Lists, foreign table", "Legislations and Lists, foreign table, foreign unique attribute"),
-    ],
     "CAS number": [
         ("Restricted Substances, foreign table", "CAS number"),
     ],
@@ -177,7 +170,6 @@ FOREIGN_ATTRIBUTE_STANDARD_NAMES = {
         ("MaterialUniverse, foreign table", "MaterialUniverse, foreign table, foreign unique attribute"),
         ("Materials - in house, foreign table", "Materials - in house, foreign table, foreign unique attribute"),
         ("ProcessUniverse, foreign table", "ProcessUniverse, foreign table, foreign unique attribute"),
-        ("Legislations and Lists, foreign table", "Legislations and Lists, foreign table, foreign unique attribute"),
         ("Restricted Substances, foreign table", "CAS number"),
         ("Specifications, foreign table", "Specifications, foreign table, foreign unique attribute"),
         ("Products and parts, foreign table", "Products and parts, foreign table, foreign unique attribute"),
@@ -194,7 +186,6 @@ FOREIGN_XDB_LINK_GROUPS = {
     "ProcessUniverseLinkGroup": ("ProcessUniverse, foreign table", "ProcessUniverse"),
     "LocationLinkGroup": ("Locations, foreign table", "Locations"),
     "TransportLinkGroup": ("Transport, foreign table", "Transport"),
-    "LegislationsLinkGroup": ("Legislations and Lists, foreign table", "Legislations and Lists"),
     "RestrictedSubstancesLinkGroup": ("Restricted Substances, foreign table", "Restricted Substances"),
     "SpecificationsLinkGroup": ("Specifications, foreign table", "Specifications"),
     "ProductsAndPartsLinkGroup": ("Products and parts, foreign table", "Products and parts"),
@@ -247,14 +238,6 @@ LINKING_CRITERIA = {
             "Aircraft, long haul dedicated-freight",
             "Train, diesel",
             "Truck 7.5-16t, EURO 3",
-        ],
-    ),
-    "LegislationsLinkGroup": (
-        "Legislation ID",
-        [
-            "Candidate_AnnexXV",
-            "Prop65",
-            "SINList",
         ],
     ),
     "RestrictedSubstancesLinkGroup": (

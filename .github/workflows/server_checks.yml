@@ -171,7 +171,7 @@ jobs:
     needs: integration-tests
     steps:
       - name: "Run Ansys documentation building action"
-        uses: ansys/actions/doc-build@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+        uses: ansys/actions/doc-build@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_DEV_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
@@ -181,6 +181,8 @@ jobs:
           check-links: false
           dependencies: "pandoc"
           sphinxopts: "-n -W --keep-going"
+          optional-dependencies-name: ""
+          group-dependencies-name: "doc"
 
   check-workflow-runs:
     name: Check if there are active workflow runs

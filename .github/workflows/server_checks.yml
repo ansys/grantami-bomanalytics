@@ -181,6 +181,8 @@ jobs:
           check-links: false
           dependencies: "pandoc"
           sphinxopts: "-n -W --keep-going"
+          optional-dependencies-name: ""
+          group-dependencies-name: "doc"
 
   check-workflow-runs:
     name: Check if there are active workflow runs

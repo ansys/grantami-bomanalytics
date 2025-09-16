@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import Any
+from typing import Any, cast
 
 import pytest
 
@@ -104,7 +104,7 @@ class TestPartQueries:
     ids = ["DRILL", "asm_flap_mating"]
     foreign_ids = ["DRILL-foreign", "asm_flap_mating-foreign"]
 
-    def test_impacted_substances(self, connection_with_db_variants, foreign_records):
+    def test_impacted_substances(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.PartImpactedSubstancesQuery().with_legislation_ids(LEGISLATIONS)
         if foreign_records:
             query = query.with_part_numbers(self.foreign_ids, FOREIGN_DB_KEY)
@@ -127,7 +127,7 @@ class TestPartQueries:
         else:
             assert not response.impacted_substances_by_part[0].equivalent_references
 
-    def test_compliance(self, connection_with_db_variants, foreign_records):
+    def test_compliance(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.PartComplianceQuery().with_indicators(indicators)
         if foreign_records:
             query = query.with_part_numbers(self.foreign_ids, FOREIGN_DB_KEY)
@@ -158,7 +158,7 @@ class TestSpecificationQueries:
     ids = ["MIL-DTL-53039,TypeI", "AMS2404,Class1"]
     foreign_ids = ["MIL-DTL-53039,TypeI-foreign", "AMS2404,Class1-foreign"]
 
-    def test_impacted_substances(self, connection_with_db_variants, foreign_records):
+    def test_impacted_substances(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.SpecificationImpactedSubstancesQuery().with_legislation_ids(LEGISLATIONS)
         if foreign_records:
             query = query.with_specification_ids(self.foreign_ids, FOREIGN_DB_KEY)
@@ -184,7 +184,7 @@ class TestSpecificationQueries:
         else:
             assert not response.impacted_substances_by_specification[0].equivalent_references
 
-    def test_compliance(self, connection_with_db_variants, foreign_records):
+    def test_compliance(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.SpecificationComplianceQuery().with_indicators(indicators)
         if foreign_records:
             query = query.with_specification_ids(self.foreign_ids, FOREIGN_DB_KEY)
@@ -215,7 +215,7 @@ class TestSpecificationQueries:
 
 @foreign_records_parametrization
 class TestSubstancesQueries:
-    def test_compliance(self, connection_with_db_variants, foreign_records):
+    def test_compliance(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.SubstanceComplianceQuery().with_indicators(indicators)
         if foreign_records:
             query = query.with_cas_numbers(["50-00-0", "57-24-9"], FOREIGN_DB_KEY).with_cas_numbers_and_amounts(
@@ -282,7 +282,7 @@ class TestBomRSQueries:
 
     @pytest.fixture
     def bom2505_xdb(self) -> str:
-        return example_boms["compliance-bom-xdb-refs-2505"].content
+        return cast(str, example_boms["compliance-bom-xdb-refs-2505"].content)
 
     def test_impacted_substances(self, bom, connection_with_db_variants):
         query = queries.BomImpactedSubstancesQuery().with_bom(bom).with_legislation_ids(LEGISLATIONS)

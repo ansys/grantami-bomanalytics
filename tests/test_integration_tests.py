@@ -20,19 +20,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import pytest
 
 from ansys.grantami.bomanalytics import BoMHandler, GrantaMIException, TransportCategory, queries
+from ansys.grantami.bomanalytics._connection import BomAnalyticsClient
 from ansys.grantami.bomanalytics.bom_types import eco2412, eco2505
 
 from .common import FOREIGN_DB_KEY, INDICATORS, LEGISLATIONS
 from .inputs import example_boms
-
-if TYPE_CHECKING:
-    from ansys.grantami.bomanalytics._connection import BomAnalyticsClient
-
 
 pytestmark = pytest.mark.integration
 

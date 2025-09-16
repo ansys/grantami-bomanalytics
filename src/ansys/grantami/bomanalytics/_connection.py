@@ -327,10 +327,14 @@ class BomAnalyticsClient(ApiClient):
         A database key is required if Granta MI is configured to use a value other than ``MI_Restricted_Substances``.
         A table name is required for each table in the Restricted Substances database that has been renamed.
 
+        If external records are used in any analysis, the database key for those records should not be provided here.
+        Instead, it should be provided in the appropriate query build method or in the XML BoM. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
+
         Parameters
         ----------
         database_key : str, optional
-            Database key for the Restricted Substances database. The default is ``None``,
+            Database key for the Restricted Substances and Sustainability database. The default is ``None``,
             in which case ``MI_Restricted_Substances`` is used.
         material_universe_table_name : str, optional
             Name of the table that implements the ``MaterialUniverse`` schema. The

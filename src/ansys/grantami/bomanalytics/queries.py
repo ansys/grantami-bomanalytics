@@ -416,23 +416,28 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         return self
 
     @validate_argument_type("record_history_identities", [int], {int})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_record_history_ids(
         self: _RecordQuery,
         record_history_identities: List[int],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> _RecordQuery:
         """
         Add a list or set of record history identities to a query.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``record_history_identities`` argument are stored in an external
+        database, you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         record_history_identities : list[int] | set[int]
            List or set of record history identities.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``record_history_identities`` argument are stored in an external
+            database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -454,29 +459,33 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         for value in record_history_identities:
             item_reference = self._definition_factory.create_definition_by_record_history_identity(
                 record_history_identity=value,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("record_history_guids", [str], {str})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_record_history_guids(
         self: _RecordQuery,
         record_history_guids: List[str],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> _RecordQuery:
         """
         Add a list or set of record history GUIDs to a query.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``record_history_guids`` argument are stored in an external database,
+        you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         record_history_guids : list[str] | set[str]
             List or set of record history GUIDs.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``record_history_guids`` argument are stored in an external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -499,29 +508,33 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         for value in record_history_guids:
             item_reference = self._definition_factory.create_definition_by_record_history_guid(
                 record_history_guid=value,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("record_guids", [str], {str})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_record_guids(
         self: _RecordQuery,
         record_guids: List[str],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> _RecordQuery:
         """
         Add a list or set of record GUIDs to a query.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``record_guids`` argument are stored in an external database, you
+        must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         record_guids : list[str] | set[str]
             List or set of record GUIDs.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``record_guids`` argument are stored in an external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -544,7 +557,7 @@ class _RecordBasedQueryBuilder(_BaseQueryBuilder, ABC):
         for value in record_guids:
             item_reference = self._definition_factory.create_definition_by_record_guid(
                 record_guid=value,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             self._data.append_record_definition(item_reference)
         return self
@@ -867,22 +880,27 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._data.batch_size = 100
 
     @validate_argument_type("material_ids", [str], {str})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_material_ids(
-        self: _MaterialQuery, material_ids: List[str], database_key: Optional[str] = None
+        self: _MaterialQuery, material_ids: List[str], external_database_key: Optional[str] = None
     ) -> _MaterialQuery:
         """
         Add a list or set of materials to a material query, referenced by the material ID attribute value.
 
-        Material IDs are valid for both ``MaterialUniverse`` and ``Materials - in house`` records. If the records are
-        stored in a linked database, provide the database key.
+        Material IDs are valid for both ``MaterialUniverse`` and ``Materials - in house`` records.
+
+        If the records referenced by values in the ``material_ids`` argument are stored in an external database, you
+        must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         material_ids : list[str] | set[set]
             List or set of material IDs.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``material_ids`` argument are stored in an external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -904,7 +922,7 @@ class _MaterialQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for material_id in material_ids:
             item_reference = self._definition_factory.create_definition_by_material_id(
                 material_id=material_id,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             self._data.append_record_definition(item_reference)
         return self
@@ -984,19 +1002,25 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._data.batch_size = 10
 
     @validate_argument_type("part_numbers", [str], {str})
-    @validate_argument_type("database_key", str, NoneType)
-    def with_part_numbers(self: _PartQuery, part_numbers: List[str], database_key: Optional[str] = None) -> _PartQuery:
+    @validate_argument_type("external_database_key", str, NoneType)
+    def with_part_numbers(
+        self: _PartQuery, part_numbers: List[str], external_database_key: Optional[str] = None
+    ) -> _PartQuery:
         """
         Add a list or set of parts to a part query, referenced by part number.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``part_numbers`` argument are stored in an external database, you
+        must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         part_numbers : list[str] | set[str]
             List or set of part numbers.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``part_numbers`` argument are stored in an external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1017,7 +1041,7 @@ class _PartQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for value in part_numbers:
             item_reference = self._definition_factory.create_definition_by_part_number(
                 part_number=value,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             self._data.append_record_definition(item_reference)
         return self
@@ -1099,22 +1123,26 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._data.batch_size = 10
 
     @validate_argument_type("specification_ids", [str], {str})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_specification_ids(
         self: _SpecificationQuery,
         specification_ids: List[str],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> _SpecificationQuery:
         """Add a list or set of specifications to a specification query, referenced by specification ID.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``specification_ids`` argument are stored in an external database,
+        you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         specification_ids : list[str] | set[str]
             List or set of specification IDs.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``specification_ids`` argument are stored in an external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1136,7 +1164,7 @@ class _SpecificationQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for specification_id in specification_ids:
             item_reference = self._definition_factory.create_definition_by_specification_id(
                 specification_id=specification_id,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             self._data.append_record_definition(item_reference)
         return self
@@ -1219,24 +1247,28 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         self._data.batch_size = 500
 
     @validate_argument_type("cas_numbers", [str], {str})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_cas_numbers(
         self: _SubstanceQuery,
         cas_numbers: List[str],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> _SubstanceQuery:
         """Add a list or set of CAS numbers to a substance query.
 
         The amount of substance in the material is set to 100%.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``cas_numbers`` argument are stored in an external database,
+        you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         cas_numbers : list[str] | set[str]
             List or set of CAS numbers.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``cas_numbers`` argument are stored in an external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1257,28 +1289,32 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for cas_number in cas_numbers:
             item_reference = self._definition_factory.create_definition_by_cas_number(
                 cas_number=cas_number,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("ec_numbers", [str], {str})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_ec_numbers(
-        self: "_SubstanceQueryBuilder", ec_numbers: List[str], database_key: Optional[str] = None
+        self: "_SubstanceQueryBuilder", ec_numbers: List[str], external_database_key: Optional[str] = None
     ) -> "_SubstanceQueryBuilder":
         """Add a list or set of EC numbers to a substance query.
 
         The amount of substance in the material is set to 100%.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``ec_numbers`` argument are stored in an external database,
+        you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         ec_numbers : list[str] | set[str]
             List or set of EC numbers.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``ec_numbers`` argument are stored in an external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1298,28 +1334,32 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         for ec_number in ec_numbers:
             item_reference = self._definition_factory.create_definition_by_ec_number(
-                ec_number=ec_number, database_key=database_key
+                ec_number=ec_number, database_key=external_database_key
             )
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("chemical_names", [str], {str})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_chemical_names(
-        self: "_SubstanceQueryBuilder", chemical_names: List[str], database_key: Optional[str] = None
+        self: "_SubstanceQueryBuilder", chemical_names: List[str], external_database_key: Optional[str] = None
     ) -> "_SubstanceQueryBuilder":
         """Add a list or set of chemical names to a substance query.
 
         The amount of substance in the material is set to 100%.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``chemical_names`` argument are stored in an external database,
+        you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         chemical_names : list[str] | set[str]
             List or set of chemical names.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``chemical_names`` argument are stored in an external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1339,30 +1379,35 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         for chemical_name in chemical_names:
             item_reference = self._definition_factory.create_definition_by_chemical_name(
-                chemical_name=chemical_name, database_key=database_key
+                chemical_name=chemical_name, database_key=external_database_key
             )
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("record_history_identities_and_amounts", [(int, Number)], {(int, Number)})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_record_history_ids_and_amounts(
         self: "_SubstanceQueryBuilder",
         record_history_identities_and_amounts: List[Tuple[int, float]],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> "_SubstanceQueryBuilder":
         """Add a list or set of record history identities and amounts to a substance query.
 
         The identity and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``record_history_identities_and_amounts`` argument are stored in an
+        external database, you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         record_history_identities_and_amounts : list[tuple[int, float]] | set[tuple[int, float]]
             List or set of record hirstory identities and amounts expressed as a tuple.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``record_history_identities_and_amounts`` argument are stored in an
+            external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1384,31 +1429,36 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for record_history_id, amount in record_history_identities_and_amounts:
             item_reference = self._definition_factory.create_definition_by_record_history_identity(
                 record_history_identity=record_history_id,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             item_reference.percentage_amount = amount
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("record_history_guids_and_amounts", [(str, Number)], {(str, Number)})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_record_history_guids_and_amounts(
         self: "_SubstanceQueryBuilder",
         record_history_guids_and_amounts: List[Tuple[str, float]],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> "_SubstanceQueryBuilder":
         """Add a list or set of record history GUID and amounts to a substance query.
 
         The GUID and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``record_history_guids_and_amounts`` argument are stored in an
+        external database, you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         record_history_guids_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             List or set of record history GUIDs and amounts expressed as a tuple.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``record_history_guids_and_amounts`` argument are stored in an
+            external database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1433,31 +1483,36 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for record_history_guid, amount in record_history_guids_and_amounts:
             item_reference = self._definition_factory.create_definition_by_record_history_guid(
                 record_history_guid=record_history_guid,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             item_reference.percentage_amount = amount
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("record_guids_and_amounts", [(str, Number)], {(str, Number)})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_record_guids_and_amounts(
         self: "_SubstanceQueryBuilder",
         record_guids_and_amounts: List[Tuple[str, float]],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> "_SubstanceQueryBuilder":
         """Add a list or set of record GUIDs and amounts to a substance query.
 
         The GUID and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``record_guids_and_amounts`` argument are stored in an
+        external database, you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         record_guids_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             List or set of record GUIDs and amounts expressed as a tuple.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``record_guids_and_amounts`` argument are stored in an external
+            database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1481,31 +1536,36 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         for record_guid, amount in record_guids_and_amounts:
             item_reference = self._definition_factory.create_definition_by_record_guid(
-                record_guid=record_guid, database_key=database_key
+                record_guid=record_guid, database_key=external_database_key
             )
             item_reference.percentage_amount = amount
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("cas_numbers_and_amounts", [(str, Number)], {(str, Number)})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_cas_numbers_and_amounts(
         self: "_SubstanceQueryBuilder",
         cas_numbers_and_amounts: List[Tuple[str, float]],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> "_SubstanceQueryBuilder":
         """Add a list or set of CAS numbers and amounts to a substance query.
 
         The CAS numbers and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``cas_numbers_and_amounts`` argument are stored in an
+        external database, you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         cas_numbers_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             List or set of CAS numbers and amounts expressed as a tuple.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``cas_numbers_and_amounts`` argument are stored in an external
+            database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1526,31 +1586,36 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         for cas_number, amount in cas_numbers_and_amounts:
             item_reference = self._definition_factory.create_definition_by_cas_number(
-                cas_number=cas_number, database_key=database_key
+                cas_number=cas_number, database_key=external_database_key
             )
             item_reference.percentage_amount = amount
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("ec_numbers_and_amounts", [(str, Number)], {(str, Number)})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_ec_numbers_and_amounts(
         self: "_SubstanceQueryBuilder",
         ec_numbers_and_amounts: List[Tuple[str, float]],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> "_SubstanceQueryBuilder":
         """Add a list or set of EC numbers and amounts to a substance query.
 
         The EC numbers and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``ec_numbers_and_amounts`` argument are stored in an
+        external database, you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         ec_numbers_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             Listor set of EC numbers and amounts expressed as a tuple.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``ec_numbers_and_amounts`` argument are stored in an external
+            database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1572,31 +1637,36 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
 
         for ec_number, amount in ec_numbers_and_amounts:
             item_reference = self._definition_factory.create_definition_by_ec_number(
-                ec_number=ec_number, database_key=database_key
+                ec_number=ec_number, database_key=external_database_key
             )
             item_reference.percentage_amount = amount
             self._data.append_record_definition(item_reference)
         return self
 
     @validate_argument_type("chemical_names_and_amounts", [(str, Number)], {(str, Number)})
-    @validate_argument_type("database_key", str, NoneType)
+    @validate_argument_type("external_database_key", str, NoneType)
     def with_chemical_names_and_amounts(
         self: "_SubstanceQueryBuilder",
         chemical_names_and_amounts: List[Tuple[str, float]],
-        database_key: Optional[str] = None,
+        external_database_key: Optional[str] = None,
     ) -> "_SubstanceQueryBuilder":
         """Add a list or set of chemical names and amounts to a substance query.
 
         The chemical names and quantity pairs are expressed as a tuple, with the quantity in units of wt. %.
 
-        If the records are stored in a linked database, provide the database key.
+        If the records referenced by values in the ``chemical_names_and_amounts`` argument are stored in an
+        external database, you must provide the external database key using the ``external_database_key`` argument. See
+        :ref:`ref_grantami_bomanalytics_external_record_references` for more details.
 
         Parameters
         ----------
         chemical_names_and_amounts : list[tuple[str, float]] | set[tuple[str, float]]
             List or set of chemical names and amounts expressed as a tuple.
-        database_key : str, optional
-            The database key that contains the records.
+        external_database_key : str, optional
+            Required if records referenced by the ``chemical_names_and_amounts`` argument are stored in an external
+            database.
+
+            .. versionadded:: 2.4
 
         Returns
         -------
@@ -1619,7 +1689,7 @@ class _SubstanceQueryBuilder(_RecordBasedQueryBuilder, ABC):
         for chemical_name, amount in chemical_names_and_amounts:
             item_reference = self._definition_factory.create_definition_by_chemical_name(
                 chemical_name=chemical_name,
-                database_key=database_key,
+                database_key=external_database_key,
             )
             item_reference.percentage_amount = amount
             self._data.append_record_definition(item_reference)

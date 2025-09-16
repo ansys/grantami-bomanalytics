@@ -129,3 +129,26 @@ the lookup is a special identifier such as:
 - ``specification_id``
 
 In such a case, the corresponding property is populated.
+
+.. _ref_grantami_bomanalytics_external_record_references:
+
+External record references
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. versionadded:: 2.4
+
+This package supports performing analysis on records stored in external databases, as long as the following conditions
+are met:
+
+* ``grantami-bomanalytics`` version 2.4 or later is used.
+* The Granta MI server is running MI Restricted Substances and Sustainability Reports 2061 R1 or later.
+* The records used for analysis are linked to equivalent records in the main Restricted Substances and Sustainability
+  database. See Ansys help for more details.
+
+For record-based queries, the ``database_key`` argument should be used when referring to records in an external
+database, for example in the :meth:`~.PartComplianceQuery.with_record_guids` method.
+
+ .. py:currentmodule:: ansys.grantami.bomanalytics.bom_types
+
+For BoM-based queries, the external database key should be used in the record or attribute reference, typically when
+using the :class:`~.RecordReferenceBuilder` or :class:`~.AttributeReferenceBuilder` classes.

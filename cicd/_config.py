@@ -160,7 +160,7 @@ FOREIGN_ATTRIBUTE_STANDARD_NAMES = {
     "EC number": [
         ("Restricted Substances, foreign table", "EC number"),
     ],
-    "Specifications ID": [
+    "Specification ID": [
         ("Specifications, foreign table", "Specifications, foreign table, foreign unique attribute"),
     ],
     "Part number": [

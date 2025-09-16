@@ -292,7 +292,7 @@ class BomAnalyticsClient(ApiClient):
 
         .. note::
             This limit applies to each branch of the BoM individually. This is not a global limit on the number of
-            specification-to-specification links that are traversed across the entire BoM. Instead it is a limit on
+            specification-to-specification links that are traversed across the entire BoM. Instead, it is a limit on
             the maximum depth of specifications below any individual specification node.
 
         Returns
@@ -324,8 +324,11 @@ class BomAnalyticsClient(ApiClient):
     ) -> None:
         """Configure the database key and table names if different from the defaults.
 
-        A database key is required if Granta MI is configured to use a value other than ``MI_Restricted_Substances``.
-        A table name is required for each table in the Restricted Substances database that has been renamed.
+        The ``database_key`` argument is required if Granta MI is configured to use a value other than
+        ``MI_Restricted_Substances`` for the Restricted Substances and Sustainability database.
+
+        A ``table_name`` argument is required for each table in the Restricted Substances and Sustainability database
+        that has been renamed.
 
         If external records are used in any analysis, the database key for those records should not be provided here.
         Instead, it should be provided in the appropriate query build method or in the XML BoM. See

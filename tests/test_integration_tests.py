@@ -73,7 +73,7 @@ class TestMaterialQueries:
             assert response.impacted_substances_by_material[0].equivalent_references
             assert response.impacted_substances_by_material[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
         else:
-            assert not response.impacted_substances_by_material[0].equivalent_references
+            assert response.impacted_substances_by_material[0].equivalent_references is None
 
     def test_compliance(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.MaterialComplianceQuery().with_indicators(indicators)
@@ -96,7 +96,7 @@ class TestMaterialQueries:
                 response.compliance_by_material_and_indicator[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
             )
         else:
-            assert not response.compliance_by_material_and_indicator[0].equivalent_references
+            assert response.compliance_by_material_and_indicator[0].equivalent_references is None
 
 
 @foreign_records_parametrization
@@ -125,7 +125,7 @@ class TestPartQueries:
             assert response.impacted_substances_by_part[0].equivalent_references
             assert response.impacted_substances_by_part[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
         else:
-            assert not response.impacted_substances_by_part[0].equivalent_references
+            assert response.impacted_substances_by_part[0].equivalent_references is None
 
     def test_compliance(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.PartComplianceQuery().with_indicators(indicators)
@@ -150,7 +150,7 @@ class TestPartQueries:
             assert response.compliance_by_part_and_indicator[0].equivalent_references
             assert response.compliance_by_part_and_indicator[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
         else:
-            assert not response.compliance_by_part_and_indicator[0].equivalent_references
+            assert response.compliance_by_part_and_indicator[0].equivalent_references is None
 
 
 @foreign_records_parametrization
@@ -182,7 +182,7 @@ class TestSpecificationQueries:
                 response.impacted_substances_by_specification[0].equivalent_references[0].database_key == FOREIGN_DB_KEY
             )
         else:
-            assert not response.impacted_substances_by_specification[0].equivalent_references
+            assert response.impacted_substances_by_specification[0].equivalent_references is None
 
     def test_compliance(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.SpecificationComplianceQuery().with_indicators(indicators)
@@ -210,7 +210,7 @@ class TestSpecificationQueries:
                 == FOREIGN_DB_KEY
             )
         else:
-            assert not response.compliance_by_specification_and_indicator[0].equivalent_references
+            assert response.compliance_by_specification_and_indicator[0].equivalent_references is None
 
 
 @foreign_records_parametrization
@@ -239,7 +239,7 @@ class TestSubstancesQueries:
                 == FOREIGN_DB_KEY
             )
         else:
-            assert not response.compliance_by_substance_and_indicator[0].equivalent_references
+            assert response.compliance_by_substance_and_indicator[0].equivalent_references is None
 
 
 class TestBomRSQueries:

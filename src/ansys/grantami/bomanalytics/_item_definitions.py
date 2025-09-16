@@ -109,7 +109,7 @@ class RecordReference(ABC):
         which are integers.
     database_key : str, optional
         The database key that contains the record, if different to the database specified in
-        :meth:`BomAnalyticsClient.set_database_details`. Supported by BoM Analytics Services 2026 R1 or later.
+        :meth:`.BomAnalyticsClient.set_database_details`. Supported by BoM Analytics Services 2026 R1 or later.
 
         .. versionadded:: 2.4
     """
@@ -150,7 +150,14 @@ class RecordReference(ABC):
 
     @property
     def database_key(self) -> Optional[str]:
-        """Database key."""
+        """
+        The database key that contains the record.
+
+        This property is only populated if the record is in a different database to the one specified in
+        :meth:`.BomAnalyticsClient.set_database_details`.
+
+        .. versionadded:: 2.4
+        """
         return self._database_key
 
     @property
@@ -201,7 +208,7 @@ class PartReference(CommonIdentifiersMixin, RecordReference):
     ) -> None:
         super().__init__(**kwargs)
         self._input_part_number: Optional[str] = input_part_number
-        self._equivalent_references = equivalent_references if equivalent_references else []
+        self._equivalent_references = equivalent_references
 
     @property
     def part_number(self) -> Optional[str]:
@@ -220,9 +227,11 @@ class PartReference(CommonIdentifiersMixin, RecordReference):
         return self._input_part_number
 
     @property
-    def equivalent_references(self) -> list["PartReference"]:
+    def equivalent_references(self) -> Optional[list["PartReference"]]:
         """
         Other part records which are defined as being equivalent to this record.
+
+        Only populated if this record was included in the analysis via a link from a record in an external database.
 
         .. versionadded:: 2.4
         """
@@ -257,7 +266,7 @@ class MaterialReference(CommonIdentifiersMixin, RecordReference):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self._equivalent_references = equivalent_references if equivalent_references else []
+        self._equivalent_references = equivalent_references
 
     @property
     def material_id(self) -> Optional[str]:
@@ -267,9 +276,11 @@ class MaterialReference(CommonIdentifiersMixin, RecordReference):
         return None
 
     @property
-    def equivalent_references(self) -> list["MaterialReference"]:
+    def equivalent_references(self) -> Optional[list["MaterialReference"]]:
         """
         Other material records which are defined as being equivalent to this record.
+
+        Only populated if this record was included in the analysis via a link from a record in an external database.
 
         .. versionadded:: 2.4
         """
@@ -304,7 +315,7 @@ class SpecificationReference(CommonIdentifiersMixin, RecordReference):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self._equivalent_references = equivalent_references if equivalent_references else []
+        self._equivalent_references = equivalent_references
 
     @property
     def specification_id(self) -> Optional[str]:
@@ -314,9 +325,11 @@ class SpecificationReference(CommonIdentifiersMixin, RecordReference):
         return None
 
     @property
-    def equivalent_references(self) -> list["SpecificationReference"]:
+    def equivalent_references(self) -> Optional[list["SpecificationReference"]]:
         """
         Other specification records which are defined as being equivalent to this record.
+
+        Only populated if this record was included in the analysis via a link from a record in an external database.
 
         .. versionadded:: 2.4
         """
@@ -355,7 +368,7 @@ class SubstanceReference(CommonIdentifiersMixin, RecordReference):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self._equivalent_references = equivalent_references if equivalent_references else []
+        self._equivalent_references = equivalent_references
 
     @property
     def cas_number(self) -> Optional[str]:
@@ -379,9 +392,11 @@ class SubstanceReference(CommonIdentifiersMixin, RecordReference):
         return None
 
     @property
-    def equivalent_references(self) -> list["SubstanceReference"]:
+    def equivalent_references(self) -> Optional[list["SubstanceReference"]]:
         """
         Other substance records which are defined as being equivalent to this record.
+
+        Only populated if this record was included in the analysis via a link from a record in an external database.
 
         .. versionadded:: 2.4
         """
@@ -476,12 +491,14 @@ class CoatingReference(IdentifierMixin, RecordReference):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self._equivalent_references = equivalent_references if equivalent_references else []
+        self._equivalent_references = equivalent_references
 
     @property
-    def equivalent_references(self) -> list["CoatingReference"]:
+    def equivalent_references(self) -> Optional[list["CoatingReference"]]:
         """
         Other coating records which are defined as being equivalent to this record.
+
+        Only populated if this record was included in the analysis via a link from a record in an external database.
 
         .. versionadded:: 2.4
         """
@@ -500,12 +517,14 @@ class ProcessReference(CommonIdentifiersMixin, RecordReference):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self._equivalent_references = equivalent_references if equivalent_references else []
+        self._equivalent_references = equivalent_references
 
     @property
-    def equivalent_references(self) -> list["ProcessReference"]:
+    def equivalent_references(self) -> Optional[list["ProcessReference"]]:
         """
         Other process records which defined as being equivalent to this record.
+
+        Only populated if this record was included in the analysis via a link from a record in an external database.
 
         .. versionadded:: 2.4
         """
@@ -524,12 +543,14 @@ class TransportReference(IdentifierMixin, RecordReference):
         **kwargs: Any,
     ) -> None:
         super().__init__(**kwargs)
-        self._equivalent_references = equivalent_references if equivalent_references else []
+        self._equivalent_references = equivalent_references
 
     @property
-    def equivalent_references(self) -> list["TransportReference"]:
+    def equivalent_references(self) -> Optional[list["TransportReference"]]:
         """
         Other transport records which are defined as being equivalent to this record.
+
+        Only populated if this record was included in the analysis via a link from a record in an external database.
 
         .. versionadded:: 2.4
         """

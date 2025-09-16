@@ -34,6 +34,14 @@ User guide
 
       An overview of how to optimize performance by controlling request batching.
 
+   .. grid-item-card:: Using external records in analysis :material-regular:`link`
+      :padding: 2 2 2 2
+      :link: external_records
+      :link-type: doc
+
+      How to use records in external databases in a Restricted Substances and Sustainability
+      analysis.
+
 
 .. toctree::
    :maxdepth: 1
@@ -43,3 +51,4 @@ User guide
    quick_code
    query_types
    batching
+   external_records

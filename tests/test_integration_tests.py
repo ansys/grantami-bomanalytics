@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from typing import TYPE_CHECKING, Any
+
 import pytest
 
 from ansys.grantami.bomanalytics import BoMHandler, GrantaMIException, TransportCategory, queries
@@ -27,6 +29,10 @@ from ansys.grantami.bomanalytics.bom_types import eco2412, eco2505
 
 from .common import FOREIGN_DB_KEY, INDICATORS, LEGISLATIONS
 from .inputs import example_boms
+
+if TYPE_CHECKING:
+    from ansys.grantami.bomanalytics._connection import BomAnalyticsClient
+
 
 pytestmark = pytest.mark.integration
 
@@ -47,7 +53,7 @@ class TestMaterialQueries:
     ids = ["plastic-abs-pvc-flame", "plastic-pmma-pc"]
     foreign_ids = ["plastic-abs-pvc-flame-foreign", "plastic-pmma-pc-foreign"]
 
-    def test_impacted_substances(self, connection_with_db_variants, foreign_records):
+    def test_impacted_substances(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.MaterialImpactedSubstancesQuery().with_legislation_ids(LEGISLATIONS)
         if foreign_records:
             query = query.with_material_ids(self.foreign_ids, FOREIGN_DB_KEY)
@@ -72,7 +78,7 @@ class TestMaterialQueries:
         else:
             assert not response.impacted_substances_by_material[0].equivalent_references
 
-    def test_compliance(self, connection_with_db_variants, foreign_records):
+    def test_compliance(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.MaterialComplianceQuery().with_indicators(indicators)
         if foreign_records:
             query = query.with_material_ids(self.foreign_ids, FOREIGN_DB_KEY)
@@ -241,7 +247,7 @@ class TestSubstancesQueries:
 
 class TestBomRSQueries:
     @pytest.fixture
-    def bom(self, connection_with_db_variants):
+    def bom(self, connection_with_db_variants: BomAnalyticsClient) -> str:
         if connection_with_db_variants._db_key == "MI_Restricted_Substances_Custom_Tables":
             bom_key = "compliance-bom-custom-db-1711"
         else:
@@ -249,7 +255,7 @@ class TestBomRSQueries:
         return example_boms[bom_key].content
 
     @pytest.fixture
-    def bom2301(self):
+    def bom2301(self) -> str:
         bom_1711 = example_boms["bom-1711"].content
         _bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
@@ -258,7 +264,7 @@ class TestBomRSQueries:
         return _bom
 
     @pytest.fixture
-    def bom2412(self, bom2301):
+    def bom2412(self, bom2301: str) -> str:
         handler = BoMHandler()
 
         parsed_bom = handler.load_bom_from_text(bom2301)
@@ -268,7 +274,7 @@ class TestBomRSQueries:
         return bom
 
     @pytest.fixture
-    def bom2505(self, bom2412):
+    def bom2505(self, bom2412: str) -> str:
         handler = BoMHandler()
 
         parsed_bom = handler.load_bom_from_text(bom2412)
@@ -278,7 +284,7 @@ class TestBomRSQueries:
         return bom
 
     @pytest.fixture
-    def bom2505_xdb(self):
+    def bom2505_xdb(self) -> str:
         return example_boms["compliance-bom-xdb-refs-2505"].content
 
     def test_impacted_substances(self, bom, connection_with_db_variants):
@@ -326,7 +332,7 @@ class TestBomRSQueries:
         assert response.compliance_by_indicator
 
     @pytest.mark.integration(mi_versions=[(26, 1)])
-    def test_impacted_substances_2505(self, connection, bom2505):
+    def test_impacted_substances_2505(self, connection: BomAnalyticsClient, bom2505: str) -> None:
         query = queries.BomImpactedSubstancesQuery().with_bom(bom2505).with_legislation_ids(LEGISLATIONS)
         response = connection.run(query)
 
@@ -334,7 +340,7 @@ class TestBomRSQueries:
         assert response.impacted_substances_by_legislation
 
     @pytest.mark.integration(mi_versions=[(26, 1)])
-    def test_compliance_2505(self, connection, bom2505):
+    def test_compliance_2505(self, connection: BomAnalyticsClient, bom2505: str) -> None:
         query = queries.BomComplianceQuery().with_bom(bom2505).with_indicators(indicators)
         response = connection.run(query)
 
@@ -342,7 +348,7 @@ class TestBomRSQueries:
         assert response.compliance_by_indicator
 
     @staticmethod
-    def _validate_equivalent_references(obj_with_equivalent_references):
+    def _validate_equivalent_references(obj_with_equivalent_references: Any) -> None:
         assert len(obj_with_equivalent_references.equivalent_references) == 1
         assert obj_with_equivalent_references.equivalent_references[0].database_key == FOREIGN_DB_KEY
         assert obj_with_equivalent_references.equivalent_references[0].record_guid is not None
@@ -352,7 +358,9 @@ class TestBomRSQueries:
         )
 
     @pytest.mark.integration(mi_versions=[(26, 1)])
-    def test_impacted_substances_2505_xdb(self, connection_with_db_variants, bom2505_xdb):
+    def test_impacted_substances_2505_xdb(
+        self, connection_with_db_variants: BomAnalyticsClient, bom2505_xdb: str
+    ) -> None:
         query = queries.BomImpactedSubstancesQuery().with_bom(bom2505_xdb).with_legislation_ids(LEGISLATIONS)
         response = connection_with_db_variants.run(query)
 
@@ -360,7 +368,7 @@ class TestBomRSQueries:
         assert response.impacted_substances
 
     @pytest.mark.integration(mi_versions=[(26, 1)])
-    def test_compliance_2505_xdb(self, connection_with_db_variants, bom2505_xdb):
+    def test_compliance_2505_xdb(self, connection_with_db_variants: BomAnalyticsClient, bom2505_xdb: str) -> None:
         primary_db_key = connection_with_db_variants._db_key
 
         query = queries.BomComplianceQuery().with_bom(bom2505_xdb).with_indicators(indicators)
@@ -528,7 +536,7 @@ class TestSustainabilityBomQueries2505:
     bom = example_boms["sustainability-bom-xdb-refs-2505"].content
 
     @staticmethod
-    def _validate_equivalent_references(obj_with_equivalent_references):
+    def _validate_equivalent_references(obj_with_equivalent_references: Any) -> None:
         assert len(obj_with_equivalent_references.equivalent_references) == 1
         assert obj_with_equivalent_references.equivalent_references[0].database_key == FOREIGN_DB_KEY
         assert obj_with_equivalent_references.equivalent_references[0].record_guid is not None
@@ -537,7 +545,7 @@ class TestSustainabilityBomQueries2505:
             != obj_with_equivalent_references.equivalent_references[0].record_guid
         )
 
-    def test_sustainability_summary_query(self, connection_with_db_variants):
+    def test_sustainability_summary_query(self, connection_with_db_variants: BomAnalyticsClient) -> None:
         primary_db_key = connection_with_db_variants._db_key
 
         query = queries.BomSustainabilitySummaryQuery()
@@ -594,7 +602,7 @@ class TestSustainabilityBomQueries2505:
         assert transport_reference.record_guid is not None
         self._validate_equivalent_references(transport_reference)
 
-    def test_sustainability_query(self, connection_with_db_variants):
+    def test_sustainability_query(self, connection_with_db_variants: BomAnalyticsClient) -> None:
         query = queries.BomSustainabilityQuery()
         query.with_bom(self.bom)
         response = connection_with_db_variants.run(query)
@@ -624,7 +632,7 @@ class TestSustainabilityBomQueries2505:
         self._validate_equivalent_references(transport)
 
     @pytest.mark.integration(mi_versions=[(24, 2), (25, 1), (25, 2)])
-    def test_sustainability_query_24_2_25_1_25_2_raises_exception(self, connection):
+    def test_sustainability_query_24_2_25_1_25_2_raises_exception(self, connection: BomAnalyticsClient) -> None:
         query = queries.BomSustainabilityQuery()
         query.with_bom(self.bom)
         with pytest.raises(GrantaMIException, match="Unrecognised/invalid namespace in the XML"):

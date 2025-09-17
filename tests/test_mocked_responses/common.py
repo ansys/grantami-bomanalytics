@@ -83,7 +83,11 @@ class ObjValidator:
     def __init__(self, obj):
         self.obj = obj
 
-    def check_reference(self, record_history_identity=None, record_guid=None):
+    def check_reference(
+        self,
+        record_history_identity: Optional[str] = None,
+        record_guid: Optional[str] = None,
+    ) -> bool:
         """
         Validate that only the specified references are populated, and all others are None.
 
@@ -99,7 +103,11 @@ class ObjValidator:
             or (self.obj.record_history_identity == record_history_identity and record_history_identity is not None)
         )
 
-    def check_equivalent_reference(self, record_history_identity=None, record_guid=None):
+    def check_equivalent_reference(
+        self,
+        record_history_identity: Optional[str] = None,
+        record_guid: Optional[str] = None,
+    ) -> bool:
         """
         Validate that only the specified references are populated, and all others are None.
 

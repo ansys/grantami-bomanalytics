@@ -31,7 +31,7 @@ common use cases.
 Pre-requisites
 --------------
 
-To use this functionality, the following conditions must be met:
+The following conditions must be met to use this feature:
 
 * The version of ``grantami-bomanalytics`` must be version 2.4 or later.
 * The Granta MI server is running MI Restricted Substances and Sustainability Reports 2026 R1 or later.

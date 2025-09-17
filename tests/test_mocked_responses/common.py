@@ -28,6 +28,8 @@ from ansys.grantami.bomanalytics._connection import DEFAULT_DBKEY, BomAnalyticsC
 
 from ..inputs import example_payloads
 
+EXTERNAL_DB_KEY = "MI_Other_Database"
+
 
 class BaseMockTester:
     mock_key: Optional[str] = None
@@ -82,13 +84,32 @@ class ObjValidator:
         self.obj = obj
 
     def check_reference(self, record_history_identity=None, record_guid=None):
-        """Validate that only the specified references are populated, and all others are None.
+        """
+        Validate that only the specified references are populated, and all others are None.
+
+        Validate that the database key is None.
 
         Currently only implements 'record_history_identity' and 'record_guid', because these are the only ones used
         in the example responses.
         """
 
-        return (
+        return self.obj.database_key is None and (
+            not self.obj.record_history_guid
+            or (self.obj.record_guid == record_guid and record_guid is not None)
+            or (self.obj.record_history_identity == record_history_identity and record_history_identity is not None)
+        )
+
+    def check_equivalent_reference(self, record_history_identity=None, record_guid=None):
+        """
+        Validate that only the specified references are populated, and all others are None.
+
+        Validate that the database key matches the expected external database key.
+
+        Currently only implements 'record_history_identity' and 'record_guid', because these are the only ones used
+        in the example responses.
+        """
+
+        return self.obj.database_key == EXTERNAL_DB_KEY and (
             not self.obj.record_history_guid
             or (self.obj.record_guid == record_guid and record_guid is not None)
             or (self.obj.record_history_identity == record_history_identity and record_history_identity is not None)

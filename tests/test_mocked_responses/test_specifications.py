@@ -152,6 +152,10 @@ class TestCompliance(BaseMockTesterWithConfigTests):
         assert specv_0.check_bom_structure()
         assert specv_0.check_empty_children(materials=True, substances=True)
 
+        spec_0_equivalent_0 = spec_0.equivalent_references[0]
+        specv_0_equivalent_0 = SpecificationValidator(spec_0_equivalent_0)
+        assert specv_0_equivalent_0.check_equivalent_reference(record_guid="a648470b-d9f7-4049-8661-35cfa5e49ffb")
+
         spec_0_0 = spec_0.specifications[0]
         specv_0_0 = SpecificationValidator(spec_0_0)
         assert specv_0_0.check_reference(record_history_identity="987654")
@@ -162,6 +166,10 @@ class TestCompliance(BaseMockTesterWithConfigTests):
         assert specv_0_0.check_indicators(specv_0_0_result)
         assert specv_0_0.check_bom_structure()
         assert specv_0_0.check_empty_children(materials=True, specifications=True, coatings=True)
+
+        spec_0_0_equivalent_0 = spec_0_0.equivalent_references[0]
+        specv_0_0_equivalent_0 = SpecificationValidator(spec_0_0_equivalent_0)
+        assert specv_0_0_equivalent_0.check_equivalent_reference(record_history_identity="654321")
 
         spec_1 = response.compliance_by_specification_and_indicator[1]
         specv_1 = SpecificationValidator(spec_1)
@@ -174,7 +182,7 @@ class TestCompliance(BaseMockTesterWithConfigTests):
         assert specv_1.check_bom_structure()
         assert specv_1.check_empty_children(specifications=True, coatings=True)
 
-    def test_compliance_by_specification_and_indicator_materials(self, mock_connection):
+    def test_compliance_by_specification_and_indicator_coatings(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
 
         coating_0_0 = response.compliance_by_specification_and_indicator[0].coatings[0]
@@ -189,7 +197,11 @@ class TestCompliance(BaseMockTesterWithConfigTests):
         assert cv_0_0.check_bom_structure()
         assert cv_0_0.check_empty_children()
 
-    def test_compliance_by_specification_and_indicator_coatings(self, mock_connection):
+        coating_0_0_equivalent_0 = coating_0_0.equivalent_references[0]
+        cv_0_0_equivalent_0 = CoatingValidator(coating_0_0_equivalent_0)
+        assert cv_0_0_equivalent_0.check_equivalent_reference(record_history_identity="876543")
+
+    def test_compliance_by_specification_and_indicator_materials(self, mock_connection):
         response = self.get_mocked_response(mock_connection)
 
         material_1_0 = response.compliance_by_specification_and_indicator[1].materials[0]

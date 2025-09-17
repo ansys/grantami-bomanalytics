@@ -24,6 +24,10 @@ Specifications:
             ReferenceValue: '12345'
         ReferenceType: MiRecordHistoryIdentity
         ReferenceValue: '987654'
+        EquivalentReferences:
+          - ReferenceType: MiRecordHistoryIdentity
+            ReferenceValue: '654321'
+            DatabaseKey: MI_Other_Database
     Coatings:
       - Indicators:
           - Name: Indicator 1
@@ -41,10 +45,18 @@ Specifications:
             ReferenceValue: '62345'
         ReferenceType: MiRecordHistoryIdentity
         ReferenceValue: '987654'
+        EquivalentReferences:
+          - ReferenceType: MiRecordHistoryIdentity
+            ReferenceValue: '876543'
+            DatabaseKey: MI_Other_Database
     Materials: [ ]
     Substances: [ ]
     ReferenceType: SpecificationId
     ReferenceValue: 'MSP89,TypeI'
+    EquivalentReferences:
+      - ReferenceType: MiRecordGuid
+        ReferenceValue: 'a648470b-d9f7-4049-8661-35cfa5e49ffb'
+        DatabaseKey: MI_Other_Database
   - Indicators:
       - Name: Indicator 1
         Flag: WatchListHasSubstanceAboveThreshold

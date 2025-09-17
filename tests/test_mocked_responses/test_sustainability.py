@@ -31,7 +31,7 @@ from ansys.grantami.bomanalytics._query_results import (
 )
 
 from ..inputs import example_boms, example_payloads
-from .common import BaseMockTesterWithConfigTests
+from .common import EXTERNAL_DB_KEY, BaseMockTesterWithConfigTests
 
 
 class TestBomSustainability(BaseMockTesterWithConfigTests):
@@ -203,7 +203,7 @@ class TestBomSustainability2505(BaseMockTesterWithConfigTests):
         assert material.record_history_guid is None
         assert material.record_history_identity is None
 
-        assert material.equivalent_references[0].database_key == "MI_Other_Database"
+        assert material.equivalent_references[0].database_key == EXTERNAL_DB_KEY
         assert material.equivalent_references[0].record_guid is None
         assert material.equivalent_references[0].record_history_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6271"
         assert material.equivalent_references[0].record_history_identity is None
@@ -214,7 +214,7 @@ class TestBomSustainability2505(BaseMockTesterWithConfigTests):
         assert process.record_history_guid == "d986c90a-2835-45f3-8b69-d6d662dcf53a"
         assert process.record_history_identity is None
 
-        assert process.equivalent_references[0].database_key == "MI_Other_Database"
+        assert process.equivalent_references[0].database_key == EXTERNAL_DB_KEY
         assert process.equivalent_references[0].record_guid == "d986c90a-2835-45f3-8b69-d6d662dcf53b"
         assert process.equivalent_references[0].record_history_guid is None
         assert process.equivalent_references[0].record_history_identity is None
@@ -225,7 +225,7 @@ class TestBomSustainability2505(BaseMockTesterWithConfigTests):
         assert transport_0.record_history_guid is None
         assert transport_0.record_history_identity is None
 
-        assert transport_0.equivalent_references[0].database_key == "MI_Other_Database"
+        assert transport_0.equivalent_references[0].database_key == EXTERNAL_DB_KEY
         assert transport_0.equivalent_references[0].record_guid == "ebb56666-dca1-467e-bee7-9a2a498aa3fb"
         assert transport_0.equivalent_references[0].record_history_guid is None
         assert transport_0.equivalent_references[0].record_history_identity is None
@@ -236,7 +236,7 @@ class TestBomSustainability2505(BaseMockTesterWithConfigTests):
         assert transport_1.record_history_guid == "b4ab65c7-2191-449d-9f1f-5ee9717b544f"
         assert transport_1.record_history_identity is None
 
-        assert transport_1.equivalent_references[0].database_key == "MI_Other_Database"
+        assert transport_1.equivalent_references[0].database_key == EXTERNAL_DB_KEY
         assert transport_1.equivalent_references[0].record_guid is None
         assert transport_1.equivalent_references[0].record_history_guid == "b4ab65c7-2191-449d-9f1f-5ee9717b5450"
         assert transport_1.equivalent_references[0].record_history_identity is None
@@ -434,7 +434,7 @@ class TestBomSustainabilitySummary2505(BaseMockTesterWithConfigTests):
         assert material.material_reference.record_history_identity is None
         assert len(material.material_reference.equivalent_references) == 1
         material_equivalent_reference = material.material_reference.equivalent_references[0]
-        assert material_equivalent_reference.database_key == "MI_Other_Database"
+        assert material_equivalent_reference.database_key == EXTERNAL_DB_KEY
         assert material_equivalent_reference.record_guid == "cebc4725-623e-4507-818f-06e8a734c682"
         assert material_equivalent_reference.record_history_guid is None
         assert material_equivalent_reference.record_history_identity is None
@@ -450,7 +450,7 @@ class TestBomSustainabilitySummary2505(BaseMockTesterWithConfigTests):
         assert process.process_reference.record_history_identity is None
         assert len(process.process_reference.equivalent_references) == 1
         process_equivalent_reference = process.process_reference.equivalent_references[0]
-        assert process_equivalent_reference.database_key == "MI_Other_Database"
+        assert process_equivalent_reference.database_key == EXTERNAL_DB_KEY
         assert process_equivalent_reference.record_guid == "03de1a28-7dd7-4354-bbd8-c839cfa00ec8"
         assert process_equivalent_reference.record_history_guid is None
         assert process_equivalent_reference.record_history_identity is None
@@ -461,7 +461,7 @@ class TestBomSustainabilitySummary2505(BaseMockTesterWithConfigTests):
         assert process.material_reference.record_history_identity is None
         assert len(process.material_reference.equivalent_references) == 1
         process_material_equivalent_reference = process.material_reference.equivalent_references[0]
-        assert process_material_equivalent_reference.database_key == "MI_Other_Database"
+        assert process_material_equivalent_reference.database_key == EXTERNAL_DB_KEY
         assert process_material_equivalent_reference.record_guid == "cebc4725-623e-4507-818f-06e8a734c682"
         assert process_material_equivalent_reference.record_history_guid is None
         assert process_material_equivalent_reference.record_history_identity is None
@@ -477,7 +477,7 @@ class TestBomSustainabilitySummary2505(BaseMockTesterWithConfigTests):
         assert transport.transport_reference.record_history_identity is None
         assert len(transport.transport_reference.equivalent_references) == 1
         transport_equivalent_reference = transport.transport_reference.equivalent_references[0]
-        assert transport_equivalent_reference.database_key == "MI_Other_Database"
+        assert transport_equivalent_reference.database_key == EXTERNAL_DB_KEY
         assert transport_equivalent_reference.record_guid == "b916ed6b-5e06-4343-9131-d4d562e2d12c"
         assert transport_equivalent_reference.record_history_guid is None
         assert transport_equivalent_reference.record_history_identity is None

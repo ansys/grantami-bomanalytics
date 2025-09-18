@@ -238,7 +238,7 @@ class BoMHandler:
         bom_dict = writer.convert_bom_to_dict(bom)
         obj, errors = schema.encode(bom_dict, validation="lax", namespaces=schema.namespaces, unordered=True)
 
-        if not obj or len(errors) > 0:
+        if obj is None or len(errors) > 0:
             newline = "\n"
             raise ValueError(f"Invalid BoM object:\n{newline.join([error.msg for error in errors])}")
 

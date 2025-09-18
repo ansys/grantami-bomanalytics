@@ -125,6 +125,9 @@ markers = [
     this package, the same version of the reports package and Granta MI are always used together.
     Deselect all integration tests with 'pytest -m \"not integration\"'""",
 ]
+filterwarnings = [
+	"error",
+]
 
 [tool.black]
 line-length = 120

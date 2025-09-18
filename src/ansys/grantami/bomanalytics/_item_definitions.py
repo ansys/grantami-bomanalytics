@@ -232,7 +232,8 @@ class PartReference(CommonIdentifiersMixin, RecordReference):
         """
         Other part records which are defined as being equivalent to this record.
 
-        Only populated if this record was included in the analysis via a link from a record in an external database.
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
 
         .. versionadded:: 2.4
         """
@@ -281,7 +282,8 @@ class MaterialReference(CommonIdentifiersMixin, RecordReference):
         """
         Other material records which are defined as being equivalent to this record.
 
-        Only populated if this record was included in the analysis via a link from a record in an external database.
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
 
         .. versionadded:: 2.4
         """
@@ -330,7 +332,8 @@ class SpecificationReference(CommonIdentifiersMixin, RecordReference):
         """
         Other specification records which are defined as being equivalent to this record.
 
-        Only populated if this record was included in the analysis via a link from a record in an external database.
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
 
         .. versionadded:: 2.4
         """
@@ -397,7 +400,8 @@ class SubstanceReference(CommonIdentifiersMixin, RecordReference):
         """
         Other substance records which are defined as being equivalent to this record.
 
-        Only populated if this record was included in the analysis via a link from a record in an external database.
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
 
         .. versionadded:: 2.4
         """
@@ -501,7 +505,8 @@ class CoatingReference(IdentifierMixin, RecordReference):
         """
         Other coating records which are defined as being equivalent to this record.
 
-        Only populated if this record was included in the analysis via a link from a record in an external database.
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
 
         .. versionadded:: 2.4
         """
@@ -527,7 +532,8 @@ class ProcessReference(CommonIdentifiersMixin, RecordReference):
         """
         Other process records which defined as being equivalent to this record.
 
-        Only populated if this record was included in the analysis via a link from a record in an external database.
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
 
         .. versionadded:: 2.4
         """
@@ -553,7 +559,8 @@ class TransportReference(IdentifierMixin, RecordReference):
         """
         Other transport records which are defined as being equivalent to this record.
 
-        Only populated if this record was included in the analysis via a link from a record in an external database.
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
 
         .. versionadded:: 2.4
         """

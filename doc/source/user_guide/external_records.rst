@@ -33,10 +33,11 @@ Pre-requisites
 
 The following conditions must be met to use this feature:
 
-* The version of ``grantami-bomanalytics`` must be version 2.4 or later.
+* The version of this package must be version 2.4 or later.
 * The Granta MI server is running MI Restricted Substances and Sustainability Reports 2026 R1 or later.
 * The records used for analysis are linked to equivalent records in the main Restricted Substances and Sustainability
-  database. See Ansys help for more details.
+  database. See the Granta MI Restricted Substances and Sustainability Install and Configuration, on the Ansys Help
+  Center for more details.
 
 
 Record-based queries

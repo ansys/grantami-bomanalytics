@@ -97,8 +97,7 @@ class RecordReference(ABC):
     """Provides all references to records in Granta MI.
 
     Record references are always instantiated with at least two parameters: the type of the reference and the value of
-    the reference. Depending on the Granta MI version, the reference may also include a database key and external
-    identity.
+    the reference. The reference may also include a database key and external identity.
 
     Parameters
     ----------
@@ -109,7 +108,8 @@ class RecordReference(ABC):
         which are integers.
     database_key : str, optional
         The database key that contains the record, if different to the database specified in
-        :meth:`.BomAnalyticsClient.set_database_details`. Supported by BoM Analytics Services 2026 R1 or later.
+        :meth:`.BomAnalyticsClient.set_database_details`. Supported by MI Restricted Substances and Sustainability
+        Reports 2026 R1 or later.
 
         .. versionadded:: 2.4
     """
@@ -151,10 +151,11 @@ class RecordReference(ABC):
     @property
     def database_key(self) -> Optional[str]:
         """
-        The database key that contains the record.
+        The database key for the database that contains the record.
 
         This property is only populated if the record is in a different database to the one specified in
-        :meth:`.BomAnalyticsClient.set_database_details`.
+        :meth:`.BomAnalyticsClient.set_database_details`. Supported by MI Restricted Substances and Sustainability
+        Reports 2026 R1 or later.
 
         .. versionadded:: 2.4
         """
@@ -418,7 +419,9 @@ class SubstanceDefinition(RecordDefinition, SubstanceReference):
         Percentage of the substance that appears in the parent BoM item. This value should be greater than 0 and
         less than or equal to 100. The default is ``100``, which is the worst case scenario.
     database_key : str, optional
-        The database key that contains the record. Supported by BoM Analytics Services 2026 R1 or later.
+        The database key that contains the record, if different to the database specified in
+        :meth:`.BomAnalyticsClient.set_database_details`. Supported by MI Restricted Substances and Sustainability
+        Reports 2026 R1 or later.
     """
 
     _default_percentage_amount = 100  # Default to worst case scenario

@@ -216,7 +216,7 @@ class TestSustainabilitySummaryResultsRepr:
             **self._eco_metrics,
             stage_name="Train A->B",
             distance=models.CommonValueWithUnit(value=45, unit="km"),
-            record_reference=models.CommonTransportReference(**self._rec_ref_kwargs),
+            record_reference=models.CommonOutputTransportExtendedTransportReference(**self._rec_ref_kwargs),
         )
         transport_result = ItemResultFactory.create_transport_summary(model)
         expected = "<TransportSummaryResult('Train A->B', EE%=60.0, CC%=40.0)>"
@@ -226,7 +226,7 @@ class TestSustainabilitySummaryResultsRepr:
         model = models.CommonSustainabilityMaterialSummaryEntry(
             **self._eco_metrics,
             identity="Steel",
-            record_reference=models.CommonMaterialReference(**self._rec_ref_kwargs),
+            record_reference=models.CommonOutputMaterialExtendedMaterialReference(**self._rec_ref_kwargs),
             largest_contributors=[],
             mass_after_processing=models.CommonValueWithUnit(value=50, unit="kg"),
             mass_before_processing=models.CommonValueWithUnit(value=45, unit="kg"),
@@ -239,9 +239,9 @@ class TestSustainabilitySummaryResultsRepr:
         model = models.CommonSustainabilityProcessSummaryEntry(
             **self._eco_metrics,
             material_identity="Steel",
-            material_record_reference=models.CommonMaterialReference(**self._rec_ref_kwargs),
+            material_record_reference=models.CommonOutputMaterialExtendedMaterialReference(**self._rec_ref_kwargs),
             process_name="Forging",
-            process_record_reference=models.CommonProcessReference(**self._rec_ref_kwargs),
+            process_record_reference=models.CommonOutputProcessExtendedProcessReference(**self._rec_ref_kwargs),
         )
         result = ItemResultFactory.create_process_summary(model)
         expected = "<ProcessSummaryResult(process='Forging', material='Steel', EE%=60.0, CC%=40.0)>"
@@ -251,7 +251,7 @@ class TestSustainabilitySummaryResultsRepr:
         model = models.CommonSustainabilityMaterialContributingComponent(
             component_name="Engine",
             material_mass_before_processing=models.CommonValueWithUnit(value=50, unit="kg"),
-            record_reference=models.CommonPartReference(**self._rec_ref_kwargs),
+            record_reference=models.CommonOutputPartExtendedPartReference(**self._rec_ref_kwargs),
         )
         result = ItemResultFactory.create_contributing_component(model)
         expected = "<ContributingComponentResult('Engine', mass=50kg)>"

@@ -1,0 +1,81 @@
+<PartsEco xmlns="http://www.grantadesign.com/25/05/BillOfMaterialsEco" xmlns:gbt="http://www.grantadesign.com/12/05/GrantaBaseTypes" id="R0">
+    <Components>
+        <Part id="R1">
+            <Quantity Unit="Each">1.0</Quantity>
+            <PartNumber>Part 1</PartNumber>
+            <ExternalIdentity>1635969933169|97</ExternalIdentity>
+            <Components>
+                <Part id="R2">
+                    <Quantity Unit="Each">1.0</Quantity>
+                    <PartNumber>Child 1</PartNumber>
+                    <ExternalIdentity>1635969933169|98</ExternalIdentity>
+                    <Components>
+                        <Part id="R3">
+                            <Quantity Unit="Each">1.0</Quantity>
+                            <MassPerUom Unit="kg/Part">10.2</MassPerUom>
+                            <MIPartReference>
+                                <gbt:dbKey>MI_Restricted_Substances_Foreign_Test</gbt:dbKey>
+                                <gbt:recordGUID>0b09eb84-45a2-4f80-9a6d-7d407f5c2ad9</gbt:recordGUID>
+                            </MIPartReference>
+                            <PartNumber>Fire Extinguisher</PartNumber>
+                            <ExternalIdentity>1635969933169|21</ExternalIdentity>
+                            <Specifications>
+                                <Specification id="R4">
+                                    <MISpecificationReference>
+                                        <gbt:dbKey>MI_Restricted_Substances_Foreign_Test</gbt:dbKey>
+                                        <gbt:recordGUID>9bc8072f-f5cf-4839-96f8-9056c1dca960</gbt:recordGUID>
+                                    </MISpecificationReference>
+                                    <Identity>AMS2404,Class1</Identity>
+                                    <Name>AMS®2404™, Class 1</Name>
+                                    <ExternalIdentity>1635969933169|25</ExternalIdentity>
+                                </Specification>
+                            </Specifications>
+                        </Part>
+                        <Part id="R45">
+                            <Quantity Unit="Each">1.0</Quantity>
+                            <PartNumber>Substance Component</PartNumber>
+                            <ExternalIdentity>1635969933169|31</ExternalIdentity>
+                            <Substances>
+                                <Substance id="R46">
+                                    <MISubstanceReference>
+                                        <gbt:dbKey>MI_Restricted_Substances_Foreign_Test</gbt:dbKey>
+                                        <gbt:recordGUID>e8a99834-bd7e-4e13-bff1-ee5f86d73d51</gbt:recordGUID>
+                                    </MISubstanceReference>
+                                    <Identity>10108-64-2</Identity>
+                                    <Name>Cadmium chloride [10108-64-2]</Name>
+                                    <ExternalIdentity>1635969933169|29</ExternalIdentity>
+                                </Substance>
+                            </Substances>
+                        </Part>
+                    </Components>
+                </Part>
+                <Part id="R80">
+                    <Quantity Unit="Each">1.0</Quantity>
+                    <PartNumber>Child 2</PartNumber>
+                    <ExternalIdentity>1635969933169|101</ExternalIdentity>
+                    <Components>
+                        <Part id="R81">
+                            <Quantity Unit="Each">1.0</Quantity>
+                            <PartNumber>Material Component</PartNumber>
+                            <ExternalIdentity>1635969933169|131</ExternalIdentity>
+                            <Materials>
+                                <Material id="R82">
+                                    <MIMaterialReference>
+                                        <gbt:dbKey>MI_Restricted_Substances_Foreign_Test</gbt:dbKey>
+                                        <gbt:recordGUID>ee45c7ce-9e86-40fe-9c4d-68c4343125a6</gbt:recordGUID>
+                                    </MIMaterialReference>
+                                    <Identity>plastic-abs-pvc-flame</Identity>
+                                    <Name>ABS+PVC (flame retarded)</Name>
+                                    <ExternalIdentity>1635969933169|132</ExternalIdentity>
+                                </Material>
+                            </Materials>
+                        </Part>
+                    </Components>
+                </Part>
+            </Components>
+        </Part>
+    </Components>
+    <Notes>
+        <ProductName>Complex Bom with foreign records</ProductName>
+    </Notes>
+</PartsEco>

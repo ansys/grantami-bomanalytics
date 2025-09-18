@@ -66,6 +66,8 @@ CUSTOM_TABLES = [
     ("transport_table_name", "Locomotion"),
 ]
 
+FOREIGN_DB_KEY = "MI_Restricted_Substances_Foreign_Test"
+
 
 def _get_connection(url, username, password) -> BomAnalyticsClient | None:
     if ci_unit_tests:

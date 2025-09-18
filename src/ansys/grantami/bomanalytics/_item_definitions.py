@@ -96,8 +96,8 @@ class CommonIdentifiersMixin(IdentifierMixin, ABC):
 class RecordReference(ABC):
     """Provides all references to records in Granta MI.
 
-    Record references are always instantiated with two parameters: the type of the reference and the value of the
-    reference. This follows the way that the REST API is structured.
+    Record references are always instantiated with at least two parameters: the type of the reference and the value of
+    the reference. The reference may also include a database key and external identity.
 
     Parameters
     ----------
@@ -106,18 +106,26 @@ class RecordReference(ABC):
     reference_value : str, int
         Value of the record reference. All are string values except for record history identities,
         which are integers.
+    database_key : str, optional
+        The database key that contains the record, if different to the database specified in
+        :meth:`.BomAnalyticsClient.set_database_details`. Supported by MI Restricted Substances and Sustainability
+        Reports 2026 R1 or later.
+
+        .. versionadded:: 2.4
     """
 
     def __init__(
         self,
         reference_type: Optional[ReferenceType],
         reference_value: Union[int, str, Unset_Type, None],
+        database_key: Optional[str] = None,
     ):
         self._reference_type = reference_type
         if isinstance(reference_value, Unset_Type):
             self._reference_value = None
         else:
             self._reference_value = reference_value
+        self._database_key = database_key
 
     @property
     def record_history_identity(self) -> Optional[int]:
@@ -141,8 +149,22 @@ class RecordReference(ABC):
         return None
 
     @property
+    def database_key(self) -> Optional[str]:
+        """
+        The database key for the database that contains the record.
+
+        This property is only populated if the record is in a different database to the one specified in
+        :meth:`.BomAnalyticsClient.set_database_details`. Supported by MI Restricted Substances and Sustainability
+        Reports 2026 R1 or later.
+
+        .. versionadded:: 2.4
+        """
+        return self._database_key
+
+    @property
     def _record_reference(self) -> Dict[str, str]:
-        """Converts the separate reference attributes back into a single dictionary that describes the type and value.
+        """Converts the separate reference attributes back into a single dictionary that describes the type, value,
+        and database key.
 
         This method is used to create the low-level API model object that references this record and is returned as-is
         as the repr for this object and subobjects.
@@ -153,6 +175,8 @@ class RecordReference(ABC):
             result["reference_type"] = self._reference_type.name
         if self._reference_value is not None:
             result["reference_value"] = str(self._reference_value)
+        if self._database_key is not None:
+            result["database_key"] = self._database_key
         return result
 
     def __repr__(self) -> str:
@@ -171,11 +195,21 @@ class RecordDefinition(RecordReference):
         pass
 
 
-class PartReference(RecordReference):
-    """Represents a reference to a Part record.
+class PartReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a part record.
 
     This class extends the base class to also support part numbers.
     """
+
+    def __init__(
+        self,
+        input_part_number: Optional[str] = None,
+        equivalent_references: Optional[list["PartReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._input_part_number: Optional[str] = input_part_number
+        self._equivalent_references = equivalent_references
 
     @property
     def part_number(self) -> Optional[str]:
@@ -183,12 +217,6 @@ class PartReference(RecordReference):
         if self._reference_type == ReferenceType.PartNumber:
             return cast(str, self._reference_value)
         return None
-
-
-class PartReferenceWithIdentifiers(CommonIdentifiersMixin, PartReference):
-    def __init__(self, input_part_number: Optional[str] = None, **kwargs: Any):
-        super().__init__(**kwargs)
-        self._input_part_number: Optional[str] = input_part_number
 
     @property
     def input_part_number(self) -> Optional[str]:
@@ -198,6 +226,18 @@ class PartReferenceWithIdentifiers(CommonIdentifiersMixin, PartReference):
         the corresponding input BoM item.
         """
         return self._input_part_number
+
+    @property
+    def equivalent_references(self) -> Optional[list["PartReference"]]:
+        """
+        Other part records which are defined as being equivalent to this record.
+
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class PartDefinition(RecordDefinition, PartReference):
@@ -216,12 +256,19 @@ class PartDefinition(RecordDefinition, PartReference):
         return result
 
 
-class MaterialReference(RecordReference):
-    # Because of ProcessSummaryResult, this is publicly documented.
-    """Represents a reference to a Material record.
+class MaterialReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a material record.
 
     This class extends the base class to also support material IDs.
     """
+
+    def __init__(
+        self,
+        equivalent_references: Optional[list["MaterialReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references
 
     @property
     def material_id(self) -> Optional[str]:
@@ -230,9 +277,17 @@ class MaterialReference(RecordReference):
             return cast(str, self._reference_value)
         return None
 
+    @property
+    def equivalent_references(self) -> Optional[list["MaterialReference"]]:
+        """
+        Other material records which are defined as being equivalent to this record.
 
-class MaterialReferenceWithIdentifiers(CommonIdentifiersMixin, MaterialReference):
-    pass
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class MaterialDefinition(RecordDefinition, MaterialReference):
@@ -251,11 +306,19 @@ class MaterialDefinition(RecordDefinition, MaterialReference):
         return result
 
 
-class SpecificationReference(RecordReference):
-    """Represents a reference to a specification record from the concrete :class:`RecordReference` subclass.
+class SpecificationReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a specification record.
 
     This class extends the base class to also support specification IDs.
     """
+
+    def __init__(
+        self,
+        equivalent_references: Optional[list["SpecificationReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references
 
     @property
     def specification_id(self) -> Optional[str]:
@@ -264,9 +327,17 @@ class SpecificationReference(RecordReference):
             return cast(str, self._reference_value)
         return None
 
+    @property
+    def equivalent_references(self) -> Optional[list["SpecificationReference"]]:
+        """
+        Other specification records which are defined as being equivalent to this record.
 
-class SpecificationReferenceWithIdentifiers(CommonIdentifiersMixin, SpecificationReference):
-    pass
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class SpecificationDefinition(RecordDefinition, SpecificationReference):
@@ -285,8 +356,8 @@ class SpecificationDefinition(RecordDefinition, SpecificationReference):
         return result
 
 
-class SubstanceReference(RecordReference):
-    """Represents a reference to a substance record from the abstract ``RecordReference`` subclass.
+class SubstanceReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a substance record.
 
     This class extends the base constructor to also support CAS numbers, EC numbers, and chemical names.
 
@@ -294,6 +365,14 @@ class SubstanceReference(RecordReference):
     substances in slightly different ways. This class implements the reference aspects of the substance record only.
     The quantifications are implemented in the subclasses.
     """
+
+    def __init__(
+        self,
+        equivalent_references: Optional[list["SubstanceReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references
 
     @property
     def cas_number(self) -> Optional[str]:
@@ -316,9 +395,17 @@ class SubstanceReference(RecordReference):
             return cast(str, self._reference_value)
         return None
 
+    @property
+    def equivalent_references(self) -> Optional[list["SubstanceReference"]]:
+        """
+        Other substance records which are defined as being equivalent to this record.
 
-class SubstanceReferenceWithIdentifiers(CommonIdentifiersMixin, SubstanceReference):
-    pass
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class SubstanceDefinition(RecordDefinition, SubstanceReference):
@@ -335,6 +422,10 @@ class SubstanceDefinition(RecordDefinition, SubstanceReference):
     percentage_amount : int, optional
         Percentage of the substance that appears in the parent BoM item. This value should be greater than 0 and
         less than or equal to 100. The default is ``100``, which is the worst case scenario.
+    database_key : str, optional
+        The database key that contains the record, if different to the database specified in
+        :meth:`.BomAnalyticsClient.set_database_details`. Supported by MI Restricted Substances and Sustainability
+        Reports 2026 R1 or later.
     """
 
     _default_percentage_amount = 100  # Default to worst case scenario
@@ -344,10 +435,12 @@ class SubstanceDefinition(RecordDefinition, SubstanceReference):
         reference_type: ReferenceType,
         reference_value: Union[int, str, Unset_Type],
         percentage_amount: Union[float, None] = None,
+        database_key: Optional[str] = None,
     ):
         super().__init__(
             reference_type=reference_type,
             reference_value=reference_value,
+            database_key=database_key,
         )
         self._percentage_amount = None
         if percentage_amount:
@@ -396,38 +489,82 @@ class SubstanceDefinition(RecordDefinition, SubstanceReference):
         return definition
 
 
-class CoatingReference(RecordReference):
-    """Extends RecordReference without changes, to re-define the class name, because it appears in the repr."""
+class CoatingReference(IdentifierMixin, RecordReference):
+    """Represents a reference to a coating record."""
+
+    def __init__(
+        self,
+        equivalent_references: Optional[list["CoatingReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references
+
+    @property
+    def equivalent_references(self) -> Optional[list["CoatingReference"]]:
+        """
+        Other coating records which are defined as being equivalent to this record.
+
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
-class CoatingReferenceWithIdentifier(IdentifierMixin, CoatingReference):
-    pass
-
-
-class ProcessReference(RecordReference):
-    # Because of ProcessSummaryResult, this is publicly documented.
-    # Extends RecordReference without changes, to re-define the class name, because it appears in the repr.
-    """Represents a reference to a Process record.
+class ProcessReference(CommonIdentifiersMixin, RecordReference):
+    """Represents a reference to a process record.
 
     .. versionadded:: 2.0
     """
 
+    def __init__(
+        self,
+        equivalent_references: Optional[list["ProcessReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references
 
-class ProcessReferenceWithIdentifiers(CommonIdentifiersMixin, ProcessReference):
-    pass
+    @property
+    def equivalent_references(self) -> Optional[list["ProcessReference"]]:
+        """
+        Other process records which defined as being equivalent to this record.
+
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
-class TransportReference(RecordReference):
-    """Represents a reference to a Transport record.
+class TransportReference(IdentifierMixin, RecordReference):
+    """Represents a reference to a transport record.
 
     .. versionadded:: 2.0
     """
 
-    # Extends RecordReference without changes, to re-define the class name, because it appears in the repr
+    def __init__(
+        self,
+        equivalent_references: Optional[list["TransportReference"]] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(**kwargs)
+        self._equivalent_references = equivalent_references
 
+    @property
+    def equivalent_references(self) -> Optional[list["TransportReference"]]:
+        """
+        Other transport records which are defined as being equivalent to this record.
 
-class TransportReferenceWithIdentifier(IdentifierMixin, TransportReference):
-    pass
+        Only populated if this record is a substitute for a record in a different database during analysis via a
+        cross-database link.
+
+        .. versionadded:: 2.4
+        """
+        return self._equivalent_references
 
 
 class BomItemDefinitionFactory(ABC):
@@ -442,17 +579,21 @@ class BomItemDefinitionFactory(ABC):
     @abstractmethod
     def create_definition_by_record_history_identity(
         record_history_identity: int,
+        database_key: Optional[str] = None,
     ) -> "RecordDefinition":
         pass
 
     @staticmethod
     @abstractmethod
-    def create_definition_by_record_guid(record_guid: str) -> "RecordDefinition":
+    def create_definition_by_record_guid(record_guid: str, database_key: Optional[str] = None) -> "RecordDefinition":
         pass
 
     @staticmethod
     @abstractmethod
-    def create_definition_by_record_history_guid(record_history_guid: str) -> "RecordDefinition":
+    def create_definition_by_record_history_guid(
+        record_history_guid: str,
+        database_key: Optional[str] = None,
+    ) -> "RecordDefinition":
         pass
 
 
@@ -462,6 +603,7 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
     @staticmethod
     def create_definition_by_record_history_identity(
         record_history_identity: int,
+        database_key: Optional[str] = None,
     ) -> MaterialDefinition:
         """Instantiate and return a ``MaterialDefinition`` object based on a record history identity.
 
@@ -469,6 +611,8 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
         ----------
         record_history_identity
             Record history identity.
+        database_key
+            Database key.
 
         Returns
         -------
@@ -478,55 +622,77 @@ class MaterialDefinitionFactory(BomItemDefinitionFactory):
         return MaterialDefinition(
             reference_type=ReferenceType.MiRecordHistoryIdentity,
             reference_value=record_history_identity,
+            database_key=database_key,
         )
 
     @staticmethod
-    def create_definition_by_record_history_guid(record_history_guid: str) -> MaterialDefinition:
+    def create_definition_by_record_history_guid(
+        record_history_guid: str,
+        database_key: Optional[str] = None,
+    ) -> MaterialDefinition:
         """Instantiate and return a ``MaterialDefinition`` object based on a record history GUID.
 
         Parameters
         ----------
         record_history_guid
             Record history GUID.
+        database_key
+            Database key.
 
         Returns
         -------
         MaterialDefinition
         """
 
-        return MaterialDefinition(reference_type=ReferenceType.MiRecordHistoryGuid, reference_value=record_history_guid)
+        return MaterialDefinition(
+            reference_type=ReferenceType.MiRecordHistoryGuid,
+            reference_value=record_history_guid,
+            database_key=database_key,
+        )
 
     @staticmethod
-    def create_definition_by_record_guid(record_guid: str) -> MaterialDefinition:
+    def create_definition_by_record_guid(record_guid: str, database_key: Optional[str] = None) -> MaterialDefinition:
         """Instantiate and return a ``MaterialDefinition`` object based on a record GUID.
 
         Parameters
         ----------
         record_guid
             Record GUID.
+        database_key
+            Database key.
 
         Returns
         -------
         MaterialDefinition
         """
 
-        return MaterialDefinition(reference_type=ReferenceType.MiRecordGuid, reference_value=record_guid)
+        return MaterialDefinition(
+            reference_type=ReferenceType.MiRecordGuid,
+            reference_value=record_guid,
+            database_key=database_key,
+        )
 
     @staticmethod
-    def create_definition_by_material_id(material_id: str) -> MaterialDefinition:
+    def create_definition_by_material_id(material_id: str, database_key: Optional[str] = None) -> MaterialDefinition:
         """Instantiate and return a ``MaterialDefinition`` object based on a material ID.
 
         Parameters
         ----------
         material_id
             Material ID.
+        database_key
+            Database key.
 
         Returns
         -------
         MaterialDefinition
         """
 
-        return MaterialDefinition(reference_type=ReferenceType.MaterialId, reference_value=material_id)
+        return MaterialDefinition(
+            reference_type=ReferenceType.MaterialId,
+            reference_value=material_id,
+            database_key=database_key,
+        )
 
 
 class PartDefinitionFactory(BomItemDefinitionFactory):
@@ -535,13 +701,18 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
     @staticmethod
     def create_definition_by_record_history_identity(
         record_history_identity: int,
+        database_key: Optional[str] = None,
     ) -> PartDefinition:
-        """Instantiate and return a ``PartDefinition`` object based on a record history identity.
+        """
+        Instantiate and return a ``PartDefinition`` object based on a record history identity  and optional database
+        key.
 
         Parameters
         ----------
         record_history_identity
             Record history identity.
+        database_key
+            Database key.
 
         Returns
         -------
@@ -551,55 +722,76 @@ class PartDefinitionFactory(BomItemDefinitionFactory):
         return PartDefinition(
             reference_type=ReferenceType.MiRecordHistoryIdentity,
             reference_value=record_history_identity,
+            database_key=database_key,
         )
 
     @staticmethod
-    def create_definition_by_record_history_guid(record_history_guid: str) -> PartDefinition:
-        """Instantiate and return a ``PartDefinition`` object based on a record history GUID.
+    def create_definition_by_record_history_guid(
+        record_history_guid: str, database_key: Optional[str] = None
+    ) -> PartDefinition:
+        """Instantiate and return a ``PartDefinition`` object based on a record history GUID  and optional database key.
 
         Parameters
         ----------
         record_history_guid
             Record history GUID.
+        database_key
+            Database key.
 
         Returns
         -------
         PartDefinition
         """
 
-        return PartDefinition(reference_type=ReferenceType.MiRecordHistoryGuid, reference_value=record_history_guid)
+        return PartDefinition(
+            reference_type=ReferenceType.MiRecordHistoryGuid,
+            reference_value=record_history_guid,
+            database_key=database_key,
+        )
 
     @staticmethod
-    def create_definition_by_record_guid(record_guid: str) -> PartDefinition:
-        """Instantiate and return a ``PartDefinition`` object based on a record GUID.
+    def create_definition_by_record_guid(record_guid: str, database_key: Optional[str] = None) -> PartDefinition:
+        """Instantiate and return a ``PartDefinition`` object based on a record GUID  and optional database key.
 
         Parameters
         ----------
         record_guid
             Record GUID.
+        database_key
+            Database key.
 
         Returns
         -------
         PartDefinition
         """
 
-        return PartDefinition(reference_type=ReferenceType.MiRecordGuid, reference_value=record_guid)
+        return PartDefinition(
+            reference_type=ReferenceType.MiRecordGuid,
+            reference_value=record_guid,
+            database_key=database_key,
+        )
 
     @staticmethod
-    def create_definition_by_part_number(part_number: str) -> PartDefinition:
-        """Instantiate and return a ``PartDefinition`` object based on a part number.
+    def create_definition_by_part_number(part_number: str, database_key: Optional[str] = None) -> PartDefinition:
+        """Instantiate and return a ``PartDefinition`` object based on a part number and optional database key.
 
         Parameters
         ----------
         part_number
             Part number.
+        database_key
+            Database key.
 
         Returns
         -------
         PartDefinition
         """
 
-        return PartDefinition(reference_type=ReferenceType.PartNumber, reference_value=part_number)
+        return PartDefinition(
+            reference_type=ReferenceType.PartNumber,
+            reference_value=part_number,
+            database_key=database_key,
+        )
 
 
 class SpecificationDefinitionFactory(BomItemDefinitionFactory):
@@ -608,14 +800,17 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
     @staticmethod
     def create_definition_by_record_history_identity(
         record_history_identity: int,
+        database_key: Optional[str] = None,
     ) -> SpecificationDefinition:
-        """Instantiate and return a ``SpecificationDefinition`` object based on a record history identity.
+        """Instantiate and return a ``SpecificationDefinition`` object based on a record history identity and optional
+        database key.
 
         Parameters
         ----------
         record_history_identity
             Record history identity.
-
+        database_key
+            Database key.
 
         Returns
         -------
@@ -625,17 +820,23 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
         return SpecificationDefinition(
             reference_type=ReferenceType.MiRecordHistoryIdentity,
             reference_value=record_history_identity,
+            database_key=database_key,
         )
 
     @staticmethod
     def create_definition_by_record_history_guid(
         record_history_guid: str,
+        database_key: Optional[str] = None,
     ) -> SpecificationDefinition:
-        """Instantiate and return a ``SpecificationDefinition`` object based on a record history GUID.
+        """Instantiate and return a ``SpecificationDefinition`` object based on a record history GUID and optional
+        database key.
 
         Parameters
         ----------
         record_history_guid
+            Record history GUID.
+        database_key
+            Database key.
 
         Returns
         -------
@@ -643,40 +844,61 @@ class SpecificationDefinitionFactory(BomItemDefinitionFactory):
         """
 
         return SpecificationDefinition(
-            reference_type=ReferenceType.MiRecordHistoryGuid, reference_value=record_history_guid
+            reference_type=ReferenceType.MiRecordHistoryGuid,
+            reference_value=record_history_guid,
+            database_key=database_key,
         )
 
     @staticmethod
-    def create_definition_by_record_guid(record_guid: str) -> SpecificationDefinition:
-        """Instantiate and return a ``SpecificationDefinition`` object based on a record GUID.
+    def create_definition_by_record_guid(
+        record_guid: str,
+        database_key: Optional[str] = None,
+    ) -> SpecificationDefinition:
+        """Instantiate and return a ``SpecificationDefinition`` object based on a record GUID and optional database key.
 
         Parameters
         ----------
         record_guid
             Record GUID.
+        database_key
+            Database key.
 
         Returns
         -------
         SpecificationDefinition
         """
 
-        return SpecificationDefinition(reference_type=ReferenceType.MiRecordGuid, reference_value=record_guid)
+        return SpecificationDefinition(
+            reference_type=ReferenceType.MiRecordGuid,
+            reference_value=record_guid,
+            database_key=database_key,
+        )
 
     @staticmethod
-    def create_definition_by_specification_id(specification_id: str) -> SpecificationDefinition:
-        """Instantiate and return a ``SpecificationDefinition`` object based on a specification ID.
+    def create_definition_by_specification_id(
+        specification_id: str,
+        database_key: Optional[str] = None,
+    ) -> SpecificationDefinition:
+        """Instantiate and return a ``SpecificationDefinition`` object based on a specification ID and optional database
+        key.
 
         Parameters
         ----------
         specification_id
             Specification ID.
+        database_key
+            Database key.
 
         Returns
         -------
         SpecificationDefinition
         """
 
-        return SpecificationDefinition(reference_type=ReferenceType.SpecificationId, reference_value=specification_id)
+        return SpecificationDefinition(
+            reference_type=ReferenceType.SpecificationId,
+            reference_value=specification_id,
+            database_key=database_key,
+        )
 
 
 class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
@@ -685,13 +907,17 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
     @staticmethod
     def create_definition_by_record_history_identity(
         record_history_identity: int,
+        database_key: Optional[str] = None,
     ) -> SubstanceDefinition:
-        """Instantiate and return a ``SubstanceDefinition`` object based on a record history identity.
+        """Instantiate and return a ``SubstanceDefinition`` object based on a record history identity and optional
+        database key.
 
         Parameters
         ----------
         record_history_identity
             Record history identity.
+        database_key
+            Database key.
 
         Returns
         -------
@@ -701,16 +927,23 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
         return SubstanceDefinition(
             reference_type=ReferenceType.MiRecordHistoryIdentity,
             reference_value=record_history_identity,
+            database_key=database_key,
         )
 
     @staticmethod
-    def create_definition_by_record_history_guid(record_history_guid: str) -> SubstanceDefinition:
-        """Instantiate and return a ``SubstanceDefinition`` object based on a record history GUID.
+    def create_definition_by_record_history_guid(
+        record_history_guid: str,
+        database_key: Optional[str] = None,
+    ) -> SubstanceDefinition:
+        """Instantiate and return a ``SubstanceDefinition`` object based on a record history GUID and optional database
+        key.
 
         Parameters
         ----------
         record_history_guid
             Record history GUID.
+        database_key
+            Database key.
 
         Returns
         -------
@@ -718,69 +951,98 @@ class SubstanceComplianceDefinitionFactory(BomItemDefinitionFactory):
         """
 
         return SubstanceDefinition(
-            reference_type=ReferenceType.MiRecordHistoryGuid, reference_value=record_history_guid
+            reference_type=ReferenceType.MiRecordHistoryGuid,
+            reference_value=record_history_guid,
+            database_key=database_key,
         )
 
     @staticmethod
-    def create_definition_by_record_guid(record_guid: str) -> SubstanceDefinition:
-        """Instantiate and return a ``SubstanceDefinition`` object based on a record GUID.
+    def create_definition_by_record_guid(record_guid: str, database_key: Optional[str] = None) -> SubstanceDefinition:
+        """Instantiate and return a ``SubstanceDefinition`` object based on a record GUID and optional database key.
 
         Parameters
         ----------
         record_guid
             Record GUID.
+        database_key
+            Database key.
 
         Returns
         -------
         SubstanceDefinition
         """
 
-        return SubstanceDefinition(reference_type=ReferenceType.MiRecordGuid, reference_value=record_guid)
+        return SubstanceDefinition(
+            reference_type=ReferenceType.MiRecordGuid,
+            reference_value=record_guid,
+            database_key=database_key,
+        )
 
     @staticmethod
-    def create_definition_by_chemical_name(chemical_name: str) -> SubstanceDefinition:
-        """Instantiate and return a ``SubstanceDefinition`` object based on a chemical name.
+    def create_definition_by_chemical_name(
+        chemical_name: str,
+        database_key: Optional[str] = None,
+    ) -> SubstanceDefinition:
+        """Instantiate and return a ``SubstanceDefinition`` object based on a chemical name and optional database key.
 
         Parameters
         ----------
         chemical_name
             Chemical name.
+        database_key
+            Database key.
 
         Returns
         -------
         SubstanceDefinition
         """
 
-        return SubstanceDefinition(reference_type=ReferenceType.ChemicalName, reference_value=chemical_name)
+        return SubstanceDefinition(
+            reference_type=ReferenceType.ChemicalName,
+            reference_value=chemical_name,
+            database_key=database_key,
+        )
 
     @staticmethod
-    def create_definition_by_cas_number(cas_number: str) -> SubstanceDefinition:
-        """Instantiate and return a ``SubstanceDefinition`` object based on a CAS number.
+    def create_definition_by_cas_number(cas_number: str, database_key: Optional[str] = None) -> SubstanceDefinition:
+        """Instantiate and return a ``SubstanceDefinition`` object based on a CAS number and optional database key.
 
         Parameters
         ----------
         cas_number
             CAS number.
+        database_key
+            Database key.
 
         Returns
         -------
         SubstanceDefinition
         """
 
-        return SubstanceDefinition(reference_type=ReferenceType.CasNumber, reference_value=cas_number)
+        return SubstanceDefinition(
+            reference_type=ReferenceType.CasNumber,
+            reference_value=cas_number,
+            database_key=database_key,
+        )
 
     @staticmethod
-    def create_definition_by_ec_number(ec_number: str) -> SubstanceDefinition:
-        """Instantiate and return a ``SubstanceDefinition`` object based on an EC number.
+    def create_definition_by_ec_number(ec_number: str, database_key: Optional[str] = None) -> SubstanceDefinition:
+        """Instantiate and return a ``SubstanceDefinition`` object based on an EC number and optional database key.
 
         Parameters
         ----------
         ec_number
             EC number.
+        database_key
+            Database key.
 
         Returns
         -------
         SubstanceDefinition
         """
 
-        return SubstanceDefinition(reference_type=ReferenceType.EcNumber, reference_value=ec_number)
+        return SubstanceDefinition(
+            reference_type=ReferenceType.EcNumber,
+            reference_value=ec_number,
+            database_key=database_key,
+        )

@@ -35,6 +35,8 @@ updates:
         - "pre-commit"
         - "*xml"
         - "pyyaml"
+        - "kaleido"
+        - "choreographer"
       examples-deps:
         patterns:
         - "jupyterlab"

@@ -310,13 +310,13 @@ if __name__ == "__main__":
     with open(INPUT_FILE_NAME, "r", encoding="utf8") as fp:
         input_data = json.load(fp)
 
-    table_browser = DatabaseBrowser(api_client, logger)
+    database_browser = DatabaseBrowser(api_client, logger)
     logger.info("Getting Table Information")
 
-    vanilla_table_name_map = table_browser.get_table_name_guid_map(RS_DB_KEY)
+    vanilla_table_name_map = database_browser.get_table_name_guid_map(RS_DB_KEY)
     process_database(RS_DB_KEY, api_client, gdl_session, vanilla_table_name_map)
 
-    custom_table_name_map = table_browser.get_table_name_guid_map(CUSTOM_DB_KEY)
+    custom_table_name_map = database_browser.get_table_name_guid_map(CUSTOM_DB_KEY)
     process_database(CUSTOM_DB_KEY, api_client, gdl_session, custom_table_name_map)
 
     logger.info("All done")

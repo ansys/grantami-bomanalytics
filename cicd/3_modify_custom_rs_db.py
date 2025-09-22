@@ -51,12 +51,12 @@ if __name__ == "__main__":
 
     database_client.update_database(database_key=CUSTOM_DB_KEY, body=rename_request)
 
-    table_browser = DatabaseBrowser(api_client, logger)
-    custom_table_name_map = table_browser.get_table_name_guid_map(CUSTOM_DB_KEY)
+    database_browser = DatabaseBrowser(api_client, logger)
+    custom_table_name_map = database_browser.get_table_name_guid_map(CUSTOM_DB_KEY)
 
     for old_name, new_name in RS_CUSTOM_TABLE_NAME_MAPPING.items():
         table_guid = custom_table_name_map[old_name]
-        table_browser.update_table_name(db_key=CUSTOM_DB_KEY, table_guid=table_guid, new_table_name=new_name)
+        database_browser.update_table_name(db_key=CUSTOM_DB_KEY, table_guid=table_guid, new_table_name=new_name)
 
     logger.info("Duplicating styrene record then withdrawing it. (TestActAsReadUser)")
     data_import_service = gdl_session.dataImportService

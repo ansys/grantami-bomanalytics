@@ -1,27 +1,32 @@
 """
-prepare_rs_db.py
--------------------------
-
 This script is the second step in the process of creating a new test database. It takes the json file output from
 get_cleaned_db_entries.py and creates a new layout and subset with the required attributes and records.
 
 It uses both the Ansys Granta MI Scripting Toolkit and the ansys-grantami-serverapi-openapi package to manipulate the
 schema and records in the database.
 
-Set the URL appropriately for your system and restore two copies of the released Restricted Substances database, change
-one database key to `MI_Restricted_Substances_Custom_Tables`, then run this script.
+Configuration is stored in _config.py. Set MI_URL appropriately for your system. Modify RS_DB_KEY and CUSTOM_DB_KEY if
+required. For this script, RS_DB_KEY and CUSTOM_DB_KEY should refer to two separate instances of the latest vanilla
+Restricted Substances & Sustainability database.
+
+The database GUID of RS_DB_KEY **must** be unaltered to allow foreign links to persist to the database.
 """
 
 import json
 import logging
 from pathlib import Path
-from typing import Mapping, Iterable, Tuple
+from typing import Mapping, Iterable, Tuple, TYPE_CHECKING
 
 from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 import GRANTA_MIScriptingToolkit as gdl
-from ansys.openapi.common import ApiClient
 
-from cicd.connection import Connection
+from cicd._connection import Connection
+from cicd._utils import DatabaseBrowser, ServerApiClient
+from cicd._config import LAYOUT_TO_PRESERVE, SUBSET_TO_PRESERVE, MI_URL, DATA_FILENAME, RS_DB_KEY, CUSTOM_DB_KEY
+
+if TYPE_CHECKING:
+    from ansys.openapi.common import ApiClient
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -30,35 +35,6 @@ ch.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
-
-LAYOUT_TO_PRESERVE = "AttributesToKeep"
-SUBSET_TO_PRESERVE = "RecordsToKeep"
-
-INPUT_FILE_NAME = Path("./rs_data.json").resolve()
-
-
-class ServerApiClient:
-    def __init__(self, api_client: ApiClient, logger: logging.Logger) -> None:
-        self._client = api_client
-        self.logger = logger
-
-
-class TableBrowser(ServerApiClient):
-    def get_table_name_guid_map(self, db_key: str) -> Mapping[str, str]:
-        tables_api = api.SchemaTablesApi(self._client)
-        self.logger.info(f"Getting Table Information for database '{db_key}'")
-        tables = tables_api.get_tables(database_key=db_key)
-        table_name_map = {table.name: table.guid for table in tables.tables}
-        logger.info(f"Fetched {len(table_name_map)} tables")
-        for name, guid in table_name_map.items():
-            logger.debug(f"Name: '{name}' - Guid: '{guid}'")
-        return table_name_map
-
-    def update_table_name(self, db_key: str, table_guid: str, new_table_name: str) -> None:
-        tables_api = api.SchemaTablesApi(self._client)
-        self.logger.info(f"Updating Table - {db_key}:{table_guid} with name '{new_table_name}'")
-        patch_request = models.GsaUpdateTable(name=new_table_name)
-        tables_api.update_table(database_key=db_key, table_guid=table_guid, body=patch_request)
 
 
 class TableLayoutApplier(ServerApiClient):
@@ -323,27 +299,24 @@ def process_database(
 
 
 if __name__ == "__main__":
-    # Update URL and connection method for your system
-    URL = "http://localhost/mi_servicelayer"
-    api_client = Connection(api_url=URL).with_autologon().connect()
-    gdl_session = gdl.GRANTA_MISession(url=URL, autoLogon=True)
+    api_client = Connection(api_url=MI_URL).with_autologon().connect()
+    gdl_session = gdl.GRANTA_MISession(url=MI_URL, autoLogon=True)
 
     logger.info("Loading saved RS information...")
+    INPUT_FILE_NAME = Path(__file__).parent / DATA_FILENAME
     if not INPUT_FILE_NAME.exists():
         logger.error("No saved data available. Run 'get_cleaned_db_entries.py' against an existing test DB first")
         exit(1)
     with open(INPUT_FILE_NAME, "r", encoding="utf8") as fp:
         input_data = json.load(fp)
 
-    table_browser = TableBrowser(api_client, logger)
+    database_browser = DatabaseBrowser(api_client, logger)
     logger.info("Getting Table Information")
 
-    vanilla_db_key = "MI_Restricted_Substances"
-    vanilla_table_name_map = table_browser.get_table_name_guid_map(vanilla_db_key)
-    process_database(vanilla_db_key, api_client, gdl_session, vanilla_table_name_map)
+    vanilla_table_name_map = database_browser.get_table_name_guid_map(RS_DB_KEY)
+    process_database(RS_DB_KEY, api_client, gdl_session, vanilla_table_name_map)
 
-    custom_db_key = "MI_Restricted_Substances_Custom_Tables"
-    custom_table_name_map = table_browser.get_table_name_guid_map(custom_db_key)
-    process_database(custom_db_key, api_client, gdl_session, custom_table_name_map)
+    custom_table_name_map = database_browser.get_table_name_guid_map(CUSTOM_DB_KEY)
+    process_database(CUSTOM_DB_KEY, api_client, gdl_session, custom_table_name_map)
 
     logger.info("All done")

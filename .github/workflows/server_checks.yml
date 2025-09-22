@@ -93,7 +93,7 @@ jobs:
 
       - name: "Start VM with Azure CLI"
         id: azure_cli
-        uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd  #v2.1.0
+        uses: azure/CLI@9f7ce6f37c31b777ec6c6b6d1dfe7db79f497956  #v2.2.0
         if:   ${{ !(inputs.skip-vm-management)}}
         with:
           azcliversion: 2.32.0
@@ -172,7 +172,7 @@ jobs:
     needs: integration-tests
     steps:
       - name: "Run Ansys documentation building action"
-        uses: ansys/actions/doc-build@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
+        uses: ansys/actions/doc-build@e0de7dd89b2a4c100f74327666d5521cfda17950  # v10.1.1
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_DEV_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
@@ -205,7 +205,7 @@ jobs:
           - "AZURE_VM_NAME_24R2"
           - "AZURE_VM_NAME_24R1"
     steps:
-      - uses: azure/CLI@089eac9d8cc39f5d003e94f8b65efc51076c9cbd  #v2.1.0
+      - uses: azure/CLI@9f7ce6f37c31b777ec6c6b6d1dfe7db79f497956  #v2.2.0
         with:
           azcliversion: 2.32.0
           inlineScript: |

@@ -5,11 +5,11 @@ get_cleaned_db_entries.py and creates a new layout and subset with the required 
 It uses both the Ansys Granta MI Scripting Toolkit and the ansys-grantami-serverapi-openapi package to manipulate the
 schema and records in the database.
 
-Configuration is stored in _config.py. Set MI_URL appropriately for your system. Modify RS_DB_KEY and CUSTOM_DB_KEY if
-required. For this script, RS_DB_KEY and CUSTOM_DB_KEY should refer to two separate instances of the latest vanilla
-Restricted Substances & Sustainability database.
+Configuration is stored in _config.py. Set MI_URL appropriately for your system. Modify RS_DB_KEY_NEW and
+CUSTOM_DB_KEY_NEW if required. For this script, RS_DB_KEY_NEW and CUSTOM_DB_KEY_NEW should refer to two separate
+instances of the latest vanilla Restricted Substances & Sustainability database.
 
-The database GUID of RS_DB_KEY **must** be unaltered to allow foreign links to persist to the database.
+The database GUID of RS_DB_KEY_NEW **must** be unaltered to allow foreign links to persist to the database.
 """
 
 import json
@@ -22,7 +22,7 @@ import GRANTA_MIScriptingToolkit as gdl
 
 from cicd._connection import Connection
 from cicd._utils import DatabaseBrowser, ServerApiClient
-from cicd._config import LAYOUT_TO_PRESERVE, SUBSET_TO_PRESERVE, MI_URL, DATA_FILENAME, RS_DB_KEY, CUSTOM_DB_KEY
+from cicd._config import LAYOUT_TO_PRESERVE, SUBSET_TO_PRESERVE, MI_URL, DATA_FILENAME, RS_DB_KEY_NEW, CUSTOM_DB_KEY_NEW
 
 if TYPE_CHECKING:
     from ansys.openapi.common import ApiClient
@@ -38,7 +38,7 @@ logger.addHandler(ch)
 
 
 class TableLayoutApplier(ServerApiClient):
-    def __init__(self, api_client: ApiClient, logger: logging.Logger, db_key: str, table_guid: str) -> None:
+    def __init__(self, api_client: "ApiClient", logger: logging.Logger, db_key: str, table_guid: str) -> None:
         super().__init__(api_client, logger)
         self._attributes_api = api.SchemaAttributesApi(self._client)
         self._layouts_api = api.SchemaLayoutsApi(self._client)
@@ -234,7 +234,7 @@ class SubsetPopulater:
 
 
 def process_database(
-    database_key: str, api_client: ApiClient, gdl_session: gdl.GRANTA_MISession, table_name_map: Mapping[str, str]
+    database_key: str, api_client: "ApiClient", gdl_session: gdl.GRANTA_MISession, table_name_map: Mapping[str, str]
 ):
     for table_name, table_data in input_data.items():
         table_guid = table_name_map.get(table_name, None)
@@ -313,10 +313,10 @@ if __name__ == "__main__":
     database_browser = DatabaseBrowser(api_client, logger)
     logger.info("Getting Table Information")
 
-    vanilla_table_name_map = database_browser.get_table_name_guid_map(RS_DB_KEY)
-    process_database(RS_DB_KEY, api_client, gdl_session, vanilla_table_name_map)
+    vanilla_table_name_map = database_browser.get_table_name_guid_map(RS_DB_KEY_NEW)
+    process_database(RS_DB_KEY_NEW, api_client, gdl_session, vanilla_table_name_map)
 
-    custom_table_name_map = database_browser.get_table_name_guid_map(CUSTOM_DB_KEY)
-    process_database(CUSTOM_DB_KEY, api_client, gdl_session, custom_table_name_map)
+    custom_table_name_map = database_browser.get_table_name_guid_map(CUSTOM_DB_KEY_NEW)
+    process_database(CUSTOM_DB_KEY_NEW, api_client, gdl_session, custom_table_name_map)
 
     logger.info("All done")

@@ -3,11 +3,14 @@
 MI_URL = "http://localhost/mi_servicelayer"
 """Granta MI Service Layer URL"""
 
-RS_DB_KEY = "MI_Restricted_Substances"
-"""Restricted Substances & Sustainability database key"""
+RS_DB_KEY_CURRENT = "MI_Restricted_Substances"
+"""Current Restricted Substances & Sustainability database key"""
 
-CUSTOM_DB_KEY = "MI_Restricted_Substances_Custom_Tables"
-"""Restricted Substances & Sustainability database key for the 'custom tables' variant."""
+RS_DB_KEY_NEW = "MI_Restricted_Substances_NewVersion"
+"""New Restricted Substances & Sustainability database key"""
+
+CUSTOM_DB_KEY_NEW = "MI_Restricted_Substances_NewVersion_CustomTables"
+"""New Restricted Substances & Sustainability database key for the 'custom tables' variant."""
 
 FOREIGN_DB_KEY = "MI_Restricted_Substances_Foreign_Test"
 """Restricted Substances & Sustainability database key for the foreign test database."""

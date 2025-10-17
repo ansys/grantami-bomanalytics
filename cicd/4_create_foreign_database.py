@@ -24,7 +24,7 @@ from GRANTA_MIScriptingToolkit import granta as mpy
 from cicd._connection import Connection
 from cicd._config import (
     MI_URL,
-    RS_DB_KEY,
+    RS_DB_KEY_CURRENT,
     FOREIGN_DB_KEY,
     FOREIGN_XDB_LINK_GROUPS,
     FOREIGN_ATTRIBUTE_STANDARD_NAMES,
@@ -208,14 +208,14 @@ if __name__ == "__main__":
     xdb_link_group_guids = []
 
     foreign_table_guids = database_browser.get_table_name_guid_map(FOREIGN_DB_KEY)
-    rs_table_guids = database_browser.get_table_name_guid_map(RS_DB_KEY)
+    rs_table_guids = database_browser.get_table_name_guid_map(RS_DB_KEY_CURRENT)
 
     for link_name, (foreign_table_name, rs_table_name) in FOREIGN_XDB_LINK_GROUPS.items():
         new_guid = ensure_link_group_exists(
             name=link_name,
             db_key=FOREIGN_DB_KEY,
             source_table_guid=foreign_table_guids[foreign_table_name],
-            target_db_key=RS_DB_KEY,
+            target_db_key=RS_DB_KEY_CURRENT,
             target_table_guid=rs_table_guids[rs_table_name],
         )
         xdb_link_group_guids.append(new_guid)
@@ -245,7 +245,7 @@ if __name__ == "__main__":
             )
             foreign_record = streamlined_session.get_db(db_key=FOREIGN_DB_KEY).get_record_by_id(hguid=foreign_guid)
             primary_record = (
-                streamlined_session.get_db(db_key=RS_DB_KEY)
+                streamlined_session.get_db(db_key=RS_DB_KEY_CURRENT)
                 .get_table(name=rs_table_name)
                 .get_record_by_lookup_value(
                     attribute_name=attribute_name,

@@ -2,7 +2,7 @@
 This script is the third step in creating new test databases. It modifies a cut down database, changing the name,
 renaming tables, and adding any extra records required for specific tests.
 
-Configuration is stored in _config.py. Set MI_URL appropriately for your system. Modify CUSTOM_DB_KEY if required.
+Configuration is stored in _config.py. Set MI_URL appropriately for your system. Modify CUSTOM_DB_KEY_NEW if required.
 
 The first operation is to rename the database, this has no practical purpose, but it makes it easier to see which
 database is which in log files.
@@ -25,7 +25,7 @@ from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 
 from cicd._connection import Connection
 from cicd._utils import DatabaseBrowser
-from cicd._config import MI_URL, CUSTOM_DB_KEY, RS_CUSTOM_TABLE_NAME_MAPPING, CUSTOM_DB_NAME
+from cicd._config import MI_URL, CUSTOM_DB_KEY_NEW, RS_CUSTOM_TABLE_NAME_MAPPING, CUSTOM_DB_NAME
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -45,28 +45,28 @@ if __name__ == "__main__":
     database_client = api.SchemaDatabasesApi(api_client)
 
     logger.info("Renaming Database")
-    database_info: models.GsaDatabase = database_client.get_database(database_key=CUSTOM_DB_KEY)
+    database_info: models.GsaDatabase = database_client.get_database(database_key=CUSTOM_DB_KEY_NEW)
     guid = database_info.guid
     rename_request = models.GsaUpdateDatabase(name=CUSTOM_DB_NAME)
 
-    database_client.update_database(database_key=CUSTOM_DB_KEY, body=rename_request)
+    database_client.update_database(database_key=CUSTOM_DB_KEY_NEW, body=rename_request)
 
     database_browser = DatabaseBrowser(api_client, logger)
-    custom_table_name_map = database_browser.get_table_name_guid_map(CUSTOM_DB_KEY)
+    custom_table_name_map = database_browser.get_table_name_guid_map(CUSTOM_DB_KEY_NEW)
 
     for old_name, new_name in RS_CUSTOM_TABLE_NAME_MAPPING.items():
         table_guid = custom_table_name_map[old_name]
-        database_browser.update_table_name(db_key=CUSTOM_DB_KEY, table_guid=table_guid, new_table_name=new_name)
+        database_browser.update_table_name(db_key=CUSTOM_DB_KEY_NEW, table_guid=table_guid, new_table_name=new_name)
 
     logger.info("Duplicating styrene record then withdrawing it. (TestActAsReadUser)")
     data_import_service = gdl_session.dataImportService
     substances_guid = custom_table_name_map["Restricted Substances"]
     copy_import_record = gdl.ImportRecord(
         existingRecord=gdl.RecordReference(
-            DBKey=CUSTOM_DB_KEY,
+            DBKey=CUSTOM_DB_KEY_NEW,
             lookupValue=gdl.LookupValue(
                 attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY,
+                    DBKey=CUSTOM_DB_KEY_NEW,
                     name="CAS number",
                     partialTableReference=gdl.PartialTableReference(tableGUID=substances_guid),
                 ),
@@ -74,10 +74,10 @@ if __name__ == "__main__":
             ),
         ),
         copyDestinationParent=gdl.RecordReference(
-            DBKey=CUSTOM_DB_KEY,
+            DBKey=CUSTOM_DB_KEY_NEW,
             lookupValue=gdl.LookupValue(
                 attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY,
+                    DBKey=CUSTOM_DB_KEY_NEW,
                     name="CAS number",
                     partialTableReference=gdl.PartialTableReference(tableGUID=substances_guid),
                 ),
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         ),
         subsetReferences=[
             gdl.SubsetReference(
-                DBKey=CUSTOM_DB_KEY,
+                DBKey=CUSTOM_DB_KEY_NEW,
                 name="All Substances",
                 partialTableReference=gdl.PartialTableReference(tableGUID=substances_guid),
             )
@@ -122,10 +122,10 @@ if __name__ == "__main__":
 
     import_spec_record = gdl.ImportRecord(
         existingRecord=gdl.RecordReference(
-            DBKey=CUSTOM_DB_KEY,
+            DBKey=CUSTOM_DB_KEY_NEW,
             lookupValue=gdl.LookupValue(
                 attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY,
+                    DBKey=CUSTOM_DB_KEY_NEW,
                     name="Specification ID",
                     partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
                 ),
@@ -138,7 +138,7 @@ if __name__ == "__main__":
         importAttributeValues=[
             gdl.ImportAttributeValue(
                 attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY,
+                    DBKey=CUSTOM_DB_KEY_NEW,
                     name="Specification ID",
                     partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
                 ),
@@ -152,7 +152,7 @@ if __name__ == "__main__":
             ),
             gdl.ImportAttributeValue(
                 attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY,
+                    DBKey=CUSTOM_DB_KEY_NEW,
                     name="Coatings in this specification",
                     partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
                 ),
@@ -160,7 +160,7 @@ if __name__ == "__main__":
             ),
             gdl.ImportAttributeValue(
                 attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY,
+                    DBKey=CUSTOM_DB_KEY_NEW,
                     name="Specifications in this specification",
                     partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
                 ),
@@ -168,7 +168,7 @@ if __name__ == "__main__":
             ),
             gdl.ImportAttributeValue(
                 attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY,
+                    DBKey=CUSTOM_DB_KEY_NEW,
                     name="Declaration type",
                     partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
                 ),
@@ -177,7 +177,7 @@ if __name__ == "__main__":
         ],
         subsetReferences=[
             gdl.SubsetReference(
-                DBKey=CUSTOM_DB_KEY,
+                DBKey=CUSTOM_DB_KEY_NEW,
                 name="All specifications",
                 partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
             )

@@ -666,7 +666,7 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
     bom = example_boms["sustainability-bom-2412"].content
 
     @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
-    def test_sustainability_summary_query_25_2(self, connection):
+    def test_sustainability_summary_query_25_2_26_1(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(self.bom)
         response = connection.run(query)
@@ -876,7 +876,7 @@ class TestSustainabilityBomQueries2412(_TestSustainabilityBomQueries):
         assert grouped_transport_other.category is None
 
     @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
-    def test_sustainability_query_25_2(self, connection):
+    def test_sustainability_query_25_2_26_1(self, connection):
         query = queries.BomSustainabilityQuery()
         query.with_bom(self.bom)
         response = connection.run(query)
@@ -1032,7 +1032,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
     bom = example_boms["sustainability-bom-2301"].content
 
     @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
-    def test_sustainability_summary_transport_aggregation_results_25_2(self, connection):
+    def test_sustainability_summary_transport_aggregation_results_25_2_26_1(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(self.bom)
         response = connection.run(query)
@@ -1065,7 +1065,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
         assert response.manufacturing_transport_summary is None
 
     @pytest.mark.integration(mi_versions=[(25, 1), (25, 2), (26, 1)])
-    def test_sustainability_summary_query_25_1_25_2(self, connection):
+    def test_sustainability_summary_query_25_1_to_26_1(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(self.bom)
         response = connection.run(query)
@@ -1176,7 +1176,7 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
         assert transport.distance.value == 350.0
 
     @pytest.mark.integration(mi_versions=[(25, 1), (25, 2), (26, 1)])
-    def test_sustainability_query_25_1_25_2(self, connection):
+    def test_sustainability_query_25_1_to_26_1(self, connection):
         query = queries.BomSustainabilityQuery()
         query.with_bom(self.bom)
         response = connection.run(query)

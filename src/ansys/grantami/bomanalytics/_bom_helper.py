@@ -236,7 +236,11 @@ class BoMHandler:
         writer = self._writers[schema]
 
         bom_dict = writer.convert_bom_to_dict(bom)
-        obj, errors = schema.encode(bom_dict, validation="lax", namespaces=schema.namespaces, unordered=True)
+        result = schema.encode(bom_dict, validation="lax", namespaces=schema.namespaces, unordered=True)
+        if result is None:
+            raise ValueError("Unhandled error during BoM serialization.")
+
+        obj, errors = result
 
         if obj is None or len(errors) > 0:
             newline = "\n"

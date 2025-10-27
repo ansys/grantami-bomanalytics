@@ -515,18 +515,18 @@ files = [
 
 [[package]]
 name = "choreographer"
-version = "1.1.2"
+version = "1.2.0"
 description = "Devtools Protocol implementation for chrome."
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 files = [
-    {file = "choreographer-1.1.2-py3-none-any.whl", hash = "sha256:b410f59c804bae50849f6b5d861713213e5363a257b72c58a122a9e8a0600324"},
-    {file = "choreographer-1.1.2.tar.gz", hash = "sha256:d091ee7bb82bdf27fd4b62937cabf0f5fc87437839ee037b2fb2088b76ffa8ba"},
+    {file = "choreographer-1.2.0-py3-none-any.whl", hash = "sha256:00892baf912fc08b169488a56a9000d61c221d7a024eb4726dc623bc2e2f1b07"},
+    {file = "choreographer-1.2.0.tar.gz", hash = "sha256:c94eaf6eb3dbc81d68e1476139e69e9e072f4e90fcae1990e5c988d15079d346"},
 ]
 
 [package.dependencies]
-logistro = ">=1.0.11"
+logistro = ">=2.0.0"
 simplejson = ">=3.19.3"
 
 [[package]]
@@ -1494,14 +1494,14 @@ pytest-timeout = ">=2.4.0"
 
 [[package]]
 name = "logistro"
-version = "1.1.0"
+version = "2.0.0"
 description = "Simple wrapper over logging for a couple basic features"
 optional = false
 python-versions = ">=3.8"
 groups = ["dev"]
 files = [
-    {file = "logistro-1.1.0-py3-none-any.whl", hash = "sha256:4f88541fe7f3c545561b754d86121abd9c6d4d8b312381046a78dcd794fddc7c"},
-    {file = "logistro-1.1.0.tar.gz", hash = "sha256:ad51f0efa2bc705bea7c266e8a759cf539457cf7108202a5eec77bdf6300d774"},
+    {file = "logistro-2.0.0-py3-none-any.whl", hash = "sha256:cfd18f9a4083f778519dd0e28a779389cdef0773d11cd7d3d0c136f803aa3330"},
+    {file = "logistro-2.0.0.tar.gz", hash = "sha256:8aec9a8c5842ce649e0767c7515b8d26142a11e6732ca806de496b6e371e1f15"},
 ]
 
 [[package]]

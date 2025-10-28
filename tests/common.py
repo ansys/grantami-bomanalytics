@@ -80,6 +80,9 @@ def _get_connection(url, username, password) -> BomAnalyticsClient | None:
     return connection
 
 
+_mi_version_cache: tuple[int, int] | None = None
+
+
 def get_mi_version() -> tuple[int, int] | None:
     """The version of MI referenced by the test url.
 
@@ -88,6 +91,11 @@ def get_mi_version() -> tuple[int, int] | None:
     tuple[int, int] | None
         A 2-tuple containing the (MAJOR, MINOR) Granta MI release version, or None if ``ci_unit_tests`` is True.
     """
+    global _mi_version_cache
+
+    if _mi_version_cache:
+        return _mi_version_cache
+
     connection = _get_connection(sl_url, read_username, read_password)
     if connection is None:
         return None
@@ -97,4 +105,6 @@ def get_mi_version() -> tuple[int, int] | None:
     version = next(c.text for c in tree if c.tag.rpartition("}")[2] == "MajorMinorVersion")
     parsed_version = [int(v) for v in version.split(".")]
     assert len(parsed_version) == 2
-    return cast(tuple[int, int], tuple(parsed_version))
+    print(f"Granta MI version {parsed_version}")
+    _mi_version_cache = cast(tuple[int, int], tuple(parsed_version))
+    return _mi_version_cache

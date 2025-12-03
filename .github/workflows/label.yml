@@ -7,6 +7,11 @@ on:
     paths:
       - '../labels.yml'
 
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -18,6 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3  # v6.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - uses: micnncim/action-label-syncer@3abd5ab72fda571e69fffd97bd4e0033dd5f495c  # v1.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -36,6 +44,7 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   commenter:
+    name: Suggest labels if missing
     runs-on: ubuntu-latest
     steps:
     - name: Suggest to add labels

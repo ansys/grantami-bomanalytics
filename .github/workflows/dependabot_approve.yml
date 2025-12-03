@@ -1,14 +1,18 @@
 name: Dependabot auto-approve
-on: pull_request_target
+on: pull_request
 permissions:
   pull-requests: write
 jobs:
   dependabot:
+    name: Auto-approve Dependabot PRs
     runs-on: ubuntu-latest
     # Checking the author will prevent your Action run failing on non-Dependabot PRs
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'pre-commit-ci[bot]' }}
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3  # v6.0.0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - name: Approve a PR if not already approved
         run: |
           gh pr checkout "$PR_URL" # sets the upstream metadata for `gh pr status`

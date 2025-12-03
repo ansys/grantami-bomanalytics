@@ -180,6 +180,7 @@ jobs:
     uses: ./.github/workflows/server_checks.yml
     permissions:
       contents: read
+      actions: read
     with:
       skip-vm-management: ${{ vars.SKIP_VM_MANAGEMENT == 'true' }}
     secrets:

@@ -109,7 +109,7 @@ jobs:
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SECRET: ${{ secrets.AZURE_SECRET }}
           RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          SERVER_NAME: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets]
+          SERVER_NAME: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation]
         with:
           azcliversion: 2.32.0
           inlineScript: |
@@ -129,7 +129,7 @@ jobs:
           pip freeze
           python ./cicd/check_server.py
         env:
-          TEST_SL_URL: ${{ secrets[matrix.server.url] }}  # zizmor: ignore[overprovisioned-secrets]
+          TEST_SL_URL: ${{ secrets[matrix.server.url] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation]
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
@@ -171,7 +171,7 @@ jobs:
       - name: "Test with tox (integration tests only)"
         run: tox -e tests -- -m "integration"
         env:
-          TEST_SL_URL: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets]
+          TEST_SL_URL: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation]
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
           TEST_WRITE_USER: ${{secrets.TEST_SERVER_WRITE_USER}}
@@ -238,7 +238,7 @@ jobs:
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SECRET: ${{ secrets.AZURE_SECRET }}
           RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          SERVER_NAME: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets]
+          SERVER_NAME: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation]
         with:
           azcliversion: 2.32.0
           inlineScript: |

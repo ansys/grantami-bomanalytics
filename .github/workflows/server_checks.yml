@@ -109,7 +109,7 @@ jobs:
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SECRET: ${{ secrets.AZURE_SECRET }}
           RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          SERVER_NAME: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
+          SERVER_NAME: ${{ secrets[matrix.server.name] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
         with:
           azcliversion: 2.32.0
           inlineScript: |
@@ -238,7 +238,7 @@ jobs:
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           SECRET: ${{ secrets.AZURE_SECRET }}
           RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          SERVER_NAME: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
+          SERVER_NAME: ${{ secrets[matrix.server.name] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
         with:
           azcliversion: 2.32.0
           inlineScript: |

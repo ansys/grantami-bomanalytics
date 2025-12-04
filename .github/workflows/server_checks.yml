@@ -60,6 +60,8 @@ on:
 
       CODECOV_TOKEN:
         required: true
+      PYANSYS_PYPI_PRIVATE_PAT:
+        required: true
   workflow_dispatch:
 
 permissions:

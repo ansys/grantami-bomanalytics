@@ -8,8 +8,6 @@ on:
       - '../labels.yml'
 
 permissions:
-  issues: write
-  pull-requests: write
   contents: read
 
 concurrency:

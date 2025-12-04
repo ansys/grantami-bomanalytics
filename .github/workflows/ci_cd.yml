@@ -10,9 +10,7 @@ on:
   merge_group:
 
 permissions:
-  contents: write
-  id-token: write
-  attestations: write
+  contents: read
 
 env:
   MAIN_PYTHON_VERSION: '3.12'

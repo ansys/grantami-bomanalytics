@@ -48,7 +48,7 @@ foreign_records_parametrization = pytest.mark.parametrize(
 @foreign_records_parametrization
 class TestMaterialQueries:
     ids = ["plastic-abs-pvc-flame", "plastic-pmma-pc"]
-    foreign_ids = ["plastic-abs-pvc-flame-foreign", "glass-borosilicate-7050-foreign"]
+    foreign_ids = ["plastic-abs-pvc-flame-foreign", "plastic-pmma-pc-foreign"]
 
     def test_impacted_substances(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.MaterialImpactedSubstancesQuery().with_legislation_ids(LEGISLATIONS)

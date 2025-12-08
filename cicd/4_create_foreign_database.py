@@ -223,7 +223,7 @@ if __name__ == "__main__":
     logger.info("Creating new cross-database record link group standard name")
     database_browser.create_standard_name(
         db_key=FOREIGN_DB_KEY,
-        name="Granta record for analysis 1",
+        name="RS and Sustainability record",
         mapped_cross_database_record_link_group_guids=xdb_link_group_guids,
     )
 

@@ -83,6 +83,8 @@ class TestMaterialQueries:
             query = query.with_material_ids(self.ids)
         response = connection_with_db_variants.run(query)
 
+        assert not response.messages
+
         # The requested indicators always matches the indicator response
         assert response.compliance_by_indicator.keys() == INDICATORS.keys()
 
@@ -153,6 +155,65 @@ class TestPartQueries:
             assert response.compliance_by_part_and_indicator[0].equivalent_references is None
 
 
+@pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+class TestPartQueriesMessages:
+    ids = ["DRILL", "asm_flap_mating"]
+    foreign_ids = ["DRILL-foreign", "asm_flap_mating-foreign"]
+    allowed_message_strings = [
+        (
+            "substance row where the 'Amount' range value does not have a 'high value'. Using the 'low value' of the "
+            "'Amount' range instead"
+        ),
+        "Cannot find tabular column: 'EC number'",
+    ]
+
+    def test_impacted_substances(self, connection_with_db_variants: BomAnalyticsClient) -> None:
+        query = queries.PartImpactedSubstancesQuery().with_legislation_ids(LEGISLATIONS).with_part_numbers(self.ids)
+        response = connection_with_db_variants.run(query)
+
+        for message in response.messages:
+            assert any(
+                s in message.message for s in self.allowed_message_strings
+            ), f"Unexpected message: {message.severity}: {message.message}"
+
+    @pytest.mark.integration(mi_versions=[(26, 1)])
+    def test_impacted_substances_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
+        query = (
+            queries.PartImpactedSubstancesQuery()
+            .with_legislation_ids(LEGISLATIONS)
+            .with_part_numbers(self.foreign_ids, FOREIGN_DB_KEY)
+        )
+        response = connection_with_db_variants.run(query)
+
+        for message in response.messages:
+            assert any(
+                s in message.message for s in self.allowed_message_strings
+            ), f"Unexpected message: {message.severity}: {message.message}"
+
+    def test_compliance(self, connection_with_db_variants: BomAnalyticsClient) -> None:
+        query = queries.PartComplianceQuery().with_indicators(indicators).with_part_numbers(self.ids)
+        response = connection_with_db_variants.run(query)
+
+        for message in response.messages:
+            assert any(
+                s in message.message for s in self.allowed_message_strings
+            ), f"Unexpected message: {message.severity}: {message.message}"
+
+    @pytest.mark.integration(mi_versions=[(26, 1)])
+    def test_compliance_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
+        query = (
+            queries.PartComplianceQuery()
+            .with_indicators(indicators)
+            .with_part_numbers(self.foreign_ids, FOREIGN_DB_KEY)
+        )
+        response = connection_with_db_variants.run(query)
+
+        for message in response.messages:
+            assert any(
+                s in message.message for s in self.allowed_message_strings
+            ), f"Unexpected message: {message.severity}: {message.message}"
+
+
 @foreign_records_parametrization
 class TestSpecificationQueries:
     ids = ["MIL-DTL-53039,TypeI", "AMS2404,Class1"]
@@ -164,7 +225,6 @@ class TestSpecificationQueries:
             query = query.with_specification_ids(self.foreign_ids, FOREIGN_DB_KEY)
         else:
             query = query.with_specification_ids(self.ids)
-
         response = connection_with_db_variants.run(query)
 
         # The requested legislations always matches the legislations response
@@ -213,19 +273,84 @@ class TestSpecificationQueries:
             assert response.compliance_by_specification_and_indicator[0].equivalent_references is None
 
 
+@pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+class TestSpecificationQueriesMessages:
+    ids = ["MIL-DTL-53039,TypeI", "AMS2404,Class1"]
+    foreign_ids = ["MIL-DTL-53039,TypeI-foreign", "AMS2404,Class1-foreign"]
+    allowed_message_strings = [
+        (
+            "coating row where the 'Thickness' range value does not have a 'high value'. Using the 'low value' of the "
+            "'Thickness' range instead"
+        ),
+        "Cannot find tabular column: 'EC number'",
+    ]
+
+    def test_impacted_substances(self, connection_with_db_variants: BomAnalyticsClient) -> None:
+        query = (
+            queries.SpecificationImpactedSubstancesQuery()
+            .with_legislation_ids(LEGISLATIONS)
+            .with_specification_ids(self.ids)
+        )
+        response = connection_with_db_variants.run(query)
+
+        for message in response.messages:
+            assert any(
+                s in message.message for s in self.allowed_message_strings
+            ), f"Unexpected message: {message.severity}: {message.message}"
+
+    @pytest.mark.integration(mi_versions=[(26, 1)])
+    def test_impacted_substances_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
+        query = (
+            queries.SpecificationImpactedSubstancesQuery()
+            .with_legislation_ids(LEGISLATIONS)
+            .with_specification_ids(self.foreign_ids, FOREIGN_DB_KEY)
+        )
+        response = connection_with_db_variants.run(query)
+
+        for message in response.messages:
+            assert any(
+                s in message.message for s in self.allowed_message_strings
+            ), f"Unexpected message: {message.severity}: {message.message}"
+
+    def test_compliance(self, connection_with_db_variants: BomAnalyticsClient) -> None:
+        query = queries.SpecificationComplianceQuery().with_indicators(indicators).with_specification_ids(self.ids)
+        response = connection_with_db_variants.run(query)
+
+        for message in response.messages:
+            assert any(
+                s in message.message for s in self.allowed_message_strings
+            ), f"Unexpected message: {message.severity}: {message.message}"
+
+    @pytest.mark.integration(mi_versions=[(26, 1)])
+    def test_compliance_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
+        query = (
+            queries.SpecificationComplianceQuery()
+            .with_indicators(indicators)
+            .with_specification_ids(self.foreign_ids, FOREIGN_DB_KEY)
+        )
+        response = connection_with_db_variants.run(query)
+
+        for message in response.messages:
+            assert any(
+                s in message.message for s in self.allowed_message_strings
+            ), f"Unexpected message: {message.severity}: {message.message}"
+
+
 @foreign_records_parametrization
 class TestSubstancesQueries:
     def test_compliance(self, connection_with_db_variants: BomAnalyticsClient, foreign_records: bool) -> None:
         query = queries.SubstanceComplianceQuery().with_indicators(indicators)
         if foreign_records:
-            query = query.with_cas_numbers(["50-00-0", "57-24-9"], FOREIGN_DB_KEY).with_cas_numbers_and_amounts(
-                [("1333-86-4", 25), ("75-74-1", 50)], FOREIGN_DB_KEY
+            query = query.with_cas_numbers(["1306-23-6", "7723-14-0"], FOREIGN_DB_KEY).with_cas_numbers_and_amounts(
+                [("10108-64-2", 25)], FOREIGN_DB_KEY
             )
         else:
-            query = query.with_cas_numbers(["50-00-0", "57-24-9"]).with_cas_numbers_and_amounts(
-                [("1333-86-4", 25), ("75-74-1", 50)]
+            query = query.with_cas_numbers(["1306-23-6", "7723-14-0"]).with_cas_numbers_and_amounts(
+                [("10108-64-2", 25)]
             )
         response = connection_with_db_variants.run(query)
+
+        assert not response.messages
 
         # The requested indicators always matches the indicator response
         assert response.compliance_by_indicator.keys() == INDICATORS.keys()

@@ -60,7 +60,7 @@ version of this package compatible with older MI Restricted Substances and Susta
 ``MI Restricted Substances`` and ``MI Sustainability`` are licensed separately. Endpoints available to end users depend
 on the available licenses.
 
-The ``ansys.grantami.bomanalytics`` package currently supports Python version 3.10 through 3.13.
+The ``ansys.grantami.bomanalytics`` package currently supports Python version 3.10 through 3.14.
 
 .. readme_software_requirements_end
 

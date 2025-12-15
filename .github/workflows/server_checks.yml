@@ -158,7 +158,7 @@ jobs:
           TEST_WRITE_PASS: ${{secrets.TEST_SERVER_WRITE_PASS}}
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7  # v5.5.1
+        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de  # v5.5.2
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -172,7 +172,7 @@ jobs:
     needs: integration-tests
     steps:
       - name: "Run Ansys documentation building action"
-        uses: ansys/actions/doc-build@eb7d0fc873deeee6d4740774675ce1741cb6f154  # v10.2.2
+        uses: ansys/actions/doc-build@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_DEV_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}

@@ -42,7 +42,7 @@ python = "^3.10.0"
 # Packages for core library
 ansys-openapi-common = "^2.0.0"
 # Ensure PIP_INDEX_URL is not set in CI when building on release branches.
-ansys-grantami-bomanalytics-openapi = "==5.0.0rc0"
+ansys-grantami-bomanalytics-openapi = "==5.0.0"
 xmlschema = ">=3.0.1,<5.0"
 defusedxml = "^0.7"
 

@@ -7,6 +7,9 @@ on:
     paths:
       - '../labels.yml'
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -18,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+        with:
+          persist-credentials: false
+
       - uses: micnncim/action-label-syncer@3abd5ab72fda571e69fffd97bd4e0033dd5f495c  # v1.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -36,6 +42,7 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
 
   commenter:
+    name: Suggest labels if missing
     runs-on: ubuntu-latest
     steps:
     - name: Suggest to add labels

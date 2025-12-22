@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 name = "ansys-grantami-bomanalytics"
 description = "Perform compliance and sustainability analysis on materials data stored in Granta MI."
-version = "2.4.0.dev0"
+version = "2.4.0rc0"
 license = "MIT"
 authors = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
 maintainers = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
@@ -41,8 +41,7 @@ python = "^3.10.0"
 
 # Packages for core library
 ansys-openapi-common = "^2.0.0"
-# Ensure PIP_INDEX_URL is not set in CI when building on release branches.
-ansys-grantami-bomanalytics-openapi = { version = ">=5.0.0,<6.0", source = "private-pypi" }
+ansys-grantami-bomanalytics-openapi = ">=5.0.0,<6.0"
 xmlschema = ">=3.0.1,<5.0"
 defusedxml = "^0.7"
 
@@ -96,11 +95,6 @@ examples = [
   "plotly",
   "ipywidgets",
 ]
-
-[[tool.poetry.source]]
-name = "private-pypi"
-url = "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
-priority = "explicit"
 
 [tool.mypy]
 warn_return_any = true

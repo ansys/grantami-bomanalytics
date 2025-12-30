@@ -11,6 +11,130 @@ See `CHANGELOG.md <https://github.com/ansys/grantami-bomanalytics/blob/main/CHAN
 
 .. towncrier release notes start
 
+`2.4.0rc0 <https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.4.0rc0>`_ - December 30, 2025
+=======================================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Add a plot to test examples
+          - `#816 <https://github.com/ansys/grantami-bomanalytics/pull/816>`_
+
+        * - Add support for Eco 25/05 XML format
+          - `#869 <https://github.com/ansys/grantami-bomanalytics/pull/869>`_
+
+        * - Add database_key and equivalent_references to record reference-based objects
+          - `#874 <https://github.com/ansys/grantami-bomanalytics/pull/874>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update tornado to v6.5
+          - `#796 <https://github.com/ansys/grantami-bomanalytics/pull/796>`_
+
+        * - Use defusedxml for parsing boms
+          - `#843 <https://github.com/ansys/grantami-bomanalytics/pull/843>`_
+
+        * - Upgrade plotly, add default renderer
+          - `#865 <https://github.com/ansys/grantami-bomanalytics/pull/865>`_
+
+
+  .. tab-item:: Miscellaneous
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Enable vulnerability and code quality scanning
+          - `#834 <https://github.com/ansys/grantami-bomanalytics/pull/834>`_
+
+        * - Update lock file
+          - `#836 <https://github.com/ansys/grantami-bomanalytics/pull/836>`_
+
+        * - Add security.md file
+          - `#837 <https://github.com/ansys/grantami-bomanalytics/pull/837>`_
+
+        * - Raise assertionerrors explicitly
+          - `#844 <https://github.com/ansys/grantami-bomanalytics/pull/844>`_
+
+        * - Chore: update changelog for v2.3.0
+          - `#849 <https://github.com/ansys/grantami-bomanalytics/pull/849>`_
+
+        * - Docs: update ``contributors.md`` with the latest contributors
+          - `#854 <https://github.com/ansys/grantami-bomanalytics/pull/854>`_
+
+        * - Chore: update changelog for v2.3.1
+          - `#860 <https://github.com/ansys/grantami-bomanalytics/pull/860>`_
+
+        * - Fully qualify all XML references in bom_types modules
+          - `#868 <https://github.com/ansys/grantami-bomanalytics/pull/868>`_
+
+        * - Re-work allowed_types module to support multiple arguments
+          - `#873 <https://github.com/ansys/grantami-bomanalytics/pull/873>`_
+
+        * - Update test database creation scripts
+          - `#875 <https://github.com/ansys/grantami-bomanalytics/pull/875>`_
+
+        * - Handle trailing slash on test server URL during test VM warmup
+          - `#882 <https://github.com/ansys/grantami-bomanalytics/pull/882>`_
+
+        * - Fix custom Locations table name
+          - `#884 <https://github.com/ansys/grantami-bomanalytics/pull/884>`_
+
+        * - Convert warnings to errors during tests
+          - `#891 <https://github.com/ansys/grantami-bomanalytics/pull/891>`_
+
+        * - Add missing dev dependencies to appropriate dependabot group
+          - `#897 <https://github.com/ansys/grantami-bomanalytics/pull/897>`_
+
+        * - Update tests and database preparation scripts for 2026 R1
+          - `#913 <https://github.com/ansys/grantami-bomanalytics/pull/913>`_
+
+        * - CHORE:   Update missing or outdated files
+          - `#919 <https://github.com/ansys/grantami-bomanalytics/pull/919>`_
+
+        * - Chore: Update missing or outdated files
+          - `#930 <https://github.com/ansys/grantami-bomanalytics/pull/930>`_
+
+        * - Fix failing integration tests after 2026 R1 update
+          - `#935 <https://github.com/ansys/grantami-bomanalytics/pull/935>`_
+
+        * - Add support for python 3.14
+          - `#940 <https://github.com/ansys/grantami-bomanalytics/pull/940>`_
+
+        * - Upgrade ansys-grantami-bomanalytics-openapi to 5.0.0 release
+          - `#949 <https://github.com/ansys/grantami-bomanalytics/pull/949>`_
+
+        * - Prepare 2.4.0rc0 release
+          - `#950 <https://github.com/ansys/grantami-bomanalytics/pull/950>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump version to 2.4.0.dev0
+          - `#791 <https://github.com/ansys/grantami-bomanalytics/pull/791>`_
+
+        * - Add 2025 R2 stable test VM
+          - `#792 <https://github.com/ansys/grantami-bomanalytics/pull/792>`_
+
+        * - Fix version number on main branch
+          - `#810 <https://github.com/ansys/grantami-bomanalytics/pull/810>`_
+
+
 `2.3.1 <https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.3.1>`_ - July 29, 2025
 =============================================================================================
 

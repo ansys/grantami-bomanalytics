@@ -290,7 +290,7 @@ LINKING_CRITERIA = {
     ),
 }
 """
-Link creation definitions with which to link foreign and primary records, based on attribute values.
+Link creation definitions for attribute-based linking between foreign and primary records.
 
 The primary record is identified by finding the record with the attribute value populated for the specified attribute
 name.

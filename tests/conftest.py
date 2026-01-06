@@ -109,7 +109,11 @@ def pytest_generate_tests(metafunc):
         return
 
     skip_examples_for_version = defaultdict(set)
+    skip_examples_for_version[(25, 2)] = {
+        "2-4_External_database_materials.py",
+    }
     skip_examples_for_version[(25, 1)] = {
+        "2-4_External_database_materials.py",
         "4-1_Sustainability.py",
         "5-1_Summary_and_messages.py",
         "5-2_Transports.py",
@@ -119,6 +123,7 @@ def pytest_generate_tests(metafunc):
         "6-1_Creating_an_XML_BoM.py",
     }
     skip_examples_for_version[(24, 2)] = {
+        "2-4_External_database_materials.py",
         "4-1_Sustainability.py",
         "5-1_Summary_and_messages.py",
         "5-2_Transports.py",

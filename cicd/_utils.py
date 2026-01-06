@@ -138,3 +138,49 @@ class DatabaseBrowser(ServerApiClient):
         if not guid:
             guid = self.create_record_in_table_with_name(db_key, table_name, record_name)
         return guid
+
+
+def ensure_link_group_exists(
+    api_client: ApiClient,
+    name: str,
+    db_key: str,
+    source_table_guid: str,
+    target_db_key: str,
+    target_table_guid: str,
+    reverse_name: Optional[str] = None,
+) -> str:
+    """
+    Check if the provided record link group name exists within the database with the provided table name as the source
+    table.
+
+    If the link group does not exist, create it as a cross-database record link group between the source table and
+    destination table, and return the GUID.
+    """
+    logger.info(f"  Checking {name}")
+
+    _database_browser = DatabaseBrowser(api_client, logger)
+
+    rlg_client = api.SchemaRecordLinkGroupsApi(api_client)
+
+    rlgs = rlg_client.get_record_link_groups(database_key=db_key, table_guid=source_table_guid)
+    for rlg in rlgs.record_link_groups:
+        if rlg.name == name:
+            logger.info("  Link group already exists")
+            return rlg.guid
+
+    logger.info("  Link group not found. Creating.")
+    target_db_guid = _database_browser.get_database_guid(target_db_key)
+    create_response = rlg_client.create_record_link_group(
+        database_key=db_key,
+        table_guid=source_table_guid,
+        body=models.GsaCreateRecordLinkGroup(
+            link_target=models.GsaLinkTarget(
+                database_guid=target_db_guid,
+                table_guid=target_table_guid,
+            ),
+            name=name,
+            reverse_name=f"{name} (reverse)" if reverse_name is None else reverse_name,
+            type=models.GsaRecordLinkGroupType.CROSSDATABASE,
+        ),
+    )
+    return create_response.guid

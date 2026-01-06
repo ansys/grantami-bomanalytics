@@ -15,6 +15,9 @@ CUSTOM_DB_KEY_NEW = "MI_Restricted_Substances_NewVersion_CustomTables"
 FOREIGN_DB_KEY = "MI_Restricted_Substances_Foreign_Test"
 """Restricted Substances & Sustainability database key for the foreign test database."""
 
+MI_TRAINING_DB_KEY = "MI_Training"
+"""Granta MI Training database key."""
+
 DATA_FILENAME = "rs_data.json"
 """
 Filename of the data interchange file defining the reduced set of data to be preserved in a Restricted Substances &
@@ -200,6 +203,24 @@ Sustainability database.
 Link groups are created with an automatically generated reverse name of "<Link group name> (reverse)".
 """
 
+MI_TRAINING_XDB_LINK_GROUPS = {
+    # Link group name: (Source table, Destination table, Reverse name)
+    "Equivalent MaterialUniverse record (Metals)": (
+        "Design Data",
+        "MaterialUniverse",
+        "Equivalent Design Data records",
+    ),
+    "Equivalent MaterialUniverse record (Composites)": (
+        "Composite Design Data",
+        "MaterialUniverse",
+        "Equivalent Composite Design Data records",
+    ),
+}
+"""
+Cross-database record link groups to create between the MI Training database and the primary Restricted Substances &
+Sustainability database.
+"""
+
 
 LINKING_CRITERIA = {
     # Link group name: (Attribute name, [Attribute value 1, attribute value 2, ...])
@@ -269,8 +290,50 @@ LINKING_CRITERIA = {
     ),
 }
 """
-Link creation definitions with which to link foreign and primary records.
+Link creation definitions for attribute-based linking between foreign and primary records.
 
 The primary record is identified by finding the record with the attribute value populated for the specified attribute
 name.
+"""
+
+
+GUID_LINKING_CRITERIA = {
+    # Link group name: (Local history GUID, Foreign history GUID)
+    "Equivalent MaterialUniverse record (Metals)": [
+        (
+            "5b1df472-a92e-4317-b9a8-e1672335bc2e",  # AMS 6250 Plate
+            "d0237d48-ddd2-4916-b24c-86ba51f25b52",  # 250, maraged
+        ),
+        (
+            "ce294339-e59d-4be1-a96c-f9e92adb71ac",  # Inconel 718, Forging
+            "b7ff507a-80c9-48ab-b489-4dc5663e57c1",  # Inconel 718 solution treated
+        ),
+    ],
+    "Equivalent MaterialUniverse record (Composites)": [
+        (
+            "5f9563c4-17f8-4ed9-ae43-d48f025d9ce5",  # CTD
+            "a1adca06-ddcb-4f64-a686-3bb4d38e16ed",  # UD lay-up
+        ),
+        (
+            "e5b404b3-3b41-4a3b-810b-573289c0fe76",  # ETD
+            "a1adca06-ddcb-4f64-a686-3bb4d38e16ed",  # UD lay-up
+        ),
+        (
+            "358fe02d-eca6-421f-898d-82894ec823bb",  # ETW 150F
+            "a1adca06-ddcb-4f64-a686-3bb4d38e16ed",  # UD lay-up
+        ),
+        (
+            "bec85b53-e111-4144-b43c-55b6504c76ee",  # ETW 180F
+            "a1adca06-ddcb-4f64-a686-3bb4d38e16ed",  # UD lay-up
+        ),
+        (
+            "5d7f34bf-e2db-413e-9407-a3a03aa3878f",  # RTD
+            "a1adca06-ddcb-4f64-a686-3bb4d38e16ed",  # UD lay-up
+        ),
+    ],
+}
+"""
+Link creation definitions with which to link foreign and primary records, based on record GUIDs.
+
+The primary and foreign records are identified directly by their record history GUIDs.
 """

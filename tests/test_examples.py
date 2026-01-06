@@ -37,33 +37,18 @@ env = os.environ.copy()
 env["PLOTLY_RENDERER"] = "json"
 
 
-def example_0_basic_usage():
-    assert len(result.impacted_substances) == 12
-    assert len(result.messages) == 0
-    # Expected cells with outputs
-    assert set(Out.keys()) == set([2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
-
-def example_4_1_sustainability():
-    assert len(records) == 50
-
-
-@pytest.mark.parametrize(
-    ["example_script_", "test_method"],
-    [
-        pytest.param("0_Basic_usage.py", example_0_basic_usage),
-        pytest.param("4_Sustainability/4-1_Sustainability.py", example_4_1_sustainability, marks=pytest.mark.onlyabove(mi_version=(27, 2))),
-    ],
-)
-def test_examples(example_script_: str, test_method):
+def test_examples(example_script):
+    example_path, test_method = example_script
     os.environ["IPYTHONDIR"] = IPYTHONDIR
     ep = ExecutePreprocessor()
-    example_script_path = EXAMPLES_DIR / example_script_
-    notebook = jupytext.read(example_script_path)
-    test_method_source = inspect.getsource(test_method)
-    notebook.cells.append(
-        new_code_cell(
-            source=f"{test_method_source}\n\n{test_method.__name__}()"
+
+    notebook = jupytext.read(example_path)
+    if test_method is not None:
+        test_method_source = inspect.getsource(test_method)
+        notebook.cells.append(
+            new_code_cell(
+                source=f"{test_method_source}\n\n{test_method.__name__}()"
+            )
         )
-    )
-    ep.preprocess(notebook, {"metadata": {"path": str(example_script_path.parent)}})
+    ep.preprocess(notebook, {"metadata": {"path": str(example_path.parent)}})
 

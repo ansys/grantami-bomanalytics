@@ -20,32 +20,50 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import inspect
 import os
 from pathlib import Path
-import subprocess
-import sys
 
+import jupytext
 import pytest
+from nbconvert.preprocessors import ExecutePreprocessor
+from nbformat.v4 import new_code_cell
 
 pytestmark = pytest.mark.integration
 IPYTHONDIR = str(Path(__file__).parent.parent) + "/.ipython"
+EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
 
 env = os.environ.copy()
 env["PLOTLY_RENDERER"] = "json"
 
 
-def test_examples(example_script: Path):
-    p = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "IPython",
-            "--ipython-dir",
-            IPYTHONDIR,
-            example_script,
-        ],
-        cwd=example_script.parent,
-        env=env,
+def example_0_basic_usage():
+    assert len(result.impacted_substances) == 12
+    assert len(result.messages) == 0
+    # Expected cells with outputs
+    assert set(Out.keys()) == set([2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+
+def example_4_1_sustainability():
+    assert len(records) == 50
+
+
+@pytest.mark.parametrize(
+    ["example_script_", "test_method"],
+    [
+        pytest.param("0_Basic_usage.py", example_0_basic_usage),
+        pytest.param("4_Sustainability/4-1_Sustainability.py", example_4_1_sustainability, marks=pytest.mark.onlyabove(mi_version=(27, 2))),
+    ],
+)
+def test_examples(example_script_: str, test_method):
+    os.environ["IPYTHONDIR"] = IPYTHONDIR
+    ep = ExecutePreprocessor()
+    example_script_path = EXAMPLES_DIR / example_script_
+    notebook = jupytext.read(example_script_path)
+    test_method_source = inspect.getsource(test_method)
+    notebook.cells.append(
+        new_code_cell(
+            source=f"{test_method_source}\n\n{test_method.__name__}()"
+        )
     )
-    p.wait()
-    assert p.returncode == 0
+    ep.preprocess(notebook, {"metadata": {"path": str(example_script_path.parent)}})
+

@@ -17,7 +17,7 @@
 
 # > Added in version 2.4. Requires MI Restricted Substances and Sustainability Reports 2026 R1 or later.
 
-# Material records stored in an external database can be included in impacted substances queries by providing the
+# Material records stored in other Granta MI databases can be included in impacted substances queries by providing the
 # ``external_database_key`` argument to methods such as ``.with_record_history_guids()`` or ``.with_material_ids()``.
 # This feature also works for compliance and sustainability queries. For more information, including pre-requisites, see
 # the [Using external records in analysis](../../user_guide/external_records.rst) user guide.

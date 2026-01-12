@@ -138,6 +138,6 @@ print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 part_substances_all = part_result.impacted_substances
 rows = [(substance.cas_number, substance.max_percentage_amount_in_material)
         for substance in part_substances_all]
-print(f'Impacted substances across all legislations in "DRILL" (5/{len(rows)})')
+print(f'Impacted substances across all legislations and parts (5/{len(rows)})')
 print(tabulate(rows[:5], headers=["CAS Number", "Amount (wt. %)"]))
 # -

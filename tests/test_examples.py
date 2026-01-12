@@ -23,6 +23,7 @@
 import inspect
 import os
 from pathlib import Path
+from typing import Callable
 
 import jupytext
 import pytest
@@ -37,7 +38,7 @@ env = os.environ.copy()
 env["PLOTLY_RENDERER"] = "json"
 
 
-def test_examples(example_script):
+def test_examples(example_script: tuple[Path, Callable]):
     example_path, test_method = example_script
     os.environ["IPYTHONDIR"] = IPYTHONDIR
     ep = ExecutePreprocessor()

@@ -164,8 +164,7 @@ def pytest_generate_tests(metafunc):
             try:
                 expectations = examples_expectations[example_file.name]
             except KeyError as e:
-                expectations = None
-                # raise KeyError(f'No expectations defined for example "{example_file.name}"') from e
+                raise KeyError(f'No expectations defined for example "{example_file.name}"') from e
 
             if example_file.name in skip_examples:
                 formatted_version = ".".join(str(x) for x in mi_version)

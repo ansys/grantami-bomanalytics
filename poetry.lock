@@ -847,18 +847,18 @@ files = [
 
 [[package]]
 name = "elementpath"
-version = "5.0.4"
+version = "5.1.0"
 description = "XPath 1.0/2.0/3.0/3.1 parsers and selectors for ElementTree and lxml"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "elementpath-5.0.4-py3-none-any.whl", hash = "sha256:75d6f31c614d57e50eb749fc50806e3102880cd1f6552da3f2265f8eb8d3bbc6"},
-    {file = "elementpath-5.0.4.tar.gz", hash = "sha256:85ed93565d6e94aefa160b12f36b12cbe4be6bf9bbde06b80f2c5c94829a25fb"},
+    {file = "elementpath-5.1.0-py3-none-any.whl", hash = "sha256:41aa6f08f1e7b02f3ae3f8ab56f84d0a564e9214a56e63fc34e6fd03f3c8f01d"},
+    {file = "elementpath-5.1.0.tar.gz", hash = "sha256:61618f64686ce73cf6f191b17298e2568e9a1763b125fc7f2cb796ad0eacfd1e"},
 ]
 
 [package.extras]
-dev = ["coverage", "flake8", "lxml", "lxml-stubs", "memray", "mypy", "psutil", "sphinx", "tox", "xmlschema (>=4.0.1)"]
+dev = ["coverage", "flake8", "lxml", "lxml-stubs", "memray ; platform_python_implementation != \"PyPy\"", "mypy", "psutil", "sphinx", "tox (>=4.0)", "xmlschema (>=4.0.1)"]
 docs = ["readthedocs-sphinx-search", "sphinx"]
 
 [[package]]
@@ -4462,23 +4462,24 @@ files = [
 
 [[package]]
 name = "xmlschema"
-version = "4.2.0"
+version = "4.3.0"
 description = "An XML Schema validator and decoder"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "xmlschema-4.2.0-py3-none-any.whl", hash = "sha256:82d24a50eea5e7f2d603312813848cd66fddf8fa2b6730839c6aa3d66312e3b6"},
-    {file = "xmlschema-4.2.0.tar.gz", hash = "sha256:b1f88c53493b2e75471977cbf218d939b872d0c7046bb63d48cc219fa7e241b9"},
+    {file = "xmlschema-4.3.0-py3-none-any.whl", hash = "sha256:2b97df551039519eed0eaf015f2ea523b958f64917a6ea4303d7025169fa423e"},
+    {file = "xmlschema-4.3.0.tar.gz", hash = "sha256:174c531dd869cd29bf2d1203603d9e619bddf168d6289725738914c96c80936e"},
 ]
 
 [package.dependencies]
-elementpath = ">=5.0.1,<6.0.0"
+elementpath = ">=5.1.0,<6.0.0"
 
 [package.extras]
 codegen = ["jinja2"]
 dev = ["coverage", "flake8", "lxml", "lxml-stubs", "mypy", "psutil", "tox", "xmlschema[docs]"]
 docs = ["jinja2", "sphinx", "sphinx_rtd_theme"]
+pydantic = ["pydantic"]
 
 [[package]]
 name = "zipp"

@@ -96,26 +96,6 @@ def mock_connection_with_custom_db() -> BomAnalyticsClient:
     return connection
 
 
-def pytest_collection_modifyitems(session, config, items):
-    # After all tests have been collected and parameterized, but not yet run
-    for item in items:
-        onlyabove_version_mark = item.get_closest_marker("onlyabove")
-        if onlyabove_version_mark is not None:
-            handle_onlyabove_mark(item, onlyabove_version_mark)
-
-
-def handle_onlyabove_mark(item: pytest.Function, mark: pytest.Mark):
-    if not "mi_version" in mark.kwargs:
-        raise ValueError("'onlyabove' mark must be initialized with the 'mi_version' keyword argument")
-    mi_version = get_mi_version()
-    if mi_version is None:
-        return # todo what does this mean
-    required_version = mark.kwargs["mi_version"]
-    if not isinstance(required_version, tuple) or len(required_version) != 2:
-        raise TypeError("'mi_version' argument to 'onlyabove' mark must be a 2-tuple of (MAJOR, MINOR) version numbers")
-    if mi_version < required_version:
-        item.add_marker(pytest.mark.skip("Not tested for this version")) # TODO file name and mi version?
-
 def pytest_generate_tests(metafunc):
     """Dynamically discover all example .py files and add to the set of parameters for a test if that test uses the
     'example_script' fixture.

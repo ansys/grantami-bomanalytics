@@ -125,7 +125,6 @@ markers = [
     RS & Sustainability reports package, which is compatible with multiple Granta MI versions. However, when testing \
     this package, the same version of the reports package and Granta MI are always used together.
     Deselect all integration tests with 'pytest -m \"not integration\"'""",
-    "onlyabove(mi_version)",
 ]
 filterwarnings = [
 	"error",

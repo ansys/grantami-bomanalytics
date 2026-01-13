@@ -83,9 +83,9 @@ def example_2_3_bom_impacted_substances():
 
 def example_2_4_external_database_materials():
     assert len(material_result.equivalent_references) == 1
-    assert (
-        material_result.name
-        == "Epoxy (EP) matrix, glass fiber (S-glass) unidirectional tape prepreg, 0° unidirectional lamina (unidirectional tape prepreg, fiber Vf:0.47-0.55, autoclave cure at 125°C, 3.5 bar)"
+    assert material_result.name == (
+        "Epoxy (EP) matrix, glass fiber (S-glass) unidirectional tape prepreg, 0° unidirectional lamina "
+        "(unidirectional tape prepreg, fiber Vf:0.47-0.55, autoclave cure at 125°C, 3.5 bar)"
     )
     assert material_result.equivalent_references[0].record_history_guid == EPOXY_GLASS_GUID
     assert material_result.equivalent_references[0].database_key == EXTERNAL_DB_KEY

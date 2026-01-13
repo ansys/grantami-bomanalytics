@@ -1,3 +1,25 @@
+# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 def example_0_basic_usage():
     assert len(result.impacted_substances) == 8
 
@@ -11,6 +33,7 @@ def example_0_basic_usage():
 
     # Expected cells with outputs
     assert set(Out.keys()) == {2, 3, 4, 5, 6, 7, 8, 9, 10, 11}
+
 
 def example_1_database_config():
     assert cxn._table_names["inhouse_materials_table_name"] == "ACME Materials"
@@ -54,18 +77,22 @@ def example_2_3_bom_impacted_substances():
     assert len(impacted_substances_result.impacted_substances) == 44
 
     # Expected cells with outputs
-    assert set(Out.keys()) == {2,3,6}, str(Out)
+    assert set(Out.keys()) == {2, 3, 6}, str(Out)
 
 
 def example_2_4_external_database_materials():
     assert len(material_result.equivalent_references) == 1
-    assert material_result.name == "Epoxy (EP) matrix, glass fiber (S-glass) unidirectional tape prepreg, 0° unidirectional lamina (unidirectional tape prepreg, fiber Vf:0.47-0.55, autoclave cure at 125°C, 3.5 bar)"
+    assert (
+        material_result.name
+        == "Epoxy (EP) matrix, glass fiber (S-glass) unidirectional tape prepreg, 0° unidirectional lamina (unidirectional tape prepreg, fiber Vf:0.47-0.55, autoclave cure at 125°C, 3.5 bar)"
+    )
     assert material_result.equivalent_references[0].record_history_guid == EPOXY_GLASS_GUID
     assert material_result.equivalent_references[0].database_key == EXTERNAL_DB_KEY
     assert len(rows) == 14
 
     # Expected cells with outputs
     assert set(Out.keys()) == {2, 3}, str(Out)
+
 
 def example_3_1_substance_compliance():
     assert len(sub_result.compliance_by_substance_and_indicator) == 4
@@ -100,7 +127,7 @@ def example_3_3_part_compliance():
     assert set(part_result.compliance_by_indicator.keys()) == {"SVHC"}
     assert len(part_result.compliance_by_part_and_indicator) == 2
 
-    assert wing.indicators['SVHC'].flag.name == "WatchListHasSubstanceAboveThreshold"
+    assert wing.indicators["SVHC"].flag.name == "WatchListHasSubstanceAboveThreshold"
     assert len(parts_contain_svhcs) == 1
 
     # Expected cells with outputs
@@ -114,7 +141,7 @@ def example_3_4_bom_compliance():
     assert len(compliance_result.compliance_by_part_and_indicator) == 1
 
     assert root_part.input_part_number == "Placeholder Root Part"
-    assert root_part.indicators['SVHC'].flag.name == "WatchListHasSubstanceAboveThreshold"
+    assert root_part.indicators["SVHC"].flag.name == "WatchListHasSubstanceAboveThreshold"
 
     # Expected cells with outputs
     assert set(Out.keys()) == {2, 3, 6}, str(Out)
@@ -122,34 +149,39 @@ def example_3_4_bom_compliance():
 
 def example_3_5_compliance_for_external_data():
     assert material_ids == {
-        'aluminum-6063-t6',
-        'elastomer-pvc-shorea55',
-        'glass-borosilicate-7050',
-        'plastic-abs-pvc-flame',
-        'plastic-pc-10glassfiber',
-        'stainless-316-annealed'
+        "aluminum-6063-t6",
+        "elastomer-pvc-shorea55",
+        "glass-borosilicate-7050",
+        "plastic-abs-pvc-flame",
+        "plastic-pc-10glassfiber",
+        "stainless-316-annealed",
     }
     assert component_results == {
-        'FQC3RQKYE5': 'WatchListHasSubstanceAboveThreshold',
-        '3FF8CXIHWJ': 'WatchListHasSubstanceAboveThreshold',
-        'O676WZSGHA': 'WatchListHasSubstanceAboveThreshold',
-        'L8NTU4BZY2': 'WatchListCompliant',
-        '7N9EUBALU2': 'WatchListCompliant',
-        'U921IQSW6K': 'WatchListCompliant',
-        'TUSMQ1ZDFM': 'WatchListHasSubstanceAboveThreshold'
+        "FQC3RQKYE5": "WatchListHasSubstanceAboveThreshold",
+        "3FF8CXIHWJ": "WatchListHasSubstanceAboveThreshold",
+        "O676WZSGHA": "WatchListHasSubstanceAboveThreshold",
+        "L8NTU4BZY2": "WatchListCompliant",
+        "7N9EUBALU2": "WatchListCompliant",
+        "U921IQSW6K": "WatchListCompliant",
+        "TUSMQ1ZDFM": "WatchListHasSubstanceAboveThreshold",
     }
     assert results == {
-        'FQC3RQKYE5': 'Level 2 Approval Required',
-        '3FF8CXIHWJ': 'Level 2 Approval Required',
-        'O676WZSGHA': 'Level 2 Approval Required',
-        'L8NTU4BZY2': 'No Approval Required',
-        '7N9EUBALU2': 'No Approval Required',
-        'U921IQSW6K': 'No Approval Required',
-        'TUSMQ1ZDFM': 'Level 2 Approval Required'
+        "FQC3RQKYE5": "Level 2 Approval Required",
+        "3FF8CXIHWJ": "Level 2 Approval Required",
+        "O676WZSGHA": "Level 2 Approval Required",
+        "L8NTU4BZY2": "No Approval Required",
+        "7N9EUBALU2": "No Approval Required",
+        "U921IQSW6K": "No Approval Required",
+        "TUSMQ1ZDFM": "Level 2 Approval Required",
     }
 
     # Expected cells with outputs
-    assert set(Out.keys()) == {3, 4,7,9,}, str(Out)
+    assert set(Out.keys()) == {
+        3,
+        4,
+        7,
+        9,
+    }, str(Out)
 
 
 def example_3_6_compliance_to_dataframe():
@@ -157,20 +189,37 @@ def example_3_6_compliance_to_dataframe():
     assert root.input_part_number == "asm_flap_mating"
     assert len(root.parts) == 12
 
-    assert all(p.indicators['SVHC'].flag.name == "WatchListCompliant" for p in root.parts[:-1])
+    assert all(p.indicators["SVHC"].flag.name == "WatchListCompliant" for p in root.parts[:-1])
     assert root.parts[-1].input_part_number == "main_frame"
-    assert root.parts[-1].indicators['SVHC'].flag.name == "WatchListHasSubstanceAboveThreshold"
+    assert root.parts[-1].indicators["SVHC"].flag.name == "WatchListHasSubstanceAboveThreshold"
 
     assert len(data) == 301
     assert len(df_non_compliant) == 18
 
     assert df_non_compliant["Item"].to_list() == [
-        'P2', 'S97', 'S107', 'S109', 'R187', 'R192', 'S104', 'S106', 'R181', 'R186', 'S101', 'S103', 'R175', 'R180',
-        'S98', 'S100', 'R169', 'R174'
+        "P2",
+        "S97",
+        "S107",
+        "S109",
+        "R187",
+        "R192",
+        "S104",
+        "S106",
+        "R181",
+        "R186",
+        "S101",
+        "S103",
+        "R175",
+        "R180",
+        "S98",
+        "S100",
+        "R169",
+        "R174",
     ]
 
     # Expected cells with outputs
-    assert set(Out.keys()) == {6,7}, str(Out)
+    assert set(Out.keys()) == {6, 7}, str(Out)
+
 
 def example_4_1_sustainability():
     assert len(records) == 50
@@ -180,7 +229,11 @@ def example_4_1_sustainability():
     assert round(records[0]["climate change [kg CO2-eq]"]) == 48
 
     # Expected cells with outputs
-    assert set(Out.keys()) == {3, 5, 6,}, str(Out)
+    assert set(Out.keys()) == {
+        3,
+        5,
+        6,
+    }, str(Out)
 
 
 def example_5_1_summary_and_messages():
@@ -189,7 +242,12 @@ def example_5_1_summary_and_messages():
     assert [round(i) for i in phases_df["EE%"].to_list()] == [56, 27, 17]
     assert [round(i) for i in phases_df["CC%"].to_list()] == [67, 19, 15]
     # Expected cells with outputs
-    assert set(Out.keys()) == {3, 4, 5, 6, }, str(Out)
+    assert set(Out.keys()) == {
+        3,
+        4,
+        5,
+        6,
+    }, str(Out)
 
 
 def example_5_2_transports():
@@ -209,15 +267,25 @@ def example_5_2_transports():
     assert transport_by_category_df["Name"].to_list() == ["Distribution", "Manufacturing"]
     assert [round(i) for i in transport_by_category_df["EE%"].to_list()] == [30, 70]
 
-    assert transport_by_part_df["Name"].to_list() == ["Component 11B", "Assembly", "Component 1C", "Component 11A", "Other"]
+    assert transport_by_part_df["Name"].to_list() == [
+        "Component 11B",
+        "Assembly",
+        "Component 1C",
+        "Component 11A",
+        "Other",
+    ]
     assert [round(i) for i in transport_by_part_df["EE%"].to_list()] == [49, 30, 6, 6, 8]
 
     # Expected cells with outputs
-    assert set(Out.keys()) == {2,3,4,7,9,10,12,13}, str(Out)
+    assert set(Out.keys()) == {2, 3, 4, 7, 9, 10, 12, 13}, str(Out)
 
 
 def example_5_3_materials():
-    assert materials_df["Name"].to_list() == ["stainless-astm-cn-7ms-cast", "beryllium-beralcast191-cast", "steel-1010-annealed"]
+    assert materials_df["Name"].to_list() == [
+        "stainless-astm-cn-7ms-cast",
+        "beryllium-beralcast191-cast",
+        "steel-1010-annealed",
+    ]
     assert [round(i) for i in materials_df["EE%"].to_list()] == [46, 35, 19]
 
     # Expected cells with outputs
@@ -229,16 +297,16 @@ def example_5_4_processes():
         "Primary processing, Casting - stainless-astm-cn-7ms-cast",
         "Primary processing, Casting - steel-1010-annealed",
         "Primary processing, Metal extrusion, hot - steel-1010-annealed",
-        "Other - None"
+        "Other - None",
     ]
     assert [round(i) for i in primary_process_df["EE%"].to_list()] == [49, 34, 17, 0]
 
-    assert secondary_process_df ["Name"].to_list() == [
+    assert secondary_process_df["Name"].to_list() == [
         "Secondary processing, Grinding - steel-1010-annealed",
         "Secondary processing, Machining, coarse - stainless-astm-cn-7ms-cast",
         "Machining, fine - steel-1010-annealed",
         "Secondary processing, Machining, fine - stainless-astm-cn-7ms-cast",
-        "Other - None"
+        "Other - None",
     ]
     assert [round(i) for i in secondary_process_df["EE%"].to_list()] == [45, 31, 15, 8, 2]
 
@@ -260,10 +328,10 @@ def example_5_5_hierarchical_plots():
 
 def example_6_1_creating_an_xml_bom():
     assert len(rendered_bom.splitlines()) == 247
-    assert root_part.indicators['EU REACH Candidate List'].flag.name == "WatchListUnknown"
+    assert root_part.indicators["EU REACH Candidate List"].flag.name == "WatchListUnknown"
 
     # Expected cells with outputs
-    assert set(Out.keys()) == { 10, 12}, str(Out)
+    assert set(Out.keys()) == {10, 12}, str(Out)
 
 
 def example_6_2_creating_an_xml_bom_from_json():
@@ -279,7 +347,7 @@ def example_6_2_creating_an_xml_bom_from_json():
     assert len(bom.transport_phase) == 3
 
     # Expected cells with outputs
-    assert set(Out.keys()) == {2,3,4,5,6,7,8,9}, str(Out)
+    assert set(Out.keys()) == {2, 3, 4, 5, 6, 7, 8, 9}, str(Out)
 
 
 def example_6_3_creating_an_xml_bom_from_csv():
@@ -291,6 +359,7 @@ def example_6_3_creating_an_xml_bom_from_csv():
 
     # Expected cells with outputs
     assert set(Out.keys()) == {1}, str(Out)
+
 
 examples_expectations = {
     "0_Basic_usage.py": example_0_basic_usage,

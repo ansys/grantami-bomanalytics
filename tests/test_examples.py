@@ -26,9 +26,9 @@ from pathlib import Path
 from typing import Callable
 
 import jupytext
-import pytest
 from nbconvert.preprocessors import ExecutePreprocessor
 from nbformat.v4 import new_code_cell
+import pytest
 
 pytestmark = pytest.mark.integration
 IPYTHONDIR = str(Path(__file__).parent.parent) + "/.ipython"
@@ -46,10 +46,5 @@ def test_examples(example_script: tuple[Path, Callable]):
     notebook = jupytext.read(example_path)
     if test_method is not None:
         test_method_source = inspect.getsource(test_method)
-        notebook.cells.append(
-            new_code_cell(
-                source=f"{test_method_source}\n\n{test_method.__name__}()"
-            )
-        )
+        notebook.cells.append(new_code_cell(source=f"{test_method_source}\n\n{test_method.__name__}()"))
     ep.preprocess(notebook, {"metadata": {"path": str(example_path.parent)}})
-

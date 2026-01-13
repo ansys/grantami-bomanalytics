@@ -44,6 +44,7 @@ from .common import (
 )
 from .examples_expectations import examples_expectations
 
+
 @pytest.fixture
 def connection():
     return _get_connection(sl_url, read_username, read_password)

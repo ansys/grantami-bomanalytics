@@ -57,6 +57,16 @@ def example_2_3_bom_impacted_substances():
     assert set(Out.keys()) == {2,3,6}, str(Out)
 
 
+def example_2_4_external_database_materials():
+    assert len(material_result.equivalent_references) == 1
+    assert material_result.name == "Epoxy (EP) matrix, glass fiber (S-glass) unidirectional tape prepreg, 0° unidirectional lamina (unidirectional tape prepreg, fiber Vf:0.47-0.55, autoclave cure at 125°C, 3.5 bar)"
+    assert material_result.equivalent_references[0].record_history_guid == EPOXY_GLASS_GUID
+    assert material_result.equivalent_references[0].database_key == EXTERNAL_DB_KEY
+    assert len(rows) == 14
+
+    # Expected cells with outputs
+    assert set(Out.keys()) == {2, 3}, str(Out)
+
 def example_3_1_substance_compliance():
     assert len(sub_result.compliance_by_substance_and_indicator) == 4
     assert set(compliant_cas_numbers) == {"50-00-0", "302-17-0", "7440-23-5"}
@@ -288,6 +298,7 @@ examples_expectations = {
     "2-1_Materials_impacted_substances.py": example_2_1_materials_impacted_substances,
     "2-2_Parts_impacted_substances.py": example_2_2_parts_impacted_substances,
     "2-3_BoM_impacted_substances.py": example_2_3_bom_impacted_substances,
+    "2-4_External_database_materials.py": example_2_4_external_database_materials,
     "3-1_Substance_compliance.py": example_3_1_substance_compliance,
     "3-2_Material_compliance.py": example_3_2_material_compliance,
     "3-3_Part_compliance.py": example_3_3_part_compliance,

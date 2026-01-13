@@ -51,7 +51,7 @@ part_result = cxn.run(part_query)
 # + tags=[]
 for part in part_result.compliance_by_part_and_indicator[0].parts:
     print(
-        f"Part ID: {part.record_history_identity}, "
+        f"Part number: {part.input_part_number}, "
         f"Compliance: {part.indicators['SVHC'].flag}"
     )
 # -
@@ -73,7 +73,7 @@ for part in part_result.compliance_by_part_and_indicator[0].parts:
 # + tags=[]
 def create_dict(item, item_type, level, parent_id):
     """Add a BoM item to a list"""
-    item_id = item.record_history_identity
+    item_id = item.identity
     indicator = item.indicators["SVHC"]
     row = {
         "Item": item_id,
@@ -128,7 +128,7 @@ def flatten_bom(root_part):
         result.append(row)
 
         # Compute the properties for the child items
-        item_id = item_object.record_history_identity
+        item_id = item_object.identity
         child_items = schema[item_type]
         child_level = level + 1
 

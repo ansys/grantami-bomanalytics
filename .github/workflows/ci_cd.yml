@@ -9,6 +9,9 @@ on:
   workflow_dispatch:
   merge_group:
 
+permissions:
+  contents: read
+
 env:
   MAIN_PYTHON_VERSION: '3.12'
   DOCUMENTATION_CNAME: 'bomanalytics.grantami.docs.pyansys.com'
@@ -36,6 +39,21 @@ jobs:
           python-package-name: ${{ env.LIBRARY_NAME }}
           dev-mode: ${{ github.ref != 'refs/heads/main' }}
           use-uv: false
+    permissions:
+      contents: read
+
+  actions-security:
+    name: "Check actions security"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ansys/actions/check-actions-security@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+        with:
+          generate-summary: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          auditing-level: 'high'
+          trust-ansys-actions: true
+    permissions:
+      contents: read
 
   code-style:
     name: "Code style"
@@ -44,6 +62,8 @@ jobs:
       - uses: ansys/actions/code-style@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
         with:
           skip-install: false
+    permissions:
+      contents: read
 
   doc-style:
     name: "Documentation style"
@@ -52,10 +72,14 @@ jobs:
       - uses: ansys/actions/doc-style@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: read
 
   doc-build:
     name: Documentation Build (mock examples)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
     - name: "Run Ansys documentation building action"
       uses: ansys/actions/doc-build@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
@@ -97,6 +121,8 @@ jobs:
     name: "Tests Python ${{ matrix.python-version }}, ${{ matrix.os }}"
     runs-on: ${{ matrix.os }}
     needs: build-wheelhouse
+    permissions:
+      contents: read
     strategy:
       matrix:
        os: [ubuntu-latest, windows-latest]
@@ -105,6 +131,8 @@ jobs:
     steps:
       - name: "Checkout the repository"
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8  # v6.0.1
+        with:
+          persist-credentials: false
 
       - name: "Set up Python ${{ matrix.python-version }}"
         uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548  # v6.1.0
@@ -147,13 +175,40 @@ jobs:
     needs: [ build-wheelhouse ]
     if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     uses: ./.github/workflows/server_checks.yml
+    permissions:
+      contents: read
+      actions: read
     with:
       skip-vm-management: ${{ vars.SKIP_VM_MANAGEMENT == 'true' }}
     secrets:
-      inherit
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      PYANSYS_PYPI_PRIVATE_PAT: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
+      # Azure secrets
+      AZURE_APP_ID: ${{ secrets.AZURE_APP_ID }}
+      AZURE_SECRET: ${{ secrets.AZURE_SECRET }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+      # Test server names
+      AZURE_VM_NAME_DEV: ${{ secrets.AZURE_VM_NAME_DEV }}
+      AZURE_VM_NAME_25R2: ${{ secrets.AZURE_VM_NAME_25R2 }}
+      AZURE_VM_NAME_25R1: ${{ secrets.AZURE_VM_NAME_25R1 }}
+      AZURE_VM_NAME_24R2: ${{ secrets.AZURE_VM_NAME_24R2 }}
+      AZURE_VM_NAME_24R1: ${{ secrets.AZURE_VM_NAME_24R1 }}
+      # Test server URLs
+      TEST_SERVER_DEV_URL: ${{ secrets.TEST_SERVER_DEV_URL }}
+      TEST_SERVER_25R2_URL: ${{ secrets.TEST_SERVER_25R2_URL }}
+      TEST_SERVER_25R1_URL: ${{ secrets.TEST_SERVER_25R1_URL }}
+      TEST_SERVER_24R2_URL: ${{ secrets.TEST_SERVER_24R2_URL }}
+      # Test server credentials
+      TEST_SERVER_READ_USER: ${{ secrets.TEST_SERVER_READ_USER }}
+      TEST_SERVER_READ_PASS: ${{ secrets.TEST_SERVER_READ_PASS }}
+      TEST_SERVER_WRITE_USER: ${{ secrets.TEST_SERVER_WRITE_USER }}
+      TEST_SERVER_WRITE_PASS: ${{ secrets.TEST_SERVER_WRITE_PASS }}
 
   integration-checks-complete:
     name: "Integration checks complete"
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     if: always() && ( startsWith( github.event.pull_request.head.ref, 'dependabot/') || needs.server-checks.result == 'success' )
     needs: server-checks
@@ -165,6 +220,9 @@ jobs:
     name: "Deploy development documentation"
     runs-on: ubuntu-latest
     needs: [server-checks]
+    permissions:
+      contents: read
+      pages: write
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
       - uses: ansys/actions/doc-deploy-dev@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
@@ -222,6 +280,9 @@ jobs:
   doc-deploy-stable:
     name: "Deploy stable documentation"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
     needs: release
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:

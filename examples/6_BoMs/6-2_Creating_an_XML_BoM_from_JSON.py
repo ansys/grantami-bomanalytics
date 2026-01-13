@@ -182,7 +182,7 @@ for item in source_parts:
         ),
         mass_per_unit_of_measure=bom_types.eco2301.UnittedValue(
             value=item["part_mass_in_kg"],
-            unit="kg/Each"
+            unit="kg/Part"
         )
     )
 

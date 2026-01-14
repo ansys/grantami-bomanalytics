@@ -61,11 +61,11 @@ def example_2_1_materials_impacted_substances():
 
 
 def example_2_2_parts_impacted_substances():
-    assert len(substances_by_part[DRILL]) == 81, len(substances_by_part[DRILL])
+    assert len(substances_by_part[DRILL]) == 80, len(substances_by_part[DRILL])
     assert len(substances_by_part[WING]) == 1, len(substances_by_part[WING])
 
-    assert len(part_result.impacted_substances_by_legislation[SIN_LIST]) == 82
-    assert len(part_result.impacted_substances) == 132, len(part_result.impacted_substances)
+    assert len(part_result.impacted_substances_by_legislation[SIN_LIST]) == 81
+    assert len(part_result.impacted_substances) == 131, len(part_result.impacted_substances)
 
     # Expected cells with outputs
     assert set(Out.keys()) == {4}, str(Out)

@@ -42,6 +42,7 @@ from .common import (
     write_password,
     write_username,
 )
+from .examples_expectations import examples_expectations
 
 
 @pytest.fixture
@@ -139,15 +140,21 @@ def pytest_generate_tests(metafunc):
         parameters = []
         example_files = discover_python_scripts(example_path)
         for example_file in example_files:
-            xfail_examples = skip_examples_for_version[mi_version]
-            if example_file.name in xfail_examples:
+            skip_examples = skip_examples_for_version[mi_version]
+
+            try:
+                expectations = examples_expectations[example_file.name]
+            except KeyError as e:
+                raise KeyError(f'No expectations defined for example "{example_file.name}"') from e
+
+            if example_file.name in skip_examples:
                 formatted_version = ".".join(str(x) for x in mi_version)
                 mark = pytest.mark.skip(
                     f'Example "{example_file.name}" skipped for Granta MI release version "{formatted_version}"'
                 )
-                param = pytest.param(example_file, id=example_file.name, marks=mark)
+                param = pytest.param((example_file, expectations), id=example_file.name, marks=mark)
             else:
-                param = pytest.param(example_file, id=example_file.name)
+                param = pytest.param((example_file, expectations), id=example_file.name)
             parameters.append(param)
         metafunc.parametrize("example_script", parameters)
 

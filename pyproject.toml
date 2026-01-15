@@ -122,6 +122,8 @@ markers = [
 ]
 filterwarnings = [
 	"error",
+    "ignore:.*Jupyter is migrating.*:DeprecationWarning",
+    "ignore:.*Proactor event loop does not implement add_reader family*:RuntimeWarning",
 ]
 
 [tool.black]

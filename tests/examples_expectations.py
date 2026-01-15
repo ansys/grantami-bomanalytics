@@ -183,7 +183,9 @@ def example_3_5_compliance_for_external_data() -> None:
         4,
         7,
         9,
-    }, str(Out)  # noqa
+    }, str(
+        Out
+    )  # noqa
 
 
 def example_3_6_compliance_to_dataframe() -> None:
@@ -235,7 +237,9 @@ def example_4_1_sustainability() -> None:
         3,
         5,
         6,
-    }, str(Out)  # noqa
+    }, str(
+        Out
+    )  # noqa
 
 
 def example_5_1_summary_and_messages() -> None:
@@ -249,7 +253,9 @@ def example_5_1_summary_and_messages() -> None:
         4,
         5,
         6,
-    }, str(Out)  # noqa
+    }, str(
+        Out
+    )  # noqa
 
 
 def example_5_2_transports() -> None:

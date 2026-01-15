@@ -20,32 +20,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import inspect
 import os
 from pathlib import Path
-import subprocess
-import sys
+from typing import Callable
 
+import jupytext
+from nbconvert.preprocessors import ExecutePreprocessor
+from nbformat.v4 import new_code_cell
 import pytest
 
 pytestmark = pytest.mark.integration
 IPYTHONDIR = str(Path(__file__).parent.parent) + "/.ipython"
+EXAMPLES_DIR = Path(__file__).parent.parent / "examples"
 
 env = os.environ.copy()
 env["PLOTLY_RENDERER"] = "json"
 
 
-def test_examples(example_script: Path):
-    p = subprocess.Popen(
-        [
-            sys.executable,
-            "-m",
-            "IPython",
-            "--ipython-dir",
-            IPYTHONDIR,
-            example_script,
-        ],
-        cwd=example_script.parent,
-        env=env,
-    )
-    p.wait()
-    assert p.returncode == 0
+def test_examples(example_script: tuple[Path, Callable]) -> None:
+    example_path, test_method = example_script
+    os.environ["IPYTHONDIR"] = IPYTHONDIR
+    ep = ExecutePreprocessor()
+
+    notebook = jupytext.read(example_path)
+    if test_method is not None:
+        test_method_source = inspect.getsource(test_method)
+        notebook.cells.append(new_code_cell(source=f"{test_method_source}\n\n{test_method.__name__}()"))
+    ep.preprocess(notebook, {"metadata": {"path": str(example_path.parent)}})

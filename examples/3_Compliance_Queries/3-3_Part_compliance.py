@@ -127,7 +127,7 @@ parts_contain_svhcs = [part for part in wing.parts
                        if part.indicators["SVHC"] >= above_threshold_flag]
 print(f"{len(parts_contain_svhcs)} parts that contain SVHCs")
 for part in parts_contain_svhcs:
-    print(f"Part: {part.record_history_identity}")
+    print(f"Part: {part.input_part_number}")
 # -
 
 # This process can be performed recursively to show a structure of each part that contains SVHCs either directly or
@@ -140,7 +140,7 @@ def recursively_print_parts_with_svhcs(parts, depth=0):
     parts_contain_svhcs = [part for part in parts
                            if part.indicators["SVHC"] >= above_threshold_flag]
     for part in parts_contain_svhcs:
-        print(f"{'  '*depth}- Part: {part.record_history_identity}")
+        print(f"{'  '*depth}- Part: {part.input_part_number}")
         recursively_print_parts_with_svhcs(part.parts, depth + 1)
 # -
 
@@ -158,7 +158,7 @@ def recursively_print_parts_with_svhcs(parts, depth=0):
     parts_contain_svhcs = [part for part in parts
                            if part.indicators["SVHC"] >= above_threshold_flag]
     for part in parts_contain_svhcs:
-        print(f"{'  '*depth}- Part: {part.record_history_identity}")
+        print(f"{'  '*depth}- Part: {part.input_part_number} (GUID: {part.record_guid})")
         recursively_print_parts_with_svhcs(part.parts, depth + 1)
         print_materials_with_svhcs(part.materials, depth + 1)
         print_specifications_with_svhcs(part.specifications, depth + 1)
@@ -171,7 +171,7 @@ def print_materials_with_svhcs(materials, depth=0):
     mats_contain_svhcs = [m for m in materials
                           if m.indicators["SVHC"] >= above_threshold_flag]
     for mat in mats_contain_svhcs:
-        print(f"{'  '*depth}- Material: {mat.record_history_identity}")
+        print(f"{'  '*depth}- Material: {mat.name} (GUID: {mat.record_guid})")
         print_substances_with_svhcs(mat.substances, depth + 1)
 # -
 
@@ -181,7 +181,7 @@ def print_specifications_with_svhcs(specifications, depth=0):
     specs_contain_svhcs = [s for s in specifications
                            if s.indicators["SVHC"] >= above_threshold_flag]
     for spec in specs_contain_svhcs:
-        print(f"{'  '*depth}- Specification: {spec.record_history_identity}")
+        print(f"{'  '*depth}- Specification: {spec.name} (GUID: {spec.record_guid})")
         print_coatings_with_svhcs(spec.coatings, depth + 1)
         print_substances_with_svhcs(spec.substances, depth + 1)
 # -
@@ -192,7 +192,7 @@ def print_coatings_with_svhcs(coatings, depth=0):
     coatings_contain_svhcs = [c for c in coatings
                              if c.indicators["SVHC"] >= above_threshold_flag]
     for coating in coatings_contain_svhcs:
-        print(f"{'  '*depth}- Coating: {coating.record_history_identity}")
+        print(f"{'  '*depth}- Coating: (History Identity: {coating.record_history_identity})")
         print_substances_with_svhcs(coating.substances, depth + 1)
 # -
 
@@ -202,8 +202,7 @@ def print_substances_with_svhcs(substances, depth=0):
     subs_contain_svhcs = [sub for sub in substances
                           if sub.indicators["SVHC"] >= above_threshold_flag]
     for sub in subs_contain_svhcs:
-        print(f"{'  '*depth}- Substance: {sub.record_history_identity}")
-# -
+        print(f"{'  '*depth}- Substance: {sub.name} (History Identity: {sub.record_history_identity})")
 
 
 # + tags=[]

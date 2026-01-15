@@ -178,14 +178,7 @@ def example_3_5_compliance_for_external_data() -> None:
     }
 
     # Expected cells with outputs
-    assert set(Out.keys()) == {  # noqa
-        3,
-        4,
-        7,
-        9,
-    }, str(
-        Out
-    )  # noqa
+    assert set(Out.keys()) == {3, 4, 7, 9}, str(Out)  # noqa
 
 
 def example_3_6_compliance_to_dataframe() -> None:
@@ -233,13 +226,7 @@ def example_4_1_sustainability() -> None:
     assert round(records[0]["climate change [kg CO2-eq]"]) == 48  # noqa
 
     # Expected cells with outputs
-    assert set(Out.keys()) == {  # noqa
-        3,
-        5,
-        6,
-    }, str(
-        Out
-    )  # noqa
+    assert set(Out.keys()) == {3, 5, 6}, str(Out)  # noqa
 
 
 def example_5_1_summary_and_messages() -> None:
@@ -248,14 +235,7 @@ def example_5_1_summary_and_messages() -> None:
     assert [round(i) for i in phases_df["EE%"].to_list()] == [56, 27, 17]  # noqa
     assert [round(i) for i in phases_df["CC%"].to_list()] == [67, 19, 15]  # noqa
     # Expected cells with outputs
-    assert set(Out.keys()) == {  # noqa
-        3,
-        4,
-        5,
-        6,
-    }, str(
-        Out
-    )  # noqa
+    assert set(Out.keys()) == {3, 4, 5, 6}, str(Out)  # noqa
 
 
 def example_5_2_transports() -> None:

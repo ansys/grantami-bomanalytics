@@ -38,7 +38,7 @@ env = os.environ.copy()
 env["PLOTLY_RENDERER"] = "json"
 
 
-def test_examples(example_script: tuple[Path, Callable]):
+def test_examples(example_script: tuple[Path, Callable]) -> None:
     example_path, test_method = example_script
     os.environ["IPYTHONDIR"] = IPYTHONDIR
     ep = ExecutePreprocessor()

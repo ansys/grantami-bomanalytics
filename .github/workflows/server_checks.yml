@@ -64,9 +64,7 @@ on:
         required: true
   workflow_dispatch:
 
-permissions:
-  contents: read
-  actions: read
+permissions: {}
 
 env:
   PIP_INDEX_URL: "https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
@@ -76,7 +74,7 @@ env:
 
 concurrency:
   group: integration-server
-  cancel-in-progress: false
+  cancel-in-progress: false  # zizmor: ignore[concurrency-limits] # Allowed in versions above 1.16.2
 
 jobs:
   start-vm:
@@ -210,9 +208,6 @@ jobs:
   check-workflow-runs:
     name: Check if there are active workflow runs
     needs: doc-build
-    permissions:
-      actions: read
-      contents: read
     uses: ansys/pygranta/.github/workflows/check-concurrent-workflows.yml@main
     if: ${{ !cancelled() }}
 

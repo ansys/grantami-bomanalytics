@@ -12,10 +12,12 @@ registries:
     password: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 updates:
   - package-ecosystem: "pip"
-    insecure-external-code-execution: allow
+    insecure-external-code-execution: allow  # zizmor: ignore[dependabot-execution] # Required for private index
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
     registries: "*"
     labels:
       - "maintenance"
@@ -53,6 +55,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
     labels:
       - "maintenance"
       - "dependencies"

@@ -4,7 +4,6 @@ from typing import MutableMapping, Optional
 from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 from ansys.openapi.common import ApiClient
 
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()

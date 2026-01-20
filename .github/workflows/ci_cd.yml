@@ -46,7 +46,7 @@ jobs:
     name: "Check actions security"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-actions-security@21c9de9bee9692173780696d4a39964f20b9cfa3 # v10.1.5
+      - uses: ansys/actions/check-actions-security@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
         with:
           generate-summary: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -107,8 +107,8 @@ jobs:
            os: [ubuntu-latest, windows-latest]
            python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     permissions:
-      id-token: write
-      attestations: write
+      id-token: write  # Required for Sigstore
+      attestations: write  # Required to generate attestations
     steps:
       - uses: ansys/actions/build-wheelhouse@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
         with:
@@ -161,8 +161,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ doc-build, tests]
     permissions:
-      id-token: write
-      attestations: write
+      id-token: write  # Required for Sigstore
+      attestations: write  # Required to generate attestation
     steps:
       - uses: ansys/actions/build-library@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
         with:
@@ -175,9 +175,6 @@ jobs:
     needs: [ build-wheelhouse ]
     if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     uses: ./.github/workflows/server_checks.yml
-    permissions:
-      contents: read
-      actions: read
     with:
       skip-vm-management: ${{ vars.SKIP_VM_MANAGEMENT == 'true' }}
     secrets:
@@ -221,8 +218,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [server-checks]
     permissions:
-      contents: read
-      pages: write
+      pages: write  # to allow the Action to push to the gh-pages branch
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
       - uses: ansys/actions/doc-deploy-dev@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
@@ -238,8 +234,8 @@ jobs:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write  # to allow the Action to push to the repo
+      pull-requests: write  # to allow the Action to create a PR if needed
     steps:
       - uses: ansys/actions/doc-deploy-changelog@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
         with:
@@ -254,8 +250,8 @@ jobs:
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     environment: release
     permissions:
-      id-token: write
-      contents: write
+      id-token: write  # Required for trusted publisher auth to PyPI
+      contents: write  # To allow the Action to upload a release asset
     steps:
       - name: "Download the library artifacts from build-library step"
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131  # v7.0.0
@@ -282,7 +278,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pages: write
+      pages: write  # To allow the Action to push to the gh-pages branch
     needs: release
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:

@@ -2,11 +2,15 @@ name: Dependabot auto-approve
 on: pull_request
 permissions:
   {}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   dependabot:
     name: Auto-approve Dependabot PRs
     permissions:
-      pull-requests: write
+      pull-requests: write  # to approve PRs
     runs-on: ubuntu-latest
     # Checking the author will prevent your Action run failing on non-Dependabot PRs
     if: ${{ github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'pre-commit-ci[bot]' }}

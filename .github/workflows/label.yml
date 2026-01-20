@@ -31,8 +31,7 @@ jobs:
   labeler:
     name: Set labels
     permissions:
-      contents: read
-      pull-requests: write
+      pull-requests: write  # to allow the Action to add labels to PRs
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
@@ -59,16 +58,16 @@ jobs:
           - [maintenance](https://github.com/ansys/grantami-bomanalytics/pulls?q=label%3Amaintenance+)
 
   changelog-fragment:
-      name: "Create changelog fragment"
-      needs: [labeler]
-      permissions:
-        contents: write
-        pull-requests: write
-      runs-on: ubuntu-latest
-      if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') && !(startsWith(github.event.pull_request.head.ref, 'pre-commit-ci-update-config')) }}
-      steps:
-      - uses: ansys/actions/doc-changelog@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
-        with:
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
-          bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
-          bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
+    name: "Create changelog fragment"
+    needs: [labeler]
+    permissions:
+      contents: write  # to allow the Action to push to the PR branch
+      pull-requests: write  # to allow the Action to update the target PR
+    runs-on: ubuntu-latest
+    if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') && !(startsWith(github.event.pull_request.head.ref, 'pre-commit-ci-update-config')) }}
+    steps:
+    - uses: ansys/actions/doc-changelog@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
+      with:
+        token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+        bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
+        bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}

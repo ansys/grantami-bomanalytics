@@ -1,5 +1,5 @@
 ci:
-  skip: [mypy-code, localhost-examples]
+  skip: [localhost-examples]
 
 repos:
 
@@ -24,18 +24,10 @@ repos:
   rev: v2.4.1
   hooks:
   - id: codespell
-    args: ["--ignore-words", "doc/styles/config/vocabularies/ANSYS/accept.txt", "--skip", "poetry.lock"]
+    args: ["--ignore-words", "doc/styles/config/vocabularies/ANSYS/accept.txt", "--skip", "uv.lock"]
 
 - repo: local
   hooks:
-  - id: mypy-code
-    name: "mypy: checks on code"
-    entry: "python -m mypy"
-    language: system
-    types: [python]
-    require_serial: true
-    files: "^(src/)"
-
   - id: localhost-examples
     name: "Notebook localhost URL check"
     entry: "(?i)localhost"

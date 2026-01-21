@@ -89,6 +89,7 @@ jobs:
         sphinxopts: "-n -W --keep-going"
         optional-dependencies-name: ""
         group-dependencies-name: "doc"
+        use-uv: "true"
 
     - name: "Delete unneeded doc artifact"
       if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
@@ -140,7 +141,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: "Test with pytest and coverage"
-        run: uv run pytest ./tests -m "not integration"
+        run: |
+          uv run --with doc pytest ./tests -m "not integration"
 
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de  # v5.5.2

@@ -10,8 +10,12 @@ name = "ansys-grantami-bomanalytics"
 description = "Perform compliance and sustainability analysis on materials data stored in Granta MI."
 version = "2.4.0.dev0"
 license = "MIT"
-authors = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
-maintainers = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
+authors = [
+    {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}
+]
+maintainers = [
+    {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}
+]
 repository = "https://github.com/ansys/grantami-bomanalytics"
 documentation = "https://bomanalytics.grantami.docs.pyansys.com"
 readme = "README.rst"

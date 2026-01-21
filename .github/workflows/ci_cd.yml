@@ -139,10 +139,12 @@ jobs:
         uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867  # zizmor: ignore[cache-poisoning] - This job does not produce artifacts used by release
         with:
           python-version: ${{ matrix.python-version }}
+          activate-environment: 'true'
 
       - name: "Test with pytest and coverage"
         run: |
-          uv run --with doc pytest ./tests -m "not integration"
+          uv sync --frozen --group doc --group dev
+          pytest ./tests -m "not integration"
 
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de  # v5.5.2

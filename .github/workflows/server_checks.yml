@@ -157,13 +157,12 @@ jobs:
         uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867  # v7.1.6
         with:
           python-version: ${{ inputs.python-version }}
-
-      - name: "Install Python dependencies"
-        run: |
-          pip install poetry 'tox<4' --disable-pip-version-check
+          activate-environment: 'true'
 
       - name: "Test with pytest (integration tests only)"
-        run: uv run pytest ./tests -m "integration"
+        run: |
+          uv sync --frozen --group doc --group dev
+          uv run pytest ./tests -m "integration"
         env:
           TEST_SL_URL: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}

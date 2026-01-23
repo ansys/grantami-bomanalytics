@@ -144,7 +144,7 @@ jobs:
       - name: "Test with pytest and coverage"
         run: |
           uv sync --frozen --group doc --group dev
-          pytest ./tests -m "not integration"
+          uv run pytest ./tests -m "not integration"
 
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de  # v5.5.2

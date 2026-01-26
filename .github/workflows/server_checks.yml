@@ -190,7 +190,7 @@ jobs:
       - name: "Run Ansys documentation building action"
         uses: ansys/actions/doc-build@41f86da4c9ead510db9135e428e33df9cc6f92e1  # v10.2.3
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_DEV_URL}}
+          TEST_SL_URL: ${{secrets.TEST_SERVER_26R1_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
           BUILD_EXAMPLES: "true"

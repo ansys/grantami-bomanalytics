@@ -29,6 +29,8 @@ on:
       # Test server names
       AZURE_VM_NAME_DEV:
         required: true
+      AZURE_VM_NAME_26R1:
+        required: true
       AZURE_VM_NAME_25R2:
         required: true
       AZURE_VM_NAME_25R1:
@@ -40,6 +42,8 @@ on:
 
       # Test server URLs
       TEST_SERVER_DEV_URL:
+        required: true
+      TEST_SERVER_26R1_URL:
         required: true
       TEST_SERVER_25R2_URL:
         required: true
@@ -87,6 +91,8 @@ jobs:
         server:
           - name: "AZURE_VM_NAME_DEV"
             url: "TEST_SERVER_DEV_URL"
+          - name: "AZURE_VM_NAME_26R1"
+            url: "TEST_SERVER_26R1_URL"
           - name: "AZURE_VM_NAME_25R2"
             url: "TEST_SERVER_25R2_URL"
           - name: "AZURE_VM_NAME_25R1"
@@ -145,6 +151,7 @@ jobs:
           - "windows-latest"
         server:
           - "TEST_SERVER_DEV_URL"
+          - "TEST_SERVER_26R1_URL"
           - "TEST_SERVER_25R2_URL"
           - "TEST_SERVER_25R1_URL"
           - "TEST_SERVER_24R2_URL"
@@ -222,6 +229,7 @@ jobs:
       matrix:
         server:
           - "AZURE_VM_NAME_DEV"
+          - "AZURE_VM_NAME_26R1"
           - "AZURE_VM_NAME_25R2"
           - "AZURE_VM_NAME_25R1"
           - "AZURE_VM_NAME_24R2"

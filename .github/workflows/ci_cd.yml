@@ -187,12 +187,14 @@ jobs:
       AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
       # Test server names
       AZURE_VM_NAME_DEV: ${{ secrets.AZURE_VM_NAME_DEV }}
+      AZURE_VM_NAME_26R1: ${{ secrets.AZURE_VM_NAME_26R1 }}
       AZURE_VM_NAME_25R2: ${{ secrets.AZURE_VM_NAME_25R2 }}
       AZURE_VM_NAME_25R1: ${{ secrets.AZURE_VM_NAME_25R1 }}
       AZURE_VM_NAME_24R2: ${{ secrets.AZURE_VM_NAME_24R2 }}
       AZURE_VM_NAME_24R1: ${{ secrets.AZURE_VM_NAME_24R1 }}
       # Test server URLs
       TEST_SERVER_DEV_URL: ${{ secrets.TEST_SERVER_DEV_URL }}
+      TEST_SERVER_26R1_URL: ${{ secrets.TEST_SERVER_26R1_URL }}
       TEST_SERVER_25R2_URL: ${{ secrets.TEST_SERVER_25R2_URL }}
       TEST_SERVER_25R1_URL: ${{ secrets.TEST_SERVER_25R1_URL }}
       TEST_SERVER_24R2_URL: ${{ secrets.TEST_SERVER_24R2_URL }}

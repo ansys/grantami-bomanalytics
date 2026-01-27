@@ -28,7 +28,7 @@ jobs:
     name: "Check library vulnerabilities"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@c60639b6b73707ec9c1926f36bacc4db62b5671d  # v10.2.3
+      - uses: ansys/actions/check-vulnerabilities@fix/upload-artifacts
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

@@ -15,3 +15,5 @@ THIRDPARTY
 autologon
 XML
 Granta Base Types
+uv
+pytest

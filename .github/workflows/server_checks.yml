@@ -111,18 +111,14 @@ jobs:
             az login --service-principal -u ${APP_ID} -p ${SECRET} --tenant ${TENANT_ID}
             az vm start -g ${RESOURCE_GROUP} -n ${SERVER_NAME}
 
-      - name: "Set up Python ${{ inputs.python-version }}"
-        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548  # v6.1.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867  # v7.1.6
         with:
           python-version: ${{ inputs.python-version }}
 
       - name: "Check if server is ready"
         run: |
-          python -m venv ./venv
-          source ./venv/bin/activate
-          pip install requests --disable-pip-version-check
-          pip freeze
-          python ./cicd/check_server.py
+          uv run ./cicd/check_server.py
         env:
           TEST_SL_URL: ${{ secrets[matrix.server.url] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
@@ -153,17 +149,16 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: "Set up Python ${{ inputs.python-version }}"
-        uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548  # v6.1.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867  # v7.1.6
         with:
           python-version: ${{ inputs.python-version }}
+          activate-environment: 'true'
 
-      - name: "Install Python dependencies"
+      - name: "Test with pytest (integration tests only)"
         run: |
-          pip install poetry 'tox<4' --disable-pip-version-check
-
-      - name: "Test with tox (integration tests only)"
-        run: tox -e tests -- -m "integration"
+          uv sync --frozen --group doc --group dev
+          uv run pytest ./tests -m "integration"
         env:
           TEST_SL_URL: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}
@@ -199,7 +194,7 @@ jobs:
           dependencies: "pandoc"
           sphinxopts: "-n -W --keep-going"
           optional-dependencies-name: ""
-          group-dependencies-name: "doc"
+          group-dependencies-name: "doc,dev"
 
   check-workflow-runs:
     name: Check if there are active workflow runs

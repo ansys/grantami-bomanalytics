@@ -35,7 +35,6 @@ jobs:
           python-package-name: ${{ env.LIBRARY_NAME }}
           dev-mode: ${{ github.ref != 'refs/heads/main' }}
           use-uv: false
-          upload-reports: true
     permissions:
       contents: read
 

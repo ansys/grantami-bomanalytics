@@ -15,8 +15,8 @@ The following contribution information is specific to PyGranta BoM Analytics.
 Developer environment setup
 ===========================
 
-PyGranta BoM Analytics uses `Poetry`_ for packaging and dependency management. Installation
-information is available in the Poetry documentation.
+PyGranta BoM Analytics uses `uv`_ for packaging and dependency management. Installation
+information is available in the `uv` documentation.
 
 Installing PyGranta BoM Analytics in developer mode allows you to modify and enhance
 the source.
@@ -33,7 +33,7 @@ build the documentation, and build the package.
 
     git clone https://github.com/ansys/grantami-bomanalytics
     cd grantami-bomanalytics
-    poetry install --with doc
+    uv sync --group doc
 
 Additional tools
 -----------------
@@ -48,26 +48,24 @@ encouraged to install this tool with this command:
 
 .. code:: bash
 
-    python -m pip install pre-commit && pre-commit install
+    uv tool install pre-commit && pre-commit install
 
 
-.. _ref_tox:
+.. _ref_tests:
 
-Tox
-~~~
-Tests can be run using `tox`_. The project defines the tox environments in the ``tox.ini``
-file. One tox environment is provided:
+Running tests
+~~~~~~~~~~~~~
+Tests can be run using pytest which is installed as part of the development dependencies. To run the all the tests,
+use the following command:
 
-.. vale off
+.. code:: bash
 
-- ``tox -e tests``: Runs all tests and checks code coverage. (For requirements, see :ref:`ref_serveraccess`.)
-
-.. vale on
+    uv run pytest ./tests
 
 Optionally, add the ``-- -m "not integration"`` suffix to the preceding command to skip integration
 tests. For example, this command only runs tests that do not require a Granta MI instance::
 
-     tox -e tests -- -m "not integration"
+     uv run pytest ./tests -- -m "not integration"
 
 
 .. _ref_serveraccess:
@@ -79,7 +77,7 @@ As indicated in :ref:`ref_software_requirements`, running integration tests and 
 requires access to a valid Granta MI instance.
 
 External contributors may not have an instance of Granta MI at their disposal. Prior to creating a
-pull request with the desired changes, they should make sure that unit tests pass (:ref:`ref_tox`),
+pull request with the desired changes, they should make sure that unit tests pass (:ref:`ref_tests`),
 static code validation and styling pass (:ref:`pre-commit <ref_precommit>`), and
 documentation can be generated successfully without the examples
 (:ref:`Documenting <ref_documenting>`).
@@ -154,9 +152,8 @@ If you have general questions about the PyAnsys ecosystem, email `pyansys.core@a
 If your question is specific to PyGranta BoM Analytics, ask your question in an issue as described in
 the previous paragraph.
 
-.. _Poetry: https://python-poetry.org/
 .. _pre-commit: https://pre-commit.com/
-.. _tox: https://tox.wiki/
+.. _uv: https://docs.astral.sh/uv/
 .. _Sphinx: https://www.sphinx-doc.org/en/master/
 .. _jupytext: https://jupytext.readthedocs.io/en/latest/
 .. _nb-convert: https://nbconvert.readthedocs.io/en/latest/

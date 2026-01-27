@@ -95,13 +95,13 @@ Alternatively, to install the latest development version from the
     pip install git+https://github.com/ansys/grantami-bomanalytics.git
 
 
-To install a local *development* version with Git and Poetry, run these commands:
+To install a local *development* version with Git and uv, run these commands:
 
 .. code::
 
     git clone https://github.com/ansys/grantami-bomanalytics
     cd grantami-bomanalytics
-    poetry install
+    uv sync
 
 
 The preceding commands install the package in development mode so that you can modify

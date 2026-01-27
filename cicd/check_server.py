@@ -1,3 +1,9 @@
+#
+# /// script
+# dependencies = ["requests"]
+# ///
+
+
 from functools import wraps
 import json
 import logging

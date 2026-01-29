@@ -58,12 +58,16 @@ jobs:
   code-style:
     name: "Code style"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: ansys/actions/code-style@36cd86710c966963f4dcec56a9670171618cf76a  # v10.2.4
         with:
           skip-install: false
-    permissions:
-      contents: read
+
+      - name: Type check library
+        run:
+          uv run --frozen mypy ./src
 
   doc-style:
     name: "Documentation style"
@@ -143,8 +147,7 @@ jobs:
 
       - name: "Test with pytest and coverage"
         run: |
-          uv sync --frozen --group doc --group dev
-          uv run pytest ./tests -m "not integration"
+          uv run --frozen --group doc pytest ./tests -m "not integration"
 
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de  # v5.5.2

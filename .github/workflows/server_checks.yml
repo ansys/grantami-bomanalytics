@@ -157,8 +157,7 @@ jobs:
 
       - name: "Test with pytest (integration tests only)"
         run: |
-          uv sync --frozen --group doc --group dev
-          uv run pytest ./tests -m "integration"
+          uv run --frozen --group doc pytest ./tests -m "integration"
         env:
           TEST_SL_URL: ${{ secrets[matrix.server] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}

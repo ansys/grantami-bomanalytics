@@ -1,0 +1,1014 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Create an XML BoM using Python &#8212; PyGranta BoM Analytics 2.4.0rc0</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dataframe.css?v=1a040689" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=0cdd7a96"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/6_BoMs/6-1_Creating_an_XML_BoM';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://bomanalytics.grantami.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.4';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script src="../../_static/js/add_blank.js?v=f2ece54a"></script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Create an XML BoM from a JSON data source" href="6-2_Creating_an_XML_BoM_from_JSON.html" />
+    <link rel="prev" title="BoM examples" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.4.0rc0" />
+  <link rel="canonical" href="https://bomanalytics.grantami.docs.pyansys.com/version/stable/examples/6_BoMs/6-1_Creating_an_XML_BoM.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyGranta BoM Analytics 2.4.0rc0 - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyGranta BoM Analytics 2.4.0rc0 - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyGranta BoM Analytics 2.4.0rc0 home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyGranta BoM Analytics 2.4.0rc0 home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../0_Basic_usage.html">Basic usage example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1_Database-specific_configuration.html">Database-specific configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2_Impacted_Substances_Queries/index.html">Impacted substances examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../3_Compliance_Queries/index.html">Compliance examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../4_Sustainability/index.html">Sustainability examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../5_Sustainability_summary/index.html">Sustainability summary examples</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">BoM examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Create an XML BoM using Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6-2_Creating_an_XML_BoM_from_JSON.html">Create an XML BoM from a JSON data source</a></li>
+<li class="toctree-l2"><a class="reference internal" href="6-3_Creating_an_XML_BoM_from_CSV.html">Create an XML BoM from a CSV data source</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+       
+    <li class="breadcrumb-item">
+      <a href="https://grantami.docs.pyansys.com/" class="nav-link">PyGranta</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">BoM examples</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Create an XML BoM using Python</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <p>Download this example as a <a class="reference download internal" download="" href="../../_downloads/1cdca7ea644b3cd320be34000bacce7f/6-1_Creating_an_XML_BoM.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Jupyter</span> <span class="pre">notebook</span></code></a> or a
+<a class="reference download internal" download="" href="../../_downloads/bb7120fb76c5561454928c34db2f8024/6-1_Creating_an_XML_BoM.py"><code class="xref download docutils literal notranslate"><span class="pre">Python</span> <span class="pre">script</span></code></a>.</p>
+<hr class="docutils" />
+<section id="Create-an-XML-BoM-using-Python">
+<h1>Create an XML BoM using Python<a class="headerlink" href="#Create-an-XML-BoM-using-Python" title="Link to this heading">#</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">bom_types</span></code> namespace can be used in conjunction with the <code class="docutils literal notranslate"><span class="pre">BoMHandler</span></code> class to create and manipulate BoMs for analysis. This example demonstrates creating a BoM for a laminated glass door and then uses the BoM as the input to a compliance query.</p>
+<p>The door contains two hinges and a handle, both fixed to the frame with machine screws and washers, the door glass is coated with a partially reflective polymer film.</p>
+<p>Most Granta MI deployments will use the default database key and table names:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">DB_KEY</span> <span class="o">=</span> <span class="s2">&quot;MI_Restricted_Substances&quot;</span>
+<span class="n">TABLE_NAME</span> <span class="o">=</span> <span class="s2">&quot;MaterialUniverse&quot;</span>
+</pre></div>
+</div>
+</div>
+<section id="Create-the-Bill-of-Materials-as-Python-objects">
+<h2>Create the Bill of Materials as Python objects<a class="headerlink" href="#Create-the-Bill-of-Materials-as-Python-objects" title="Link to this heading">#</a></h2>
+<p>The structure of an XML BoM is hierarchical, individual parts belong to assemblies which can belong to larger assemblies. It is possible to construct the BoM in one statement, but this example uses the recommended approach of building each part up from objects that represent smaller sub-assemblies.</p>
+<p>It is possible to have the same part in multiple places in the BoM, so we define two helper functions to create a copy of a part and set the quantity.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.grantami.bomanalytics.bom_types.eco2412</span><span class="w"> </span><span class="kn">import</span> <span class="n">BillOfMaterials</span><span class="p">,</span> <span class="n">Material</span><span class="p">,</span> <span class="n">Part</span><span class="p">,</span> <span class="n">UnittedValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.grantami.bomanalytics.bom_types.gbt1205</span><span class="w"> </span><span class="kn">import</span> <span class="n">MIRecordReference</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">child</span><span class="p">:</span> <span class="n">Part</span><span class="p">,</span> <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Part</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">add_part_to_assembly_with_quantity</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">count</span><span class="p">),</span> <span class="s2">&quot;Each&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">add_part_to_assembly_with_quantity</span><span class="p">(</span><span class="n">child</span><span class="p">:</span> <span class="n">Part</span><span class="p">,</span> <span class="n">quantity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Part</span><span class="p">:</span>
+    <span class="n">assigned_part</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+    <span class="n">assigned_part</span><span class="o">.</span><span class="n">quantity</span> <span class="o">=</span> <span class="n">UnittedValue</span><span class="p">(</span><span class="n">quantity</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">assigned_part</span>
+</pre></div>
+</div>
+</div>
+<p>Material references define abstract references to Granta MI records, and so can be reused. Material references can be defined in different ways.</p>
+<p>The following references are created using different types of GUID. Record GUIDs identify a specific version of the record, while Record History GUIDs identify the latest accessible version of the record.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">laminated_glass_reference</span> <span class="o">=</span> <span class="n">MIRecordReference</span><span class="p">(</span><span class="n">db_key</span><span class="o">=</span><span class="n">DB_KEY</span><span class="p">,</span> <span class="n">record_guid</span><span class="o">=</span><span class="s2">&quot;85ed8b21-c2e6-4c43-8ec3-4c12a44c820c&quot;</span><span class="p">)</span>
+<span class="n">hardened_stainless_reference</span> <span class="o">=</span> <span class="n">MIRecordReference</span><span class="p">(</span><span class="n">db_key</span><span class="o">=</span><span class="n">DB_KEY</span><span class="p">,</span> <span class="n">record_guid</span><span class="o">=</span><span class="s2">&quot;fcc49a93-6b92-4751-9b85-f00b7769190d&quot;</span><span class="p">)</span>
+<span class="n">nylon_pa6_reference</span> <span class="o">=</span> <span class="n">MIRecordReference</span><span class="p">(</span><span class="n">db_key</span><span class="o">=</span><span class="n">DB_KEY</span><span class="p">,</span> <span class="n">record_history_guid</span><span class="o">=</span><span class="s2">&quot;1c7884dd-80ed-4661-89d6-4b6e56a08ed7&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Some databases also have unique identifiers for materials. If these are Short Text attributes they can be used as lookup values, for example in MaterialUniverse we can use the “Material ID” attribute.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.grantami.bomanalytics.bom_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttributeReferenceBuilder</span>
+
+<span class="n">material_id_reference</span> <span class="o">=</span> <span class="p">(</span><span class="n">AttributeReferenceBuilder</span><span class="p">(</span><span class="n">DB_KEY</span><span class="p">)</span>
+                         <span class="o">.</span><span class="n">with_attribute_name</span><span class="p">(</span><span class="s2">&quot;Material ID&quot;</span><span class="p">)</span>
+                         <span class="o">.</span><span class="n">with_table_name</span><span class="p">(</span><span class="n">TABLE_NAME</span><span class="p">)</span>
+                         <span class="o">.</span><span class="n">build</span><span class="p">())</span>
+
+<span class="n">pet_film_reference</span> <span class="o">=</span> <span class="n">MIRecordReference</span><span class="p">(</span>
+    <span class="n">db_key</span><span class="o">=</span><span class="n">DB_KEY</span><span class="p">,</span>
+    <span class="n">lookup_attribute_reference</span><span class="o">=</span><span class="n">material_id_reference</span><span class="p">,</span>
+    <span class="n">lookup_value</span><span class="o">=</span><span class="s2">&quot;plastic-pet&quot;</span>
+<span class="p">)</span>
+<span class="n">annealed_stainless_reference</span> <span class="o">=</span> <span class="n">MIRecordReference</span><span class="p">(</span>
+    <span class="n">db_key</span><span class="o">=</span><span class="n">DB_KEY</span><span class="p">,</span>
+    <span class="n">lookup_attribute_reference</span><span class="o">=</span><span class="n">material_id_reference</span><span class="p">,</span>
+    <span class="n">lookup_value</span><span class="o">=</span><span class="s2">&quot;stainless-304-annealed&quot;</span>
+<span class="p">)</span>
+<span class="n">aluminium_319_reference</span> <span class="o">=</span> <span class="n">MIRecordReference</span><span class="p">(</span>
+    <span class="n">db_key</span><span class="o">=</span><span class="n">DB_KEY</span><span class="p">,</span>
+    <span class="n">lookup_attribute_reference</span><span class="o">=</span><span class="n">material_id_reference</span><span class="p">,</span>
+    <span class="n">lookup_value</span><span class="o">=</span><span class="s2">&quot;aluminum-319-0-moldcast-t6&quot;</span>
+<span class="p">)</span>
+<span class="n">steel_1015_reference</span> <span class="o">=</span> <span class="n">MIRecordReference</span><span class="p">(</span>
+    <span class="n">db_key</span><span class="o">=</span><span class="n">DB_KEY</span><span class="p">,</span>
+    <span class="n">lookup_attribute_reference</span><span class="o">=</span><span class="n">material_id_reference</span><span class="p">,</span>
+    <span class="n">lookup_value</span><span class="o">=</span><span class="s2">&quot;steel-1015-normalized&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Nylon washers exist in multiple parts, so define these first. The part number has no effect on the analysis and simply identifies each part in the result.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">washer_part</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;N0403.12N.2&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">2.</span><span class="p">,</span> <span class="s2">&quot;g/Part&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">nylon_pa6_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Start with sub-assemblies and assemble the BoM. The hinge assembly consists of two casting parts, four washers, and two machine screws</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">hinge_casting_a</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;HA-42-Al(A)&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">146.</span><span class="p">,</span> <span class="s2">&quot;g/Part&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">aluminium_319_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">hinge_casting_b</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;HA-42-Al(B)&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">220.</span><span class="p">,</span> <span class="s2">&quot;g/Part&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">aluminium_319_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">machine_screw_part</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;DIN-7991-M8-20&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">8.6</span><span class="p">,</span> <span class="s2">&quot;g/Part&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">hardened_stainless_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">hinge_assembly</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;HA-42-Al&quot;</span><span class="p">,</span>
+    <span class="n">components</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">hinge_casting_a</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">hinge_casting_b</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">washer_part</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">machine_screw_part</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The handle assembly consists of two stainless steel handles, two mild steel pins, four nylon washers and a pair of grub screws. The pin screws into part B and is retained in part A with a grub screw.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">handle_part_a</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;H-S-BR-A&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">472.</span><span class="p">,</span> <span class="s2">&quot;g/Part&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">annealed_stainless_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">handle_part_b</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;H-S-BR-B&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">464.</span><span class="p">,</span> <span class="s2">&quot;g/Part&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">annealed_stainless_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">handle_pin_part</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;H-PIN-12&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">46.5</span><span class="p">,</span> <span class="s2">&quot;g/Part&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">steel_1015_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">handle_grub_screw_part</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;SSF-M4-6-A2&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">1.3</span><span class="p">,</span> <span class="s2">&quot;g/Part&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">hardened_stainless_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">handle_assembly</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;H-S-BR-Dual&quot;</span><span class="p">,</span>
+    <span class="n">components</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">handle_part_a</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">handle_part_b</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">handle_pin_part</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">washer_part</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">handle_grub_screw_part</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The glass panel consists of a laminated glass door and a layer of PET solar control film.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">glass_panel</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;321-51&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">19.6</span><span class="p">,</span> <span class="s2">&quot;kg/m^2&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">laminated_glass_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)])</span>
+
+<span class="n">solar_control_film</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;7000001298&quot;</span><span class="p">,</span>
+    <span class="n">mass_per_unit_of_measure</span><span class="o">=</span><span class="n">UnittedValue</span><span class="p">(</span><span class="mf">340.</span><span class="p">,</span> <span class="s2">&quot;g/m^2&quot;</span><span class="p">),</span>
+    <span class="n">materials</span><span class="o">=</span><span class="p">[</span><span class="n">Material</span><span class="p">(</span><span class="n">mi_material_reference</span><span class="o">=</span><span class="n">pet_film_reference</span><span class="p">,</span> <span class="n">percentage</span><span class="o">=</span><span class="mf">100.</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">panel_assembly</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;P-30-L&quot;</span><span class="p">,</span>
+    <span class="n">components</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">add_part_to_assembly_with_quantity</span><span class="p">(</span><span class="n">glass_panel</span><span class="p">,</span> <span class="mf">1.51</span><span class="p">,</span> <span class="s2">&quot;m^2&quot;</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_quantity</span><span class="p">(</span><span class="n">solar_control_film</span><span class="p">,</span> <span class="mf">1.51</span><span class="p">,</span> <span class="s2">&quot;m^2&quot;</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The whole door assembly is then a combination of two hinges, one handle assembly and one door panel.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">door_assembly</span> <span class="o">=</span> <span class="n">Part</span><span class="p">(</span>
+    <span class="n">part_number</span><span class="o">=</span><span class="s2">&quot;24X6-30&quot;</span><span class="p">,</span>
+    <span class="n">components</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">hinge_assembly</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">handle_assembly</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">add_part_to_assembly_with_count</span><span class="p">(</span><span class="n">panel_assembly</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Serialize-the-BoM-to-XML">
+<h2>Serialize the BoM to XML<a class="headerlink" href="#Serialize-the-BoM-to-XML" title="Link to this heading">#</a></h2>
+<p>Generate a BoM from the door assembly part, and serialize the BoM to XML.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.grantami.bomanalytics</span><span class="w"> </span><span class="kn">import</span> <span class="n">BoMHandler</span>
+
+<span class="n">door_assembly_bom</span> <span class="o">=</span> <span class="n">BillOfMaterials</span><span class="p">(</span><span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="n">door_assembly</span><span class="p">])</span>
+<span class="n">bom_handler</span> <span class="o">=</span> <span class="n">BoMHandler</span><span class="p">()</span>
+
+<span class="n">rendered_bom</span> <span class="o">=</span> <span class="n">bom_handler</span><span class="o">.</span><span class="n">dump_bom</span><span class="p">(</span><span class="n">door_assembly_bom</span><span class="p">)</span>
+<span class="n">rendered_bom</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;&lt;ns0:PartsEco xmlns:ns0=&#34;http://www.grantadesign.com/24/12/BillOfMaterialsEco&#34; xmlns:ns1=&#34;http://www.grantadesign.com/12/05/GrantaBaseTypes&#34;&gt;&#39;,
+ &#39;    &lt;ns0:Components&gt;&#39;,
+ &#39;        &lt;ns0:Part&gt;&#39;,
+ &#39;            &lt;ns0:PartNumber&gt;24X6-30&lt;/ns0:PartNumber&gt;&#39;,
+ &#39;            &lt;ns0:Components&gt;&#39;,
+ &#39;                &lt;ns0:Part&gt;&#39;,
+ &#39;                    &lt;ns0:Quantity Unit=&#34;Each&#34;&gt;2.0&lt;/ns0:Quantity&gt;&#39;,
+ &#39;                    &lt;ns0:PartNumber&gt;HA-42-Al&lt;/ns0:PartNumber&gt;&#39;,
+ &#39;                    &lt;ns0:Components&gt;&#39;,
+ &#39;                        &lt;ns0:Part&gt;&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="Run-a-compliance-query">
+<h2>Run a compliance query<a class="headerlink" href="#Run-a-compliance-query" title="Link to this heading">#</a></h2>
+<p>Now that you have created an XML BoM, run a compliance query to determine whether the BoM complies with a specific legislation. First, connect to Granta MI.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.grantami.bomanalytics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span>
+
+<span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;http://my_grantami_server/mi_servicelayer&quot;</span>
+<span class="n">cxn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">server_url</span><span class="p">)</span><span class="o">.</span><span class="n">with_credentials</span><span class="p">(</span><span class="s2">&quot;user_name&quot;</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>The compliance BoM query accepts a single XML BoM as a string and one or more indicators. In this case we perform a query against the SIN list, using the RoHS indicator with a threshold of 0.1%.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ansys.grantami.bomanalytics</span><span class="w"> </span><span class="kn">import</span> <span class="n">indicators</span><span class="p">,</span> <span class="n">queries</span>
+
+<span class="n">sin_list</span> <span class="o">=</span> <span class="n">indicators</span><span class="o">.</span><span class="n">WatchListIndicator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;EU REACH Candidate List&quot;</span><span class="p">,</span>
+    <span class="n">legislation_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Candidate_AnnexXV&quot;</span><span class="p">],</span>
+    <span class="n">default_threshold_percentage</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">compliance_query</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">queries</span><span class="o">.</span><span class="n">BomComplianceQuery</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">with_bom</span><span class="p">(</span><span class="n">rendered_bom</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">with_indicators</span><span class="p">([</span><span class="n">sin_list</span><span class="p">])</span>
+<span class="p">)</span>
+
+<span class="n">compliance_result</span> <span class="o">=</span> <span class="n">cxn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">compliance_query</span><span class="p">)</span>
+<span class="n">compliance_result</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;BomComplianceQueryResult: 1 PartWithCompliance results&gt;
+</pre></div></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">BomComplianceQueryResult</span></code> object returned after running the compliance query contains a list of <code class="docutils literal notranslate"><span class="pre">PartWithComplianceResult</span></code> objects. The following cell prints the compliance status of the BoM.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">root_part</span> <span class="o">=</span> <span class="n">compliance_result</span><span class="o">.</span><span class="n">compliance_by_part_and_indicator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BoM Compliance Status: </span><span class="si">{</span><span class="n">root_part</span><span class="o">.</span><span class="n">indicators</span><span class="p">[</span><span class="s1">&#39;EU REACH Candidate List&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+BoM Compliance Status: WatchListUnknown
+</pre></div></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Create-the-Bill-of-Materials-as-Python-objects">Create the Bill of Materials as Python objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Serialize-the-BoM-to-XML">Serialize the BoM to XML</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Run-a-compliance-query">Run a compliance query</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/6_BoMs/6-1_Creating_an_XML_BoM.ipynb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

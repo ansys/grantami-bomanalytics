@@ -218,7 +218,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [server-checks]
     permissions:
-      pages: write  # to allow the Action to push to the gh-pages branch
+      contents: write  # To allow the Action to push to the gh-pages branch
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
       - uses: ansys/actions/doc-deploy-dev@36cd86710c966963f4dcec56a9670171618cf76a  # v10.2.4
@@ -277,8 +277,7 @@ jobs:
     name: "Deploy stable documentation"
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      pages: write  # To allow the Action to push to the gh-pages branch
+      contents: write  # To allow the Action to push to the gh-pages branch
     needs: release
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:

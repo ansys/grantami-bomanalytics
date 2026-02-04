@@ -141,6 +141,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs: start-vm
     strategy:
+      fail-fast: false
       matrix:
         os:
           - "ubuntu-latest"

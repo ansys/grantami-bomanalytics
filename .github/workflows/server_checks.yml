@@ -122,7 +122,7 @@ jobs:
             az vm start -g ${RESOURCE_GROUP} -n ${SERVER_NAME}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b  # v7.2.0
+        uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b  # v7.3.0
         with:
           python-version: ${{ inputs.python-version }}
 
@@ -162,7 +162,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@61cb8a9741eeb8a550a1b8544337180c0fc8476b  # v7.2.0
+        uses: astral-sh/setup-uv@eac588ad8def6316056a12d4907a9d4d84ff7a3b  # v7.3.0
         with:
           python-version: ${{ inputs.python-version }}
           activate-environment: 'true'
@@ -194,7 +194,7 @@ jobs:
       contents: read
     steps:
       - name: "Run Ansys documentation building action"
-        uses: ansys/actions/doc-build@36cd86710c966963f4dcec56a9670171618cf76a  # v10.2.4
+        uses: ansys/actions/doc-build@3931ac9351b13ae11b1203c2ef6b51e5c75502ea  # v10.2.5
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_DEV_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}

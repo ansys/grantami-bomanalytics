@@ -1,0 +1,201 @@
+[
+  {
+    "type": "Product",
+    "part_identifier": "Part1[ProductAssembly]"
+  },
+  {
+    "type": "Assembly",
+    "parent_part_identifier": "Part1[ProductAssembly]",
+    "part_identifier": "Part1.1[SubAssembly]",
+    "quantity_in_parent": 1.0
+  },
+  {
+    "type": "Part",
+    "parent_part_identifier": "Part1.1[SubAssembly]",
+    "part_identifier": "Part1.1.A[LeafPart]",
+    "quantity_in_parent": 1.0,
+    "part_mass_in_kg": 0.925
+  },
+  {
+    "type": "Material",
+    "parent_part_identifier": "Part1.1.A[LeafPart]",
+    "name": "stainless-astm-cn-7ms-cast",
+    "Granta_MI_Record_GUID": "2086f56a-4f4d-4850-9891-3d6ad155d1f9"
+  },
+  {
+    "type": "MaterialFormingStep",
+    "name": "Primary processing, Casting",
+    "parent_part_identifier": "Part1.1.A[LeafPart]",
+    "Granta_MI_Record_GUID": "baa6c95b-ff0e-4811-9120-92717ee15bda"
+  },
+  {
+    "type": "MaterialProcessingStep",
+    "name": "Machining, coarse",
+    "parent_part_identifier": "Part1.1.A[LeafPart]",
+    "Granta_MI_Record_GUID": "907bda29-e800-44f6-b7ea-4eb8e7cff375",
+    "step_order": 0,
+    "mass_removed_in_kg": 0.0808
+  },
+  {
+    "type": "MaterialProcessingStep",
+    "name": "Machining, fine",
+    "parent_part_identifier": "Part1.1.A[LeafPart]",
+    "Granta_MI_Record_GUID": "03de1a28-7dd7-4354-bbd8-c839cfa00ec7",
+    "step_order": 1,
+    "mass_removed_in_kg": 0.00465
+  },
+  {
+    "type": "Part",
+    "parent_part_identifier": "Part1.1[SubAssembly]",
+    "part_identifier": "Part1.1.B[LeafPart]",
+    "quantity_in_parent": 3.0,
+    "part_mass_in_kg": 0.175
+  },
+  {
+    "type": "Material",
+    "parent_part_identifier": "Part1.1.B[LeafPart]",
+    "name": "stainless-astm-cn-7ms-cast",
+    "Granta_MI_Record_GUID": "2086f56a-4f4d-4850-9891-3d6ad155d1f9"
+  },
+  {
+    "type": "MaterialFormingStep",
+    "name": "Primary processing, Casting",
+    "parent_part_identifier": "Part1.1.B[LeafPart]",
+    "Granta_MI_Record_GUID": "baa6c95b-ff0e-4811-9120-92717ee15bda"
+  },
+  {
+    "type": "MaterialProcessingStep",
+    "name": "Machining, fine",
+    "parent_part_identifier": "Part1.1.B[LeafPart]",
+    "Granta_MI_Record_GUID": "03de1a28-7dd7-4354-bbd8-c839cfa00ec7",
+    "step_order": 0,
+    "mass_removed_in_kg": 0.0035
+  },
+  {
+    "type": "PartProcessingStep",
+    "name": "Joining and finishing, Welding, electric",
+    "parent_part_identifier": "Part1.1[SubAssembly]",
+    "Granta_MI_Record_GUID": "21941b5e-fdbc-47fe-8180-809bb42e5e0a",
+    "step_order": 0,
+    "quantity": 0.45,
+    "quantity_unit": "m"
+  },
+  {
+    "type": "Part",
+    "parent_part_identifier": "Part1[ProductAssembly]",
+    "part_identifier": "Part1.A[LeafPart]",
+    "quantity_in_parent": 1.0,
+    "part_mass_in_kg": 0.61
+  },
+  {
+    "type": "Material",
+    "parent_part_identifier": "Part1.A[LeafPart]",
+    "name": "steel-1010-annealed",
+    "Granta_MI_Record_GUID": "879f3268-e8b6-48c0-822a-40a010d12911"
+  },
+  {
+    "type": "MaterialFormingStep",
+    "name": "Primary processing, Metal extrusion, hot",
+    "parent_part_identifier": "Part1.A[LeafPart]",
+    "Granta_MI_Record_GUID": "92f90382-610a-4737-a18f-b153ea88e4ad"
+  },
+  {
+    "type": "MaterialProcessingStep",
+    "name": "Machining, fine",
+    "parent_part_identifier": "Part1.A[LeafPart]",
+    "Granta_MI_Record_GUID": "03de1a28-7dd7-4354-bbd8-c839cfa00ec7",
+    "step_order": 0,
+    "mass_removed_in_kg": 0.0305
+  },
+  {
+    "type": "Part",
+    "parent_part_identifier": "Part1[ProductAssembly]",
+    "part_identifier": "Part1.B[LeafPart]",
+    "quantity_in_parent": 2.0,
+    "part_mass_in_kg": 0.495
+  },
+  {
+    "type": "Material",
+    "parent_part_identifier": "Part1.B[LeafPart]",
+    "name": "steel-1010-annealed",
+    "Granta_MI_Record_GUID": "879f3268-e8b6-48c0-822a-40a010d12911"
+  },
+  {
+    "type": "MaterialFormingStep",
+    "name": "Primary processing, Casting",
+    "parent_part_identifier": "Part1.B[LeafPart]",
+    "Granta_MI_Record_GUID": "baa6c95b-ff0e-4811-9120-92717ee15bda"
+  },
+  {
+    "type": "MaterialProcessingStep",
+    "name": "Secondary processing, Grinding",
+    "parent_part_identifier": "Part1.B[LeafPart]",
+    "Granta_MI_Record_GUID": "9b5b1824-f11e-449e-9a3f-f6a75396ac87",
+    "step_order": 0,
+    "mass_removed_in_kg": 0.03762
+  },
+  {
+    "type": "Part",
+    "parent_part_identifier": "Part1[ProductAssembly]",
+    "part_identifier": "Part1.C[LeafPart]",
+    "quantity_in_parent": 2.0,
+    "part_mass_in_kg": 0.52
+  },
+  {
+    "type": "Material",
+    "parent_part_identifier": "Part1.C[LeafPart]",
+    "name": "steel-1010-annealed",
+    "Granta_MI_Record_GUID": "879f3268-e8b6-48c0-822a-40a010d12911"
+  },
+  {
+    "type": "MaterialFormingStep",
+    "name": "Metal extrusion, hot",
+    "parent_part_identifier": "Part1.C[LeafPart]",
+    "Granta_MI_Record_GUID": "92f90382-610a-4737-a18f-b153ea88e4ad"
+  },
+  {
+    "type": "Part",
+    "parent_part_identifier": "Part1[ProductAssembly]",
+    "part_identifier": "Part1.D[LeafPart]",
+    "quantity_in_parent": 2.0,
+    "part_mass_in_kg": 0.012
+  },
+  {
+    "type": "Material",
+    "parent_part_identifier": "Part1.D[LeafPart]",
+    "name": "beryllium-beralcast191-cast",
+    "Granta_MI_Record_GUID": "a0adc9d7-69a2-494e-b6da-d588f86cc5ab"
+  },
+  {
+    "type": "MaterialFormingStep",
+    "name": "Metal extrusion, hot",
+    "parent_part_identifier": "Part1.D[LeafPart]",
+    "Granta_MI_Record_GUID": "92f90382-610a-4737-a18f-b153ea88e4ad"
+  },
+  {
+    "type": "MaterialProcessingStep",
+    "name": "Machining, fine",
+    "parent_part_identifier": "Part1.D[LeafPart]",
+    "Granta_MI_Record_GUID": "03de1a28-7dd7-4354-bbd8-c839cfa00ec7",
+    "step_order": 0,
+    "mass_removed_in_kg": 0.0015
+  },
+  {
+    "type": "Transport",
+    "name": "Port to airport by truck",
+    "Granta_MI_Record_GUID": "8d37ee4c-41ca-4cb5-9e8e-264646fcafa8",
+    "distance_in_km": 350.0
+  },
+  {
+    "type": "Transport",
+    "name": "Country 1 to country 2 by air",
+    "Granta_MI_Record_GUID": "546b90cb-1f8e-423c-a284-a25f731a13e5",
+    "distance_in_km": 1500.0
+  },
+  {
+    "type": "Transport",
+    "name": "Airport to distributor by truck",
+    "Granta_MI_Record_GUID": "8d37ee4c-41ca-4cb5-9e8e-264646fcafa8",
+    "distance_in_km": 125.0
+  }
+]

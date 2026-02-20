@@ -1,0 +1,27 @@
+[
+  {
+    "name": "dev",
+    "version": "dev",
+    "url": "https://bomanalytics.grantami.docs.pyansys.com/version/dev/"
+  },
+  {
+    "name": "2.4.0rc0",
+    "version": "2.4.0rc0",
+    "url": "https://bomanalytics.grantami.docs.pyansys.com/version/2.4.0rc0/"
+  },
+  {
+    "name": "2.3 (stable)",
+    "version": "2.3",
+    "url": "https://bomanalytics.grantami.docs.pyansys.com/version/stable/"
+  },
+  {
+    "name": "2.2",
+    "version": "2.2",
+    "url": "https://bomanalytics.grantami.docs.pyansys.com/version/2.2/"
+  },
+  {
+    "name": "Older version",
+    "version": "N/A",
+    "url": "https://bomanalytics.grantami.docs.pyansys.com/version/"
+  }
+]

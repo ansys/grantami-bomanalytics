@@ -1,0 +1,1027 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Release notes &#8212; PyGranta BoM Analytics 2.4.0rc0</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/css/dataframe.css?v=1a040689" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="_static/documentation_options.js?v=0cdd7a96"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=49e1bf35"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'changelog';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://bomanalytics.grantami.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.4';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script src="_static/js/add_blank.js?v=f2ece54a"></script>
+    <link rel="icon" href="_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Contribute" href="contributing.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="2.4.0rc0" />
+  <link rel="canonical" href="https://bomanalytics.grantami.docs.pyansys.com/version/stable/changelog.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyGranta BoM Analytics 2.4.0rc0 - Home"/>
+    <img src="_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyGranta BoM Analytics 2.4.0rc0 - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="index.html" title="PyGranta BoM Analytics 2.4.0rc0 home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" current active">
+  <a class="nav-link dropdown-item nav-internal" href="#">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="index.html" title="PyGranta BoM Analytics 2.4.0rc0 home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"></div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+       
+    <li class="breadcrumb-item">
+      <a href="https://grantami.docs.pyansys.com/" class="nav-link">PyGranta</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Release notes</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="release-notes">
+<span id="ref-release-notes"></span><h1>Release notes<a class="headerlink" href="#release-notes" title="Link to this heading">#</a></h1>
+<p>This document contains the release notes for the project.</p>
+<p>See <a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/blob/main/CHANGELOG.md">CHANGELOG.md</a> for release notes for v2.2.0 and earlier.</p>
+<section id="rc0-december-30-2025">
+<h2><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.4.0rc0">2.4.0rc0</a> - December 30, 2025<a class="headerlink" href="#rc0-december-30-2025" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Added</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Add a plot to test examples</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/816">#816</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Add support for Eco 25/05 XML format</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/869">#869</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Add database_key and equivalent_references to record reference-based objects</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/874">#874</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Dependencies</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Update tornado to v6.5</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/796">#796</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Use defusedxml for parsing boms</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/843">#843</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Upgrade plotly, add default renderer</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/865">#865</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Miscellaneous</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Enable vulnerability and code quality scanning</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/834">#834</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Update lock file</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/836">#836</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Add security.md file</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/837">#837</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Raise assertionerrors explicitly</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/844">#844</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Chore: update changelog for v2.3.0</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/849">#849</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Docs: update <code class="docutils literal notranslate"><span class="pre">contributors.md</span></code> with the latest contributors</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/854">#854</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Chore: update changelog for v2.3.1</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/860">#860</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Fully qualify all XML references in bom_types modules</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/868">#868</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Re-work allowed_types module to support multiple arguments</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/873">#873</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Update test database creation scripts</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/875">#875</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Handle trailing slash on test server URL during test VM warmup</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/882">#882</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Fix custom Locations table name</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/884">#884</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Convert warnings to errors during tests</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/891">#891</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Add missing dev dependencies to appropriate dependabot group</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/897">#897</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Update tests and database preparation scripts for 2026 R1</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/913">#913</a></p></td>
+</tr>
+<tr class="row-even"><td><p>CHORE:   Update missing or outdated files</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/919">#919</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Chore: Update missing or outdated files</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/930">#930</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Fix failing integration tests after 2026 R1 update</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/935">#935</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Add support for python 3.14</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/940">#940</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Upgrade ansys-grantami-bomanalytics-openapi to 5.0.0 release</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/949">#949</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Prepare 2.4.0rc0 release</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/950">#950</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Maintenance</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Bump version to 2.4.0.dev0</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/791">#791</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Add 2025 R2 stable test VM</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/792">#792</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Fix version number on main branch</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/810">#810</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="july-29-2025">
+<h2><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.3.1">2.3.1</a> - July 29, 2025<a class="headerlink" href="#july-29-2025" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+Miscellaneous</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Update changelog with link to stable docs</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/850">#850</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Refer to the documentation on ansys help that relates to the 2025 r2 release</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/855">#855</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Prepare 2.3.1 release</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/859">#859</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="july-10-2025">
+<h2><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.3.0">2.3.0</a> - July 10, 2025<a class="headerlink" href="#july-10-2025" title="Link to this heading">#</a></h2>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+Added</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Support 24/12 Eco BoM</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/693">#693</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Optionally raise exceptions if a BoM can’t be fully deserialized</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/702">#702</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Test on multiple servers</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/710">#710</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Feat/support v2 api</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/713">#713</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Add part and process-level transport information to BoM Sustainability responses</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/719">#719</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Add transport groupings by part and by category to sustainability summary results</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/724">#724</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Improve documentation of Enum classes</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/726">#726</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Re-organize test BoMs and payloads</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/727">#727</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Add ImplactedSubstance and Compliance integration tests for 24/12 BoMs</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/735">#735</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-6" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-6">
+Fixed</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Mark failing tests as xfail</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/718">#718</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Add reprs for new result classes</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/730">#730</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-7" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-7">
+Dependencies</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Migrate to BoM Analytics Services V2</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/714">#714</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Update jinja2 to 3.1.6</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/740">#740</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Update ansys-openapi-common to 2.2.2</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/741">#741</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Update bomanalytics-openapi to 4.0.0.dev165</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/751">#751</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Update bomanalytics-openapi to v4.0.0rc1</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/781">#781</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Update bomanalytics-openapi to 4.0.0rc4</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/786">#786</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Update bomanalytics-openapi dependency to 4.0.0 stable release</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/787">#787</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Remove private PyPI references</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/788">#788</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Prepare 2.3.0rc0 release</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/820">#820</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-8" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-8">
+Miscellaneous</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Prepare 2.3.0 release</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/848">#848</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-9" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-9">
+Documentation</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>Move bom types to submodule</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/703">#703</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Pin plotly to &lt;6 to avoid bug during documentation build</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/723">#723</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Update examples to include transport results</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/728">#728</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Documentation review</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/738">#738</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Improve documentation for Granta MI reports bundle version support</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/779">#779</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Add references to 24/12 BoM format in API documentation</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/780">#780</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Include changelog in documentation</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/795">#795</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Add an example of creating a BoM from Python classes directly</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/800">#800</a>, <a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/818">#818</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Sankey diagram example</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/803">#803</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Address example notebook formatting issues</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/805">#805</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Re-organize examples to improve grouping and readability</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/817">#817</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Add an example of creating a bom from a csv file</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/819">#819</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-10" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-10">
+Maintenance</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<tbody>
+<tr class="row-odd"><td><p>chore: update CHANGELOG for v2.2.0</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/673">#673</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Update License Date in Headers</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/681">#681</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Add a call to BoM Analytics Services during VM start</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/706">#706</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Warm up databases</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/708">#708</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Run server_check.yml workflow for dependabot PRs</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/717">#717</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Fix Dependabot Configuration for Private PyPI</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/742">#742</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Allow dependabot server checks to run in parallel</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/748">#748</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Move Integration Test check to top-level workflow</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/749">#749</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>docs: Update <code class="docutils literal notranslate"><span class="pre">CONTRIBUTORS.md</span></code> with the latest contributors</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/754">#754</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Update database preparation scripts</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/771">#771</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Use PyPI-authored publish action</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/772">#772</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Generate provenance attestations</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/773">#773</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Bump version to 2.3</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/776">#776</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Use git SHA to pin action version</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/785">#785</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Move release branch to use release VM</p></td>
+<td><p><a class="reference external" href="https://github.com/ansys/grantami-bomanalytics/pull/790">#790</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rc0-december-30-2025">2.4.0rc0 - December 30, 2025</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#july-29-2025">2.3.1 - July 29, 2025</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#july-10-2025">2.3.0 - July 10, 2025</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="_sources/changelog.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "_static/search.json";
+const ADVANCE_SEARCH_PATH = "search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

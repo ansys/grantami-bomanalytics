@@ -1,0 +1,228 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "40473fda",
+   "metadata": {},
+   "source": [
+    "# Perform an impacted substances query on materials in an external database"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0205bee6",
+   "metadata": {},
+   "source": [
+    "> Added in version 2.4. Requires MI Restricted Substances and Sustainability Reports 2026 R1 or later."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "08647daf",
+   "metadata": {},
+   "source": [
+    "Material records stored in other Granta MI databases can be included in impacted substances queries by providing the\n",
+    "``external_database_key`` argument to methods such as ``.with_record_history_guids()`` or ``.with_material_ids()``.\n",
+    "This feature also works for compliance and sustainability queries. For more information, including pre-requisites, see\n",
+    "the [Using external records in analysis](../../user_guide/external_records.rst) user guide."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d35d3ed8",
+   "metadata": {},
+   "source": [
+    "This example shows how to perform an impacted substances query on material records stored in an external database\n",
+    "and how to interpret the results."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d6ea9619",
+   "metadata": {},
+   "source": [
+    "## Pre-requisites"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c43683ad",
+   "metadata": {},
+   "source": [
+    "The example can be run using the MI_Training database that is included with Granta MI. However, to see the expected\n",
+    "results, make the following additions to the MI Training database:\n",
+    "\n",
+    "1. Create the following two static record link groups between the specified tables:\n",
+    "  * The 'Design Data' table (MI Training) to the 'MaterialUniverse' table (Restricted Substances & Sustainability).\n",
+    "  * The 'Composites Design Data' table (MI Training) to the 'MaterialUniverse' table (Restricted Substances &\n",
+    "     Sustainability).\n",
+    "2. Create a Standard Name 'RS and Sustainability record', and map to both record link groups.\n",
+    "3. Link the following records:\n",
+    "  * Link the MI Training Design Data record 'Nickel alloys, Inconel 718, Forging' to the MaterialUniverse record\n",
+    "    'Nickel-chromium alloy, INCONEL 718, solution treated'\n",
+    "  * Link the MI Training Composites Design Data record 'S-Glass Unitape S2/SP381, 3M, [0], CTD' to the\n",
+    "    MaterialUniverse record 'Epoxy/S-glass fiber, UD prepreg, UD lay-up'."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f28fe25e",
+   "metadata": {},
+   "source": [
+    "## Connect to Granta MI"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "27b03fcd",
+   "metadata": {},
+   "source": [
+    "Import the ``Connection`` class and create the connection. For more information, see the\n",
+    "[Basic Usage](../0_Basic_usage.ipynb) example."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ba2d57d5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import Connection\n",
+    "\n",
+    "server_url = \"http://my_grantami_server/mi_servicelayer\"\n",
+    "cxn = Connection(server_url).with_credentials(\"user_name\", \"password\").connect()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "35c23eb9",
+   "metadata": {},
+   "source": [
+    "## Build and run the query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "75950f12",
+   "metadata": {},
+   "source": [
+    "The ``external_database_key`` argument is provided alongside the record history GUIDs of the material records to\n",
+    "indicate that the records are stored in an external database."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "73ab9889",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import queries\n",
+    "\n",
+    "EXTERNAL_DB_KEY = \"MI_Training\"\n",
+    "SIN_LIST = \"SINList\"\n",
+    "\n",
+    "EPOXY_GLASS_GUID = \"5f9563c4-17f8-4ed9-ae43-d48f025d9ce5\"\n",
+    "INCONEL_GUID = \"ce294339-e59d-4be1-a96c-f9e92adb71ac\"\n",
+    "\n",
+    "external_mat_query = (\n",
+    "    queries.MaterialImpactedSubstancesQuery()\n",
+    "    .with_record_history_guids(\n",
+    "        record_history_guids=[EPOXY_GLASS_GUID, INCONEL_GUID],\n",
+    "        external_database_key=EXTERNAL_DB_KEY,\n",
+    "    )\n",
+    "    .with_legislation_ids([SIN_LIST])\n",
+    ")\n",
+    "external_mat_query"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8ddddbdb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "results = cxn.run(external_mat_query)\n",
+    "results"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "66ac0a92",
+   "metadata": {},
+   "source": [
+    "## Equivalent references"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "52495472",
+   "metadata": {},
+   "source": [
+    "The result objects reference the linked records in the Restricted Substances database. To allow results to be\n",
+    "correlated back to the originally-specified external records, each result object includes an\n",
+    "``equivalent_references`` property.\n",
+    "\n",
+    "The ``equivalent_references`` property contains a list of references to the originally-specified external records."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "22a8dda2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "material_result = results.impacted_substances_by_material[0]\n",
+    "print(f\"Record GUID (in RS database): {material_result.record_guid}\")\n",
+    "\n",
+    "external_reference = material_result.equivalent_references[0]\n",
+    "print(f\"External database key: {external_reference.database_key}\")\n",
+    "print(f\"External record history GUID: {external_reference.record_history_guid}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "02d5d505",
+   "metadata": {},
+   "source": [
+    "Use this to display the impacted substances for the Epoxy/Glass Fiber material only:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "202e23b2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from tabulate import tabulate\n",
+    "\n",
+    "substances_by_external_material_record_guid = {}\n",
+    "for material in results.impacted_substances_by_material:\n",
+    "    substances = material.substances_by_legislation[SIN_LIST]\n",
+    "    substances_by_external_material_record_guid[material.equivalent_references[0].record_history_guid] = substances\n",
+    "\n",
+    "rows = [(substance.cas_number, substance.max_percentage_amount_in_material)\n",
+    "    for substance in substances_by_external_material_record_guid[EPOXY_GLASS_GUID]]\n",
+    "\n",
+    "print(f'Substances impacted by \"{SIN_LIST}\" in Epoxy/Glass Fiber (5/{len(rows)})')\n",
+    "print(tabulate(rows[:5], headers=[\"CAS Number\", \"Amount (wt. %)\"]))"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:light"
+  },
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

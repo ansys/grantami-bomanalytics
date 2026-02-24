@@ -1,0 +1,409 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "6e44c151",
+   "metadata": {},
+   "source": [
+    "# Perform a sustainability query\n",
+    "\n",
+    "The following supporting files are required for this example:\n",
+    "\n",
+    "* [sustainability-bom-2412.xml](../supporting-files/sustainability-bom-2412.xml)\n",
+    "\n",
+    "For help on constructing an XML BoM, see [BoM examples](../6_BoMs/index.rst)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6da21354",
+   "metadata": {},
+   "source": [
+    "<div class=\"alert alert-info\">\n",
+    "\n",
+    "**Info:**\n",
+    "\n",
+    "This example uses an input file that is in the 24/12 XML BoM format. This structure requires Granta MI Restricted\n",
+    "Substances and Sustainability Reports 2025 R2 or later.\n",
+    "\n",
+    "To run this example with an older version of the reports bundle, use\n",
+    "[sustainability-bom-2301.xml](../supporting-files/sustainability-bom-2301.xml) instead. Some sections of this example\n",
+    "will produce different results from the published example when this BoM is used.\n",
+    "</div>"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c89a2558",
+   "metadata": {},
+   "source": [
+    "## Run a BoM sustainability query\n",
+    "\n",
+    "First, connect to Granta MI."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0f18ab07",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import Connection\n",
+    "\n",
+    "server_url = \"http://my_grantami_server/mi_servicelayer\"\n",
+    "cxn = Connection(server_url).with_credentials(\"user_name\", \"password\").connect()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4bf3a107",
+   "metadata": {},
+   "source": [
+    "Next, create a sustainability query. The query accepts a single BoM as argument and an optional\n",
+    "configuration for units. If a unit is not specified, the default unit is used. Default units for the\n",
+    "analysis are ``MJ`` for energy, ``kg`` for mass, and ``km`` for distance."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7b17a5dc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "xml_file_path = \"../supporting-files/sustainability-bom-2412.xml\"\n",
+    "with open(xml_file_path) as f:\n",
+    "    bom = f.read()\n",
+    "\n",
+    "from ansys.grantami.bomanalytics import queries\n",
+    "\n",
+    "query = queries.BomSustainabilityQuery().with_bom(bom)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "96a4c423",
+   "metadata": {},
+   "source": [
+    "Finally, run the query. The ``BomSustainabilityQueryResult`` object that is returned contains the\n",
+    "results of the analysis."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "50ed36ce",
+   "metadata": {
+    "lines_to_end_of_cell_marker": 0,
+    "lines_to_next_cell": 1
+   },
+   "outputs": [],
+   "source": [
+    "result = cxn.run(query)\n",
+    "result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "67a2bf58",
+   "metadata": {},
+   "source": [
+    "## The ``BomSustainabilityQueryResult`` class\n",
+    "\n",
+    "### Definition\n",
+    "\n",
+    "The structure of a BoM sustainabability query result mirrors the input BoM structure. However, each\n",
+    "item in the result objects also includes the results of the sustainability analysis for that item.\n",
+    "In addition to the described properties, these objects  contain at least the following\n",
+    "properties that define the results of the sustainability analysis:\n",
+    "\n",
+    "* ``.embodied_energy``\n",
+    "* ``.climate_change``\n",
+    "\n",
+    "Additional properties are also available for each ``<ItemType>WithSustainabilityResult`` object.\n",
+    "For more information, see the\n",
+    "[Sustainability API](https://bomanalytics.grantami.docs.pyansys.com/version/stable/api/sustainability/index.html)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "42815277",
+   "metadata": {},
+   "source": [
+    "### The ``BomSustainabilityQueryResult.parts`` property\n",
+    "\n",
+    "The ``BomSustainabilityQueryResult.parts`` property contains the single *root* part in the input\n",
+    "BoM. This part in turn also has a ``.parts`` property, which contains the list of\n",
+    "``PartWithSustainabilityResult`` objects that are children of the root part. This structure\n",
+    "continues recursively to define all parts in the input BoM. These parts can be of two types:\n",
+    "assemblies or leaf parts.\n",
+    "\n",
+    "#### **Assemblies**\n",
+    "\n",
+    "Assemblies are ``PartWithSustainabilityResult`` objects that contain subparts. Assemblies do not\n",
+    "contain materials directly.\n",
+    "\n",
+    "Assemblies include the following properties that describe child BoM items:\n",
+    "\n",
+    "- ``.parts``: Subparts of the assembly. Defined as ``PartWithSustainabilityResult`` objects.\n",
+    "- ``.processes``: Joining and finishing processes applied to the assembly. Defined as\n",
+    "``ProcessWithSustainabilityResult`` objects.\n",
+    "- ``.transport_stages``: Transportation of the assembly. Defined as a list of\n",
+    "``TransportWithSustainabilityResult`` objects.\n",
+    "\n",
+    "The environmental impact of an assembly includes the sum of the environmental impacts of all\n",
+    "subparts and processes applied to the assembly.\n",
+    "\n",
+    "#### **Leaf parts**\n",
+    "\n",
+    "Leaf parts are ``PartWithSustainabilityResult`` objects that do not include subparts. Leaf parts\n",
+    "can contain the materials they are made of as direct children.\n",
+    "\n",
+    "Leaf parts include the following properties:\n",
+    "\n",
+    "- ``.materials``: Materials that the part is made of. Defined as a list of\n",
+    "``MaterialWithSustainabilityResult`` objects.\n",
+    "- ``.processes``: Joining and finishing processes applied to the part. Defined as a list of\n",
+    "``ProcessWithSustainabilityResult`` objects.\n",
+    "- ``.transport_stages``: Transportation of the part. Defined as a list of\n",
+    "``TransportWithSustainabilityResult`` objects.\n",
+    "\n",
+    "The environmental impact of a leaf part includes the sum of the environmental impacts associated with\n",
+    "the quantity of materials used in the part, processes applied to the part directly, and processes\n",
+    "applied to materials in the part."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0a814cfa",
+   "metadata": {},
+   "source": [
+    "#### **Materials**\n",
+    "\n",
+    "Materials are ``MaterialWithSustainabilityResult`` objects. They include the ``.processes`` property.\n",
+    "This property consists of the primary and secondary processes applied to the mass of material, which\n",
+    "are defined as a list of ``ProcessWithSustainabilityResult`` objects.\n",
+    "\n",
+    "The environmental impact of a material is calculated from database data and the mass of material used.\n",
+    "\n",
+    "Processes may appear as children of materials in the hierarchy, but the environmental impact of\n",
+    "processes do *not* contribute to a parent material's environmental impact."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a9516e3f",
+   "metadata": {},
+   "source": [
+    "#### **Processes**\n",
+    "\n",
+    "Processes are represented by ``ProcessWithSustainabilityResult`` objects. They include the\n",
+    "``.transport_stages`` property. This property consists of the transportation of the part\n",
+    "during the manufacturing process, and is defined as a list of ``TransportWithSustainabilityResult``\n",
+    "objects.\n",
+    "\n",
+    "The environmental impact of a process is calculated from database data and the dimensional details of\n",
+    "the process defined in the BoM.\n",
+    "\n",
+    "Transport stages may appear as children of processes in the hierarchy, but the environmental impact of\n",
+    "transport stages do *not* contribute to a parent process's environmental impact."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cffe57e5",
+   "metadata": {},
+   "source": [
+    "### The `BomSustainabilityQueryResult.transport` property\n",
+    "\n",
+    "The ``BomSustainabilityQueryResult.transport`` property contains the transport stages in the input\n",
+    "BoM, which are defined as a list of ``TransportWithSustainabilityResult`` objects. Transport stages\n",
+    "contain no BoM properties. The environmental impact of a transport stage is just the environmental\n",
+    "impact associated with the transport stage itself."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "381f1c2c",
+   "metadata": {},
+   "source": [
+    "## Process the ``BomSustainabilityQueryResult`` object\n",
+    "\n",
+    "To visualize the results using [plotly](https://plotly.com/python/), the results are\n",
+    "loaded into a [pandas](https://pandas.pydata.org/) ``DataFrame`` object.\n",
+    "\n",
+    "The following cell defines functions that convert the BoM hierarchical structure into a flat list\n",
+    "of items. Each function also converts each item into a dictionary of common values that the\n",
+    "``DataFrame`` object can interpret.\n",
+    "\n",
+    "Each row in the ``DataFrame`` object contains an ``id`` that uniquely identifies the item and a ``parent_id``\n",
+    "that defines the parent item. The ``.identity`` property is used as an identifier because it is unique\n",
+    "across all BoM items. This property is populated even if not initially populated on the BoM items."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2fe49a77",
+   "metadata": {
+    "lines_to_end_of_cell_marker": 0,
+    "lines_to_next_cell": 1
+   },
+   "outputs": [],
+   "source": [
+    "def traverse_bom(query_response):\n",
+    "    # Identify top-level assembly, which includes transport stages contributions.\n",
+    "    top_level_assembly = query_response.part\n",
+    "    top_level_assembly_id = top_level_assembly.identity\n",
+    "    yield to_dict(top_level_assembly, \"\")\n",
+    "    for part in top_level_assembly.parts:\n",
+    "        yield from traverse_part(part, top_level_assembly_id)\n",
+    "    for transport in query_response.transport_stages:\n",
+    "        yield to_dict(transport, top_level_assembly_id)\n",
+    "\n",
+    "\n",
+    "def traverse_part(part, parent_id):\n",
+    "    yield to_dict(part, parent_id)\n",
+    "    part_id = part.identity\n",
+    "    for child_part in part.parts:\n",
+    "        yield from traverse_part(child_part, part_id)\n",
+    "    for child_material in part.materials:\n",
+    "        yield from traverse_material(child_material, part_id)\n",
+    "    for child_process in part.processes:\n",
+    "        yield from traverse_process(child_process, part_id)\n",
+    "    for child_transport in part.transport_stages:\n",
+    "        yield to_dict(child_transport, part_id)\n",
+    "\n",
+    "\n",
+    "def traverse_material(material, parent_id):\n",
+    "    yield to_dict(material, parent_id)\n",
+    "    for child_process in material.processes:\n",
+    "        yield from traverse_process(child_process, parent_id)\n",
+    "\n",
+    "\n",
+    "def traverse_process(process, parent_id):\n",
+    "    yield to_dict(process, parent_id)\n",
+    "    for child_transport in process.transport_stages:\n",
+    "        yield to_dict(child_transport, parent_id)\n",
+    "\n",
+    "\n",
+    "from ansys.grantami.bomanalytics._item_results import (\n",
+    "    PartWithSustainabilityResult,\n",
+    "    TransportWithSustainabilityResult,\n",
+    "    MaterialWithSustainabilityResult,\n",
+    "    ProcessWithSustainabilityResult,\n",
+    ")\n",
+    "\n",
+    "\n",
+    "def to_dict(item, parent):\n",
+    "    record = {\n",
+    "        \"id\": item.identity,\n",
+    "        \"parent_id\": parent,\n",
+    "        \"embodied energy [MJ]\": item.embodied_energy.value,\n",
+    "        \"climate change [kg CO2-eq]\": item.climate_change.value,\n",
+    "    }\n",
+    "    if isinstance(item, PartWithSustainabilityResult):\n",
+    "        record.update({\"type\": \"Part\", \"name\": item.input_part_number})\n",
+    "    elif isinstance(item, TransportWithSustainabilityResult):\n",
+    "        record.update({\"type\": \"Transport\", \"name\": item.name})\n",
+    "    elif isinstance(item, MaterialWithSustainabilityResult):\n",
+    "        record.update({\"type\": \"Material\", \"name\": item.name})\n",
+    "    elif isinstance(item, ProcessWithSustainabilityResult):\n",
+    "        record.update({\"type\": \"Process\", \"name\": item.name})\n",
+    "    elif isinstance(item, TransportWithSustainabilityResult):\n",
+    "        record.update({\"type\": \"Transport\", \"name\": item.name})\n",
+    "    return record"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1019dc0c",
+   "metadata": {},
+   "source": [
+    "Now call the ``traverse_bom`` function and print the first two dictionaries, which represent the root\n",
+    "part and the first assembly in the BoM."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4f574f01",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "records = list(traverse_bom(result))\n",
+    "records[:2]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "558d6eb8",
+   "metadata": {},
+   "source": [
+    "Now, use the list of dictionaries to create a pandas ``DataFrame`` object. Use the ``DataFrame.head()`` method\n",
+    "to display the first five rows of the ``DataFrame`` object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c92a4ec5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "df = pd.DataFrame.from_records(records)\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0f1c5636",
+   "metadata": {},
+   "source": [
+    "Finally, visualize the data in a ``sunburst`` hierarchical chart:\n",
+    "\n",
+    "* The segments are represented hierarchically. The BoM is at the center, and items further down\n",
+    "the hierarchy are further out in the plot.\n",
+    "* Item type is represented by color.\n",
+    "* The size of the segment represents the environmental impact of that item."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0a8fc43e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import plotly.express as px\n",
+    "\n",
+    "fig = px.sunburst(\n",
+    "    df,\n",
+    "    names=df[\"name\"],\n",
+    "    ids=df[\"id\"],\n",
+    "    parents=df[\"parent_id\"],\n",
+    "    values=df[\"embodied energy [MJ]\"],\n",
+    "    branchvalues=\"total\",\n",
+    "    color=df[\"type\"],\n",
+    "    title=\"Embodied energy [MJ] breakdown\",\n",
+    "    width=800,\n",
+    "    height=800,\n",
+    ")\n",
+    "# Disable sorting, so that items appear in the same order as in the BoM.\n",
+    "fig.update_traces(sort=False)\n",
+    "fig.show()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

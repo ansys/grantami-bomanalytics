@@ -1,0 +1,218 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "8742ca74",
+   "metadata": {},
+   "source": [
+    "# Database-specific configuration"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ee67ec41",
+   "metadata": {},
+   "source": [
+    "Granta MI BoM Analytics work with an off-the-shelf Granta MI Restricted Substances database. However, there are\n",
+    "some situations in which additional run-time configuration changes are required:\n",
+    "\n",
+    "- If the database key or table names have been modified from their default values, these must be set on the\n",
+    "  ``Connection`` object.\n",
+    "- If the number of linked records is very large, the batch sizes should be changed for each query. For more\n",
+    "  information, see [Batching requests](../user_guide/batching.rst)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "303179cc",
+   "metadata": {},
+   "source": [
+    "## Specify a custom database key or table name"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "af7492e1",
+   "metadata": {},
+   "source": [
+    "The default database key, ``MI_Restricted_Substances``, is used if no database key is specified. To specify a\n",
+    "key, use the ``Connection.set_database_details()`` method. The specified key is then used for all queries made\n",
+    "with this ``Connection`` object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b7ae8caf",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import Connection\n",
+    "\n",
+    "server_url = \"http://my_grantami_server/mi_servicelayer\"\n",
+    "cxn = Connection(server_url).with_credentials(\"user_name\", \"password\").connect()\n",
+    "cxn.set_database_details(database_key=\"ACME_SUBSTANCES_DATABASE\")\n",
+    "cxn"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "51c4cc43",
+   "metadata": {},
+   "source": [
+    "It is also possible to specify alternative names for the relevant restricted substances tables if they\n",
+    "have been modified from the defaults. You provide the names to the ``.set_database_details()`` method in the same way."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "14a8d39b",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "cxn.set_database_details(in_house_materials_table_name=\"ACME Materials\")\n",
+    "cxn"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5112cf96",
+   "metadata": {},
+   "source": [
+    "## Change batch size"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6368e593",
+   "metadata": {},
+   "source": [
+    "The queries that can be performed with this package are batched if they exceed a certain size. This is achieved by\n",
+    "splitting the list of parts, materials, and so on into smaller lists to reduce the overall time taken\n",
+    "to perform the query. Default batch sizes have been chosen based on typical tabular attribute sizes, but\n",
+    "these might need to be changed in some situations. For examples, see the relevant page in the API documentation."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5db606f2",
+   "metadata": {},
+   "source": [
+    "The batch size is included in the query ``__repr__``. The following cell shows a ``SpecificationComplianceQuery``\n",
+    "object with the default batch size."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4c0b49e0",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import queries\n",
+    "\n",
+    "spec_query = queries.SpecificationComplianceQuery()\n",
+    "spec_query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6b6fd9c4",
+   "metadata": {},
+   "source": [
+    "You can manually set the batch size like this:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fb4b2ee4",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "spec_query = spec_query.with_batch_size(5)\n",
+    "spec_query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "063702cc",
+   "metadata": {},
+   "source": [
+    "## Set depth of specification-to-specification links"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0312b928",
+   "metadata": {},
+   "source": [
+    "> Supported with Restricted Substances Reports 2023 R2 and later"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "aea22dac",
+   "metadata": {},
+   "source": [
+    "The Restricted Substances database allows Specification records to be defined in terms of other Specification records.\n",
+    "Since this is a recursive relationship, there is in principle no limit to the complexity of these\n",
+    "specification-to-specification (spec-to-spec) hierarchies. By default, this package considers every spec-to-spec\n",
+    "hierarchy completely, with no truncation imposed."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4309656f",
+   "metadata": {},
+   "source": [
+    "For typical databases this is the correct and desired behavior. However, in some circumstances, this may cause query\n",
+    "times and response sizes to become very large. In such cases, you should control the maximum spec-to-spec hierarchy\n",
+    "depth followed using the ``maximum_spec_link_depth`` parameter on the ``BomAnalyticsClient`` object."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8a7447d1",
+   "metadata": {},
+   "source": [
+    "The default value is ``None``. Setting it to a positive integer limits the depth to at most that many spec-to-spec\n",
+    "links."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fca1cb5b",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "cxn.maximum_spec_link_depth = 2\n",
+    "cxn"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:light"
+  },
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

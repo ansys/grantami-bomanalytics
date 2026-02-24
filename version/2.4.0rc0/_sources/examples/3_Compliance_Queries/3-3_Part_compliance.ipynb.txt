@@ -1,0 +1,474 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "4e6c3655",
+   "metadata": {},
+   "source": [
+    "# Perform a part compliance query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bccd04e6",
+   "metadata": {},
+   "source": [
+    "A part compliance query determines whether one or more parts are compliant with the specified indicators. This is\n",
+    "done by first finding all substances directly or indirectly associated with that part, determining compliance for\n",
+    "those substances, and then rolling up the results to the material."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "29eb8ccb",
+   "metadata": {},
+   "source": [
+    "## Connect to Granta MI"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7e653482",
+   "metadata": {},
+   "source": [
+    "Import the ``Connection`` class and create the connection. For more information, see the\n",
+    "[Basic Usage](../0_Basic_usage.ipynb) example."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "614f68d5",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import Connection\n",
+    "\n",
+    "server_url = \"http://my_grantami_server/mi_servicelayer\"\n",
+    "cxn = Connection(server_url).with_credentials(\"user_name\", \"password\").connect()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "29eea42d",
+   "metadata": {},
+   "source": [
+    "## Define an indicator"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "822105f2",
+   "metadata": {},
+   "source": [
+    "A Compliance query determines compliance against indicators, as opposed to an Impacted Substances query which\n",
+    "determines compliance directly against legislations.\n",
+    "\n",
+    "There are two types of indicator objects (``WatchListIndicator`` and ``RohsIndicator``), and the following syntax\n",
+    "applies to both object types. The differences in the internal implementation of the two objects are described\n",
+    "in the API documentation.\n",
+    "\n",
+    "Generally speaking, if a substance is impacted by a legislation associated with an indicator and in a quantity\n",
+    "above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to\n",
+    "any other items in the BoM hierarchy that directly or indirectly include that substance."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5c851555",
+   "metadata": {},
+   "source": [
+    "First, create two ``WatchListIndicator`` objects."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fea8b98e",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import indicators\n",
+    "\n",
+    "svhc = indicators.WatchListIndicator(\n",
+    "    name=\"SVHC\",\n",
+    "    legislation_ids=[\"Candidate_AnnexXV\"],\n",
+    "    default_threshold_percentage=0.1,\n",
+    ")\n",
+    "sin = indicators.WatchListIndicator(\n",
+    "    name=\"SIN\",\n",
+    "    legislation_ids=[\"SINList\"]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3d04c19e",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "## Build and run the query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ec451679",
+   "metadata": {},
+   "source": [
+    "Next define the query itself. Parts can be referenced by Granta MI record reference or part number. The\n",
+    "table containing the part records is not required because this is enforced by the Restricted Substances database\n",
+    "schema."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a5ae7c68",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import queries\n",
+    "\n",
+    "part_query = (\n",
+    "    queries.PartComplianceQuery()\n",
+    "    .with_part_numbers([\"asm_flap_mating\", \"DRILL\"])\n",
+    "    .with_indicators([svhc])\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ed89b15c",
+   "metadata": {},
+   "source": [
+    "Finally, run the query. Passing a ``PartComplianceQuery`` object to the ``Connection.run()`` method returns a\n",
+    "``PartComplianceQueryResult`` object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9b25fddc",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "part_result = cxn.run(part_query)\n",
+    "part_result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "72e331f5",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "The result object contains two properties, ``compliance_by_part_and_indicator`` and ``compliance_by_indicator``."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "174a770d",
+   "metadata": {},
+   "source": [
+    "## Group results by part"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "30325163",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "``compliance_by_part_and_indicator`` contains a list of ``PartWithComplianceResult`` objects with the\n",
+    "reference to the part record and the compliance status for each indicator.\n",
+    "\n",
+    "In Granta MI, parts can link to the following record types:\n",
+    "\n",
+    "- Parts\n",
+    "- Specifications (which can link to specifications, materials, substances, and coatings)\n",
+    "- Materials (which can link to substances)\n",
+    "- Substances\n",
+    "\n",
+    "Because compliance of a part is determined based on the compliance of the items that the record is linked to, the\n",
+    "corresponding ``ResultWithCompliance`` objects are included in the parent ``PartWithComplianceResult``, each with\n",
+    "their own compliance status."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "38ca6038",
+   "metadata": {},
+   "source": [
+    "Because you specified two part records, you received two result objects. This example only looks in\n",
+    "more detail at results for the wing flap assembly."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5b3f3c73",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "wing = part_result.compliance_by_part_and_indicator[0]\n",
+    "print(f\"Wing compliance status: {wing.indicators['SVHC'].flag.name}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "be2fb160",
+   "metadata": {},
+   "source": [
+    "This tells you that the wing flap assembly contains an SVHC above the 0.1% threshold."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f08c3894",
+   "metadata": {},
+   "source": [
+    "You can print the parts below this part that also contain an SVHC above the threshold. The parts referenced by the\n",
+    "``wing`` part are available in the ``parts`` property."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4e299b84",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "above_threshold_flag = svhc.available_flags.WatchListAboveThreshold\n",
+    "parts_contain_svhcs = [part for part in wing.parts\n",
+    "                       if part.indicators[\"SVHC\"] >= above_threshold_flag]\n",
+    "print(f\"{len(parts_contain_svhcs)} parts that contain SVHCs\")\n",
+    "for part in parts_contain_svhcs:\n",
+    "    print(f\"Part: {part.record_history_identity}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2fd87264",
+   "metadata": {
+    "lines_to_next_cell": 2
+   },
+   "source": [
+    "This process can be performed recursively to show a structure of each part that contains SVHCs either directly or\n",
+    "indirectly. The following cells implement the preceding code in a function that can be called recursively. They then\n",
+    "call it on the wing flap assembly."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "49a94920",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "def recursively_print_parts_with_svhcs(parts, depth=0):\n",
+    "    parts_contain_svhcs = [part for part in parts\n",
+    "                           if part.indicators[\"SVHC\"] >= above_threshold_flag]\n",
+    "    for part in parts_contain_svhcs:\n",
+    "        print(f\"{'  '*depth}- Part: {part.record_history_identity}\")\n",
+    "        recursively_print_parts_with_svhcs(part.parts, depth + 1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9394e075",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "recursively_print_parts_with_svhcs(wing.parts)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "664a5775",
+   "metadata": {
+    "lines_to_next_cell": 2
+   },
+   "source": [
+    "This can be extended further to include all possible BoM components in the recursive iteration, including\n",
+    "specifications, coatings, and substances."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fca760d3",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "def recursively_print_parts_with_svhcs(parts, depth=0):\n",
+    "    parts_contain_svhcs = [part for part in parts\n",
+    "                           if part.indicators[\"SVHC\"] >= above_threshold_flag]\n",
+    "    for part in parts_contain_svhcs:\n",
+    "        print(f\"{'  '*depth}- Part: {part.record_history_identity}\")\n",
+    "        recursively_print_parts_with_svhcs(part.parts, depth + 1)\n",
+    "        print_materials_with_svhcs(part.materials, depth + 1)\n",
+    "        print_specifications_with_svhcs(part.specifications, depth + 1)\n",
+    "        print_substances_with_svhcs(part.substances, depth + 1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "659524e8",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "def print_materials_with_svhcs(materials, depth=0):\n",
+    "    mats_contain_svhcs = [m for m in materials\n",
+    "                          if m.indicators[\"SVHC\"] >= above_threshold_flag]\n",
+    "    for mat in mats_contain_svhcs:\n",
+    "        print(f\"{'  '*depth}- Material: {mat.record_history_identity}\")\n",
+    "        print_substances_with_svhcs(mat.substances, depth + 1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "590c8919",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "def print_specifications_with_svhcs(specifications, depth=0):\n",
+    "    specs_contain_svhcs = [s for s in specifications\n",
+    "                           if s.indicators[\"SVHC\"] >= above_threshold_flag]\n",
+    "    for spec in specs_contain_svhcs:\n",
+    "        print(f\"{'  '*depth}- Specification: {spec.record_history_identity}\")\n",
+    "        print_coatings_with_svhcs(spec.coatings, depth + 1)\n",
+    "        print_substances_with_svhcs(spec.substances, depth + 1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c06662d6",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "def print_coatings_with_svhcs(coatings, depth=0):\n",
+    "    coatings_contain_svhcs = [c for c in coatings\n",
+    "                             if c.indicators[\"SVHC\"] >= above_threshold_flag]\n",
+    "    for coating in coatings_contain_svhcs:\n",
+    "        print(f\"{'  '*depth}- Coating: {coating.record_history_identity}\")\n",
+    "        print_substances_with_svhcs(coating.substances, depth + 1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "5101cb63",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "def print_substances_with_svhcs(substances, depth=0):\n",
+    "    subs_contain_svhcs = [sub for sub in substances\n",
+    "                          if sub.indicators[\"SVHC\"] >= above_threshold_flag]\n",
+    "    for sub in subs_contain_svhcs:\n",
+    "        print(f\"{'  '*depth}- Substance: {sub.record_history_identity}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a453261e",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "recursively_print_parts_with_svhcs(wing.parts)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b4d4e151",
+   "metadata": {},
+   "source": [
+    "You have now identified a coating that is causing non-compliance. While there is a single coating in\n",
+    "the assembly that is non-compliant, it appears in four non-compliant subcomponents. The coating also\n",
+    "only contains one non-compliant substance."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dfe5a38f",
+   "metadata": {},
+   "source": [
+    "## Group results by indicator"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "84980e99",
+   "metadata": {},
+   "source": [
+    "Alternatively, using the ``compliance_by_indicator`` property gives you a single indicator result that rolls up the\n",
+    "results across all parts in the query. This would be useful in a situation where you have a *concept* assembly stored\n",
+    "outside of Granta MI and want to determine its compliance. You know it contains the subassemblies specified in the\n",
+    "preceding query, and so using ``compliance_by_indicator`` tells you if that concept assembly is compliant based on the\n",
+    "worst result of the individual subassemblies."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0de2bb2c",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "if part_result.compliance_by_indicator[\"SVHC\"] >= above_threshold_flag:\n",
+    "    print(\"One or more subassemblies contains an SVHC in a quantity greater than 0.1%.\")\n",
+    "else:\n",
+    "    print(\"No SVHCs are present, or no SVHCs have a quantity less than 0.1%.\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:light"
+  },
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

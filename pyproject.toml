@@ -8,7 +8,7 @@ packages = ["src/ansys"]
 [project]
 name = "ansys-grantami-bomanalytics"
 description = "Perform compliance and sustainability analysis on materials data stored in Granta MI."
-version = "2.4.0.dev0"
+version = "2.5.0.dev0"
 license = "MIT"
 authors = [
     {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}

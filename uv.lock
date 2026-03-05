@@ -165,7 +165,7 @@ wheels = [
 
 [[package]]
 name = "ansys-openapi-common"
-version = "2.3.2"
+version = "2.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyparsing" },
@@ -174,9 +174,9 @@ dependencies = [
     { name = "requests-negotiate-sspi", marker = "sys_platform == 'win32'" },
     { name = "requests-ntlm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/01/8a/aac45c32482dfeed2c4f18a41b91c04f4d3b85c85604dfcd53a4d74d36ca/ansys_openapi_common-2.3.2.tar.gz", hash = "sha256:e912a1a03c7612e0a6371d600c232863a302668c46dbceaad0a92506af84f8bc", size = 28800, upload-time = "2025-09-30T16:22:34.64Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ff/5d/f10ccf060164e920c988b0e165fdc2ca2c4ea19a4c4763daa51fe543eede/ansys_openapi_common-2.4.0.tar.gz", hash = "sha256:b97153cfe6db0021619bd46935174e8b60af09c438e99a1b113f39200d190fbf", size = 591974, upload-time = "2026-03-04T19:42:26.196Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/48/84/6d15ebc153324761205f7413fb46257a93f69a082678c888c257547e0449/ansys_openapi_common-2.3.2-py3-none-any.whl", hash = "sha256:9fab1958a0a9d83a089dc451d6cf0c65dae93c388d0e79cb749d598a9f87ce84", size = 35931, upload-time = "2025-09-30T16:22:33.46Z" },
+    { url = "https://files.pythonhosted.org/packages/86/f1/b5133cf6626dbbc6432610eeb4a69596d1669f2ee78141634e40760271c4/ansys_openapi_common-2.4.0-py3-none-any.whl", hash = "sha256:802d0db5f647efc054c04dffe8897b004a6a0167a858a09570849c666b3963b4", size = 36018, upload-time = "2026-03-04T19:42:24.459Z" },
 ]
 
 [[package]]

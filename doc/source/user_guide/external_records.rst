@@ -36,8 +36,8 @@ The following conditions must be met to use this feature:
 * The version of this package must be version 2.4 or later.
 * The Granta MI server is running MI Restricted Substances and Sustainability Reports 2026 R1 or later.
 * The records used for analysis are linked to equivalent records in the main Restricted Substances and Sustainability
-  database. See the Granta MI Restricted Substances and Sustainability Install and Configuration, on the Ansys Help
-  Center for more details.
+  database. See :RS_docs:`Creating cross-database links <mi_installation/own_records_sustainability.html>` in the
+  Granta MI product documentation. for more details.
 
 
 Record-based queries

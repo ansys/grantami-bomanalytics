@@ -37,7 +37,7 @@ The following conditions must be met to use this feature:
 * The Granta MI server is running MI Restricted Substances and Sustainability Reports 2026 R1 or later.
 * The records used for analysis are linked to equivalent records in the main Restricted Substances and Sustainability
   database. See :RS_docs:`Creating cross-database links <mi_installation/own_records_sustainability.html>` in the
-  Granta MI product documentation. for more details.
+  Granta MI product documentation for more details.
 
 
 Record-based queries

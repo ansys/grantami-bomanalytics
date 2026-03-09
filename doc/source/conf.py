@@ -122,23 +122,13 @@ numpydoc_validation_exclude = {
     r"^ansys\.grantami\.bomanalytics\.bom_types\.[\w]+\.[\w]+\.[\w]+$"
 }
 
-DOC_ROOT = "https://ansyshelp.ansys.com/public/account/secured?returnurl=/Views/Secured/Granta/v261/en"
+ANSYS_DOC_ROOT = "https://ansyshelp.ansys.com/public/account/secured?returnurl=/Views/Secured/Granta/v261/en"
 
 extlinks = {
-    'MI_docs': (
-        f'{DOC_ROOT}/Granta_MI/%s',
-        None
-    ),
-    'RS_docs': (
-        f'{DOC_ROOT}/RS_and_Sustainability_Install/%s',
-        None
-    ),
+    'MI_docs': (f'{ANSYS_DOC_ROOT}/Granta_MI/%s', None),
+    'RS_docs': (f'{ANSYS_DOC_ROOT}/RS_and_Sustainability_Install/%s', None),
     "OpenAPI-Common": ("https://openapi.docs.pyansys.com/version/stable/%s", None),
 }
-
-# static path
-html_static_path = ["_static"]
-
 
 # static path
 html_static_path = ["_static"]

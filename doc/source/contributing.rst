@@ -144,7 +144,7 @@ This conversion between Jupyter notebooks and Python files is performed by
 
 Post issues
 ===========
-Use the `PyGranta BoM Analytics Issues <https://github.com/pyansys/grantami-bomanalytics/issues>`_ page
+Use the `PyGranta BoM Analytics Issues <https://github.com/ansys/grantami-bomanalytics/issues>`_ page
 to report bugs and request new features. When possible, use the issue templates provided. If
 your issue does not fit into one of these templates, click the link for opening a blank issue.
 

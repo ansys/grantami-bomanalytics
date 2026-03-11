@@ -84,8 +84,8 @@ class RoHSFlag(_Flag):
     A larger value means that the item is less compliant. The further down the list the compliance
     result appears, the worse it is.
 
-    For more information, see the
-    :MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>`.
+    For more information, see :MI_docs:`Roll-up logic for an indicator with exemptions
+    <one_mi/roll_up_logic_for_an_indicator_with_exemptions.html>` in the Granta MI product documentation.
     """
 
     RohsNotImpacted = 1
@@ -165,8 +165,8 @@ class WatchListFlag(_Flag):
     An increasing value means less compliance. The further down the list the compliance result
     appears, the worse it is.
 
-    For more information, see the
-    :MI_docs:`Restricted Substances Reports User Guide <rs_and_sustainability/restricted_substances.html>`.
+    For more information, see :MI_docs:`Roll-up logic for an indicator without exemptions
+    <one_mi/roll_up_logic_for_an_indicator_without_exemptions.html>` in the Granta MI product documentation.
     """
 
     WatchListNotImpacted = 1

@@ -11,6 +11,32 @@ See `CHANGELOG.md <https://github.com/ansys/grantami-bomanalytics/blob/main/CHAN
 
 .. towncrier release notes start
 
+`2.4.1 <https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.4.1>`_ - March 12, 2026
+==============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Miscellaneous
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Prepare 2.4.1 release
+          - `#1009 <https://github.com/ansys/grantami-bomanalytics/pull/1009>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update documentation to refer to 2026 R1 help
+          - `#1007 <https://github.com/ansys/grantami-bomanalytics/pull/1007>`_
+
+
 `2.4.0 <https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.4.0>`_ - March 05, 2026
 ==============================================================================================
 

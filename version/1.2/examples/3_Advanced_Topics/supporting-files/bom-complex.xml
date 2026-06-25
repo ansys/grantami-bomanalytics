@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<PartsEco xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="R0" xmlns="http://www.grantadesign.com/17/11/BillOfMaterialsEco">
+  <Components>
+    <Part id="R1">
+      <Quantity Unit="Each">1</Quantity>
+      <PartNumber>Part 1</PartNumber>
+      <ExternalIdentity>1635969933169|97</ExternalIdentity>
+      <Components>
+        <Part id="R2">
+          <Quantity Unit="Each">1</Quantity>
+          <PartNumber>Child 1</PartNumber>
+          <Name />
+          <ExternalIdentity>1635969933169|98</ExternalIdentity>
+          <Components>
+            <Part id="R3">
+              <Quantity Unit="Each">1</Quantity>
+              <MassPerUom Unit="kg/Part">10.2</MassPerUom>
+              <MIPartReference>
+                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">d00873c5-9544-48c5-8de2-2e2b00893db4</recordGUID>
+              </MIPartReference>
+              <PartNumber>Fire Distinguisher</PartNumber>
+              <Name />
+              <ExternalIdentity>1635969933169|21</ExternalIdentity>
+              <Specifications>
+                <Specification id="R4">
+                  <MISpecificationReference>
+                    <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                    <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">9b5b2172-da97-4ffa-9bd4-e57309be5641</recordGUID>
+                  </MISpecificationReference>
+                  <Identity>AMS2420,Class1</Identity>
+                  <Name>AMS®2420™, Class 1</Name>
+                  <ExternalIdentity>1635969933169|25</ExternalIdentity>
+                </Specification>
+              </Specifications>
+            </Part>
+            <Part id="R26">
+              <Quantity Unit="Each">1</Quantity>
+              <MIPartReference>
+                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">90ed0f8c-1fb0-47bc-89e0-0c2380d7976c</recordGUID>
+              </MIPartReference>
+              <PartNumber>mid_frame</PartNumber>
+              <Name>mid_frame</Name>
+              <ExternalIdentity>1635969933169|14</ExternalIdentity>
+              <Components>
+                <Part id="R27">
+                  <Quantity Unit="Each">1</Quantity>
+                  <MassPerUom Unit="kg/Part">13.7651193872285</MassPerUom>
+                  <MIPartReference>
+                    <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                    <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">ad3cae1e-6ad6-4800-96bc-bec6cc0e4e59</recordGUID>
+                  </MIPartReference>
+                  <PartNumber>mid_frame: Body 1</PartNumber>
+                  <Name>mid_frame: Body 1</Name>
+                  <ExternalIdentity>1635969933169|15</ExternalIdentity>
+                  <Specifications>
+                    <Specification id="R28">
+                      <MISpecificationReference>
+                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">44b976f9-1c1b-4187-a9dc-9ec88bf40c38</recordGUID>
+                      </MISpecificationReference>
+                      <Identity>MIL-A-8625,TypeIII,Class1</Identity>
+                      <Name>MIL-A-8625, Type III, Class 1 (Hardcoat sulfuric)</Name>
+                      <ExternalIdentity>1635969933169|16</ExternalIdentity>
+                      <Quantity Unit="mm^2">238064.510108457</Quantity>
+                    </Specification>
+                  </Specifications>
+                  <Materials>
+                    <Material id="R35">
+                      <Percentage>100</Percentage>
+                      <MIMaterialReference>
+                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">5a4d882d-789b-4c94-8af4-fd3527845849</recordGUID>
+                      </MIMaterialReference>
+                      <Identity>aluminum-2024-t6</Identity>
+                      <Name>Aluminum, 2024, T6</Name>
+                      <ExternalIdentity>1635969933169|17</ExternalIdentity>
+                    </Material>
+                  </Materials>
+                </Part>
+                <Part id="R36">
+                  <Quantity Unit="Each">1</Quantity>
+                  <MassPerUom Unit="kg/Part">0.0788292499952808</MassPerUom>
+                  <MIPartReference>
+                    <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                    <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2c50aee4-7a5b-4d49-b27d-a7bc184167fb</recordGUID>
+                  </MIPartReference>
+                  <PartNumber>mid_frame: Body 2</PartNumber>
+                  <Name>mid_frame: Body 2</Name>
+                  <ExternalIdentity>1635969933169|18</ExternalIdentity>
+                  <Specifications>
+                    <Specification id="R37">
+                      <MISpecificationReference>
+                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">44b976f9-1c1b-4187-a9dc-9ec88bf40c38</recordGUID>
+                      </MISpecificationReference>
+                      <Identity>MIL-A-8625,TypeIII,Class1</Identity>
+                      <Name>MIL-A-8625, Type III, Class 1 (Hardcoat sulfuric)</Name>
+                      <ExternalIdentity>1635969933169|19</ExternalIdentity>
+                      <Quantity Unit="mm^2">36908.3727431303</Quantity>
+                    </Specification>
+                  </Specifications>
+                  <Materials>
+                    <Material id="R44">
+                      <Percentage>100</Percentage>
+                      <MIMaterialReference>
+                        <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                        <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">5a4d882d-789b-4c94-8af4-fd3527845849</recordGUID>
+                      </MIMaterialReference>
+                      <Identity>aluminum-2024-t6</Identity>
+                      <Name>Aluminum, 2024, T6</Name>
+                      <ExternalIdentity>1635969933169|20</ExternalIdentity>
+                    </Material>
+                  </Materials>
+                </Part>
+              </Components>
+            </Part>
+            <Part id="R45">
+              <Quantity Unit="Each">1</Quantity>
+              <PartNumber>Substance Component</PartNumber>
+              <Name />
+              <ExternalIdentity>1635969933169|31</ExternalIdentity>
+              <Substances>
+                <Substance id="R46">
+                  <MISubstanceReference>
+                    <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                    <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">b3ed7838-15c5-4bb2-874b-a112d2201914</recordGUID>
+                  </MISubstanceReference>
+                  <Identity>143-50-0</Identity>
+                  <Name>Kepone [143-50-0]</Name>
+                  <ExternalIdentity>1635969933169|29</ExternalIdentity>
+                </Substance>
+              </Substances>
+            </Part>
+          </Components>
+        </Part>
+        <Part id="R80">
+          <Quantity Unit="Each">1</Quantity>
+          <PartNumber>Child 2</PartNumber>
+          <Name />
+          <ExternalIdentity>1635969933169|101</ExternalIdentity>
+          <Components>
+            <Part id="R81">
+              <Quantity Unit="Each">1</Quantity>
+              <PartNumber>Material Component</PartNumber>
+              <Name />
+              <ExternalIdentity>1635969933169|131</ExternalIdentity>
+              <Materials>
+                <Material id="R82">
+                  <MIMaterialReference>
+                    <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                    <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">2ce26bf2-ea34-4e0c-af77-a8424252a079</recordGUID>
+                  </MIMaterialReference>
+                  <Identity>mmc-aluminum-polyethylenesandwich</Identity>
+                  <Name>Aluminum-polyethylene sandwich</Name>
+                  <ExternalIdentity>1635969933169|132</ExternalIdentity>
+                </Material>
+                <Material id="R92">
+                  <MIMaterialReference>
+                    <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                    <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">40cc6742-ca1f-4e00-a39a-d4cb01842658</recordGUID>
+                  </MIMaterialReference>
+                  <Identity>plastic-pe-hd-20-30longglassfiber</Identity>
+                  <Name>PE-HD (20-30% long glass fiber)</Name>
+                  <ExternalIdentity>1635969933169|142</ExternalIdentity>
+                </Material>
+              </Materials>
+            </Part>
+          </Components>
+        </Part>
+      </Components>
+    </Part>
+    <Part id="R110">
+          <Quantity Unit="Each">1</Quantity>
+          <PartNumber>Part 2</PartNumber>
+          <Name />
+          <ExternalIdentity>1635969933169|181</ExternalIdentity>
+          <Specifications>
+            <Specification id="R111">
+              <MISpecificationReference>
+                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">ad7a7965-8f48-4250-9e09-f1062b50cf9e</recordGUID>
+              </MISpecificationReference>
+              <Identity>AMS2404,Class1</Identity>
+              <Name>AMS®2404™, Class 1</Name>
+              <ExternalIdentity>1635969933169|185</ExternalIdentity>
+            </Specification>
+          </Specifications>
+          <Materials>
+            <Material id="R141">
+              <MIMaterialReference>
+                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">1b7932f7-c3c2-4228-8b51-f7fabee7de4e</recordGUID>
+              </MIMaterialReference>
+              <Identity>plastic-cap-13-18plasticizer</Identity>
+              <Name>CAP (13-18% plasticizer)</Name>
+              <ExternalIdentity>1635969933169|183</ExternalIdentity>
+            </Material>
+          </Materials>
+          <Substances>
+            <Substance id="R179">
+              <MISubstanceReference>
+                <dbKey xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">MI_Restricted_Substances</dbKey>
+                <recordGUID xmlns="http://www.grantadesign.com/12/05/GrantaBaseTypes">5286d5c7-393f-4ea4-876e-1f716b555dac</recordGUID>
+              </MISubstanceReference>
+              <Identity>68476-30-2</Identity>
+              <Name>Fuel oil, No 2 [68476-30-2]</Name>
+              <ExternalIdentity>1635969933169|187</ExternalIdentity>
+            </Substance>
+          </Substances>
+        </Part>
+  </Components>
+  <Notes>
+    <ProductName>Complex Bom</ProductName>
+  </Notes>
+  <Annotations />
+</PartsEco>

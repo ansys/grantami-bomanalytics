@@ -1,4 +1,4 @@
-# Copyright (C) 2022 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2022 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -241,7 +241,8 @@ class TestBoMDeserialization:
     # the namespace is sufficient to obtain a valid 23/01, 24/12, or 25/05 BoM.
 
     @pytest.fixture(scope="class")
-    def simple_2301_bom(self) -> eco2301.BillOfMaterials:
+    @classmethod
+    def simple_2301_bom(cls) -> eco2301.BillOfMaterials:
         bom_1711 = example_boms["bom-1711"].content
         input_bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
@@ -251,7 +252,8 @@ class TestBoMDeserialization:
         return bom_handler.load_bom_from_text(input_bom)
 
     @pytest.fixture(scope="class")
-    def simple_2412_bom(self) -> eco2412.BillOfMaterials:
+    @classmethod
+    def simple_2412_bom(cls) -> eco2412.BillOfMaterials:
         bom_1711 = example_boms["bom-1711"].content
         input_bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",
@@ -261,7 +263,8 @@ class TestBoMDeserialization:
         return bom_handler.load_bom_from_text(input_bom)
 
     @pytest.fixture(scope="class")
-    def simple_2505_bom(self) -> eco2505.BillOfMaterials:
+    @classmethod
+    def simple_2505_bom(cls) -> eco2505.BillOfMaterials:
         bom_1711 = example_boms["bom-1711"].content
         input_bom = bom_1711.replace(
             "http://www.grantadesign.com/17/11/BillOfMaterialsEco",

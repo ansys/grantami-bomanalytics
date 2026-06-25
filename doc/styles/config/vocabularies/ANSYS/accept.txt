@@ -17,3 +17,4 @@ XML
 Granta Base Types
 uv
 pytest
+synopsys

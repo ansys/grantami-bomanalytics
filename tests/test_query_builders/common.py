@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+
 def check_query_manager_attributes(query_manager, none_attributes, populated_attributes, populated_values):
     assert len(query_manager._data._item_definitions) == len(populated_values)
     for idx, value in enumerate(populated_values):

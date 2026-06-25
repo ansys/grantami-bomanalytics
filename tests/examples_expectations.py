@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+
 def example_0_basic_usage() -> None:
     assert len(result.impacted_substances) == 8  # noqa
 

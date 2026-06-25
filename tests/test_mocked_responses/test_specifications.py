@@ -154,7 +154,7 @@ class TestCompliance(BaseMockTesterWithConfigTests):
 
         spec_0_equivalent_0 = spec_0.equivalent_references[0]
         specv_0_equivalent_0 = SpecificationValidator(spec_0_equivalent_0)
-        assert specv_0_equivalent_0.check_equivalent_reference(record_guid="a648470b-d9f7-4049 - 8661-35cfa5e49ffb")
+        assert specv_0_equivalent_0.check_equivalent_reference(record_guid="a648470b-d9f7-4049-8661-35cfa5e49ffb")
 
         spec_0_0 = spec_0.specifications[0]
         specv_0_0 = SpecificationValidator(spec_0_0)

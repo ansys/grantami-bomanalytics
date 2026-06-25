@@ -308,7 +308,7 @@ class TestBomSustainabilitySummary2301(BaseMockTesterWithConfigTests):
         # Unique primary process - material pair
         unique_ppmp_0 = response.primary_processes_details[0]
         assert unique_ppmp_0.process_name == "Metal casting"
-        assert unique_ppmp_0.process_reference.record_guid == "baa6c95b-ff0e-4811 - 9120-92717ee15bda"
+        assert unique_ppmp_0.process_reference.record_guid == "baa6c95b-ff0e-4811-9120-92717ee15bda"
         assert unique_ppmp_0.material_identity == "steel-kovar-annealed"
         assert unique_ppmp_0.material_reference.record_guid == "8dc38bb5-eff9-4c60-9233-271a3c8f6270"
 
@@ -366,7 +366,7 @@ class TestBomSustainabilitySummary2412(BaseMockTesterWithConfigTests):
         assert transport.embodied_energy.unit == "MJ"
         assert transport.embodied_energy_percentage == 100.0
         assert transport.name == "Aircraft, short haul, belly-freight"
-        assert transport.transport_reference.record_guid == "b916ed6b-5e06-4343 - 9131-d4d562e2d12b"
+        assert transport.transport_reference.record_guid == "b916ed6b-5e06-4343-9131-d4d562e2d12b"
         assert transport.transport_reference.record_history_guid is None
         assert transport.transport_reference.record_history_identity is None
 
@@ -472,12 +472,12 @@ class TestBomSustainabilitySummary2505(BaseMockTesterWithConfigTests):
         transport = transport_details[0]
         assert transport.name == "Aircraft, short haul, belly-freight"
         assert transport.transport_reference.database_key is None
-        assert transport.transport_reference.record_guid == "b916ed6b-5e06-4343 - 9131-d4d562e2d12b"
+        assert transport.transport_reference.record_guid == "b916ed6b-5e06-4343-9131-d4d562e2d12b"
         assert transport.transport_reference.record_history_guid is None
         assert transport.transport_reference.record_history_identity is None
         assert len(transport.transport_reference.equivalent_references) == 1
         transport_equivalent_reference = transport.transport_reference.equivalent_references[0]
         assert transport_equivalent_reference.database_key == EXTERNAL_DB_KEY
-        assert transport_equivalent_reference.record_guid == "b916ed6b-5e06-4343 - 9131-d4d562e2d12c"
+        assert transport_equivalent_reference.record_guid == "b916ed6b-5e06-4343-9131-d4d562e2d12c"
         assert transport_equivalent_reference.record_history_guid is None
         assert transport_equivalent_reference.record_history_identity is None

@@ -1,0 +1,10 @@
+table.dataframe {
+    table-layout: auto !important;
+}
+
+/*
+!important is unavoidable
+table-layout: fixed is included by nbsphinx,
+which includes css in the html below the
+css imports
+*/

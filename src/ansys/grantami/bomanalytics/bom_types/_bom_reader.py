@@ -49,7 +49,9 @@ class _GenericBoMReader(Generic[TBom]):
         """
         cls._class_members = {}
         for xml_type_module in xml_type_modules:
-            cls._class_members.update({k: v for k, v in inspect.getmembers(xml_type_module, inspect.isclass)})
+            cls._class_members.update(
+                {k: v for k, v in inspect.getmembers(xml_type_module, inspect.isclass) if issubclass(v, BaseType)}
+            )
         cls._bom_type = bom_type
 
     def __init__(self, schema: XMLSchema):

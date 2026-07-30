@@ -19,9 +19,9 @@ specification depth parameter works as expected.
 
 import logging
 
-import GRANTA_MIScriptingToolkit as gdl
+import ansys.grantami.backend.soap as gdl
 
-from ansys.grantami.serverapi_openapi.v2025r2 import api, models
+from ansys.grantami.serverapi_openapi.v2026r1 import api, models
 
 from cicd._connection import Connection
 from cicd._utils import DatabaseBrowser
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     logger.info("Renaming tables")
 
     api_client = Connection(api_url=MI_URL).with_autologon().connect()
-    gdl_session = gdl.GRANTA_MISession(url=MI_URL, autoLogon=True)
+    gdl_session = gdl.GRANTA_MISession(url=MI_URL, auto_logon=True)
 
     database_client = api.SchemaDatabasesApi(api_client)
 
@@ -59,129 +59,128 @@ if __name__ == "__main__":
         database_browser.update_table_name(db_key=CUSTOM_DB_KEY_NEW, table_guid=table_guid, new_table_name=new_name)
 
     logger.info("Duplicating styrene record then withdrawing it. (TestActAsReadUser)")
-    data_import_service = gdl_session.dataImportService
+    data_import_service = gdl_session.data_import_service
     substances_guid = custom_table_name_map["Restricted Substances"]
     copy_import_record = gdl.ImportRecord(
-        existingRecord=gdl.RecordReference(
-            DBKey=CUSTOM_DB_KEY_NEW,
-            lookupValue=gdl.LookupValue(
-                attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY_NEW,
+        existing_record=gdl.RecordReference(
+            db_key=CUSTOM_DB_KEY_NEW,
+            lookup_value=gdl.LookupValue(
+                attribute_reference=gdl.AttributeReference(
+                    db_key=CUSTOM_DB_KEY_NEW,
                     name="CAS number",
-                    partialTableReference=gdl.PartialTableReference(tableGUID=substances_guid),
+                    partial_table_reference=gdl.PartialTableReference(table_guid=substances_guid),
                 ),
-                attributeValue="100-42-5",
+                attribute_value="100-42-5",
             ),
         ),
-        copyDestinationParent=gdl.RecordReference(
-            DBKey=CUSTOM_DB_KEY_NEW,
-            lookupValue=gdl.LookupValue(
-                attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY_NEW,
+        copy_destination_parent=gdl.RecordReference(
+            db_key=CUSTOM_DB_KEY_NEW,
+            lookup_value=gdl.LookupValue(
+                attribute_reference=gdl.AttributeReference(
+                    db_key=CUSTOM_DB_KEY_NEW,
                     name="CAS number",
-                    partialTableReference=gdl.PartialTableReference(tableGUID=substances_guid),
+                    partial_table_reference=gdl.PartialTableReference(table_guid=substances_guid),
                 ),
-                attributeValue="7664-93-9",
+                attribute_value="7664-93-9",
             ),
         ),
-        subsetReferences=[
+        subset_references=[
             gdl.SubsetReference(
-                DBKey=CUSTOM_DB_KEY_NEW,
+                db_key=CUSTOM_DB_KEY_NEW,
                 name="All Substances",
-                partialTableReference=gdl.PartialTableReference(tableGUID=substances_guid),
+                partial_table_reference=gdl.PartialTableReference(table_guid=substances_guid),
             )
         ],
-        recordName="Styrene Copy",
-        releaseRecord=True,
-        importRecordMode="Copy",
+        record_name="Styrene Copy",
+        release_record=True,
+        import_record_mode="Copy",
     )
-    copy_request = gdl.SetRecordAttributesRequest(importRecords=[copy_import_record])
-    copy_response = data_import_service.SetRecordAttributes(copy_request)
+    copy_request = gdl.SetRecordAttributesRequest(import_records=[copy_import_record])
+    copy_response = data_import_service.set_record_attributes(copy_request)
 
-    record_reference = copy_response.recordsImported[0].recordReference
+    record_reference = copy_response.records_imported[0].record_reference
     withdrawal_request = gdl.DeleteOrWithdrawIfLatestRecordVersionRequest(
-        deleteOrWithdrawRecords=[gdl.DeleteOrWithdrawRecord(recordReference=record_reference)]
+        delete_or_withdraw_records=[gdl.DeleteOrWithdrawRecord(record_reference=record_reference)]
     )
-    delete_response = data_import_service.DeleteOrWithdrawIfLatestRecordVersion(withdrawal_request)
+    delete_response = data_import_service.delete_or_withdraw_if_latest_record_version(withdrawal_request)
 
     logger.info("Creating linked specifications. (TestSpecificationLinkDepth)")
     specs_guid = custom_table_name_map["Specifications"]
 
-    tabular_type = gdl.TabularDataType()
-    tabular_type.AddColumn("Thickness")
-    new_row = tabular_type.CreateRow()
+    thickness_value = gdl.RangeDataType(low=0.0508, high=0.127, unit_symbol="mm")
+    thickness_cell = gdl.TabularDataImportCell(
+        column_name="Thickness",
+        range_data_value=thickness_value,
+    )
 
-    new_row.linkingValue = "Coating-203"
-    new_row.cells[0].data = gdl.RangeDataType(low=0.0508, high=0.127, unitSymbol="mm")
-    tabular_type.tabularDataRows.append(new_row)
+    coating_row = gdl.TabularDataImportRow(cells=[thickness_cell], linking_value="Coating-203")
+    coating_attribute = gdl.TabularDataImportType(import_rows=[coating_row])
 
-    spec_link_attribute = gdl.TabularDataType()
-    new_spec_row = spec_link_attribute.CreateRow()
-    new_spec_row.linkingValue = "MIL-DTL-53039,TypeI"
-    spec_link_attribute.tabularDataRows.append(new_spec_row)
+    spec_row = gdl.TabularDataImportRow(linking_value="MIL-DTL-53039,TypeI")
+    spec_attribute = gdl.TabularDataImportType(import_rows=[spec_row])
 
     import_spec_record = gdl.ImportRecord(
-        existingRecord=gdl.RecordReference(
-            DBKey=CUSTOM_DB_KEY_NEW,
-            lookupValue=gdl.LookupValue(
-                attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY_NEW,
+        existing_record=gdl.RecordReference(
+            db_key=CUSTOM_DB_KEY_NEW,
+            lookup_value=gdl.LookupValue(
+                attribute_reference=gdl.AttributeReference(
+                    db_key=CUSTOM_DB_KEY_NEW,
                     name="Specification ID",
-                    partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
+                    partial_table_reference=gdl.PartialTableReference(table_guid=specs_guid),
                 ),
-                attributeValue="MIL-DTL-53039",
+                attribute_value="MIL-DTL-53039",
             ),
         ),
-        recordName="MIL-DTL-53039, Type II",
-        releaseRecord=True,
-        importRecordMode="Create",
-        importAttributeValues=[
+        record_name="MIL-DTL-53039, Type II",
+        release_record=True,
+        import_record_mode="Create",
+        import_attribute_values=[
             gdl.ImportAttributeValue(
-                attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY_NEW,
+                attribute_reference=gdl.AttributeReference(
+                    db_key=CUSTOM_DB_KEY_NEW,
                     name="Specification ID",
-                    partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
+                    partial_table_reference=gdl.PartialTableReference(table_guid=specs_guid),
                 ),
-                shortTextDataValue=gdl.ShortTextDataType(value="MIL-DTL-53039,TypeII"),
+                short_text_data_value=gdl.ShortTextDataType(value="MIL-DTL-53039,TypeII"),
             ),
             gdl.ImportAttributeValue(
-                attributeReference=gdl.AttributeReference(
-                    pseudoAttribute=gdl.AttributeReference.MIPseudoAttributeReference.shortName
+                attribute_reference=gdl.AttributeReference(
+                    pseudo_attribute=gdl.AttributeReference.MIPseudoAttributeReference.shortName
                 ),
-                shortTextDataValue=gdl.ShortTextDataType(value="MIL-DTL-53039, Type II"),
+                short_text_data_value=gdl.ShortTextDataType(value="MIL-DTL-53039, Type II"),
             ),
             gdl.ImportAttributeValue(
-                attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY_NEW,
+                attribute_reference=gdl.AttributeReference(
+                    db_key=CUSTOM_DB_KEY_NEW,
                     name="Coatings in this specification",
-                    partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
+                    partial_table_reference=gdl.PartialTableReference(table_guid=specs_guid),
                 ),
-                tabularDataValue=tabular_type,
+                tabular_data_value=coating_attribute,
             ),
             gdl.ImportAttributeValue(
-                attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY_NEW,
+                attribute_reference=gdl.AttributeReference(
+                    db_key=CUSTOM_DB_KEY_NEW,
                     name="Specifications in this specification",
-                    partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
+                    partial_table_reference=gdl.PartialTableReference(table_guid=specs_guid),
                 ),
-                tabularDataValue=spec_link_attribute,
+                tabular_data_value=spec_attribute,
             ),
             gdl.ImportAttributeValue(
-                attributeReference=gdl.AttributeReference(
-                    DBKey=CUSTOM_DB_KEY_NEW,
+                attribute_reference=gdl.AttributeReference(
+                    db_key=CUSTOM_DB_KEY_NEW,
                     name="Declaration type",
-                    partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
+                    partial_table_reference=gdl.PartialTableReference(table_guid=specs_guid),
                 ),
-                discreteDataValue=gdl.DiscreteDataType(discreteValues=[gdl.DiscreteValue(value="Generic data")]),
+                discrete_data_value=gdl.DiscreteDataType(discrete_values=[gdl.DiscreteValue(value="Generic data")]),
             ),
         ],
-        subsetReferences=[
+        subset_references=[
             gdl.SubsetReference(
-                DBKey=CUSTOM_DB_KEY_NEW,
+                db_key=CUSTOM_DB_KEY_NEW,
                 name="All specifications",
-                partialTableReference=gdl.PartialTableReference(tableGUID=specs_guid),
+                partial_table_reference=gdl.PartialTableReference(table_guid=specs_guid),
             )
         ],
     )
-    import_spec_request = gdl.SetRecordAttributesRequest(importRecords=[import_spec_record])
-    import_spec_response = data_import_service.SetRecordAttributes(import_spec_request)
+    import_spec_request = gdl.SetRecordAttributesRequest(import_records=[import_spec_record])
+    import_spec_response = data_import_service.set_record_attributes(import_spec_request)

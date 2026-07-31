@@ -1,7 +1,7 @@
 import logging
 from typing import MutableMapping, Optional
 
-from ansys.grantami.serverapi_openapi.v2025r2 import api, models
+from ansys.grantami.serverapi_openapi.v2026r1 import api, models
 from ansys.openapi.common import ApiClient
 
 logger = logging.getLogger(__name__)
@@ -172,8 +172,8 @@ def ensure_link_group_exists(
     create_response = rlg_client.create_record_link_group(
         database_key=db_key,
         table_guid=source_table_guid,
-        body=models.GsaCreateRecordLinkGroup(
-            link_target=models.GsaLinkTarget(
+        body=models.GsaCreateCrossDatabaseRecordLinkGroup(
+            link_target=models.GsaCreateCrossDatabaseLinkTarget(
                 database_guid=target_db_guid,
                 table_guid=target_table_guid,
             ),

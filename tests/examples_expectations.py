@@ -233,7 +233,7 @@ def example_5_1_summary_and_messages() -> None:
     assert sustainability_summary.messages == []  # noqa
     assert phases_df["Name"].to_list() == ["Material", "Processes", "Transport"]  # noqa
     assert [round(i) for i in phases_df["EE%"].to_list()] == [56, 27, 17]  # noqa
-    assert [round(i) for i in phases_df["CC%"].to_list()] == [67, 19, 15]  # noqa
+    assert [round(i) for i in phases_df["CC%"].to_list()] == [66, 19, 15]  # noqa
     # Expected cells with outputs
     assert set(Out.keys()) == {3, 4, 5, 6}, str(Out)  # noqa
 

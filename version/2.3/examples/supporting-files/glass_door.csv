@@ -1,0 +1,27 @@
+﻿BoM Level,ID,Name,Item Type,Quantity,Unit of measure,Measured mass (per UoM),Measured mass unit
+1,24X6-30,24X6-30,Part,1,Each,,
+2,HA-42-Al,HA-42-Al,Part,2,Each,,
+3,HA-42-Al(A),HA-42-Al(A),Part,1,Each,146,g/Part
+4,aluminum-319-0-moldcast-t6,"Aluminum, 319.0, permanent mold cast, T6",Material,100,%,,
+3,HA-42-Al(B),HA-42-Al(B),Part,1,Each,220,g/Part
+4,aluminum-319-0-moldcast-t6,"Aluminum, 319.0, permanent mold cast, T6",Material,100,%,,
+3,N0403.12N.2,N0403.12N.2,Part,4,Each,2,g/Part
+4,plastic-pa6-cast-plasticized,"PA6 (cast, plasticized)",Material,100,%,,
+3,DIN-7991-M8-20,DIN-7991-M8-20,Part,2,Each,8.6,g/Part
+4,stainless-304-halfhard,"Stainless steel, austenitic, AISI 304, 1/2 hard",Material,100,%,,
+2,H-S-BR-Dual,H-S-BR-Dual,Part,1,Each,,
+3,H-S-BR-A,H-S-BR-A,Part,1,Each,472,g/Part
+4,stainless-304-annealed,"Stainless steel, austenitic, AISI 304, annealed",Material,100,%,,
+3,H-S-BR-B,H-S-BR-B,Part,1,Each,464,g/Part
+4,stainless-304-annealed,"Stainless steel, austenitic, AISI 304, annealed",Material,100,%,,
+3,H-PIN-12,H-PIN-12,Part,2,Each,46.5,g/Part
+4,steel-1015-normalized,"Carbon steel, AISI 1015, normalized",Material,100,%,,
+3,N0403.12N.2,N0403.12N.2,Part,4,Each,2,g/Part
+4,plastic-pa6-cast-plasticized,"PA6 (cast, plasticized)",Material,100,%,,
+3,SSF-M4-6-A2,SSF-M4-6-A2,Part,2,Each,1.3,g/Part
+4,stainless-304-halfhard,"Stainless steel, austenitic, AISI 304, 1/2 hard",Material,100,%,,
+2,P-30-L,P-30-L,Part,1,Each,,
+3,321-51,321-51,Part,1.51,m^2,19.6,kg/m^2
+4,glass-laminated,Laminated glass,Material,100,%,,
+3,7000001298,7000001298,Part,1.51,m^2,340,g/m^2
+4,plastic-pet,"PET (unfilled, amorphous)",Material,100,%,,

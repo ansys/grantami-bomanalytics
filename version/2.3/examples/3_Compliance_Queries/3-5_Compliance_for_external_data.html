@@ -1,0 +1,967 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta property="og:site_name" content="PyAnsys" />
+    <title>Determine compliance for BoMs in external data sources &#8212; PyGranta BoM Analytics 2.3.1</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=ce7f2556" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=ce7f2556" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dataframe.css?v=1a040689" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=7de5c1a2"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/3_Compliance_Queries/3-5_Compliance_for_external_data';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.15.4';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://bomanalytics.grantami.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.3';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <script src="../../_static/js/add_blank.js?v=f2ece54a"></script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Write compliance results to a pandas.DataFrame object" href="3-6_Writing_compliance_results_to_a_dataframe.html" />
+    <link rel="prev" title="Perform a BoM compliance query" href="3-4_BoM_compliance.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://bomanalytics.grantami.docs.pyansys.com/version/stable/examples/3_Compliance_Queries/3-5_Compliance_for_external_data.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyGranta BoM Analytics 2.3.1 - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark" alt="PyGranta BoM Analytics 2.3.1 - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api/index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../0_Basic_usage.html">Basic usage example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1_Database-specific_configuration.html">Database-specific configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../2_Impacted_Substances_Queries/index.html">Impacted substances examples</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Compliance examples</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="3-1_Substance_compliance.html">Perform a substance compliance query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3-2_Material_compliance.html">Perform a material compliance query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3-3_Part_compliance.html">Perform a part compliance query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3-4_BoM_compliance.html">Perform a BoM compliance query</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Determine compliance for BoMs in external data sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="3-6_Writing_compliance_results_to_a_dataframe.html">Write compliance results to a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> object</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../4_Sustainability/index.html">Sustainability examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../5_Sustainability_summary/index.html">Sustainability summary examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../6_BoMs/index.html">BoM examples</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+       
+    <li class="breadcrumb-item">
+      <a href="https://grantami.docs.pyansys.com/" class="nav-link">PyGranta</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Compliance examples</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Determine compliance for BoMs in external data sources</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <p>Download this example as a <a class="reference download internal" download="" href="../../_downloads/e7b8ff40a08d316574bb8bcbde4c8e7f/3-5_Compliance_for_external_data.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Jupyter</span> <span class="pre">notebook</span></code></a> or a
+<a class="reference download internal" download="" href="../../_downloads/3644ba7af3ef61b7c048fbfc5ab2f9a6/3-5_Compliance_for_external_data.py"><code class="xref download docutils literal notranslate"><span class="pre">Python</span> <span class="pre">script</span></code></a>.</p>
+<hr class="docutils" />
+<section id="Determine-compliance-for-BoMs-in-external-data-sources">
+<h1>Determine compliance for BoMs in external data sources<a class="headerlink" href="#Determine-compliance-for-BoMs-in-external-data-sources" title="Link to this heading">#</a></h1>
+<p>You might have to deal with BoMs or other data structures stored in third-party systems. This example shows a scenario where compliance must be determined for a BoM-type structure in a JSON file, with the result added to the input file.</p>
+<p>Although it is unlikely that the data structures and processing presented here match your requirements, this example demonstrates the principles behind using the Granta MI BoM Analytics API within your existing processes. It shows how a BoM-like data structure can be loaded from a neutral format and used as a starting point for compliance analysis. The approach is applicable to data in other formats or data loaded from other software platform APIs.</p>
+<p>You can <a class="reference external" href="../supporting-files/source_data.json">download</a> the external data source used in this example.</p>
+<section id="Load-the-external-data">
+<h2>Load the external data<a class="headerlink" href="#Load-the-external-data" title="Link to this heading">#</a></h2>
+<p>First load the JSON file and use the <code class="docutils literal notranslate"><span class="pre">json</span></code> module to convert the text into a hierarchical structure of <code class="docutils literal notranslate"><span class="pre">dict</span></code> and <code class="docutils literal notranslate"><span class="pre">list</span></code> objects.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="kn">import</span> <span class="n">pprint</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../supporting-files/source_data.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">pprint</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;components&#39;: [{&#39;materials&#39;: [&#39;plastic-abs-pvc-flame&#39;],
+                 &#39;part_number&#39;: &#39;FQC3RQKYE5&#39;},
+                {&#39;materials&#39;: [&#39;plastic-abs-pvc-flame&#39;,
+                               &#39;plastic-pc-10glassfiber&#39;],
+                 &#39;part_number&#39;: &#39;3FF8CXIHWJ&#39;},
+                {&#39;materials&#39;: [&#39;elastomer-pvc-shorea55&#39;],
+                 &#39;part_number&#39;: &#39;O676WZSGHA&#39;},
+                {&#39;materials&#39;: [&#39;aluminum-6063-t6&#39;],
+                 &#39;part_number&#39;: &#39;L8NTU4BZY2&#39;},
+                {&#39;materials&#39;: [&#39;aluminum-6063-t6&#39;],
+                 &#39;part_number&#39;: &#39;7N9EUBALU2&#39;},
+                {&#39;materials&#39;: [&#39;stainless-316-annealed&#39;],
+                 &#39;part_number&#39;: &#39;U921IQSW6K&#39;},
+                {&#39;materials&#39;: [&#39;aluminum-6063-t6&#39;, &#39;glass-borosilicate-7050&#39;],
+                 &#39;part_number&#39;: &#39;TUSMQ1ZDFM&#39;}]}
+</pre></div></div>
+</div>
+<p>Because the list of components is used frequently, store it in a variable for convenience.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">components</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;components&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>It is clear from viewing this data that some parts include multiple materials, and some materials appear in the JSON file more than once. However, the material compliance is not dependent on the component it is used in, and the compliance of a part only depends on the worst compliance status of the constituent materials. Therefore, you can simplify the compliance query by get the compliance for the unique set of materials in the JSON file. You can then perform some data manipulation of the
+results.</p>
+<p>Because the compliance status of a material does not depend on which component it is used in and part compliance depends only on the worst compliance status of its constituent materials, you can simplify the query by running it against the set of unique materials in the JSON file. You can then rebuild the data structure from these results to view the compliance by component.</p>
+<p>First, use a set comprehension to get the unique materials, which you can then cast into a list.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">material_ids</span> <span class="o">=</span> <span class="p">{</span><span class="n">m</span> <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">components</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">comp</span><span class="p">[</span><span class="s2">&quot;materials&quot;</span><span class="p">]}</span>
+<span class="n">material_ids</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;aluminum-6063-t6&#39;,
+ &#39;elastomer-pvc-shorea55&#39;,
+ &#39;glass-borosilicate-7050&#39;,
+ &#39;plastic-abs-pvc-flame&#39;,
+ &#39;plastic-pc-10glassfiber&#39;,
+ &#39;stainless-316-annealed&#39;}
+</pre></div></div>
+</div>
+</section>
+<section id="Get-the-compliance-status">
+<h2>Get the compliance status<a class="headerlink" href="#Get-the-compliance-status" title="Link to this heading">#</a></h2>
+<p>Next, create and run a compliance query using the list of material IDs, as shown in previous examples.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.grantami.bomanalytics</span> <span class="kn">import</span> <span class="n">Connection</span><span class="p">,</span> <span class="n">indicators</span><span class="p">,</span> <span class="n">queries</span>
+
+<span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;http://my_grantami_server/mi_servicelayer&quot;</span>
+<span class="n">cxn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">server_url</span><span class="p">)</span><span class="o">.</span><span class="n">with_credentials</span><span class="p">(</span><span class="s2">&quot;user_name&quot;</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="n">svhc</span> <span class="o">=</span> <span class="n">indicators</span><span class="o">.</span><span class="n">WatchListIndicator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;SVHC&quot;</span><span class="p">,</span>
+    <span class="n">legislation_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Candidate_AnnexXV&quot;</span><span class="p">],</span>
+    <span class="n">default_threshold_percentage</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">mat_query</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">queries</span><span class="o">.</span><span class="n">MaterialComplianceQuery</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">with_indicators</span><span class="p">([</span><span class="n">svhc</span><span class="p">])</span>
+    <span class="o">.</span><span class="n">with_material_ids</span><span class="p">(</span><span class="n">material_ids</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">mat_results</span> <span class="o">=</span> <span class="n">cxn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mat_query</span><span class="p">)</span>
+<span class="n">mat_results</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;MaterialComplianceQueryResult: 6 MaterialWithCompliance results&gt;
+</pre></div></div>
+</div>
+</section>
+<section id="Postprocess-the-results">
+<h2>Postprocess the results<a class="headerlink" href="#Postprocess-the-results" title="Link to this heading">#</a></h2>
+<p>The preceding results describe the compliance status for each material, but more work is needed to provide the compliance status for all the components in the original JSON file.</p>
+<p>When a component contains only one material, the result can simply be copied over. In the general case, moving from material compliance to component compliance means taking the worst compliance result across all the constituent materials.</p>
+<p>To do this, first create a dictionary that maps a material ID to the indicator result returned by the query.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">material_lookup</span> <span class="o">=</span> <span class="p">{</span><span class="n">mat</span><span class="o">.</span><span class="n">material_id</span><span class="p">:</span> <span class="n">mat</span><span class="o">.</span><span class="n">indicators</span><span class="p">[</span><span class="s2">&quot;SVHC&quot;</span><span class="p">]</span>
+                   <span class="k">for</span> <span class="n">mat</span> <span class="ow">in</span> <span class="n">mat_results</span><span class="o">.</span><span class="n">compliance_by_material_and_indicator</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>Next, define a function that takes a list of material IDs and returns the worst compliance status associated with the materials in the list.</p>
+<p>You can use the built-in <code class="docutils literal notranslate"><span class="pre">max()</span></code> function to do this because you can compare <code class="docutils literal notranslate"><span class="pre">WatchListIndicator</span></code> with <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;</span></code> operators. The convention is that a worse result is <em>greater than</em> a better result.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">rollup_results</span><span class="p">(</span><span class="n">material_ids</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">indicator_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">material_lookup</span><span class="p">[</span><span class="n">mat_id</span><span class="p">]</span> <span class="k">for</span> <span class="n">mat_id</span> <span class="ow">in</span> <span class="n">material_ids</span><span class="p">]</span>
+    <span class="n">worst_result</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">indicator_results</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">worst_result</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+</div>
+</div>
+<p>Now call this function for each component in a <code class="docutils literal notranslate"><span class="pre">dict</span></code> comprehension to obtain a mapping between part number and compliance status.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">component_results</span> <span class="o">=</span> <span class="p">{</span><span class="n">comp</span><span class="p">[</span><span class="s2">&quot;part_number&quot;</span><span class="p">]:</span> <span class="n">rollup_results</span><span class="p">(</span><span class="n">comp</span><span class="p">[</span><span class="s2">&quot;materials&quot;</span><span class="p">])</span>
+                     <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">components</span><span class="p">}</span>
+<span class="n">component_results</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;FQC3RQKYE5&#39;: &#39;WatchListHasSubstanceAboveThreshold&#39;,
+ &#39;3FF8CXIHWJ&#39;: &#39;WatchListHasSubstanceAboveThreshold&#39;,
+ &#39;O676WZSGHA&#39;: &#39;WatchListHasSubstanceAboveThreshold&#39;,
+ &#39;L8NTU4BZY2&#39;: &#39;WatchListCompliant&#39;,
+ &#39;7N9EUBALU2&#39;: &#39;WatchListCompliant&#39;,
+ &#39;U921IQSW6K&#39;: &#39;WatchListCompliant&#39;,
+ &#39;TUSMQ1ZDFM&#39;: &#39;WatchListHasSubstanceAboveThreshold&#39;}
+</pre></div></div>
+</div>
+<p>These results include text defined by the API for compliance status. However, you might want the compliance status to determine the approvals required to release the part in a design review process. In this case, you can define a mapping between compliance status and approval requirements.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flags</span> <span class="o">=</span> <span class="n">indicators</span><span class="o">.</span><span class="n">WatchListFlag</span>
+<span class="n">result_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">flags</span><span class="o">.</span><span class="n">WatchListCompliant</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="s2">&quot;No Approval Required&quot;</span><span class="p">,</span>
+    <span class="n">flags</span><span class="o">.</span><span class="n">WatchListAllSubstancesBelowThreshold</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="s2">&quot;Level 1 Approval Required&quot;</span><span class="p">,</span>
+    <span class="n">flags</span><span class="o">.</span><span class="n">WatchListHasSubstanceAboveThreshold</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="s2">&quot;Level 2 Approval Required&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<p>You can now use this dictionary to map from the Granta MI result to the approval requirements.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="n">part_number</span><span class="p">:</span> <span class="n">result_map</span><span class="p">[</span><span class="n">result</span><span class="p">]</span>
+           <span class="k">for</span> <span class="n">part_number</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">component_results</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+<span class="n">results</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;FQC3RQKYE5&#39;: &#39;Level 2 Approval Required&#39;,
+ &#39;3FF8CXIHWJ&#39;: &#39;Level 2 Approval Required&#39;,
+ &#39;O676WZSGHA&#39;: &#39;Level 2 Approval Required&#39;,
+ &#39;L8NTU4BZY2&#39;: &#39;No Approval Required&#39;,
+ &#39;7N9EUBALU2&#39;: &#39;No Approval Required&#39;,
+ &#39;U921IQSW6K&#39;: &#39;No Approval Required&#39;,
+ &#39;TUSMQ1ZDFM&#39;: &#39;Level 2 Approval Required&#39;}
+</pre></div></div>
+</div>
+</section>
+<section id="Write-the-output">
+<h2>Write the output<a class="headerlink" href="#Write-the-output" title="Link to this heading">#</a></h2>
+<p>Once you have your final result, you can take your result <code class="docutils literal notranslate"><span class="pre">dict</span></code> and use it to extend the original JSON data structure, with approval requirements added in.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">components_with_result</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">components</span><span class="p">:</span>
+    <span class="n">component_with_result</span> <span class="o">=</span> <span class="n">component</span>
+    <span class="n">part_number</span> <span class="o">=</span> <span class="n">component</span><span class="p">[</span><span class="s2">&quot;part_number&quot;</span><span class="p">]</span>
+    <span class="n">component_with_result</span><span class="p">[</span><span class="s2">&quot;approval&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="n">part_number</span><span class="p">]</span>
+    <span class="n">components_with_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">component_with_result</span><span class="p">)</span>
+
+<span class="n">data_results</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">data_results</span><span class="p">[</span><span class="s2">&quot;components&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">components_with_result</span>
+</pre></div>
+</div>
+</div>
+<p>Print the results to see that the new data structure includes the results.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pprint</span><span class="p">(</span><span class="n">data_results</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;components&#39;: [{&#39;approval&#39;: &#39;Level 2 Approval Required&#39;,
+                 &#39;materials&#39;: [&#39;plastic-abs-pvc-flame&#39;],
+                 &#39;part_number&#39;: &#39;FQC3RQKYE5&#39;},
+                {&#39;approval&#39;: &#39;Level 2 Approval Required&#39;,
+                 &#39;materials&#39;: [&#39;plastic-abs-pvc-flame&#39;,
+                               &#39;plastic-pc-10glassfiber&#39;],
+                 &#39;part_number&#39;: &#39;3FF8CXIHWJ&#39;},
+                {&#39;approval&#39;: &#39;Level 2 Approval Required&#39;,
+                 &#39;materials&#39;: [&#39;elastomer-pvc-shorea55&#39;],
+                 &#39;part_number&#39;: &#39;O676WZSGHA&#39;},
+                {&#39;approval&#39;: &#39;No Approval Required&#39;,
+                 &#39;materials&#39;: [&#39;aluminum-6063-t6&#39;],
+                 &#39;part_number&#39;: &#39;L8NTU4BZY2&#39;},
+                {&#39;approval&#39;: &#39;No Approval Required&#39;,
+                 &#39;materials&#39;: [&#39;aluminum-6063-t6&#39;],
+                 &#39;part_number&#39;: &#39;7N9EUBALU2&#39;},
+                {&#39;approval&#39;: &#39;No Approval Required&#39;,
+                 &#39;materials&#39;: [&#39;stainless-316-annealed&#39;],
+                 &#39;part_number&#39;: &#39;U921IQSW6K&#39;},
+                {&#39;approval&#39;: &#39;Level 2 Approval Required&#39;,
+                 &#39;materials&#39;: [&#39;aluminum-6063-t6&#39;, &#39;glass-borosilicate-7050&#39;],
+                 &#39;part_number&#39;: &#39;TUSMQ1ZDFM&#39;}]}
+</pre></div></div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Load-the-external-data">Load the external data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Get-the-compliance-status">Get the compliance status</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Postprocess-the-results">Postprocess the results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Write-the-output">Write the output</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/3_Compliance_Queries/3-5_Compliance_for_external_data.ipynb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.5.3. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

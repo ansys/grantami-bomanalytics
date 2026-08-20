@@ -1,0 +1,907 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Performing a Material Compliance Query &#8212; PyGranta BoM Analytics 2.0.0</title>
+
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/ansys_sphinx_theme.css?v=450015ff" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/dataframe.css?v=1a040689" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="../../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
+ 
+<link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+
+    <script src="../../_static/documentation_options.js?v=79f5c508"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=49e1bf35"></script>
+    <script src="../../_static/js/table.js?v=b64f5182"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/2_Compliance_Queries/2-2_Material_compliance';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.14.3';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://bomanalytics.grantami.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '2.0';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner = false;
+        </script>
+    <script src="../../_static/js/add_blank.js?v=f2ece54a"></script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Performing a Part Compliance Query" href="2-3_Part_compliance.html" />
+    <link rel="prev" title="Performing a Substance Compliance Query" href="2-1_Substance_compliance.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <link rel="canonical" href="https://bomanalytics.grantami.docs.pyansys.com/version/stable/examples/2_Compliance_Queries/2-2_Material_compliance.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container"><!-- Debugging: html_theme_options =  -->
+
+<!-- If there is no MiliSearch enabled, use the PyData search -->
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+   
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-light" alt="PyGranta BoM Analytics 2.0.0 - Home"/>
+    <script>document.write(`<img src="../../_static/pyansys-logo-black-cropped.png" class="logo__image only-dark" alt="PyGranta BoM Analytics 2.0.0 - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-2"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-2"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-2"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-2">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../getting_started/index.html">
+                        Getting started
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../api/index.html">
+                        API reference
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../index.html">
+                        Examples
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../contributing.html">
+                        Contribute
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <div class="version-switcher__container dropdown">
+    <button id="pst-version-switcher-button-3"
+      type="button"
+      class="version-switcher__button btn btn-sm navbar-btn dropdown-toggle"
+      data-bs-toggle="dropdown"
+      aria-haspopup="listbox"
+      aria-controls="pst-version-switcher-list-3"
+      aria-label="Version switcher list"
+    >
+      Choose version  <!-- this text may get changed later by javascript -->
+      <span class="caret"></span>
+    </button>
+    <div id="pst-version-switcher-list-3"
+      class="version-switcher__menu dropdown-menu list-group-flush py-0"
+      role="listbox" aria-labelledby="pst-version-switcher-button-3">
+      <!-- dropdown will be populated by javascript on page load -->
+    </div>
+  </div>
+`);
+</script></div>
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-bomanalytics" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../0_Getting_started.html">Basic usage example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../1_Impacted_Substances_Queries/index.html">Impacted substances examples</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Compliance Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="2-1_Substance_compliance.html">Performing a Substance Compliance Query</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Performing a Material Compliance Query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="2-3_Part_compliance.html">Performing a Part Compliance Query</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../3_Advanced_Topics/index.html">Advanced examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../4_Sustainability/index.html">Sustainability</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys Documentation</a>
+    </li>
+       
+    <li class="breadcrumb-item">
+      <a href="https://grantami.docs.pyansys.com/" class="nav-link">PyGranta</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../index.html" class="nav-link">Examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Compliance Examples</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page">Performing a Material Compliance Query</li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <p>Download this example as a <a class="reference download internal" download="" href="../../_downloads/040e7af8423fb8db51f3b039254e7ae8/2-2_Material_compliance.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Jupyter</span> <span class="pre">notebook</span></code></a> or a
+<a class="reference download internal" download="" href="../../_downloads/09b357ca725cd19bd6195f4901fb452b/2-2_Material_compliance.py"><code class="xref download docutils literal notranslate"><span class="pre">Python</span> <span class="pre">script</span></code></a>.</p>
+<hr class="docutils" />
+<section id="Performing-a-Material-Compliance-Query">
+<h1>Performing a Material Compliance Query<a class="headerlink" href="#Performing-a-Material-Compliance-Query" title="Link to this heading">#</a></h1>
+<p>A Material Compliance Query determines whether one or more materials are compliant with the specified indicators. This is done by first determining compliance for the substances associated with the material, and then rolling up the results to the material.</p>
+<section id="Connecting-to-Granta-MI">
+<h2>Connecting to Granta MI<a class="headerlink" href="#Connecting-to-Granta-MI" title="Link to this heading">#</a></h2>
+<p>Import the <code class="docutils literal notranslate"><span class="pre">Connection</span></code> class and create the connection. See the <a class="reference internal" href="../0_Getting_started.html"><span class="doc">Getting Started</span></a> example for more details.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.grantami.bomanalytics</span> <span class="kn">import</span> <span class="n">Connection</span>
+
+<span class="n">server_url</span> <span class="o">=</span> <span class="s2">&quot;http://my_grantami_server/mi_servicelayer&quot;</span>
+<span class="n">cxn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">server_url</span><span class="p">)</span><span class="o">.</span><span class="n">with_credentials</span><span class="p">(</span><span class="s2">&quot;user_name&quot;</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Defining-an-Indicator">
+<h2>Defining an Indicator<a class="headerlink" href="#Defining-an-Indicator" title="Link to this heading">#</a></h2>
+<p>A Compliance query determines compliance against ‘Indicators’, as opposed to an Impacted Substances query which determines compliance directly against legislations.</p>
+<p>There are two types of Indicator object (<code class="docutils literal notranslate"><span class="pre">WatchListIndicator</span></code> and <code class="docutils literal notranslate"><span class="pre">RohsIndicator</span></code>), and the syntax presented below applies to both. The differences in the internal implementation of the two objects are described in the API documentation.</p>
+<p>Generally speaking, if a substance is impacted by a legislation associated with an indicator, and in a quantity above a specified threshold, the substance is non-compliant with that indicator. This non-compliance applies to any other items in the BoM hierarchy that directly or indirectly include that substance.</p>
+<p>First, create two <code class="docutils literal notranslate"><span class="pre">WatchListIndicator</span></code> objects.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.grantami.bomanalytics</span> <span class="kn">import</span> <span class="n">indicators</span>
+
+<span class="n">svhc</span> <span class="o">=</span> <span class="n">indicators</span><span class="o">.</span><span class="n">WatchListIndicator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;SVHC&quot;</span><span class="p">,</span>
+    <span class="n">legislation_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Candidate_AnnexXV&quot;</span><span class="p">],</span>
+    <span class="n">default_threshold_percentage</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">sin</span> <span class="o">=</span> <span class="n">indicators</span><span class="o">.</span><span class="n">WatchListIndicator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;SIN&quot;</span><span class="p">,</span>
+    <span class="n">legislation_ids</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SINList&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Building-and-Running-the-Query">
+<h2>Building and Running the Query<a class="headerlink" href="#Building-and-Running-the-Query" title="Link to this heading">#</a></h2>
+<p>Next define the query itself. Materials can be referenced by Granta MI record reference or Material ID. The table containing the Material records is not required, since this is enforced by the Restricted Substances database schema.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ansys.grantami.bomanalytics</span> <span class="kn">import</span> <span class="n">queries</span>
+
+<span class="n">mat_query</span> <span class="o">=</span> <span class="n">queries</span><span class="o">.</span><span class="n">MaterialComplianceQuery</span><span class="p">()</span><span class="o">.</span><span class="n">with_indicators</span><span class="p">([</span><span class="n">svhc</span><span class="p">,</span> <span class="n">sin</span><span class="p">])</span>
+<span class="n">mat_query</span> <span class="o">=</span> <span class="n">mat_query</span><span class="o">.</span><span class="n">with_material_ids</span><span class="p">([</span><span class="s2">&quot;plastic-pa66-60glassfiber&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;zinc-pb-cdlow-alloy-z21220-rolled&quot;</span><span class="p">,</span>
+                                         <span class="s2">&quot;stainless-316h&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Finally, run the query. Passing a <code class="docutils literal notranslate"><span class="pre">MaterialComplianceQuery</span></code> object to the <code class="docutils literal notranslate"><span class="pre">Connection.run()</span></code> method returns a <code class="docutils literal notranslate"><span class="pre">MaterialComplianceQueryResult</span></code> object.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mat_result</span> <span class="o">=</span> <span class="n">cxn</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">mat_query</span><span class="p">)</span>
+<span class="n">mat_result</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;MaterialComplianceQueryResult: 3 MaterialWithCompliance results&gt;
+</pre></div></div>
+</div>
+<p>The result object contains two properties: <code class="docutils literal notranslate"><span class="pre">compliance_by_material_and_indicator</span></code> and <code class="docutils literal notranslate"><span class="pre">compliance_by_indicator</span></code>.</p>
+</section>
+<section id="Results-Grouped-by-Material">
+<h2>Results Grouped by Material<a class="headerlink" href="#Results-Grouped-by-Material" title="Link to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">compliance_by_material_and_indicator</span></code> property contains a list of <code class="docutils literal notranslate"><span class="pre">MaterialWithComplianceResult</span></code> objects with the reference to the material record and the compliance status for each indicator. The <code class="docutils literal notranslate"><span class="pre">SubstanceWithComplianceResult</span></code> objects are also included because compliance was determined based on the substances associated with the material object. These are also accompanied by their compliance status for each indicator.</p>
+<p>Initially, we can print just the results for the reinforced PA66 record.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pa_66</span> <span class="o">=</span> <span class="n">mat_result</span><span class="o">.</span><span class="n">compliance_by_material_and_indicator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PA66 (60% glass fiber): </span><span class="si">{</span><span class="n">pa_66</span><span class="o">.</span><span class="n">indicators</span><span class="p">[</span><span class="s1">&#39;SVHC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+PA66 (60% glass fiber): WatchListHasSubstanceAboveThreshold
+</pre></div></div>
+</div>
+<p>The reinforced PA66 record has a status of ‘WatchListHasSubstanceAboveThreshold’, which tells us the material is not compliant with the indicator, and therefore contains SVHCs above the 0.1% threshold.</p>
+<p>To understand which substances have caused this status, we can print the substances that are not compliant with the legislation. The possible states of the indicator are available on the <code class="docutils literal notranslate"><span class="pre">Indicator.available_flags</span></code> attribute and can be compared using standard Python operators.</p>
+<p>For substances, the critical threshold is the state ‘WatchListAboveThreshold’.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">above_threshold_flag</span> <span class="o">=</span> <span class="n">svhc</span><span class="o">.</span><span class="n">available_flags</span><span class="o">.</span><span class="n">WatchListAboveThreshold</span>
+<span class="n">pa_66_svhcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">sub</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">pa_66</span><span class="o">.</span><span class="n">substances</span>
+               <span class="k">if</span> <span class="n">sub</span><span class="o">.</span><span class="n">indicators</span><span class="p">[</span><span class="s2">&quot;SVHC&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">above_threshold_flag</span>
+               <span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pa_66_svhcs</span><span class="p">)</span><span class="si">}</span><span class="s2"> SVHCs&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">pa_66_svhcs</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Substance record history identity: </span><span class="si">{</span><span class="n">sub</span><span class="o">.</span><span class="n">record_history_identity</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+16 SVHCs
+Substance record history identity: 75821
+Substance record history identity: 74483
+Substance record history identity: 75073
+Substance record history identity: 75822
+Substance record history identity: 119243
+Substance record history identity: 74441
+Substance record history identity: 161216
+Substance record history identity: 270848
+Substance record history identity: 161215
+Substance record history identity: 119242
+Substance record history identity: 76444
+Substance record history identity: 76445
+Substance record history identity: 74449
+Substance record history identity: 77133
+Substance record history identity: 76672
+Substance record history identity: 75282
+</pre></div></div>
+</div>
+<p>Note that children of items passed into the compliance query are returned with record references based on record history identities only. The Granta MI Scripting Toolkit for Python can be used to translate record history identities into CAS Numbers if required.</p>
+<p>Next, look at the state of the zinc alloy record.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">zn_pb_cd</span> <span class="o">=</span> <span class="n">mat_result</span><span class="o">.</span><span class="n">compliance_by_material_and_indicator</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zn-Pb-Cd low alloy: </span><span class="si">{</span><span class="n">zn_pb_cd</span><span class="o">.</span><span class="n">indicators</span><span class="p">[</span><span class="s1">&#39;SVHC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Zn-Pb-Cd low alloy: WatchListAllSubstancesBelowThreshold
+</pre></div></div>
+</div>
+<p>The zinc alloy record has the status ‘WatchListAllSubstancesBelowThreshold’, which means there are substances present that are impacted by the legislation, but are below the 0.1% threshold.</p>
+<p>We can print these substances using the ‘WatchListBelowThreshold’ flag as the threshold.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">below_threshold_flag</span> <span class="o">=</span> <span class="n">svhc</span><span class="o">.</span><span class="n">available_flags</span><span class="o">.</span><span class="n">WatchListBelowThreshold</span>
+<span class="n">zn_svhcs_below_threshold</span> <span class="o">=</span> <span class="p">[</span><span class="n">sub</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">zn_pb_cd</span><span class="o">.</span><span class="n">substances</span>
+                            <span class="k">if</span> <span class="n">sub</span><span class="o">.</span><span class="n">indicators</span><span class="p">[</span><span class="s2">&quot;SVHC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="n">below_threshold_flag</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">zn_svhcs_below_threshold</span><span class="p">)</span><span class="si">}</span><span class="s2"> SVHCs below threshold&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">substance</span> <span class="ow">in</span> <span class="n">zn_svhcs_below_threshold</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Substance record history identity: </span><span class="si">{</span><span class="n">substance</span><span class="o">.</span><span class="n">record_history_identity</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2 SVHCs below threshold
+Substance record history identity: 72969
+Substance record history identity: 74252
+</pre></div></div>
+</div>
+<p>Finally, look at the stainless steel record.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ss_316h</span> <span class="o">=</span> <span class="n">mat_result</span><span class="o">.</span><span class="n">compliance_by_material_and_indicator</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;316H stainless steel: </span><span class="si">{</span><span class="n">ss_316h</span><span class="o">.</span><span class="n">indicators</span><span class="p">[</span><span class="s1">&#39;SVHC&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">flag</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+316H stainless steel: WatchListCompliant
+</pre></div></div>
+</div>
+<p>The stainless steel record has the status ‘WatchListCompliant’, which means there are no impacted substances in the material.</p>
+<p>We can print these substances using the ‘WatchListNotImpacted’ flag as the threshold.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">not_impacted_flag</span> <span class="o">=</span> <span class="n">svhc</span><span class="o">.</span><span class="n">available_flags</span><span class="o">.</span><span class="n">WatchListNotImpacted</span>
+<span class="n">ss_not_impacted</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">sub</span>
+    <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">ss_316h</span><span class="o">.</span><span class="n">substances</span>
+    <span class="k">if</span> <span class="n">sub</span><span class="o">.</span><span class="n">indicators</span><span class="p">[</span><span class="s2">&quot;SVHC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">flag</span> <span class="o">==</span> <span class="n">not_impacted_flag</span>
+<span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ss_not_impacted</span><span class="p">)</span><span class="si">}</span><span class="s2"> non-SVHC substances&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">ss_not_impacted</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Substance record history identity: </span><span class="si">{</span><span class="n">sub</span><span class="o">.</span><span class="n">record_history_identity</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+9 non-SVHC substances
+Substance record history identity: 75489
+Substance record history identity: 73449
+Substance record history identity: 75307
+Substance record history identity: 75352
+Substance record history identity: 75516
+Substance record history identity: 77816
+Substance record history identity: 75373
+Substance record history identity: 75306
+Substance record history identity: 77307
+</pre></div></div>
+</div>
+</section>
+<section id="Results-Grouped-by-Indicator">
+<h2>Results Grouped by Indicator<a class="headerlink" href="#Results-Grouped-by-Indicator" title="Link to this heading">#</a></h2>
+<p>Alternatively, using the <code class="docutils literal notranslate"><span class="pre">compliance_by_indicator</span></code> property provides a single indicator result that summarizes the results across all materials in the query. This would be useful in a situation where we have a ‘concept’ assembly stored outside of Granta MI, and want to determine its compliance. We know it contains the materials specified in the query above, and so using <code class="docutils literal notranslate"><span class="pre">compliance_by_indicator</span></code> will tell us if that concept assembly is compliant based on the worst result from individual
+materials.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">mat_result</span><span class="o">.</span><span class="n">compliance_by_indicator</span><span class="p">[</span><span class="s2">&quot;SVHC&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">above_threshold_flag</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;One or more materials contains an SVHC in a quantity &gt; 0.1%&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No SVHCs, or SVHCs are present in a quantity &lt; 0.1%&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+One or more materials contains an SVHC in a quantity &gt; 0.1%
+</pre></div></div>
+</div>
+<p>Note that this cannot tell us which material is responsible for the non-compliance. This would require performing a more granular analysis as shown above, or importing the assembly into Granta MI and running the compliance on that part record.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="2-1_Substance_compliance.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Performing a Substance Compliance Query</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="2-3_Part_compliance.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Performing a Part Compliance Query</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Connecting-to-Granta-MI">Connecting to Granta MI</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Defining-an-Indicator">Defining an Indicator</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Building-and-Running-the-Query">Building and Running the Query</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Results-Grouped-by-Material">Results Grouped by Material</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Results-Grouped-by-Indicator">Results Grouped by Indicator</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button--></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/examples/2_Compliance_Queries/2-2_Material_compliance.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright (c) 2024 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  0.13.1. <br />Last updated on
+  <span id="date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var lastModifiedDate = new Date(document.lastModified);
+  var date = lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("date").innerHTML = date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

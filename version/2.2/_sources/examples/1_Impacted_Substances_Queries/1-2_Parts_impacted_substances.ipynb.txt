@@ -1,0 +1,335 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "da43936c",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "# Perform a part impacted substances query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d3ae099e",
+   "metadata": {},
+   "source": [
+    "A part impacted substances query is used to determine the substances associated with a part that are impacted by one\n",
+    "or more defined legislations. The part record can represent either a single component, a subassembly, or a finished\n",
+    "product. Thus, the substances can be associated with either the part record itself or any other record that\n",
+    "the part directly or indirectly references."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5f09343c",
+   "metadata": {},
+   "source": [
+    "This example shows how to perform an Impacted Substance query on part records and how to process the results."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e6e3758e",
+   "metadata": {},
+   "source": [
+    "## Connect to Granta MI"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f687c16e",
+   "metadata": {},
+   "source": [
+    "Import the ``Connection`` class and create the connection. For more information, see the\n",
+    "[Getting Started](../0_Getting_started.ipynb) example."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7aad90ab",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import Connection\n",
+    "\n",
+    "server_url = \"http://my_grantami_server/mi_servicelayer\"\n",
+    "cxn = Connection(server_url).with_credentials(\"user_name\", \"password\").connect()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b03ed8a9",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "## Build and run the query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2127f84c",
+   "metadata": {},
+   "source": [
+    "The query is assembled by providing lists of part references and legislations of interest. The query returns\n",
+    "the substances that are present in the specified parts and are impacted by the specified legislations.\n",
+    "\n",
+    "In this example, the ``DRILL`` part is used. In contrast to the Material version of this query shown in\n",
+    "a previous example, this part does not reference any substances directly. Instead, it references\n",
+    "subcomponents, which in turn reference materials, which then reference substances. The Part Impacted Substances\n",
+    "Query flattens all these layers of complexity and aggregates them together into a single list."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bf1b7014",
+   "metadata": {},
+   "source": [
+    "First specify some constants that contain the part and legislation references to use."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "15ce8493",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "DRILL = \"DRILL\"\n",
+    "WING = \"asm_flap_mating\"\n",
+    "SIN_LIST = \"SINList\"\n",
+    "REACH = \"Candidate_AnnexXV\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bc14d082",
+   "metadata": {},
+   "source": [
+    "Next, import the ``queries`` module and build the query with the references in the previous cell."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cf2c8fe3",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import queries\n",
+    "\n",
+    "part_query = (\n",
+    "    queries.PartImpactedSubstancesQuery()\n",
+    "    .with_part_numbers([DRILL, WING])\n",
+    "    .with_legislation_ids([SIN_LIST, REACH])\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d5ab011d",
+   "metadata": {},
+   "source": [
+    "Finally, run the query. Passing a ``PartImpactedSubstancesQuery`` object to the ``Connection.run()`` method returns a\n",
+    "``PartImpactedSubstancesQueryResult`` object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "eb798beb",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "part_result = cxn.run(part_query)\n",
+    "part_result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "92203a27",
+   "metadata": {},
+   "source": [
+    "A ``PartImpactedSubstancesQueryResult`` object contains three properties:\n",
+    "``impacted_substances_by_part``, ``impacted_substances_by_legislation``, and ``impacted_substances``. They provide\n",
+    "different views of the impacted substances at different levels of granularity."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "062579dd",
+   "metadata": {},
+   "source": [
+    "## Group results by part"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "871de951",
+   "metadata": {},
+   "source": [
+    "This property is structured first as a list of ``PartWithImpactedSubstancesResult`` objects, each of which contains\n",
+    "a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation or a single flat list of all\n",
+    "substances."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "af73cc67",
+   "metadata": {},
+   "source": [
+    "You can simplify the structure because you are only using part numbers. First, create a\n",
+    "dictionary that maps part numbers to lists of substances impacted by the ``SIN_LIST``."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "18383106",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "substances_by_part = {}\n",
+    "for part in part_result.impacted_substances_by_part:\n",
+    "    part_substances = part.substances_by_legislation[SIN_LIST]\n",
+    "    substances_by_part[part.part_number] = part_substances"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "145785fc",
+   "metadata": {},
+   "source": [
+    "Then use the ``tabulate`` package to print a table of the substances and their quantities for the wing assembly only."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a18065a1",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from tabulate import tabulate\n",
+    "\n",
+    "rows = [(substance.cas_number, substance.max_percentage_amount_in_material)\n",
+    "        for substance in substances_by_part[WING]]\n",
+    "\n",
+    "print(f'Substances impacted by \"{SIN_LIST}\" in \"{WING}\"')\n",
+    "print(tabulate(rows, headers=[\"CAS Number\", \"Amount (wt. %)\"]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a2781d1d",
+   "metadata": {},
+   "source": [
+    "## Group results by legislation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d07f846f",
+   "metadata": {},
+   "source": [
+    "This property merges the results across all parts, returning a single dictionary of legislations that contain\n",
+    "all impacted substances for all parts."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "378fed7b",
+   "metadata": {},
+   "source": [
+    "As before, use the ``tabulate`` package to print a table of substances. This time include substances in\n",
+    "all parts, but only those on the ``SIN_LIST``."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a2dd26db",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "part_substances_sin = part_result.impacted_substances_by_legislation[SIN_LIST]\n",
+    "rows = [(substance.cas_number, substance.max_percentage_amount_in_material)\n",
+    "        for substance in part_substances_sin]\n",
+    "print(f'Substances impacted by \"{SIN_LIST}\" in all parts (5/{len(rows)})')\n",
+    "print(tabulate(rows[:5], headers=[\"CAS Number\", \"Amount (wt. %)\"]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "878754bf",
+   "metadata": {},
+   "source": [
+    "## Generate results as a flat list"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8996dfe0",
+   "metadata": {},
+   "source": [
+    "This property reduces the granularity further, producing a single flattened list of substances across all legislations\n",
+    "and for all parts."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "68e4cf58",
+   "metadata": {},
+   "source": [
+    "Use the ``tabulate`` package to print a third table of substances. Because you are using the\n",
+    "``impacted_substances`` property, you only have one list of ``ImpactedSubstance`` objects, which covers both\n",
+    "legislations and both the parts specified above."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "d8543630",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "part_substances_all = part_result.impacted_substances\n",
+    "rows = [(substance.cas_number, substance.max_percentage_amount_in_material)\n",
+    "        for substance in part_substances_all]\n",
+    "print(f'Impacted substances across all legislations in \"DRILL\" (5/{len(rows)})')\n",
+    "print(tabulate(rows[:5], headers=[\"CAS Number\", \"Amount (wt. %)\"]))"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:light"
+  },
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

@@ -194,7 +194,7 @@ jobs:
       contents: read
     steps:
       - name: "Run Ansys documentation building action"
-        uses: ansys/actions/doc-build@21c78f8b27683ae8c93557345392abe39ab21d2f  # v11.0.4
+        uses: ansys/actions/doc-build@3ad3b285bd9b67045477dafc7f9865a3aa39f692  # v11.0.6
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_DEV_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_READ_USER}}

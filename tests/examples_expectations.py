@@ -281,27 +281,35 @@ def example_5_3_materials() -> None:
 
 
 def example_5_4_processes() -> None:
-    assert dict(zip(primary_process_df["Name"], [round(i) for i in primary_process_df["EE%"]])) == {  # noqa
+    primary_process_actual = dict(zip(primary_process_df["Name"], [round(i) for i in primary_process_df["EE%"]]))
+    primary_process_expected = {
         "Primary processing, Casting - stainless-astm-cn-7ms-cast": 49,
         "Primary processing, Casting - steel-1010-annealed": 34,
         "Primary processing, Metal extrusion, hot - steel-1010-annealed": 17,
         "Other - None": 0,
     }
+    assert primary_process_actual == primary_process_expected, primary_process_actual  # noqa
 
-    assert dict(zip(secondary_process_df["Name"], [round(i) for i in secondary_process_df["EE%"]])) == {  # noqa
+    secondary_process_actual = dict(zip(secondary_process_df["Name"], [round(i) for i in secondary_process_df["EE%"]]))
+    secondary_process_expected = {
         "Secondary processing, Grinding - steel-1010-annealed": 45,
         "Secondary processing, Machining, coarse - stainless-astm-cn-7ms-cast": 31,
         "Machining, fine - steel-1010-annealed": 15,
         "Secondary processing, Machining, fine - stainless-astm-cn-7ms-cast": 8,
         "Other - None": 2,
     }
+    assert secondary_process_actual == secondary_process_expected, secondary_process_actual  # noqa
 
-    assert dict(
+    joining_and_finishing_processes_actual = dict(
         zip(
             joining_and_finishing_processes_df["Name"],  # noqa
             [round(i) for i in joining_and_finishing_processes_df["EE%"]],  # noqa
         )
-    ) == {"Joining and finishing, Welding, electric": 100}
+    )
+    joining_and_finishing_processes_expected = {"Joining and finishing, Welding, electric": 100}
+    assert joining_and_finishing_processes_actual == joining_and_finishing_processes_expected, (
+        joining_and_finishing_processes_actual
+    )
 
     # Expected cells with outputs
     assert set(Out.keys()) == {2, 3, 4, 7, 8, 10, 11}, str(Out)  # noqa

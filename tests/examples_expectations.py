@@ -297,8 +297,11 @@ def example_5_4_processes() -> None:
     }
 
     assert dict(
-        zip(joining_and_finishing_processes_df["Name"], [round(i) for i in joining_and_finishing_processes_df["EE%"]])
-    ) == {  # noqa
+        zip(
+            joining_and_finishing_processes_df["Name"],  # noqa
+            [round(i) for i in joining_and_finishing_processes_df["EE%"]]  # noqa
+        )  
+    ) == {
         "Joining and finishing, Welding, electric": 100
     }
 

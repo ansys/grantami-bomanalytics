@@ -307,9 +307,9 @@ def example_5_4_processes() -> None:
         )
     )
     joining_and_finishing_processes_expected = {"Joining and finishing, Welding, electric": 100}
-    assert joining_and_finishing_processes_actual == joining_and_finishing_processes_expected, (
-        joining_and_finishing_processes_actual
-    )
+    assert (
+        joining_and_finishing_processes_actual == joining_and_finishing_processes_expected
+    ), joining_and_finishing_processes_actual
 
     # Expected cells with outputs
     assert set(Out.keys()) == {2, 3, 4, 7, 8, 10, 11}, str(Out)  # noqa

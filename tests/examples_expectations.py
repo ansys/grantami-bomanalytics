@@ -299,11 +299,9 @@ def example_5_4_processes() -> None:
     assert dict(
         zip(
             joining_and_finishing_processes_df["Name"],  # noqa
-            [round(i) for i in joining_and_finishing_processes_df["EE%"]]  # noqa
-        )  
-    ) == {
-        "Joining and finishing, Welding, electric": 100
-    }
+            [round(i) for i in joining_and_finishing_processes_df["EE%"]],  # noqa
+        )
+    ) == {"Joining and finishing, Welding, electric": 100}
 
     # Expected cells with outputs
     assert set(Out.keys()) == {2, 3, 4, 7, 8, 10, 11}, str(Out)  # noqa

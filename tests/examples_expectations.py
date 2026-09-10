@@ -281,25 +281,24 @@ def example_5_3_materials() -> None:
 
 
 def example_5_4_processes() -> None:
-    assert primary_process_df["Name"].to_list() == [  # noqa
-        "Primary processing, Casting - stainless-astm-cn-7ms-cast",
-        "Primary processing, Casting - steel-1010-annealed",
-        "Primary processing, Metal extrusion, hot - steel-1010-annealed",
-        "Other - None",
-    ]
-    assert [round(i) for i in primary_process_df["EE%"].to_list()] == [49, 34, 17, 0]  # noqa
+    assert dict(zip(primary_process_df["Name"], [round(i) for i in primary_process_df["EE%"]])) == {  # noqa
+        "Primary processing, Casting - stainless-astm-cn-7ms-cast": 49,
+        "Primary processing, Casting - steel-1010-annealed": 34,
+        "Primary processing, Metal extrusion, hot - steel-1010-annealed": 17,
+        "Other - None": 0,
+    }
 
-    assert secondary_process_df["Name"].to_list() == [  # noqa
-        "Secondary processing, Grinding - steel-1010-annealed",
-        "Secondary processing, Machining, coarse - stainless-astm-cn-7ms-cast",
-        "Machining, fine - steel-1010-annealed",
-        "Secondary processing, Machining, fine - stainless-astm-cn-7ms-cast",
-        "Other - None",
-    ]
-    assert [round(i) for i in secondary_process_df["EE%"].to_list()] == [45, 31, 15, 8, 2]  # noqa
+    assert dict(zip(secondary_process_df["Name"], [round(i) for i in secondary_process_df["EE%"]])) == {  # noqa
+        "Secondary processing, Grinding - steel-1010-annealed": 45,
+        "Secondary processing, Machining, coarse - stainless-astm-cn-7ms-cast": 31,
+        "Machining, fine - steel-1010-annealed": 15,
+        "Secondary processing, Machining, fine - stainless-astm-cn-7ms-cast": 8,
+        "Other - None": 2,
+    }
 
-    assert joining_and_finishing_processes_df["Name"].to_list() == ["Joining and finishing, Welding, electric"]  # noqa
-    assert [round(i) for i in joining_and_finishing_processes_df["EE%"].to_list()] == [100]  # noqa
+    assert dict(zip(joining_and_finishing_processes_df["Name"], [round(i) for i in joining_and_finishing_processes_df["EE%"]])) == {  # noqa
+        "Joining and finishing, Welding, electric": 100
+    }
 
     # Expected cells with outputs
     assert set(Out.keys()) == {2, 3, 4, 7, 8, 10, 11}, str(Out)  # noqa

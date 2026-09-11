@@ -92,14 +92,14 @@ primary_process_df = pd.DataFrame.from_records(
         for item in sustainability_summary.primary_processes_details
     ]
 )
+primary_process_df.loc[primary_process_df["Process name"] == "Other", "Material name"] = "None"
 primary_process_df
 # -
 
 # Add a ``Name`` to each item that represents the process-material pair name.
 
 primary_process_df["Name"] = primary_process_df.apply(
-    lambda row: f"{row['Process name']} - {None if pd.isna(row['Material name']) else row['Material name']}",
-    axis=1,
+    lambda row: f"{row['Process name']} - {row['Material name']}", axis=1
 )
 primary_process_df
 
@@ -145,13 +145,13 @@ secondary_process_df = pd.DataFrame.from_records(
         for item in sustainability_summary.secondary_processes_details
     ]
 )
+secondary_process_df.loc[secondary_process_df["Process name"] == "Other", "Material name"] = "None"
 secondary_process_df
 
 # Add a ``Name`` to each item that represents the process-material pair name.
 
 secondary_process_df["Name"] = secondary_process_df.apply(
-    lambda row: f"{row['Process name']} - {None if pd.isna(row['Material name']) else row['Material name']}",
-    axis=1,
+    lambda row: f"{row['Process name']} - {row['Material name']}", axis=1
 )
 plot_impact(secondary_process_df, "Aggregated secondary processes impact")
 

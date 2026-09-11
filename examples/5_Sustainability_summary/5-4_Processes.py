@@ -124,7 +124,6 @@ def plot_impact(df, title):
     fig.update_layout(title_text=title, legend=dict(orientation="h"))
     fig.update_traces(textposition="inside", textinfo="percent", hoverinfo="value+name+label")
     fig.show()
-
 # -
 
 plot_impact(primary_process_df, "Aggregated primary processes impact")

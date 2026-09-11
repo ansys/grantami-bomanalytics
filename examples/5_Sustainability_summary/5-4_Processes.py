@@ -92,6 +92,7 @@ primary_process_df = pd.DataFrame.from_records(
         for item in sustainability_summary.primary_processes_details
     ]
 )
+primary_process_df.loc[primary_process_df["Process name"] == "Other", "Material name"] = "None"
 primary_process_df
 # -
 
@@ -144,6 +145,7 @@ secondary_process_df = pd.DataFrame.from_records(
         for item in sustainability_summary.secondary_processes_details
     ]
 )
+secondary_process_df.loc[secondary_process_df["Process name"] == "Other", "Material name"] = "None"
 secondary_process_df
 
 # Add a ``Name`` to each item that represents the process-material pair name.

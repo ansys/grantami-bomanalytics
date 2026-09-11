@@ -97,15 +97,10 @@ primary_process_df
 
 # Add a ``Name`` to each item that represents the process-material pair name.
 
-
-def process_material_pair_name(row):
-    material_name = row["Material name"]
-    if pd.isna(material_name):
-        material_name = None
-    return f"{row['Process name']} - {material_name}"
-
-
-primary_process_df["Name"] = primary_process_df.apply(process_material_pair_name, axis=1)
+primary_process_df["Name"] = primary_process_df.apply(
+    lambda row: f"{row['Process name']} - {None if pd.isna(row['Material name']) else row['Material name']}",
+    axis=1,
+)
 primary_process_df
 
 # This example produces multiple plots which all consist of a pair of pie charts representing the
@@ -156,7 +151,10 @@ secondary_process_df
 
 # Add a ``Name`` to each item that represents the process-material pair name.
 
-secondary_process_df["Name"] = secondary_process_df.apply(process_material_pair_name, axis=1)
+secondary_process_df["Name"] = secondary_process_df.apply(
+    lambda row: f"{row['Process name']} - {None if pd.isna(row['Material name']) else row['Material name']}",
+    axis=1,
+)
 plot_impact(secondary_process_df, "Aggregated secondary processes impact")
 
 # ### Joining and finishing

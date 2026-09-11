@@ -1,0 +1,37 @@
+.. _ref_grantami_bomanalytics_bom_eco2505:
+
+25/05 XML BoM types
+===================
+
+.. currentmodule:: ansys.grantami.bomanalytics.bom_types.eco2505
+
+These models are Python bindings for the Ansys Granta MI 25/05 XML schema.
+Not all elements are required to define a valid BoM for analysis, and not all elements have an impact
+on all types of analysis. For information on the relevant items for each analysis type,
+see :ref:`ref_grantami_bomanalytics_api_index`.
+
+These classes are available in the module ``ansys.grantami.bomanalytics.bom_types.eco2505``.
+
+The 25/05 XML schema is supported by MI Restricted Substances and Sustainability Reports 2061 R1 and later.
+
+.. note::
+   The following elements are defined in the 25/05 BoM schema but are not supported in this module:
+
+   * ``NonMIPartReference`` on :class:`~.Part`
+   * ``Annotations`` and ``AnnotationSources`` on :class:`~.BillOfMaterials`
+
+   This module does not contain classes that correspond to these types and cannot serialize a BoM that includes these
+   elements. It is still possible to deserialize an XML BoM that uses these elements, but these elements cannot be
+   converted to Python objects. See :meth:`~ansys.grantami.bomanalytics._bom_helper.BoMHandler.load_bom_from_file` and
+   :meth:`~ansys.grantami.bomanalytics._bom_helper.BoMHandler.load_bom_from_text` for more details.
+
+.. versionadded:: 2.4
+   The 25/05 XML schema is backwards compatible with the 24/12 XML schema. This version adds a new
+   :class:`~.eco2505.ExtendedMIRecordReference` type, which extends the :class:`~.gbt1205.MIRecordReference` type.
+   The new type adds an ``equivalent_references`` field, and is used instead of :class:`~.gbt1205.MIRecordReference` for
+   all ``mi_xxxxx_reference`` fields, for example :attr:`~.eco2505.Part.mi_part_reference`.
+
+
+.. automodule:: ansys.grantami.bomanalytics.bom_types.eco2505
+   :inherited-members:
+   :member-order: bysource

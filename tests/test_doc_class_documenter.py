@@ -64,3 +64,11 @@ def test_register_custom_class_documenter_falls_back_to_add_autodocumenter():
     class_documenter.register_custom_class_documenter(app)
 
     app.add_autodocumenter.assert_called_once_with(class_documenter.ClassDocumenter, override=True)
+
+
+def test_register_custom_class_documenter_falls_back_when_registry_lacks_add_documenter():
+    app = SimpleNamespace(registry=SimpleNamespace(), add_autodocumenter=Mock())
+
+    class_documenter.register_custom_class_documenter(app)
+
+    app.add_autodocumenter.assert_called_once_with(class_documenter.ClassDocumenter, override=True)

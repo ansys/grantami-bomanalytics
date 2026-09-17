@@ -104,8 +104,15 @@ def wrapped_member_order_option(arg: Any) -> Optional[str]:
         return member_order_option(arg)
 
 
-# Allow custom member-order setting
-ClassDocumenter.option_spec['member-order'] = wrapped_member_order_option
+def register_custom_member_order_option() -> None:
+    ClassDocumenter.option_spec['member-order'] = wrapped_member_order_option
 
-if _OPTION_SPECS is not None:
-    _OPTION_SPECS[ClassDocumenter.objtype]["member-order"] = wrapped_member_order_option
+    if _OPTION_SPECS is not None:
+        _OPTION_SPECS.setdefault(ClassDocumenter.objtype, {})["member-order"] = wrapped_member_order_option
+
+
+def register_custom_class_documenter(app: Any) -> None:
+    app.registry.add_documenter(ClassDocumenter.objtype, ClassDocumenter)
+
+
+register_custom_member_order_option()

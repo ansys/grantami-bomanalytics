@@ -11,7 +11,7 @@ from sphinx.application import Sphinx
 from ansys.grantami.bomanalytics import __version__
 
 sys.path.insert(0, os.path.abspath("../"))
-from class_documenter import ClassDocumenter
+from class_documenter import ClassDocumenter, register_custom_class_documenter
 
 sys.path.insert(0, os.path.abspath("../../src"))
 
@@ -239,4 +239,4 @@ Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb
 
 def setup(app: Sphinx):
     # Register custom documenter as the default documenter for classes.
-    app.registry.add_documenter(ClassDocumenter.objtype, ClassDocumenter)
+    register_custom_class_documenter(app)

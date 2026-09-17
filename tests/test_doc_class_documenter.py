@@ -32,10 +32,7 @@ import class_documenter
 
 
 def test_wrapped_member_order_option_accepts_custom_value():
-    assert (
-        class_documenter.wrapped_member_order_option(class_documenter.CUSTOM_ORDER_KEY)
-        == class_documenter.CUSTOM_ORDER_KEY
-    )
+    assert class_documenter.wrapped_member_order_option(class_documenter.CUSTOM_ORDER_KEY) == class_documenter.CUSTOM_ORDER_KEY
 
 
 def test_register_custom_member_order_option_handles_missing_class_entry(monkeypatch):

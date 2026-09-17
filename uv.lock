@@ -102,7 +102,7 @@ examples = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ansys-grantami-bomanalytics-openapi", specifier = ">=5.0.0,<6.0" },
+    { name = "ansys-grantami-bomanalytics-openapi", specifier = "==5.1.0rc0" },
     { name = "ansys-openapi-common", specifier = ">=2.0.0,<3.0" },
     { name = "choreographer", marker = "extra == 'examples'", specifier = ">=1.0.0" },
     { name = "defusedxml", specifier = ">=0.7" },
@@ -162,16 +162,16 @@ examples = [
 
 [[package]]
 name = "ansys-grantami-bomanalytics-openapi"
-version = "5.0.0"
+version = "5.1.0rc0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansys-openapi-common" },
     { name = "python-dateutil" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4f/ff/317ee7e7e5c95c2e3e3a1ed44f4ff29e18cd013357576895f88518ed1361/ansys_grantami_bomanalytics_openapi-5.0.0.tar.gz", hash = "sha256:2d74ed1233251a8b6e725c67575178c77ac45c2acc82ffab7d8d15a0a3b87f9c", size = 87187, upload-time = "2025-12-16T15:02:16.411Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/74/ac/8d2ef0b7390021fce3019c63e305339178deb4404b621e288abeb861bf19/ansys_grantami_bomanalytics_openapi-5.1.0rc0.tar.gz", hash = "sha256:886399cb751f03358b02bc8ca3b62e10f188f23e599ff6deeaeeca5d095bb480", size = 97023, upload-time = "2026-09-17T11:26:51.96Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cc/a0/dee36a8fc0108ed121853c8ba6fab6e0cc32dafb93a901189a87e79f88c3/ansys_grantami_bomanalytics_openapi-5.0.0-py3-none-any.whl", hash = "sha256:8e146f264033c09e16818971bc04cef459e7ee7d1c677343ce3093a8376ded9e", size = 388792, upload-time = "2025-12-16T15:02:14.984Z" },
+    { url = "https://files.pythonhosted.org/packages/f4/a0/359a69d2daee0118233892376b90248d57644ef46ca10c51270dc32049d1/ansys_grantami_bomanalytics_openapi-5.1.0rc0-py3-none-any.whl", hash = "sha256:58fd6225dce4028a1942df4459b5208f924630bf4f3d6d3e611bae4aac2c761a", size = 391266, upload-time = "2026-09-17T11:26:50.048Z" },
 ]
 
 [[package]]
@@ -1938,7 +1938,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess" },
+    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
@@ -2180,7 +2180,7 @@ name = "pypiwin32"
 version = "223"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pywin32" },
+    { name = "pywin32", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/13/e8/4f38eb30c4dae36634a53c5b2cd73b517ea3607e10d00f61f2494449cec0/pypiwin32-223.tar.gz", hash = "sha256:71be40c1fbd28594214ecaecb58e7aa8b708eabfa0125c8a109ebd51edbd776a", size = 622, upload-time = "2018-02-26T00:43:23.994Z" }
 wheels = [
@@ -2415,8 +2415,8 @@ name = "requests-negotiate-sspi"
 version = "0.5.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pypiwin32" },
-    { name = "requests" },
+    { name = "pypiwin32", marker = "sys_platform == 'win32'" },
+    { name = "requests", marker = "sys_platform == 'win32'" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7c/0b/99220cb4d3c8cf9b667a1cd13650d28b19e689ab7145085897e254d141a3/requests_negotiate_sspi-0.5.2-py2.py3-none-any.whl", hash = "sha256:84ca9e81cfd3f2bd5eede5f8eddec1d5b58d957efac5e7fc078a3b323d296b77", size = 7119, upload-time = "2018-10-10T09:34:31.166Z" },

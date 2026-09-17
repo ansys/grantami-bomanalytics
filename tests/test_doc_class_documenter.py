@@ -60,13 +60,12 @@ def test_register_custom_class_documenter_uses_app_registry():
 
 def test_register_custom_class_documenter_can_be_called_multiple_times():
     registry = SimpleNamespace(add_documenter=Mock())
-    app = SimpleNamespace(registry=registry, add_autodocumenter=Mock())
+    app = SimpleNamespace(registry=registry)
 
     class_documenter.register_custom_class_documenter(app)
     class_documenter.register_custom_class_documenter(app)
 
     assert registry.add_documenter.call_count == 2
-    app.add_autodocumenter.assert_not_called()
 
 
 def test_register_custom_class_documenter_falls_back_to_add_autodocumenter():

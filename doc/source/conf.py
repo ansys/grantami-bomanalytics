@@ -83,6 +83,7 @@ nitpick_ignore = [
 # sphinx.ext.autodoc
 autodoc_typehints = "description"
 autodoc_typehints_description_target = "documented"
+autodoc_use_legacy_class_based = True
 
 # Intersphinx mapping
 intersphinx_mapping = {

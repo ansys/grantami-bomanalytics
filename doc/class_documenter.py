@@ -4,11 +4,11 @@ from typing import Any, Optional
 from sphinx.ext.autodoc import (
     Documenter,
     MethodDocumenter,
-    ModuleAnalyzer,
     PropertyDocumenter,
     member_order_option,
 )
 from sphinx.ext.autodoc import ClassDocumenter as DefaultClassDocumenter
+from sphinx.pycode import ModuleAnalyzer
 
 
 class CustomOrderException(Exception):

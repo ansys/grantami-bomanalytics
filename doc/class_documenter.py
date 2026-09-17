@@ -1,13 +1,8 @@
 from inspect import getmodule
 from typing import Any, Optional
 
-from sphinx.ext.autodoc import (
-    Documenter,
-    MethodDocumenter,
-    PropertyDocumenter,
-    member_order_option,
-)
 from sphinx.ext.autodoc import ClassDocumenter as DefaultClassDocumenter
+from sphinx.ext.autodoc import Documenter, MethodDocumenter, PropertyDocumenter, member_order_option
 
 try:
     from sphinx.ext.autodoc import ModuleAnalyzer

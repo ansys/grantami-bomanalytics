@@ -239,4 +239,4 @@ Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb
 
 def setup(app: Sphinx):
     # Register custom documenter as the default documenter for classes.
-    register_custom_class_documenter(app)
+    app.add_autodocumenter(ClassDocumenter, override=True)

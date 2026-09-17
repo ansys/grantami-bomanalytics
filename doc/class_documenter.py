@@ -112,10 +112,7 @@ def register_custom_member_order_option() -> None:
 
 
 def register_custom_class_documenter(app: Any) -> None:
-    if hasattr(app, "registry") and hasattr(app.registry, "add_documenter"):
-        app.registry.add_documenter(ClassDocumenter.objtype, ClassDocumenter)
-    else:
-        app.add_autodocumenter(ClassDocumenter, override=True)
+    app.registry.add_documenter(ClassDocumenter.objtype, ClassDocumenter)
 
 
 register_custom_member_order_option()

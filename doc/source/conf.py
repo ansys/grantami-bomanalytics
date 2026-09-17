@@ -11,7 +11,7 @@ from sphinx.application import Sphinx
 from ansys.grantami.bomanalytics import __version__
 
 sys.path.insert(0, os.path.abspath("../"))
-from class_documenter import ClassDocumenter, register_custom_class_documenter
+from class_documenter import ClassDocumenter
 
 sys.path.insert(0, os.path.abspath("../../src"))
 

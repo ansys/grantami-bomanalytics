@@ -4,11 +4,20 @@ from typing import Any, Optional
 from sphinx.ext.autodoc import (
     Documenter,
     MethodDocumenter,
-    ModuleAnalyzer,
     PropertyDocumenter,
     member_order_option,
 )
 from sphinx.ext.autodoc import ClassDocumenter as DefaultClassDocumenter
+
+try:
+    from sphinx.ext.autodoc import ModuleAnalyzer
+except ImportError:
+    from sphinx.pycode import ModuleAnalyzer
+
+try:
+    from sphinx.ext.autodoc._directive_options import _OPTION_SPECS
+except ImportError:
+    _OPTION_SPECS = None
 
 
 class CustomOrderException(Exception):
@@ -97,3 +106,6 @@ def wrapped_member_order_option(arg: Any) -> Optional[str]:
 
 # Allow custom member-order setting
 ClassDocumenter.option_spec['member-order'] = wrapped_member_order_option
+
+if _OPTION_SPECS is not None:
+    _OPTION_SPECS[ClassDocumenter.objtype]["member-order"] = wrapped_member_order_option

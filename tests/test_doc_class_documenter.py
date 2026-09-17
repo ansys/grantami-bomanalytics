@@ -56,3 +56,11 @@ def test_register_custom_class_documenter_uses_app_registry():
         class_documenter.ClassDocumenter.objtype,
         class_documenter.ClassDocumenter,
     )
+
+
+def test_register_custom_class_documenter_falls_back_to_add_autodocumenter():
+    app = SimpleNamespace(add_autodocumenter=Mock())
+
+    class_documenter.register_custom_class_documenter(app)
+
+    app.add_autodocumenter.assert_called_once_with(class_documenter.ClassDocumenter, override=True)

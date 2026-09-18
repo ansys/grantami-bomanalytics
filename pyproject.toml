@@ -11,10 +11,10 @@ description = "Perform compliance and sustainability analysis on materials data 
 version = "2.5.0.dev0"
 license = "MIT"
 authors = [
-    {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}
+    {name = "Synopsys, Inc. and ANSYS, Inc.", email = "pyansys-core@synopsys.com"}
 ]
 maintainers = [
-    {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}
+    {name = "Synopsys, Inc. and ANSYS, Inc.", email = "pyansys-core@synopsys.com"}
 ]
 repository = "https://github.com/ansys/grantami-bomanalytics"
 documentation = "https://bomanalytics.grantami.docs.pyansys.com"

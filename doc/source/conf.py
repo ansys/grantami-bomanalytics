@@ -83,6 +83,7 @@ nitpick_ignore = [
 # sphinx.ext.autodoc
 autodoc_typehints = "description"
 autodoc_typehints_description_target = "documented"
+autodoc_use_legacy_class_based = True
 
 # Intersphinx mapping
 intersphinx_mapping = {
@@ -237,6 +238,10 @@ Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb
 """
 
 
-def setup(app: Sphinx):
+def _register_custom_class_documenter(app: Sphinx, config) -> None:
     # Register custom documenter as the default documenter for classes.
     app.add_autodocumenter(ClassDocumenter, override=True)
+
+
+def setup(app: Sphinx):
+    app.connect("config-inited", _register_custom_class_documenter, priority=900)

@@ -221,7 +221,7 @@ jobs:
   doc-deploy-dev:
     name: "Deploy development documentation"
     runs-on: ubuntu-latest
-    needs: [server-checks]
+    needs: [integration-checks-complete]
     permissions:
       contents: write  # To allow the Action to push to the gh-pages branch
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
@@ -251,7 +251,7 @@ jobs:
   release:
     name: "Release"
     runs-on: ubuntu-latest
-    needs: [build-library, server-checks, update-changelog]
+    needs: [build-library, integration-checks-complete, update-changelog]
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     environment: release
     permissions:

@@ -21,7 +21,7 @@ import logging
 
 import ansys.grantami.backend.soap as gdl
 
-from ansys.grantami.serverapi_openapi.v2026r1 import api, models
+from ansys.grantami.serverapi_openapi.v2027r1 import api, models
 
 from cicd._connection import Connection
 from cicd._utils import DatabaseBrowser

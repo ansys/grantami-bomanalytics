@@ -18,7 +18,7 @@ import logging
 from collections import defaultdict
 from typing import Mapping, Sequence
 
-from ansys.grantami.serverapi_openapi.v2026r1 import api, models
+from ansys.grantami.serverapi_openapi.v2027r1 import api, models
 import ansys.grantami.core as mpy
 
 from cicd._connection import Connection

@@ -17,8 +17,8 @@ import logging
 from pathlib import Path
 from typing import Mapping, Iterable, Tuple, TYPE_CHECKING
 
-from ansys.grantami.serverapi_openapi.v2025r2 import api, models
-import GRANTA_MIScriptingToolkit as gdl
+from ansys.grantami.serverapi_openapi.v2026r1 import api, models
+import ansys.grantami.backend.soap as gdl
 
 from cicd._connection import Connection
 from cicd._utils import DatabaseBrowser, ServerApiClient
@@ -177,32 +177,32 @@ class SubsetPopulater:
     def __init__(self, gdl_session: gdl.GRANTA_MISession, logger: logging.Logger):
         self._session = gdl_session
         self._logger = logger
-        self._data_import_session = self._session.dataImportService
-        self._data_export_session = self._session.dataExportService
+        self._data_import_session = self._session.data_import_service
+        self._data_export_session = self._session.data_export_service
 
     def _get_subsets(
         self, db_key: str, record_identifiers: Iterable[Tuple[str, str]]
     ) -> Iterable[Iterable[gdl.SubsetReference]]:
         self._logger.info("Fetching subset membership for records")
         record_references = [
-            gdl.RecordReference(DBKey=db_key, historyGUID=history_guid, recordUID=str(uid))
+            gdl.RecordReference(db_key=db_key, history_guid=history_guid, record_uid=str(uid))
             for uid, (history_guid, _) in enumerate(record_identifiers)
         ]
         subsets_request = gdl.GetRecordAttributesByRefRequest(
-            attributeReferences=[
+            attribute_references=[
                 gdl.AttributeReference(
-                    DBKey=db_key, pseudoAttribute=gdl.AttributeReference.MIPseudoAttributeReference.subsets
+                    db_key=db_key, pseudo_attribute=gdl.AttributeReference.MIPseudoAttributeReference.subsets
                 )
             ],
-            recordReferences=record_references,
+            record_references=record_references,
         )
-        subsets_response = self._data_export_session.GetRecordAttributesByRef(subsets_request)
+        subsets_response = self._data_export_session.get_record_attributes_by_ref(subsets_request)
         self._logger.info(f"Fetched subset membership for {len(record_references)} records")
 
-        items = subsets_response.recordData
-        items.sort(key=lambda x: x.recordReference.recordUID)
+        items = subsets_response.record_data
+        items.sort(key=lambda x: x.record_reference.record_uid)
         existing_subsets = [
-            [subset.subset for subset in item.attributeValues[0].subsetsDataType.namedSubsets] for item in items
+            [subset.subset for subset in item.attribute_values[0].subsets_data_value.named_subsets] for item in items
         ]
         return existing_subsets
 
@@ -216,21 +216,21 @@ class SubsetPopulater:
             new_subsets = existing_subsets
             new_subsets.append(
                 gdl.SubsetReference(
-                    DBKey=db_key,
+                    db_key=db_key,
                     name=new_subset_name,
-                    partialTableReference=gdl.PartialTableReference(tableGUID=table_guid),
+                    partial_table_reference=gdl.PartialTableReference(table_guid=table_guid),
                 )
             )
             import_record = gdl.ImportRecord(
-                existingRecord=gdl.RecordReference(DBKey=db_key, historyGUID=history_guid),
-                subsetReferences=new_subsets,
-                releaseRecord=True,
-                importRecordMode="Update",
+                existing_record=gdl.RecordReference(db_key=db_key, history_guid=history_guid),
+                subset_references=new_subsets,
+                release_record=True,
+                import_record_mode="Update",
             )
             import_records.append(import_record)
         self._logger.info("Adding specified records to the new subset")
-        import_request = gdl.SetRecordAttributesRequest(importRecords=import_records)
-        self._data_import_session.SetRecordAttributes(import_request)
+        import_request = gdl.SetRecordAttributesRequest(import_records=import_records)
+        self._data_import_session.set_record_attributes(import_request)
 
 
 def process_database(
@@ -300,7 +300,7 @@ def process_database(
 
 if __name__ == "__main__":
     api_client = Connection(api_url=MI_URL).with_autologon().connect()
-    gdl_session = gdl.GRANTA_MISession(url=MI_URL, autoLogon=True)
+    gdl_session = gdl.GRANTA_MISession(url=MI_URL, auto_logon=True)
 
     logger.info("Loading saved RS information...")
     INPUT_FILE_NAME = Path(__file__).parent / DATA_FILENAME

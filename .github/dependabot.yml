@@ -39,6 +39,7 @@ updates:
         - "pyyaml"
         - "kaleido"
         - "choreographer"
+        - "ipython"
       examples-deps:
         patterns:
         - "jupyterlab"
@@ -46,6 +47,8 @@ updates:
         - "plotly"
         - "tabulate"
         - "ipywidgets"
+        - "ipykernel"
+        - "lxml"
       src-deps:
         patterns:
         - "ansys-openapi-common"

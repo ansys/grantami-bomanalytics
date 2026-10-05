@@ -32,7 +32,7 @@ jobs:
     name: "Check library vulnerabilities"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      - uses: ansys/actions/check-vulnerabilities@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -46,7 +46,7 @@ jobs:
     name: "Check actions security"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-actions-security@d946b24b9a765f4169bcc94afdb27bd1a0533741 # v10.3.2
+      - uses: ansys/actions/check-actions-security@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           generate-summary: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: ansys/actions/code-style@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      - uses: ansys/actions/code-style@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         with:
           skip-install: false
 
@@ -73,7 +73,7 @@ jobs:
     name: "Documentation style"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/doc-style@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      - uses: ansys/actions/doc-style@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
     permissions:
@@ -86,13 +86,13 @@ jobs:
       contents: read
     steps:
     - name: "Run Ansys documentation building action"
-      uses: ansys/actions/doc-build@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      uses: ansys/actions/doc-build@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
       with:
         check-links: "false"
         dependencies: "pandoc"
         sphinxopts: "-n -W --keep-going"
-        optional-dependencies-name: ""
-        group-dependencies-name: "doc,dev"
+        optional-dependencies-name: "examples"
+        group-dependencies-name: "doc"
         use-uv: "true"
 
     - name: "Delete unneeded doc artifact"
@@ -110,12 +110,12 @@ jobs:
     strategy:
        matrix:
            os: [ubuntu-latest, windows-latest]
-           python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+           python-version: ['3.12', '3.13', '3.14']
     permissions:
       id-token: write  # Required for Sigstore
       attestations: write  # Required to generate attestations
     steps:
-      - uses: ansys/actions/build-wheelhouse@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      - uses: ansys/actions/build-wheelhouse@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           operating-system: ${{ matrix.os }}
@@ -131,16 +131,16 @@ jobs:
     strategy:
       matrix:
        os: [ubuntu-latest, windows-latest]
-       python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+       python-version: ['3.12', '3.13', '3.14']
       fail-fast: false
     steps:
       - name: "Checkout the repository"
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39  # zizmor: ignore[cache-poisoning] - This job does not produce artifacts used by release
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4    # v10.0.0  # zizmor: ignore[cache-poisoning,ref-version-mismatch] - This job does not produce artifacts used by release, zizmore cannot handle version number and ignore statements on the same line
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: 'true'
@@ -167,7 +167,7 @@ jobs:
       id-token: write  # Required for Sigstore
       attestations: write  # Required to generate attestation
     steps:
-      - uses: ansys/actions/build-library@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      - uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -226,7 +226,7 @@ jobs:
       contents: write  # To allow the Action to push to the gh-pages branch
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
-      - uses: ansys/actions/doc-deploy-dev@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      - uses: ansys/actions/doc-deploy-dev@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -242,7 +242,7 @@ jobs:
       contents: write  # to allow the Action to push to the repo
       pull-requests: write  # to allow the Action to create a PR if needed
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      - uses: ansys/actions/doc-deploy-changelog@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -265,14 +265,14 @@ jobs:
           path: ${{ env.LIBRARY_NAME }}-artifacts
 
       - name: "Upload artifacts to PyPI using trusted publisher"
-        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b  # v1.14.0
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33  # v1.14.2
         with:
           repository-url: "https://upload.pypi.org/legacy/"
           print-hash: true
           packages-dir: ${{ env.LIBRARY_NAME }}-artifacts
           skip-existing: false
 
-      - uses: ansys/actions/release-github@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      - uses: ansys/actions/release-github@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         name: "Release to GitHub"
         with:
           library-name: ${{ env.LIBRARY_NAME }}
@@ -286,7 +286,7 @@ jobs:
     needs: release
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:
-      - uses: ansys/actions/doc-deploy-stable@d946b24b9a765f4169bcc94afdb27bd1a0533741  # v10.3.2
+      - uses: ansys/actions/doc-deploy-stable@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}

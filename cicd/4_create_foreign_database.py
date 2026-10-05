@@ -18,8 +18,8 @@ import logging
 from collections import defaultdict
 from typing import Mapping, Sequence
 
-from ansys.grantami.serverapi_openapi.v2025r2 import api, models
-from GRANTA_MIScriptingToolkit import granta as mpy
+from ansys.grantami.serverapi_openapi.v2026r1 import api, models
+import ansys.grantami.core as mpy
 
 from cicd._connection import Connection
 from cicd._config import (
@@ -137,8 +137,8 @@ def ensure_link_group_exists(
     create_response = rlg_client.create_record_link_group(
         database_key=db_key,
         table_guid=source_table_guid,
-        body=models.GsaCreateRecordLinkGroup(
-            link_target=models.GsaLinkTarget(
+        body=models.GsaCreateCrossDatabaseRecordLinkGroup(
+            link_target=models.GsaCreateCrossDatabaseLinkTarget(
                 database_guid=target_db_guid,
                 table_guid=target_table_guid,
             ),
@@ -229,7 +229,7 @@ if __name__ == "__main__":
 
     # ------------------ Foreign record creation and population --------------------------
 
-    streamlined_session = mpy.Session(service_layer_url=MI_URL, autologon=True)
+    streamlined_session = mpy.SessionBuilder(MI_URL).with_autologon()
 
     logger.info("Creating and link foreign records")
     records_to_update = []

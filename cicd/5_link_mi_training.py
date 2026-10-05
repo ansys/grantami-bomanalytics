@@ -1,6 +1,6 @@
 import logging
 
-from GRANTA_MIScriptingToolkit import granta as mpy
+from ansys.grantami.core import SessionBuilder, Record
 
 from cicd._connection import Connection
 from cicd._config import (
@@ -21,7 +21,7 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 
-def add_links_to_record(record: mpy.Record, link_group_name: str, link_records: list[mpy.Record]) -> None:
+def add_links_to_record(record: Record, link_group_name: str, link_records: list[Record]) -> None:
     """Add links to a record link group."""
     logger.info(f"    Adding links to record link group {link_group_name}")
     record.set_links(link_name=link_group_name, records=link_records)
@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
     # ------------------ Link creation --------------------------
 
-    streamlined_session = mpy.Session(service_layer_url=MI_URL, autologon=True)
+    streamlined_session = SessionBuilder(MI_URL).with_autologon()
 
     logger.info("Creating and linking foreign records")
     records_to_update = []

@@ -15,8 +15,8 @@ import json
 import logging
 from pathlib import Path
 
-from GRANTA_MIScriptingToolkit import granta as mpy
-from ansys.grantami.serverapi_openapi.v2025r2 import api, models
+from ansys.grantami.core import SessionBuilder
+from ansys.grantami.serverapi_openapi.v2026r1 import api, models
 from ansys.openapi.common import Unset
 
 from cicd._connection import Connection
@@ -38,7 +38,7 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 
 logger.info(f"Connecting to MI at {MI_URL} with AutoLogon")
-s = mpy.Session(MI_URL, autologon=True)
+s = SessionBuilder(MI_URL).with_autologon()
 db = s.get_db(db_key=RS_DB_KEY_CURRENT)
 api_client = Connection(api_url=MI_URL).with_autologon().connect()
 

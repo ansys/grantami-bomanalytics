@@ -39,8 +39,8 @@ indicators = list(INDICATORS.values())
 foreign_records_parametrization = pytest.mark.parametrize(
     "foreign_records",
     [
-        pytest.param(False, marks=pytest.mark.integration(mi_versions=[(24, 2), (25, 1), (25, 2), (26, 1)])),
-        pytest.param(True, marks=pytest.mark.integration(mi_versions=[(26, 1)])),
+        pytest.param(False, marks=pytest.mark.integration(mi_versions=[(24, 2), (25, 1), (25, 2), (26, 1), (27, 1)])),
+        pytest.param(True, marks=pytest.mark.integration(mi_versions=[(27, 1), (26, 1)])),
     ],
 )
 
@@ -155,7 +155,7 @@ class TestPartQueries:
             assert response.compliance_by_part_and_indicator[0].equivalent_references is None
 
 
-@pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+@pytest.mark.integration(mi_versions=[(25, 2), (26, 1), (27, 1)])
 class TestPartQueriesMessages:
     ids = ["DRILL", "asm_flap_mating"]
     foreign_ids = ["DRILL-foreign", "asm_flap_mating-foreign"]
@@ -176,7 +176,7 @@ class TestPartQueriesMessages:
                 s in message.message for s in self.allowed_message_strings
             ), f"Unexpected message: {message.severity}: {message.message}"
 
-    @pytest.mark.integration(mi_versions=[(26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_impacted_substances_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
         query = (
             queries.PartImpactedSubstancesQuery()
@@ -199,7 +199,7 @@ class TestPartQueriesMessages:
                 s in message.message for s in self.allowed_message_strings
             ), f"Unexpected message: {message.severity}: {message.message}"
 
-    @pytest.mark.integration(mi_versions=[(26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_compliance_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
         query = (
             queries.PartComplianceQuery()
@@ -273,7 +273,7 @@ class TestSpecificationQueries:
             assert response.compliance_by_specification_and_indicator[0].equivalent_references is None
 
 
-@pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+@pytest.mark.integration(mi_versions=[(25, 2), (26, 1), (27, 1)])
 class TestSpecificationQueriesMessages:
     ids = ["MIL-DTL-53039,TypeI", "AMS2404,Class1"]
     foreign_ids = ["MIL-DTL-53039,TypeI-foreign", "AMS2404,Class1-foreign"]
@@ -298,7 +298,7 @@ class TestSpecificationQueriesMessages:
                 s in message.message for s in self.allowed_message_strings
             ), f"Unexpected message: {message.severity}: {message.message}"
 
-    @pytest.mark.integration(mi_versions=[(26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_impacted_substances_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
         query = (
             queries.SpecificationImpactedSubstancesQuery()
@@ -321,7 +321,7 @@ class TestSpecificationQueriesMessages:
                 s in message.message for s in self.allowed_message_strings
             ), f"Unexpected message: {message.severity}: {message.message}"
 
-    @pytest.mark.integration(mi_versions=[(26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_compliance_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
         query = (
             queries.SpecificationComplianceQuery()
@@ -437,7 +437,7 @@ class TestBomRSQueries:
         assert response.compliance_by_part_and_indicator
         assert response.compliance_by_indicator
 
-    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1), (27, 1)])
     def test_impacted_substances_2412(self, connection, bom2412):
         query = queries.BomImpactedSubstancesQuery().with_bom(bom2412).with_legislation_ids(LEGISLATIONS)
         response = connection.run(query)
@@ -445,7 +445,7 @@ class TestBomRSQueries:
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
 
-    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
+    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1), (27, 1)])
     def test_compliance_2412(self, connection, bom2412):
         query = queries.BomComplianceQuery().with_bom(bom2412).with_indicators(indicators)
         response = connection.run(query)
@@ -453,7 +453,7 @@ class TestBomRSQueries:
         assert response.compliance_by_part_and_indicator
         assert response.compliance_by_indicator
 
-    @pytest.mark.integration(mi_versions=[(26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_impacted_substances_2505(self, connection: BomAnalyticsClient, bom2505: str) -> None:
         query = queries.BomImpactedSubstancesQuery().with_bom(bom2505).with_legislation_ids(LEGISLATIONS)
         response = connection.run(query)
@@ -461,7 +461,7 @@ class TestBomRSQueries:
         assert response.impacted_substances
         assert response.impacted_substances_by_legislation
 
-    @pytest.mark.integration(mi_versions=[(26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_compliance_2505(self, connection: BomAnalyticsClient, bom2505: str) -> None:
         query = queries.BomComplianceQuery().with_bom(bom2505).with_indicators(indicators)
         response = connection.run(query)
@@ -479,7 +479,7 @@ class TestBomRSQueries:
             != obj_with_equivalent_references.equivalent_references[0].record_guid
         )
 
-    @pytest.mark.integration(mi_versions=[(26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_impacted_substances_2505_xdb(
         self, connection_with_db_variants: BomAnalyticsClient, bom2505_xdb: str
     ) -> None:
@@ -489,7 +489,7 @@ class TestBomRSQueries:
         assert response.impacted_substances_by_legislation
         assert response.impacted_substances
 
-    @pytest.mark.integration(mi_versions=[(26, 1)])
+    @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_compliance_2505_xdb(self, connection_with_db_variants: BomAnalyticsClient, bom2505_xdb: str) -> None:
         primary_db_key = connection_with_db_variants._db_key
 
@@ -637,7 +637,7 @@ class _TestSustainabilityBomQueries:
         assert sum(item.climate_change_percentage for item in items) == pytest.approx(100)
 
 
-@pytest.mark.integration(mi_versions=[(26, 1)])
+@pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
 class TestSustainabilityBomQueries2505:
     """
     Sustainability integration tests specific to the 25/05 XML BoM schema.
@@ -1491,8 +1491,8 @@ class TestSustainabilityBomQueries2301(_TestSustainabilityBomQueries):
 
     bom = example_boms["sustainability-bom-2301"].content
 
-    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
-    def test_sustainability_summary_transport_aggregation_results_25_2_26_1(self, connection):
+    @pytest.mark.integration(mi_versions=[(25, 2), (26, 1), (27, 1)])
+    def test_sustainability_summary_transport_aggregation_results_25_2_26_1_27_1(self, connection):
         query = queries.BomSustainabilitySummaryQuery()
         query.with_bom(self.bom)
         response = connection.run(query)

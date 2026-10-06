@@ -102,7 +102,7 @@ examples = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ansys-grantami-bomanalytics-openapi", specifier = "==5.1.0rc0" },
+    { name = "ansys-grantami-bomanalytics-openapi", specifier = ">=5.0.0,<6.0" },
     { name = "ansys-openapi-common", specifier = ">=2.0.0,<3.0" },
     { name = "choreographer", marker = "extra == 'examples'", specifier = ">=1.0.0" },
     { name = "defusedxml", specifier = ">=0.7" },
@@ -162,16 +162,16 @@ examples = [
 
 [[package]]
 name = "ansys-grantami-bomanalytics-openapi"
-version = "5.1.0rc0"
+version = "5.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansys-openapi-common" },
     { name = "python-dateutil" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/74/ac/8d2ef0b7390021fce3019c63e305339178deb4404b621e288abeb861bf19/ansys_grantami_bomanalytics_openapi-5.1.0rc0.tar.gz", hash = "sha256:886399cb751f03358b02bc8ca3b62e10f188f23e599ff6deeaeeca5d095bb480", size = 97023, upload-time = "2026-09-17T11:26:51.96Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/42/cc/c54ca61739245db931f9435572b0f5a0738d1a95e2c6447a86d2ddadc79c/ansys_grantami_bomanalytics_openapi-5.1.0.tar.gz", hash = "sha256:28306700b0adf07ea7fb932b31bc301bf6341b2ebe56b67d2d927a127f905d4d", size = 96740, upload-time = "2026-10-06T12:24:32.778Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f4/a0/359a69d2daee0118233892376b90248d57644ef46ca10c51270dc32049d1/ansys_grantami_bomanalytics_openapi-5.1.0rc0-py3-none-any.whl", hash = "sha256:58fd6225dce4028a1942df4459b5208f924630bf4f3d6d3e611bae4aac2c761a", size = 391266, upload-time = "2026-09-17T11:26:50.048Z" },
+    { url = "https://files.pythonhosted.org/packages/cd/bf/2251ee5362ac808ac2d7d267ccd95b599f99c25ba7750341da5c8ba84f63/ansys_grantami_bomanalytics_openapi-5.1.0-py3-none-any.whl", hash = "sha256:674a257663309cf79135143194dcb145b30a8e1e8a0e6e74b5aa5deee57c813c", size = 391230, upload-time = "2026-10-06T12:24:31.031Z" },
 ]
 
 [[package]]

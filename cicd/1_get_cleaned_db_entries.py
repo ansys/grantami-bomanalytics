@@ -16,7 +16,7 @@ import logging
 from pathlib import Path
 
 from ansys.grantami.core import SessionBuilder
-from ansys.grantami.serverapi_openapi.v2026r1 import api, models
+from ansys.grantami.serverapi_openapi.v2027r1 import api, models
 from ansys.openapi.common import Unset
 
 from cicd._connection import Connection

@@ -17,7 +17,7 @@ import logging
 from pathlib import Path
 from typing import Mapping, Iterable, Tuple, TYPE_CHECKING
 
-from ansys.grantami.serverapi_openapi.v2026r1 import api, models
+from ansys.grantami.serverapi_openapi.v2027r1 import api, models
 import ansys.grantami.backend.soap as gdl
 
 from cicd._connection import Connection

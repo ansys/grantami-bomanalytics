@@ -49,12 +49,12 @@ def example_2_1_materials_impacted_substances() -> None:
     assert len(results.impacted_substances_by_material) == 2  # noqa
     assert len(results.impacted_substances_by_legislation) == 2  # noqa
     assert len(substances_by_material[PC_ID]) == 16  # noqa
-    assert len(substances_by_material[PPS_ID]) == 11  # noqa
+    assert len(substances_by_material[PPS_ID]) == 2  # noqa
 
-    assert len(results.impacted_substances_by_legislation[SIN_LIST]) == 27  # noqa
-    assert len(results.impacted_substances_by_legislation[REACH]) == 21  # noqa
+    assert len(results.impacted_substances_by_legislation[SIN_LIST]) == 18  # noqa
+    assert len(results.impacted_substances_by_legislation[REACH]) == 15  # noqa
 
-    assert len(results.impacted_substances) == 48  # noqa
+    assert len(results.impacted_substances) == 33  # noqa
 
     # Expected cells with outputs
     assert set(Out.keys()) == {4}, str(Out)  # noqa
@@ -222,7 +222,7 @@ def example_4_1_sustainability() -> None:
     assert len(records) == 50  # noqa
     assert records[0]["type"] == "Part"  # noqa
     assert records[0]["name"] == "Part1"  # noqa
-    assert round(records[0]["embodied energy [MJ]"]) == 593  # noqa
+    assert round(records[0]["embodied energy [MJ]"]) == 594  # noqa
     assert round(records[0]["climate change [kg CO2-eq]"]) == 48  # noqa
 
     # Expected cells with outputs
@@ -307,9 +307,9 @@ def example_5_4_processes() -> None:
 
 def example_5_5_hierarchical_plots() -> None:
     assert len(df) == 39  # noqa
-    assert round(df["EE [MJ]"].sum()) == 1186  # noqa
+    assert round(df["EE [MJ]"].sum()) == 1189  # noqa
     assert len(df_aggregated) == 14  # noqa
-    assert round(df_aggregated["EE [MJ]"].sum()) == 1186  # noqa
+    assert round(df_aggregated["EE [MJ]"].sum()) == 1189  # noqa
     # Expected cells with outputs
     assert set(Out.keys()) == {2, 4, 10, 14}, str(Out)  # noqa
 

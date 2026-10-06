@@ -1,7 +1,7 @@
 import logging
 from typing import MutableMapping, Optional
 
-from ansys.grantami.serverapi_openapi.v2026r1 import api, models
+from ansys.grantami.serverapi_openapi.v2027r1 import api, models
 from ansys.openapi.common import ApiClient
 
 logger = logging.getLogger(__name__)

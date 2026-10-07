@@ -11,6 +11,109 @@ See `CHANGELOG.md <https://github.com/ansys/grantami-bomanalytics/blob/main/CHAN
 
 .. towncrier release notes start
 
+`2.5.0rc0 <https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.5.0rc0>`_ - October 07, 2026
+======================================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Convert class-scoped fixtures to class methods
+          - `#1062 <https://github.com/ansys/grantami-bomanalytics/pull/1062>`_
+
+        * - Use legacy autodoc interface with Sphinx 9
+          - `#1128 <https://github.com/ansys/grantami-bomanalytics/pull/1128>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Chore: update CHANGELOG for v2.4.0
+          - `#1001 <https://github.com/ansys/grantami-bomanalytics/pull/1001>`_
+
+        * - Chore: update CHANGELOG for v2.4.1
+          - `#1011 <https://github.com/ansys/grantami-bomanalytics/pull/1011>`_
+
+        * - Fix broken test expectation for example 5-4 following pandas update
+          - `#1121 <https://github.com/ansys/grantami-bomanalytics/pull/1121>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Add 2026 R1 release VM to CI
+          - `#967 <https://github.com/ansys/grantami-bomanalytics/pull/967>`_
+
+        * - Update dependabot to use \`uv\` package ecosystem
+          - `#978 <https://github.com/ansys/grantami-bomanalytics/pull/978>`_
+
+        * - Update ansys actions
+          - `#996 <https://github.com/ansys/grantami-bomanalytics/pull/996>`_
+
+        * - Bump version number on main to 2.5.0.dev0
+          - `#1002 <https://github.com/ansys/grantami-bomanalytics/pull/1002>`_
+
+        * - Chore: Update missing or outdated files
+          - `#1070 <https://github.com/ansys/grantami-bomanalytics/pull/1070>`_, `#1098 <https://github.com/ansys/grantami-bomanalytics/pull/1098>`_
+
+        * - Update scripts and tests for 2027 R1
+          - `#1093 <https://github.com/ansys/grantami-bomanalytics/pull/1093>`_
+
+        * - Update ansys actions to 10.3.6
+          - `#1096 <https://github.com/ansys/grantami-bomanalytics/pull/1096>`_
+
+        * - Update dependabot groups
+          - `#1109 <https://github.com/ansys/grantami-bomanalytics/pull/1109>`_
+
+        * - Drop support for python 3.10 and 3.11
+          - `#1116 <https://github.com/ansys/grantami-bomanalytics/pull/1116>`_
+
+        * - Bump bomanalytics-openapi to 5.1.0rc0
+          - `#1122 <https://github.com/ansys/grantami-bomanalytics/pull/1122>`_
+
+        * - Update authors/maintainers to Synopsys, Inc. and ANSYS, Inc.
+          - `#1129 <https://github.com/ansys/grantami-bomanalytics/pull/1129>`_
+
+        * - Conditionally skip integration tests via actions variable
+          - `#1137 <https://github.com/ansys/grantami-bomanalytics/pull/1137>`_
+
+        * - Run post-build actions if integration checks are skipped
+          - `#1141 <https://github.com/ansys/grantami-bomanalytics/pull/1141>`_
+
+        * - Update test expectations and database creation scripts for 2027 R1
+          - `#1143 <https://github.com/ansys/grantami-bomanalytics/pull/1143>`_
+
+        * - Bump bomanalytics-openapi to stable release 5.1.0
+          - `#1144 <https://github.com/ansys/grantami-bomanalytics/pull/1144>`_
+
+        * - Prepare release 2.5.0rc0
+          - `#1145 <https://github.com/ansys/grantami-bomanalytics/pull/1145>`_
+
+        * - Allow Release job to run despite skipped server checks
+          - `#1147 <https://github.com/ansys/grantami-bomanalytics/pull/1147>`_
+
+
+  .. tab-item:: Miscellaneous
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Fix mypy 2.3.0 type error in _bom_reader.py dict comprehension
+          - `#1091 <https://github.com/ansys/grantami-bomanalytics/pull/1091>`_
+
+
 `2.4.1 <https://github.com/ansys/grantami-bomanalytics/releases/tag/v2.4.1>`_ - March 12, 2026
 ==============================================================================================
 

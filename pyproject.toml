@@ -8,7 +8,7 @@ packages = ["src/ansys"]
 [project]
 name = "ansys-grantami-bomanalytics"
 description = "Perform compliance and sustainability analysis on materials data stored in Granta MI."
-version = "2.5.0.dev0"
+version = "2.5.0rc0"
 license = "MIT"
 authors = [
     {name = "Synopsys, Inc. and ANSYS, Inc.", email = "pyansys-core@synopsys.com"}
@@ -40,7 +40,7 @@ classifiers = [
 requires-python = ">=3.12"
 
 dependencies = [
-  "ansys-openapi-common>=2.0.0,<3.0", 
+  "ansys-openapi-common>=2.0.0,<3.0",
   "ansys-grantami-bomanalytics-openapi>=5.0.0,<6.0",
   "xmlschema>=3.0.1,<5.0",
   "defusedxml>=0.7",

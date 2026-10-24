@@ -32,7 +32,7 @@ jobs:
     name: "Check library vulnerabilities"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      - uses: ansys/actions/check-vulnerabilities@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -46,7 +46,7 @@ jobs:
     name: "Check actions security"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-actions-security@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
+      - uses: ansys/actions/check-actions-security@a5c8d0d92928e144130a3c64aa7200b9547785de # v11.1.3
         with:
           generate-summary: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: ansys/actions/code-style@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      - uses: ansys/actions/code-style@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
         with:
           skip-install: false
 
@@ -73,7 +73,7 @@ jobs:
     name: "Documentation style"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/doc-style@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      - uses: ansys/actions/doc-style@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
     permissions:
@@ -86,7 +86,7 @@ jobs:
       contents: read
     steps:
     - name: "Run Ansys documentation building action"
-      uses: ansys/actions/doc-build@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      uses: ansys/actions/doc-build@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
       with:
         check-links: "false"
         dependencies: "pandoc"
@@ -115,7 +115,7 @@ jobs:
       id-token: write  # Required for Sigstore
       attestations: write  # Required to generate attestations
     steps:
-      - uses: ansys/actions/build-wheelhouse@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      - uses: ansys/actions/build-wheelhouse@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           operating-system: ${{ matrix.os }}
@@ -140,7 +140,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884    # v10.0.0  # zizmor: ignore[cache-poisoning,ref-version-mismatch] - This job does not produce artifacts used by release, zizmore cannot handle version number and ignore statements on the same line
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e    # v10.3.2  # zizmor: ignore[cache-poisoning,ref-version-mismatch] - This job does not produce artifacts used by release, zizmore cannot handle version number and ignore statements on the same line
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: 'true'
@@ -167,7 +167,7 @@ jobs:
       id-token: write  # Required for Sigstore
       attestations: write  # Required to generate attestation
     steps:
-      - uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      - uses: ansys/actions/build-library@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -226,7 +226,7 @@ jobs:
       contents: write  # To allow the Action to push to the gh-pages branch
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
-      - uses: ansys/actions/doc-deploy-dev@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      - uses: ansys/actions/doc-deploy-dev@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -242,7 +242,7 @@ jobs:
       contents: write  # to allow the Action to push to the repo
       pull-requests: write  # to allow the Action to create a PR if needed
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      - uses: ansys/actions/doc-deploy-changelog@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -265,14 +265,14 @@ jobs:
           path: ${{ env.LIBRARY_NAME }}-artifacts
 
       - name: "Upload artifacts to PyPI using trusted publisher"
-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33  # v1.14.2
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086  # v1.14.3
         with:
           repository-url: "https://upload.pypi.org/legacy/"
           print-hash: true
           packages-dir: ${{ env.LIBRARY_NAME }}-artifacts
           skip-existing: false
 
-      - uses: ansys/actions/release-github@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      - uses: ansys/actions/release-github@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
         name: "Release to GitHub"
         with:
           library-name: ${{ env.LIBRARY_NAME }}
@@ -286,7 +286,7 @@ jobs:
     needs: release
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:
-      - uses: ansys/actions/doc-deploy-stable@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
+      - uses: ansys/actions/doc-deploy-stable@a5c8d0d92928e144130a3c64aa7200b9547785de  # v11.1.3
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}

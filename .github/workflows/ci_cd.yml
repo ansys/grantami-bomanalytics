@@ -177,7 +177,7 @@ jobs:
     name: "Server checks"
     needs: [ build-wheelhouse ]
     if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') && vars.SKIP_INTEGRATION_TESTS != 'true' }}
-    uses: ./.github/workflows/server_checks.yml
+    uses: $/.github/workflows/server_checks.yml
     with:
       skip-vm-management: ${{ vars.SKIP_VM_MANAGEMENT == 'true' }}
     secrets:

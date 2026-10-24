@@ -272,7 +272,7 @@ class BomAnalyticsClient(ApiClient):
             if isinstance(value, str):
                 value = f'"{value}"'
             rendered_entries.append(f"{name}={value}")
-        return f'<BomAnalyticsClient: {", ".join(rendered_entries)}>'
+        return f"<BomAnalyticsClient: {', '.join(rendered_entries)}>"
 
     @property
     def maximum_spec_link_depth(self) -> Optional[int]:
@@ -495,17 +495,17 @@ class BomAnalyticsClient(ApiClient):
             logger.info(f"Using maximum specification-to-specification link depth: {self._max_spec_depth}")
             config.maximum_spec_chain_node_count = self._max_spec_depth + 1
         else:
-            logger.info(f"No specification-to-specification link depth limit is specified. All links will be followed.")
+            logger.info("No specification-to-specification link depth limit is specified. All links will be followed.")
         if any(self._table_names.values()):
             for table_type, name in self._table_names.items():
                 if name is not None:
                     setattr(config, table_type, name)
             table_mapping = [f"{n}: {v}" for n, v in self._table_names.items() if v]
-            logger.info(f"Using custom table config:")
+            logger.info("Using custom table config:")
             for line in table_mapping:
                 logger.info(line)
         else:
-            logger.info(f"Using default table config")
+            logger.info("Using default table config")
 
         if self._db_key != DEFAULT_DBKEY:
             logger.info(f"Using custom database key: {self._db_key}")

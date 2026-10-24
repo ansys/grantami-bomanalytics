@@ -1048,7 +1048,7 @@ class ItemResultFactory:
         try:
             return ReferenceType[reference_type]
         except KeyError as e:
-            raise KeyError(f"Unknown reference_type {reference_type} " f"returned.").with_traceback(e.__traceback__)
+            raise KeyError(f"Unknown reference_type {reference_type} returned.").with_traceback(e.__traceback__)
 
     @staticmethod
     def create_licensing_result(result: models.GetAvailableLicensesResponse) -> "Licensing":
@@ -2302,8 +2302,7 @@ class TransportSummaryByCategoryResult(TransportSummaryBase):
 
     def __repr__(self) -> str:
         return (
-            f"<{self.__class__.__name__}(EE%={self.embodied_energy_percentage}, "
-            f"CC%={self.climate_change_percentage})>"
+            f"<{self.__class__.__name__}(EE%={self.embodied_energy_percentage}, CC%={self.climate_change_percentage})>"
         )
 
 

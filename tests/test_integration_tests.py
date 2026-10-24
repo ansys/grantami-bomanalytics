@@ -172,9 +172,9 @@ class TestPartQueriesMessages:
         response = connection_with_db_variants.run(query)
 
         for message in response.messages:
-            assert any(
-                s in message.message for s in self.allowed_message_strings
-            ), f"Unexpected message: {message.severity}: {message.message}"
+            assert any(s in message.message for s in self.allowed_message_strings), (
+                f"Unexpected message: {message.severity}: {message.message}"
+            )
 
     @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_impacted_substances_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
@@ -186,18 +186,18 @@ class TestPartQueriesMessages:
         response = connection_with_db_variants.run(query)
 
         for message in response.messages:
-            assert any(
-                s in message.message for s in self.allowed_message_strings
-            ), f"Unexpected message: {message.severity}: {message.message}"
+            assert any(s in message.message for s in self.allowed_message_strings), (
+                f"Unexpected message: {message.severity}: {message.message}"
+            )
 
     def test_compliance(self, connection_with_db_variants: BomAnalyticsClient) -> None:
         query = queries.PartComplianceQuery().with_indicators(indicators).with_part_numbers(self.ids)
         response = connection_with_db_variants.run(query)
 
         for message in response.messages:
-            assert any(
-                s in message.message for s in self.allowed_message_strings
-            ), f"Unexpected message: {message.severity}: {message.message}"
+            assert any(s in message.message for s in self.allowed_message_strings), (
+                f"Unexpected message: {message.severity}: {message.message}"
+            )
 
     @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_compliance_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
@@ -209,9 +209,9 @@ class TestPartQueriesMessages:
         response = connection_with_db_variants.run(query)
 
         for message in response.messages:
-            assert any(
-                s in message.message for s in self.allowed_message_strings
-            ), f"Unexpected message: {message.severity}: {message.message}"
+            assert any(s in message.message for s in self.allowed_message_strings), (
+                f"Unexpected message: {message.severity}: {message.message}"
+            )
 
 
 @foreign_records_parametrization
@@ -294,9 +294,9 @@ class TestSpecificationQueriesMessages:
         response = connection_with_db_variants.run(query)
 
         for message in response.messages:
-            assert any(
-                s in message.message for s in self.allowed_message_strings
-            ), f"Unexpected message: {message.severity}: {message.message}"
+            assert any(s in message.message for s in self.allowed_message_strings), (
+                f"Unexpected message: {message.severity}: {message.message}"
+            )
 
     @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_impacted_substances_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
@@ -308,18 +308,18 @@ class TestSpecificationQueriesMessages:
         response = connection_with_db_variants.run(query)
 
         for message in response.messages:
-            assert any(
-                s in message.message for s in self.allowed_message_strings
-            ), f"Unexpected message: {message.severity}: {message.message}"
+            assert any(s in message.message for s in self.allowed_message_strings), (
+                f"Unexpected message: {message.severity}: {message.message}"
+            )
 
     def test_compliance(self, connection_with_db_variants: BomAnalyticsClient) -> None:
         query = queries.SpecificationComplianceQuery().with_indicators(indicators).with_specification_ids(self.ids)
         response = connection_with_db_variants.run(query)
 
         for message in response.messages:
-            assert any(
-                s in message.message for s in self.allowed_message_strings
-            ), f"Unexpected message: {message.severity}: {message.message}"
+            assert any(s in message.message for s in self.allowed_message_strings), (
+                f"Unexpected message: {message.severity}: {message.message}"
+            )
 
     @pytest.mark.integration(mi_versions=[(26, 1), (27, 1)])
     def test_compliance_foreign_records(self, connection_with_db_variants: BomAnalyticsClient) -> None:
@@ -331,9 +331,9 @@ class TestSpecificationQueriesMessages:
         response = connection_with_db_variants.run(query)
 
         for message in response.messages:
-            assert any(
-                s in message.message for s in self.allowed_message_strings
-            ), f"Unexpected message: {message.severity}: {message.message}"
+            assert any(s in message.message for s in self.allowed_message_strings), (
+                f"Unexpected message: {message.severity}: {message.message}"
+            )
 
 
 @foreign_records_parametrization
@@ -550,7 +550,9 @@ class TestMissingDatabase:
 @pytest.mark.xfail(reason="Uninformative error message", strict=True)
 def test_missing_table_raises_grantami_exception(connection):
     query = (
-        queries.BomImpactedSubstancesQuery().with_bom(compliance_bom_custom_db_1711).with_legislation_ids(LEGISLATIONS)
+        queries.BomImpactedSubstancesQuery()
+        .with_bom(example_boms["compliance-bom-custom-db-1711"].content)
+        .with_legislation_ids(LEGISLATIONS)
     )
     with pytest.raises(GrantaMIException) as e:
         connection.run(query)

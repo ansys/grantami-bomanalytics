@@ -140,7 +140,7 @@ class QueryResultFactory:
         try:
             item_factory_class = cls.registry[response_type]
         except KeyError as e:
-            raise RuntimeError(f"Unregistered response type" f' "{response_type}"').with_traceback(e.__traceback__)
+            raise RuntimeError(f'Unregistered response type "{response_type}"').with_traceback(e.__traceback__)
 
         item_result: ResultBaseClass = item_factory_class(results=results, messages=messages, **kwargs)
         return item_result
@@ -239,7 +239,7 @@ class ComplianceBaseClass(ResultBaseClass):
     _result_type_name: str
 
     def __repr__(self) -> str:
-        result = f"<{self.__class__.__name__}: {len(self._results)} " f"{self._result_type_name} results>"
+        result = f"<{self.__class__.__name__}: {len(self._results)} {self._result_type_name} results>"
         return result
 
     @property

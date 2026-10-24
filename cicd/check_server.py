@@ -72,9 +72,9 @@ def check_status(url: str, auth_header: HTTPBasicAuth) -> bool:
     content = json.loads(response.content)
     for check in content["HealthChecks"]:
         if check["Name"] == "Database Check" and check["Status"] == "Ok":
-            logger.info(f"All databases loaded.")
+            logger.info("All databases loaded.")
             return True
-    logger.info(f"All databases not loaded.")
+    logger.info("All databases not loaded.")
     return False
 
 
@@ -113,4 +113,4 @@ if __name__ == "__main__":
     warm_up_database(sl_url, auth, "MI_Restricted_Substances")
     logger.info("Warming up database MI_Restricted_Substances_Custom_Tables")
     warm_up_database(sl_url, auth, "MI_Restricted_Substances_Custom_Tables")
-    logger.info(f"Server ready!")
+    logger.info("Server ready!")

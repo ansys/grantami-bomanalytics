@@ -129,10 +129,10 @@ def ensure_link_group_exists(
     rlgs = rlg_client.get_record_link_groups(database_key=db_key, table_guid=source_table_guid)
     for rlg in rlgs.record_link_groups:
         if rlg.name == name:
-            logger.info(f"  Link group already exists")
+            logger.info("  Link group already exists")
             return rlg.guid
 
-    logger.info(f"  Link group not found. Creating.")
+    logger.info("  Link group not found. Creating.")
     target_db_guid = _database_browser.get_database_guid(target_db_key)
     create_response = rlg_client.create_record_link_group(
         database_key=db_key,
@@ -190,7 +190,7 @@ if __name__ == "__main__":
 
     # ------------------ Create attribute standard names --------------------------
 
-    logger.info(f"Creating attribute standard names...")
+    logger.info("Creating attribute standard names...")
     for foreign_standard_name, mappings in FOREIGN_ATTRIBUTE_STANDARD_NAMES.items():
         attribute_guids = [
             foreign_table_name_to_attribute_name_to_guid_map[table_name][attribute_name]

@@ -96,7 +96,7 @@ for table_name, table_details in TABLE_INFORMATION.items():
             ).to_dict()
         )
     if len(renamed_attributes_for_table) > 0:
-        logger.info(f"----Remapping attribute names")
+        logger.info("----Remapping attribute names")
         for section in layout_info:
             for item in section["section_items"]:
                 if item["name"] in renamed_attributes_for_table:

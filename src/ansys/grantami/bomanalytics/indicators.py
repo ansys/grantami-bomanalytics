@@ -284,7 +284,7 @@ class _Indicator(ABC):
         try:
             self._flag = self.__class__.available_flags[flag]
         except KeyError as e:
-            raise KeyError(f'Unknown flag "{flag}" for Indicator' f' "{repr(self)}"').with_traceback(e.__traceback__)
+            raise KeyError(f'Unknown flag "{flag}" for Indicator "{repr(self)}"').with_traceback(e.__traceback__)
 
     def __eq__(self, other: object) -> bool:
         """Allows comparison both to another indicator and to a flag of the correct type for the concrete class.

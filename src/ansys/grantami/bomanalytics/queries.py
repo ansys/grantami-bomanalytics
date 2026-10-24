@@ -662,7 +662,7 @@ class _ComplianceMixin(_ApiMixin, ABC):
         and so only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
-        result = f"<{self.__class__.__name__}: {self._data}," f" {len(self._indicators)} indicators>"
+        result = f"<{self.__class__.__name__}: {self._data}, {len(self._indicators)} indicators>"
         return result
 
     @validate_argument_type("indicators", [_Indicator], {_Indicator})
@@ -787,7 +787,7 @@ class _ImpactedSubstanceMixin(_ApiMixin, ABC):
         and so only the reference to the class is stored here, not the instance itself."""
 
     def __repr__(self) -> str:
-        result = f"<{self.__class__.__name__}: {self._data}, " f"{len(self._legislations)} legislations>"
+        result = f"<{self.__class__.__name__}: {self._data}, {len(self._legislations)} legislations>"
         return result
 
     @validate_argument_type("legislation_ids", [str], {str})

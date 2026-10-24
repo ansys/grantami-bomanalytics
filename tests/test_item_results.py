@@ -85,7 +85,7 @@ def test_impacted_substance_repr():
         max_percentage_amount_in_material=50,
         legislation_threshold=12,
     )
-    assert repr(impacted_substance) == f'<ImpactedSubstance: {{"cas_number": "123-456-789", "percent_amount": 50}}>'
+    assert repr(impacted_substance) == '<ImpactedSubstance: {"cas_number": "123-456-789", "percent_amount": 50}>'
 
 
 class TestImpactedSubstancesResultsRepr:

@@ -569,7 +569,7 @@ class BoMFactory:
                             name="RootPartSubstance0Name",
                         )
                     ],
-                    rohs_exemptions=["RootPartRohsExemption0" "RootPartRohsExemption1"],
+                    rohs_exemptions=["RootPartRohsExemption0RootPartRohsExemption1"],
                     end_of_life_fates=[
                         self.bom_module.EndOfLifeFate(
                             mi_end_of_life_reference=self.make_record_reference("RootPartEOLFRef"),

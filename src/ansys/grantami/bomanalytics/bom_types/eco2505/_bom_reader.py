@@ -20,9 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from . import _bom_types as bom_types
 from .. import gbt1205
 from .._bom_reader import _GenericBoMReader
+from . import _bom_types as bom_types
 
 
 class _BoMReader(

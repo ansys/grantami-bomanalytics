@@ -69,7 +69,6 @@ MI_AUTH_PATH = "/Health/v2.svc"
 GRANTA_APPLICATION_NAME_HEADER = "PyGranta BoM Analytics"
 
 MINIMUM_BAS_VERSION = (24, 2)
-RETRY_STATUS_CODES = [429, 502, 503, 504]
 
 if TYPE_CHECKING:
     from ._item_results import Licensing
@@ -201,10 +200,7 @@ class Connection(ApiClientFactory):
         existing transport adapters are modified in place so the configured request timeout is retained.
         """
         for adapter in self._session.adapters.values():
-            adapter.max_retries = adapter.max_retries.new(
-                allowed_methods=None,
-                status_forcelist=RETRY_STATUS_CODES,
-            )
+            adapter.max_retries = adapter.max_retries.new(allowed_methods=None)
 
     @staticmethod
     def _test_connection(client: "BomAnalyticsClient") -> None:

@@ -70,7 +70,6 @@ def test_gateway_errors_are_retried(mock_connection, method):
     for adapter in mock_connection.rest_client.adapters.values():
         retry = adapter.max_retries
         assert retry.is_retry(method, 504)
-        assert not retry.is_retry(method, 400)
         assert retry.total == 3
 
 

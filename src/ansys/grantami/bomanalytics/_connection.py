@@ -181,6 +181,7 @@ class Connection(ApiClientFactory):
         """
 
         self._validate_builder()
+        self._enable_post_retries()
         client = BomAnalyticsClient(
             session=self._session,
             servicelayer_url=self._base_servicelayer_url,
@@ -189,6 +190,17 @@ class Connection(ApiClientFactory):
         client.setup_client(models)
         self._test_connection(client)
         return client
+
+    def _enable_post_retries(self) -> None:
+        """
+        Retry transient gateway errors for POST requests as well as idempotent methods.
+
+        By default, urllib3 does not retry POST requests. All BoM Analytics queries are read-only POSTs, so retrying
+        them is safe. The retry count and backoff configured by ``ansys-openapi-common`` are preserved, and the
+        existing transport adapters are modified in place so the configured request timeout is retained.
+        """
+        for adapter in self._session.adapters.values():
+            adapter.max_retries = adapter.max_retries.new(allowed_methods=None)
 
     @staticmethod
     def _test_connection(client: "BomAnalyticsClient") -> None:

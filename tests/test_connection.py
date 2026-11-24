@@ -65,6 +65,14 @@ def test_session_headers(mock_connection):
     assert headers["User-Agent"].startswith("ansys-grantami-bomanalytics/")
 
 
+@pytest.mark.parametrize("method", ["GET", "POST"])
+def test_gateway_errors_are_retried(mock_connection, method):
+    for adapter in mock_connection.rest_client.adapters.values():
+        retry = adapter.max_retries
+        assert retry.is_retry(method, 504)
+        assert retry.total == 3
+
+
 def test_repr_default_dbkey(mock_connection):
     assert (
         repr(mock_connection) == f'<BomAnalyticsClient: url="{SL_URL}", maximum_spec_link_depth="unlimited", '

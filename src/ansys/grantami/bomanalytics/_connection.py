@@ -151,12 +151,14 @@ class Connection(ApiClientFactory):
         from . import __version__
 
         auth_url = api_url.strip("/") + MI_AUTH_PATH
-        super().__init__(auth_url, session_configuration)
-        self._base_servicelayer_url = api_url
-        session_configuration = self._session_configuration
+        if session_configuration is None:
+            session_configuration = SessionConfiguration()
+        # Headers must be set before calling super().__init__, which copies them to the underlying requests session.
         session_configuration.headers["X-Granta-ApplicationName"] = GRANTA_APPLICATION_NAME_HEADER
         session_configuration.headers["User-Agent"] = generate_user_agent("ansys-grantami-bomanalytics", __version__)
         session_configuration.headers["X-Granta-ActAsReadUser"] = "true"
+        super().__init__(auth_url, session_configuration)
+        self._base_servicelayer_url = api_url
 
     def connect(self) -> "BomAnalyticsClient":
         """Finalize the BoM Analytics client and return it for use.

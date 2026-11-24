@@ -58,6 +58,13 @@ def test_default_dbkey(mock_connection):
     assert mock_connection._query_arguments["database_key"] == "MI_Restricted_Substances"
 
 
+def test_session_headers(mock_connection):
+    headers = mock_connection.rest_client.headers
+    assert headers["X-Granta-ApplicationName"] == _connection.GRANTA_APPLICATION_NAME_HEADER
+    assert headers["X-Granta-ActAsReadUser"] == "true"
+    assert headers["User-Agent"].startswith("ansys-grantami-bomanalytics/")
+
+
 def test_repr_default_dbkey(mock_connection):
     assert (
         repr(mock_connection) == f'<BomAnalyticsClient: url="{SL_URL}", maximum_spec_link_depth="unlimited", '

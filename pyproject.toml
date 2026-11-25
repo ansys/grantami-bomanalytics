@@ -40,7 +40,7 @@ classifiers = [
 requires-python = ">=3.12"
 
 dependencies = [
-  "ansys-openapi-common>=2.0.0,<3.0", 
+  "ansys-openapi-common>=2.0.0,<3.0",
   "ansys-grantami-bomanalytics-openapi>=5.0.0,<6.0",
   "xmlschema>=3.0.1,<5.0",
   "defusedxml>=0.7",
@@ -63,6 +63,9 @@ examples = [
 name = "private-pypi"
 url = "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
 explicit = true
+
+[tool.uv.sources]
+ansys-openapi-common = { git = "https://github.com/ansys/openapi-common", branch = "lsteinba/configuration-mutability" }
 
 [dependency-groups]
 dev = [

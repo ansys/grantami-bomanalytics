@@ -39,8 +39,6 @@ on:
         required: true
       AZURE_VM_NAME_24R2:
         required: true
-      AZURE_VM_NAME_24R1:
-        required: true
 
       # Test server URLs
       TEST_SERVER_DEV_URL:
@@ -236,7 +234,6 @@ jobs:
           - "AZURE_VM_NAME_25R2"
           - "AZURE_VM_NAME_25R1"
           - "AZURE_VM_NAME_24R2"
-          - "AZURE_VM_NAME_24R1"
     steps:
       - uses: azure/CLI@9eb25b8360668fb0ecbafa808d40e2197b2f5f52  #v3.0.0
         env:

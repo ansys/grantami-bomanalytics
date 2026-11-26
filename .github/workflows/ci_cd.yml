@@ -195,7 +195,6 @@ jobs:
       AZURE_VM_NAME_25R2: ${{ secrets.AZURE_VM_NAME_25R2 }}
       AZURE_VM_NAME_25R1: ${{ secrets.AZURE_VM_NAME_25R1 }}
       AZURE_VM_NAME_24R2: ${{ secrets.AZURE_VM_NAME_24R2 }}
-      AZURE_VM_NAME_24R1: ${{ secrets.AZURE_VM_NAME_24R1 }}
       # Test server URLs
       TEST_SERVER_DEV_URL: ${{ secrets.TEST_SERVER_DEV_URL }}
       TEST_SERVER_27R1_URL: ${{ secrets.TEST_SERVER_27R1_URL }}

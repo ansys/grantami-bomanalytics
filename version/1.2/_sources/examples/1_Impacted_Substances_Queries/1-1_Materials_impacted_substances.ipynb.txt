@@ -1,0 +1,325 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "6354bc99",
+   "metadata": {},
+   "source": [
+    "# Perform a material impacted substances query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "33d2d814",
+   "metadata": {},
+   "source": [
+    "A Material Impacted Substances Query is used to identify the substances associated with a material that are impacted\n",
+    "by one or more defined legislations."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "692a7d93",
+   "metadata": {},
+   "source": [
+    "This example shows how to perform an Impacted Substance query on material records, and how to process the results."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c867d42f",
+   "metadata": {},
+   "source": [
+    "## Connecting to Granta MI"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f71d2fc3",
+   "metadata": {},
+   "source": [
+    "Import the ``Connection`` class and create the connection. See the [Getting Started](../0_Getting_started.ipynb)\n",
+    "example for more detail."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "23a64964",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import Connection\n",
+    "\n",
+    "server_url = \"http://my_grantami_server/mi_servicelayer\"\n",
+    "cxn = Connection(server_url).with_credentials(\"user_name\", \"password\").connect()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e72962b8",
+   "metadata": {},
+   "source": [
+    "## Building and running the query"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5f6084c4",
+   "metadata": {},
+   "source": [
+    "The query is assembled by providing lists of material references and legislations of interest. The query will return\n",
+    "the substances that are present in the specified materials and are impacted by the specified legislations."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "71d7d196",
+   "metadata": {},
+   "source": [
+    "First specify some constants that contain the material and legislation references we will use."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c9517d2f",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "PPS_ID = \"plastic-pps-generalpurpose\"\n",
+    "PC_ID = \"plastic-pc-20carbonfiber\"\n",
+    "SIN_LIST = \"The SIN List 2.1 (Substitute It Now!)\"\n",
+    "REACH = \"EU REACH - The Candidate List\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "430ebc38",
+   "metadata": {},
+   "source": [
+    "Next import the ``queries`` module and build the query with the references in the previous cell."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8e1475ce",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.bomanalytics import queries\n",
+    "\n",
+    "mat_query = (\n",
+    "    queries.MaterialImpactedSubstancesQuery()\n",
+    "    .with_material_ids([PPS_ID, PC_ID])\n",
+    "    .with_legislations([REACH, SIN_LIST])\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d490aae7",
+   "metadata": {},
+   "source": [
+    "Finally, run the query. Passing a ``MaterialImpactedSubstancesQuery`` object to the ``Connection.run()`` method\n",
+    "returns a ``MaterialImpactedSubstancesQueryResult`` object."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7be4d671",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "results = cxn.run(mat_query)\n",
+    "results"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1c7ef7f2",
+   "metadata": {},
+   "source": [
+    "A ``MaterialImpactedSubstancesQueryResult`` object contains three properties:\n",
+    "``impacted_substances_by_material``, ``impacted_substances_by_legislation``, and ``impacted_substances``. They provide\n",
+    "different views of the impacted substances at different levels of granularity."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9a821b49",
+   "metadata": {},
+   "source": [
+    "## View results grouped by material"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7fcd6a18",
+   "metadata": {},
+   "source": [
+    "This property is structured first as a list of ``MaterialWithImpactedSubstancesResult`` objects, each of which\n",
+    "contains a dictionary of lists of ``ImpactedSubstance`` objects keyed by legislation or a single flat list of all\n",
+    "substances."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4298c306",
+   "metadata": {},
+   "source": [
+    "First, we can simplify the structure somewhat because we are only using Material IDs. The cell below creates a\n",
+    "dictionary that maps Material IDs to lists of substances impacted by the 'SIN List'."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ac8fb3db",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "substances_by_material = {}\n",
+    "for material in results.impacted_substances_by_material:\n",
+    "    substances = material.substances_by_legislation[SIN_LIST]\n",
+    "    substances_by_material[material.material_id] = substances"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "35445883",
+   "metadata": {},
+   "source": [
+    "Then use the ``tabulate`` package to print a table of the substances and their quantities for the polycarbonate\n",
+    "material only."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c0a082a5",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from tabulate import tabulate\n",
+    "\n",
+    "rows = [(substance.cas_number, substance.max_percentage_amount_in_material)\n",
+    "    for substance in substances_by_material[PC_ID]]\n",
+    "\n",
+    "print(f'Substances impacted by \"{SIN_LIST}\" in \"{PC_ID}\" (10/{len(rows)})')\n",
+    "print(tabulate(rows[:10], headers=[\"CAS Number\", \"Amount (wt. %)\"]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "de045783",
+   "metadata": {},
+   "source": [
+    "## View results grouped by legislation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "03403568",
+   "metadata": {},
+   "source": [
+    "This property merges the results across all materials, resulting in a single dictionary of legislations that contain\n",
+    "all impacted substances for all materials."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "46aa2119",
+   "metadata": {},
+   "source": [
+    "Again we use the ``tabulate`` package to print a table of substances, but this time we are including the substances in\n",
+    "all materials, but again limited to the SIN List only."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3d49be98",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "material_substances_sin = results.impacted_substances_by_legislation[SIN_LIST]\n",
+    "rows = [(substance.cas_number, substance.max_percentage_amount_in_material)\n",
+    "    for substance in material_substances_sin]\n",
+    "print(f'Substances impacted by \"{SIN_LIST}\" in all materials (10/{len(rows)})')\n",
+    "print(tabulate(rows[:10], headers=[\"CAS Number\", \"Amount (wt. %)\"]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "99e3d7cf",
+   "metadata": {},
+   "source": [
+    "## View results as a flat list"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8b77cf69",
+   "metadata": {},
+   "source": [
+    "This property reduces the granularity further to produce a single flattened list of substances across all legislations\n",
+    "for all materials."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a517b92b",
+   "metadata": {},
+   "source": [
+    "The cell below uses the ``tabulate`` package to print a table of substances. Because we are using the\n",
+    "``impacted_substances`` property, we only have one list of ``ImpactedSubstance`` objects which covers both\n",
+    "legislations and both materials."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7dc1d24e",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "material_substances_all = results.impacted_substances\n",
+    "rows = [(substance.cas_number, substance.max_percentage_amount_in_material)\n",
+    "    for substance in material_substances_all]\n",
+    "print(f\"Impacted substances for all materials and legislations (10/{len(rows)})\")\n",
+    "print(tabulate(rows[:10], headers=[\"CAS Number\", \"Amount (wt. %)\"]))"
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:light"
+  },
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

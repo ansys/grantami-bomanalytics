@@ -29,6 +29,8 @@ on:
       # Test server names
       AZURE_VM_NAME_DEV:
         required: true
+      AZURE_VM_NAME_27R1:
+        required: true
       AZURE_VM_NAME_26R1:
         required: true
       AZURE_VM_NAME_25R2:
@@ -37,11 +39,11 @@ on:
         required: true
       AZURE_VM_NAME_24R2:
         required: true
-      AZURE_VM_NAME_24R1:
-        required: true
 
       # Test server URLs
       TEST_SERVER_DEV_URL:
+        required: true
+      TEST_SERVER_27R1_URL:
         required: true
       TEST_SERVER_26R1_URL:
         required: true
@@ -91,6 +93,8 @@ jobs:
         server:
           - name: "AZURE_VM_NAME_DEV"
             url: "TEST_SERVER_DEV_URL"
+          - name: "AZURE_VM_NAME_27R1"
+            url: "TEST_SERVER_27R1_URL"
           - name: "AZURE_VM_NAME_26R1"
             url: "TEST_SERVER_26R1_URL"
           - name: "AZURE_VM_NAME_25R2"
@@ -148,6 +152,7 @@ jobs:
           - "windows-latest"
         server:
           - "TEST_SERVER_DEV_URL"
+          - "TEST_SERVER_27R1_URL"
           - "TEST_SERVER_26R1_URL"
           - "TEST_SERVER_25R2_URL"
           - "TEST_SERVER_25R1_URL"
@@ -224,11 +229,11 @@ jobs:
       matrix:
         server:
           - "AZURE_VM_NAME_DEV"
+          - "AZURE_VM_NAME_27R1"
           - "AZURE_VM_NAME_26R1"
           - "AZURE_VM_NAME_25R2"
           - "AZURE_VM_NAME_25R1"
           - "AZURE_VM_NAME_24R2"
-          - "AZURE_VM_NAME_24R1"
     steps:
       - uses: azure/CLI@9eb25b8360668fb0ecbafa808d40e2197b2f5f52  #v3.0.0
         env:
